@@ -9,12 +9,24 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form method="post" enctype="multipart/form-data" asp-controller="FileUpload" asp-action="Index">
+    <div class="form-group">
+        <div class="col-md-10">
+            <p>Upload one or more files using this form:</p>
+            <input type="file" name="files" multiple />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="submit" value="Upload" />
+        </div>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id_Produto)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Ref_Produto)
             </th>
@@ -39,9 +51,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id_Produto)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Ref_Produto)
             </td>

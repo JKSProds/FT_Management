@@ -46,14 +46,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `dat_produtos`;
 CREATE TABLE `dat_produtos` (
-  `id_produto` int(10) unsigned NOT NULL auto_increment,
   `ref_produto` varchar(100) NOT NULL,
   `designacao_produto` varchar(100) default NULL,
-  `stock_fisico` double unsigned zerofill default NULL,
-  `stock_phc` double unsigned zerofill default NULL,
+  `stock_fisico` double unsigned default '0',
+  `stock_phc` double unsigned default '0',
   `pos_stock` varchar(45) default NULL,
   `obs` varchar(1024) default NULL,
-  PRIMARY KEY  (`id_produto`)
+  PRIMARY KEY  USING BTREE (`ref_produto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

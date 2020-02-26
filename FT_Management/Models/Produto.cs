@@ -7,7 +7,6 @@ namespace FT_Management.Models
 {
     public class Produto
     {
-        public int Id_Produto { get; set; }
         public string Ref_Produto { get; set; }
         public string Designacao_Produto { get; set; }
         public double Stock_Fisico { get; set; }
