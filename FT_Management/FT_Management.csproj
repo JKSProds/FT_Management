@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MySql.Simple" Version="5.3.5" />
+  </ItemGroup>
+
 
 
 </Project>
