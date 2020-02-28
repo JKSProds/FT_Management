@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,12 +60,18 @@ namespace FT_Management.Controllers
 
             }
 
-            return Ok(new { count = files.Count, size, filePaths });
+            return Redirect("~/Produtos");
         }
 
         public ActionResult Print(int id)
         {
-            return Content("Em desenvolvimento");
+            var outputStream = new MemoryStream();
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            context.desenharEtiqueta80x50(id).Save(outputStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+            outputStream.Seek(0, SeekOrigin.Begin);
+            return File(outputStream, "image/jpeg");
         }
 
         // GET: Produtos/Create

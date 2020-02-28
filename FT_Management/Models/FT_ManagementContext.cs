@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using System.IO;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace FT_Management.Models
 {
@@ -52,7 +54,6 @@ namespace FT_Management.Models
 
             return LstProdutos;
         }
-
         public void CarregarFicheiroDB(string FilePath)
         {
             using (ExcelPackage package = new ExcelPackage(new FileInfo(FilePath)))
@@ -95,7 +96,6 @@ namespace FT_Management.Models
                 atualizarListaArtigos(LstProdutos);
             }
         }
-
         public void atualizarListaArtigos(List<Produto> LstProdutos)
         {
             string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_fisico, pos_stock, obs) VALUES ";
@@ -110,6 +110,42 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+        }
+
+        public Bitmap desenharEtiqueta80x50 (int id)
+        {
+          
+            Bitmap bm = new Bitmap(300, 188);
+            Font fontHeader = new Font("Tahoma", 18, FontStyle.Bold);
+            Font fontBody = new Font("Tahoma", 8, FontStyle.Regular);
+
+            int x = 10;
+            int y = 10;
+
+            using (Graphics gr = Graphics.FromImage(bm))
+            {
+                gr.Clear(Color.White);
+
+                Image img = System.Drawing.Image.FromFile(@"wwwroot\img\ft_logo.png", true);
+                gr.DrawImage(img, x, y, 85, 50);
+
+                y += 10;
+                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 85 + 10, y);
+
+                y += 40;
+                gr.DrawString("Nome do Artigo", fontBody, Brushes.Black, x, y);
+
+
+                y += 50;
+                gr.DrawString("Barcode", fontBody, Brushes.Black, x, y);
+
+
+                y += 60;
+                gr.DrawString("geral@food-tech.pt", fontBody, Brushes.Black, x, y);
+
+            }
+
+            return bm;
         }
 
     }
