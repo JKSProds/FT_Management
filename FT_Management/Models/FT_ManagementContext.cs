@@ -28,13 +28,13 @@ namespace FT_Management.Models
             }
         }
 
-        public List<Produto> ObterListaProdutos()
+        public List<Produto> ObterListaProdutos(string referencia, string desig)
         {
             List<Produto> LstProdutos = new List<Produto>();
 
             Database db = ConnectionString;
 
-            using (var result = db.Query("SELECT * FROM dat_produtos;"))
+            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto like '%"+ referencia + "%' AND designacao_produto like '%"+desig+"%';"))
             {
                 while (result.Read())
                 {

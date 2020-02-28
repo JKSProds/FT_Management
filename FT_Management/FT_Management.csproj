@@ -8,6 +8,10 @@
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
     <PackageReference Include="MySql.Simple" Version="5.3.5" />
+    <PackageReference Include="X.PagedList" Version="7.9.0" />
+    <PackageReference Include="X.PagedList.Mvc" Version="7.9.1" />
+    <PackageReference Include="X.PagedList.Mvc.Bootstrap4" Version="7.9.0" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="7.9.1" />
   </ItemGroup>
 
 

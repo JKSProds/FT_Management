@@ -6,28 +6,32 @@ using System.Threading.Tasks;
 using FT_Management.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using X.PagedList;
 
 namespace FT_Management.Controllers
 {
     public class ProdutosController : Controller
     {
         // GET: Produtos
-        public ActionResult Index()
+        public ActionResult Index(int? page, string Ref, string Desig)
         {
+            ViewData["Ref"] = Ref;
+            ViewData["Desig"] = Desig;
+
+            int pageSize = 100;
+            var pageNumber = page ?? 1;
+
+            if (Ref == null) { Ref = ""; }
+            if (Desig == null) { Desig = ""; }
+
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterListaProdutos());
+            return View(context.ObterListaProdutos(Ref, Desig).ToPagedList(pageNumber, pageSize));
 
-        }
-
-        // GET: Produtos/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
         }
 
         [HttpPost("FileUpload")]
-        public async Task<IActionResult> Index(List<IFormFile> files)
+        public async Task<IActionResult> FileUpload(List<IFormFile> files)
         {
             long size = files.Sum(f => f.Length);
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -57,10 +61,15 @@ namespace FT_Management.Controllers
             return Ok(new { count = files.Count, size, filePaths });
         }
 
+        public ActionResult Print(int id)
+        {
+            return Content("Em desenvolvimento");
+        }
+
         // GET: Produtos/Create
         public ActionResult Create()
         {
-            return View();
+            return Content ("Em desenvolvimento");
         }
 
         // POST: Produtos/Create
@@ -83,7 +92,7 @@ namespace FT_Management.Controllers
         // GET: Produtos/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            return Content("Em desenvolvimento");
         }
 
         // POST: Produtos/Edit/5
@@ -106,7 +115,7 @@ namespace FT_Management.Controllers
         // GET: Produtos/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            return Content("Em desenvolvimento");
         }
 
         // POST: Produtos/Delete/5
