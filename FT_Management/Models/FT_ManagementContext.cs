@@ -65,21 +65,31 @@ namespace FT_Management.Models
 
                 for (int i = 1; i <= totalRows; i++)
                 {
+                    string ref_prod = workSheet.Cells[i, 1].Value.ToString().Replace(" ", "");
+                    string desig = workSheet.Cells[i, 2].Value.ToString().Trim();
                     double stock_Rececao = 0;
                     double.TryParse(workSheet.Cells[i, 3].Value.ToString(), out double stock_PHC);
                    if (workSheet.Dimension.End.Column == 4) {
                     double.TryParse(workSheet.Cells[i, 4].Value.ToString(), out stock_Rececao);
                     }
 
-                    LstProdutos.Add(new Produto
+                   if (LstProdutos.Where(p => p.Ref_Produto == ref_prod).Count() == 0)
                     {
-                        Ref_Produto = workSheet.Cells[i, 1].Value.ToString().Replace(" ", ""),
-                        Designacao_Produto = workSheet.Cells[i, 2].Value.ToString().Trim(),
-                        Stock_PHC = stock_PHC + stock_Rececao,
-                       Stock_Fisico = 0.0,
-                       Pos_Stock = "",
-                       Obs_Produto = ""
-                    });
+                        LstProdutos.Add(new Produto
+                        {
+                            Ref_Produto = ref_prod,
+                            Designacao_Produto = desig,
+                            Stock_PHC = stock_PHC + stock_Rececao,
+                            Stock_Fisico = 0.0,
+                            Pos_Stock = "",
+                            Obs_Produto = ""
+                        });
+
+                    } else
+                    {
+                        LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Stock_PHC += stock_PHC;
+                        LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Designacao_Produto = desig;
+                    }
                 }
 
                 atualizarListaArtigos(LstProdutos);
