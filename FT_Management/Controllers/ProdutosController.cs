@@ -35,7 +35,7 @@ namespace FT_Management.Controllers
             var filePaths = new List<string>();
             foreach (var formFile in files)
             {
-                if (formFile.Length > 0)
+                if (formFile.Length > 0 && formFile.FileName.Contains(".xls"))
                 {
                     // full path to file in temp location
                     var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.
