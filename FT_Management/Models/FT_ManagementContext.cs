@@ -30,6 +30,28 @@ namespace FT_Management.Models
             }
         }
 
+        public Produto ObterProduto(string referencia)
+        {
+            Produto produto = new Produto();
+            Database db = ConnectionString;
+
+            var result = db.Query("SELECT * FROM dat_produtos Where ref_produto = '" + referencia + "';");
+
+            while (result.Read()) {
+
+                produto = new Produto()
+                {
+                    Ref_Produto = result["ref_produto"],
+                    Designacao_Produto = result["designacao_produto"],
+                    Stock_Fisico = result["stock_fisico"],
+                    Stock_PHC = result["stock_phc"],
+                    Pos_Stock = result["pos_stock"],
+                    Obs_Produto = result["obs"]
+                };
+            }
+            return produto;
+        }
+
         public List<Produto> ObterListaProdutos(string referencia, string desig)
         {
             List<Produto> LstProdutos = new List<Produto>();
@@ -112,36 +134,42 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-        public Bitmap desenharEtiqueta80x50 (int id)
+        public Bitmap desenharEtiqueta80x50 (Produto produto)
         {
           
             Bitmap bm = new Bitmap(300, 188);
             Font fontHeader = new Font("Tahoma", 18, FontStyle.Bold);
             Font fontBody = new Font("Tahoma", 8, FontStyle.Regular);
 
+            StringFormat format = new StringFormat();
+            format.LineAlignment = StringAlignment.Center;
+            format.Alignment = StringAlignment.Center;
+
             int x = 10;
-            int y = 10;
+            int y = 0;
 
             using (Graphics gr = Graphics.FromImage(bm))
             {
                 gr.Clear(Color.White);
 
+                x = 30;
                 Image img = System.Drawing.Image.FromFile(@"wwwroot\img\ft_logo.png", true);
                 gr.DrawImage(img, x, y, 85, 50);
 
                 y += 10;
                 gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 85 + 10, y);
-
+          
+                x = 10;
                 y += 40;
-                gr.DrawString("Nome do Artigo", fontBody, Brushes.Black, x, y);
+                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, 280, 45), format);
 
 
                 y += 50;
-                gr.DrawString("Barcode", fontBody, Brushes.Black, x, y);
+                gr.DrawString(produto.Ref_Produto, fontBody, Brushes.Black, x, y);
 
 
-                y += 60;
-                gr.DrawString("geral@food-tech.pt", fontBody, Brushes.Black, x, y);
+                y += 70;
+                gr.DrawString("geral@food-tech.pt", fontBody, Brushes.Black, new Rectangle(x, y, 280, 20), format);
 
             }
 

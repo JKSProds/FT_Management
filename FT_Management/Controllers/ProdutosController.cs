@@ -63,13 +63,13 @@ namespace FT_Management.Controllers
             return Redirect("~/Produtos");
         }
 
-        public ActionResult Print(int id)
+        public ActionResult Print(string id)
         {
             var outputStream = new MemoryStream();
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            context.desenharEtiqueta80x50(id).Save(outputStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+            context.desenharEtiqueta80x50(context.ObterProduto(id)).Save(outputStream, System.Drawing.Imaging.ImageFormat.Jpeg);
             outputStream.Seek(0, SeekOrigin.Begin);
             return File(outputStream, "image/jpeg");
         }
