@@ -161,7 +161,7 @@ namespace FT_Management.Models
                 gr.CompositingQuality = CompositingQuality.HighQuality;
                 gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                Image img = System.Drawing.Image.FromFile(@"wwwroot\img\ft_logo.png", true);
+                Image img = System.Drawing.Image.FromFile(Directory.GetCurrentDirectory() + @"\wwwroot\img\ft_logo.png", true);
                 gr.DrawImage(img, x, y, 85, 50);
 
                 y += 10;
