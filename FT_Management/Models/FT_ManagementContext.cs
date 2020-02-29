@@ -78,47 +78,47 @@ namespace FT_Management.Models
         }
         public void CarregarFicheiroDB(string FilePath)
         {
-            using (ExcelPackage package = new ExcelPackage(new FileInfo(FilePath)))
+            using ExcelPackage package = new ExcelPackage(new FileInfo(FilePath));
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            int totalRows = workSheet.Dimension.Rows;
+
+            var LstProdutos = new List<Produto>();
+
+            for (int i = 1; i <= totalRows; i++)
             {
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
-                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                int totalRows = workSheet.Dimension.Rows;
-
-                var LstProdutos = new List<Produto>();
-
-                for (int i = 1; i <= totalRows; i++)
+                string ref_prod = workSheet.Cells[i, 1].Value.ToString().Replace(" ", "");
+                string desig = workSheet.Cells[i, 2].Value.ToString().Trim();
+                double stock_Rececao = 0;
+                double.TryParse(workSheet.Cells[i, 3].Value.ToString(), out double stock_PHC);
+                if (workSheet.Dimension.End.Column == 4)
                 {
-                    string ref_prod = workSheet.Cells[i, 1].Value.ToString().Replace(" ", "");
-                    string desig = workSheet.Cells[i, 2].Value.ToString().Trim();
-                    double stock_Rececao = 0;
-                    double.TryParse(workSheet.Cells[i, 3].Value.ToString(), out double stock_PHC);
-                   if (workSheet.Dimension.End.Column == 4) {
                     double.TryParse(workSheet.Cells[i, 4].Value.ToString(), out stock_Rececao);
-                    }
-
-                   if (LstProdutos.Where(p => p.Ref_Produto == ref_prod).Count() == 0)
-                    {
-                        LstProdutos.Add(new Produto
-                        {
-                            Ref_Produto = ref_prod,
-                            Designacao_Produto = desig,
-                            Stock_PHC = stock_PHC + stock_Rececao,
-                            Stock_Fisico = 0.0,
-                            Pos_Stock = "",
-                            Obs_Produto = ""
-                        });
-
-                    } else
-                    {
-                        LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Stock_PHC += stock_PHC;
-                        LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Designacao_Produto = desig;
-                    }
                 }
 
-                atualizarListaArtigos(LstProdutos);
+                if (LstProdutos.Where(p => p.Ref_Produto == ref_prod).Count() == 0)
+                {
+                    LstProdutos.Add(new Produto
+                    {
+                        Ref_Produto = ref_prod,
+                        Designacao_Produto = desig,
+                        Stock_PHC = stock_PHC + stock_Rececao,
+                        Stock_Fisico = 0.0,
+                        Pos_Stock = "",
+                        Obs_Produto = ""
+                    });
+
+                }
+                else
+                {
+                    LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Stock_PHC += stock_PHC;
+                    LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Designacao_Produto = desig;
+                }
             }
+
+            AtualizarListaArtigos(LstProdutos);
         }
-        public void atualizarListaArtigos(List<Produto> LstProdutos)
+        public void AtualizarListaArtigos(List<Produto> LstProdutos)
         {
             string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_fisico, pos_stock, obs) VALUES ";
 
@@ -134,25 +134,33 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-        public Bitmap desenharEtiqueta80x50 (Produto produto)
+        public Bitmap DesenharEtiqueta80x50 (Produto produto)
         {
-          
-            Bitmap bm = new Bitmap(300, 188);
+
+            int x = 30;
+            int y = 0;
+            int width = 300;
+            int height = 188;
+
+            Bitmap bm = new Bitmap(width, height);
+
             Font fontHeader = new Font("Tahoma", 18, FontStyle.Bold);
             Font fontBody = new Font("Tahoma", 8, FontStyle.Regular);
 
-            StringFormat format = new StringFormat();
-            format.LineAlignment = StringAlignment.Center;
-            format.Alignment = StringAlignment.Center;
-
-            int x = 10;
-            int y = 0;
+            StringFormat format = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
 
             using (Graphics gr = Graphics.FromImage(bm))
             {
                 gr.Clear(Color.White);
 
-                x = 30;
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
                 Image img = System.Drawing.Image.FromFile(@"wwwroot\img\ft_logo.png", true);
                 gr.DrawImage(img, x, y, 85, 50);
 
@@ -161,15 +169,20 @@ namespace FT_Management.Models
           
                 x = 10;
                 y += 40;
-                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, 280, 45), format);
+                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x*2), 35), format);
 
 
-                y += 50;
-                gr.DrawString(produto.Ref_Produto, fontBody, Brushes.Black, x, y);
+                y += 40;
+                Barcode.Code93 code = new Barcode.Code93
+                {
+                    DrawText = false
+                };
 
+                gr.DrawImage(code.desenharBarcode(produto.Ref_Produto), 10, y, width - (x * 2), 90);
+                y += 60;
+                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2), 20), format);
 
-                y += 70;
-                gr.DrawString("geral@food-tech.pt", fontBody, Brushes.Black, new Rectangle(x, y, 280, 20), format);
+                gr.DrawString("geral@food-tech.pt", fontBody, Brushes.Black, new Rectangle(x, height-20, width - (x * 2), 20), format);
 
             }
 

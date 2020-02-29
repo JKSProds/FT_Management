@@ -9,6 +9,8 @@ using FT_Management.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
+using PdfSharp.Pdf;
+using PdfSharp.Drawing;
 
 namespace FT_Management.Controllers
 {
@@ -47,10 +49,8 @@ namespace FT_Management.Controllers
                     var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.
                     filePaths.Add(filePath);
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await formFile.CopyToAsync(stream);
-                    }
+                    using var stream = new FileStream(filePath, FileMode.Create);
+                    await formFile.CopyToAsync(stream);
                 }
             }
 
@@ -65,13 +65,39 @@ namespace FT_Management.Controllers
 
         public ActionResult Print(string id)
         {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
             var outputStream = new MemoryStream();
+            var ms = new MemoryStream();
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            context.desenharEtiqueta80x50(context.ObterProduto(id)).Save(outputStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+            context.DesenharEtiqueta80x50(context.ObterProduto(id)).Save(outputStream, System.Drawing.Imaging.ImageFormat.Bmp);
             outputStream.Seek(0, SeekOrigin.Begin);
-            return File(outputStream, "image/jpeg");
+
+            PdfDocument doc = new PdfDocument();
+            doc.Info.Title = context.ObterProduto(id).Designacao_Produto;
+            PdfPage page = new PdfPage
+            {
+                Width = 225,
+                Height = 140
+            };
+
+
+            XImage img = XImage.FromStream(outputStream);
+            img.Interpolate = false;
+
+            doc.Pages.Add(page);
+
+            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
+            xgr.DrawImage(img, 0, 0);
+
+            doc.Save(ms, false);
+
+            return File(ms, "application/pdf");
         }
 
         // GET: Produtos/Create
