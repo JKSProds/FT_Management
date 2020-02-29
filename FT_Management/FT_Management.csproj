@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <Reference Include="Code93">
-      <HintPath>..\..\..\Downloads\Code93\Code93.dll</HintPath>
+      <HintPath>Code93.dll</HintPath>
     </Reference>
   </ItemGroup>
 
