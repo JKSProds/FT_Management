@@ -16,7 +16,7 @@ chmod -R 777 FT_Management
 
 rm -r FT_Management
 
-docker run -d -p 8080:80 --restart always --name FT_Management ftmanagement
+docker run -d -p 8082:80 --restart always --name FT_Management ftmanagement
 
 
 
