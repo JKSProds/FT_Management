@@ -29,7 +29,7 @@ namespace FT_Management.Models
             catch
             {
                 throw new Exception("Não foi possivel conectar á BD! Verifique se a base de dados existe e o IP está correto.");
-            }
+            } 
         }
 
         public Produto ObterProduto(string referencia)
@@ -135,6 +135,7 @@ namespace FT_Management.Models
 
             db.Execute(sql);
         }
+
 
         public Bitmap DesenharEtiqueta80x50 (Produto produto)
         {
