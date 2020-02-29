@@ -15,10 +15,12 @@ namespace FT_Management.Models
     {
 
         public string ConnectionString { get; set; }
+        public string FT_Logo_Print { get; set; }
 
-        public FT_ManagementContext(string connectionString)
+        public FT_ManagementContext(string connectionString, string FT_Logo)
         {
             this.ConnectionString = connectionString;
+            this.FT_Logo_Print = FT_Logo;
 
             try
             {
@@ -161,8 +163,7 @@ namespace FT_Management.Models
                 gr.CompositingQuality = CompositingQuality.HighQuality;
                 gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                Image img = System.Drawing.Image.FromFile(Directory.GetCurrentDirectory() + @"\wwwroot\img\ft_logo.png", true);
-                gr.DrawImage(img, x, y, 85, 50);
+                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 85, 50); }
 
                 y += 10;
                 gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 85 + 10, y);
