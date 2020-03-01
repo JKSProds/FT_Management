@@ -203,7 +203,7 @@ namespace FT_Management.Models
             Bitmap bm = new Bitmap(width, height);
 
             Font fontHeader = new Font("Tahoma", 18, FontStyle.Bold);
-            Font fontBody = new Font("Tahoma", 12, FontStyle.Regular);
+            Font fontBody = new Font("Tahoma", 13, FontStyle.Regular);
             Font fontFooter = new Font("Tahoma", 8, FontStyle.Regular);
 
             StringFormat format = new StringFormat
@@ -226,20 +226,21 @@ namespace FT_Management.Models
                 gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 85 + 10, y);
 
                 x = 10;
-                y += 30;
+                y += 25;
+               
+                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 115), format);
+
+                y += 105;
+                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2), 20), format);
+
+                y += 15;
+
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
                 QRCode qrCode = new QRCode(qrCodeData);
                 Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
-                gr.DrawImage(qrCodeImage, width - 65, y, 60, 60);
-
-                y += 25;
-                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 60, 20), format);
-
-                y += 15;
-
-                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 100), format);
+                gr.DrawImage(qrCodeImage, width - 60, height - 60, 60, 60);
 
                 gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, height - 20, width - (x * 2), 20), format);
 
