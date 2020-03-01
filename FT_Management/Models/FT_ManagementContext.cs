@@ -8,6 +8,7 @@ using OfficeOpenXml;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using QRCoder;
 
 namespace FT_Management.Models
 {
@@ -191,5 +192,60 @@ namespace FT_Management.Models
             return bm;
         }
 
+        public Bitmap DesenharEtiqueta80x50QR(Produto produto)
+        {
+
+            int x = 30;
+            int y = 0;
+            int width = 300;
+            int height = 188;
+
+            Bitmap bm = new Bitmap(width, height);
+
+            Font fontHeader = new Font("Tahoma", 18, FontStyle.Bold);
+            Font fontBody = new Font("Tahoma", 12, FontStyle.Regular);
+            Font fontFooter = new Font("Tahoma", 8, FontStyle.Regular);
+
+            StringFormat format = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
+
+            using (Graphics gr = Graphics.FromImage(bm))
+            {
+                gr.Clear(Color.White);
+
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 85, 50); }
+
+                y += 10;
+                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 85 + 10, y);
+
+                x = 10;
+                y += 30;
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
+                QRCode qrCode = new QRCode(qrCodeData);
+                Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+                gr.DrawImage(qrCodeImage, width - 65, y, 60, 60);
+
+                y += 25;
+                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 60, 20), format);
+
+                y += 15;
+
+                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 100), format);
+
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, height - 20, width - (x * 2), 20), format);
+
+            }
+
+            return bm;
+        }
     }
 }
