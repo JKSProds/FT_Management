@@ -8,9 +8,7 @@
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
     <PackageReference Include="MySql.Simple" Version="5.3.5" />
-    <PackageReference Include="PdfSharp.Core" Version="1.0.0" />
-    <PackageReference Include="runtime.linux-x64.CoreCompat.System.Drawing" Version="1.0.0-beta009" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="PdfSharpCore" Version="1.1.21" />
     <PackageReference Include="X.PagedList" Version="7.9.0" />
     <PackageReference Include="X.PagedList.Mvc.Bootstrap4" Version="7.9.0" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="7.9.1" />

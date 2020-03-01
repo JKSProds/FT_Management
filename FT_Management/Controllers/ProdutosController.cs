@@ -9,8 +9,8 @@ using FT_Management.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
-using PdfSharp.Pdf;
-using PdfSharp.Drawing;
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Drawing;
 
 namespace FT_Management.Controllers
 {
@@ -70,13 +70,11 @@ namespace FT_Management.Controllers
                 return RedirectToAction("Index");
             }
 
-            var outputStream = new MemoryStream();
             var ms = new MemoryStream();
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            context.DesenharEtiqueta80x50(context.ObterProduto(id)).Save(outputStream, System.Drawing.Imaging.ImageFormat.Bmp);
-            outputStream.Seek(0, SeekOrigin.Begin);
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta80x50(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
             PdfDocument doc = new PdfDocument();
             doc.Info.Title = context.ObterProduto(id).Designacao_Produto;
@@ -86,8 +84,7 @@ namespace FT_Management.Controllers
                 Height = 140
             };
 
-
-            XImage img = XImage.FromStream(outputStream);
+                       XImage img = XImage.FromFile(filePath);
             img.Interpolate = false;
 
             doc.Pages.Add(page);
@@ -97,6 +94,8 @@ namespace FT_Management.Controllers
 
             doc.Save(ms, false);
 
+            System.IO.File.Delete(filePath);
+            //return File(outputStream, "image/bmp");
             return File(ms, "application/pdf");
         }
 
