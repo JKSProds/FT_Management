@@ -230,10 +230,10 @@ namespace FT_Management.Models
                
                 gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 115), format);
 
-                y += 105;
-                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2), 20), format);
+                y += 110;
+                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 65, 20), format);
 
-                y += 15;
+                y += 20;
 
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
@@ -242,7 +242,7 @@ namespace FT_Management.Models
 
                 gr.DrawImage(qrCodeImage, width - 60, height - 60, 60, 60);
 
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, height - 20, width - (x * 2), 20), format);
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 65, 20), format);
 
             }
 

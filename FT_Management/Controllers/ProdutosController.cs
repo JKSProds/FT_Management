@@ -74,7 +74,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            context.DesenharEtiqueta80x50QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
 
             PdfDocument doc = new PdfDocument();
             doc.Info.Title = context.ObterProduto(id).Designacao_Produto;
