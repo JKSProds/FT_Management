@@ -191,7 +191,6 @@ namespace FT_Management.Models
 
             return bm;
         }
-
         public Bitmap DesenharEtiqueta80x50QR(Produto produto)
         {
 

@@ -19,6 +19,7 @@ namespace FT_Management.Models
         [Display(Name = "Localização")]
         public string Pos_Stock { get; set; }
         [Display(Name = "Observações")]
+        [DataType(DataType.MultilineText)]
         public string Obs_Produto { get; set; }
     }
 }

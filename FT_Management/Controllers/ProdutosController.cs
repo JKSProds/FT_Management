@@ -101,19 +101,26 @@ namespace FT_Management.Controllers
         }
 
         // GET: Produtos/Create
-        public ActionResult Create()
+        public ActionResult Criar()
         {
-            return Content ("Em desenvolvimento");
+            return View();
         }
 
         // POST: Produtos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Criar(Produto produto)
         {
             try
             {
-                // TODO: Add insert logic here
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+                List<Produto> produtos = new List<Produto>
+                {
+                    produto
+                };
+
+                context.AtualizarListaArtigos(produtos);
 
                 return RedirectToAction(nameof(Index));
             }
