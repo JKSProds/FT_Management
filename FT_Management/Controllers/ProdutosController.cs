@@ -74,23 +74,24 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Png);
+            context.DesenharEtiqueta80x50QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
             PdfDocument doc = new PdfDocument();
             doc.Info.Title = context.ObterProduto(id).Designacao_Produto;
             PdfPage page = new PdfPage
             {
-                Width = 225,
-                Height = 140
+                Width = 810,
+                Height = 504
             };
 
-                       XImage img = XImage.FromFile(filePath);
+             XImage img = XImage.FromFile(filePath);
             img.Interpolate = false;
 
             doc.Pages.Add(page);
 
             XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
-            xgr.DrawImage(img, 0, 0);
+            XRect box = new XRect(0, 0, 810, 504);
+            xgr.DrawImage(img, box);
 
             doc.Save(ms, false);
 
