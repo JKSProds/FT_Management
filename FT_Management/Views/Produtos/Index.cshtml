@@ -89,7 +89,10 @@ else
                         @Html.DisplayFor(modelItem => item.Stock_PHC)
                     </td>
                     <td>
-                        <a class="btn" onclick="window.open('@Url.Action("Print", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
+                        @*<a class="btn" onclick="window.open('@Url.Action("Print", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>*@
+                        <a class="btn" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
+                        <a class="btn" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
+
                     </td>
                 </tr>
             }

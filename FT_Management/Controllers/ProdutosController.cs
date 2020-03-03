@@ -63,28 +63,18 @@ namespace FT_Management.Controllers
             return Redirect("~/Produtos");
         }
 
-        public ActionResult Print(string id)
+        public MemoryStream BitMapToMemoryStream(string filePath)
         {
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
-
             var ms = new MemoryStream();
 
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
             PdfDocument doc = new PdfDocument();
-            doc.Info.Title = context.ObterProduto(id).Designacao_Produto;
             PdfPage page = new PdfPage
             {
                 Width = 810,
                 Height = 504
             };
 
-             XImage img = XImage.FromFile(filePath);
+            XImage img = XImage.FromFile(filePath);
             img.Interpolate = false;
 
             doc.Pages.Add(page);
@@ -96,8 +86,57 @@ namespace FT_Management.Controllers
             doc.Save(ms, false);
 
             System.IO.File.Delete(filePath);
+
+            return ms;
+
+        }
+
+        public ActionResult Print(string id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta80x50(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+
             //return File(outputStream, "image/bmp");
-            return File(ms, "application/pdf");
+            return File(BitMapToMemoryStream(filePath), "application/pdf");
+        }
+
+        public ActionResult PrintQr(string id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta80x50QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+
+            //return File(outputStream, "image/bmp");
+            return File(BitMapToMemoryStream(filePath), "application/pdf");
+        }
+
+        public ActionResult PrintPeq(string id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta80x25QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+
+            //return File(outputStream, "image/bmp");
+            return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
         // GET: Produtos/Create
