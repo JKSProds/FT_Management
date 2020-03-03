@@ -169,6 +169,19 @@ namespace FT_Management.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult EditarStockFisico(string refproduto, string stockfisico)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Produto produtoFinal = context.ObterProduto(refproduto);
+            Double.TryParse(stockfisico, out double stock_fisico);
+            produtoFinal.Stock_Fisico = stock_fisico;
+
+            context.AtualizarArtigo(produtoFinal);
+
+            return Json("ok");
+        }
+
         // GET: Produtos/Edit/5
         public ActionResult Edit(int id)
         {

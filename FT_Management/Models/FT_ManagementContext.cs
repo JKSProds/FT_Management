@@ -136,7 +136,14 @@ namespace FT_Management.Models
 
             db.Execute(sql);
         }
+        public void AtualizarArtigo (Produto produto)
+        {
 
+            Database db = ConnectionString;
+            String sql = "update dat_produtos set designacao_produto='"+ produto.Designacao_Produto + "', stock_fisico="+produto.Stock_Fisico+ ", stock_phc="+produto.Stock_PHC+ ", pos_stock='"+produto.Pos_Stock+ "', obs='"+produto.Obs_Produto+"' Where ref_produto='"+produto.Ref_Produto+"';";
+            db.Execute(sql);
+
+        }
 
         public Bitmap DesenharEtiqueta80x50 (Produto produto)
         {
