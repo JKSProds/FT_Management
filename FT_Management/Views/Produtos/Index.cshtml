@@ -78,17 +78,17 @@ else
             @foreach (var item in Model)
             {
                 <tr>
-                    <td class="Ref_Produto" onclick="location.href = '@(Url.Action("Edit", "Produtos", new { id = item.Ref_Produto }))'">
+                    <td class="Ref_Produto" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
                         <span>@item.Ref_Produto</span>
                     </td>
-                    <td class="Designacao_Produto" onclick="location.href = '@(Url.Action("Edit", "Produtos", new { id = item.Ref_Produto }))'">
+                    <td class="Designacao_Produto" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
                         <span>@item.Designacao_Produto</span>
                     </td>
                     <td class="Stock_Fisico" >
-                        <span onclick="location.href = '@(Url.Action("Edit", "Produtos", new { id = item.Ref_Produto }))'">@item.Stock_Fisico</span>
+                        <span onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">@item.Stock_Fisico</span>
                         <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
                     </td>
-                    <td class="Stock_PHC" onclick="location.href = '@(Url.Action("Edit", "Produtos", new { id = item.Ref_Produto }))'">
+                    <td class="Stock_PHC" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
                         <span>@item.Stock_PHC</span>
                     </td>
                     <td>

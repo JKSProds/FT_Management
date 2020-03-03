@@ -183,21 +183,25 @@ namespace FT_Management.Controllers
         }
 
         // GET: Produtos/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Editar(string id)
         {
-            return Content("Em desenvolvimento");
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+    
+            return View(context.ObterProduto(id));
         }
 
         // POST: Produtos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Editar(string id, Produto produto)
         {
             try
             {
-                // TODO: Add update logic here
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                produto.Ref_Produto = id;
+                context.AtualizarArtigo(produto);
 
-                return RedirectToAction(nameof(Index));
+                return Redirect("~/Produtos/Editar/" + id);
             }
             catch
             {
