@@ -69,8 +69,8 @@ else
                 <th>
                     @Html.DisplayNameFor(model => model.Stock_PHC)
                 </th>
-                <th><a id="btnEdit" class="btn btn-primary btn-lg " onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
-                    <a id="btnCloseEdit" class="btn btn-primary btn-lg " onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
+                <th><a id="btnEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
+                    <a id="btnCloseEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
                 </th>                
             </tr>
         </thead>
@@ -86,14 +86,14 @@ else
                     </td>
                     <td class="Stock_Fisico" >
                         <span onclick="location.href = '@(Url.Action("Edit", "Produtos", new { id = item.Ref_Produto }))'">@item.Stock_Fisico</span>
-                        <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text" />
+                        <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
                     </td>
                     <td class="Stock_PHC" onclick="location.href = '@(Url.Action("Edit", "Produtos", new { id = item.Ref_Produto }))'">
                         <span>@item.Stock_PHC</span>
                     </td>
                     <td>
                         @*<a class="btn" onclick="window.open('@Url.Action("Print", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>*@
-                        <a class="update" href="javascript:;" style="display:none;"><i class="fas fa-save" style="font-size:20px"></i></a>
+                        <a class="update" href="javascript:;" style="display:none;"><i class="fas fa-save" style="font-size:22px"></i></a>
                         <a class="btn" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print" style="font-size:20px"></i></a>
                         <a class="btn" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
 
@@ -107,6 +107,7 @@ else
 }
 
 <script>
+
     //Edit event handler.
     function Edit() {
         //alert("Clicou");
@@ -117,6 +118,7 @@ else
             var row = $(this).closest("tr");
             $("td", row).each(function () {
                 if ($(this).find("input").length > 0) {
+                    
                     var span = $(this).find("span");
                     var input = $(this).find("input");
                     span.html(input.val());
@@ -140,17 +142,17 @@ else
         var btn1 = document.getElementById("btnEdit");
         var btn2 = document.getElementById("btnCloseEdit");
         $("td").each(function () {
-                        var row = $(this).closest("tr");
+            var row = $(this).closest("tr");
             if ($(this).find("input").length > 0) {
 
                 if (btn1.style.display === "none") {
-                                    row.find(".update").hide();
-                    $(this).find("input").hide();
+                   row.find(".update").hide();
+                   row.find(".txtstockfis").hide();
                     $(this).find("span").show();
 
                 } else {
-                                    row.find(".update").show();
-                    $(this).find("input").show();
+                    row.find(".update").show();
+                    row.find(".txtstockfis").show();
                     $(this).find("span").hide();
 
                 }
