@@ -29,7 +29,7 @@ namespace FT_Management.Models
             }
             catch
             {
-                throw new Exception("Não foi possivel conectar á BD! Verifique se a base de dados existe e o IP está correto.");
+                throw new Exception("Não foi possivel conectar á BD! Verifique se a base de dados existe e o IP está correto. ");
             } 
         }
 
