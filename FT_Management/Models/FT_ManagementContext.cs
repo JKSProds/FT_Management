@@ -17,11 +17,13 @@ namespace FT_Management.Models
 
         public string ConnectionString { get; set; }
         public string FT_Logo_Print { get; set; }
+        public string PHC_DB_Conn { get; set; }
 
-        public FT_ManagementContext(string connectionString, string FT_Logo)
+        public FT_ManagementContext(string connectionString, string FT_Logo, string PHC_DB)
         {
             this.ConnectionString = connectionString;
             this.FT_Logo_Print = FT_Logo;
+            this.PHC_DB_Conn = PHC_DB;
 
             try
             {
@@ -33,27 +35,7 @@ namespace FT_Management.Models
             } 
         }
 
-        public Produto ObterProduto(string referencia)
-        {
-            Produto produto = new Produto();
-            Database db = ConnectionString;
 
-            var result = db.Query("SELECT * FROM dat_produtos Where ref_produto = '" + referencia + "';");
-
-            while (result.Read()) {
-
-                produto = new Produto()
-                {
-                    Ref_Produto = result["ref_produto"],
-                    Designacao_Produto = result["designacao_produto"],
-                    Stock_Fisico = result["stock_fisico"],
-                    Stock_PHC = result["stock_phc"],
-                    Pos_Stock = result["pos_stock"],
-                    Obs_Produto = result["obs"]
-                };
-            }
-            return produto;
-        }
 
         public List<Produto> ObterListaProdutos(string referencia, string desig)
         {
@@ -119,9 +101,32 @@ namespace FT_Management.Models
                 }
             }
 
-            AtualizarListaArtigos(LstProdutos);
+            CriarArtigos(LstProdutos);
         }
-        public void AtualizarListaArtigos(List<Produto> LstProdutos)
+
+        public Produto ObterProduto(string referencia)
+        {
+            Produto produto = new Produto();
+            Database db = ConnectionString;
+
+            var result = db.Query("SELECT * FROM dat_produtos Where ref_produto = '" + referencia + "';");
+
+            while (result.Read())
+            {
+
+                produto = new Produto()
+                {
+                    Ref_Produto = result["ref_produto"],
+                    Designacao_Produto = result["designacao_produto"],
+                    Stock_Fisico = result["stock_fisico"],
+                    Stock_PHC = result["stock_phc"],
+                    Pos_Stock = result["pos_stock"],
+                    Obs_Produto = result["obs"]
+                };
+            }
+            return produto;
+        }
+        public void CriarArtigos(List<Produto> LstProdutos)
         {
             string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_fisico, pos_stock, obs) VALUES ";
 
@@ -136,11 +141,18 @@ namespace FT_Management.Models
 
             db.Execute(sql);
         }
-        public void AtualizarArtigo (Produto produto)
+        public void EditarArtigo (Produto produto)
         {
 
             Database db = ConnectionString;
             String sql = "update dat_produtos set designacao_produto='"+ produto.Designacao_Produto + "', stock_fisico="+produto.Stock_Fisico+ ", stock_phc="+produto.Stock_PHC+ ", pos_stock='"+produto.Pos_Stock+ "', obs='"+produto.Obs_Produto+"' Where ref_produto='"+produto.Ref_Produto+"';";
+            db.Execute(sql);
+
+        }
+        public void ApagarArtigo(Produto produto)
+        {
+            Database db = ConnectionString;
+            String sql = "delete from dat_produtos Where ref_produto='" + produto.Ref_Produto + "';";
             db.Execute(sql);
 
         }

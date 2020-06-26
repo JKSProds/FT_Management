@@ -47,6 +47,30 @@
     </tr>
 </table>
 
+<button style="display: none" type="button" id="btnModal" class="btn btn-info btn-lg" data-toggle="modal" data-target="#exampleModal">Open Modal</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Apagar Artigo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Tem a certeza que pretende apagar este produto. Esta ação é irreversivel!
+            </div>
+            <div class="modal-footer">
+                <div id="modalApagarConfirm"></div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (Model.Count() == 0)
 {
     <br />
@@ -54,7 +78,7 @@
 }
 else
 {
-    <table class="table table-hover"  id="tblProdutos">
+    <table class="table table-hover" id="tblProdutos">
         <thead>
             <tr>
                 <th>
@@ -69,9 +93,10 @@ else
                 <th>
                     @Html.DisplayNameFor(model => model.Stock_PHC)
                 </th>
-                <th><a id="btnEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
+                <th>
+                    <a id="btnEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
                     <a id="btnCloseEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
-                </th>                
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -84,18 +109,18 @@ else
                     <td class="Designacao_Produto" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
                         <span>@item.Designacao_Produto</span>
                     </td>
-                    <td class="Stock_Fisico" >
+                    <td class="Stock_Fisico">
                         <span onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">@item.Stock_Fisico</span>
                         <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
                     </td>
                     <td class="Stock_PHC" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
                         <span>@item.Stock_PHC</span>
                     </td>
-                    <td>
-                        @*<a class="btn" onclick="window.open('@Url.Action("Print", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>*@
-                        <a class="update" href="javascript:;" style="display:none;"><i class="fas fa-save" style="font-size:22px"></i></a>
-                        <a class="btn" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                        <a class="btn" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
+                    <td style="min-width: 200px">
+                        <a class="update btn btn-outline-success" href="javascript:;" style="display:none;"><i class="fas fa-save" style="font-size:22px"></i></a>
+                        @*<a class="apagar" onclick="modalApagar(@item.Ref_Produto)" style="display:none;"><i class="fas fa-trash" style="font-size:20px"></i></a>*@
+                        <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                        <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
 
                     </td>
                 </tr>
@@ -107,38 +132,49 @@ else
 }
 
 <script>
+    function modalApagar(refprod) {
+        alert(refprod);
+   
+ 
+        var modalApagarConfirm = $('#modalApagarConfirm');
+        modalApagarConfirm.html('<a href="Produtos/Apagar/' + row + '" class="btn btn-danger" role="button">Confirmar</a>');
+        $("#btnModal").trigger("click");
+ 
+    }
 
     //Edit event handler.
     function Edit() {
         //alert("Clicou");
+
         var btns = document.querySelectorAll('.update');
 
         Array.prototype.forEach.call(btns, function addClickListener(btn) {
-          btn.addEventListener('click', function(event) {
-            var row = $(this).closest("tr");
-            $("td", row).each(function () {
-                if ($(this).find("input").length > 0) {
-                    
-                    var span = $(this).find("span");
-                    var input = $(this).find("input");
-                    span.html(input.val());
-                }
+            btn.addEventListener('click', function (event) {
+                var row = $(this).closest("tr");
+                $("td", row).each(function () {
+                    if ($(this).find("input").length > 0) {
+
+                        var span = $(this).find("span");
+                        var input = $(this).find("input");
+                        span.html(input.val());
+                    }
+                });
+
+                var produto = {
+                    refproduto: row.find(".Ref_Produto").find("span").html(),
+                    stockfisico: row.find(".Stock_Fisico").find("span").html()
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Produtos/EditarStockFisico",
+                    data: produto,
+                    traditional: true
+                });
             });
-
-             var produto = {
-                 refproduto: row.find(".Ref_Produto").find("span").html(),
-                 stockfisico: row.find(".Stock_Fisico").find("span").html()
-            };
-
-
-            $.ajax({
-                type: "POST",
-                url: "/Produtos/EditarStockFisico",
-                data: produto,
-                traditional: true
-            });
-          });
         });
+
         var btn1 = document.getElementById("btnEdit");
         var btn2 = document.getElementById("btnCloseEdit");
         $("td").each(function () {
@@ -146,12 +182,14 @@ else
             if ($(this).find("input").length > 0) {
 
                 if (btn1.style.display === "none") {
-                   row.find(".update").hide();
-                   row.find(".txtstockfis").hide();
+                    row.find(".update").hide();
+                    //row.find(".apagar").hide();
+                    row.find(".txtstockfis").hide();
                     $(this).find("span").show();
 
                 } else {
                     row.find(".update").show();
+                    //row.find(".apagar").show();
                     row.find(".txtstockfis").show();
                     $(this).find("span").hide();
 
@@ -166,7 +204,7 @@ else
             btn2.style.display = "block";
         }
         $(this).hide();
-}
+    }
 
- 
+
 </script>

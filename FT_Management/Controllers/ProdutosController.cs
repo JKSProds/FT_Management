@@ -159,7 +159,7 @@ namespace FT_Management.Controllers
                     produto
                 };
 
-                context.AtualizarListaArtigos(produtos);
+                context.CriarArtigos(produtos);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -177,7 +177,7 @@ namespace FT_Management.Controllers
             Double.TryParse(stockfisico, out double stock_fisico);
             produtoFinal.Stock_Fisico = stock_fisico;
 
-            context.AtualizarArtigo(produtoFinal);
+            context.EditarArtigo(produtoFinal);
 
             return Json("ok");
         }
@@ -199,7 +199,7 @@ namespace FT_Management.Controllers
             {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 produto.Ref_Produto = id;
-                context.AtualizarArtigo(produto);
+                context.EditarArtigo(produto);
 
                 return Redirect("~/Produtos/Editar/" + id);
             }
