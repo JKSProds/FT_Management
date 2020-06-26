@@ -1,0 +1,58 @@
+﻿@model FT_Management.Models.FolhaObra
+
+@{
+    ViewData["Title"] = "Adicionar";
+}
+
+<h1>Adicionar</h1>
+
+<h4>FolhaObra</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Adicionar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="IdFolhaObra" class="control-label"></label>
+                <input asp-for="IdFolhaObra" class="form-control" />
+                <span asp-validation-for="IdFolhaObra" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataServico" class="control-label"></label>
+                <input asp-for="DataServico" class="form-control" />
+                <span asp-validation-for="DataServico" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReferenciaServico" class="control-label"></label>
+                <input asp-for="ReferenciaServico" class="form-control" />
+                <span asp-validation-for="ReferenciaServico" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EstadoEquipamento" class="control-label"></label>
+                <input asp-for="EstadoEquipamento" class="form-control" />
+                <span asp-validation-for="EstadoEquipamento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RelatorioServico" class="control-label"></label>
+                <input asp-for="RelatorioServico" class="form-control" />
+                <span asp-validation-for="RelatorioServico" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SituacoesPendentes" class="control-label"></label>
+                <input asp-for="SituacoesPendentes" class="form-control" />
+                <span asp-validation-for="SituacoesPendentes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

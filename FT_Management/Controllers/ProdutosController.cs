@@ -210,10 +210,10 @@ namespace FT_Management.Controllers
         }
 
         // GET: Produtos/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return Content("Em desenvolvimento");
-        }
+        //public ActionResult Delete(int id)
+        //{
+        //    return Content("Em desenvolvimento");
+        //}
 
         // POST: Produtos/Delete/5
         [HttpPost]
