@@ -1,0 +1,528 @@
+﻿@model FT_Management.Models.FolhaObra
+
+@{
+    ViewData["Title"] = "Editar Intervenção";
+}
+
+<h1>Adicionar Intervenção</h1>
+<hr />
+        <form asp-action="Editar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-item nav-link active" id="v-pills-equipamento-tab" data-toggle="pill" href="#v-pills-equipamento" role="tab" aria-controls="v-pills-equipamento" aria-selected="true">Equipamento</a>
+                <a class="nav-item nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="false">Dados</a>
+                <a class="nav-item nav-link" id="v-pills-intervencoes-tab" data-toggle="pill" href="#v-pills-intervencoes" role="tab" aria-controls="v-pills-intervencoes" aria-selected="false">Intervenções</a>
+                <a class="nav-item nav-link" id="v-pills-pecas-tab" data-toggle="pill" href="#v-pills-pecas" role="tab" aria-controls="v-pills-pecas" aria-selected="false">Peças</a>
+            </div>
+
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-equipamento" role="tabpanel" aria-labelledby="v-pills-equipamento-tab">
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-6">
+                            <div class="form-group d-none">
+                                <label asp-for="EquipamentoServico.IdEquipamento" class="control-label"></label>
+                                <input asp-for="EquipamentoServico.IdEquipamento" class="form-control" id="IdEquipamento"/>
+                                <span asp-validation-for="EquipamentoServico.IdEquipamento" class="text-danger"></span>
+                            </div>
+                            <div class="form-group ">
+                                <label asp-for="EquipamentoServico.NumeroSerieEquipamento" class="control-label"></label>
+                                <div class="form-group row">
+                                <input asp-for="EquipamentoServico.NumeroSerieEquipamento" class="form-control col-10" id="NumeroSerieEquipamento" />
+                                <button type="button" class="btn btn-primary" onclick="ObterEquipamento()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                </div>
+                                <span asp-validation-for="EquipamentoServico.NumeroSerieEquipamento" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <div class="form-group d-none">
+                                <label asp-for="EquipamentoServico.DesignacaoEquipamento" class="control-label"></label>
+                                <input asp-for="EquipamentoServico.DesignacaoEquipamento" class="form-control" id="DesignacaoEquipamento" />
+                                <span asp-validation-for="EquipamentoServico.DesignacaoEquipamento" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="EquipamentoServico.MarcaEquipamento" class="control-label"></label>
+                                <input asp-for="EquipamentoServico.MarcaEquipamento" class="form-control" id="MarcaEquipamento" />
+                                <span asp-validation-for="EquipamentoServico.MarcaEquipamento" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="form-group col-6">
+                            <div class="form-group">
+                                <label asp-for="EquipamentoServico.ModeloEquipamento" class="control-label"></label>
+                                <input asp-for="EquipamentoServico.ModeloEquipamento" class="form-control" id="ModeloEquipamento"/>
+                                <span asp-validation-for="EquipamentoServico.ModeloEquipamento" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <div class="form-group">
+                                <label asp-for="EstadoEquipamento" class="col-form-label"></label>
+                                <select asp-for="EstadoEquipamento" class="form-control">
+                                    <option>Instalação</option>
+                                    <option>Garantia</option>
+                                    <option>Não Garantia</option>
+                                    <option>Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade show" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-6">
+
+                            <div class="form-group d-none">
+                                <label asp-for="ClienteServico.IdCliente" class="control-label"></label>
+                                <input asp-for="ClienteServico.IdCliente" class="form-control" id="IdCliente" />
+                                <span asp-validation-for="ClienteServico.IdCliente" class="text-danger"></span>
+                            </div>
+                            <div class="form-group d-none">
+                                <label asp-for="IdFolhaObra" class="control-label"></label>
+                                <input asp-for="IdFolhaObra" class="form-control" id="txtIdFolhaObra" />
+                                <span asp-validation-for="IdFolhaObra" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ClienteServico.NomeCliente" class="control-label"></label>
+                                <div class="form-group row">
+                                    <input asp-for="ClienteServico.NomeCliente" class="form-control col-10" id="NomeCliente" />
+                                    <button type="button" class="btn btn-primary" onclick="ObterCliente()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="ClienteServico.NomeCliente" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group col-6">
+                            <div class="form-group">
+                                <label asp-for="ClienteServico.PessoaContatoCliente" class="control-label"></label>
+                                <input asp-for="ClienteServico.PessoaContatoCliente" class="form-control" id="PessoaContactoCliente" />
+                                <span asp-validation-for="ClienteServico.PessoaContatoCliente" class="text-danger"></span>
+                            </div>
+                            <div class="form-group d-none">
+                                <label asp-for="ClienteServico.MoradaCliente" class="control-label"></label>
+                                <input asp-for="ClienteServico.MoradaCliente" class="form-control" id="MoradaCliente" />
+                                <span asp-validation-for="ClienteServico.MoradaCliente" class="text-danger"></span>
+                            </div>
+                            <div class="form-group d-none">
+                                <label asp-for="ClienteServico.EmailCliente" class="control-label"></label>
+                                <input asp-for="ClienteServico.EmailCliente" class="form-control" id="EmailCliente" />
+                                <span asp-validation-for="ClienteServico.EmailCliente" class="text-danger"></span>
+                            </div>
+                            <div class="form-group d-none">
+                                <label asp-for="ClienteServico.NumeroContribuinteCliente" class="control-label"></label>
+                                <input asp-for="ClienteServico.NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" />
+                                <span asp-validation-for="ClienteServico.NumeroContribuinteCliente" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="form-group col-12">
+
+                            <div class="form-group">
+                                <label asp-for="ReferenciaServico" class="control-label"></label>
+                                <input asp-for="ReferenciaServico" class="form-control" />
+                                <span asp-validation-for="ReferenciaServico" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="form-group col-12">
+
+                            <div class="form-group">
+                                <label asp-for="RelatorioServico" class="control-label"></label>
+                                @Html.EditorFor(model => model.RelatorioServico, new { htmlAttributes = new { @class = "form-control", @rows = "8" } })
+                                <span asp-validation-for="RelatorioServico" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="form-group col-12">
+
+                            <div class="form-group">
+                                <label asp-for="SituacoesPendentes" class="control-label"></label>
+                                @Html.EditorFor(model => model.SituacoesPendentes, new { htmlAttributes = new { @class = "form-control", @rows = "4" } })
+                                <span asp-validation-for="SituacoesPendentes" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade show" id="v-pills-intervencoes" role="tabpanel" aria-labelledby="v-pills-intervencoes-tab">
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-8">
+                            <div class="form-group col-12">
+                                <div class="row">
+
+                                    <label asp-for="DataServico" class="control-label col-2"></label>
+                                    @Html.TextBoxFor(m => m.DataServico, "{0:dd/MM/yyyy}", new { @class = "form-control col-8", @readonly = "true" })
+                                    <span asp-validation-for="DataServico" class="text-danger"></span>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-group col-4">
+                                <button type="button" class="btn btn-primary btn-block" style=" font-size: 20px" data-toggle="modal" data-target="#exampleModal">
+                                    Adicionar Intervenção
+                                </button>
+                            </div>
+
+                        </div>
+                    <hr />
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Adicionar Intervenção</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group row">
+                                        <label for="data" class="col-sm-4 col-form-label">Data Intervenção</label>
+                                        <div class="col-sm-8">
+                                            @*DateTimePicker*@
+                                            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                            <input type="text" class="form-control" id="txtData">
+                                            <script>
+                                                var today = new Date();
+                                                var dd = String(today.getDate()).padStart(2, '0');
+                                                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                                var yyyy = today.getFullYear();
+
+                                                $('#txtData').datepicker({
+                                                    format: 'dd-mm-yyyy',
+                                                    value: dd + '-' + mm + '-' + yyyy
+                                                });
+                                            </script>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="horaInicio" class="col-sm-4 col-form-label">Hora Inicio</label>
+                                        <div class="col-sm-8">
+                                            @*DateTimePicker*@
+                                            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                            <input type="text" class="form-control" id="txtHoraInicio">
+                                            <script>
+                                                var today = new Date();
+                                                $('#txtHoraInicio').timepicker({ mode: '24hr', value: (today.getHours()) + ':00' });
+                                            </script>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="horaFim" class="col-sm-4 col-form-label">Hora Fim</label>
+                                        <div class="col-sm-8">
+                                            @*DateTimePicker*@
+                                            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                            <input type="text" class="form-control" id="txtHoraFim">
+                                            <script>
+                                                var today = new Date();
+                                                $('#txtHoraFim').timepicker({ mode: '24hr', value: (today.getHours() + 1) + ':00' });
+                                            </script>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="tecnico" class="col-sm-4 col-form-label">Técnico</label>
+                                        <select class="form-control col-sm-8" id="txtTecnico">
+                                            <option>Jorge Monteiro</option>
+                                            <option>Nelson Martins</option>
+                                            <option>Armando Rodrigues</option>
+                                            <option>Luis Fernandes</option>
+                                            <option>Deus</option>
+                                            <option>Pedro Santos</option>
+                                            <option>Silvino</option>
+                                            <option>Helder Pinto</option>
+                                            <option>Ricardo Almeida</option>
+                                            <option>Daniel Diogo</option>
+                                            <option>Diogo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    <button type="button" class="btn btn-primary" onclick="AdicionarIntervencao()" href="javascript:;">Adicionar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.IntervencaosServico.Count == 0)
+                    {
+                        <br />
+                        <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas intervenções associadas a esta folha de obra!</button>
+                        <br />
+                    }
+                    else
+                    {
+                        <table class="table table-hover" id="tblIntervencao">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Data
+                                    </th>
+                                    <th>
+                                        Hora Inicio
+                                    </th>
+                                    <th>
+                                        Hora Fim
+                                    </th>
+                                    <th>
+                                        Tecnico
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.IntervencaosServico)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span>@item.DataServiço.ToString("dd/MM/yyyy")</span>
+                                        </td>
+                                        <td>
+                                            <span>@item.HoraInicio.ToString("HH:mm")</span>
+                                        </td>
+                                        <td>
+                                            <span>@item.HoraFim.ToString("HH:mm")</span>
+                                        </td>
+                                        <td>
+                                            <span>@item.NomeTecnico</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+                <div class="tab-pane fade show" id="v-pills-pecas" role="tabpanel" aria-labelledby="v-pills-pecas-tab">
+
+                    <br />
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <button type="button" class="btn btn-primary btn-block" style="height: 100%; font-size: 20px" data-toggle="modal" data-target="#exampleModal2">
+                                Adicionar Peças
+                            </button>
+                        </div>
+
+                    </div>
+                    <hr />
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Adicionar Peças</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group row">
+                                        <label for="horaInicio" class="col-sm-4 col-form-label">Referencia</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="txtRefProduto">
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="ObterDesignacao()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="horaInicio" class="col-sm-4 col-form-label">Designacao</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="txtDesignacao">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label for="horaInicio" class="col-sm-4 col-form-label">Quantidade</label>
+                                        <div class="input-group col-sm-8">
+                                            <div class="input-group-prepend col" id="button-addon3">
+                                                <input class="form-control" min="0" max="999" name="txtQuantidade" id="txtQuantidade" value="1" readonly>
+                                                <button onclick="MenosUm()" class="btn btn-danger fas fa-minus" type="button"></button>
+                                                <button onclick="MaisUm()" class="btn btn-primary fas fa-plus" type="button"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    <button type="button" class="btn btn-primary" onclick="AdicionarPeca()" href="javascript:;">Adicionar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.PecasServico.Count() == 0)
+                    {
+                        <br />
+                        <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas peças associadas a esta folha de obra!</button>
+                        <br />
+                    }
+                    else
+                    {
+                        <table class="table table-hover" id="tblPecas">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Referencia
+                                    </th>
+                                    <th>
+                                        Designação
+                                    </th>
+                                    <th>
+                                        Quantidade
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.PecasServico)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span>@item.Ref_Produto</span>
+                                        </td>
+                                        <td>
+                                            <span>@item.Designacao_Produto</span>
+                                        </td>
+                                        <td>
+                                            <span>@item.Stock_Fisico</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+                </div>
+                    <div class="form-group">
+                        <input type="submit" value="Atualizar" class="btn btn-primary" />
+                    </div>
+</form>
+
+
+<div>
+    <a asp-action="Index">Voltar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    function MaisUm() {
+        var valor = parseInt(document.getElementById("txtQuantidade").value) + 1;
+        if (valor > 999) {
+            valor = 999
+        };
+        document.getElementById("txtQuantidade").value = valor;
+    }
+    function MenosUm() {
+
+        var valor = parseInt(document.getElementById("txtQuantidade").value) - 1;
+        if (valor < 0) {
+            valor = 0
+        };
+        document.getElementById("txtQuantidade").value = valor;
+    }
+    function ObterDesignacao() {
+        var RefProduto = document.getElementById("txtRefProduto").value;
+        //alert(RefProduto);
+        $.get('/FolhasObra/ObterDesignacaoProduto', { 'RefProduto': RefProduto }, function (response) {
+            document.getElementById("txtDesignacao").value = response.result;
+        })
+    }
+
+    function ObterEquipamento() {
+        var NumeroSerie = document.getElementById("NumeroSerieEquipamento").value;
+
+        $.ajax({
+            url: "/FolhasObra/ObterEquipamento",
+            type: "GET",
+            data: "NumeroSerieEquipamento=" + NumeroSerie,
+            dataType: "json", // type of data you're expecting from response
+            success: function (json) {
+                console.log(json);
+                document.getElementById("DesignacaoEquipamento").value = json.json.designacaoEquipamento;
+                document.getElementById("MarcaEquipamento").value = json.json.marcaEquipamento;
+                document.getElementById("ModeloEquipamento").value = json.json.modeloEquipamento;
+                document.getElementById("IdEquipamento").value = json.json.idEquipamento;
+                document.getElementById("NumeroSerie").value = json.json.numeroSerie;
+            },
+            error: function (error) { }
+        });
+    }
+
+    function ObterCliente() {
+        var NomeCliente = document.getElementById("NomeCliente").value;
+        //alert(RefProduto);
+
+        $.ajax({
+            url: "/FolhasObra/ObterCliente",
+            type: "GET",
+            data: "NomeCliente=" + NomeCliente,
+            dataType: "json", // type of data you're expecting from response
+            success: function (json) {
+                console.log(json);
+                document.getElementById("IdCliente").value = json.json.idCliente;
+                document.getElementById("PessoaContactoCliente").value = json.json.pessoaContatoCliente;
+                document.getElementById("MoradaCliente").value = json.json.moradaCliente;
+                document.getElementById("EmailCliente").value = json.json.emailCliente;
+                document.getElementById("NumeroContribuinteCliente").value = json.json.numeroContribuinteCliente;
+                document.getElementById("NomeCliente").value = json.json.nomeCliente;
+            },
+            error: function (error) { }
+        });
+    }
+
+    function AdicionarPeca() {
+
+        var peca = {
+            referencia: document.getElementById("txtRefProduto").value,
+            designacao: document.getElementById("txtDesignacao").value,
+            quantidade: document.getElementById("txtQuantidade").value,
+            idfolhaobra: document.getElementById("txtIdFolhaObra").value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/AdicionarPeca",
+            data: peca,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    location.reload(true);
+                });
+            }
+        });
+
+    }
+    function AdicionarIntervencao() {
+
+        var intervencao = {
+            data: document.getElementById("txtData").value,
+            horainicio: document.getElementById("txtHoraInicio").value,
+            horafim: document.getElementById("txtHoraFim").value,
+            tecnico: document.getElementById("txtTecnico").value,
+            idfolhaobra: document.getElementById("txtIdFolhaObra").value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/AdicionarIntervencao",
+            data: intervencao,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    location.reload(true);
+                });
+            }
+        });
+
+    }
+</script>

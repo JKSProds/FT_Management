@@ -1,0 +1,58 @@
+﻿@model IEnumerable<FT_Management.Models.FolhaObra>
+
+@{
+    ViewData["Title"] = "Folhas de Obra";
+}
+
+<h1>Listagem de Folhas de Obra</h1>
+
+<p>
+    <br />
+    <a asp-action="Adicionar" class="btn btn-primary btn-block" style="margin-left:5px; margin-bottom:5px;"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
+</p>
+
+<hr />
+
+@if (Model.Count() == 0)
+{
+    <br />
+    <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas folhas de obra!</button>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DataServico)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ClienteServico.NomeCliente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EquipamentoServico.NumeroSerieEquipamento)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                    <td>
+                        <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
