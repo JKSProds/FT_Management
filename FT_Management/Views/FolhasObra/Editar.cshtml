@@ -158,14 +158,14 @@
                                     <span asp-validation-for="DataServico" class="text-danger"></span>
                                 </div>
                             </div>
-                            </div>
-                            <div class="form-group col-4">
-                                <button type="button" class="btn btn-primary btn-block" style=" font-size: 20px" data-toggle="modal" data-target="#exampleModal">
-                                    Adicionar Intervenção
-                                </button>
-                            </div>
-
                         </div>
+                        <div class="form-group col-4">
+                            <button type="button" class="btn btn-primary btn-block" style=" font-size: 20px" data-toggle="modal" data-target="#exampleModal">
+                                Adicionar Intervenção
+                            </button>
+                        </div>
+
+                    </div>
                     <hr />
                     <!-- Modal -->
                     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -277,12 +277,13 @@
                                     <th>
                                         Tecnico
                                     </th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model.IntervencaosServico)
                                 {
-                                    <tr>
+                                    <tr id="row_@item.IdFolhaObra">
                                         <td>
                                             <span>@item.DataServiço.ToString("dd/MM/yyyy")</span>
                                         </td>
@@ -295,11 +296,40 @@
                                         <td>
                                             <span>@item.NomeTecnico</span>
                                         </td>
+                                        <td>
+                                            <a href="#" class="btn btn-danger btn-block" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     }
+                    <div class="modal fade" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Apagar Intervenção</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h4>Tens a certeza que queres apagar esta intervenção?</h4>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+                                    <a href="#" class="btn btn-danger" onclick="ApagarIntervencao()">Sim</a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="hiddenPecaId" />
+                    <input type="hidden" id="hiddenIntervencaoId" />
                 </div>
                 <div class="tab-pane fade show" id="v-pills-pecas" role="tabpanel" aria-labelledby="v-pills-pecas-tab">
 
@@ -378,12 +408,13 @@
                                     <th>
                                         Quantidade
                                     </th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model.PecasServico)
                                 {
-                                    <tr>
+                                    <tr id="row_@item.Ref_Produto">
                                         <td>
                                             <span>@item.Ref_Produto</span>
                                         </td>
@@ -393,11 +424,37 @@
                                         <td>
                                             <span>@item.Stock_Fisico</span>
                                         </td>
+                                        <td>
+                                            <a href="#" class="btn btn-danger btn-block" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     }
+                    <div class="modal fade" id="myModal2">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Apagar Peça</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h4>Tens a certeza que queres apagar esta Peça?</h4>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+                                    <a href="#" class="btn btn-danger" onclick="ApagarPeca()">Sim</a>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
                 </div>
                     <div class="form-group">
@@ -415,6 +472,52 @@
 }
 
 <script>
+    var ConfirmApagarIntervencao = function (IdIntervencao) {
+      $("#hiddenIntervencaoId").val(IdIntervencao);
+            $("#myModal").modal('show');
+
+        }
+
+    var ApagarIntervencao = function () {
+        var IdIntervencao = $("#hiddenIntervencaoId").val();
+            $.ajax({
+
+                type: "POST",
+                url: "/FolhasObra/ApagarIntervencao",
+                data: { Id: IdIntervencao },
+                success: function (result) {
+
+                    $("#myModal").modal("hide");
+                    $("#row_" + IdIntervencao).remove();
+                    location.reload(true);
+                }
+
+            })
+    }
+
+    var ConfirmApagarPeca = function (Ref_Produto) {
+        $("#hiddenPecaId").val(Ref_Produto);
+        $("#myModal2").modal('show');
+
+    }
+
+    var ApagarPeca = function () {
+        var IdPeca = $("#hiddenPecaId").val();
+        $.ajax({
+
+            type: "POST",
+            url: "/FolhasObra/ApagarPeca",
+            data: { Ref: IdPeca, Id: document.getElementById("txtIdFolhaObra").value },
+            success: function (result) {
+
+                $("#myModal2").modal("hide");
+                $("#row_" + IdPeca).remove();
+                location.reload(true);
+            }
+
+        })
+
+    }
     function MaisUm() {
         var valor = parseInt(document.getElementById("txtQuantidade").value) + 1;
         if (valor > 999) {

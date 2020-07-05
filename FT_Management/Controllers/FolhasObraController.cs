@@ -119,12 +119,12 @@ namespace FT_Management.Controllers
             return Json(new { json = context.ObterListaClientes(NomeCliente).FirstOrDefault() }) ;
         }
 
-        public ActionResult PrintFolhaObra(int id)
+        public virtual ActionResult PrintFolhaObra(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
            
 
-            var file = context.FillForm(context.ObterFolhaObra(id)).ToArray();
+            var file = context.PreencherFormularioFolhaObra(context.ObterFolhaObra(id)).ToArray();
             var output = new MemoryStream();
             output.Write(file, 0, file.Length);
             output.Position = 0;
@@ -134,10 +134,10 @@ namespace FT_Management.Controllers
                 FileName = "FolhaObra_"+ id +".pdf",
                 Inline = false,
                 Size = file.Length,
-                CreationDate = DateTime.Now
+                CreationDate = DateTime.Now,
 
             };
-
+            Response.Headers.Add("Content-Disposition", cd.ToString());
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
         // GET: FolhasObraController/Edit/5
@@ -165,19 +165,29 @@ namespace FT_Management.Controllers
             }
         }
 
-        // GET: FolhasObraController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
         // POST: FolhasObraController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult ApagarIntervencao(int id)
         {
             try
             {
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                context.ApagarIntervencao(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+        [HttpPost]
+        public ActionResult ApagarPeca(string Ref, string Id)
+        {
+            try
+            {
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                context.ApagarPecaFolhaObra(Ref, int.Parse(Id));
                 return RedirectToAction(nameof(Index));
             }
             catch

@@ -428,6 +428,22 @@ namespace FT_Management.Models
             db.Execute(sql);
 
         }
+        public void ApagarIntervencao (int id)
+        {
+            string sql = "DELETE FROM dat_intervencoes_folha_obra where IdIntervencao="+id+";";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+        }
+        public void ApagarPecaFolhaObra(string Ref_Produto, int idFolhaObra)
+        {
+            string sql = "DELETE FROM dat_produto_intervencao where RefProduto='" + Ref_Produto + "' AND IdFolhaObra = "+idFolhaObra+";";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+        }
         public int ObterUltimaEntrada (string NomeTabela, string CampoID)
         {
             Database db = ConnectionString;
@@ -604,7 +620,7 @@ namespace FT_Management.Models
             return bm;
         }
 
-        public MemoryStream FillForm(FolhaObra folhaobra)
+        public MemoryStream PreencherFormularioFolhaObra(FolhaObra folhaobra)
         {
             string pdfTemplate = AppDomain.CurrentDomain.BaseDirectory + "\\FT_FolhaObra.pdf";
             var outputPdfStream = new MemoryStream();
