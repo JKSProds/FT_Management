@@ -622,7 +622,7 @@ namespace FT_Management.Models
 
         public MemoryStream PreencherFormularioFolhaObra(FolhaObra folhaobra)
         {
-            string pdfTemplate = AppDomain.CurrentDomain.BaseDirectory + "\\FT_FolhaObra.pdf";
+            string pdfTemplate = AppDomain.CurrentDomain.BaseDirectory + "FT_FolhaObra.pdf";
             var outputPdfStream = new MemoryStream();
             PdfReader pdfReader = new PdfReader(pdfTemplate);
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
