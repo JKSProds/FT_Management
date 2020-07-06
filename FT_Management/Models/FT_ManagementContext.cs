@@ -238,57 +238,41 @@ namespace FT_Management.Models
         public FolhaObra ObterFolhaObra (int id)
         {
             Database db = ConnectionString;
-            var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra="+id+";");
 
-            result.Read();
-
-            FolhaObra folhaObra = new FolhaObra()
+            using (var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";"))
             {
-                IdFolhaObra = result["IdFolhaObra"],
-                DataServico = result["DataServico"],
-                ReferenciaServico = result["ReferenciaServico"],
-                EstadoEquipamento = result["EstadoEquipamento"],
-                RelatorioServico = result["RelatorioServico"],
-                SituacoesPendentes = result["SituacoesPendentes"],
-                EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
-                ClienteServico = ObterCliente(result["IdCliente"]),
-                PecasServico = ObterListaProdutoIntervencao(id),
-                IntervencaosServico = ObterListaIntervencoes(id)
 
-            };
+                result.Read();
+
+                FolhaObra folhaObra = new FolhaObra()
+                {
+                    IdFolhaObra = result["IdFolhaObra"],
+                    DataServico = result["DataServico"],
+                    ReferenciaServico = result["ReferenciaServico"],
+                    EstadoEquipamento = result["EstadoEquipamento"],
+                    RelatorioServico = result["RelatorioServico"],
+                    SituacoesPendentes = result["SituacoesPendentes"],
+                    EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
+                    ClienteServico = ObterCliente(result["IdCliente"]),
+                    PecasServico = ObterListaProdutoIntervencao(id),
+                    IntervencaosServico = ObterListaIntervencoes(id)
+
+                };
+         
 
             return folhaObra;
+            }
         }
         public Equipamento ObterEquipamento(int id)
         {
             Database db = ConnectionString;
-            var result = db.Query("SELECT * FROM dat_equipamentos where IdEquipamento=" + id + ";");
 
-            result.Read();
-
-            Equipamento equipamento = new Equipamento()
+            using (var result = db.Query("SELECT * FROM dat_equipamentos where IdEquipamento=" + id + ";"))
             {
-                IdEquipamento = result["IdEquipamento"],
-                DesignacaoEquipamento = result["DesignacaoEquipamento"],
-                MarcaEquipamento = result["MarcaEquipamento"],
-                ModeloEquipamento = result["ModeloEquipamento"],
-                NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
 
-            };
+                result.Read();
 
-            return equipamento;
-        }
-        public Equipamento ObterEquipamentoNS(string NumeroSerie)
-        {
-            Database db = ConnectionString;
-            var result = db.Query("SELECT * FROM dat_equipamentos where NumeroSerieEquipamento=" + NumeroSerie + ";");
-            Equipamento equipamento = new Equipamento();
-
-            result.Read();
-
-            if (result.Reader.HasRows)
-            {
-                 equipamento = new Equipamento()
+                Equipamento equipamento = new Equipamento()
                 {
                     IdEquipamento = result["IdEquipamento"],
                     DesignacaoEquipamento = result["DesignacaoEquipamento"],
@@ -297,29 +281,55 @@ namespace FT_Management.Models
                     NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
 
                 };
-            }
 
-            return equipamento;
+                return equipamento;
+            }
+        }
+        public Equipamento ObterEquipamentoNS(string NumeroSerie)
+        {
+            Database db = ConnectionString;
+            using (var result = db.Query("SELECT * FROM dat_equipamentos where NumeroSerieEquipamento=" + NumeroSerie + ";")) {
+                Equipamento equipamento = new Equipamento();
+
+                result.Read();
+
+                if (result.Reader.HasRows)
+                {
+                    equipamento = new Equipamento()
+                    {
+                        IdEquipamento = result["IdEquipamento"],
+                        DesignacaoEquipamento = result["DesignacaoEquipamento"],
+                        MarcaEquipamento = result["MarcaEquipamento"],
+                        ModeloEquipamento = result["ModeloEquipamento"],
+                        NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
+
+                    };
+                }
+
+                return equipamento;
+             }
         }
         public Cliente ObterCliente(int id)
         {
             Database db = ConnectionString;
-            var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + ";");
-
-            result.Read();
-
-            Cliente cliente = new Cliente()
+            using (var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + ";"))
             {
-                IdCliente = result["IdCliente"],
-                NomeCliente = result["NomeCliente"],
-                PessoaContatoCliente = result["PessoaContactoCliente"],
-                MoradaCliente = result["MoradaCliente"],
-                EmailCliente = result["EmailCliente"],
-                NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
 
-            };
+                result.Read();
 
-            return cliente;
+                Cliente cliente = new Cliente()
+                {
+                    IdCliente = result["IdCliente"],
+                    NomeCliente = result["NomeCliente"],
+                    PessoaContatoCliente = result["PessoaContactoCliente"],
+                    MoradaCliente = result["MoradaCliente"],
+                    EmailCliente = result["EmailCliente"],
+                    NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
+
+                };
+
+                return cliente;
+            }
         }
         public List<Cliente> ObterListaClientes(string NomeCliente)
         {
@@ -360,7 +370,7 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
-
+            db.Connection.Close();
             return folhaObra.IdFolhaObra;
         }
         public int NovoCliente (Cliente cliente)
@@ -376,6 +386,7 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+            db.Connection.Close();
 
             return cliente.IdCliente;
 
@@ -393,6 +404,8 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+            db.Connection.Close();
+
 
             return equipamento.IdEquipamento;
 
@@ -410,6 +423,8 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+            db.Connection.Close();
+
 
             return intervencao.IdIntervencao;
 
@@ -426,6 +441,8 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+            db.Connection.Close();
+
 
         }
         public void ApagarIntervencao (int id)
@@ -435,6 +452,8 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+            db.Connection.Close();
+
         }
         public void ApagarPecaFolhaObra(string Ref_Produto, int idFolhaObra)
         {
@@ -443,16 +462,19 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+            db.Connection.Close();
+
         }
         public int ObterUltimaEntrada (string NomeTabela, string CampoID)
         {
             Database db = ConnectionString;
-            var result = db.Query("SELECT Max("+CampoID+") FROM "+NomeTabela+";");
+            using (var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";"))
+            {
                 while (result.Read())
                 {
-                    return result.Reader.IsDBNull(0) ? 0 : result[0] ;
+                    return result.Reader.IsDBNull(0) ? 0 : result[0];
                 };
-
+            }
             return 0;
 
         }
