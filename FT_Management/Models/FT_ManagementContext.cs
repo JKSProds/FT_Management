@@ -700,7 +700,9 @@ namespace FT_Management.Models
                 int p = 1;
                 foreach (Produto pecas in folhaobra.PecasServico)
                 {
+                    pdfFormFields.SetFieldProperty("ReferênciaRow" + p, "textsize", 6f, null);
                     pdfFormFields.SetField("ReferênciaRow" + p, pecas.Ref_Produto);
+                    pdfFormFields.SetFieldProperty("DesignaçãoRow" + p, "textsize", 6f, null);
                     pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto);
                     pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString());
                     p++;
