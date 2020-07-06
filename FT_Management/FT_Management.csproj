@@ -26,6 +26,12 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="FT_FolhaObra.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 
 
 </Project>
