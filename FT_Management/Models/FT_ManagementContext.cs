@@ -703,7 +703,14 @@ namespace FT_Management.Models
                     pdfFormFields.SetFieldProperty("ReferênciaRow" + p, "textsize", 6f, null);
                     pdfFormFields.SetField("ReferênciaRow" + p, pecas.Ref_Produto);
                     pdfFormFields.SetFieldProperty("DesignaçãoRow" + p, "textsize", 6f, null);
-                    pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto);
+                    if (pecas.Designacao_Produto.Length > 54)
+                    {
+                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto.Substring(0,54);
+                    }
+                    else
+                    {
+                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto);
+                    }
                     pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString());
                     p++;
                 }
