@@ -60,7 +60,7 @@ namespace FT_Management.Models
                     });
                 }
             }
-
+            db.Connection.Close();
             return LstProdutos;
         }
         public void CarregarFicheiroDB(string FilePath)
@@ -126,6 +126,7 @@ namespace FT_Management.Models
                     Obs_Produto = result["obs"]
                 };
             }
+            db.Connection.Close();
             return produto;
         }
         public void CriarArtigos(List<Produto> LstProdutos)
@@ -142,6 +143,7 @@ namespace FT_Management.Models
             Database db = ConnectionString;
 
             db.Execute(sql);
+            db.Connection.Close();
         }
         public void EditarArtigo (Produto produto)
         {
@@ -149,21 +151,22 @@ namespace FT_Management.Models
             Database db = ConnectionString;
             String sql = "update dat_produtos set designacao_produto='"+ produto.Designacao_Produto + "', stock_fisico="+produto.Stock_Fisico+ ", stock_phc="+produto.Stock_PHC+ ", pos_stock='"+produto.Pos_Stock+ "', obs='"+produto.Obs_Produto+"' Where ref_produto='"+produto.Ref_Produto+"';";
             db.Execute(sql);
-
+            db.Connection.Close();
         }
         public void ApagarArtigo(Produto produto)
         {
             Database db = ConnectionString;
             String sql = "delete from dat_produtos Where ref_produto='" + produto.Ref_Produto + "';";
             db.Execute(sql);
-
+            db.Connection.Close();
         }
 
         public List<FolhaObra> ObterListaFolhasObra(string tecnico, string data)
         {
                 List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
 
-                Database db = ConnectionString;
+            using (Database db = ConnectionString)
+            {
 
                 using (var result = db.Query("SELECT * FROM dat_folhas_obra Where dataservico like '%" + data + "%';"))
                 {
@@ -185,117 +188,97 @@ namespace FT_Management.Models
                         });
                     }
                 }
-
-                return LstFolhasObra;
+            }
+            
+            return LstFolhasObra;
 
             }
         public List<Intervencao> ObterListaIntervencoes(int idfolhaobra)
         {
             List<Intervencao> LstIntervencoes = new List<Intervencao>();
 
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_intervencoes_folha_obra where IdFolhaObra=" + idfolhaobra + ";"))
+            using (Database db = ConnectionString)
             {
-                while (result.Read())
+
+                using (var result = db.Query("SELECT * FROM dat_intervencoes_folha_obra where IdFolhaObra=" + idfolhaobra + ";"))
                 {
-                    LstIntervencoes.Add(new Intervencao()
+                    while (result.Read())
                     {
-                        IdFolhaObra = result["IdFolhaObra"],
-                        IdIntervencao = result["IdIntervencao"],
-                        IdTecnico = result["IdTecnico"],
-                        NomeTecnico = result["NomeTecnico"],
-                        DataServiço = DateTime.Parse(result["DataServico"]),
-                        HoraInicio = DateTime.Parse(result["HoraInicio"]),
-                        HoraFim = DateTime.Parse(result["HoraFim"])
-                    });
+                        LstIntervencoes.Add(new Intervencao()
+                        {
+                            IdFolhaObra = result["IdFolhaObra"],
+                            IdIntervencao = result["IdIntervencao"],
+                            IdTecnico = result["IdTecnico"],
+                            NomeTecnico = result["NomeTecnico"],
+                            DataServiço = DateTime.Parse(result["DataServico"]),
+                            HoraInicio = DateTime.Parse(result["HoraInicio"]),
+                            HoraFim = DateTime.Parse(result["HoraFim"])
+                        });
+                    }
                 }
             }
-
             return LstIntervencoes;
         }
         public List<Produto> ObterListaProdutoIntervencao(int idfolhaobra)
         {
             List<Produto> LstProdutosIntervencao = new List<Produto>();
 
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_produto_intervencao where IdFolhaObra=" + idfolhaobra + ";"))
+            using (Database db = ConnectionString)
             {
-                while (result.Read())
+                using (var result = db.Query("SELECT * FROM dat_produto_intervencao where IdFolhaObra=" + idfolhaobra + ";"))
                 {
-                    LstProdutosIntervencao.Add(new Produto()
+                    while (result.Read())
                     {
-                        Ref_Produto = result["RefProduto"],
-                        Designacao_Produto = result["Designacao"],
-                        Stock_Fisico = result["Quantidade"]
-                    });
+                        LstProdutosIntervencao.Add(new Produto()
+                        {
+                            Ref_Produto = result["RefProduto"],
+                            Designacao_Produto = result["Designacao"],
+                            Stock_Fisico = result["Quantidade"]
+                        });
+                    }
                 }
             }
-
             return LstProdutosIntervencao;
         }
         public FolhaObra ObterFolhaObra (int id)
         {
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";"))
+            using (Database db = ConnectionString)
             {
-
-                result.Read();
-
-                FolhaObra folhaObra = new FolhaObra()
+                using (var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";"))
                 {
-                    IdFolhaObra = result["IdFolhaObra"],
-                    DataServico = result["DataServico"],
-                    ReferenciaServico = result["ReferenciaServico"],
-                    EstadoEquipamento = result["EstadoEquipamento"],
-                    RelatorioServico = result["RelatorioServico"],
-                    SituacoesPendentes = result["SituacoesPendentes"],
-                    EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
-                    ClienteServico = ObterCliente(result["IdCliente"]),
-                    PecasServico = ObterListaProdutoIntervencao(id),
-                    IntervencaosServico = ObterListaIntervencoes(id)
 
-                };
-         
+                    result.Read();
 
-            return folhaObra;
+                    FolhaObra folhaObra = new FolhaObra()
+                    {
+                        IdFolhaObra = result["IdFolhaObra"],
+                        DataServico = result["DataServico"],
+                        ReferenciaServico = result["ReferenciaServico"],
+                        EstadoEquipamento = result["EstadoEquipamento"],
+                        RelatorioServico = result["RelatorioServico"],
+                        SituacoesPendentes = result["SituacoesPendentes"],
+                        EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
+                        ClienteServico = ObterCliente(result["IdCliente"]),
+                        PecasServico = ObterListaProdutoIntervencao(id),
+                        IntervencaosServico = ObterListaIntervencoes(id)
+
+                    };
+                return folhaObra;
+
+                }
             }
         }
         public Equipamento ObterEquipamento(int id)
         {
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_equipamentos where IdEquipamento=" + id + ";"))
+            using (Database db = ConnectionString)
             {
 
-                result.Read();
-
-                Equipamento equipamento = new Equipamento()
+                using (var result = db.Query("SELECT * FROM dat_equipamentos where IdEquipamento=" + id + ";"))
                 {
-                    IdEquipamento = result["IdEquipamento"],
-                    DesignacaoEquipamento = result["DesignacaoEquipamento"],
-                    MarcaEquipamento = result["MarcaEquipamento"],
-                    ModeloEquipamento = result["ModeloEquipamento"],
-                    NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
 
-                };
+                    result.Read();
 
-                return equipamento;
-            }
-        }
-        public Equipamento ObterEquipamentoNS(string NumeroSerie)
-        {
-            Database db = ConnectionString;
-            using (var result = db.Query("SELECT * FROM dat_equipamentos where NumeroSerieEquipamento=" + NumeroSerie + ";")) {
-                Equipamento equipamento = new Equipamento();
-
-                result.Read();
-
-                if (result.Reader.HasRows)
-                {
-                    equipamento = new Equipamento()
+                    Equipamento equipamento = new Equipamento()
                     {
                         IdEquipamento = result["IdEquipamento"],
                         DesignacaoEquipamento = result["DesignacaoEquipamento"],
@@ -304,45 +287,48 @@ namespace FT_Management.Models
                         NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
 
                     };
-                }
 
-                return equipamento;
+                    return equipamento;
+                }
+            }
+        }
+
+        public Equipamento ObterEquipamentoNS(string NumeroSerie)
+        {
+            using (Database db = ConnectionString)
+            {
+                using (var result = db.Query("SELECT * FROM dat_equipamentos where NumeroSerieEquipamento=" + NumeroSerie + ";"))
+                {
+                    Equipamento equipamento = new Equipamento();
+
+                    result.Read();
+
+                    if (result.Reader.HasRows)
+                    {
+                        equipamento = new Equipamento()
+                        {
+                            IdEquipamento = result["IdEquipamento"],
+                            DesignacaoEquipamento = result["DesignacaoEquipamento"],
+                            MarcaEquipamento = result["MarcaEquipamento"],
+                            ModeloEquipamento = result["ModeloEquipamento"],
+                            NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
+
+                        };
+                    }
+                    return equipamento;
+                }
              }
         }
         public Cliente ObterCliente(int id)
         {
-            Database db = ConnectionString;
-            using (var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + ";"))
+            using (Database db = ConnectionString)
             {
-
-                result.Read();
-
-                Cliente cliente = new Cliente()
+                using (var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + ";"))
                 {
-                    IdCliente = result["IdCliente"],
-                    NomeCliente = result["NomeCliente"],
-                    PessoaContatoCliente = result["PessoaContactoCliente"],
-                    MoradaCliente = result["MoradaCliente"],
-                    EmailCliente = result["EmailCliente"],
-                    NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
 
-                };
+                    result.Read();
 
-                return cliente;
-            }
-        }
-        public List<Cliente> ObterListaClientes(string NomeCliente)
-        {
-
-            List<Cliente> LstClientes = new List<Cliente>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente + "%';"))
-            {
-                while (result.Read())
-                {
-                    LstClientes.Add(new Cliente()
+                    Cliente cliente = new Cliente()
                     {
                         IdCliente = result["IdCliente"],
                         NomeCliente = result["NomeCliente"],
@@ -351,11 +337,36 @@ namespace FT_Management.Models
                         EmailCliente = result["EmailCliente"],
                         NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
 
-                    });
+                    };
+                    return cliente;
                 }
             }
+        }
+        public List<Cliente> ObterListaClientes(string NomeCliente)
+        {
 
-            return LstClientes;
+            List<Cliente> LstClientes = new List<Cliente>();
+
+            using (Database db = ConnectionString)
+            {
+                using (var result = db.Query("SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente + "%';"))
+                {
+                    while (result.Read())
+                    {
+                        LstClientes.Add(new Cliente()
+                        {
+                            IdCliente = result["IdCliente"],
+                            NomeCliente = result["NomeCliente"],
+                            PessoaContatoCliente = result["PessoaContactoCliente"],
+                            MoradaCliente = result["MoradaCliente"],
+                            EmailCliente = result["EmailCliente"],
+                            NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
+
+                        });
+                    }
+                }
+                return LstClientes;
+            }
         }
         public int NovaFolhaObra(FolhaObra folhaObra)
         {
@@ -367,10 +378,10 @@ namespace FT_Management.Models
             
             sql += " ON DUPLICATE KEY UPDATE DataServico = VALUES(DataServico), ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente);";
 
-            Database db = ConnectionString;
-
-            db.Execute(sql);
-            db.Connection.Close();
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
             return folhaObra.IdFolhaObra;
         }
         public int NovoCliente (Cliente cliente)
@@ -383,10 +394,10 @@ namespace FT_Management.Models
 
             sql += " ON DUPLICATE KEY UPDATE NomeCliente = VALUES(NomeCliente), PessoaContactoCliente = VALUES(PessoaContactoCliente), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
 
-            Database db = ConnectionString;
-
-            db.Execute(sql);
-            db.Connection.Close();
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
 
             return cliente.IdCliente;
 
@@ -401,11 +412,10 @@ namespace FT_Management.Models
 
             sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento), NumeroSerieEquipamento = VALUES(NumeroSerieEquipamento);";
 
-            Database db = ConnectionString;
-
-            db.Execute(sql);
-            db.Connection.Close();
-
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
 
             return equipamento.IdEquipamento;
 
@@ -420,11 +430,10 @@ namespace FT_Management.Models
 
             sql += " ON DUPLICATE KEY UPDATE IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico), DataServico = VALUES(DataServico), HoraInicio = VALUES(HoraInicio), HoraFim = VALUES(HoraFim);";
 
-            Database db = ConnectionString;
-
-            db.Execute(sql);
-            db.Connection.Close();
-
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
 
             return intervencao.IdIntervencao;
 
@@ -438,42 +447,42 @@ namespace FT_Management.Models
 
             sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade);";
 
-            Database db = ConnectionString;
-
-            db.Execute(sql);
-            db.Connection.Close();
-
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
 
         }
         public void ApagarIntervencao (int id)
         {
             string sql = "DELETE FROM dat_intervencoes_folha_obra where IdIntervencao="+id+";";
 
-            Database db = ConnectionString;
-
-            db.Execute(sql);
-            db.Connection.Close();
-
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
         }
         public void ApagarPecaFolhaObra(string Ref_Produto, int idFolhaObra)
         {
             string sql = "DELETE FROM dat_produto_intervencao where RefProduto='" + Ref_Produto + "' AND IdFolhaObra = "+idFolhaObra+";";
 
-            Database db = ConnectionString;
-
-            db.Execute(sql);
-            db.Connection.Close();
-
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
         }
         public int ObterUltimaEntrada (string NomeTabela, string CampoID)
         {
-            Database db = ConnectionString;
-            using (var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";"))
+            using (Database db = ConnectionString)
             {
-                while (result.Read())
+                using (var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";"))
                 {
-                    return result.Reader.IsDBNull(0) ? 0 : result[0];
-                };
+                    while (result.Read())
+                    {
+                        db.Connection.Close();
+                        return result.Reader.IsDBNull(0) ? 0 : result[0];
+                    };
+                }
             }
             return 0;
 
@@ -666,31 +675,39 @@ namespace FT_Management.Models
             //Assistencia
             pdfFormFields.SetField("trabalho efectuado", folhaobra.RelatorioServico);
             pdfFormFields.SetField("SituacoesPendentes", folhaobra.SituacoesPendentes);
-            pdfFormFields.SetField("DataConclusao", folhaobra.DataServico.ToString("dd-MM-yyyy"));
-            pdfFormFields.SetField("o tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
+            if (folhaobra.IntervencaosServico.Count > 0)
+            {
+                //Mao de Obra
+                int i = 1;
+                foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
+                {
+                    pdfFormFields.SetField("DataRow" + i, intervencao.DataServiço.ToString("dd-MM"));
+                    pdfFormFields.SetField("TécnicoRow" + i, intervencao.NomeTecnico);
+                    pdfFormFields.SetField("InícioRow" + i, intervencao.HoraInicio.ToString("HH:mm"));
+                    pdfFormFields.SetField("FimRow" + i, intervencao.HoraFim.ToString("HH:mm"));
+                    pdfFormFields.SetField("HorasRow" + i, "");
+                    i++;
+                }
+
+                pdfFormFields.SetField("DataConclusao", folhaobra.IntervencaosServico.Last().DataServiço.ToString("dd-MM-yyyy"));
+                pdfFormFields.SetField("o tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
+            }
+
+            if (folhaobra.PecasServico.Count > 0 )
+            {
+
+                //Peças
+                int p = 1;
+                foreach (Produto pecas in folhaobra.PecasServico)
+                {
+                    pdfFormFields.SetField("ReferênciaRow" + p, pecas.Ref_Produto);
+                    pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto);
+                    pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString());
+                    p++;
+                }
+            }
+
             pdfFormFields.SetField("o cliente", folhaobra.ClienteServico.PessoaContatoCliente);
-
-            //Mao de Obra
-            int i = 1;
-            foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
-            {
-                pdfFormFields.SetField("DataRow"+i, intervencao.DataServiço.ToString("dd-MM"));
-                pdfFormFields.SetField("TécnicoRow"+i, intervencao.NomeTecnico);
-                pdfFormFields.SetField("InícioRow"+i, intervencao.HoraInicio.ToString("HH:mm"));
-                pdfFormFields.SetField("FimRow"+i, intervencao.HoraFim.ToString("HH:mm"));
-                pdfFormFields.SetField("HorasRow"+i, "");
-                i++;
-            }
-
-            //Peças
-            int p = 1;
-            foreach (Produto pecas in folhaobra.PecasServico)
-            {
-                pdfFormFields.SetField("ReferênciaRow" + p, pecas.Ref_Produto);
-                pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto);
-                pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString());
-                p++;
-            }
 
             pdfStamper.FormFlattening = true;
             pdfStamper.SetFullCompression();
