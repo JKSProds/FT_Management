@@ -28,7 +28,7 @@ public class HelloWorldJob : IJob
         //_logger.LogInformation("Hello world!");
         try
         {
-
+            Console.WriteLine("Sending email");
             SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"]);
 
             // set smtp-client with basicAuthentication

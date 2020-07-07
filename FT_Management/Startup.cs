@@ -39,12 +39,12 @@ namespace FT_Management
             services.AddSingleton<HelloWorldJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(HelloWorldJob),
-                cronExpression: "00 05 16 * * ?")); 
+                cronExpression: "00 30 16 * * ?")); 
             
             services.AddHostedService<QuartzHostedService>();
 
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value, Configuration.GetConnectionString("PHC_DB"))));
-
+            Console.WriteLine("Starting app");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
