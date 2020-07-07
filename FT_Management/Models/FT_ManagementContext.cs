@@ -477,11 +477,11 @@ namespace FT_Management.Models
             {
                 using (var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";"))
                 {
-                    while (result.Read())
-                    {
-                        db.Connection.Close();
-                        return result.Reader.IsDBNull(0) ? 0 : result[0];
-                    };
+                        while (result.Read())
+                        {
+                            return result.Reader.IsDBNull(0) ? 0 : result[0];
+                        };
+
                 }
             }
             return 0;

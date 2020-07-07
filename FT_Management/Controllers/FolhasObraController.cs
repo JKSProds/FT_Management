@@ -39,23 +39,17 @@ namespace FT_Management.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Adicionar(FolhaObra folhaObra)
         {
-            try
-            {
+ 
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
                 return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
-            }
-            catch
-            {
-                return View();
-            }
+
         }
 
         [HttpPost]
         public ActionResult AdicionarIntervencao(string data, string horainicio, string horafim, string tecnico, string idfolhaobra)
         {
-            try
-            {
+ 
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 Intervencao intervencao = new Intervencao()
                 {
@@ -69,18 +63,11 @@ namespace FT_Management.Controllers
 
                 return Content(string.Empty);
 
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         [HttpPost]
         public ActionResult AdicionarPeca(string referencia, string designacao, string quantidade, string idfolhaobra)
         {
-            try
-            {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 Produto produto = new Produto()
                 {
@@ -91,12 +78,6 @@ namespace FT_Management.Controllers
                 context.NovaPecaIntervencao(produto, idfolhaobra);
 
                 return Content(string.Empty);
-
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         public JsonResult ObterDesignacaoProduto (string RefProduto)
@@ -153,16 +134,10 @@ namespace FT_Management.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Editar(int id, FolhaObra folhaObra)
         {
-            try
-            {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 folhaObra.IdFolhaObra = id;
                 return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra)});
-            }
-            catch
-            {
-                return View();
-            }
+
         }
 
 
@@ -170,30 +145,18 @@ namespace FT_Management.Controllers
         [HttpPost]
         public ActionResult ApagarIntervencao(int id)
         {
-            try
-            {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 context.ApagarIntervencao(id);
                 return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
         [HttpPost]
         public ActionResult ApagarPeca(string Ref, string Id)
         {
-            try
-            {
+
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 context.ApagarPecaFolhaObra(Ref, int.Parse(Id));
                 return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+
         }
     }
 }
