@@ -292,7 +292,6 @@ namespace FT_Management.Models
                 }
             }
         }
-
         public Equipamento ObterEquipamentoNS(string NumeroSerie)
         {
             using (Database db = ConnectionString)

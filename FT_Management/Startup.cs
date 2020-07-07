@@ -39,8 +39,8 @@ namespace FT_Management
             services.AddSingleton<HelloWorldJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(HelloWorldJob),
-                cronExpression: "20 46 13 * * ?")); // run every 5 seconds
-
+                cronExpression: "00 00 16 * * ?")); 
+            
             services.AddHostedService<QuartzHostedService>();
 
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value, Configuration.GetConnectionString("PHC_DB"))));
