@@ -1,4 +1,4 @@
-    using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FT_Management.Models;
 using System.Globalization;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
 
 namespace FT_Management
 {
@@ -27,6 +30,19 @@ namespace FT_Management
         {
             services.AddControllersWithViews();
             services.AddMvc();
+
+            // Add Quartz services
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            // Add our job
+            services.AddSingleton<HelloWorldJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(HelloWorldJob),
+                cronExpression: "20 46 13 * * ?")); // run every 5 seconds
+
+            services.AddHostedService<QuartzHostedService>();
+
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value, Configuration.GetConnectionString("PHC_DB"))));
 
         }
@@ -63,6 +79,7 @@ namespace FT_Management
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FT_Management.Models;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.WindowsServices;
@@ -49,6 +50,7 @@ namespace FT_Management
             {
                 CreateHostBuilder(args).Build().Run();
             }
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
