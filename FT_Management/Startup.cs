@@ -39,7 +39,7 @@ namespace FT_Management
             services.AddSingleton<HelloWorldJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(HelloWorldJob),
-                cronExpression: "00 00 16 * * ?")); 
+                cronExpression: "00 05 16 * * ?")); 
             
             services.AddHostedService<QuartzHostedService>();
 
