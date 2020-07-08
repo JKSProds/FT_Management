@@ -279,20 +279,24 @@ namespace FT_Management.Models
                 {
 
                     result.Read();
-
-                    Equipamento equipamento = new Equipamento()
+                    if (result.Reader.HasRows)
                     {
-                        IdEquipamento = result["IdEquipamento"],
-                        DesignacaoEquipamento = result["DesignacaoEquipamento"],
-                        MarcaEquipamento = result["MarcaEquipamento"],
-                        ModeloEquipamento = result["ModeloEquipamento"],
-                        NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
+                        Equipamento equipamento = new Equipamento()
+                        {
+                            IdEquipamento = result["IdEquipamento"],
+                            DesignacaoEquipamento = result["DesignacaoEquipamento"],
+                            MarcaEquipamento = result["MarcaEquipamento"],
+                            ModeloEquipamento = result["ModeloEquipamento"],
+                            NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
 
-                    };
+                        };
 
-                    return equipamento;
+                        return equipamento;
+                    }
+
                 }
             }
+            return new Equipamento();
         }
         public Equipamento ObterEquipamentoNS(string NumeroSerie)
         {
@@ -320,6 +324,7 @@ namespace FT_Management.Models
                 }
              }
         }
+
         public Cliente ObterCliente(int id)
         {
             using (Database db = ConnectionString)
@@ -339,6 +344,32 @@ namespace FT_Management.Models
                         NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
 
                     };
+                    return cliente;
+                }
+            }
+        }
+        public Cliente ObterClienteNome(string nome)
+        {
+            using (Database db = ConnectionString)
+            {
+                Cliente cliente = new Cliente();
+                using (var result = db.Query("SELECT * FROM dat_clientes where NomeCliente like '%" + nome + "%';"))
+                {
+
+                    result.Read();
+                    if (result.Reader.HasRows)
+                    {
+                         cliente = new Cliente()
+                        {
+                            IdCliente = result["IdCliente"],
+                            NomeCliente = result["NomeCliente"],
+                            PessoaContatoCliente = result["PessoaContactoCliente"],
+                            MoradaCliente = result["MoradaCliente"],
+                            EmailCliente = result["EmailCliente"],
+                            NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
+
+                        };
+                    }
                     return cliente;
                 }
             }
@@ -377,7 +408,7 @@ namespace FT_Management.Models
 
             sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '" + folhaObra.SituacoesPendentes + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "') \r\n");
             
-            sql += " ON DUPLICATE KEY UPDATE DataServico = VALUES(DataServico), ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente);";
+            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente);";
 
             using (Database db = ConnectionString)
             {
@@ -387,13 +418,27 @@ namespace FT_Management.Models
         }
         public int NovoCliente (Cliente cliente)
         {
-            cliente.IdCliente = cliente.IdCliente == 0 ? ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1 : cliente.IdCliente;
+            if (cliente.IdCliente == 0)
+            {
+                Cliente c = ObterClienteNome(cliente.NomeCliente);
+                if (c == null) {
+                    cliente.IdCliente = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
+                }
+                else
+                {
+                    cliente = c;
+                }
+            }
+            else if (cliente.NomeCliente != ObterCliente(cliente.IdCliente).NomeCliente)
+            {
+                cliente = ObterClienteNome(cliente.NomeCliente);
+            }
 
             string sql = "INSERT INTO dat_clientes (IdCliente, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, NumeroContribuinteCliente) VALUES ";
 
             sql += ("('" + cliente.IdCliente + "', '" + cliente.NomeCliente + "', '" + cliente.PessoaContatoCliente + "', '" + cliente.MoradaCliente + "', '" + cliente.EmailCliente + "', '" + cliente.NumeroContribuinteCliente + "') \r\n");
 
-            sql += " ON DUPLICATE KEY UPDATE NomeCliente = VALUES(NomeCliente), PessoaContactoCliente = VALUES(PessoaContactoCliente), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
+            sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
 
             using (Database db = ConnectionString)
             {
@@ -405,13 +450,29 @@ namespace FT_Management.Models
         }
         public int NovoEquipamento(Equipamento equipamento)
         {
-            equipamento.IdEquipamento = equipamento.IdEquipamento == 0 ? ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1 : equipamento.IdEquipamento;
+            if (equipamento.IdEquipamento == 0)
+            {
+
+                Equipamento e = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
+                if (e == null)
+                {
+                    equipamento.IdEquipamento = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
+                }
+                else
+                {
+                    equipamento = e;
+                }
+            }
+            else if (equipamento.NumeroSerieEquipamento != ObterEquipamento(equipamento.IdEquipamento).NumeroSerieEquipamento)
+            {
+                equipamento = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
+            }
 
             string sql = "INSERT INTO dat_equipamentos (IdEquipamento, DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento) VALUES ";
 
             sql += ("('" + equipamento.IdEquipamento + "',  '" + equipamento.DesignacaoEquipamento + "', '" + equipamento.MarcaEquipamento + "', '" + equipamento.ModeloEquipamento + "', '" + equipamento.NumeroSerieEquipamento + "') \r\n");
 
-            sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento), NumeroSerieEquipamento = VALUES(NumeroSerieEquipamento);";
+            sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento);";
 
             using (Database db = ConnectionString)
             {
