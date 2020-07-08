@@ -16,7 +16,7 @@
             <h1>Listagem de Referências</h1>
         </td>
         <td class="float-right" style="margin-bottom:5px;">
-            <form method="post" enctype="multipart/form-data" asp-controller="Produtos" asp-action="FileUpload" style="margin-bottom: -10px">
+            @*<form method="post" enctype="multipart/form-data" asp-controller="Produtos" asp-action="FileUpload" style="margin-bottom: -10px">
                 <div class="form-group">
                     <div class="input-group mb-3">
                         <div class="custom-file">
@@ -28,18 +28,18 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            </form>*@
             <form asp-action="Index" method="get">
                 <div class="input-group" style="margin-left:auto; margin-right:0;">
                     <input type="text" style="min-width: 100px" class="form-control" placeholder="Referência" aria-label="Referência" aria-describedby="button-addon4" name="Ref" value="@ViewData["Ref"]">
                     <input type="text" style="min-width: 100px" class="form-control" placeholder="Designação" aria-label="Designação" aria-describedby="button-addon4" name="Desig" value="@ViewData["Desig"]">
                 </div>
-                <div class="input-group" style="margin-left:auto;margin-top:5px; margin-right:0;">
-                    <button type="submit" class="btn btn-primary float-left" style="margin-left:5px;margin-bottom:5px;">
-                        <i class="fas fa-search fa-lg"></i> Pesquisar
+                <div class="" style="margin-left:auto;margin-top:5px; margin-right:0;">
+                    <button type="submit" class="btn btn-primary float-lg-right" style="margin-left:5px;margin-bottom:5px;">
+                        <i class="fas fa-search fa-lg"></i>
                     </button>
-                    <a asp-action="Index" style="margin-left:5px; margin-bottom:5px;" class="btn btn-secondary float-right"><i class="fas fa-backspace"></i> Limpar Filtro</a>
-                    <a asp-action="Criar" class="btn btn-primary" style="margin-left:5px; margin-bottom:5px;"><i class="fas fa-plus"></i> Adicionar Referência</a>
+                    <a asp-action="Index" style="margin-left:5px; margin-bottom:5px;" class="btn btn-secondary float-lg-right"><i class="fas fa-backspace"></i></a>
+                    <a asp-action="Criar" class="btn btn-primary float-lg-right" style="margin-left:5px; margin-bottom:5px;"><i class="fas fa-plus"></i></a>
                 </div>
             </form>
         </td>
