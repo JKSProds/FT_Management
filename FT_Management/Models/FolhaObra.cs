@@ -66,5 +66,6 @@ namespace FT_Management.Models
         public List<Intervencao> IntervencaosServico { get; set; }
         public Equipamento EquipamentoServico { get; set; }
         public Cliente ClienteServico { get; set; }
+        public string IdCartao { get; set; }
     }
 }

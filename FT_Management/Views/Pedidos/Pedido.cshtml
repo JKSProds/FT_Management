@@ -1,0 +1,74 @@
+﻿@model FT_Management.Models.TrelloCartoes
+
+
+@{
+    ViewData["Title"] = "Pedido";
+}
+
+<br />
+<hr />
+
+<h1 class="text-center">
+    @Html.DisplayFor(model => model.NomeCartao)
+</h1>
+<hr />
+<div>
+    <dl class="row">
+        <dd class="col-sm-10 h5">
+            @Html.DisplayFor(model => model.DescricaoCartao)
+        </dd>
+    </dl>
+</div>
+
+    <br />
+    <a class="btn btn-primary btn-block btn-lg" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
+
+
+@if (Model.FolhasObra.Count() == 0)
+{
+    <br />
+    <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas folhas de obra!</button>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FolhasObra.First().DataServico)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FolhasObra.First().ClienteServico.NomeCliente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.FolhasObra)
+            {
+                <tr>
+                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                        <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
+                    </td>
+                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                        @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                    </td>
+                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                        @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div>
+    <br />
+    <a asp-action="Index">Voltar</a>
+</div>

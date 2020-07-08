@@ -182,6 +182,8 @@ namespace FT_Management.Models
                             EstadoEquipamento = result["EstadoEquipamento"],
                             RelatorioServico = result["RelatorioServico"],
                             SituacoesPendentes = result["SituacoesPendentes"],
+                            //IdCartao = result.Reader.IsDBNull(result["IdCartaoTrello"]) ? "" : result["IdCartaoTrello"],
+                            IdCartao = result["IdCartaoTrello"],
                             EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                             ClienteServico = ObterCliente(result["IdCliente"]),
                             PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
@@ -195,6 +197,39 @@ namespace FT_Management.Models
             return LstFolhasObra;
 
             }
+        public List<FolhaObra> ObterListaFolhasObraCartao(string IdCartao)
+        {
+            List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using (var result = db.Query("SELECT * FROM dat_folhas_obra Where IdCartaoTrello='"+IdCartao+"';"))
+                {
+                    while (result.Read())
+                    {
+                        LstFolhasObra.Add(new FolhaObra()
+                        {
+                            IdFolhaObra = result["IdFolhaObra"],
+                            DataServico = result["DataServico"],
+                            ReferenciaServico = result["ReferenciaServico"],
+                            EstadoEquipamento = result["EstadoEquipamento"],
+                            RelatorioServico = result["RelatorioServico"],
+                            SituacoesPendentes = result["SituacoesPendentes"],
+                            IdCartao = result["IdCartaoTrello"],
+                            EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
+                            ClienteServico = ObterCliente(result["IdCliente"]),
+                            PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
+                            IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
+
+                        });
+                    }
+                }
+            }
+
+            return LstFolhasObra;
+
+        }
         public List<Intervencao> ObterListaIntervencoes(int idfolhaobra)
         {
             List<Intervencao> LstIntervencoes = new List<Intervencao>();
@@ -259,6 +294,7 @@ namespace FT_Management.Models
                         EstadoEquipamento = result["EstadoEquipamento"],
                         RelatorioServico = result["RelatorioServico"],
                         SituacoesPendentes = result["SituacoesPendentes"],
+                        IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                         ClienteServico = ObterCliente(result["IdCliente"]),
                         PecasServico = ObterListaProdutoIntervencao(id),
@@ -404,9 +440,9 @@ namespace FT_Management.Models
         {
             folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") + 1 : folhaObra.IdFolhaObra;
 
-            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, SituacoesPendentes, IdEquipamento, IdCliente) VALUES ";
+            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '" + folhaObra.SituacoesPendentes + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "') \r\n");
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "') \r\n");
             
             sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente);";
 

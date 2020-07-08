@@ -237,7 +237,7 @@
                                             <option>Nelson Martins</option>
                                             <option>Armando Rodrigues</option>
                                             <option>Luis Fernandes</option>
-                                            <option>Deus</option>
+                                            <option>Paulo Deus</option>
                                             <option>Pedro Santos</option>
                                             <option>Silvino</option>
                                             <option>Helder Pinto</option>
@@ -461,11 +461,9 @@
                         <input type="submit" value="Atualizar" class="btn btn-primary btn-block btn-lg" />
                     </div>
 </form>
-
-
-<div>
-    <a asp-action="Index">Voltar</a>
-</div>
+        <div>
+            <a onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = Model.IdCartao }))'">Voltar</a>
+        </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

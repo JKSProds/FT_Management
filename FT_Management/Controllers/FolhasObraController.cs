@@ -21,10 +21,11 @@ namespace FT_Management.Controllers
         
 
         // GET: FolhasObraController/Create
-        public ActionResult Adicionar()
+        public ActionResult Adicionar(string idCartao)
         {
             //FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
+            if (idCartao == null) idCartao = "";
+            ViewData["IdCartao"] = idCartao;
             FolhaObra folha = new FolhaObra
             {
                 EquipamentoServico = new Equipamento(),
@@ -38,12 +39,13 @@ namespace FT_Management.Controllers
         // POST: FolhasObraController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Adicionar(FolhaObra folhaObra)
+        public ActionResult Adicionar(FolhaObra folhaObra, string IdCartao)
         {
  
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
-                return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
+            folhaObra.IdCartao = IdCartao == null ? "" : IdCartao;
+            return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
         }
 

@@ -7,6 +7,8 @@
 <h1>Adicionar Intervenção</h1>
 <hr />
 <form asp-action="Adicionar">
+    <input type="hidden" id="hiddenCartaoId" value="@ViewData["IdCartao"]" name="IdCartao" />
+
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
         <a class="nav-item nav-link active" id="v-pills-equipamento-tab" data-toggle="pill" href="#v-pills-equipamento" role="tab" aria-controls="v-pills-equipamento" aria-selected="true">Equipamento</a>
@@ -151,7 +153,7 @@
 
 
 <div>
-    <a asp-action="Index">Voltar</a>
+    <a onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = Model.IdCartao }))'">Voltar</a>
 </div>
 
 @section Scripts {
