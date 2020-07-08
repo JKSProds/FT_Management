@@ -59,7 +59,9 @@ namespace FT_Management.Models
                     IdCartao = cartao.id,
                     NomeCartao = cartao.name,
                     DescricaoCartao = cartao.desc,
-                    CorLabel = cartao.labels.Count > 0 ? cartao.labels[0].color : "grey"
+                    CorLabel = cartao.labels.Count > 0 ? cartao.labels[0].color : "grey",
+                    IdQuadro = cartao.idBoard,
+                    IdLista = cartao.idList
                 });
             }
 
@@ -79,7 +81,9 @@ namespace FT_Management.Models
                     IdCartao = jsonCartao.id,
                     NomeCartao = jsonCartao.name,
                     DescricaoCartao = jsonCartao.desc,
-                    CorLabel = jsonCartao.labels.Count > 0 ? jsonCartao.labels[0].color : "grey"
+                    CorLabel = jsonCartao.labels.Count > 0 ? jsonCartao.labels[0].color : "grey",
+                    IdQuadro = jsonCartao.idBoard,
+                    IdLista = jsonCartao.idList
                 };
             }
             return cartao;
@@ -142,6 +146,8 @@ namespace FT_Management.Models
         public string DescricaoCartao { get; set; }
         public string CorLabel { get; set; }
         public List<FolhaObra> FolhasObra { get; set; }
+        public string IdQuadro { get; set; }
+        public string IdLista { get; set; }
     }
 
 

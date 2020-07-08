@@ -70,5 +70,5 @@ else
 
 <div>
     <br />
-    <a asp-action="Index">Voltar</a>
+    <a onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'">Voltar</a>
 </div>
