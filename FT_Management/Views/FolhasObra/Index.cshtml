@@ -8,7 +8,7 @@
 
 <p>
     <br />
-    <a asp-action="Adicionar" class="btn btn-primary btn-block" style="margin-left:5px; margin-bottom:5px;"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
+    <a asp-action="Adicionar" class="btn btn-primary btn-block btn-lg" style="margin-left:5px; margin-bottom:5px;"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
 </p>
 
 <hr />
@@ -38,18 +38,18 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                    <td>
+                <tr>
+                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
                         <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
                     </td>
-                    <td>
+                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
                         @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
                     </td>
-                    <td>
+                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
                         @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
                     </td>
                     <td>
-                        <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
                     </td>
                 </tr>
             }
