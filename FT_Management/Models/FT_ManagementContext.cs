@@ -721,7 +721,7 @@ namespace FT_Management.Models
                     }
                     pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString());
                     p++;
-                    if (j == 10) break;
+                    if (p == 10) break;
                 }
             }
 

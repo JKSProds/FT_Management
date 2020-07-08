@@ -6,6 +6,47 @@ using System.Threading.Tasks;
 
 namespace FT_Management.Models
 {
+    public class Intervencao
+    {
+        public int IdIntervencao { get; set; }
+        public int IdTecnico { get; set; }
+        public int IdFolhaObra { get; set; }
+        [Display(Name = "Técnico")]
+        public string NomeTecnico { get; set; }
+        [Display(Name = "Data do Serviço")]
+        public DateTime DataServiço { get; set; }
+        [Display(Name = "Hora de Inicio")]
+        public DateTime HoraInicio { get; set; }
+        [Display(Name = "Hora de Fim")]
+        public DateTime HoraFim { get; set; }
+    }
+
+    public class Equipamento
+    {
+        public int IdEquipamento { get; set; }
+        [Display(Name = "Designação do Equipamento")]
+        public string DesignacaoEquipamento { get; set; }
+        [Display(Name = "Marca")]
+        public string MarcaEquipamento { get; set; }
+        [Display(Name = "Modelo")]
+        public string ModeloEquipamento { get; set; }
+        [Display(Name = "Numero de Série")]
+        public string NumeroSerieEquipamento { get; set; }
+    }
+    public class Cliente
+    {
+        public int IdCliente { get; set; }
+        [Display(Name = "Nome do Cliente")]
+        public string NomeCliente { get; set; }
+        [Display(Name = "Pessoa de Contacto")]
+        public string PessoaContatoCliente { get; set; }
+        [Display(Name = "Morada")]
+        public string MoradaCliente { get; set; }
+        [Display(Name = "Email")]
+        public string EmailCliente { get; set; }
+        [Display(Name = "NIF")]
+        public string NumeroContribuinteCliente { get; set; }
+    }
     public class FolhaObra
     {
         public int IdFolhaObra { get; set; }
