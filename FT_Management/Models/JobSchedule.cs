@@ -44,7 +44,7 @@ public class HelloWorldJob : IJob
             myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC"]));
 
             // set subject and encoding
-            myMail.Subject = "Folhas de Obra - " + DateTime.Now.ToString("dd-MM-yyyy");
+            myMail.Subject = "Folhas de Obra - " + DateTime.Now.ToString("dd/MM/yyyy");
             myMail.SubjectEncoding = System.Text.Encoding.UTF8;
 
             // set body-message and encoding

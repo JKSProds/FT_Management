@@ -11,6 +11,8 @@ using System.Drawing.Drawing2D;
 using QRCoder;
 using iTextSharp.text.pdf;
 using OfficeOpenXml.FormulaParsing.Utilities;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace FT_Management.Models
 {
@@ -296,7 +298,7 @@ namespace FT_Management.Models
         {
             using (Database db = ConnectionString)
             {
-                using (var result = db.Query("SELECT * FROM dat_equipamentos where NumeroSerieEquipamento=" + NumeroSerie + ";"))
+                using (var result = db.Query("SELECT * FROM dat_equipamentos where NumeroSerieEquipamento='" + NumeroSerie + "';"))
                 {
                     Equipamento equipamento = new Equipamento();
 
@@ -680,17 +682,24 @@ namespace FT_Management.Models
                 int i = 1;
                 foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
                 {
-                    pdfFormFields.SetField("DataRow" + i, intervencao.DataServiço.ToString("dd-MM"));
+                    pdfFormFields.SetField("DataRow" + i, intervencao.DataServiço.ToString("dd/MM"));
                     pdfFormFields.SetField("TécnicoRow" + i, intervencao.NomeTecnico);
                     pdfFormFields.SetField("InícioRow" + i, intervencao.HoraInicio.ToString("HH:mm"));
                     pdfFormFields.SetField("FimRow" + i, intervencao.HoraFim.ToString("HH:mm"));
-                    pdfFormFields.SetField("HorasRow" + i, "");
+
+                    var ts = new TimeSpan(intervencao.HoraFim.Hour - intervencao.HoraInicio.Hour, intervencao.HoraFim.Minute - intervencao.HoraInicio.Minute, 00);
+                    ts = TimeSpan.FromMinutes(15 * Math.Ceiling(ts.TotalMinutes / 15));
+
+                    pdfFormFields.SetField("HorasRow" + i, ts.Hours.ToString() + "." + (ts.Minutes * 100) / 60);
                     i++;
+                    if (i == 9) break;
                 }
 
-                pdfFormFields.SetField("DataConclusao", folhaobra.IntervencaosServico.Last().DataServiço.ToString("dd-MM-yyyy"));
+                pdfFormFields.SetField("DataConclusao", folhaobra.IntervencaosServico.Last().DataServiço.ToString("dd/MM/yyyy"));
                 pdfFormFields.SetField("o tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
             }
+
+            pdfFormFields.SetField("Text5", folhaobra.DataServico.ToString("dd/MM/yyyy"));
 
             if (folhaobra.PecasServico.Count > 0 )
             {
@@ -712,6 +721,7 @@ namespace FT_Management.Models
                     }
                     pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString());
                     p++;
+                    if (j == 10) break;
                 }
             }
 
