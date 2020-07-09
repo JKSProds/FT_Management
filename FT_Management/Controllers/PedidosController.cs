@@ -57,6 +57,7 @@ namespace FT_Management.Controllers
 
             if (cartao.IdCartao == null) return RedirectToAction("Index");
             cartao.FolhasObra = context.ObterListaFolhasObraCartao(idCartao);
+            cartao.Comentarios = trello.ObterComentarios(idCartao);
 
             return View(cartao);
         }

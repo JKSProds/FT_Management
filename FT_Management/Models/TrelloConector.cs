@@ -35,7 +35,7 @@ namespace FT_Management.Models
         {
             List<TrelloListas> trelloListas = new List<TrelloListas>();
 
-            foreach (var lista in GetTrelloJson("https://api.trello.com/1/boards/"+IdQuadro+"/lists?key="+API_KEY+"&token="+TOKEN+""))
+            foreach (var lista in GetTrelloJson("https://api.trello.com/1/boards/" + IdQuadro + "/lists?key=" + API_KEY + "&token=" + TOKEN + ""))
             {
                 trelloListas.Add(new TrelloListas
                 {
@@ -52,7 +52,7 @@ namespace FT_Management.Models
         {
             List<TrelloCartoes> trelloCartoes = new List<TrelloCartoes>();
 
-            foreach (var cartao in GetTrelloJson("https://api.trello.com/1/lists/" + IdLista    + "/cards?key=" + API_KEY + "&token=" + TOKEN + ""))
+            foreach (var cartao in GetTrelloJson("https://api.trello.com/1/lists/" + IdLista + "/cards?key=" + API_KEY + "&token=" + TOKEN + ""))
             {
                 trelloCartoes.Add(new TrelloCartoes
                 {
@@ -68,14 +68,14 @@ namespace FT_Management.Models
 
             return trelloCartoes;
         }
-        public TrelloCartoes ObterCartao (string IdCartao)
+        public TrelloCartoes ObterCartao(string IdCartao)
         {
 
             TrelloCartoes cartao = new TrelloCartoes();
             dynamic jsonCartao = GetTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "?key=" + API_KEY + "&token=" + TOKEN + "");
             if (jsonCartao != null)
             {
-                 cartao = new TrelloCartoes
+                cartao = new TrelloCartoes
                 {
                     IdCartao = jsonCartao.id,
                     NomeCartao = jsonCartao.name,
@@ -87,6 +87,31 @@ namespace FT_Management.Models
                 //Console.WriteLine(jsonCartao.desc);
             }
             return cartao;
+        }
+        public List<TrelloComentarios> ObterComentarios(string IdCartao)
+        {
+
+            List<TrelloComentarios> Comentarios = new List<TrelloComentarios>();
+            foreach (var comentario in GetTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions?key=" + API_KEY + "&token=" + TOKEN + ""))
+            {
+                if (comentario.type == "commentCard")
+                {
+                    Comentarios.Add(new TrelloComentarios
+                    {
+                        IdComentario = comentario.id,
+                        IdCartao = comentario.data.card.id,
+                        Comentario = comentario.data.text.ToString().Replace("\n", Environment.NewLine),
+                        DataComentario = comentario.date,
+                        Utilizador = comentario.memberCreator.fullName
+                    });
+                }
+            }
+
+            return Comentarios;
+        }
+        public void NovoComentario(string IdCartao, string Comentario)
+        {
+            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "");
         }
 
         private dynamic GetTrelloJson(string url)
@@ -121,8 +146,26 @@ namespace FT_Management.Models
             }
             return deserializedProduct;
         }
-    }
+        private void PostTrelloJson(string url)
+        {
+            try
+            {
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
 
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Erro 400 Trello");
+            }
+        }
+    }
 
     public class TrelloQuadros
     {
@@ -148,8 +191,16 @@ namespace FT_Management.Models
         public List<FolhaObra> FolhasObra { get; set; }
         public string IdQuadro { get; set; }
         public string IdLista { get; set; }
+        public List<TrelloComentarios> Comentarios { get; set; }
     }
 
-
+    public class TrelloComentarios 
+    {
+        public string IdComentario { get; set; }
+        public string Comentario { get; set; }
+        public DateTime DataComentario { get; set; }
+        public string Utilizador { get; set; }
+        public string IdCartao { get; set; }
+    }
 
 }

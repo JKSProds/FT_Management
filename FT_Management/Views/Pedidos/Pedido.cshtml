@@ -19,8 +19,8 @@
     </dl>
 </div>
 
-    <br />
-    <a class="btn btn-primary btn-block btn-lg" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
+<br />
+<a class="btn btn-primary btn-block btn-lg" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
 
 
 @if (Model.FolhasObra.Count() == 0)
@@ -60,6 +60,48 @@ else
                     </td>
                     <td>
                         <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (Model.Comentarios.Count() == 0)
+{
+    <br />
+    <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontrados comentários!</button>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Comentarios.First().Utilizador)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Comentarios.First().Comentario)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Comentarios.First().DataComentario)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Comentarios)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Utilizador)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comentario)
+                    </td>
+                    <td>
+                        <span>@item.DataComentario.ToString("dd/MM/yyyy HH:mm")</span>
+
                     </td>
                 </tr>
             }
