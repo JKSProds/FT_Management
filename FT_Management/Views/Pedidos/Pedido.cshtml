@@ -5,7 +5,6 @@
     ViewData["Title"] = "Pedido";
 }
 
-<br />
 <hr />
 
 <h1 class="text-center">
@@ -14,8 +13,8 @@
 <hr />
 <div>
     <dl class="row">
-        <dd class="col-sm-10 h5">
-            @Html.DisplayFor(model => model.DescricaoCartao)
+        <dd class="col-sm-12">
+            <span style="white-space: pre-line">@Model.DescricaoCartao</span>
         </dd>
     </dl>
 </div>

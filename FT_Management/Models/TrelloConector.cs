@@ -68,7 +68,6 @@ namespace FT_Management.Models
 
             return trelloCartoes;
         }
-
         public TrelloCartoes ObterCartao (string IdCartao)
         {
 
@@ -80,11 +79,12 @@ namespace FT_Management.Models
                 {
                     IdCartao = jsonCartao.id,
                     NomeCartao = jsonCartao.name,
-                    DescricaoCartao = jsonCartao.desc,
-                    CorLabel = jsonCartao.labels.Count > 0 ? jsonCartao.labels[0].color : "grey",
+                    DescricaoCartao = jsonCartao.desc.ToString().Replace("\n", Environment.NewLine),
+                    CorLabel = jsonCartao.labels.Count > 0 ? jsonCartao.labels[0].color : "",
                     IdQuadro = jsonCartao.idBoard,
                     IdLista = jsonCartao.idList
                 };
+                //Console.WriteLine(jsonCartao.desc);
             }
             return cartao;
         }
