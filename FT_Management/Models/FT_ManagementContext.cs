@@ -363,24 +363,29 @@ namespace FT_Management.Models
 
         public Cliente ObterCliente(int id)
         {
+
+            Cliente cliente = new Cliente();
             using (Database db = ConnectionString)
             {
                 using (var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + ";"))
                 {
 
                     result.Read();
-
-                    Cliente cliente = new Cliente()
+                    if (result.Reader.HasRows)
                     {
-                        IdCliente = result["IdCliente"],
-                        NomeCliente = result["NomeCliente"],
-                        PessoaContatoCliente = result["PessoaContactoCliente"],
-                        MoradaCliente = result["MoradaCliente"],
-                        EmailCliente = result["EmailCliente"],
-                        NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
+                        cliente = new Cliente()
+                        {
+                            IdCliente = result["IdCliente"],
+                            NomeCliente = result["NomeCliente"],
+                            PessoaContatoCliente = result["PessoaContactoCliente"],
+                            MoradaCliente = result["MoradaCliente"],
+                            EmailCliente = result["EmailCliente"],
+                            NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
 
-                    };
+                        };
+                    }
                     return cliente;
+
                 }
             }
         }
@@ -457,7 +462,7 @@ namespace FT_Management.Models
             if (cliente.IdCliente == 0)
             {
                 Cliente c = ObterClienteNome(cliente.NomeCliente);
-                if (c == null) {
+                if (c.IdCliente == 0) {
                     cliente.IdCliente = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
                 }
                 else
@@ -490,7 +495,7 @@ namespace FT_Management.Models
             {
 
                 Equipamento e = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
-                if (e == null)
+                if (e.IdEquipamento == 0)
                 {
                     equipamento.IdEquipamento = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
                 }
