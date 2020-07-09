@@ -463,7 +463,7 @@ namespace FT_Management.Models
             {
                 Cliente c = ObterClienteNome(cliente.NomeCliente);
                 if (c.IdCliente == 0) {
-                    cliente.IdCliente = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
+                    cliente.IdCliente = ObterUltimaEntrada("dat_clientes", "IdCliente") + 1;
                 }
                 else
                 {
