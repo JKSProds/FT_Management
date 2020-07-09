@@ -47,8 +47,8 @@ namespace FT_Management.Controllers
             folhaObra.IdCartao = IdCartao == null ? "" : IdCartao;
 
             TrelloConector trello = new TrelloConector();
-            if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-            if (folhaObra.SituacoesPendentes != String.Empty && folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
+            if (folhaObra.RelatorioServico != String.Empty || folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
+            //if (folhaObra.SituacoesPendentes != String.Empty || folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
 
             return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
@@ -144,12 +144,14 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             folhaObra.IdFolhaObra = id;
+            context.NovaFolhaObra(folhaObra);
 
             TrelloConector trello = new TrelloConector();
-            if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-            if (folhaObra.SituacoesPendentes != String.Empty && folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
+            if (folhaObra.RelatorioServico != String.Empty || folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
+            //if (folhaObra.SituacoesPendentes != String.Empty || folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
 
-            return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra)});
+            trello.NovoAnexo(folhaObra.IdCartao, context.PreencherFormularioFolhaObra(context.ObterFolhaObra(id)).ToArray(), "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf");
+            return RedirectToAction("Editar", new { id = id});
 
         }
 

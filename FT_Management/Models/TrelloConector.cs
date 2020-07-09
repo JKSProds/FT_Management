@@ -1,10 +1,15 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -109,9 +114,93 @@ namespace FT_Management.Models
 
             return Comentarios;
         }
+        public List<TrelloAnexos> ObterAnexos(string IdCartao)
+        {
+            List<TrelloAnexos> Anexos = new List<TrelloAnexos>();
+            foreach (var anexo in GetTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/attachments?key=" + API_KEY + "&token=" + TOKEN + ""))
+            {
+                    Anexos.Add(new TrelloAnexos
+                    {
+                        id = anexo.id,
+                        name = anexo.name
+                    });
+            }
+
+            return Anexos;
+        }
         public void NovoComentario(string IdCartao, string Comentario)
         {
-            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "");
+            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "", "");
+        }
+        public void ApagarAnexo(string IdAnexo, string IdCartao)
+        {
+            DeleteTrello("https://api.trello.com/1/cards/" + IdCartao + "/attachments/" + IdAnexo + "?key=" + API_KEY + "&token=" + TOKEN + "");
+        }
+        public void NovoAnexo(string IdCartao, byte[] documento, string NomeDocumento)
+        {
+            if (ObterAnexos(IdCartao).Where(a => a.name == NomeDocumento).Count() > 0) ApagarAnexo(ObterAnexos(IdCartao).Where(a => a.name == NomeDocumento).First().id, IdCartao); 
+
+                NameValueCollection nvc = new NameValueCollection();
+                nvc.Add("id", IdCartao);
+                nvc.Add("name", NomeDocumento);
+                HttpUploadFile("https://api.trello.com/1/cards/"+IdCartao+"/attachments?key="+API_KEY+"&token="+TOKEN+"",
+                     documento, "file", "application/pdf", nvc, NomeDocumento);
+
+        }
+
+        public static void HttpUploadFile(string url, byte[] file, string paramName, string contentType, NameValueCollection nvc, string NomeDocumento)
+        {
+            string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+
+            HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(url);
+            wr.ContentType = "multipart/form-data; boundary=" + boundary;
+            wr.Method = "POST";
+            wr.KeepAlive = true;
+            wr.Credentials = System.Net.CredentialCache.DefaultCredentials;
+
+            Stream rs = wr.GetRequestStream();
+
+            string formdataTemplate = "Content-Disposition: form-data; name=\"{0}\"\r\n\r\n{1}";
+            foreach (string key in nvc.Keys)
+            {
+                rs.Write(boundarybytes, 0, boundarybytes.Length);
+                string formitem = string.Format(formdataTemplate, key, nvc[key]);
+                byte[] formitembytes = System.Text.Encoding.UTF8.GetBytes(formitem);
+                rs.Write(formitembytes, 0, formitembytes.Length);
+            }
+            rs.Write(boundarybytes, 0, boundarybytes.Length);
+
+            string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
+            string header = string.Format(headerTemplate, paramName, NomeDocumento, contentType);
+            byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
+            rs.Write(headerbytes, 0, headerbytes.Length);
+
+                rs.Write(file);
+
+            byte[] trailer = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+            rs.Write(trailer, 0, trailer.Length);
+            rs.Close();
+
+            WebResponse wresp = null;
+            try
+            {
+                wresp = wr.GetResponse();
+                Stream stream2 = wresp.GetResponseStream();
+                StreamReader reader2 = new StreamReader(stream2);
+            }
+            catch (Exception)
+            {
+                if (wresp != null)
+                {
+                    wresp.Close();
+                    wresp = null;
+                }
+            }
+            finally
+            {
+                wr = null;
+            }
         }
 
         private dynamic GetTrelloJson(string url)
@@ -146,13 +235,20 @@ namespace FT_Management.Models
             }
             return deserializedProduct;
         }
-        private void PostTrelloJson(string url)
+        private void PostTrelloJson(string url, string json)
         {
             try
             {
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
+
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                }
+
 
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
@@ -165,6 +261,26 @@ namespace FT_Management.Models
                 Console.WriteLine("Erro 400 Trello");
             }
         }
+        private void DeleteTrello(string url)
+        {
+            try
+            {
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "DELETE";
+
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Erro 400 Trello");
+            }
+        }
+
     }
 
     public class TrelloQuadros
@@ -203,4 +319,13 @@ namespace FT_Management.Models
         public string IdCartao { get; set; }
     }
 
+    public class TrelloAnexos
+    {
+        public string id { get; set; }
+        public byte[] file { get; set; }
+        public DateTime date { get; set; }
+        public string name { get; set; }
+        public string mimeType { get; set; }
+    }
+   
 }
