@@ -146,6 +146,24 @@ namespace FT_Management.Controllers
 
         // POST: FolhasObraController/Delete/5
         [HttpPost]
+        public ActionResult ApagarFolhaObra(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            foreach (Intervencao intervencao in context.ObterFolhaObra(id).IntervencaosServico)
+            {
+                context.ApagarIntervencao(intervencao.IdIntervencao);
+            }
+
+            foreach (Produto peca in context.ObterFolhaObra(id).PecasServico)
+            {
+                context.ApagarPecaFolhaObra(peca.Ref_Produto, id);
+            }
+
+            context.ApagarFolhaObra(id);
+            return RedirectToAction(nameof(Index));
+        }
+        [HttpPost]
         public ActionResult ApagarIntervencao(int id)
         {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

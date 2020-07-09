@@ -459,7 +459,7 @@ namespace FT_Management.Models
         }
         public int NovoCliente (Cliente cliente)
         {
-            if (cliente.IdCliente == 0)
+            if (cliente.IdCliente == 0 || cliente == null)
             {
                 Cliente c = ObterClienteNome(cliente.NomeCliente);
                 if (c.IdCliente == 0) {
@@ -555,6 +555,15 @@ namespace FT_Management.Models
                 db.Execute(sql);
             }
 
+        }
+        public void ApagarFolhaObra(int id)
+        {
+            string sql = "DELETE FROM dat_folhas_obra where IdFolhaObra=" + id + ";";
+
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
         }
         public void ApagarIntervencao (int id)
         {
