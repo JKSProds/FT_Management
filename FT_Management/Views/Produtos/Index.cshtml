@@ -119,7 +119,7 @@ else
                     <td style="min-width: 240px">
                         <div class="btn-group">
                             <a class="update btn btn-outline-success btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
-                            <a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto(@item.Ref_Produto)"><i class="fas fa-trash"></i> </a>
+                            <a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
                         </div>
                             <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
                             <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>

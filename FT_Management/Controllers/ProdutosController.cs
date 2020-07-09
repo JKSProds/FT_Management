@@ -217,7 +217,6 @@ namespace FT_Management.Controllers
 
         // POST: Produtos/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Apagar(string Id)
         {
             try
