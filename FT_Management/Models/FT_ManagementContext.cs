@@ -457,22 +457,17 @@ namespace FT_Management.Models
             }
             return folhaObra.IdFolhaObra;
         }
-        public int NovoCliente (Cliente cliente)
+        public int NovoCliente(Cliente cliente)
         {
-            if (cliente.IdCliente == 0 || cliente == null)
-            {
-                Cliente c = ObterClienteNome(cliente.NomeCliente);
-                if (c.IdCliente == 0) {
-                    cliente.IdCliente = ObterUltimaEntrada("dat_clientes", "IdCliente") + 1;
-                }
-                else
-                {
-                    cliente = c;
-                }
+            Cliente c = new Cliente();
+
+            if (cliente.NomeCliente != null || cliente.NomeCliente == String.Empty) {  c = ObterClienteNome(cliente.NomeCliente); }
+            if (c.IdCliente == 0) {
+                cliente.IdCliente = ObterUltimaEntrada("dat_clientes", "IdCliente") + 1;
             }
-            else if (cliente.NomeCliente != ObterCliente(cliente.IdCliente).NomeCliente)
+            else
             {
-                cliente = ObterClienteNome(cliente.NomeCliente);
+                cliente.IdCliente = c.IdCliente;
             }
 
             string sql = "INSERT INTO dat_clientes (IdCliente, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, NumeroContribuinteCliente) VALUES ";
@@ -491,22 +486,15 @@ namespace FT_Management.Models
         }
         public int NovoEquipamento(Equipamento equipamento)
         {
-            if (equipamento.IdEquipamento == 0)
+ 
+            Equipamento e = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
+            if (e.IdEquipamento == 0)
             {
-
-                Equipamento e = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
-                if (e.IdEquipamento == 0)
-                {
-                    equipamento.IdEquipamento = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
-                }
-                else
-                {
-                    equipamento = e;
-                }
+                equipamento.IdEquipamento = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
             }
-            else if (equipamento.NumeroSerieEquipamento != ObterEquipamento(equipamento.IdEquipamento).NumeroSerieEquipamento)
+            else
             {
-                equipamento = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
+                equipamento.IdEquipamento = e.IdEquipamento;
             }
 
             string sql = "INSERT INTO dat_equipamentos (IdEquipamento, DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento) VALUES ";

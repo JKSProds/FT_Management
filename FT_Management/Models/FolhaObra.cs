@@ -30,12 +30,14 @@ namespace FT_Management.Models
         public string MarcaEquipamento { get; set; }
         [Display(Name = "Modelo")]
         public string ModeloEquipamento { get; set; }
+        [Required(ErrorMessage = "Número de Série é Obrigatório")]
         [Display(Name = "Numero de Série")]
         public string NumeroSerieEquipamento { get; set; }
     }
     public class Cliente
     {
         public int IdCliente { get; set; }
+        [Required(ErrorMessage = "Nome do Cliente é Obrigatório")]
         [Display(Name = "Nome do Cliente")]
         public string NomeCliente { get; set; }
         [Display(Name = "Pessoa de Contacto")]

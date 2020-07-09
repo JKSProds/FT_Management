@@ -41,7 +41,7 @@ namespace FT_Management.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Adicionar(FolhaObra folhaObra, string IdCartao)
         {
- 
+            if (folhaObra.EquipamentoServico.NumeroSerieEquipamento == null || folhaObra.ClienteServico.NomeCliente == null) return View(folhaObra);
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
             folhaObra.IdCartao = IdCartao == null ? "" : IdCartao;
