@@ -47,8 +47,8 @@ namespace FT_Management.Controllers
             folhaObra.IdCartao = IdCartao == null ? "" : IdCartao;
 
             TrelloConector trello = new TrelloConector();
-            if (folhaObra.RelatorioServico != String.Empty) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-            if (folhaObra.SituacoesPendentes != String.Empty) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
+            if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
+            if (folhaObra.SituacoesPendentes != String.Empty && folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
 
             return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
@@ -146,8 +146,8 @@ namespace FT_Management.Controllers
             folhaObra.IdFolhaObra = id;
 
             TrelloConector trello = new TrelloConector();
-            if (folhaObra.RelatorioServico != String.Empty) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-            if (folhaObra.SituacoesPendentes != String.Empty) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
+            if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
+            if (folhaObra.SituacoesPendentes != String.Empty && folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
 
             return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra)});
 

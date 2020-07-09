@@ -22,16 +22,19 @@
                         <div class="form-group col-lg-6">
                             <div class="form-group d-none">
                                 <label asp-for="EquipamentoServico.IdEquipamento" class="control-label"></label>
-                                <input asp-for="EquipamentoServico.IdEquipamento" class="form-control" id="IdEquipamento"/>
+                                <input asp-for="EquipamentoServico.IdEquipamento" class="form-control" id="IdEquipamento" />
                                 <span asp-validation-for="EquipamentoServico.IdEquipamento" class="text-danger"></span>
+                            </div>
+                            <div class="form-group d-none">
+                                <input asp-for="IdCartao" class="form-control" id="IdEquipamento" />
                             </div>
                             <div class="form-group">
                                 <label asp-for="EquipamentoServico.NumeroSerieEquipamento" class="control-label"></label>
                                 <div class="input-group">
-                                <input asp-for="EquipamentoServico.NumeroSerieEquipamento" class="form-control col-10" id="NumeroSerieEquipamento" />
-                                <button type="button" class="btn btn-primary col-2" onclick="ObterEquipamento()">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                                    <input asp-for="EquipamentoServico.NumeroSerieEquipamento" class="form-control col-10" id="NumeroSerieEquipamento" />
+                                    <button type="button" class="btn btn-primary col-2" onclick="ObterEquipamento()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.NumeroSerieEquipamento" class="text-danger"></span>
                             </div>
