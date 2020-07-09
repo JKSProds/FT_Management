@@ -17,18 +17,18 @@
         </td>
         <td class="float-right" style="margin-bottom:5px;">
             @*<form method="post" enctype="multipart/form-data" asp-controller="Produtos" asp-action="FileUpload" style="margin-bottom: -10px">
-                <div class="form-group">
-                    <div class="input-group mb-3">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher">
-                            <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
-                        </div>
-                        <div class="input-group-append">
-                            <input type="submit" class="input-group-text" value="Carregar" />
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher">
+                                <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                            </div>
+                            <div class="input-group-append">
+                                <input type="submit" class="input-group-text" value="Carregar" />
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>*@
+                </form>*@
             <form asp-action="Index" method="get">
                 <div class="input-group" style="margin-left:auto; margin-right:0;">
                     <input type="text" style="min-width: 100px" class="form-control" placeholder="Referência" aria-label="Referência" aria-describedby="button-addon4" name="Ref" value="@ViewData["Ref"]">
@@ -116,11 +116,13 @@ else
                     <td class="Stock_PHC" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
                         <span>@item.Stock_PHC</span>
                     </td>
-                    <td style="min-width: 200px">
-                        <a class="update btn btn-outline-success" href="javascript:;" style="display:none;"><i class="fas fa-save" style="font-size:22px"></i></a>
-                        @*<a class="apagar" onclick="modalApagar(@item.Ref_Produto)" style="display:none;"><i class="fas fa-trash" style="font-size:20px"></i></a>*@
-                        <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                        <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
+                    <td style="min-width: 240px">
+                        <div class="btn-group">
+                            <a class="update btn btn-outline-success btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
+                            <a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto(@item.Ref_Produto)"><i class="fas fa-trash"></i> </a>
+                        </div>
+                            <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
+                            <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
 
                     </td>
                 </tr>
@@ -131,15 +133,54 @@ else
 
 }
 
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Apagar Referência</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Tens a certeza que queres apagar esta referência? Esta ação é irreversivel!</h4>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+                <a href="#" class="btn btn-danger" onclick="ApagarProduto()">Sim</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<input type="hidden" id="hiddenRef" />
+
 <script>
-    function modalApagar(refprod) {
-        alert(refprod);
-   
- 
-        var modalApagarConfirm = $('#modalApagarConfirm');
-        modalApagarConfirm.html('<a href="Produtos/Apagar/' + row + '" class="btn btn-danger" role="button">Confirmar</a>');
-        $("#btnModal").trigger("click");
- 
+    var ConfirmApagarProduto = function (Ref_Produto) {
+        $("#hiddenRef").val(Ref_Produto);
+        $("#myModal").modal('show');
+
+    }
+
+    var ApagarProduto = function () {
+        var Ref_Produto = $("#hiddenRef").val();
+        $.ajax({
+
+            type: "POST",
+            url: "/Produtos/Apagar",
+            data: { Id: Ref_Produto },
+            success: function (result) {
+
+                $("#myModal").modal("hide");
+                $("#row_" + Ref_Produto).remove();
+                location.reload(true);
+            }
+
+        })
     }
 
     //Edit event handler.
@@ -183,13 +224,13 @@ else
 
                 if (btn1.style.display === "none") {
                     row.find(".update").hide();
-                    //row.find(".apagar").hide();
+                    row.find(".delete").hide();
                     row.find(".txtstockfis").hide();
                     $(this).find("span").show();
 
                 } else {
                     row.find(".update").show();
-                    //row.find(".apagar").show();
+                    row.find(".delete").show();
                     row.find(".txtstockfis").show();
                     $(this).find("span").hide();
 

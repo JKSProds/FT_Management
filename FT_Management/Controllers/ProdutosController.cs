@@ -218,12 +218,13 @@ namespace FT_Management.Controllers
         // POST: Produtos/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Apagar(string Id)
         {
             try
             {
-                // TODO: Add delete logic here
 
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                context.ApagarArtigo(context.ObterProduto(Id));
                 return RedirectToAction(nameof(Index));
             }
             catch
