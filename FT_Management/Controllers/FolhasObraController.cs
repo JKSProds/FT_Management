@@ -46,10 +46,6 @@ namespace FT_Management.Controllers
             folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
             folhaObra.IdCartao = IdCartao == null ? "" : IdCartao;
 
-            TrelloConector trello = new TrelloConector();
-            if (folhaObra.RelatorioServico != String.Empty || folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-            //if (folhaObra.SituacoesPendentes != String.Empty || folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
-
             return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
         }
@@ -146,11 +142,6 @@ namespace FT_Management.Controllers
             folhaObra.IdFolhaObra = id;
             context.NovaFolhaObra(folhaObra);
 
-            TrelloConector trello = new TrelloConector();
-            if (folhaObra.RelatorioServico != String.Empty || folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-            //if (folhaObra.SituacoesPendentes != String.Empty || folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
-
-            trello.NovoAnexo(folhaObra.IdCartao, context.PreencherFormularioFolhaObra(context.ObterFolhaObra(id)).ToArray(), "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf");
             return RedirectToAction("Editar", new { id = id});
 
         }

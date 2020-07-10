@@ -202,7 +202,6 @@ namespace FT_Management.Models
                 wr = null;
             }
         }
-
         private dynamic GetTrelloJson(string url)
         {
             string urlAddress = url;

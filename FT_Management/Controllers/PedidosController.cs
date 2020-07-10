@@ -61,5 +61,23 @@ namespace FT_Management.Controllers
 
             return View(cartao);
         }
+
+        public ActionResult ValidarPedido(string idCartao, string estado)
+        {
+
+            TrelloConector trello = new TrelloConector();
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            TrelloCartoes cartao = trello.ObterCartao(idCartao);
+
+            foreach (var folhaObra in context.ObterListaFolhasObraCartao(idCartao))
+            {
+                if (folhaObra.RelatorioServico != String.Empty || folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
+                //if (folhaObra.SituacoesPendentes != String.Empty || folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
+
+                trello.NovoAnexo(folhaObra.IdCartao, context.PreencherFormularioFolhaObra(folhaObra).ToArray(), "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf");
+            }
+            return RedirectToAction("ListaPedidos", new { idQuadro = cartao.IdQuadro, idlista = cartao.IdLista});
+        }
     }
 }
