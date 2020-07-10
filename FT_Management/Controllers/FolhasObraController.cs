@@ -23,18 +23,32 @@ namespace FT_Management.Controllers
         // GET: FolhasObraController/Create
         public ActionResult Adicionar(string idCartao)
         {
-            //FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             if (idCartao == null) idCartao = "";
             ViewData["IdCartao"] = idCartao;
+            TrelloCartoes cartao = trello.ObterCartao(idCartao);
+            string nSerie = TrelloConector.getBetween(cartao.DescricaoCartao, "Serial Number: ", "\r");
+            string ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", "\r");
+
+            if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "INC", " "); }
+
             FolhaObra folha = new FolhaObra
             {
-                EquipamentoServico = new Equipamento(),
+                ReferenciaServico = ticketNumero,
+                ClienteServico = new Cliente { 
+                    NomeCliente = cartao.NomeCartao
+                },
+                EquipamentoServico = new Equipamento { 
+                    NumeroSerieEquipamento = nSerie
+                },
                 PecasServico = new List<Produto>(),
                 IntervencaosServico = new List<Intervencao>(),
             };
 
             return View(folha);
         }
+
+
 
         // POST: FolhasObraController/Create
         [HttpPost]
