@@ -72,11 +72,11 @@ namespace FT_Management.Controllers
 
             foreach (var folhaObra in context.ObterListaFolhasObraCartao(idCartao))
             {
-                if (folhaObra.RelatorioServico != String.Empty || folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-                //if (folhaObra.SituacoesPendentes != String.Empty || folhaObra.SituacoesPendentes != null) { trello.NovoComentario(folhaObra.IdCartao, "Pendentes: " + folhaObra.SituacoesPendentes); }
-
+                if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
                 trello.NovoAnexo(folhaObra.IdCartao, context.PreencherFormularioFolhaObra(folhaObra).ToArray(), "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf");
             }
+
+            trello.NovaLabel(idCartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
             return RedirectToAction("ListaPedidos", new { idQuadro = cartao.IdQuadro, idlista = cartao.IdLista});
         }
     }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -128,13 +129,28 @@ namespace FT_Management.Models
 
             return Anexos;
         }
+        public List<TrelloLabels> ObterLabels(string IdQuadro)
+        {
+            List<TrelloLabels> Labels = new List<TrelloLabels>();
+            foreach (var label in GetTrelloJson("https://api.trello.com/1/boards/"+IdQuadro+"/labels?key="+API_KEY+"&token="+TOKEN+""))
+            {
+                Labels.Add(new TrelloLabels
+                {
+                    IdLabel = label.id,
+                    Nome = label.name,
+                    Color = label.color
+                });
+            }
+
+            return Labels;
+        }
+        public void ApagarLabel(string IdLabel, string IdCartao)
+        {
+            DeleteTrello("https://api.trello.com/1/cards/" + IdCartao + "/idLabels/" + IdLabel + "?key=" + API_KEY + "&token=" + TOKEN + "");
+        }
         public void NovoComentario(string IdCartao, string Comentario)
         {
-            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "", "");
-        }
-        public void ApagarAnexo(string IdAnexo, string IdCartao)
-        {
-            DeleteTrello("https://api.trello.com/1/cards/" + IdCartao + "/attachments/" + IdAnexo + "?key=" + API_KEY + "&token=" + TOKEN + "");
+            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario.Replace("\r\n", string.Empty)).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "", "");
         }
         public void NovoAnexo(string IdCartao, byte[] documento, string NomeDocumento)
         {
@@ -146,6 +162,20 @@ namespace FT_Management.Models
                 HttpUploadFile("https://api.trello.com/1/cards/"+IdCartao+"/attachments?key="+API_KEY+"&token="+TOKEN+"",
                      documento, "file", "application/pdf", nvc, NomeDocumento);
 
+        }
+        public void NovaLabel(string IdCartao, string Cor)
+        {
+            foreach (var label in ObterLabels(ObterCartao(IdCartao).IdQuadro))
+            {
+                ApagarLabel(label.IdLabel, IdCartao);
+            }
+            var json = JsonConvert.SerializeObject(new { value = ObterLabels(ObterCartao(IdCartao).IdQuadro).Where(l => l.Color == Cor).First().IdLabel });
+            PostTrelloJson("https://api.trello.com/1/cards/"+IdCartao+"/idLabels?key="+API_KEY+"&token="+TOKEN+"", json);
+
+        }
+        public void ApagarAnexo(string IdAnexo, string IdCartao)
+        {
+            DeleteTrello("https://api.trello.com/1/cards/" + IdCartao + "/attachments/" + IdAnexo + "?key=" + API_KEY + "&token=" + TOKEN + "");
         }
 
         public static void HttpUploadFile(string url, byte[] file, string paramName, string contentType, NameValueCollection nvc, string NomeDocumento)
@@ -327,4 +357,10 @@ namespace FT_Management.Models
         public string mimeType { get; set; }
     }
    
+    public class TrelloLabels
+    {
+        public string IdLabel { get; set; }
+        public string Nome { get; set; }
+        public string Color { get; set; }
+    }
 }
