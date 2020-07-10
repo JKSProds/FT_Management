@@ -63,9 +63,8 @@ namespace FT_Management.Controllers
                     HoraInicio = DateTime.Parse(horainicio),
                     HoraFim = DateTime.Parse(horafim)
                 };
-                context.NovaIntervencao(intervencao);
 
-                return Content(string.Empty);
+                return Content(context.NovaIntervencao(intervencao).ToString());
 
         }
 
@@ -81,7 +80,7 @@ namespace FT_Management.Controllers
                 };
                 context.NovaPecaIntervencao(produto, idfolhaobra);
 
-                return Content(string.Empty);
+                return Content(referencia);
         }
 
         public JsonResult ObterDesignacaoProduto (string RefProduto)
@@ -142,7 +141,7 @@ namespace FT_Management.Controllers
             folhaObra.IdFolhaObra = id;
             context.NovaFolhaObra(folhaObra);
 
-            return RedirectToAction("Editar", new { id = id});
+            return RedirectToAction("Pedido", "Pedidos", new { idCartao = folhaObra.IdCartao});
 
         }
 

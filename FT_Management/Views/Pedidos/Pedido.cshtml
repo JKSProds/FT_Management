@@ -20,13 +20,13 @@
 </div>
 
 <br />
-<a class="btn btn-primary btn-block btn-lg" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
+<a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
 
 
 @if (Model.FolhasObra.Count() == 0)
 {
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas folhas de obra!</button>
+    <button class="btn btn-lg btn-danger btn-block form-group disabled">Não foram encontradas folhas de obra!</button>
 }
 else
 {
@@ -70,7 +70,7 @@ else
 @if (Model.Comentarios.Count() == 0)
 {
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontrados comentários!</button>
+    <button class="btn btn-lg btn-danger form-group btn-block disabled">Não foram encontrados comentários!</button>
 }
 else
 {
@@ -111,5 +111,5 @@ else
 
 <div>
     <br />
-    <a class="btn-link" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'">Voltar</a>
+    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'">< Voltar</a>
 </div>

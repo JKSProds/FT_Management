@@ -257,56 +257,51 @@
                             </div>
                         </div>
                     </div>
-                    @if (Model.IntervencaosServico.Count == 0)
-                    {
-                        <br />
-                        <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas intervenções associadas a esta folha de obra!</button>
-                        <br />
-                    }
-                    else
-                    {
-                        <table class="table table-hover" id="tblIntervencao">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Data
-                                    </th>
-                                    <th>
-                                        Hora Inicio
-                                    </th>
-                                    <th>
-                                        Hora Fim
-                                    </th>
-                                    <th>
-                                        Tecnico
-                                    </th>
-                                    <th></th>
+
+                    <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.IntervencaosServico.Count() == 0 ? "" : "d-none")" id="no-int">Não foram encontradas intervenções associadas a esta folha de obra!</button>
+
+                    <table class="table table-hover @(Model.IntervencaosServico.Count() == 0 ? "d-none" : "")" id="tblIntervencao">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Data
+                                </th>
+                                <th>
+                                    Hora Inicio
+                                </th>
+                                <th>
+                                    Hora Fim
+                                </th>
+                                <th>
+                                    Tecnico
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.IntervencaosServico)
+                            {
+                                <tr id="row_@item.IdIntervencao">
+                                    <td>
+                                        <span>@item.DataServiço.ToString("dd-MM-yyyy")</span>
+                                    </td>
+                                    <td>
+                                        <span>@item.HoraInicio.ToString("HH:mm")</span>
+                                    </td>
+                                    <td>
+                                        <span>@item.HoraFim.ToString("HH:mm")</span>
+                                    </td>
+                                    <td>
+                                        <span>@item.NomeTecnico</span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.IntervencaosServico)
-                                {
-                                    <tr id="row_@item.IdFolhaObra">
-                                        <td>
-                                            <span>@item.DataServiço.ToString("dd/MM/yyyy")</span>
-                                        </td>
-                                        <td>
-                                            <span>@item.HoraInicio.ToString("HH:mm")</span>
-                                        </td>
-                                        <td>
-                                            <span>@item.HoraFim.ToString("HH:mm")</span>
-                                        </td>
-                                        <td>
-                                            <span>@item.NomeTecnico</span>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
+                            }
+                        </tbody>
+                    </table>
+
                     <div class="modal fade" id="myModal">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -392,50 +387,43 @@
                             </div>
                         </div>
                     </div>
-                    @if (Model.PecasServico.Count() == 0)
-                    {
-                        <br />
-                        <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas peças associadas a esta folha de obra!</button>
-                        <br />
-                    }
-                    else
-                    {
-                        <table class="table table-hover" id="tblPecas">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Referencia
-                                    </th>
-                                    <th>
-                                        Designação
-                                    </th>
-                                    <th>
-                                        Quantidade
-                                    </th>
-                                    <th></th>
+                    <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.PecasServico.Count() == 0 ? "" : "d-none")" id="no-pecas">Não foram encontradas peças associadas a esta folha de obra!</button>
+
+                    <table class="table table-hover @(Model.PecasServico.Count() == 0 ? "d-none" : "")" id="tblPecas">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Referencia
+                                </th>
+                                <th>
+                                    Designação
+                                </th>
+                                <th>
+                                    Quantidade
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PecasServico)
+                            {
+                                <tr id="linha_@item.Ref_Produto">
+                                    <td>
+                                        <span>@item.Ref_Produto</span>
+                                    </td>
+                                    <td>
+                                        <span>@item.Designacao_Produto</span>
+                                    </td>
+                                    <td>
+                                        <span>@item.Stock_Fisico</span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.PecasServico)
-                                {
-                                    <tr id="row_@item.Ref_Produto">
-                                        <td>
-                                            <span>@item.Ref_Produto</span>
-                                        </td>
-                                        <td>
-                                            <span>@item.Designacao_Produto</span>
-                                        </td>
-                                        <td>
-                                            <span>@item.Stock_Fisico</span>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
+                            }
+                        </tbody>
+                    </table>
                     <div class="modal fade" id="myModal2">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -462,12 +450,10 @@
                 </div>
                 </div>
                     <div class="form-group">
-                        <input type="submit" value="Atualizar" class="btn btn-primary btn-block btn-lg" />
+                        <input type="submit" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" />
                     </div>
 </form>
-        <div>
-            <a class="btn-link" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = Model.IdCartao }))'">Voltar</a>
-        </div>
+      
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -491,7 +477,14 @@
 
                     $("#myModal").modal("hide");
                     $("#row_" + IdIntervencao).remove();
-                    location.reload(true);
+
+
+                    if (document.getElementById("tblIntervencao").rows.length == 1) {
+
+                        document.getElementById('no-int').classList.remove("d-none");
+                        document.getElementById('tblIntervencao').classList.add("d-none");
+
+                    }
                 }
 
             })
@@ -511,10 +504,18 @@
             url: "/FolhasObra/ApagarPeca",
             data: { Ref: IdPeca, Id: document.getElementById("txtIdFolhaObra").value },
             success: function (result) {
-
+                //alert(IdPeca);
                 $("#myModal2").modal("hide");
-                $("#row_" + IdPeca).remove();
-                location.reload(true);
+                var row = document.getElementById("linha_" + IdPeca);
+                var parent = row.parentNode;
+                parent.removeChild(row);
+
+                if (document.getElementById("tblPecas").rows.length == 1) {
+                    
+                    document.getElementById('no-pecas').classList.remove("d-none");
+                    document.getElementById('tblPecas').classList.add("d-none");
+
+                }
             }
 
         })
@@ -601,7 +602,19 @@
             traditional: true,
             success: function (result) {
                 $(function () {
-                    location.reload(true);
+                    document.getElementById('no-pecas') != null ? document.getElementById('no-pecas').classList.add("d-none") : "";
+                    document.getElementById('tblPecas').classList.remove("d-none");
+                    var newRow = document.getElementById('tblPecas').insertRow();
+                    newRow.setAttribute("id", "linha_" + result);
+                    newRow.innerHTML = "<td>" + peca.referencia + "</td><td>" + peca.designacao + "</td><td>" + peca.quantidade + "</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarPeca('" + result + "')\"><i class=\"fas fa-trash\"></i> </a></td>";
+                    $('#exampleModal2').modal('hide');
+                    $('#exampleModal2')
+                        .find("input,textarea,select")
+                        .val('')
+                        .end()
+                        .find("input[type=checkbox], input[type=radio]")
+                        .prop("checked", "")
+                        .end();
                 });
             }
         });
@@ -624,10 +637,18 @@
             traditional: true,
             success: function (result) {
                 $(function () {
-                    location.reload(true);
+                    //alert(result);
+                    document.getElementById('no-int') != null ? document.getElementById('no-int').classList.add("d-none") : "";
+                    document.getElementById('tblIntervencao').classList.remove("d-none");
+                    var newRow = document.getElementById('tblIntervencao').insertRow();
+                    newRow.setAttribute("id", "row_" + result);
+                    newRow.innerHTML = "<td>" + intervencao.data + "</td><td>" + intervencao.horainicio + "</td><td>" + intervencao.horafim + "</td><td>" + intervencao.tecnico +"</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarIntervencao("+result+")\"><i class=\"fas fa-trash\"></i> </a></td>";
+                    $('#exampleModal').modal('toggle');
                 });
             }
         });
 
     }
+
+
 </script>
