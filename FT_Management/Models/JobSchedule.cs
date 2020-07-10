@@ -61,8 +61,10 @@ public class HelloWorldJob : IJob
                 Attachment att = new Attachment(pdf, "FolhaObra_" + folha.IdFolhaObra, System.Net.Mime.MediaTypeNames.Application.Pdf);
                     myMail.Attachments.Add(att);
             }
-
+            if (myMail.Attachments.Count > 0)
+            {
                 mySmtpClient.Send(myMail);
+            }
         }
 
         catch (SmtpException ex)
