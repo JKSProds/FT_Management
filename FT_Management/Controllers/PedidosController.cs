@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FT_Management.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FT_Management.Controllers
 {
@@ -76,6 +77,14 @@ namespace FT_Management.Controllers
 
             trello.NovaLabel(idCartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
             return RedirectToAction("ListaPedidos", new { idQuadro = cartao.IdQuadro, idlista = cartao.IdLista});
+        }
+        public ActionResult AdicionarComentario(string idcartao, string comentario)
+        {
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+
+            trello.NovoComentario(idcartao, comentario);
+            TrelloComentarios Comentario = trello.ObterComentarios(idcartao).Where(c => c.Comentario.Replace("\r\n", "") == comentario).First();
+            return Json(Comentario);
         }
     }
 }

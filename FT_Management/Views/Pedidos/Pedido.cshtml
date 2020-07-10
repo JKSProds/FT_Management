@@ -67,14 +67,12 @@ else
     </table>
 }
 
-@if (Model.Comentarios.Count() == 0)
-{
-    <br />
-    <button class="btn btn-lg btn-danger form-group btn-block disabled">Não foram encontrados comentários!</button>
-}
-else
-{
-    <table class="table table-hover">
+<br />
+<a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario</a>
+
+    <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com">Não foram encontrados comentários!</button>
+
+    <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
         <thead>
             <tr>
                 <th>
@@ -107,9 +105,83 @@ else
             }
         </tbody>
     </table>
-}
+
 
 <div>
     <br />
     <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'">< Voltar</a>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Adicionar Comentário</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="txtComentario" class="form-control" rows="5" placeholder="Comentário" required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="AdicionarComentario()" href="javascript:;">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="hiddenCartaoId" />
+<script>
+    var ConfirmAdicionarComentario = function (IdCartao) {
+        $("#hiddenCartaoId").val(IdCartao);
+        $("#myModal").modal('show');
+
+    }
+    function AdicionarComentario(IdCartao) {
+        {
+
+            var comment = {
+                idcartao: document.getElementById("hiddenCartaoId").value,
+                comentario: document.getElementById("txtComentario").value
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/AdicionarComentario",
+                data: comment,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        //alert(JSON.stringify(result));
+                        document.getElementById('no-com') != null ? document.getElementById('no-com').classList.add("d-none") : "";
+                        document.getElementById('tblComentarios').classList.remove("d-none");
+
+                        var m = new Date(result.dataComentario);
+                        var dateString =
+                            ("0" + m.getUTCDate()).slice(-2) + "/" +
+                            ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" +
+                            m.getUTCFullYear() + " " +
+                            ("0" + m.getUTCHours()).slice(-2) + ":" +
+                            ("0" + m.getUTCMinutes()).slice(-2);
+
+                        //var newRow = document.getElementById('tblComentarios').insertRow();
+                        var row = "<td>" + result.utilizador + "</td><td>" + result.comentario + "</td><td>" + dateString + "</td>";
+                        $(row).insertAfter("#tblComentarios tr:first");
+
+                        $('#myModal').modal('toggle');
+                        $('#myModal')
+                            .find("input,textarea,select")
+                            .val('')
+                            .end()
+                            .find("input[type=checkbox], input[type=radio]")
+                            .prop("checked", "")
+                            .end();
+                    });
+                }
+            });
+
+        }
+    }
+</script>
