@@ -18,8 +18,14 @@ namespace FT_Management.Models
 {
     public class TrelloConector
     {
-        private const string API_KEY = "d2c48cf9456913b82f7890d96892e760";
-        private const string TOKEN = "fdc25865a518d1f2cefbafb2a13fcf2ced7a37caa872fe02451d1013e81ab9f3";
+        private string API_KEY;
+        private string TOKEN;
+
+        public TrelloConector(string _API_KEY, string _TOKEN)
+        {
+            API_KEY = _API_KEY;
+            TOKEN = _TOKEN;
+        }
 
         public List<TrelloQuadros> ObterQuadros()
         {

@@ -44,6 +44,8 @@ namespace FT_Management
             services.AddHostedService<QuartzHostedService>();
 
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value, Configuration.GetConnectionString("PHC_DB"))));
+            services.Add(new ServiceDescriptor(typeof(TrelloConector), new TrelloConector(Configuration.GetSection("Trello").GetSection("API_KEY").Value, Configuration.GetSection("Trello").GetSection("TOKEN").Value)));
+
             Console.WriteLine("Starting app");
         }
 

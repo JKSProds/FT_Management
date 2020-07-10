@@ -19,9 +19,9 @@ namespace FT_Management.Models
     public class FT_ManagementContext
     {
 
-        public string ConnectionString { get; set; }
-        public string FT_Logo_Print { get; set; }
-        public string PHC_DB_Conn { get; set; }
+        private string ConnectionString { get; set; }
+        private string FT_Logo_Print { get; set; }
+        private string PHC_DB_Conn { get; set; }
 
         public FT_ManagementContext(string connectionString, string FT_Logo, string PHC_DB)
         {

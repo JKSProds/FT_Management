@@ -13,14 +13,14 @@ namespace FT_Management.Controllers
         // GET: Pedidos
         public ActionResult Index()
         {
-            TrelloConector trello = new TrelloConector();
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+
 
             return View(trello.ObterQuadros());
         }
-
         public ActionResult ListaPedidos(string idQuadro, string idlista)
         {
-            TrelloConector trello = new TrelloConector();
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
 
             List<TrelloListas> trelloListas = trello.ObterListas(idQuadro);
 
@@ -45,12 +45,11 @@ namespace FT_Management.Controllers
 
             return View(trelloListas);
         }
-
         public ActionResult Pedido(string idCartao)
         {
             if (idCartao == null) return RedirectToAction("Index");
 
-            TrelloConector trello = new TrelloConector();
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
@@ -61,11 +60,10 @@ namespace FT_Management.Controllers
 
             return View(cartao);
         }
-
         public ActionResult ValidarPedido(string idCartao, string estado)
         {
 
-            TrelloConector trello = new TrelloConector();
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
