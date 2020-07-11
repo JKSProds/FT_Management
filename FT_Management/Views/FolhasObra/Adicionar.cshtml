@@ -152,6 +152,12 @@
 </form>
 
 
+<div>
+    <br />
+    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = Model.IdCartao}))'">Cancelar</a>
+</div>
+
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

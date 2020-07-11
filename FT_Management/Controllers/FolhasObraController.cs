@@ -35,14 +35,15 @@ namespace FT_Management.Controllers
             FolhaObra folha = new FolhaObra
             {
                 ReferenciaServico = ticketNumero,
-                ClienteServico = new Cliente { 
+                ClienteServico = new Cliente {
                     NomeCliente = cartao.NomeCartao
                 },
-                EquipamentoServico = new Equipamento { 
+                EquipamentoServico = new Equipamento {
                     NumeroSerieEquipamento = nSerie
                 },
                 PecasServico = new List<Produto>(),
                 IntervencaosServico = new List<Intervencao>(),
+                IdCartao = idCartao,
             };
 
             return View(folha);
