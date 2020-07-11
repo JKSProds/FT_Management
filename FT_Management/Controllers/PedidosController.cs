@@ -32,15 +32,17 @@ namespace FT_Management.Controllers
 
                     if (lista.NomeLista.Contains(DateTime.Now.ToString("dd/MM/yyyy")))
                     {
-                        lista.ListaCartoes = trello.ObterCartoes(lista.IdLista);
                         idlista = lista.IdLista;
                     }
                 }
+                if (idlista == null && trelloListas.Count > 0)
+                {
+                    idlista = trelloListas.First().IdLista;
+
+                }
             }
-            else
-            {
-                trelloListas.Where(l => l.IdLista == idlista).FirstOrDefault().ListaCartoes = trello.ObterCartoes(idlista);
-            }
+
+             trelloListas.Where(l => l.IdLista == idlista).FirstOrDefault().ListaCartoes = trello.ObterCartoes(idlista);
 
             ViewData["SelectedLista"] = idlista;
 

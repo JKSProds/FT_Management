@@ -31,6 +31,7 @@ namespace FT_Management.Controllers
             string ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", "\\]");
 
             if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "INC", " "); }
+            if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", "\r"); }
 
             FolhaObra folha = new FolhaObra
             {
