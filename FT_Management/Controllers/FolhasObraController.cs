@@ -27,11 +27,11 @@ namespace FT_Management.Controllers
             if (idCartao == null) idCartao = "";
             ViewData["IdCartao"] = idCartao;
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
-            string nSerie = TrelloConector.getBetween(cartao.DescricaoCartao, "Serial Number:", "\r");
+            string nSerie = TrelloConector.getBetween(cartao.DescricaoCartao, "Serial Number:", Environment.NewLine);
             string ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", "\\]");
 
             if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "INC", " "); }
-            if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", "\r"); }
+            if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", Environment.NewLine); }
 
             FolhaObra folha = new FolhaObra
             {
