@@ -20,5 +20,5 @@ rm -r FT_Management
 
 docker run -d -p 8082:80 --restart always --name FT_Management ftmanagement 
 
-docker image prune -a
+docker image prune -a -f
 
