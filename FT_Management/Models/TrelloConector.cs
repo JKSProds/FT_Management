@@ -156,7 +156,7 @@ namespace FT_Management.Models
         }
         public void NovoComentario(string IdCartao, string Comentario)
         {
-            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario.Replace("\r\n", string.Empty)).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "", "");
+            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario.Replace(Environment.NewLine, string.Empty)).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "", "");
         
         }
         public void NovoAnexo(string IdCartao, byte[] documento, string NomeDocumento)
