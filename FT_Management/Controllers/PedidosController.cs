@@ -85,7 +85,7 @@ namespace FT_Management.Controllers
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
 
             trello.NovoComentario(idcartao, comentario);
-            TrelloComentarios Comentario = trello.ObterComentarios(idcartao).Where(c => c.Comentario.Replace("\r\n", "") == comentario).First();
+            TrelloComentarios Comentario = trello.ObterComentarios(idcartao).Where(c => c.Comentario.Replace(Environment.NewLine, "") == comentario).First();
             return Json(Comentario);
         }
     }
