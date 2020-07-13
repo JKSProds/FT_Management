@@ -69,5 +69,7 @@ namespace FT_Management.Models
         public Equipamento EquipamentoServico { get; set; }
         public Cliente ClienteServico { get; set; }
         public string IdCartao { get; set; }
+        [Display(Name = "Conferido por")]
+        public string ConferidoPor { get; set; }
     }
 }

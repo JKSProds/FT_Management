@@ -63,6 +63,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
             folhaObra.IdCartao = IdCartao == null ? "" : IdCartao;
+            if (folhaObra.ClienteServico.PessoaContatoCliente != string.Empty && folhaObra.ClienteServico.PessoaContatoCliente != null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
+            folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
 
             return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
@@ -160,8 +162,9 @@ namespace FT_Management.Controllers
         public ActionResult Editar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            return View(context.ObterFolhaObra(id));
+            FolhaObra folhaObra = context.ObterFolhaObra(id);
+            if (folhaObra.ConferidoPor == string.Empty) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
+            return View(folhaObra);
         }
 
         // POST: FolhasObraController/Edit/5
@@ -171,6 +174,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             folhaObra.IdFolhaObra = id;
+            folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
             context.NovaFolhaObra(folhaObra);
 
             return RedirectToAction("Pedido", "Pedidos", new { idCartao = folhaObra.IdCartao});

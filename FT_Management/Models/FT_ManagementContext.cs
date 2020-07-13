@@ -39,8 +39,6 @@ namespace FT_Management.Models
             } 
         }
 
-
-
         public List<Produto> ObterListaProdutos(string referencia, string desig)
         {
             List<Produto> LstProdutos = new List<Produto>();
@@ -182,6 +180,7 @@ namespace FT_Management.Models
                             EstadoEquipamento = result["EstadoEquipamento"],
                             RelatorioServico = result["RelatorioServico"],
                             SituacoesPendentes = result["SituacoesPendentes"],
+                            ConferidoPor = result["ConferidoPor"],
                             //IdCartao = result.Reader.IsDBNull(result["IdCartaoTrello"]) ? "" : result["IdCartaoTrello"],
                             IdCartao = result["IdCartaoTrello"],
                             EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
@@ -216,6 +215,7 @@ namespace FT_Management.Models
                             EstadoEquipamento = result["EstadoEquipamento"],
                             RelatorioServico = result["RelatorioServico"],
                             SituacoesPendentes = result["SituacoesPendentes"],
+                            ConferidoPor = result["ConferidoPor"],
                             IdCartao = result["IdCartaoTrello"],
                             EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                             ClienteServico = ObterCliente(result["IdCliente"]),
@@ -294,6 +294,7 @@ namespace FT_Management.Models
                         EstadoEquipamento = result["EstadoEquipamento"],
                         RelatorioServico = result["RelatorioServico"],
                         SituacoesPendentes = result["SituacoesPendentes"],
+                        ConferidoPor = result["ConferidoPor"],
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                         ClienteServico = ObterCliente(result["IdCliente"]),
@@ -445,11 +446,11 @@ namespace FT_Management.Models
         {
             folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") + 1 : folhaObra.IdFolhaObra;
 
-            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente) VALUES ";
+            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "') \r\n");
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '"+folhaObra.ConferidoPor+"', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "') \r\n");
             
-            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente);";
+            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente);";
 
             using (Database db = ConnectionString)
             {
@@ -823,8 +824,8 @@ namespace FT_Management.Models
                     if (p == 10) break;
                 }
             }
-
-            pdfFormFields.SetField("o cliente", folhaobra.ClienteServico.PessoaContatoCliente);
+            if (folhaobra.ConferidoPor == string.Empty) folhaobra.ConferidoPor = folhaobra.ClienteServico.PessoaContatoCliente;
+            pdfFormFields.SetField("o cliente", folhaobra.ConferidoPor);
 
             pdfStamper.FormFlattening = true;
             pdfStamper.SetFullCompression();
