@@ -163,7 +163,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             FolhaObra folhaObra = context.ObterFolhaObra(id);
-            if (folhaObra.ConferidoPor == string.Empty) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
+            if (folhaObra.ConferidoPor == string.Empty || folhaObra.ConferidoPor == null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
             return View(folhaObra);
         }
 
