@@ -5,151 +5,213 @@
     ViewData["Title"] = "Pedido";
 }
 
-<div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-    <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
-    <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
-    <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>
+    <div class="container-fluid">
 
-</div>
-<br />
-<hr />
+        <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
+            <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
+            <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>
 
-<h1 class="text-center">
-    @Html.DisplayFor(model => model.NomeCartao)
-</h1>
-<hr />
-<div class="tab-content" id="v-pills-tabContent">
-    <div class="tab-pane fade show active" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
+        </div>
         <br />
+        <hr />
 
+        <h1 class="text-center">
+            @Html.DisplayFor(model => model.NomeCartao)
+        </h1>
+        <hr />
+        <div class="tab-content" id="v-pills-tabContent">
+            <div class="tab-pane fade show active" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
+                <br />
+
+
+                <div>
+                    <dl class="row">
+                        <dd class="col-sm-12">
+                            <span style="white-space: pre-line">@Model.DescricaoCartao</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="tab-pane fade show" id="v-pills-folhas" role="tabpanel" aria-labelledby="v-pills-folhas-tab">
+
+                <br />
+                <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
+
+
+                @if (Model.FolhasObra.Count() == 0)
+                {
+                    <br />
+                    <button class="btn btn-lg btn-danger btn-block form-group disabled">Não foram encontradas folhas de obra!</button>
+                }
+                else
+                {
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FolhasObra.First().DataServico)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FolhasObra.First().ClienteServico.NomeCliente)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.FolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.FolhasObra)
+                            {
+                                <tr>
+                                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                        <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
+                                    </td>
+                                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                        @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                                    </td>
+                                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                        @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                                    </td>
+                                    <td>
+                                        <div class="btn-group float-right">
+                                            <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                            <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)"><i class="fas fa-paper-plane" style="font-size:20px"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+            <div class="tab-pane fade show" id="v-pills-com" role="tabpanel" aria-labelledby="v-pills-com-tab">
+
+                <br />
+                <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario</a>
+
+                <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com">Não foram encontrados comentários!</button>
+
+                <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().Utilizador)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().Comentario)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().DataComentario)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Comentarios)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Utilizador)
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Comentario)
+                                </td>
+                                <td>
+                                    <span>@item.DataComentario.ToString("dd/MM/yyyy HH:mm")</span>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <div>
-            <dl class="row">
-                <dd class="col-sm-12">
-                    <span style="white-space: pre-line">@Model.DescricaoCartao</span>
-                </dd>
-            </dl>
-        </div>
-    </div>
-    <div class="tab-pane fade show" id="v-pills-folhas" role="tabpanel" aria-labelledby="v-pills-folhas-tab">
-
-        <br />
-        <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
-
-
-        @if (Model.FolhasObra.Count() == 0)
-        {
             <br />
-            <button class="btn btn-lg btn-danger btn-block form-group disabled">Não foram encontradas folhas de obra!</button>
-        }
-        else
-        {
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FolhasObra.First().DataServico)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FolhasObra.First().ClienteServico.NomeCliente)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.FolhasObra)
-                    {
-                        <tr>
-                            <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
-                            </td>
-                            <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
-                            </td>
-                            <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
-                            </td>
-                            <td>
-                                <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
-    <div class="tab-pane fade show" id="v-pills-com" role="tabpanel" aria-labelledby="v-pills-com-tab">
+            <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'">< Voltar</a>
+        </div>
 
-        <br />
-        <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario</a>
-
-        <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com">Não foram encontrados comentários!</button>
-
-        <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Comentarios.First().Utilizador)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Comentarios.First().Comentario)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Comentarios.First().DataComentario)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Comentarios)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Utilizador)
-
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Comentario)
-                        </td>
-                        <td>
-                            <span>@item.DataComentario.ToString("dd/MM/yyyy HH:mm")</span>
-
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div>
-    <br />
-    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'">< Voltar</a>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Adicionar Comentário</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <textarea id="txtComentario" class="form-control" rows="5" placeholder="Comentário" required></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" onclick="AdicionarComentario()" href="javascript:;">Adicionar</button>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Adicionar Comentário</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="txtComentario" class="form-control" rows="5" placeholder="Comentário" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary" onclick="AdicionarComentario()" href="javascript:;">Adicionar</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Enviar Mail</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input id="txtEmail" type="email" class="form-control" placeholder="Email" value="" required />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary" onclick="EnviarEmail()" href="javascript:;">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="hiddenCartaoId" />
+        <input type="hidden" id="hiddenFolhaObraId" />
+
+        <!-- Toasts -->
+        <div aria-live="polite" aria-atomic="true">
+
+            <!-- Position it -->
+            <div style="position: absolute; top: 6rem; right: 1rem;">
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="6000" id="myToast">
+                    <div class="toast-header bg-success">
+                        <strong class="mr-auto">Informação</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Email enviado com sucesso!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="position: absolute; top: 6rem; right: 1rem;">
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="6000" id="myToast1">
+                <div class="toast-header bg-danger">
+                    <strong class="mr-auto">Erro</strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    Ocorreu um erro!
+                </div>
+            </div>
+        </div>
+
 </div>
-<input type="hidden" id="hiddenCartaoId" />
 <script>
     var ConfirmAdicionarComentario = function (IdCartao) {
         $("#hiddenCartaoId").val(IdCartao);
@@ -194,6 +256,80 @@
                             .end()
                             .find("input[type=checkbox], input[type=radio]")
                             .prop("checked", "")
+                            .end();
+                    });
+                }
+            });
+
+        }
+    }
+
+    var ConfirmEnviarEmail = function (IdFolhaObra) {
+        
+        $("#hiddenFolhaObraId").val(IdFolhaObra);
+
+        var json = {
+            id:IdFolhaObra
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/ObterEmailClienteFolhaObra",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                   // alert(JSON.stringify(result));
+                    document.getElementById("txtEmail").value = result;
+
+                });
+            }
+        });
+
+        $("#myModal2").modal('show');
+
+    }
+
+    function EnviarEmail() {
+        {
+            var json = {
+                id: document.getElementById("hiddenFolhaObraId").value,
+                emailDestino: document.getElementById("txtEmail").value
+            };
+            $.ajax({
+                type: "POST",
+                url: "/FolhasObra/EmailFolhaObra",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        if (result == "Sucesso") {
+                            $("#myToast").toast('show');
+
+                            var json = {
+                                id: document.getElementById("hiddenFolhaObraId").value,
+                                novoemail: document.getElementById("txtEmail").value
+                            };
+                            $.ajax({
+                                type: "POST",
+                                url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
+                                data: json,
+                                traditional: true,
+                                success: function (result) {
+                                    $(function () {
+                                    });
+                                }
+                            });
+
+                        } else {
+                            $("#myToast1").toast('show');
+                        }
+
+
+                        $('#myModal2').modal('toggle');
+                        $('#myModal2')
+                            .find("input,textarea,select")
+                            .val('')
                             .end();
                     });
                 }

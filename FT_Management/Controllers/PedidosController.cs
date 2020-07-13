@@ -56,7 +56,6 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
-
             if (cartao.IdCartao == null) return RedirectToAction("Index");
             cartao.FolhasObra = context.ObterListaFolhasObraCartao(idCartao);
             cartao.Comentarios = trello.ObterComentarios(idCartao);
