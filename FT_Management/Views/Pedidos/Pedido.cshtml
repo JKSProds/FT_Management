@@ -8,7 +8,7 @@
    <div class="container-fluid">
 
         <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-            <a class="nav-item nav-link active" style="font-size: 10px" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
+            <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
             <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
         </div>
         <br />
@@ -30,45 +30,6 @@
                         </dd>
                     </dl>
                 </div>
-
-                <br />
-                <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario</a>
-
-                <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com">Não foram encontrados comentários!</button>
-
-                <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Comentarios.First().Utilizador)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Comentarios.First().Comentario)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Comentarios.First().DataComentario)
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Comentarios)
-                        {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Utilizador)
-
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Comentario)
-                                </td>
-                                <td>
-                                    <span>@item.DataComentario.ToString("dd/MM/yyyy HH:mm")</span>
-
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
 
             </div>
             <div class="tab-pane fade show" id="v-pills-folhas" role="tabpanel" aria-labelledby="v-pills-folhas-tab">
@@ -123,6 +84,45 @@
                         </tbody>
                     </table>
                 }
+
+                <br />
+                <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario</a>
+
+                <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com">Não foram encontrados comentários!</button>
+
+                <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().Utilizador)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().Comentario)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().DataComentario)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Comentarios)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Utilizador)
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Comentario)
+                                </td>
+                                <td>
+                                    <span>@item.DataComentario.ToString("dd/MM/yyyy HH:mm")</span>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
 
