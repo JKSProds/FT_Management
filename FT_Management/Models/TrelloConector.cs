@@ -112,7 +112,7 @@ namespace FT_Management.Models
                     {
                         IdComentario = comentario.id,
                         IdCartao = comentario.data.card.id,
-                        Comentario = comentario.data.text.ToString().Replace("\n", Environment.NewLine),
+                        Comentario = comentario.data.text.ToString().Replace(Environment.NewLine, string.Empty),
                         DataComentario = comentario.date,
                         Utilizador = comentario.memberCreator.fullName
                     });

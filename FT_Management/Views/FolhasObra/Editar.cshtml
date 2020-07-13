@@ -468,6 +468,8 @@
 
     var ApagarIntervencao = function () {
         var IdIntervencao = $("#hiddenIntervencaoId").val();
+        $("#myModal").modal("hide");
+
             $.ajax({
 
                 type: "POST",
@@ -475,7 +477,6 @@
                 data: { Id: IdIntervencao },
                 success: function (result) {
 
-                    $("#myModal").modal("hide");
                     $("#row_" + IdIntervencao).remove();
 
 
@@ -498,6 +499,8 @@
 
     var ApagarPeca = function () {
         var IdPeca = $("#hiddenPecaId").val();
+        $("#myModal2").modal("hide");
+
         $.ajax({
 
             type: "POST",
@@ -505,7 +508,6 @@
             data: { Ref: IdPeca, Id: document.getElementById("txtIdFolhaObra").value },
             success: function (result) {
                 //alert(IdPeca);
-                $("#myModal2").modal("hide");
                 var row = document.getElementById("linha_" + IdPeca);
                 var parent = row.parentNode;
                 parent.removeChild(row);
@@ -595,6 +597,19 @@
             idfolhaobra: document.getElementById("txtIdFolhaObra").value
         };
 
+        $('#exampleModal2').modal('hide');
+        $('#exampleModal2')
+            .find("input,textarea,select")
+            .val('')
+            .end()
+            .find("input[type=checkbox], input[type=radio]")
+            .prop("checked", "")
+            .end()
+            .find("input[id=txtQuantidade]")
+            .val('1')
+            .end();
+
+
         $.ajax({
             type: "POST",
             url: "/FolhasObra/AdicionarPeca",
@@ -607,17 +622,6 @@
                     var newRow = document.getElementById('tblPecas').insertRow();
                     newRow.setAttribute("id", "linha_" + result);
                     newRow.innerHTML = "<td>" + peca.referencia + "</td><td>" + peca.designacao + "</td><td>" + peca.quantidade + "</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarPeca('" + result + "')\"><i class=\"fas fa-trash\"></i> </a></td>";
-                    $('#exampleModal2').modal('hide');
-                    $('#exampleModal2')
-                        .find("input,textarea,select")
-                        .val('')
-                        .end()
-                        .find("input[type=checkbox], input[type=radio]")
-                        .prop("checked", "")
-                        .end()
-                        .find("input[id=txtQuantidade]")
-                        .val('1')
-                        .end();
                 });
             }
         });
@@ -632,6 +636,7 @@
             tecnico: document.getElementById("txtTecnico").value,
             idfolhaobra: document.getElementById("txtIdFolhaObra").value
         };
+        $('#exampleModal').modal('toggle');
 
         $.ajax({
             type: "POST",
@@ -646,7 +651,6 @@
                     var newRow = document.getElementById('tblIntervencao').insertRow();
                     newRow.setAttribute("id", "row_" + result);
                     newRow.innerHTML = "<td>" + intervencao.data + "</td><td>" + intervencao.horainicio + "</td><td>" + intervencao.horafim + "</td><td>" + intervencao.tecnico +"</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarIntervencao("+result+")\"><i class=\"fas fa-trash\"></i> </a></td>";
-                    $('#exampleModal').modal('toggle');
                 });
             }
         });

@@ -226,6 +226,15 @@
                 comentario: document.getElementById("txtComentario").value
             };
 
+            $('#myModal').modal('toggle');
+            $('#myModal')
+                .find("input,textarea,select")
+                .val('')
+                .end()
+                .find("input[type=checkbox], input[type=radio]")
+                .prop("checked", "")
+                .end();
+
             $.ajax({
                 type: "POST",
                 url: "/Pedidos/AdicionarComentario",
@@ -249,14 +258,6 @@
                         var row = "<td>" + result.utilizador + "</td><td>" + result.comentario + "</td><td>" + dateString + "</td>";
                         $(row).insertAfter("#tblComentarios tr:first");
 
-                        $('#myModal').modal('toggle');
-                        $('#myModal')
-                            .find("input,textarea,select")
-                            .val('')
-                            .end()
-                            .find("input[type=checkbox], input[type=radio]")
-                            .prop("checked", "")
-                            .end();
                     });
                 }
             });
@@ -267,6 +268,7 @@
     var ConfirmEnviarEmail = function (IdFolhaObra) {
         
         $("#hiddenFolhaObraId").val(IdFolhaObra);
+        $("#myModal2").modal('show');
 
         var json = {
             id:IdFolhaObra
@@ -286,16 +288,23 @@
             }
         });
 
-        $("#myModal2").modal('show');
-
     }
 
     function EnviarEmail() {
         {
+            var idCartao = document.getElementById("hiddenFolhaObraId").value;
+            var emailDestino = document.getElementById("txtEmail").value; 
             var json = {
-                id: document.getElementById("hiddenFolhaObraId").value,
-                emailDestino: document.getElementById("txtEmail").value
+                id: idCartao,
+                emailDestino: emailDestino 
             };
+
+            $('#myModal2').modal('toggle');
+            $('#myModal2')
+                .find("input,textarea,select")
+                .val('')
+                .end();
+
             $.ajax({
                 type: "POST",
                 url: "/FolhasObra/EmailFolhaObra",
@@ -307,8 +316,8 @@
                             $("#myToast").toast('show');
 
                             var json = {
-                                id: document.getElementById("hiddenFolhaObraId").value,
-                                novoemail: document.getElementById("txtEmail").value
+                                id:idCartao,
+                                novoemail: emailDestino
                             };
                             $.ajax({
                                 type: "POST",
@@ -325,12 +334,6 @@
                             $("#myToast1").toast('show');
                         }
 
-
-                        $('#myModal2').modal('toggle');
-                        $('#myModal2')
-                            .find("input,textarea,select")
-                            .val('')
-                            .end();
                     });
                 }
             });
