@@ -4,81 +4,131 @@
     ViewData["Title"] = "Pedidos";
 }
 
-<h1>Pedidos</h1>
+    <h1>Pedidos</h1>
 
-<form method="get" action="ListaPedidos">
-    <div>
-        <select class="form-control" id="SelectLista" asp-items="@(new SelectList(Model, "IdLista", "NomeLista", @ViewData["SelectedLista"]))" onchange="submitdata()" name="idlista"></select>
-        <input type="hidden" id="hiddenQuadroID" value="@Model.First().IdQuadro" name="idQuadro" />
-    </div>
-</form>
-<hr />
+    <form method="get" action="ListaPedidos">
+        <div>
+            <select class="form-control" id="SelectLista" asp-items="@(new SelectList(Model, "IdLista", "NomeLista", @ViewData["SelectedLista"]))" onchange="submitdata()" name="idlista"></select>
+            <input type="hidden" id="hiddenQuadroID" value="@Model.First().IdQuadro" name="idQuadro" />
+        </div>
+    </form>
+    <hr />
 
-@if (Model.Count() == 0)
-{
-    <br />
-    <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas listas!</button>
-}
-else
-{
-
-    @foreach (var lista in Model)
+    @if (Model.Count() == 0)
     {
-        <div class="row">
-            @foreach (var item in lista.ListaCartoes)
-            {
+        <br />
+        <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas listas!</button>
+    }
+    else
+    {
 
-                <div class="col-sm-6 " style="margin-bottom: 10px">
-                    <div class="card mb-3">
-                        <div class="card-header @(item.CorLabel == "green" ? "card bg-success mb-3" : "") @(item.CorLabel == "yellow" ? "bg-warning" : "")@(item.CorLabel == "red" ? "bg-danger" : "")"> <h3>@item.NomeCartao </h3></div>
-                        <div class="card-body text-primary">
-                            <p class="card-text">
-                                <a class="btn btn-info btn-lg btn-block text-black-50" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = item.IdCartao }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
-                                <hr />
-                                <div class="btn-group-lg">
-                                    <a class="btn btn-success btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="location.href = '@(Url.Action("ValidarPedido", "Pedidos", new { idCartao = item.IdCartao, estado = "1" }))'")"><i class="fas fa-check float-left" style="margin-top:5px"></i>Serviço Concluido</a>
-                                    <a class="btn btn-warning btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="location.href = '@(Url.Action("ValidarPedido", "Pedidos", new { idCartao = item.IdCartao, estado = "2" }))'"><i class="fas fa-clock float-left" style="margin-top:5px"></i>Pendente</a>
-                                    <a class="btn btn-danger btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="location.href = '@(Url.Action("ValidarPedido", "Pedidos", new { idCartao = item.IdCartao, estado = "3" }))'"><i class="fas fa-exclamation float-left" style="margin-top:5px"></i>Não Concluido</a>
+        @foreach (var lista in Model)
+        {
+            <div class="row">
+                @foreach (var item in lista.ListaCartoes)
+                {
+
+                    <div class="col-sm-6 " style="margin-bottom: 10px">
+                        <div class="card mb-3">
+                            <div id="headerPedido_@item.IdCartao" class="card-header @(item.CorLabel == "green" ? "card bg-success mb-3" : "") @(item.CorLabel == "yellow" ? "bg-warning" : "")@(item.CorLabel == "red" ? "bg-danger" : "")"> <h3>@item.NomeCartao </h3></div>
+                            <div class="card-body text-primary">
+                                <p class="card-text">
+                                    <a class="btn btn-info btn-lg btn-block text-black-50" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = item.IdCartao }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
+                                    <hr />
+                                    <div class="btn-group-lg">
+                                        <a class="btn btn-success btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '1')"><i class="fas fa-check float-left" style="margin-top:5px"></i>Serviço Concluido</a>
+                                        <a class="btn btn-warning btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '2')"><i class="fas fa-clock float-left" style="margin-top:5px"></i>Pendente</a>
+                                        <a class="btn btn-danger btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '3')"><i class="fas fa-exclamation float-left" style="margin-top:5px"></i>Não Concluido</a>
+                                    </div>
+                                </p>
+                                <div class="card-footer">
+                                    <small>
+                                        Lista: @lista.NomeLista
+                                    </small>
                                 </div>
-                            </p>
-                            <div class="card-footer">
-                                <small>
-                                    Lista: @lista.NomeLista
-                                </small>
                             </div>
                         </div>
                     </div>
+
+                }
+            </div>
+        }
+    }
+    <div>
+        <br />
+        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Pedidos"))'">< Voltar</a>
+
+    </div>
+
+
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div aria-live="polite" aria-atomic="true">
+
+                <!-- Position it -->
+                <div style="position: absolute; top: 6rem; right: 1rem;">
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="6000" id="myToast">
+                        <div class="toast-header bg-success">
+                            <strong class="mr-auto">Informação</strong>
+                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="toast-body">
+                            Cartão atualizado com sucesso!
+                        </div>
+                    </div>
                 </div>
-
-            }
+            </div>
         </div>
-    }
-}
-<div>
-    <br />
-    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Pedidos"))'">< Voltar</a>
+    </div>
 
-</div>
+    <script>
+        function ValidarPedido(idcartao, estado) {
 
+            var json = {
+                idcartao:idcartao,
+                estado: estado
+            };
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/ValidarPedido",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        $("#myToast").toast('show');
+                        var element = document.getElementById("headerPedido_" + idcartao);
+                        element.classList = 'card-header';
+                        if (estado == '1') {
+                            element.classList.add("bg-success");
+                        } else if (estado == '2') {
+                            element.classList.add("bg-warning");
+                        } else {
+                            element.classList.add("bg-danger");
+                        }
+                        //this.location.reload(true);
+                    });
+                }
+            });
 
-<script>
+        }
+        function ChangeLista() {
 
-    function ChangeLista() {
+            var lista = {
+                idlista: $("#SelectLista").val(),
+                id: document.getElementById("hiddenQuadroID").value
+            };
 
-        var lista = {
-            idlista: $("#SelectLista").val(),
-            id: document.getElementById("hiddenQuadroID").value
-        };
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/ListaPedidos",
+                data: lista,
+                traditional: true
+            });
+        }
 
-        $.ajax({
-            type: "POST",
-            url: "/Pedidos/ListaPedidos",
-            data: lista,
-            traditional: true
-        });
-    }
-
-    function submitdata() {
-        $('form').submit();
-    }
-</script>
+        function submitdata() {
+            $('form').submit();
+        }
+    </script>

@@ -62,21 +62,21 @@ namespace FT_Management.Controllers
 
             return View(cartao);
         }
-        public ActionResult ValidarPedido(string idCartao, string estado)
+        public ActionResult ValidarPedido(string idcartao, string estado)
         {
 
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            TrelloCartoes cartao = trello.ObterCartao(idCartao);
+            TrelloCartoes cartao = trello.ObterCartao(idcartao);
 
-            foreach (var folhaObra in context.ObterListaFolhasObraCartao(idCartao))
+            foreach (var folhaObra in context.ObterListaFolhasObraCartao(idcartao))
             {
                 if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
                 trello.NovoAnexo(folhaObra.IdCartao, context.PreencherFormularioFolhaObra(folhaObra).ToArray(), "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf");
             }
 
-            trello.NovaLabel(idCartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
+            trello.NovaLabel(idcartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
             return RedirectToAction("ListaPedidos", new { idQuadro = cartao.IdQuadro, idlista = cartao.IdLista});
         }
         public ActionResult AdicionarComentario(string idcartao, string comentario)
