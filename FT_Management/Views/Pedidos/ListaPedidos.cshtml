@@ -31,7 +31,7 @@
                     <div class="col-sm-6 " style="margin-bottom: 10px">
                         <div class="card mb-3">
                             <div id="headerPedido_@item.IdCartao" class="card-header @(item.CorLabel == "green" ? "card bg-success mb-3" : "") @(item.CorLabel == "yellow" ? "bg-warning" : "")@(item.CorLabel == "red" ? "bg-danger" : "")">
-                                <span class="spinner-border text-primary float-sm-right" style="display:none" id="cartao_@item.IdCartao" role="status"></span>
+                                <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdCartao" role="status"></span>
                                 <h3>@item.NomeCartao </h3>
                             </div>
                             <div class="card-body text-primary">
@@ -95,7 +95,10 @@
                             message: "Cartão atualizado com sucesso!"
                         }, {
                             // settings
-                                type: 'success'
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
                         });
                         document.getElementById("cartao_" + idcartao).style.display = 'none';
                         document.getElementById("green_" + idcartao).classList.remove("disabled");

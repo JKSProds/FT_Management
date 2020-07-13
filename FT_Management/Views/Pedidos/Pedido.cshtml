@@ -225,7 +225,10 @@
                             message: "Comentário adicionado com sucesso!"
                         }, {
                             // settings
-                            type: 'success'
+                                type: 'success',
+                                onShow: function () {
+                                    this.css({ 'width': 'auto', 'height': 'auto' });
+                                }
                         });
 
                     });
@@ -296,7 +299,10 @@
                                 message: "Email enviado com sucesso!"
                             }, {
                                 // settings
-                                type: 'success'
+                                    type: 'success',
+                                    onShow: function () {
+                                        this.css({ 'width': 'auto', 'height': 'auto' });
+                                    }
                             });
 
                             var json = {
@@ -319,7 +325,10 @@
                                 message: "Ocorreu um erro!"
                             }, {
                                 // settings
-                                type: 'danger'
+                                    type: 'danger',
+                                    onShow: function () {
+                                        this.css({ 'width': 'auto', 'height': 'auto' });
+                                    }
                             });
                         }
 

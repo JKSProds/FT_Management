@@ -626,7 +626,10 @@
                         message: "Referência "+peca.referencia+" adicionada com sucesso!"
                     }, {
                         // settings
-                        type: 'success'
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
                     });
                 });
             }
@@ -661,7 +664,10 @@
                         message: "Intervenção adicionada com sucesso!"
                     }, {
                         // settings
-                        type: 'success'
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
                     });
                 });
             }
