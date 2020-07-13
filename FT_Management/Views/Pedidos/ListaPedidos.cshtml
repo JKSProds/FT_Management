@@ -30,15 +30,18 @@
 
                     <div class="col-sm-6 " style="margin-bottom: 10px">
                         <div class="card mb-3">
-                            <div id="headerPedido_@item.IdCartao" class="card-header @(item.CorLabel == "green" ? "card bg-success mb-3" : "") @(item.CorLabel == "yellow" ? "bg-warning" : "")@(item.CorLabel == "red" ? "bg-danger" : "")"> <h3>@item.NomeCartao </h3></div>
+                            <div id="headerPedido_@item.IdCartao" class="card-header @(item.CorLabel == "green" ? "card bg-success mb-3" : "") @(item.CorLabel == "yellow" ? "bg-warning" : "")@(item.CorLabel == "red" ? "bg-danger" : "")">
+                                <span class="spinner-grow text-dark float-sm-right" style="display:none" id="cartao_@item.IdCartao" role="status" aria-hidden="true"></span>
+                                <h3>@item.NomeCartao </h3>
+                            </div>
                             <div class="card-body text-primary">
                                 <p class="card-text">
                                     <a class="btn btn-info btn-lg btn-block text-black-50" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = item.IdCartao }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
                                     <hr />
                                     <div class="btn-group-lg">
-                                        <a class="btn btn-success btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '1')"><i class="fas fa-check float-left" style="margin-top:5px"></i>Serviço Concluido</a>
-                                        <a class="btn btn-warning btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '2')"><i class="fas fa-clock float-left" style="margin-top:5px"></i>Pendente</a>
-                                        <a class="btn btn-danger btn-lg btn-block text-black-50 " style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '3')"><i class="fas fa-exclamation float-left" style="margin-top:5px"></i>Não Concluido</a>
+                                        <a class="btn btn-success btn-lg btn-block text-black-50 " id="green_@item.IdCartao" style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '1')"><i class="fas fa-check float-left" style="margin-top:5px"></i>Serviço Concluido</a>
+                                        <a class="btn btn-warning btn-lg btn-block text-black-50 " id="yellow_@item.IdCartao" style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '2')"><i class="fas fa-clock float-left" style="margin-top:5px"></i>Pendente</a>
+                                        <a class="btn btn-danger btn-lg btn-block text-black-50 " id="red_@item.IdCartao" style="margin-right: 10px" onclick="ValidarPedido('@item.IdCartao', '3')"><i class="fas fa-exclamation float-left" style="margin-top:5px"></i>Não Concluido</a>
                                     </div>
                                 </p>
                                 <div class="card-footer">
@@ -85,6 +88,10 @@
 
     <script>
         function ValidarPedido(idcartao, estado) {
+            document.getElementById("cartao_" + idcartao).style.display = '';
+            document.getElementById("green_" + idcartao).classList.add("disabled");
+            document.getElementById("yellow_" + idcartao).classList.add("disabled");
+            document.getElementById("red_" + idcartao).classList.add("disabled");
 
             var json = {
                 idcartao:idcartao,
@@ -108,7 +115,10 @@
                 success: function (result) {
                     $(function () {
                         $("#myToast").toast('show');
-                        //this.location.reload(true);
+                        document.getElementById("cartao_" + idcartao).style.display = 'none';
+                        document.getElementById("green_" + idcartao).classList.remove("disabled");
+                        document.getElementById("yellow_" + idcartao).classList.remove("disabled");
+                        document.getElementById("red_" + idcartao).classList.remove("disabled");
                     });
                 }
             });
