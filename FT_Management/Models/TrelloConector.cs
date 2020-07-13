@@ -112,7 +112,7 @@ namespace FT_Management.Models
                     {
                         IdComentario = comentario.id,
                         IdCartao = comentario.data.card.id,
-                        Comentario = comentario.data.text.ToString().Replace(Environment.NewLine, string.Empty),
+                        Comentario = comentario.data.text.ToString(),
                         DataComentario = comentario.date,
                         Utilizador = comentario.memberCreator.fullName
                     });
@@ -156,7 +156,7 @@ namespace FT_Management.Models
         }
         public void NovoComentario(string IdCartao, string Comentario)
         {
-            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario.Replace(Environment.NewLine, string.Empty)).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "", "");
+            if (ObterComentarios(IdCartao).Where(c => c.Comentario == Comentario).Count() == 0) PostTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/actions/comments?key=" + API_KEY + "&token=" + TOKEN + "&text=" + Comentario + "", "");
         
         }
         public void NovoAnexo(string IdCartao, byte[] documento, string NomeDocumento)
