@@ -623,7 +623,6 @@
                     newRow.setAttribute("id", "linha_" + result);
                     newRow.innerHTML = "<td>" + peca.referencia + "</td><td>" + peca.designacao + "</td><td>" + peca.quantidade + "</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarPeca('" + result + "')\"><i class=\"fas fa-trash\"></i> </a></td>";
                     $.notify({
-                        title: "Informação:",
                         message: "Referência "+peca.referencia+" adicionada com sucesso!"
                     }, {
                         // settings
@@ -659,7 +658,6 @@
                     newRow.setAttribute("id", "row_" + result);
                     newRow.innerHTML = "<td>" + intervencao.data + "</td><td>" + intervencao.horainicio + "</td><td>" + intervencao.horafim + "</td><td>" + intervencao.tecnico +"</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarIntervencao("+result+")\"><i class=\"fas fa-trash\"></i> </a></td>";
                     $.notify({
-                        title: "Informação:",
                         message: "Intervenção adicionada com sucesso!"
                     }, {
                         // settings
