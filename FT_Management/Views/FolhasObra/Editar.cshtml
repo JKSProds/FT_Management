@@ -4,7 +4,7 @@
     ViewData["Title"] = "Editar Intervenção";
 }
 
-<h1>Adicionar Intervenção</h1>
+<h1>Editar Intervenção</h1>
 <hr />
         <form asp-action="Editar">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -614,6 +614,9 @@
                         .end()
                         .find("input[type=checkbox], input[type=radio]")
                         .prop("checked", "")
+                        .end()
+                        .find("input[id=txtQuantidade]")
+                        .val('1')
                         .end();
                 });
             }
