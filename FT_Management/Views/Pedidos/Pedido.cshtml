@@ -5,8 +5,6 @@
     ViewData["Title"] = "Pedido";
 }
 
-   <div class="container-fluid">
-
         <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
             <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
             <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
@@ -76,7 +74,8 @@
                                     <td>
                                         <div class="btn-group float-right">
                                             <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                                            <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)"><i class="fas fa-paper-plane" style="font-size:20px"></i></a>
+                                            <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
+                                                <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-grow text-dark float-sm-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -174,40 +173,7 @@
         <input type="hidden" id="hiddenCartaoId" />
         <input type="hidden" id="hiddenFolhaObraId" />
 
-        <!-- Toasts -->
-        <div aria-live="polite" aria-atomic="true">
-
-            <!-- Position it -->
-            <div style="position: absolute; top: 6rem; right: 1rem;">
-                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="6000" id="myToast">
-                    <div class="toast-header bg-success">
-                        <strong class="mr-auto">Informação</strong>
-                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="toast-body">
-                        Email enviado com sucesso!
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div style="position: absolute; top: 6rem; right: 1rem;">
-            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="6000" id="myToast1">
-                <div class="toast-header bg-danger">
-                    <strong class="mr-auto">Erro</strong>
-                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="toast-body">
-                    Ocorreu um erro!
-                </div>
-            </div>
-        </div>
-
-</div>
+ 
 <script>
     var ConfirmAdicionarComentario = function (IdCartao) {
         $("#hiddenCartaoId").val(IdCartao);
@@ -254,6 +220,14 @@
                         var row = "<td>" + result.utilizador + "</td><td>" + result.comentario + "</td><td>" + dateString + "</td>";
                         $(row).insertAfter("#tblComentarios tr:first");
 
+                        $.notify({
+                            title: "Informação:",
+                            message: "Comentário adicionado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success'
+                        });
+
                     });
                 }
             });
@@ -288,8 +262,14 @@
 
     function EnviarEmail() {
         {
+
             var idCartao = document.getElementById("hiddenFolhaObraId").value;
             var emailDestino = document.getElementById("txtEmail").value; 
+
+            document.getElementById("folha_" + idCartao).style.display = '';
+            document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
+
+
             var json = {
                 id: idCartao,
                 emailDestino: emailDestino 
@@ -308,8 +288,17 @@
                 traditional: true,
                 success: function (result) {
                     $(function () {
+                        document.getElementById("folha_" + idCartao).style.display = 'none';
+                        document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
+
                         if (result == "Sucesso") {
-                            $("#myToast").toast('show');
+                            $.notify({
+                                title: "Informação:",
+                                message: "Email enviado com sucesso!"
+                            }, {
+                                // settings
+                                type: 'success'
+                            });
 
                             var json = {
                                 id:idCartao,
@@ -327,7 +316,13 @@
                             });
 
                         } else {
-                            $("#myToast1").toast('show');
+                            $.notify({
+                                title: "Erro:",
+                                message: "Ocorreu um erro!"
+                            }, {
+                                // settings
+                                type: 'danger'
+                            });
                         }
 
                     });

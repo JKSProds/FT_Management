@@ -63,29 +63,6 @@
 
     </div>
 
-
-    <div class="container h-100">
-        <div class="row h-100 justify-content-center align-items-center">
-            <div aria-live="polite" aria-atomic="true">
-
-                <!-- Position it -->
-                <div style="position: absolute; top: 6rem; right: 1rem;">
-                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="6000" id="myToast">
-                        <div class="toast-header bg-success">
-                            <strong class="mr-auto">Informação</strong>
-                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <div class="toast-body">
-                            Cartão atualizado com sucesso!
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         function ValidarPedido(idcartao, estado) {
             document.getElementById("cartao_" + idcartao).style.display = '';
@@ -114,7 +91,13 @@
                 traditional: true,
                 success: function (result) {
                     $(function () {
-                        $("#myToast").toast('show');
+                        $.notify({
+                            title: "Informação:",
+                            message: "Cartão atualizado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success'
+                        });
                         document.getElementById("cartao_" + idcartao).style.display = 'none';
                         document.getElementById("green_" + idcartao).classList.remove("disabled");
                         document.getElementById("yellow_" + idcartao).classList.remove("disabled");
