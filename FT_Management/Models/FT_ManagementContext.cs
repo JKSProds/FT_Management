@@ -760,6 +760,8 @@ namespace FT_Management.Models
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
+            pdfFormFields.SetField("IdFolhaObra", folhaobra.IdFolhaObra.ToString());
+
             //Equipamento
             pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);
             pdfFormFields.SetField("Marca", folhaobra.EquipamentoServico.MarcaEquipamento);
