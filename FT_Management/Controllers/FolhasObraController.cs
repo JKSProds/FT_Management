@@ -120,7 +120,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return Json(new { json = context.ObterListaClientes(NomeCliente, true).FirstOrDefault() }) ;
+            return Json(new { json = context.ObterListaClientes(NomeCliente, false).FirstOrDefault() }) ;
         }
         public JsonResult ObterEmailClienteFolhaObra(int id)
         {
