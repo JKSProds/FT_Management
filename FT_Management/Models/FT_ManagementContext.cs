@@ -357,6 +357,13 @@ namespace FT_Management.Models
 
                         };
                     }
+                    else
+                    {
+                        equipamento = new Equipamento()
+                        {
+                            NumeroSerieEquipamento = NumeroSerie
+                        };
+                    }
                     return equipamento;
                 }
              }
@@ -395,7 +402,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
                 Cliente cliente = new Cliente();
-                using (var result = db.Query("SELECT * FROM dat_clientes where NomeCliente like '%" + nome + "%';"))
+                using (var result = db.Query("SELECT * FROM dat_clientes where NomeCliente = '" + nome + "';"))
                 {
 
                     result.Read();
@@ -412,18 +419,27 @@ namespace FT_Management.Models
 
                         };
                     }
+                    else
+                    {
+                        cliente = new Cliente()
+                        {
+                            NomeCliente = nome
+                        };
+                    }
                     return cliente;
                 }
             }
         }
-        public List<Cliente> ObterListaClientes(string NomeCliente)
+        public List<Cliente> ObterListaClientes(string NomeCliente, bool exact)
         {
 
             List<Cliente> LstClientes = new List<Cliente>();
+            string sqlQuery = "SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente + "%';";
+            if (exact) sqlQuery = "SELECT * FROM dat_clientes where NomeCliente ='" + NomeCliente + "';"; 
 
             using (Database db = ConnectionString)
             {
-                using (var result = db.Query("SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente + "%';"))
+                using (var result = db.Query(sqlQuery))
                 {
                     while (result.Read())
                     {
@@ -438,6 +454,13 @@ namespace FT_Management.Models
 
                         });
                     }
+                }
+                if (LstClientes.Count == 0)
+                {
+                    LstClientes.Add(new Cliente()
+                    {
+                        NomeCliente = NomeCliente
+                    });
                 }
                 return LstClientes;
             }

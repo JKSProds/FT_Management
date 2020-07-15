@@ -26,28 +26,28 @@ namespace FT_Management.Controllers
         public ActionResult Adicionar(string idCartao)
         {
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
             if (idCartao == null) idCartao = "";
             ViewData["IdCartao"] = idCartao;
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
             string nSerie = TrelloConector.getBetween(cartao.DescricaoCartao, "Serial Number:", Environment.NewLine);
-            string ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", "\\]");
 
+            string ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", "\\]");
             if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "INC", " "); }
             if (ticketNumero == "") { ticketNumero = TrelloConector.getBetween(cartao.DescricaoCartao, "Ticket#", Environment.NewLine); }
 
             FolhaObra folha = new FolhaObra
             {
                 ReferenciaServico = ticketNumero,
-                ClienteServico = new Cliente {
-                    NomeCliente = cartao.NomeCartao
-                },
-                EquipamentoServico = new Equipamento {
-                    NumeroSerieEquipamento = nSerie
-                },
+                ClienteServico = context.ObterClienteNome(cartao.NomeCartao),
+                EquipamentoServico = context.ObterEquipamentoNS(nSerie),
                 PecasServico = new List<Produto>(),
                 IntervencaosServico = new List<Intervencao>(),
-                IdCartao = idCartao,
+                IdCartao = idCartao
             };
+
+            folha.ConferidoPor = folha.ClienteServico.PessoaContatoCliente;
 
             return View(folha);
         }
@@ -120,7 +120,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return Json(new { json = context.ObterListaClientes(NomeCliente).FirstOrDefault() }) ;
+            return Json(new { json = context.ObterListaClientes(NomeCliente, true).FirstOrDefault() }) ;
         }
         public JsonResult ObterEmailClienteFolhaObra(int id)
         {
