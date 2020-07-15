@@ -820,7 +820,7 @@ namespace FT_Management.Models
             pdfFormFields.SetField("IdFolhaObra", "FO" + folhaobra.IdFolhaObra.ToString());
             pdfFormFields.SetFieldProperty("Remoto", "textsize", 28f, null);
             pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
-            pdfFormFields.SetField("Remoto", "REMOTO");
+            //pdfFormFields.SetField("Remoto", "REMOTO");
 
             //Equipamento
             pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);
