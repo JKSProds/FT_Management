@@ -36,12 +36,44 @@
                                         <button type="button" class="btn btn-primary" onclick="ObterEquipamento()">
                                             <i class="fas fa-search"></i>
                                         </button>
-                                        <button type="button" class="btn btn-primary disabled" onclick="ObterHistoricoEquipamento()">
+                                        <button type="button" class="btn btn-primary" onclick="ObterHistoricoEquipamento()">
                                             <i class="fas fa-history"></i>
                                         </button>
                                     </div>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.NumeroSerieEquipamento" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="myModal" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Histórico de Intervenções</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p> </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="myModal2" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Histórico de Intervenções</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <btn class="btn btn-danger btn-block btn-lg disabled">Não existem intervenções!</btn>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group col-lg-6">
@@ -60,7 +92,7 @@
                         <div class="form-group col-lg-6">
                             <div class="form-group">
                                 <label asp-for="EquipamentoServico.ModeloEquipamento" class="control-label"></label>
-                                <input asp-for="EquipamentoServico.ModeloEquipamento" class="form-control" id="ModeloEquipamento"/>
+                                <input asp-for="EquipamentoServico.ModeloEquipamento" class="form-control" id="ModeloEquipamento" />
                                 <span asp-validation-for="EquipamentoServico.ModeloEquipamento" class="text-danger"></span>
                             </div>
                         </div>
@@ -452,13 +484,14 @@
                         </div>
 
                     </div>
+
                 </div>
                 </div>
                     <div class="form-group">
                         <input type="submit" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" />
                     </div>
 </form>
-      
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -598,6 +631,34 @@
             data: "NumeroSerieEquipamento=" + NumeroSerie,
             dataType: "json", // type of data you're expecting from response
             success: function (json) {
+                var html = "<table class=\"table table-hover\" <thead><tr><th>Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
+                console.log(json);
+                var existeFolhasObra = false;
+                for (var i = 0; i < json.json.length; i++) {
+                    var obj = json.json[i];
+                    var tecnico = "";
+                    if (obj.intervencaosServico.length > 0) tecnico = obj.intervencaosServico[0].nomeTecnico;
+
+                    var date = new Date(obj.dataServico);
+
+                    var year = date.getFullYear();
+                    var month = date.getMonth() + 1;
+                    var day = date.getDate();
+
+                    if (day < 10) {
+                        day = '0' + day;
+                    }
+                    if (month < 10) {
+                        month = '0' + month;
+                    }
+                    if (obj.idFolhaObra != document.getElementById("txtIdFolhaObra").value) {
+                        html += "<tr onclick=\"location.href = '/FolhasObra/Editar/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
+                        existeFolhasObra = true;
+                    }
+                }
+                html += "</tbody></table>"
+                $('#myModal').find('.modal-body').html(html);
+                if (existeFolhasObra) { $("#myModal").modal("show") } else { $("#myModal2").modal("show") };
 
             },
             error: function (error) { }

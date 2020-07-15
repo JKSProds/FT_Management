@@ -368,6 +368,40 @@ namespace FT_Management.Models
                 }
              }
         }
+        public List<FolhaObra> ObterHistorico (string NumeroSerie)
+        {
+        List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
+
+                using (Database db = ConnectionString)
+                {
+
+                    using (var result = db.Query("SELECT * FROM dat_folhas_obra inner join dat_equipamentos on dat_equipamentos.numeroserieequipamento='"+NumeroSerie+"' AND dat_folhas_obra.idequipamento=dat_equipamentos.idequipamento;"))
+                    {
+                        while (result.Read())
+                        {
+                            LstFolhasObra.Add(new FolhaObra()
+                            {
+                                IdFolhaObra = result["IdFolhaObra"],
+                                DataServico = result["DataServico"],
+                                ReferenciaServico = result["ReferenciaServico"],
+                                EstadoEquipamento = result["EstadoEquipamento"],
+                                RelatorioServico = result["RelatorioServico"],
+                                SituacoesPendentes = result["SituacoesPendentes"],
+                                ConferidoPor = result["ConferidoPor"],
+                                //IdCartao = result.Reader.IsDBNull(result["IdCartaoTrello"]) ? "" : result["IdCartaoTrello"],
+                                IdCartao = result["IdCartaoTrello"],
+                                EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
+                                ClienteServico = ObterCliente(result["IdCliente"]),
+                                PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
+                                IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
+
+                            });
+                        }
+                    }
+                }
+
+                return LstFolhasObra;
+        }
 
         public Cliente ObterCliente(int id)
         {
@@ -783,7 +817,7 @@ namespace FT_Management.Models
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
-            pdfFormFields.SetField("IdFolhaObra", folhaobra.IdFolhaObra.ToString());
+            pdfFormFields.SetField("IdFolhaObra", "FO" + folhaobra.IdFolhaObra.ToString());
 
             //Equipamento
             pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);

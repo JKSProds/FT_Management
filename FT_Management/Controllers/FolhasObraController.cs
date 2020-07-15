@@ -116,6 +116,12 @@ namespace FT_Management.Controllers
 
             return Json(new { json = context.ObterEquipamentoNS(NumeroSerieEquipamento) });
         }
+        public JsonResult ObterHistorico(string NumeroSerieEquipamento)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return Json(new { json = context.ObterHistorico(NumeroSerieEquipamento) });
+        }
         public JsonResult ObterCliente(string NomeCliente)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
