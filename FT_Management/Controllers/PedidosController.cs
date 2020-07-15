@@ -42,16 +42,18 @@ namespace FT_Management.Controllers
 
                 }
             }
-            List<GuiasTransporte> LstGuias = context.ObterListaGuiasTransporte("");
+
+            string NomeTecnico = trello.ObterQuadros().Where(q => q.IdQuadro == idQuadro).First().NomeQuadro.Replace("Serviços ", "");
+            List<GuiasTransporte> LstGuias = context.ObterListaGuiasTransporte(NomeTecnico);
             ViewData["LstGuias"] = LstGuias;
             if (GuiaTransporte == null)
             {
-                ViewData["LstGuiasPecas"] = context.ObterListaGuiasTransporte("", LstGuias.Count > 0 ? LstGuias.Last().GuiaTransporte : "");
+                ViewData["LstGuiasPecas"] = context.ObterListaGuiasTransporte(NomeTecnico, LstGuias.Count > 0 ? LstGuias.Last().GuiaTransporte : "");
                 ViewData["LstGuiasSelected"] = LstGuias.Count > 0 ? LstGuias.Last().GuiaTransporte : "";
             }
             else
             {
-                ViewData["LstGuiasPecas"] = context.ObterListaGuiasTransporte("", GuiaTransporte);
+                ViewData["LstGuiasPecas"] = context.ObterListaGuiasTransporte(NomeTecnico, GuiaTransporte);
                 ViewData["LstGuiasSelected"] = GuiaTransporte;
             }
 
