@@ -874,7 +874,7 @@ namespace FT_Management.Models
             pdfFormFields.SetField("IdFolhaObra", "FO" + folhaobra.IdFolhaObra.ToString());
             if (folhaobra.AssistenciaRemota)
             {
-                pdfFormFields.SetFieldProperty("Remoto", "textsize", 28f, null);
+                pdfFormFields.SetFieldProperty("Remoto", "textsize", 26f, null);
                 pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
                 pdfFormFields.SetField("Remoto", "REMOTO");
             }else if((folhaobra.DataServico.DayOfWeek == DayOfWeek.Sunday) || (folhaobra.DataServico.DayOfWeek == DayOfWeek.Saturday))
