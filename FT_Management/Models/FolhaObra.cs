@@ -71,5 +71,9 @@ namespace FT_Management.Models
         public string IdCartao { get; set; }
         [Display(Name = "Conferido por")]
         public string ConferidoPor { get; set; }
+        [Display(Name = "Número da tua Guia de Transporte")]
+        public string GuiaTransporteAtual { get; set; }
+        [Display(Name = "Assistência Remota?")]
+        public bool AssistenciaRemota { get; set; }
     }
 }

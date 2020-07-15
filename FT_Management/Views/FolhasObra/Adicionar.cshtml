@@ -122,13 +122,18 @@
                     </div>
                 </div>
                 <div class="w-100"></div>
-                <div class="form-group col-lg-12">
+                <div class="form-group col-lg-8">
 
                     <div class="form-group">
                         <label asp-for="ReferenciaServico" class="control-label"></label>
                         <input asp-for="ReferenciaServico" class="form-control" />
                         <span asp-validation-for="ReferenciaServico" class="text-danger"></span>
                     </div>
+
+                </div>
+                <div class="form-group col-lg-4">
+                    <input type="checkbox" class="custom-checkbox" style="margin-top:35px; width: 30px; height: 30px;" asp-for="AssistenciaRemota"/>
+                    <label asp-for="AssistenciaRemota" class="control-label" style="" margin-top:10px;font-size:20px;"></label>
                 </div>
                 <div class="w-100"></div>
                 <div class="form-group col-lg-12">

@@ -65,7 +65,7 @@ namespace FT_Management.Controllers
             folhaObra.IdCartao = IdCartao == null ? "" : IdCartao;
             if (folhaObra.ClienteServico.PessoaContatoCliente != string.Empty && folhaObra.ClienteServico.PessoaContatoCliente != null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
             folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
-
+            folhaObra.GuiaTransporteAtual = "GT" + DateTime.Now.Year + "BO91/";
             return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
         }
@@ -170,6 +170,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             FolhaObra folhaObra = context.ObterFolhaObra(id);
             if (folhaObra.ConferidoPor == string.Empty || folhaObra.ConferidoPor == null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
+
             return View(folhaObra);
         }
 
@@ -182,7 +183,6 @@ namespace FT_Management.Controllers
             folhaObra.IdFolhaObra = id;
             folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
             context.NovaFolhaObra(folhaObra);
-
             return RedirectToAction("Pedido", "Pedidos", new { idCartao = folhaObra.IdCartao});
 
         }

@@ -181,6 +181,8 @@ namespace FT_Management.Models
                             RelatorioServico = result["RelatorioServico"],
                             SituacoesPendentes = result["SituacoesPendentes"],
                             ConferidoPor = result["ConferidoPor"],
+                            GuiaTransporteAtual = result["GuiaTransporteAtual"],
+                            AssistenciaRemota = result["Remoto"] == 1 ? true : false,
                             //IdCartao = result.Reader.IsDBNull(result["IdCartaoTrello"]) ? "" : result["IdCartaoTrello"],
                             IdCartao = result["IdCartaoTrello"],
                             EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
@@ -216,6 +218,8 @@ namespace FT_Management.Models
                             RelatorioServico = result["RelatorioServico"],
                             SituacoesPendentes = result["SituacoesPendentes"],
                             ConferidoPor = result["ConferidoPor"],
+                            GuiaTransporteAtual = result["GuiaTransporteAtual"],
+                            AssistenciaRemota = result["Remoto"] == 1 ? true : false,
                             IdCartao = result["IdCartaoTrello"],
                             EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                             ClienteServico = ObterCliente(result["IdCliente"]),
@@ -295,6 +299,8 @@ namespace FT_Management.Models
                         RelatorioServico = result["RelatorioServico"],
                         SituacoesPendentes = result["SituacoesPendentes"],
                         ConferidoPor = result["ConferidoPor"],
+                        GuiaTransporteAtual = result["GuiaTransporteAtual"],
+                        AssistenciaRemota = result["Remoto"] == 1 ? true : false,
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                         ClienteServico = ObterCliente(result["IdCliente"]),
@@ -503,11 +509,11 @@ namespace FT_Management.Models
         {
             folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") + 1 : folhaObra.IdFolhaObra;
 
-            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente) VALUES ";
+            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '"+folhaObra.ConferidoPor+"', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "') \r\n");
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '"+folhaObra.ConferidoPor+"', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '"+folhaObra.GuiaTransporteAtual+"', '"+ (folhaObra.AssistenciaRemota ? 1 : 0) +"') \r\n");
             
-            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente);";
+            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto);";
 
             using (Database db = ConnectionString)
             {
@@ -818,9 +824,20 @@ namespace FT_Management.Models
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
             pdfFormFields.SetField("IdFolhaObra", "FO" + folhaobra.IdFolhaObra.ToString());
-            pdfFormFields.SetFieldProperty("Remoto", "textsize", 28f, null);
-            pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
-            //pdfFormFields.SetField("Remoto", "REMOTO");
+            if (folhaobra.AssistenciaRemota)
+            {
+                pdfFormFields.SetFieldProperty("Remoto", "textsize", 28f, null);
+                pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
+                pdfFormFields.SetField("Remoto", "REMOTO");
+            }else if((folhaobra.DataServico.DayOfWeek == DayOfWeek.Sunday) || (folhaobra.DataServico.DayOfWeek == DayOfWeek.Saturday))
+            {
+                pdfFormFields.SetFieldProperty("Remoto", "textsize", 28f, null);
+                pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
+                pdfFormFields.SetField("Remoto", "FIM-DE-SEMANA");
+            }
+
+            if (folhaobra.PecasServico.Count() > 0 && folhaobra.GuiaTransporteAtual != "GT" + folhaobra.DataServico.Year + "BO91/") pdfFormFields.SetField("GT", "Peça(s) retirada(s) da " + folhaobra.GuiaTransporteAtual);
+
 
             //Equipamento
             pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);
