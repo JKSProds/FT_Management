@@ -1,22 +1,126 @@
--- MySQL dump 10.10
+-- MySQL Administrator dump 1.4
 --
--- Host: localhost    Database: sys_inventario
 -- ------------------------------------------------------
 -- Server version	5.0.19-nt
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
+
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
 
 --
--- Table structure for table `dat_logs_stocks`
+-- Create schema sys_inventario
+--
+
+CREATE DATABASE IF NOT EXISTS sys_inventario;
+USE sys_inventario;
+
+--
+-- Definition of table `dat_clientes`
+--
+
+DROP TABLE IF EXISTS `dat_clientes`;
+CREATE TABLE `dat_clientes` (
+  `IdCliente` int(10) unsigned NOT NULL auto_increment,
+  `NomeCliente` varchar(1024) NOT NULL,
+  `PessoaContactoCliente` varchar(45) default NULL,
+  `MoradaCliente` varchar(1024) default NULL,
+  `EmailCliente` varchar(1024) default NULL,
+  `NumeroContribuinteCliente` varchar(45) default NULL,
+  PRIMARY KEY  (`IdCliente`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `dat_clientes`
+--
+
+/*!40000 ALTER TABLE `dat_clientes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dat_clientes` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dat_equipamentos`
+--
+
+DROP TABLE IF EXISTS `dat_equipamentos`;
+CREATE TABLE `dat_equipamentos` (
+  `IdEquipamento` int(10) unsigned NOT NULL auto_increment,
+  `DesignacaoEquipamento` varchar(1024) default NULL,
+  `MarcaEquipamento` varchar(1024) default NULL,
+  `ModeloEquipamento` varchar(1024) default NULL,
+  `NumeroSerieEquipamento` varchar(1024) NOT NULL,
+  PRIMARY KEY  (`IdEquipamento`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `dat_equipamentos`
+--
+
+/*!40000 ALTER TABLE `dat_equipamentos` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dat_equipamentos` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dat_folhas_obra`
+--
+
+DROP TABLE IF EXISTS `dat_folhas_obra`;
+CREATE TABLE `dat_folhas_obra` (
+  `IdFolhaObra` int(10) unsigned NOT NULL auto_increment,
+  `DataServico` datetime NOT NULL,
+  `ReferenciaServico` varchar(45) default NULL,
+  `EstadoEquipamento` varchar(45) default NULL,
+  `RelatorioServico` varchar(1024) default NULL,
+  `SituacoesPendentes` varchar(1024) default NULL,
+  `IdEquipamento` int(10) unsigned NOT NULL,
+  `IdCliente` int(10) unsigned NOT NULL,
+  `IdCartaoTrello` varchar(100) default NULL,
+  `ConferidoPor` varchar(200) default NULL,
+  `GuiaTransporteAtual` varchar(45) default NULL,
+  `Remoto` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`IdFolhaObra`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `dat_folhas_obra`
+--
+
+/*!40000 ALTER TABLE `dat_folhas_obra` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dat_folhas_obra` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dat_intervencoes_folha_obra`
+--
+
+DROP TABLE IF EXISTS `dat_intervencoes_folha_obra`;
+CREATE TABLE `dat_intervencoes_folha_obra` (
+  `IdIntervencao` int(10) unsigned NOT NULL auto_increment,
+  `IdTecnico` int(10) unsigned NOT NULL,
+  `IdFolhaObra` int(10) unsigned NOT NULL,
+  `NomeTecnico` varchar(1024) NOT NULL,
+  `DataServico` datetime NOT NULL,
+  `HoraInicio` varchar(45) NOT NULL,
+  `HoraFim` varchar(45) NOT NULL,
+  PRIMARY KEY  (`IdIntervencao`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `dat_intervencoes_folha_obra`
+--
+
+/*!40000 ALTER TABLE `dat_intervencoes_folha_obra` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dat_intervencoes_folha_obra` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dat_logs_stocks`
 --
 
 DROP TABLE IF EXISTS `dat_logs_stocks`;
@@ -34,22 +138,41 @@ CREATE TABLE `dat_logs_stocks` (
 -- Dumping data for table `dat_logs_stocks`
 --
 
-
 /*!40000 ALTER TABLE `dat_logs_stocks` DISABLE KEYS */;
-LOCK TABLES `dat_logs_stocks` WRITE;
-UNLOCK TABLES;
 /*!40000 ALTER TABLE `dat_logs_stocks` ENABLE KEYS */;
 
+
 --
--- Table structure for table `dat_produtos`
+-- Definition of table `dat_produto_intervencao`
+--
+
+DROP TABLE IF EXISTS `dat_produto_intervencao`;
+CREATE TABLE `dat_produto_intervencao` (
+  `RefProduto` varchar(250) NOT NULL,
+  `Designacao` varchar(1024) NOT NULL,
+  `Quantidade` float unsigned zerofill NOT NULL,
+  `IdFolhaObra` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`RefProduto`,`IdFolhaObra`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `dat_produto_intervencao`
+--
+
+/*!40000 ALTER TABLE `dat_produto_intervencao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dat_produto_intervencao` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dat_produtos`
 --
 
 DROP TABLE IF EXISTS `dat_produtos`;
 CREATE TABLE `dat_produtos` (
-  `ref_produto` varchar(100) NOT NULL,
-  `designacao_produto` varchar(100) default NULL,
-  `stock_fisico` double unsigned default '0',
-  `stock_phc` double unsigned default '0',
+  `ref_produto` varchar(254) NOT NULL,
+  `designacao_produto` varchar(1024) default NULL,
+  `stock_fisico` double default NULL,
+  `stock_phc` double default NULL,
   `pos_stock` varchar(45) default NULL,
   `obs` varchar(1024) default NULL,
   PRIMARY KEY  USING BTREE (`ref_produto`)
@@ -59,12 +182,11 @@ CREATE TABLE `dat_produtos` (
 -- Dumping data for table `dat_produtos`
 --
 
-
 /*!40000 ALTER TABLE `dat_produtos` DISABLE KEYS */;
-LOCK TABLES `dat_produtos` WRITE;
-UNLOCK TABLES;
 /*!40000 ALTER TABLE `dat_produtos` ENABLE KEYS */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
@@ -72,5 +194,4 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
