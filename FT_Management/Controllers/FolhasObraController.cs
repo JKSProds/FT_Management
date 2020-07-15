@@ -169,7 +169,8 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-            ViewData["SelectedTecnico"] = trello.ObterQuadros().Where(q => q.IdQuadro == trello.ObterCartao(context.ObterFolhaObra(id).IdCartao).IdQuadro).First().NomeQuadro.Replace("Serviços ", "");
+            string IdQuadro = trello.ObterCartao(context.ObterFolhaObra(id).IdCartao).IdQuadro;
+            if (IdQuadro != null & IdQuadro != string.Empty) { ViewData["SelectedTecnico"] = trello.ObterQuadros().Where(q => q.IdQuadro == IdQuadro).First().NomeQuadro.Replace("Serviços ", ""); } else { ViewData["SelectedTecnico"] = "Jorge Monteiro"; }
 
             FolhaObra folhaObra = context.ObterFolhaObra(id);
             if (folhaObra.ConferidoPor == string.Empty || folhaObra.ConferidoPor == null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
