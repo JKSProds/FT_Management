@@ -193,8 +193,8 @@
             }
 
             function submitdata() {
-                document.getElementById("hiddenSelectedListaID").value = document.getElementById("SelectLista").value;
-                document.getElementById("hiddenSelectedGuiaID").value = document.getElementById("SelectLista2").value;
+                document.getElementById("hiddenSelectedListaID").value = document.getElementById("SelectLista").value == null "" : document.getElementById("SelectLista").value;
+                document.getElementById("hiddenSelectedGuiaID").value = document.getElementById("SelectLista2").value == null ? "" : document.getElementById("SelectLista2").value;
 
                 $('form').submit();
             }

@@ -26,7 +26,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<TrelloListas> trelloListas = trello.ObterListas(idQuadro);
 
-            if (idlista == null)
+            if (idlista == null || idlista == string.Empty)
             {
                 foreach (var lista in trelloListas)
                 {
