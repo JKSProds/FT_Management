@@ -32,9 +32,14 @@
                                 <label asp-for="EquipamentoServico.NumeroSerieEquipamento" class="control-label"></label>
                                 <div class="input-group">
                                     <input asp-for="EquipamentoServico.NumeroSerieEquipamento" class="form-control col-10" id="NumeroSerieEquipamento" />
-                                    <button type="button" class="btn btn-primary col-2" onclick="ObterEquipamento()">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary" onclick="ObterEquipamento()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-primary disabled" onclick="ObterHistoricoEquipamento()">
+                                            <i class="fas fa-history"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.NumeroSerieEquipamento" class="text-danger"></span>
                             </div>
@@ -579,6 +584,21 @@
                 document.getElementById("ModeloEquipamento").value = json.json.modeloEquipamento;
                 document.getElementById("IdEquipamento").value = json.json.idEquipamento;
                 document.getElementById("NumeroSerie").value = json.json.numeroSerie;
+            },
+            error: function (error) { }
+        });
+    }
+
+    function ObterHistoricoEquipamento() {
+        var NumeroSerie = document.getElementById("NumeroSerieEquipamento").value;
+
+        $.ajax({
+            url: "/FolhasObra/ObterHistorico",
+            type: "GET",
+            data: "NumeroSerieEquipamento=" + NumeroSerie,
+            dataType: "json", // type of data you're expecting from response
+            success: function (json) {
+
             },
             error: function (error) { }
         });
