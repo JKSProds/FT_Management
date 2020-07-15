@@ -77,10 +77,11 @@ namespace FT_Management.Models
         public bool AssistenciaRemota { get; set; }
     }
 
-    public class GuiaTransporte
+    public class GuiasTransporte
     {
         public int IdFolhaObra { get; set; }
         public int IdTecnico { get; set; }
+        public string GuiaTransporte { get; set; }
         public string NomeTecnico { get; set; }
         public string RefProduto { get; set; }
         public string Designacao { get; set; }

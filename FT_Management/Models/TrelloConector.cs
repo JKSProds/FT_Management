@@ -346,6 +346,7 @@ namespace FT_Management.Models
         public List<TrelloCartoes> ListaCartoes { get; set; }
         public string IdQuadro { get; set; }
 
+
     }
     public class TrelloCartoes
     {

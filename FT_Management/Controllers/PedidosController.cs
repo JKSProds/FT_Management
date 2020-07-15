@@ -19,10 +19,11 @@ namespace FT_Management.Controllers
 
             return View(trello.ObterQuadros());
         }
-        public ActionResult ListaPedidos(string idQuadro, string idlista)
+
+        public ActionResult ListaPedidos(string idQuadro, string idlista, string GuiaTransporte)
         {
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<TrelloListas> trelloListas = trello.ObterListas(idQuadro);
 
             if (idlista == null)
@@ -41,8 +42,20 @@ namespace FT_Management.Controllers
 
                 }
             }
+            List<GuiasTransporte> LstGuias = context.ObterListaGuiasTransporte("");
+            ViewData["LstGuias"] = LstGuias;
+            if (GuiaTransporte == null)
+            {
+                ViewData["LstGuiasPecas"] = context.ObterListaGuiasTransporte("", LstGuias.Count > 0 ? LstGuias.Last().GuiaTransporte : "");
+                ViewData["LstGuiasSelected"] = LstGuias.Count > 0 ? LstGuias.Last().GuiaTransporte : "";
+            }
+            else
+            {
+                ViewData["LstGuiasPecas"] = context.ObterListaGuiasTransporte("", GuiaTransporte);
+                ViewData["LstGuiasSelected"] = GuiaTransporte;
+            }
 
-             trelloListas.Where(l => l.IdLista == idlista).FirstOrDefault().ListaCartoes = trello.ObterCartoes(idlista);
+            trelloListas.Where(l => l.IdLista == idlista).FirstOrDefault().ListaCartoes = trello.ObterCartoes(idlista);
 
             ViewData["SelectedLista"] = idlista;
 
