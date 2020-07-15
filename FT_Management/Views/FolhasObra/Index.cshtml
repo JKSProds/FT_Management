@@ -17,6 +17,9 @@ else
         <thead>
             <tr>
                 <th>
+                    @Html.DisplayNameFor(model => model.IdFolhaObra)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.DataServico)
                 </th>
                 <th>
@@ -31,23 +34,26 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                        <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
-                    </td>
-                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                        @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
-                    </td>
-                    <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                        @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
-                    </td>
-                    <td>
-                        <div class="btn-group float-right">
-                            <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                            <a href="#" class="btn btn-danger btn-lg" onclick="ConfirmApagarFolhaObra(@item.IdFolhaObra)"><i class="fas fa-trash"></i> </a>
-                        </div>
-                    </td>
-                </tr>
+            <tr>
+                <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                    <span>@item.IdFolhaObra</span>
+                </td>
+                <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                    <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
+                </td>
+                <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                    @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                </td>
+                <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                    @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                </td>
+                <td>
+                    <div class="btn-group float-right">
+                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                        <a href="#" class="btn btn-danger btn-lg" onclick="ConfirmApagarFolhaObra(@item.IdFolhaObra)"><i class="fas fa-trash"></i> </a>
+                    </div>
+                </td>
+            </tr>
             }
         </tbody>
     </table>
