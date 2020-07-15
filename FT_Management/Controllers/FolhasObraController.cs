@@ -168,6 +168,9 @@ namespace FT_Management.Controllers
         public ActionResult Editar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+            ViewData["SelectedTecnico"] = trello.ObterQuadros().Where(q => q.IdQuadro == trello.ObterCartao(context.ObterFolhaObra(id).IdCartao).IdQuadro).First().NomeQuadro.Replace("Serviços ", "");
+
             FolhaObra folhaObra = context.ObterFolhaObra(id);
             if (folhaObra.ConferidoPor == string.Empty || folhaObra.ConferidoPor == null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
 
