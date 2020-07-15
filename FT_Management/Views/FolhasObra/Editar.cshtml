@@ -6,490 +6,488 @@
 
 <h1>Editar Intervenção</h1>
 <hr />
-        <form asp-action="Editar">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-item nav-link active" id="v-pills-equipamento-tab" data-toggle="pill" href="#v-pills-equipamento" role="tab" aria-controls="v-pills-equipamento" aria-selected="true">Equipamento</a>
-                <a class="nav-item nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="false">Dados</a>
-                <a class="nav-item nav-link" id="v-pills-intervencoes-tab" data-toggle="pill" href="#v-pills-intervencoes" role="tab" aria-controls="v-pills-intervencoes" aria-selected="false">Intervenções</a>
-                <a class="nav-item nav-link" id="v-pills-pecas-tab" data-toggle="pill" href="#v-pills-pecas" role="tab" aria-controls="v-pills-pecas" aria-selected="false">Peças</a>
+<form asp-action="Editar">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Apagar Intervenção</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>Tens a certeza que queres apagar esta intervenção?</h4>
+
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+                    <a href="#" class="btn btn-danger" onclick="ApagarIntervencao()">Sim</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Apagar Peça</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4>Tens a certeza que queres apagar esta Peça?</h4>
+
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+                    <a href="#" class="btn btn-danger" onclick="ApagarPeca()">Sim</a>
+                </div>
+
             </div>
 
-            <div class="tab-content" id="v-pills-tabContent">
-                <div class="tab-pane fade show active" id="v-pills-equipamento" role="tabpanel" aria-labelledby="v-pills-equipamento-tab">
-                    <br />
-                    <div class="row">
-                        <div class="form-group col-lg-6">
-                            <div class="form-group d-none">
-                                <label asp-for="EquipamentoServico.IdEquipamento" class="control-label"></label>
-                                <input asp-for="EquipamentoServico.IdEquipamento" class="form-control" id="IdEquipamento" />
-                                <span asp-validation-for="EquipamentoServico.IdEquipamento" class="text-danger"></span>
+        </div>
+
+    </div>
+    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-item nav-link active" id="v-pills-equipamento-tab" data-toggle="pill" href="#v-pills-equipamento" role="tab" aria-controls="v-pills-equipamento" aria-selected="true">Equipamento</a>
+        <a class="nav-item nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="false">Dados</a>
+        <a class="nav-item nav-link" id="v-pills-intervencoes-tab" data-toggle="pill" href="#v-pills-intervencoes" role="tab" aria-controls="v-pills-intervencoes" aria-selected="false">Intervenções</a>
+        <a class="nav-item nav-link" id="v-pills-pecas-tab" data-toggle="pill" href="#v-pills-pecas" role="tab" aria-controls="v-pills-pecas" aria-selected="false">Peças</a>
+    </div>
+
+    <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-equipamento" role="tabpanel" aria-labelledby="v-pills-equipamento-tab">
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <div class="form-group d-none">
+                        <label asp-for="EquipamentoServico.IdEquipamento" class="control-label"></label>
+                        <input asp-for="EquipamentoServico.IdEquipamento" class="form-control" id="IdEquipamento" />
+                        <span asp-validation-for="EquipamentoServico.IdEquipamento" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-none">
+                        <input asp-for="IdCartao" class="form-control" id="IdEquipamento" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EquipamentoServico.NumeroSerieEquipamento" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="EquipamentoServico.NumeroSerieEquipamento" class="form-control col-10" id="NumeroSerieEquipamento" />
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" onclick="ObterEquipamento()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="ObterHistoricoEquipamento()">
+                                    <i class="fas fa-history"></i>
+                                </button>
                             </div>
-                            <div class="form-group d-none">
-                                <input asp-for="IdCartao" class="form-control" id="IdEquipamento" />
+                        </div>
+                        <span asp-validation-for="EquipamentoServico.NumeroSerieEquipamento" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Histórico de Intervenções</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="EquipamentoServico.NumeroSerieEquipamento" class="control-label"></label>
-                                <div class="input-group">
-                                    <input asp-for="EquipamentoServico.NumeroSerieEquipamento" class="form-control col-10" id="NumeroSerieEquipamento" />
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-primary" onclick="ObterEquipamento()">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-primary" onclick="ObterHistoricoEquipamento()">
-                                            <i class="fas fa-history"></i>
-                                        </button>
-                                    </div>
+                            <div class="modal-body">
+                                <p> </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="myModal2" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Histórico de Intervenções</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <btn class="btn btn-danger btn-block btn-lg disabled">Não existem intervenções!</btn>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <div class="form-group d-none">
+                        <label asp-for="EquipamentoServico.DesignacaoEquipamento" class="control-label"></label>
+                        <input asp-for="EquipamentoServico.DesignacaoEquipamento" class="form-control" id="DesignacaoEquipamento" />
+                        <span asp-validation-for="EquipamentoServico.DesignacaoEquipamento" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EquipamentoServico.MarcaEquipamento" class="control-label"></label>
+                        <input asp-for="EquipamentoServico.MarcaEquipamento" class="form-control" id="MarcaEquipamento" />
+                        <span asp-validation-for="EquipamentoServico.MarcaEquipamento" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="form-group col-lg-6">
+                    <div class="form-group">
+                        <label asp-for="EquipamentoServico.ModeloEquipamento" class="control-label"></label>
+                        <input asp-for="EquipamentoServico.ModeloEquipamento" class="form-control" id="ModeloEquipamento" />
+                        <span asp-validation-for="EquipamentoServico.ModeloEquipamento" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <div class="form-group">
+                        <label asp-for="EstadoEquipamento" class="col-form-label"></label>
+                        <select asp-for="EstadoEquipamento" class="form-control">
+                            <option>Instalação</option>
+                            <option>Garantia</option>
+                            <option>Não Garantia</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-6">
+
+                    <div class="form-group d-none">
+                        <label asp-for="ClienteServico.IdCliente" class="control-label"></label>
+                        <input asp-for="ClienteServico.IdCliente" class="form-control" id="IdCliente" />
+                        <span asp-validation-for="ClienteServico.IdCliente" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-none">
+                        <label asp-for="IdFolhaObra" class="control-label"></label>
+                        <input asp-for="IdFolhaObra" class="form-control" id="txtIdFolhaObra" />
+                        <span asp-validation-for="IdFolhaObra" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ClienteServico.NomeCliente" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="ClienteServico.NomeCliente" class="form-control col-10" id="NomeCliente" />
+                            <button type="button" class="btn btn-primary col-2" onclick="ObterCliente()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ClienteServico.NomeCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <div class="form-group">
+                        <label asp-for="ConferidoPor" class="control-label"></label>
+                        <input asp-for="ConferidoPor" class="form-control" id="PessoaContactoCliente" />
+                        <span asp-validation-for="ConferidoPor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-none">
+                        <label asp-for="ClienteServico.MoradaCliente" class="control-label"></label>
+                        <input asp-for="ClienteServico.MoradaCliente" class="form-control" id="MoradaCliente" />
+                        <span asp-validation-for="ClienteServico.MoradaCliente" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-none">
+                        <label asp-for="ClienteServico.EmailCliente" class="control-label"></label>
+                        <input asp-for="ClienteServico.EmailCliente" class="form-control" id="EmailCliente" />
+                        <span asp-validation-for="ClienteServico.EmailCliente" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-none">
+                        <label asp-for="ClienteServico.NumeroContribuinteCliente" class="control-label"></label>
+                        <input asp-for="ClienteServico.NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" />
+                        <span asp-validation-for="ClienteServico.NumeroContribuinteCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="form-group col-lg-12">
+
+                    <div class="form-group">
+                        <label asp-for="ReferenciaServico" class="control-label"></label>
+                        <input asp-for="ReferenciaServico" class="form-control" />
+                        <span asp-validation-for="ReferenciaServico" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="form-group col-lg-12">
+
+                    <div class="form-group">
+                        <label asp-for="RelatorioServico" class="control-label"></label>
+                        @Html.EditorFor(model => model.RelatorioServico, new { htmlAttributes = new { @class = "form-control", @rows = "8" } })
+                        <span asp-validation-for="RelatorioServico" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="form-group col-lg-12">
+
+                    <div class="form-group">
+                        <label asp-for="SituacoesPendentes" class="control-label"></label>
+                        @Html.EditorFor(model => model.SituacoesPendentes, new { htmlAttributes = new { @class = "form-control", @rows = "4" } })
+                        <span asp-validation-for="SituacoesPendentes" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="v-pills-intervencoes" role="tabpanel" aria-labelledby="v-pills-intervencoes-tab">
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-8">
+                    <div class="form-group col-12">
+                        <div class="row">
+
+                            <label asp-for="DataServico" class="control-label col-2"></label>
+                            @Html.TextBoxFor(m => m.DataServico, "{0:dd/MM/yyyy}", new { @class = "form-control col-8", @readonly = "true" })
+                            <span asp-validation-for="DataServico" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-lg-4">
+                    <button type="button" class="btn btn-primary btn-block" style=" font-size: 20px" data-toggle="modal" data-target="#exampleModal">
+                        Adicionar Intervenção
+                    </button>
+                </div>
+
+            </div>
+            <hr />
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Adicionar Intervenção</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group row">
+                                <label for="data" class="col-sm-4 col-form-label">Data Intervenção</label>
+                                <div class="col-sm-8">
+                                    @*DateTimePicker*@
+                                    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                    <input type="text" class="form-control" id="txtData">
+                                    <script>
+                                        var today = new Date();
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                        var yyyy = today.getFullYear();
+
+                                        $('#txtData').datepicker({
+                                            format: 'dd-mm-yyyy',
+                                            value: dd + '-' + mm + '-' + yyyy
+                                        });
+                                    </script>
                                 </div>
-                                <span asp-validation-for="EquipamentoServico.NumeroSerieEquipamento" class="text-danger"></span>
                             </div>
-                        </div>
-                        <div class="modal fade" id="myModal" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Histórico de Intervenções</h4>
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p> </p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                    </div>
+                            <div class="form-group row">
+                                <label for="horaInicio" class="col-sm-4 col-form-label">Hora Inicio</label>
+                                <div class="col-sm-8">
+                                    @*DateTimePicker*@
+                                    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                    <input type="text" class="form-control" id="txtHoraInicio">
+                                    <script>
+                                        var today = new Date();
+                                        $('#txtHoraInicio').timepicker({ mode: '24hr', value: (today.getHours()) + ':00' });
+                                    </script>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal fade" id="myModal2" role="dialog">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title">Histórico de Intervenções</h4>
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <btn class="btn btn-danger btn-block btn-lg disabled">Não existem intervenções!</btn>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                    </div>
+                            <div class="form-group row">
+                                <label for="horaFim" class="col-sm-4 col-form-label">Hora Fim</label>
+                                <div class="col-sm-8">
+                                    @*DateTimePicker*@
+                                    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                    <input type="text" class="form-control" id="txtHoraFim">
+                                    <script>
+                                        var today = new Date();
+                                        $('#txtHoraFim').timepicker({ mode: '24hr', value: (today.getHours() + 1) + ':00' });
+                                    </script>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <div class="form-group d-none">
-                                <label asp-for="EquipamentoServico.DesignacaoEquipamento" class="control-label"></label>
-                                <input asp-for="EquipamentoServico.DesignacaoEquipamento" class="form-control" id="DesignacaoEquipamento" />
-                                <span asp-validation-for="EquipamentoServico.DesignacaoEquipamento" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="EquipamentoServico.MarcaEquipamento" class="control-label"></label>
-                                <input asp-for="EquipamentoServico.MarcaEquipamento" class="form-control" id="MarcaEquipamento" />
-                                <span asp-validation-for="EquipamentoServico.MarcaEquipamento" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="form-group col-lg-6">
-                            <div class="form-group">
-                                <label asp-for="EquipamentoServico.ModeloEquipamento" class="control-label"></label>
-                                <input asp-for="EquipamentoServico.ModeloEquipamento" class="form-control" id="ModeloEquipamento" />
-                                <span asp-validation-for="EquipamentoServico.ModeloEquipamento" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <div class="form-group">
-                                <label asp-for="EstadoEquipamento" class="col-form-label"></label>
-                                <select asp-for="EstadoEquipamento" class="form-control">
-                                    <option>Instalação</option>
-                                    <option>Garantia</option>
-                                    <option>Não Garantia</option>
-                                    <option>Outro</option>
+                            <div class="form-group row">
+                                <label for="tecnico" class="col-sm-4 col-form-label">Técnico</label>
+                                <select class="form-control col-sm-8" id="txtTecnico">
+                                    <option>Jorge Monteiro</option>
+                                    <option>Nelson Martins</option>
+                                    <option>Armando Rodrigues</option>
+                                    <option>Luis Fernandes</option>
+                                    <option>Paulo Deus</option>
+                                    <option>Pedro Santos</option>
+                                    <option>Silvino</option>
+                                    <option>Helder Pinto</option>
+                                    <option>Ricardo Almeida</option>
+                                    <option>Daniel Diogo</option>
+                                    <option>Diogo Correia</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade show" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
-                    <br />
-                    <div class="row">
-                        <div class="form-group col-lg-6">
-
-                            <div class="form-group d-none">
-                                <label asp-for="ClienteServico.IdCliente" class="control-label"></label>
-                                <input asp-for="ClienteServico.IdCliente" class="form-control" id="IdCliente" />
-                                <span asp-validation-for="ClienteServico.IdCliente" class="text-danger"></span>
-                            </div>
-                            <div class="form-group d-none">
-                                <label asp-for="IdFolhaObra" class="control-label"></label>
-                                <input asp-for="IdFolhaObra" class="form-control" id="txtIdFolhaObra" />
-                                <span asp-validation-for="IdFolhaObra" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="ClienteServico.NomeCliente" class="control-label"></label>
-                                <div class="input-group">
-                                    <input asp-for="ClienteServico.NomeCliente" class="form-control col-10" id="NomeCliente" />
-                                    <button type="button" class="btn btn-primary col-2" onclick="ObterCliente()">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                                <span asp-validation-for="ClienteServico.NomeCliente" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <div class="form-group">
-                                <label asp-for="ConferidoPor" class="control-label"></label>
-                                <input asp-for="ConferidoPor" class="form-control" id="PessoaContactoCliente" />
-                                <span asp-validation-for="ConferidoPor" class="text-danger"></span>
-                            </div>
-                            <div class="form-group d-none">
-                                <label asp-for="ClienteServico.MoradaCliente" class="control-label"></label>
-                                <input asp-for="ClienteServico.MoradaCliente" class="form-control" id="MoradaCliente" />
-                                <span asp-validation-for="ClienteServico.MoradaCliente" class="text-danger"></span>
-                            </div>
-                            <div class="form-group d-none">
-                                <label asp-for="ClienteServico.EmailCliente" class="control-label"></label>
-                                <input asp-for="ClienteServico.EmailCliente" class="form-control" id="EmailCliente" />
-                                <span asp-validation-for="ClienteServico.EmailCliente" class="text-danger"></span>
-                            </div>
-                            <div class="form-group d-none">
-                                <label asp-for="ClienteServico.NumeroContribuinteCliente" class="control-label"></label>
-                                <input asp-for="ClienteServico.NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" />
-                                <span asp-validation-for="ClienteServico.NumeroContribuinteCliente" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="form-group col-lg-12">
-
-                            <div class="form-group">
-                                <label asp-for="ReferenciaServico" class="control-label"></label>
-                                <input asp-for="ReferenciaServico" class="form-control" />
-                                <span asp-validation-for="ReferenciaServico" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="form-group col-lg-12">
-
-                            <div class="form-group">
-                                <label asp-for="RelatorioServico" class="control-label"></label>
-                                @Html.EditorFor(model => model.RelatorioServico, new { htmlAttributes = new { @class = "form-control", @rows = "8" } })
-                                <span asp-validation-for="RelatorioServico" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="form-group col-lg-12">
-
-                            <div class="form-group">
-                                <label asp-for="SituacoesPendentes" class="control-label"></label>
-                                @Html.EditorFor(model => model.SituacoesPendentes, new { htmlAttributes = new { @class = "form-control", @rows = "4" } })
-                                <span asp-validation-for="SituacoesPendentes" class="text-danger"></span>
-                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary" onclick="AdicionarIntervencao()" href="javascript:;">Adicionar</button>
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade show" id="v-pills-intervencoes" role="tabpanel" aria-labelledby="v-pills-intervencoes-tab">
-                    <br />
-                    <div class="row">
-                        <div class="form-group col-lg-8">
-                            <div class="form-group col-12">
-                                <div class="row">
+            </div>
 
-                                    <label asp-for="DataServico" class="control-label col-2"></label>
-                                    @Html.TextBoxFor(m => m.DataServico, "{0:dd/MM/yyyy}", new { @class = "form-control col-8", @readonly = "true" })
-                                    <span asp-validation-for="DataServico" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <button type="button" class="btn btn-primary btn-block" style=" font-size: 20px" data-toggle="modal" data-target="#exampleModal">
-                                Adicionar Intervenção
+            <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.IntervencaosServico.Count() == 0 ? "" : "d-none")" id="no-int">Não foram encontradas intervenções associadas a esta folha de obra!</button>
+
+            <table class="table table-hover @(Model.IntervencaosServico.Count() == 0 ? "d-none" : "")" id="tblIntervencao">
+                <thead>
+                    <tr>
+                        <th>
+                            Data
+                        </th>
+                        <th>
+                            Hora Inicio
+                        </th>
+                        <th>
+                            Hora Fim
+                        </th>
+                        <th>
+                            Tecnico
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.IntervencaosServico)
+                    {
+                        <tr id="row_@item.IdIntervencao">
+                            <td>
+                                <span>@item.DataServiço.ToString("dd-MM-yyyy")</span>
+                            </td>
+                            <td>
+                                <span>@item.HoraInicio.ToString("HH:mm")</span>
+                            </td>
+                            <td>
+                                <span>@item.HoraFim.ToString("HH:mm")</span>
+                            </td>
+                            <td>
+                                <span>@item.NomeTecnico</span>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+
+            <input type="hidden" id="hiddenPecaId" />
+            <input type="hidden" id="hiddenIntervencaoId" />
+        </div>
+        <div class="tab-pane fade show" id="v-pills-pecas" role="tabpanel" aria-labelledby="v-pills-pecas-tab">
+
+            <br />
+            <div class="row">
+                <div class="form-group col-12">
+                    <button type="button" class="btn btn-primary btn-block" style="height: 100%; font-size: 20px" data-toggle="modal" data-target="#exampleModal2">
+                        Adicionar Peças
+                    </button>
+                </div>
+
+            </div>
+            <hr />
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Adicionar Peças</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-
-                    </div>
-                    <hr />
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Adicionar Intervenção</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group row">
-                                        <label for="data" class="col-sm-4 col-form-label">Data Intervenção</label>
-                                        <div class="col-sm-8">
-                                            @*DateTimePicker*@
-                                            <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                            <input type="text" class="form-control" id="txtData">
-                                            <script>
-                                                var today = new Date();
-                                                var dd = String(today.getDate()).padStart(2, '0');
-                                                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                                var yyyy = today.getFullYear();
-
-                                                $('#txtData').datepicker({
-                                                    format: 'dd-mm-yyyy',
-                                                    value: dd + '-' + mm + '-' + yyyy
-                                                });
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="horaInicio" class="col-sm-4 col-form-label">Hora Inicio</label>
-                                        <div class="col-sm-8">
-                                            @*DateTimePicker*@
-                                            <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                            <input type="text" class="form-control" id="txtHoraInicio">
-                                            <script>
-                                                var today = new Date();
-                                                $('#txtHoraInicio').timepicker({ mode: '24hr', value: (today.getHours()) + ':00' });
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="horaFim" class="col-sm-4 col-form-label">Hora Fim</label>
-                                        <div class="col-sm-8">
-                                            @*DateTimePicker*@
-                                            <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                            <input type="text" class="form-control" id="txtHoraFim">
-                                            <script>
-                                                var today = new Date();
-                                                $('#txtHoraFim').timepicker({ mode: '24hr', value: (today.getHours() + 1) + ':00' });
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="tecnico" class="col-sm-4 col-form-label">Técnico</label>
-                                        <select class="form-control col-sm-8" id="txtTecnico">
-                                            <option>Jorge Monteiro</option>
-                                            <option>Nelson Martins</option>
-                                            <option>Armando Rodrigues</option>
-                                            <option>Luis Fernandes</option>
-                                            <option>Paulo Deus</option>
-                                            <option>Pedro Santos</option>
-                                            <option>Silvino</option>
-                                            <option>Helder Pinto</option>
-                                            <option>Ricardo Almeida</option>
-                                            <option>Daniel Diogo</option>
-                                            <option>Diogo</option>
-                                        </select>
+                        <div class="modal-body">
+                            <div class="form-group row">
+                                <label for="horaInicio" class="col-sm-4 col-form-label">Referencia</label>
+                                <div class="input-group col-sm-8">
+                                    <div class="input-group-prepend col" id="button-addon3">
+                                        <input type="text" class="form-control" id="txtRefProduto">
+                                        <button type="button" class="btn btn-primary" onclick="ObterDesignacao()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                    <button type="button" class="btn btn-primary" onclick="AdicionarIntervencao()" href="javascript:;">Adicionar</button>
+                            </div>
+                            <div class="form-group row">
+                                <label for="horaInicio" class="col-sm-4 col-form-label">Designacao</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="txtDesignacao">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="horaInicio" class="col-sm-4 col-form-label">Quantidade</label>
+                                <div class="input-group col-sm-8">
+                                    <div class="input-group-prepend col" id="button-addon3">
+                                        <input class="form-control" min="0" max="999" name="txtQuantidade" id="txtQuantidade" value="1" readonly>
+                                        <button onclick="MenosUm()" class="btn btn-danger fas fa-minus" type="button"></button>
+                                        <button onclick="MaisUm()" class="btn btn-primary fas fa-plus" type="button"></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.IntervencaosServico.Count() == 0 ? "" : "d-none")" id="no-int">Não foram encontradas intervenções associadas a esta folha de obra!</button>
-
-                    <table class="table table-hover @(Model.IntervencaosServico.Count() == 0 ? "d-none" : "")" id="tblIntervencao">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Data
-                                </th>
-                                <th>
-                                    Hora Inicio
-                                </th>
-                                <th>
-                                    Hora Fim
-                                </th>
-                                <th>
-                                    Tecnico
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.IntervencaosServico)
-                            {
-                                <tr id="row_@item.IdIntervencao">
-                                    <td>
-                                        <span>@item.DataServiço.ToString("dd-MM-yyyy")</span>
-                                    </td>
-                                    <td>
-                                        <span>@item.HoraInicio.ToString("HH:mm")</span>
-                                    </td>
-                                    <td>
-                                        <span>@item.HoraFim.ToString("HH:mm")</span>
-                                    </td>
-                                    <td>
-                                        <span>@item.NomeTecnico</span>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-                    <div class="modal fade" id="myModal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Apagar Intervenção</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <h4>Tens a certeza que queres apagar esta intervenção?</h4>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
-                                    <a href="#" class="btn btn-danger" onclick="ApagarIntervencao()">Sim</a>
-                                </div>
-
-                            </div>
-
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary" onclick="AdicionarPeca()" href="javascript:;">Adicionar</button>
                         </div>
-
                     </div>
-
-                    <input type="hidden" id="hiddenPecaId" />
-                    <input type="hidden" id="hiddenIntervencaoId" />
                 </div>
-                <div class="tab-pane fade show" id="v-pills-pecas" role="tabpanel" aria-labelledby="v-pills-pecas-tab">
+            </div>
+            <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.PecasServico.Count() == 0 ? "" : "d-none")" id="no-pecas">Não foram encontradas peças associadas a esta folha de obra!</button>
 
-                    <br />
-                    <div class="row">
-                        <div class="form-group col-12">
-                            <button type="button" class="btn btn-primary btn-block" style="height: 100%; font-size: 20px" data-toggle="modal" data-target="#exampleModal2">
-                                Adicionar Peças
-                            </button>
-                        </div>
+            <table class="table table-hover @(Model.PecasServico.Count() == 0 ? "d-none" : "")" id="tblPecas">
+                <thead>
+                    <tr>
+                        <th>
+                            Referencia
+                        </th>
+                        <th>
+                            Designação
+                        </th>
+                        <th>
+                            Quantidade
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PecasServico)
+                    {
+                        <tr id="linha_@item.Ref_Produto">
+                            <td>
+                                <span>@item.Ref_Produto</span>
+                            </td>
+                            <td>
+                                <span>@item.Designacao_Produto</span>
+                            </td>
+                            <td>
+                                <span>@item.Stock_Fisico</span>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
 
-                    </div>
-                    <hr />
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Adicionar Peças</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-group row">
-                                        <label for="horaInicio" class="col-sm-4 col-form-label">Referencia</label>
-                                        <div class="input-group col-sm-8">
-                                            <div class="input-group-prepend col" id="button-addon3">
-                                                <input type="text" class="form-control" id="txtRefProduto">
-                                                <button type="button" class="btn btn-primary" onclick="ObterDesignacao()">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="horaInicio" class="col-sm-4 col-form-label">Designacao</label>
-                                        <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="txtDesignacao">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label for="horaInicio" class="col-sm-4 col-form-label">Quantidade</label>
-                                        <div class="input-group col-sm-8">
-                                            <div class="input-group-prepend col" id="button-addon3">
-                                                <input class="form-control" min="0" max="999" name="txtQuantidade" id="txtQuantidade" value="1" readonly>
-                                                <button onclick="MenosUm()" class="btn btn-danger fas fa-minus" type="button"></button>
-                                                <button onclick="MaisUm()" class="btn btn-primary fas fa-plus" type="button"></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                                    <button type="button" class="btn btn-primary" onclick="AdicionarPeca()" href="javascript:;">Adicionar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.PecasServico.Count() == 0 ? "" : "d-none")" id="no-pecas">Não foram encontradas peças associadas a esta folha de obra!</button>
-
-                    <table class="table table-hover @(Model.PecasServico.Count() == 0 ? "d-none" : "")" id="tblPecas">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Referencia
-                                </th>
-                                <th>
-                                    Designação
-                                </th>
-                                <th>
-                                    Quantidade
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.PecasServico)
-                            {
-                                <tr id="linha_@item.Ref_Produto">
-                                    <td>
-                                        <span>@item.Ref_Produto</span>
-                                    </td>
-                                    <td>
-                                        <span>@item.Designacao_Produto</span>
-                                    </td>
-                                    <td>
-                                        <span>@item.Stock_Fisico</span>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                    <div class="modal fade" id="myModal2">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Apagar Peça</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <h4>Tens a certeza que queres apagar esta Peça?</h4>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
-                                    <a href="#" class="btn btn-danger" onclick="ApagarPeca()">Sim</a>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-                </div>
-                    <div class="form-group">
-                        <input type="submit" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" />
-                    </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" />
+    </div>
 </form>
 
 

@@ -818,6 +818,9 @@ namespace FT_Management.Models
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
             pdfFormFields.SetField("IdFolhaObra", "FO" + folhaobra.IdFolhaObra.ToString());
+            pdfFormFields.SetFieldProperty("Remoto", "textsize", 28f, null);
+            pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
+            pdfFormFields.SetField("Remoto", "REMOTO");
 
             //Equipamento
             pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);
@@ -870,7 +873,7 @@ namespace FT_Management.Models
                     pdfFormFields.SetFieldProperty("ReferênciaRow" + p, "textsize", 6f, null);
                     pdfFormFields.SetField("ReferênciaRow" + p, pecas.Ref_Produto);
                     pdfFormFields.SetFieldProperty("DesignaçãoRow" + p, "textsize", 6f, null);
-                    if (pecas.Designacao_Produto.Length > 54)
+                    if (pecas.Designacao_Produto.Length > 50)
                     {
                         pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto.Substring(0,54));
                     }

@@ -75,7 +75,7 @@
                                         <div class="btn-group float-right">
                                             <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
                                             <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
-                                                <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-grow text-dark float-sm-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>                                            </a>
+                                                <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -85,7 +85,7 @@
                 }
 
                 <br />
-                <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario</a>
+                <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" id="addCom" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario <span class="spinner-border text-success float-right" style="display:none" id="addComment" role="status" aria-hidden="true"></span></a>
 
                 <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com">Não foram encontrados comentários!</button>
 
@@ -182,6 +182,8 @@
     }
     function AdicionarComentario(IdCartao) {
         {
+            document.getElementById("addComment").style.display = '';
+            document.getElementById("addCom").classList.add("disabled");
 
             var comment = {
                 idcartao: document.getElementById("hiddenCartaoId").value,
@@ -221,7 +223,6 @@
                         $(row).insertAfter("#tblComentarios tr:first");
 
                         $.notify({
-                            title: "Informação:",
                             message: "Comentário adicionado com sucesso!"
                         }, {
                             // settings
@@ -230,6 +231,9 @@
                                     this.css({ 'width': 'auto', 'height': 'auto' });
                                 }
                         });
+
+                        document.getElementById("addComment").style.display = 'none';
+                        document.getElementById("addCom").classList.remove("disabled");
 
                     });
                 }
