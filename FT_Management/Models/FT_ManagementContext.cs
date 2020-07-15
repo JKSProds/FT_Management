@@ -831,13 +831,12 @@ namespace FT_Management.Models
                 pdfFormFields.SetField("Remoto", "REMOTO");
             }else if((folhaobra.DataServico.DayOfWeek == DayOfWeek.Sunday) || (folhaobra.DataServico.DayOfWeek == DayOfWeek.Saturday))
             {
-                pdfFormFields.SetFieldProperty("Remoto", "textsize", 28f, null);
+                pdfFormFields.SetFieldProperty("Remoto", "textsize", 20f, null);
                 pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
                 pdfFormFields.SetField("Remoto", "FIM-DE-SEMANA");
             }
 
             if (folhaobra.PecasServico.Count() > 0 && folhaobra.GuiaTransporteAtual != "GT" + folhaobra.DataServico.Year + "BO91/") pdfFormFields.SetField("GT", "Peça(s) retirada(s) da " + folhaobra.GuiaTransporteAtual);
-
 
             //Equipamento
             pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);
@@ -878,6 +877,7 @@ namespace FT_Management.Models
                 pdfFormFields.SetField("o tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
             }
 
+            pdfFormFields.SetFieldProperty("Text5", "textsize", 9f, null);
             pdfFormFields.SetField("Text5", folhaobra.DataServico.ToString("dd/MM/yyyy"));
 
             if (folhaobra.PecasServico.Count > 0 )
