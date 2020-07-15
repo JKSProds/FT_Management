@@ -76,4 +76,14 @@ namespace FT_Management.Models
         [Display(Name = "Assistência Remota?")]
         public bool AssistenciaRemota { get; set; }
     }
+
+    public class GuiaTransporte
+    {
+        public int IdFolhaObra { get; set; }
+        public int IdTecnico { get; set; }
+        public string NomeTecnico { get; set; }
+        public string RefProduto { get; set; }
+        public string Designacao { get; set; }
+        public float Quantidade { get; set; }
+    }
 }
