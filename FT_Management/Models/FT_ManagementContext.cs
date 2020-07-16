@@ -907,7 +907,7 @@ namespace FT_Management.Models
                 Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2], (int)fldPosition[3], 20);
                 folhaobra.RubricaCliente = folhaobra.RubricaCliente.Replace("data:image/png;base64,", "").Trim();
 
-                if ((folhaobra.RubricaCliente.Length % 4 == 0) && Regex.IsMatch(folhaobra.RubricaCliente, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None)
+                if ((folhaobra.RubricaCliente.Length % 4 == 0) && Regex.IsMatch(folhaobra.RubricaCliente, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
                 {
                     byte[] imageBytes = Convert.FromBase64String(folhaobra.RubricaCliente);
 
