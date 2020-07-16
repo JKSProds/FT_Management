@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FT_Management.Models;
@@ -73,7 +74,6 @@ namespace FT_Management.Controllers
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
             if (cartao.IdCartao == null) return RedirectToAction("Index");
             cartao.FolhasObra = context.ObterListaFolhasObraCartao(idCartao);
-            cartao.Comentarios = trello.ObterComentarios(idCartao);
 
             return View(cartao);
         }
@@ -88,7 +88,16 @@ namespace FT_Management.Controllers
             foreach (var folhaObra in context.ObterListaFolhasObraCartao(idcartao))
             {
                 if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-                trello.NovoAnexo(folhaObra.IdCartao, context.PreencherFormularioFolhaObra(folhaObra).ToArray(), "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf");
+                TrelloAnexos Anexo = new TrelloAnexos
+                {
+                    id = folhaObra.IdCartao,
+                    name = "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf",
+                    file = context.PreencherFormularioFolhaObra(folhaObra).ToArray(),
+                };
+                Anexo.dict.TryGetValue(Anexo.name.Split('.').Last(), out string mimeType);
+                Anexo.mimeType = mimeType;
+
+                trello.NovoAnexo(Anexo);
             }
 
             trello.NovaLabel(idcartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
@@ -102,5 +111,66 @@ namespace FT_Management.Controllers
             TrelloComentarios Comentario = trello.ObterComentarios(idcartao).Where(c => c.Comentario.Replace(Environment.NewLine, "") == comentario).First();
             return Json(Comentario);
         }
+        [HttpPost("AdicionarAnexo")]
+        public  ActionResult AdicionarAnexo(List<IFormFile> files, string idcartao)
+        {
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0 )
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        formFile.CopyTo(ms);
+                        var fileBytes = ms.ToArray();
+
+                        TrelloAnexos Anexo = new TrelloAnexos
+                        {
+                            id = idcartao,
+                            name = formFile.FileName,
+                            file = fileBytes,
+                        };
+
+                        if (Anexo.name.Split('.').Count() > 1)
+                        {
+                            Anexo.dict.TryGetValue("." + Anexo.name.Split('.').Last().ToString(), out string mimeType);
+                            Anexo.mimeType = mimeType;
+                        }
+                        else
+                        {
+                            Anexo.mimeType = "application/pdf";
+                        }
+
+                        trello.NovoAnexo(Anexo);
+                    }
+                }
+            }
+
+            return RedirectToAction("Pedido", new { idCartao = idcartao });
+        }
+
+        public virtual ActionResult DescarregarAnexo(string id, string idcartao)
+        {
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+
+            TrelloAnexos Anexo = trello.ObterAnexo(id, idcartao);
+            var file = Anexo.file.ToArray();
+            var output = new MemoryStream();
+            output.Write(file, 0, file.Length);
+            output.Position = 0;
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = Anexo.name,
+                Inline = false,
+                Size = file.Length,
+                CreationDate = DateTime.Now,
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+            return File(output, Anexo.mimeType);
+        }
+
     }
 }
