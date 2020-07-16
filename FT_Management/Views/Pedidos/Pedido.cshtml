@@ -5,10 +5,12 @@
     ViewData["Title"] = "Pedido";
 }
 
-<div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-    <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
-    <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
-</div>
+    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+        <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
+        <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
+        <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
+        <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>
+    </div>
 <br />
 <hr />
 
@@ -28,7 +30,9 @@
                 </dd>
             </dl>
         </div>
+    </div>
 
+    <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
 
         <br />
         <a class="btn btn-primary btn-block btn-lg form-group " id="btnAddAnexo" data-toggle="modal" data-target="#myModal3" style="color:white; margin-bottom:5px;"><i class="fas fa-plus"></i> Novo Anexo<span class="spinner-border text-success float-right" style="display:none" id="addAnexo" role="status" aria-hidden="true"></span></a>
@@ -74,7 +78,6 @@
         }
     </div>
     <div class="tab-pane fade show" id="v-pills-folhas" role="tabpanel" aria-labelledby="v-pills-folhas-tab">
-
         <br />
         <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
 
@@ -127,6 +130,8 @@
                 </tbody>
             </table>
         }
+    </div>
+    <div class="tab-pane fade show" id="v-pills-com" role="tabpanel" aria-labelledby="v-pills-com-tab">
 
         <br />
         <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;" id="addCom" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario <span class="spinner-border text-success float-right" style="display:none" id="addComment" role="status" aria-hidden="true"></span></a>
@@ -168,7 +173,6 @@
         </table>
     </div>
 </div>
-
 <div>
     <br />
     <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'">< Voltar</a>
