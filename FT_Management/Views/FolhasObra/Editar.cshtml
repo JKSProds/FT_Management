@@ -534,9 +534,9 @@
     <script>
         var canvas = document.querySelector('#signature');
         var pad = new SignaturePad(canvas, {
-            minWidth: 1,
+            minWidth: 5,
             maxWidth: 10,
-            dotSize: 10
+            dotSize: 5
         });
 
         $('#accept').click(function () {
@@ -574,10 +574,11 @@
         window.onresize = resizeCanvas;
         resizeCanvas();
         pad.fromDataURL(document.getElementById("clienteAssinatura").value);
-        pad.fromDataURL(document.getElementById("clienteAssinatura").value);
 
         window.addEventListener(orientationEvent, function () {
             resizeCanvas();
+            pad.fromDataURL(document.getElementById("clienteAssinatura").value);
+
             }, false);
 
         function enviarFolha() {
