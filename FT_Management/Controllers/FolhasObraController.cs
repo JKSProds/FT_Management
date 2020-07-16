@@ -13,11 +13,13 @@ namespace FT_Management.Controllers
     public class FolhasObraController : Controller
     {
         // GET: FolhasObraController
-        public ActionResult Index()
+        public ActionResult Index(string DataFolhasObra)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            return View(context.ObterListaFolhasObra("", ""));
+            
+            if (DataFolhasObra == null || DataFolhasObra == string.Empty) DataFolhasObra = DateTime.Now.ToString("dd-MM-yyyy");
+            ViewData["DataFolhasObra"] = DataFolhasObra;
+            return View(context.ObterListaFolhasObra("", DateTime.Parse(DataFolhasObra).ToString("yyyy-MM-dd")));
         }
 
         
