@@ -442,7 +442,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using (var result = db.Query("SELECT GuiaTransporteAtual FROM dat_folhas_obra inner join dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND NomeTecnico like '%" + NomeTecnico + "%' GROUP BY dat_folhas_obra.guiatransporteatual;"))
+                using (var result = db.Query("SELECT GuiaTransporteAtual FROM dat_folhas_obra inner join dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND GuiaTransporteAtual != 'GT"+DateTime.Now.Year+"BO91/' AND NomeTecnico like '%" + NomeTecnico + "%' GROUP BY dat_folhas_obra.guiatransporteatual;"))
                 {
                     while (result.Read())
                     {
