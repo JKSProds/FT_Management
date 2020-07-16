@@ -917,6 +917,10 @@ namespace FT_Management.Models
 
                         pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
                     }
+                    catch
+                    {
+
+                    }
                 }
             }
 
