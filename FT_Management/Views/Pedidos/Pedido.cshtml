@@ -31,7 +31,7 @@
 
 
         <br />
-        <a class="btn btn-primary btn-block btn-lg form-group " data-toggle="modal" data-target="#myModal3" style="color:white; margin-bottom:5px;"><i class="fas fa-plus"></i> Novo Anexo</a>
+        <a class="btn btn-primary btn-block btn-lg form-group " id="btnAddAnexo" data-toggle="modal" data-target="#myModal3" style="color:white; margin-bottom:5px;"><i class="fas fa-plus"></i> Novo Anexo<span class="spinner-border text-success float-right" style="display:none" id="addAnexo" role="status" aria-hidden="true"></span></a>
 
         @if (Model.Anexos.Count() == 0)
         {
@@ -229,7 +229,7 @@
             <div class="form-group">
                 <div class="input-group mb-3">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="this.form.submit()">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo()">
                         <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
                     </div>
                     <input type="hidden" id="hiddenCartaoId" name="idcartao" value="@Model.IdCartao"/>
@@ -387,6 +387,15 @@
                     });
                 }
             });
+    }
+
+    function AdicionarAnexo() {
+        document.getElementById("addAnexo").style.display = ''
+        document.getElementById("btnAddAnexo").classList.add("disabled");
+        $('#myModal3').modal('toggle');
+
+        $('form').submit();
+
     }
 
 </script>
