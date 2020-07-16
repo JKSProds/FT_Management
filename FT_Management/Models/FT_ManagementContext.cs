@@ -13,6 +13,7 @@ using iTextSharp.text.pdf;
 using OfficeOpenXml.FormulaParsing.Utilities;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using System.Text.RegularExpressions;
 
 namespace FT_Management.Models
 {
@@ -904,23 +905,19 @@ namespace FT_Management.Models
             {
                 var fldPosition = pdfFormFields.GetFieldPositions("assinatura");
                 Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2], (int)fldPosition[3], 20);
+                folhaobra.RubricaCliente = folhaobra.RubricaCliente.Replace("data:image/png;base64,", "").Trim();
 
-                byte[] imageBytes = Convert.FromBase64String(folhaobra.RubricaCliente.Replace("data:image/png;base64,", ""));
-                if (imageBytes.Length > 0)
+                if ((folhaobra.RubricaCliente.Length % 4 == 0) && Regex.IsMatch(folhaobra.RubricaCliente, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None)
                 {
-                    try
-                    {
-                        iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
+                    byte[] imageBytes = Convert.FromBase64String(folhaobra.RubricaCliente);
+
+                    iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
 
                         image.ScaleToFit(rectangle.Width, rectangle.Height);
                         image.SetAbsolutePosition(rectangle.Left + 2, rectangle.Top - 2);
 
                         pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
-                    }
-                    catch
-                    {
 
-                    }
                 }
             }
 
