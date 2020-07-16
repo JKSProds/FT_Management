@@ -86,5 +86,7 @@ namespace FT_Management.Models
         public string RefProduto { get; set; }
         public string Designacao { get; set; }
         public float Quantidade { get; set; }
+        public string NomeCliente { get; set; }
+        public DateTime DataMovimento { get; set; }
     }
 }

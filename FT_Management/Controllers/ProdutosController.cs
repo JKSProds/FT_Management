@@ -186,7 +186,7 @@ namespace FT_Management.Controllers
         public ActionResult Editar(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-    
+            ViewData["LstGuiasPecas"] = context.ObterListaMovimentosProduto(id);
             return View(context.ObterProduto(id));
         }
 

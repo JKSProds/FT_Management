@@ -415,7 +415,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using (var result = db.Query("SELECT dat_folhas_obra.IdFolhaObra, NomeTecnico, GuiaTransporteAtual, RefProduto, Designacao, Quantidade FROM dat_folhas_obra inner join dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND NomeTecnico like '"+NomeTecnico+"' AND GuiaTransporteAtual like '"+Guia+ "' GROUP BY dat_produto_intervencao.RefProduto, dat_folhas_obra.idfolhaobra;"))
+                using (var result = db.Query("SELECT dat_folhas_obra.IdFolhaObra, NomeTecnico, NomeCliente, dat_folhas_obra.DataServico, GuiaTransporteAtual, RefProduto, Designacao, Quantidade FROM dat_folhas_obra inner join dat_clientes, dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND NomeTecnico like '"+NomeTecnico+"' AND GuiaTransporteAtual like '"+Guia+ "' AND dat_clientes.idcliente = dat_folhas_obra.idcliente GROUP BY dat_produto_intervencao.RefProduto, dat_folhas_obra.idfolhaobra;"))
                 {
                     while (result.Read())
                     {
@@ -426,8 +426,37 @@ namespace FT_Management.Models
                             GuiaTransporte = result["GuiaTransporteAtual"],
                             RefProduto = result["RefProduto"],
                             Designacao = result["Designacao"],
-                            Quantidade = result["Quantidade"]
+                            Quantidade = result["Quantidade"],
+                            NomeCliente = result["NomeCliente"],
+                            DataMovimento = result["DataServico"]
+                        });
+                    }
+                }
+            }
 
+            return LstGuias;
+        }
+        public List<Movimentos> ObterListaMovimentosProduto(string Ref_Produto)
+        {
+            List<Movimentos> LstGuias = new List<Movimentos>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using (var result = db.Query("SELECT dat_folhas_obra.IdFolhaObra, NomeTecnico, NomeCliente, dat_folhas_obra.DataServico, GuiaTransporteAtual, RefProduto, Designacao, Quantidade FROM dat_folhas_obra inner join dat_clientes, dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND RefProduto = '"+Ref_Produto+"' AND dat_clientes.idcliente = dat_folhas_obra.idcliente GROUP BY dat_produto_intervencao.RefProduto, dat_folhas_obra.idfolhaobra;"))
+                {
+                    while (result.Read())
+                    {
+                        LstGuias.Add(new Movimentos()
+                        {
+                            IdFolhaObra = result["IdFolhaObra"],
+                            NomeTecnico = result["NomeTecnico"],
+                            GuiaTransporte = result["GuiaTransporteAtual"],
+                            RefProduto = result["RefProduto"],
+                            Designacao = result["Designacao"],
+                            Quantidade = result["Quantidade"],
+                            NomeCliente = result["NomeCliente"],
+                            DataMovimento = result["DataServico"]
                         });
                     }
                 }
