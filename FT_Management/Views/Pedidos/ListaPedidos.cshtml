@@ -72,7 +72,7 @@
     <div class="tab-pane fade show " id="v-pills-pecas" role="tabpanel" aria-labelledby="v-pills-pecas-tab">
         <br />
         <h4>Peças em uso na Guia de Transporte</h4>
-        @{ var LstGuiaPecas = ViewData["LstGuiasPecas"] as IList<GuiasTransporte>;}
+        @{ var LstGuiaPecas = ViewData["LstGuiasPecas"] as IList<Movimentos>;}
 
             <br />
             <button class="btn btn-lg btn-danger btn-block form-group disabled @(LstGuiaPecas.Count() == 0 ? "" : "d-none")">Não foram encontradas guias de transporte!</button>
@@ -91,7 +91,7 @@
                         </th>
                         <th>
                             <form method="get" action="ListaPedidos">
-                                <select class="form-control" id="SelectLista2" asp-items="@(new SelectList(@ViewData["LstGuias"] as List<GuiasTransporte>, "GuiaTransporte", "GuiaTransporte", @ViewData["LstGuiasSelected"]))" onchange="submitdata()" name="GuiaTransporte"></select>
+                                <select class="form-control" id="SelectLista2" asp-items="@(new SelectList(@ViewData["LstGuias"] as List<Movimentos>, "GuiaTransporte", "GuiaTransporte", @ViewData["LstGuiasSelected"]))" onchange="submitdata()" name="GuiaTransporte"></select>
                                 <input type="hidden" id="hiddenQuadroID" value="@Model.First().IdQuadro" name="idQuadro" />
                                 <input type="hidden" id="hiddenSelectedListaID" name="idlista" />
                             </form>
@@ -99,7 +99,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in ViewData["LstGuiasPecas"] as List<GuiasTransporte>)
+                    @foreach (var item in ViewData["LstGuiasPecas"] as List<Movimentos>)
                     {
                         <tr>
                             <td>
