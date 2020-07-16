@@ -75,6 +75,7 @@ namespace FT_Management.Models
         public string GuiaTransporteAtual { get; set; }
         [Display(Name = "Assistência Remota?")]
         public bool AssistenciaRemota { get; set; }
+        public string RubricaCliente { get; set; }
     }
 
     public class Movimentos

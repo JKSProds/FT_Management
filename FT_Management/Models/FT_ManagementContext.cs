@@ -305,8 +305,8 @@ namespace FT_Management.Models
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                         ClienteServico = ObterCliente(result["IdCliente"]),
                         PecasServico = ObterListaProdutoIntervencao(id),
-                        IntervencaosServico = ObterListaIntervencoes(id)
-
+                        IntervencaosServico = ObterListaIntervencoes(id),
+                        RubricaCliente = result["RubricaCliente"]
                     };
                 return folhaObra;
 
@@ -586,11 +586,11 @@ namespace FT_Management.Models
         {
             folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") + 1 : folhaObra.IdFolhaObra;
 
-            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto) VALUES ";
+            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '"+folhaObra.ConferidoPor+"', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '"+folhaObra.GuiaTransporteAtual+"', '"+ (folhaObra.AssistenciaRemota ? 1 : 0) +"') \r\n");
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '"+folhaObra.ConferidoPor+"', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '"+folhaObra.GuiaTransporteAtual+"', '"+ (folhaObra.AssistenciaRemota ? 1 : 0) +"', '"+folhaObra.RubricaCliente+"') \r\n");
             
-            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto);";
+            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
 
             using (Database db = ConnectionString)
             {
@@ -899,6 +899,23 @@ namespace FT_Management.Models
             PdfReader pdfReader = new PdfReader(pdfTemplate);
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
             AcroFields pdfFormFields = pdfStamper.AcroFields;
+
+            if (folhaobra.RubricaCliente != null)
+            {
+                var fldPosition = pdfFormFields.GetFieldPositions("assinatura");
+                Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2], (int)fldPosition[3], 20);
+
+                byte[] imageBytes = Convert.FromBase64String(folhaobra.RubricaCliente.Split(',').Last());
+                if (imageBytes.Length > 0)
+                {
+                    iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
+
+                    image.ScaleToFit(rectangle.Width, rectangle.Height);
+                    image.SetAbsolutePosition(rectangle.Left + 2, rectangle.Top - 2);
+
+                    pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
+                }
+            }
 
             pdfFormFields.SetField("IdFolhaObra", "FO" + folhaobra.IdFolhaObra.ToString());
             if (folhaobra.AssistenciaRemota)

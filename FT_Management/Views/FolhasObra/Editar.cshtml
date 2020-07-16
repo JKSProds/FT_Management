@@ -56,6 +56,7 @@
         <a class="nav-item nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="false">Dados</a>
         <a class="nav-item nav-link" id="v-pills-intervencoes-tab" data-toggle="pill" href="#v-pills-intervencoes" role="tab" aria-controls="v-pills-intervencoes" aria-selected="false">Intervenções</a>
         <a class="nav-item nav-link" id="v-pills-pecas-tab" data-toggle="pill" href="#v-pills-pecas" role="tab" aria-controls="v-pills-pecas" aria-selected="false">Peças</a>
+        <a class="nav-item nav-link" id="v-pills-sig-tab" data-toggle="pill" href="#v-pills-sig" role="tab" aria-controls="v-pills-sig" aria-selected="false">Rubricas</a>
     </div>
 
     <div class="tab-content" id="v-pills-tabContent">
@@ -210,7 +211,7 @@
                     </div>
                 </div>
                 <div class="form-group col-lg-4">
-                    <input type="checkbox" class="custom-checkbox" style="margin-top:35px; width: 30px; height: 30px;" asp-for="AssistenciaRemota"/>
+                    <input type="checkbox" class="custom-checkbox" style="margin-top:35px; width: 30px; height: 30px;" asp-for="AssistenciaRemota" />
                     <label asp-for="AssistenciaRemota" class="control-label" style="" margin-top:10px;font-size:20px;"></label>
                 </div>
 
@@ -233,7 +234,7 @@
                     </div>
                 </div>
             </div>
-            </div>
+        </div>
         <div class="tab-pane fade show" id="v-pills-intervencoes" role="tabpanel" aria-labelledby="v-pills-intervencoes-tab">
             <br />
             <div class="row">
@@ -403,7 +404,7 @@
                     <button type="button" class="btn btn-primary btn-block" style="height: 100%; font-size: 20px" data-toggle="modal" data-target="#exampleModal2">
                         Adicionar Peças
                     </button>
-                    </div>
+                </div>
                 <div class="form-group col-8">
                     <label asp-for="GuiaTransporteAtual" class="control-label"></label>
                     <input asp-for="GuiaTransporteAtual" class="form-control" />
@@ -498,61 +499,111 @@
             </table>
 
         </div>
+        <div class="tab-pane fade show" id="v-pills-sig" role="tabpanel" aria-labelledby="v-pills-sig-tab">
+            <br />
+
+
+            <p>
+                <canvas id="signature" width="700" height="460" style="border: 1px solid rgba(0, 0, 0, 0.1);"></canvas><hr />
+            <p class="text-center">Assine acima</p>
+            <div class="btn-group btn-block">
+                <button hidden type="button" id="accept"
+                        class="btn btn-primary col-lg-6 btn-lg">
+                    Guardar Assinatura
+                </button>
+                <button type="button" id="clean"
+                        class="btn btn-secondary btn-lg">
+                    Limpar
+                </button>
+            </div>
+            <input type="text" hidden id="clienteAssinatura" asp-for="@Model.RubricaCliente">
+
+        </div>
     </div>
+    <br />
     <div class="form-group">
-        <input type="submit" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" />
+        <input onclick="enviarFolha()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" />
     </div>
 </form>
 
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+
+    <script>
+       
+
+        function enviarFolha() {
+            document.getElementById("accept").click();
+            $('form').submit();
+        }
+        $(function () {
+            var canvas = document.querySelector('#signature');
+            var pad = new SignaturePad(canvas, {
+                minWidth: 5,
+                maxWidth: 10,
+                dotSize: 10
+            });
+
+            pad.fromDataURL(document.getElementById("clienteAssinatura").value);
+            $('#accept').click(function () {
+                var data = pad.toDataURL();
+                document.getElementById("clienteAssinatura").value = data;
+                pad.off();
+            });
+            $('#clean').click(function () {
+                pad.clear();
+            });
+        });
+    </script>
 }
 
 <script>
+
     function AbrirIntervencao() {
         document.getElementById("txtTecnico").value = document.getElementById("hiddenNomeTecnico").value;
         $('#exampleModal').modal('toggle');
 
     }
     var ConfirmApagarIntervencao = function (IdIntervencao) {
-      $("#hiddenIntervencaoId").val(IdIntervencao);
-            $("#myModal").modal('show');
+        $("#hiddenIntervencaoId").val(IdIntervencao);
+        $("#myModal").modal('show');
 
-        }
+    }
 
     var ApagarIntervencao = function () {
         var IdIntervencao = $("#hiddenIntervencaoId").val();
         $("#myModal").modal("hide");
 
-            $.ajax({
+        $.ajax({
 
-                type: "POST",
-                url: "/FolhasObra/ApagarIntervencao",
-                data: { Id: IdIntervencao },
-                success: function (result) {
+            type: "POST",
+            url: "/FolhasObra/ApagarIntervencao",
+            data: { Id: IdIntervencao },
+            success: function (result) {
 
-                    $("#row_" + IdIntervencao).remove();
+                $("#row_" + IdIntervencao).remove();
 
 
-                    if (document.getElementById("tblIntervencao").rows.length == 1) {
+                if (document.getElementById("tblIntervencao").rows.length == 1) {
 
-                        document.getElementById('no-int').classList.remove("d-none");
-                        document.getElementById('tblIntervencao').classList.add("d-none");
+                    document.getElementById('no-int').classList.remove("d-none");
+                    document.getElementById('tblIntervencao').classList.add("d-none");
 
-                    }
-                    $.notify({
-                        message: "Intervenção removida com sucesso!"
-                    }, {
-                        // settings
-                        type: 'success',
-                        onShow: function () {
-                            this.css({ 'width': 'auto', 'height': 'auto' });
-                        }
-                    });
                 }
+                $.notify({
+                    message: "Intervenção removida com sucesso!"
+                }, {
+                    // settings
+                    type: 'success',
+                    onShow: function () {
+                        this.css({ 'width': 'auto', 'height': 'auto' });
+                    }
+                });
+            }
 
-            })
+        })
     }
 
     var ConfirmApagarPeca = function (Ref_Produto) {
@@ -577,7 +628,7 @@
                 parent.removeChild(row);
 
                 if (document.getElementById("tblPecas").rows.length == 1) {
-                    
+
                     document.getElementById('no-pecas').classList.remove("d-none");
                     document.getElementById('tblPecas').classList.add("d-none");
 
@@ -739,13 +790,13 @@
                     newRow.setAttribute("id", "linha_" + result);
                     newRow.innerHTML = "<td>" + peca.referencia + "</td><td>" + peca.designacao + "</td><td>" + peca.quantidade + "</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarPeca('" + result + "')\"><i class=\"fas fa-trash\"></i> </a></td>";
                     $.notify({
-                        message: "Referência "+peca.referencia+" adicionada com sucesso!"
+                        message: "Referência " + peca.referencia + " adicionada com sucesso!"
                     }, {
                         // settings
-                            type: 'success',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
+                        }
                     });
                 });
             }
@@ -775,15 +826,15 @@
                     document.getElementById('tblIntervencao').classList.remove("d-none");
                     var newRow = document.getElementById('tblIntervencao').insertRow();
                     newRow.setAttribute("id", "row_" + result);
-                    newRow.innerHTML = "<td>" + intervencao.data + "</td><td>" + intervencao.horainicio + "</td><td>" + intervencao.horafim + "</td><td>" + intervencao.tecnico +"</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarIntervencao("+result+")\"><i class=\"fas fa-trash\"></i> </a></td>";
+                    newRow.innerHTML = "<td>" + intervencao.data + "</td><td>" + intervencao.horainicio + "</td><td>" + intervencao.horafim + "</td><td>" + intervencao.tecnico + "</td><td><a href=\"#\" class=\"btn btn-danger btn-block btn-lg\" onclick=\"ConfirmApagarIntervencao(" + result + ")\"><i class=\"fas fa-trash\"></i> </a></td>";
                     $.notify({
                         message: "Intervenção adicionada com sucesso!"
                     }, {
                         // settings
-                            type: 'success',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
+                        }
                     });
                 });
             }
