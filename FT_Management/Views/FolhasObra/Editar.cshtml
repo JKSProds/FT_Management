@@ -534,7 +534,7 @@
     <script>
         var canvas = document.querySelector('#signature');
         var pad = new SignaturePad(canvas, {
-            minWidth: 3,
+            minWidth: 1,
             maxWidth: 10,
             dotSize: 10
         });
@@ -571,9 +571,9 @@
 
         // On mobile devices it might make more sense to listen to orientation change,
         // rather than window resize events.
-        resizeCanvas();
         window.onresize = resizeCanvas;
-
+        resizeCanvas();
+        pad.fromDataURL(document.getElementById("clienteAssinatura").value);
         pad.fromDataURL(document.getElementById("clienteAssinatura").value);
 
         window.addEventListener(orientationEvent, function () {
