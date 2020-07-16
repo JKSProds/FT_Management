@@ -884,7 +884,7 @@ namespace FT_Management.Models
                 pdfFormFields.SetField("Remoto", "FIM-DE-SEMANA");
             }
 
-            if (folhaobra.PecasServico.Count() > 0 && (folhaobra.GuiaTransporteAtual != "GT" + folhaobra.DataServico.Year + "BO91/" || folhaobra.GuiaTransporteAtual != string.Empty)) pdfFormFields.SetField("GT", "Peça(s) retirada(s) da " + folhaobra.GuiaTransporteAtual);
+            if (folhaobra.PecasServico.Count() > 0 && folhaobra.GuiaTransporteAtual != "GT" + folhaobra.DataServico.Year + "BO91/" && folhaobra.GuiaTransporteAtual != string.Empty) pdfFormFields.SetField("GT", "Peça(s) retirada(s) da " + folhaobra.GuiaTransporteAtual);
 
             //Equipamento
             pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);
