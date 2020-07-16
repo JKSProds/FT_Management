@@ -504,7 +504,7 @@
 
 
             <p>
-                <canvas id="signature" width="700" height="460" style="border: 1px solid rgba(0, 0, 0, 0.1);"></canvas><hr />
+                <canvas id="signature" width="700" height="700" style="border: 1px solid rgba(0, 0, 0, 0.1);width:100%; height:100%"></canvas><hr />
             <p class="text-center">Assine acima</p>
             <div class="btn-group btn-block">
                 <button hidden type="button" id="accept"
@@ -532,30 +532,59 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
     <script>
-       
+        var canvas = document.querySelector('#signature');
+        var pad = new SignaturePad(canvas, {
+            minWidth: 5,
+            maxWidth: 10,
+            dotSize: 10
+        });
+
+        $('#accept').click(function () {
+            var data = pad.toDataURL();
+            document.getElementById("clienteAssinatura").value = data;
+            pad.off();
+        });
+        $('#clean').click(function () {
+            resizeCanvas();
+            pad.clear();
+        });
+
+        function resizeCanvas() {
+            //alert('resize');
+            // When zoomed out to less than 100%, for some very strange reason,
+            // some browsers report devicePixelRatio as less than 1
+            // and only part of the canvas is cleared then.
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+            // This part causes the canvas to be cleared
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = window.innerHeight * ratio / 2;
+            canvas.getContext("2d").scale(ratio, ratio);
+
+            // This library does not listen for canvas changes, so after the canvas is automatically
+            // cleared by the browser, SignaturePad#isEmpty might still return false, even though the
+            // canvas looks empty, because the internal data of this library wasn't cleared. To make sure
+            // that the state of this library is consistent with visual state of the canvas, you
+            // have to clear it manually.
+            pad.clear();
+        }
+
+        // On mobile devices it might make more sense to listen to orientation change,
+        // rather than window resize events.
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+        pad.fromDataURL(document.getElementById("clienteAssinatura").value);
+
+        window.addEventListener(orientationEvent, function () {
+            resizeCanvas();
+            }, false);
 
         function enviarFolha() {
             document.getElementById("accept").click();
             $('form').submit();
         }
-        $(function () {
-            var canvas = document.querySelector('#signature');
-            var pad = new SignaturePad(canvas, {
-                minWidth: 5,
-                maxWidth: 10,
-                dotSize: 10
-            });
 
-            pad.fromDataURL(document.getElementById("clienteAssinatura").value);
-            $('#accept').click(function () {
-                var data = pad.toDataURL();
-                document.getElementById("clienteAssinatura").value = data;
-                pad.off();
-            });
-            $('#clean').click(function () {
-                pad.clear();
-            });
-        });
+
     </script>
 }
 
