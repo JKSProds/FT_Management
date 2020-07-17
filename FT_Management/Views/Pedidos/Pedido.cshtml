@@ -5,12 +5,12 @@
     ViewData["Title"] = "Pedido";
 }
 
-    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-        <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
-        <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
-        <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
-        <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>
-    </div>
+<div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+    <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
+    <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
+    <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
+    <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>
+</div>
 <br />
 <hr />
 
@@ -68,7 +68,7 @@
                             </td>
                             <td>
                                 <div class="btn-group float-right  @(item.mimeType == "application/pdf" ? "" : "d-none") ">
-                                    <a class="btn btn-outline-success btn-lg disabled" onclick="window.open('@Url.Action("Assinar", "Pedidos", new { item = item})')"><i class="fas fa-signature" style="font-size:20px"></i></a>
+                                    <a class="btn btn-outline-success btn-lg" onclick="ConfirmAssinarDocumento('@Model.IdCartao', '@item.id')"><i class="fas fa-signature" style="font-size:20px"></i></a>
                                 </div>
                             </td>
                         </tr>
@@ -230,17 +230,17 @@
             </div>
             <div class="modal-body">
                 <form method="post" enctype="multipart/form-data" asp-controller="Pedidos" asp-action="AdicionarAnexo" style="margin-bottom: -10px">
-            <div class="form-group">
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo()">
-                        <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
-                    </div>
-                    <input type="hidden" id="hiddenCartaoId" name="idcartao" value="@Model.IdCartao"/>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo()">
+                                <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                            </div>
+                            <input type="hidden" id="hiddenCartaoId" name="idcartao" value="@Model.IdCartao" />
 
-                </div>
-            </div>
-        </form>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
@@ -248,8 +248,39 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Assinar Documento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label class="control-label">Nome do Cliente</label>
+                <input id="txtNomeCliente" type="text" class="form-control" placeholder="Nome do Cliente" value='@ViewData["PessoaContacto"]' required />
+                <div class="d-none" id="chkEntregue">
+                    <input type="checkbox" class="custom-checkbox" id="chkManualEntregue" />
+                    <label class="control-label">Manuel entregue ao cliente?</label>
+                </div>
+                <label class="col-form-label">Tipo de Documento</label>
+                <select id="tipoDocumento" class="form-control" onchange="AlteradoTipoDoc()">
+                    <option value="0">Guia de Transporte</option>
+                    <option value="1">Auto</option>
+                    <option value="2">Outro</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="adicionarAssinatura" onclick="AssinarDocumento()" href="javascript:;">Assinar Documento  <span class="spinner-border text-success float-right" style="display:none" id="addAssinatura" role="status" aria-hidden="true"></span></button>
+            </div>
+        </div>
+    </div>
+</div>
 <input type="hidden" id="hiddenCartaoId" />
 <input type="hidden" id="hiddenFolhaObraId" />
+<input type="hidden" id="hiddenAnexoId" />
 
 
 <script>
@@ -257,6 +288,59 @@
         $("#hiddenCartaoId").val(IdCartao);
         $("#myModal").modal('show');
 
+    }
+
+    var ConfirmAssinarDocumento = function (IdCartao, IdAnexo) {
+        $("#hiddenCartaoId").val(IdCartao);
+        $("#hiddenAnexoId").val(IdAnexo);
+
+        $("#myModal4").modal('show');
+
+    }
+
+    function AlteradoTipoDoc() {
+        var opcaoAtual = document.getElementById("tipoDocumento").value;
+        if (opcaoAtual == 1) {
+            document.getElementById("chkEntregue").classList.remove("d-none");
+
+        } else {
+            document.getElementById("chkEntregue").classList.add("d-none");
+            $('#chkManualEntregue').prop('checked', false);
+        }
+    }
+
+    function AssinarDocumento() {
+
+        document.getElementById("addAssinatura").style.display = '';
+        document.getElementById("adicionarAssinatura").classList.add("disabled");
+
+        var nomeCliente = document.getElementById("txtNomeCliente").value;
+        var cartaoId = document.getElementById("hiddenCartaoId").value;
+        var checkedManual = $('#chkManualEntregue').is(":checked");
+        var tipoDocumento = document.getElementById("tipoDocumento").value;
+        var anexoid = document.getElementById("hiddenAnexoId").value;
+
+        var json = {
+            nomecliente: nomeCliente,
+            cartaoid: cartaoId,
+            manualentregue: checkedManual,
+            tipodocumento: tipoDocumento,
+            idanexo: anexoid
+        };
+
+
+        $.ajax({
+            type: "POST",
+            url: "/Pedidos/AssinarDocumento",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    this.location.reload(true);
+                });
+            }
+        });
+        
     }
 
     var ConfirmEnviarEmail = function (IdFolhaObra) {
@@ -343,75 +427,75 @@
 
     function EnviarEmail() {
 
-            var idCartao = document.getElementById("hiddenFolhaObraId").value;
-            var emailDestino = document.getElementById("txtEmail").value;
+        var idCartao = document.getElementById("hiddenFolhaObraId").value;
+        var emailDestino = document.getElementById("txtEmail").value;
 
-            document.getElementById("folha_" + idCartao).style.display = '';
-            document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
+        document.getElementById("folha_" + idCartao).style.display = '';
+        document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
 
 
-            var json = {
-                id: idCartao,
-                emailDestino: emailDestino
-            };
+        var json = {
+            id: idCartao,
+            emailDestino: emailDestino
+        };
 
-            $('#myModal2').modal('toggle');
-            $('#myModal2')
-                .find("input,textarea,select")
-                .val('')
-                .end();
+        $('#myModal2').modal('toggle');
+        $('#myModal2')
+            .find("input,textarea,select")
+            .val('')
+            .end();
 
-            $.ajax({
-                type: "POST",
-                url: "/FolhasObra/EmailFolhaObra",
-                data: json,
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        document.getElementById("folha_" + idCartao).style.display = 'none';
-                        document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/EmailFolhaObra",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    document.getElementById("folha_" + idCartao).style.display = 'none';
+                    document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
 
-                        if (result == "Sucesso") {
-                            $.notify({
-                                message: "Email enviado com sucesso!"
-                            }, {
-                                // settings
-                                type: 'success',
-                                onShow: function () {
-                                    this.css({ 'width': 'auto', 'height': 'auto' });
-                                }
-                            });
+                    if (result == "Sucesso") {
+                        $.notify({
+                            message: "Email enviado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
 
-                            var json = {
-                                id: idCartao,
-                                novoemail: emailDestino
-                            };
-                            $.ajax({
-                                type: "POST",
-                                url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
-                                data: json,
-                                traditional: true,
-                                success: function (result) {
-                                    $(function () {
-                                    });
-                                }
-                            });
+                        var json = {
+                            id: idCartao,
+                            novoemail: emailDestino
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
+                            data: json,
+                            traditional: true,
+                            success: function (result) {
+                                $(function () {
+                                });
+                            }
+                        });
 
-                        } else {
-                            $.notify({
-                                message: "Ocorreu um erro!"
-                            }, {
-                                // settings
-                                type: 'danger',
-                                onShow: function () {
-                                    this.css({ 'width': 'auto', 'height': 'auto' });
-                                }
-                            });
-                        }
+                    } else {
+                        $.notify({
+                            message: "Ocorreu um erro!"
+                        }, {
+                            // settings
+                            type: 'danger',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
+                    }
 
-                    });
-                }
-            });
+                });
+            }
+        });
     }
 
     function AdicionarAnexo() {

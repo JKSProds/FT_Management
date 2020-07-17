@@ -72,6 +72,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
+            ViewData["PessoaContacto"] = context.ObterClienteNome(cartao.NomeCartao).PessoaContatoCliente;
+
             if (cartao.IdCartao == null) return RedirectToAction("Index");
             cartao.FolhasObra = context.ObterListaFolhasObraCartao(idCartao);
 
@@ -171,6 +173,20 @@ namespace FT_Management.Controllers
             Response.Headers.Add("Content-Disposition", cd.ToString());
             return File(output, Anexo.mimeType);
         }
+        public virtual ActionResult AssinarDocumento(string cartaoid, string idanexo, string nomecliente, string tipodocumento, string manualentregue)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+            TrelloAnexos Anexo = trello.ObterAnexo(idanexo, cartaoid);
+
+            Anexo.file = context.AssinarDocumento(nomecliente, tipodocumento, manualentregue == "true", Anexo.file).ToArray(); ;
+            Anexo.id = cartaoid;
+            Anexo.name = Anexo.name.Contains("Assinada_") ? Anexo.name : "Assinada_" + Anexo.name;
+
+            trello.NovoAnexo(Anexo);
+            return Content(string.Empty);
+        }
+
 
     }
 }

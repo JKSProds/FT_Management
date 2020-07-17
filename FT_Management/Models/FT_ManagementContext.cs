@@ -14,6 +14,8 @@ using OfficeOpenXml.FormulaParsing.Utilities;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography.Xml;
+using System.Configuration;
 
 namespace FT_Management.Models
 {
@@ -1011,5 +1013,46 @@ namespace FT_Management.Models
             return outputPdfStream;
             
         }
+
+        public MemoryStream AssinarDocumento(string nomecliente, string tipodocumento, bool manualentregue, byte[] documento)
+        {
+            var outputPdfStream = new MemoryStream();
+            PdfReader pdfReader = new PdfReader(documento);
+            PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
+            PdfContentByte canvas = pdfStamper.GetOverContent(1);
+
+            switch (tipodocumento)
+            {
+               case "0":
+                    for (int i = 3; i < pdfReader.NumberOfPages + 1; i++)
+                    {
+                        canvas = pdfStamper.GetOverContent(i);
+                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_RIGHT, new iTextSharp.text.Phrase(nomecliente, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 30, 290, 0);
+                    }
+                    break;
+               default:
+                    for (int i = 1; i < pdfReader.NumberOfPages + 1; i++)
+                    {
+                        canvas = pdfStamper.GetOverContent(i);
+                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_RIGHT, new iTextSharp.text.Phrase(nomecliente, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 30, 290, 0);
+                        if (manualentregue)
+                        {
+                            ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase("X", new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 20, iTextSharp.text.Font.BOLD))), 50, 290, 0);
+                        }
+                        else
+                        {
+                            ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase("X", new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 20, iTextSharp.text.Font.BOLD))), 70, 290, 0);
+                        }
+                    }
+                    break;
+            }
+
+            pdfStamper.FormFlattening = true;
+            pdfStamper.SetFullCompression();
+            pdfStamper.Close();
+
+            return outputPdfStream;
+        }
+
     }
 }
