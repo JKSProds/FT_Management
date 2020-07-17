@@ -92,12 +92,12 @@ namespace FT_Management.Controllers
                 if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
                 TrelloAnexos Anexo = new TrelloAnexos
                 {
-                    id = folhaObra.IdCartao,
-                    name = "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf",
-                    file = context.PreencherFormularioFolhaObra(folhaObra).ToArray(),
+                    Id = folhaObra.IdCartao,
+                    Name = "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf",
+                    File = context.PreencherFormularioFolhaObra(folhaObra).ToArray(),
                 };
-                Anexo.dict.TryGetValue(Anexo.name.Split('.').Last(), out string mimeType);
-                Anexo.mimeType = mimeType;
+                Anexo.dict.TryGetValue(Anexo.Name.Split('.').Last(), out string mimeType);
+                Anexo.MimeType = mimeType;
 
                 trello.NovoAnexo(Anexo);
             }
@@ -122,30 +122,28 @@ namespace FT_Management.Controllers
             {
                 if (formFile.Length > 0 )
                 {
-                    using (var ms = new MemoryStream())
+                    using var ms = new MemoryStream();
+                    formFile.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+
+                    TrelloAnexos Anexo = new TrelloAnexos
                     {
-                        formFile.CopyTo(ms);
-                        var fileBytes = ms.ToArray();
+                        Id = idcartao,
+                        Name = formFile.FileName,
+                        File = fileBytes,
+                    };
 
-                        TrelloAnexos Anexo = new TrelloAnexos
-                        {
-                            id = idcartao,
-                            name = formFile.FileName,
-                            file = fileBytes,
-                        };
-
-                        if (Anexo.name.Split('.').Count() > 1)
-                        {
-                            Anexo.dict.TryGetValue("." + Anexo.name.Split('.').Last().ToString(), out string mimeType);
-                            Anexo.mimeType = mimeType;
-                        }
-                        else
-                        {
-                            Anexo.mimeType = "application/pdf";
-                        }
-
-                        trello.NovoAnexo(Anexo);
+                    if (Anexo.Name.Split('.').Count() > 1)
+                    {
+                        Anexo.dict.TryGetValue("." + Anexo.Name.Split('.').Last().ToString(), out string mimeType);
+                        Anexo.MimeType = mimeType;
                     }
+                    else
+                    {
+                        Anexo.MimeType = "application/pdf";
+                    }
+
+                    trello.NovoAnexo(Anexo);
                 }
             }
 
@@ -157,34 +155,36 @@ namespace FT_Management.Controllers
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
 
             TrelloAnexos Anexo = trello.ObterAnexo(id, idcartao);
-            var file = Anexo.file.ToArray();
+            var file = Anexo.File.ToArray();
             var output = new MemoryStream();
             output.Write(file, 0, file.Length);
             output.Position = 0;
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = Anexo.name,
+                FileName = Uri.EscapeDataString(Anexo.Name),
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
 
             };
+
             Response.Headers.Add("Content-Disposition", cd.ToString());
-            return File(output, Anexo.mimeType);
+            return File(output, Anexo.MimeType);
         }
-        public virtual ActionResult AssinarDocumento(string cartaoid, string idanexo, string nomecliente, string tipodocumento, string manualentregue)
+        public virtual ActionResult AssinarDocumento(string cartaoid, string idanexo, string nometecnico, string nomecliente, string tipodocumento, string manualentregue)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             TrelloAnexos Anexo = trello.ObterAnexo(idanexo, cartaoid);
 
-            Anexo.file = context.AssinarDocumento(nomecliente, tipodocumento, manualentregue == "true", Anexo.file).ToArray(); ;
-            Anexo.id = cartaoid;
-            Anexo.name = Anexo.name.Contains("Assinada_") ? Anexo.name : "Assinada_" + Anexo.name;
+            Anexo.File = context.AssinarDocumento(nomecliente, nometecnico, tipodocumento, manualentregue == "true", Anexo.File).ToArray();
+            Anexo.Id = cartaoid;
+            Anexo.Name = Anexo.Name.Contains("Assinada_") ? Anexo.Name : "Assinada_" + Anexo.Name;
+            Anexo.Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy HH:mm"));
 
             trello.NovoAnexo(Anexo);
-            return Content(string.Empty);
+            return Json(Anexo);
         }
 
 

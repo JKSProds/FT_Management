@@ -44,14 +44,14 @@
         }
         else
         {
-            <table class="table table-hover">
+            <table class="table table-hover" id="tblAnexos">
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.Anexos.First().name)
+                            @Html.DisplayNameFor(model => model.Anexos.First().Name)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Anexos.First().date)
+                            @Html.DisplayNameFor(model => model.Anexos.First().Date)
                         </th>
                         <th></th>
                     </tr>
@@ -59,16 +59,16 @@
                 <tbody>
                     @foreach (var item in Model.Anexos)
                     {
-                        <tr>
-                            <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.id, idcartao = item.IdCartao }))'">
-                                <span>@item.name</span>
+                        <tr id="anexo_@item.Name">
+                            <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.Id, idcartao = item.IdCartao }))'">
+                                <span>@item.Name</span>
                             </td>
-                            <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.id, idcartao = item.IdCartao }))'">
-                                <span>@item.date.ToString("dd-MM-yyyy HH:mm")</span>
+                            <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.Id, idcartao = item.IdCartao }))'">
+                                <span>@item.Date.ToString("dd-MM-yyyy HH:mm")</span>
                             </td>
                             <td>
-                                <div class="btn-group float-right  @(item.mimeType == "application/pdf" ? "" : "d-none") ">
-                                    <a class="btn btn-outline-success btn-lg" onclick="ConfirmAssinarDocumento('@Model.IdCartao', '@item.id')"><i class="fas fa-signature" style="font-size:20px"></i></a>
+                                <div class="btn-group float-right  @(item.MimeType == "application/pdf" ? "" : "d-none") ">
+                                    <a class="btn btn-outline-success btn-lg" onclick="ConfirmAssinarDocumento('@Model.IdCartao', '@item.Id')"><i class="fas fa-signature" style="font-size:20px"></i></a>
                                 </div>
                             </td>
                         </tr>
@@ -262,7 +262,24 @@
                 <input id="txtNomeCliente" type="text" class="form-control" placeholder="Nome do Cliente" value='@ViewData["PessoaContacto"]' required />
                 <div class="d-none" id="chkEntregue">
                     <input type="checkbox" class="custom-checkbox" id="chkManualEntregue" />
-                    <label class="control-label">Manuel entregue ao cliente?</label>
+                    <label class="control-label">Manual entregue ao cliente?</label>
+                    <br />
+                    <label for="tecnico" class="col-sm-4 col-form-label">Técnico</label>
+                    <select class="form-control col-sm-8" id="txtTecnico">
+                        <option>Jorge Monteiro</option>
+                        <option>Nelson Martins</option>
+                        <option>Armando</option>
+                        <option>Luis Fernandes</option>
+                        <option>Paulo Deus</option>
+                        <option>Pedro Santos</option>
+                        <option>Silvino</option>
+                        <option>Helder</option>
+                        <option>Ricardo Almeida</option>
+                        <option>Daniel Diogo</option>
+                        <option>Diogo</option>
+                        <option>Henrique Crispim</option>
+                    </select>
+
                 </div>
                 <label class="col-form-label">Tipo de Documento</label>
                 <select id="tipoDocumento" class="form-control" onchange="AlteradoTipoDoc()">
@@ -319,13 +336,15 @@
         var checkedManual = $('#chkManualEntregue').is(":checked");
         var tipoDocumento = document.getElementById("tipoDocumento").value;
         var anexoid = document.getElementById("hiddenAnexoId").value;
+        var nomeTecnico = document.getElementById("txtTecnico").value;
 
         var json = {
             nomecliente: nomeCliente,
             cartaoid: cartaoId,
             manualentregue: checkedManual,
             tipodocumento: tipoDocumento,
-            idanexo: anexoid
+            idanexo: anexoid,
+            nometecnico: nomeTecnico
         };
 
 
@@ -336,11 +355,37 @@
             traditional: true,
             success: function (result) {
                 $(function () {
-                    this.location.reload(true);
+                    var m = new Date(result.date);
+                    var dateString =
+                        ("0" + m.getUTCDate()).slice(-2) + "-" +
+                        ("0" + (m.getUTCMonth() + 1)).slice(-2) + "-" +
+                        m.getUTCFullYear() + " " +
+                        ("0" + m.getUTCHours()).slice(-2) + ":" +
+                        ("0" + m.getUTCMinutes()).slice(-2);
+
+                    alert(JSON.stringify(result));
+                    var newRow = document.getElementById('tblAnexos').insertRow();
+                    newRow.setAttribute("id", "linha_" + result);
+                    newRow.innerHTML = "<td>" + result.name + "</td><td>" + dateString + "</td><td></td>";
+
+                    document.getElementById("addAssinatura").style.display = 'd-none';
+                    document.getElementById("adicionarAssinatura").classList.remove("disabled");
+                    $('#myModal4').modal('toggle');
+
+
+                    $.notify({
+                        message: "Anexo adicionado com sucesso!"
+                    }, {
+                        // settings
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
+                        }
+                    });
                 });
             }
         });
-        
+
     }
 
     var ConfirmEnviarEmail = function (IdFolhaObra) {

@@ -19,8 +19,8 @@ namespace FT_Management.Models
 {
     public class TrelloConector
     {
-        private string API_KEY;
-        private string TOKEN;
+        private static string API_KEY;
+        private static string TOKEN;
 
         public TrelloConector(string _API_KEY, string _TOKEN)
         {
@@ -131,10 +131,10 @@ namespace FT_Management.Models
             {
                 Anexos.Add(new TrelloAnexos
                     {
-                        id = anexo.id,
-                        name = anexo.name,
-                        mimeType = anexo.mimeType,
-                        date = anexo.date,
+                        Id = anexo.id,
+                        Name = anexo.name,
+                        MimeType = anexo.mimeType,
+                        Date = anexo.date,
                         IdCartao = IdCartao
                     });
             }
@@ -143,17 +143,17 @@ namespace FT_Management.Models
         }
         public TrelloAnexos ObterAnexo(string IdAnexo, string IdCartao)
         {
-            TrelloAnexos trelloAnexo = new TrelloAnexos();
+            TrelloAnexos trelloAnexo;
             var anexo = GetTrelloJson("https://api.trello.com/1/cards/" + IdCartao + "/attachments/" + IdAnexo + "?key=" + API_KEY + "&token=" + TOKEN + "");
             
                 WebClient myWebClient = new WebClient();
                 trelloAnexo = new TrelloAnexos
                 {
-                    id = anexo.id,
-                    name = anexo.name,
-                    file = myWebClient.DownloadData(anexo.url.ToString()),
-                    mimeType = anexo.mimeType,
-                    date = anexo.date,
+                    Id = anexo.id,
+                    Name = anexo.name,
+                    File = myWebClient.DownloadData(anexo.url.ToString()),
+                    MimeType = anexo.mimeType,
+                    Date = anexo.date,
                     IdCartao = IdCartao
                 };
    
@@ -186,13 +186,13 @@ namespace FT_Management.Models
         }
         public void NovoAnexo(TrelloAnexos Anexo)
         {
-            if (ObterAnexos(Anexo.id).Where(a => a.name == Anexo.name).Count() > 0) ApagarAnexo(ObterAnexos(Anexo.id).Where(a => a.name == Anexo.name).First().id, Anexo.id);
-          
-                NameValueCollection nvc = new NameValueCollection();
-                nvc.Add("id", Anexo.id);
-                nvc.Add("name", Anexo.name);
-                HttpUploadFile("https://api.trello.com/1/cards/"+Anexo.id+"/attachments?key="+API_KEY+"&token="+TOKEN+"",
-                     Anexo.file, "file", Anexo.mimeType, nvc, Anexo.name);
+            if (ObterAnexos(Anexo.Id).Where(a => a.Name == Anexo.Name).Count() > 0) ApagarAnexo(ObterAnexos(Anexo.Id).Where(a => a.Name == Anexo.Name).First().Id, Anexo.Id);
+
+            NameValueCollection nvc = new NameValueCollection();
+            nvc.Add("id", Anexo.Id);
+            nvc.Add("name", Anexo.Name);
+            HttpUploadFile("https://api.trello.com/1/cards/"+Anexo.Id+"/attachments?key="+API_KEY+"&token="+TOKEN+"",
+                     Anexo.File, "file", Anexo.MimeType, nvc, Anexo.Name);
 
         }
         public void NovaLabel(string IdCartao, string Cor)
@@ -238,7 +238,7 @@ namespace FT_Management.Models
             byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
             rs.Write(headerbytes, 0, headerbytes.Length);
 
-                rs.Write(file);
+            rs.Write(file);
 
             byte[] trailer = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
             rs.Write(trailer, 0, trailer.Length);
@@ -312,10 +312,8 @@ namespace FT_Management.Models
 
 
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-                }
+                using var streamReader = new StreamReader(httpResponse.GetResponseStream());
+                var result = streamReader.ReadToEnd();
             }
             catch (Exception)
             {
@@ -331,10 +329,8 @@ namespace FT_Management.Models
                 httpWebRequest.Method = "DELETE";
 
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = streamReader.ReadToEnd();
-                }
+                using var streamReader = new StreamReader(httpResponse.GetResponseStream());
+                var result = streamReader.ReadToEnd();
             }
             catch (Exception)
             {
@@ -342,14 +338,14 @@ namespace FT_Management.Models
             }
         }
 
-        public static string getBetween(string strSource, string strStart, string strEnd)
+        public static string GetBetween(string strSource, string strStart, string strEnd)
         {
             if (strSource.Contains(strStart) && strSource.Contains(strEnd))
             {
                 int Start, End;
                 Start = strSource.IndexOf(strStart, 0) + strStart.Length;
                 End = strSource.IndexOf(strEnd, Start);
-                return strSource.Substring(Start, End - Start);
+                return strSource[Start..End];
             }
 
             return "";
@@ -397,14 +393,14 @@ namespace FT_Management.Models
 
     public class TrelloAnexos
     {
-        public string id { get; set; }
+        public string Id { get; set; }
         public string IdCartao { get; set; }
-        public byte[] file { get; set; }
+        public byte[] File { get; set; }
         [Display(Name = "Data")]
-        public DateTime date { get; set; }
+        public DateTime Date { get; set; }
         [Display(Name = "Ficheiro")]
-        public string name { get; set; }
-        public string mimeType { get; set; }
+        public string Name { get; set; }
+        public string MimeType { get; set; }
 
         public IDictionary<string, string> dict = new Dictionary<string, string>()
                         {
