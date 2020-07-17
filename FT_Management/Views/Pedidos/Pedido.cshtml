@@ -85,7 +85,7 @@
         @if (Model.FolhasObra.Count() == 0)
         {
             <br />
-            <button class="btn btn-lg btn-danger btn-block form-group">Não foram encontradas folhas de obra!</button>
+            <button class="btn btn-lg btn-danger btn-block form-group disabled">Não foram encontradas folhas de obra!</button>
         }
         else
         {
@@ -261,6 +261,21 @@
 
     var ConfirmEnviarEmail = function (IdFolhaObra) {
         $("#hiddenFolhaObraId").val(IdFolhaObra);
+        var json = {
+            id: IdFolhaObra
+        };
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/ObterEmailClienteFolhaObra",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    // alert(JSON.stringify(result));
+                    document.getElementById("txtEmail").value = result;
+                });
+            }
+        });
         $("#myModal2").modal('show');
 
     }
