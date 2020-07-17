@@ -258,6 +258,12 @@
         $("#myModal").modal('show');
 
     }
+
+    var ConfirmEnviarEmail = function (IdFolhaObra) {
+        $("#hiddenFolhaObraId").val(IdFolhaObra);
+        $("#myModal2").modal('show');
+
+    }
     function AdicionarComentario(IdCartao) {
         {
             document.getElementById("addComment").style.display = '';
