@@ -39,7 +39,7 @@
 @if (Model.Count() == 0)
 {
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled">Não foram encontradas folhas de obra!</button>
+    <button class="btn btn-lg btn-danger btn-block disabled"  style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
 }
 else
 {
@@ -75,8 +75,8 @@ else
                 </td>
                 <td>
                     <div class="btn-group float-right">
-                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                        <a href="#" class="btn btn-danger btn-lg" onclick="ConfirmApagarFolhaObra(@item.IdFolhaObra)"><i class="fas fa-trash"></i> </a>
+                        <a class="btn btn-outline-success btn-lg"  style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                        <a href="#" class="btn btn-danger btn-lg"  style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmApagarFolhaObra(@item.IdFolhaObra)"><i class="fas fa-trash"></i> </a>
                     </div>
                 </td>
             </tr>

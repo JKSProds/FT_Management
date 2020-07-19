@@ -212,7 +212,7 @@
                 </div>
                 <div class="form-group col-lg-4">
                     <input type="checkbox" class="custom-checkbox" style="margin-top:35px; width: 30px; height: 30px;" asp-for="AssistenciaRemota" />
-                    <label asp-for="AssistenciaRemota" class="control-label" style="" margin-top:10px;font-size:20px;"></label>
+                    <label asp-for="AssistenciaRemota" class="control-label" margin-top:10px;font-size:20px;"></label>
                 </div>
 
                 <div class="w-100"></div>
@@ -249,7 +249,7 @@
                     </div>
                 </div>
                 <div class="form-group col-lg-4">
-                    <button type="button" class="btn btn-primary btn-block" style=" font-size: 20px" onclick="AbrirIntervencao()">
+                    <button type="button" class="btn btn-primary btn-block" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AbrirIntervencao()">
                         Adicionar Intervenção
                     </button>
                 </div>
@@ -326,14 +326,14 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                            <button type="button" class="btn btn-primary" onclick="AdicionarIntervencao()" href="javascript:;">Adicionar</button>
+                            <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarIntervencao()" href="javascript:;">Adicionar</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.IntervencaosServico.Count() == 0 ? "" : "d-none")" id="no-int">Não foram encontradas intervenções associadas a esta folha de obra!</button>
+            <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.IntervencaosServico.Count() == 0 ? "" : "d-none")" id="no-int" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas intervenções associadas a esta folha de obra!</button>
 
             <table class="table table-hover @(Model.IntervencaosServico.Count() == 0 ? "d-none" : "")" id="tblIntervencao">
                 <thead>
@@ -370,7 +370,7 @@
                                 <span>@item.NomeTecnico</span>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
+                                <a href="#" class="btn btn-danger btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
                             </td>
                         </tr>
                     }
@@ -389,7 +389,7 @@
             <br />
             <div class="row">
                 <div class="form-group col-4">
-                    <button type="button" class="btn btn-primary btn-block" style="height: 100%; font-size: 20px" data-toggle="modal" data-target="#exampleModal2">
+                    <button type="button" class="btn btn-primary btn-block" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" style="height: 100%; font-size: 20px" data-toggle="modal" data-target="#exampleModal2">
                         Adicionar Peças
                     </button>
                 </div>
@@ -435,20 +435,20 @@
                                 <div class="input-group col-sm-8">
                                     <div class="input-group-prepend col" id="button-addon3">
                                         <input class="form-control" min="0" max="999" name="txtQuantidade" id="txtQuantidade" value="1" readonly>
-                                        <button onclick="MenosUm()" class="btn btn-danger fas fa-minus" type="button"></button>
-                                        <button onclick="MaisUm()" class="btn btn-primary fas fa-plus" type="button"></button>
+                                        <button onclick="MenosUm()" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" class="btn btn-danger fas fa-minus" type="button"></button>
+                                        <button onclick="MaisUm()" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" class="btn btn-primary fas fa-plus" type="button"></button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                            <button type="button" class="btn btn-primary" onclick="AdicionarPeca()" href="javascript:;">Adicionar</button>
+                            <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarPeca()" href="javascript:;">Adicionar</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.PecasServico.Count() == 0 ? "" : "d-none")" id="no-pecas">Não foram encontradas peças associadas a esta folha de obra!</button>
+            <button class="btn btn-lg btn-danger btn-block disabled form-group @(Model.PecasServico.Count() == 0 ? "" : "d-none")" id="no-pecas" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas peças associadas a esta folha de obra!</button>
 
             <table class="table table-hover @(Model.PecasServico.Count() == 0 ? "d-none" : "")" id="tblPecas">
                 <thead>
@@ -479,7 +479,7 @@
                                 <span>@item.Stock_Fisico</span>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
+                                <a href="#" class="btn btn-danger btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
                             </td>
                         </tr>
                     }
@@ -510,7 +510,7 @@
     </div>
     <br />
     <div class="form-group">
-        <input onclick="enviarFolha()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" />
+        <input onclick="enviarFolha()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
     </div>
 </form>
 
