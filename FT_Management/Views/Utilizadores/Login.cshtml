@@ -4,32 +4,33 @@
     ViewData["Title"] = "Iniciar Sessão";
 }
 
-<h1>Iniciar Sessão</h1>
-
-<hr />
-
-<form asp-action="Login">
+<div class="container">
     <div class="row">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group col-lg-6">
-            <label asp-for="NomeUtilizador" class="control-label"></label>
-            <input asp-for="NomeUtilizador" class="form-control" />
-            <span asp-validation-for="NomeUtilizador" class="text-danger"></span>
-        </div>
-        <div class="form-group col-lg-6">
-            <label asp-for="Password" class="control-label"></label>
-            <input asp-for="Password" class="form-control" type="password" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-        <input class="form-control d-none" value="@ViewData["ReturnUrl"]" name="ReturnUrl" />
-        <div class="form-group">
-            <input type="submit" value="Iniciar Sessão" class="btn btn-primary" />
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5" style=" border: 0; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);">
+                <div class="card-body">
+                    <img src="~/img/ft_logo.png" width="150" height="90" class="" style="display:block;margin:auto;">
+                    <br />
+                    <form class="form-signin" method="post">
+                        <div class="form-label-group">
+                            <input type="text" asp-for="NomeUtilizador" id="inputNome" class="form-control" placeholder="Nome de Utilizador" style=" height: auto; border-radius: 2rem;" required autofocus>
+                        </div>
+                        <br />
+                        <div class="form-label-group" style=" position: relative; margin-bottom: 1rem; ">
+                            <input type="password" asp-for="Password" id="inputPassword" class="form-control" style=" height: auto; border-radius: 2rem;" placeholder="Password" required>
+                        </div>
+
+                        <div class="custom-control custom-checkbox mb-3">
+                            <input type="checkbox" class="custom-control-input" id="customCheck1">
+                            <label class="custom-control-label" for="customCheck1">Lembrar password</label>
+                        </div>
+                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Sign in</button>
+                        <br />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-</form>
-
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 

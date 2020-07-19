@@ -22,6 +22,7 @@ namespace FT_Management.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl)
         {
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
