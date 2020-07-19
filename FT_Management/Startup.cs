@@ -13,6 +13,9 @@ using System.Globalization;
 using Quartz.Spi;
 using Quartz;
 using Quartz.Impl;
+using System.Net.Sockets;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 namespace FT_Management
 {
@@ -43,8 +46,22 @@ namespace FT_Management
             
             services.AddHostedService<QuartzHostedService>();
 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(cookieOptions =>
+            {
+                cookieOptions.LoginPath = "/Utilizadores/Login";
+            });
+
+
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
             services.Add(new ServiceDescriptor(typeof(TrelloConector), new TrelloConector(Configuration.GetSection("Trello").GetSection("API_KEY").Value, Configuration.GetSection("Trello").GetSection("TOKEN").Value)));
+
+            //var passwordHasher = new PasswordHasher<string>();
+            //Console.WriteLine(passwordHasher.HashPassword(null, "Food@001.jmonteiro"));
 
             Console.WriteLine("Starting app");
         }
@@ -67,7 +84,7 @@ namespace FT_Management
 
             }
 
-
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

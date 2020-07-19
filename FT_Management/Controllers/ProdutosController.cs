@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
+    [Authorize]
     public class ProdutosController : Controller
     {
         // GET: Produtos

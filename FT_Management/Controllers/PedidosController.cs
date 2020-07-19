@@ -2,22 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FT_Management.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace FT_Management.Controllers
 {
+    [Authorize]
     public class PedidosController : Controller
     {
         // GET: Pedidos
         public ActionResult Index()
         {
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-
+            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            if (user.IdCartaoTrello != null && user.IdCartaoTrello != string.Empty) return RedirectToAction("ListaPedidos", new { idQuadro = user.IdCartaoTrello });
             return View(trello.ObterQuadros());
         }
 
@@ -73,6 +78,12 @@ namespace FT_Management.Controllers
 
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
             ViewData["PessoaContacto"] = context.ObterClienteNome(cartao.NomeCartao).PessoaContatoCliente;
+
+            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            ViewData["SelectedTecnico"] = user.NomeCompleto;
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != "3").ToList();
+
+
 
             if (cartao.IdCartao == null) return RedirectToAction("Index");
             cartao.FolhasObra = context.ObterListaFolhasObraCartao(idCartao);

@@ -7,16 +7,18 @@ using FT_Management.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Custom;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
+    [Authorize]
     public class FolhasObraController : Controller
     {
         // GET: FolhasObraController
         public ActionResult Index(string DataFolhasObra)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            
+            if (context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).TipoUtilizador == "2") return RedirectToAction("Index", "Pedidos");
             if (DataFolhasObra == null || DataFolhasObra == string.Empty) DataFolhasObra = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["DataFolhasObra"] = DataFolhasObra;
             return View(context.ObterListaFolhasObra(DateTime.Parse(DataFolhasObra).ToString("yyyy-MM-dd")));
@@ -83,7 +85,8 @@ namespace FT_Management.Controllers
                     NomeTecnico = tecnico,
                     DataServiço = DateTime.Parse(data),
                     HoraInicio = DateTime.Parse(horainicio),
-                    HoraFim = DateTime.Parse(horafim)
+                    HoraFim = DateTime.Parse(horafim),
+                    IdTecnico = int.Parse(this.User.Claims.First().Value)
                 };
 
                 return Content(context.NovaIntervencao(intervencao).ToString());
@@ -172,9 +175,13 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             string IdQuadro = trello.ObterCartao(context.ObterFolhaObra(id).IdCartao).IdQuadro;
-            if (IdQuadro != null & IdQuadro != string.Empty) { ViewData["SelectedTecnico"] = trello.ObterQuadros().Where(q => q.IdQuadro == IdQuadro).First().NomeQuadro.Replace("Serviços ", ""); } else { ViewData["SelectedTecnico"] = "Jorge Monteiro"; }
+            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            ViewData["SelectedTecnico"] = user.NomeCompleto;
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != "3").ToList();
 
             FolhaObra folhaObra = context.ObterFolhaObra(id);
+            if (user.TipoUtilizador == "2" && !(folhaObra.IntervencaosServico.Where(t => t.IdTecnico == user.Id).Count() > 0 || folhaObra.IntervencaosServico.Count == 0)) return RedirectToAction("Index", "Pedidos");
+
             if (folhaObra.ConferidoPor == string.Empty || folhaObra.ConferidoPor == null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
 
             return View(folhaObra);
@@ -186,6 +193,7 @@ namespace FT_Management.Controllers
         public ActionResult Editar(int id, FolhaObra folhaObra)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
             folhaObra.IdFolhaObra = id;
             folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
             context.NovaFolhaObra(folhaObra);

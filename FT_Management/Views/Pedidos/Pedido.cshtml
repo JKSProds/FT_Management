@@ -261,25 +261,13 @@
                 <label class="control-label">Nome do Cliente</label>
                 <input id="txtNomeCliente" type="text" class="form-control" placeholder="Nome do Cliente" value='@ViewData["PessoaContacto"]' required />
                 <div class="d-none" id="chkEntregue">
+                    <br />
                     <input type="checkbox" class="custom-checkbox" id="chkManualEntregue" />
                     <label class="control-label">Manual entregue ao cliente?</label>
                     <br />
-                    <label for="tecnico" class="col-sm-4 col-form-label">Técnico</label>
-                    <select class="form-control col-sm-8" id="txtTecnico">
-                        <option>Jorge Monteiro</option>
-                        <option>Nelson Martins</option>
-                        <option>Armando</option>
-                        <option>Luis Fernandes</option>
-                        <option>Paulo Deus</option>
-                        <option>Pedro Santos</option>
-                        <option>Silvino</option>
-                        <option>Helder</option>
-                        <option>Ricardo Almeida</option>
-                        <option>Daniel Diogo</option>
-                        <option>Diogo</option>
-                        <option>Henrique Crispim</option>
-                    </select>
-
+                    @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
+                    <label for="tecnico" class="col-form-label">Técnico</label>
+                    <select class="form-control col-sm-12" id="txtTecnico" asp-items="@(new SelectList(LstTecnicos, "NomeCompleto", "NomeCompleto", ViewData["SelectedTecnico"]))"></select>
                 </div>
                 <label class="col-form-label">Tipo de Documento</label>
                 <select id="tipoDocumento" class="form-control" onchange="AlteradoTipoDoc()">

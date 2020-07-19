@@ -320,21 +320,9 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
                                 <label for="tecnico" class="col-sm-4 col-form-label">Técnico</label>
-                                <select class="form-control col-sm-8" id="txtTecnico">
-                                    <option>Jorge Monteiro</option>
-                                    <option>Nelson Martins</option>
-                                    <option>Armando</option>
-                                    <option>Luis Fernandes</option>
-                                    <option>Paulo Deus</option>
-                                    <option>Pedro Santos</option>
-                                    <option>Silvino</option>
-                                    <option>Helder</option>
-                                    <option>Ricardo Almeida</option>
-                                    <option>Daniel Diogo</option>
-                                    <option>Diogo</option>
-                                    <option>Henrique Crispim</option>
-                                </select>
+                                <select class="form-control col-sm-8" id="txtTecnico" asp-items="@(new SelectList(LstTecnicos, "NomeCompleto", "NomeCompleto", ViewData["SelectedTecnico"]))"></select>
                             </div>
                         </div>
                         <div class="modal-footer">

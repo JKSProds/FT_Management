@@ -675,6 +675,54 @@ namespace FT_Management.Models
             return 0;
 
         }
+        public List<Utilizador> ObterListaUtilizadores()
+        {
+                List<Utilizador> LstUtilizadores = new List<Utilizador>();
+                string sqlQuery = "SELECT * FROM sys_utilizadores;";
+
+                using Database db = ConnectionString;
+                using (var result = db.Query(sqlQuery))
+                {
+                    while (result.Read())
+                    {
+                        LstUtilizadores.Add(new Utilizador()
+                        {
+                            Id = result["IdUtilizador"],
+                            NomeUtilizador = result["NomeUtilizador"],
+                            Password = result["Password"],
+                            NomeCompleto = result["NomeCompleto"],
+                            TipoUtilizador = result["TipoUtilizador"],
+                            EmailUtilizador = result["EmailUtilizador"],
+                            IdCartaoTrello = result["IdCartaoTrello"]
+                        });
+                    }
+                }
+            return LstUtilizadores;
+        }
+        public Utilizador ObterUtilizador(int Id)
+        {
+            Utilizador utilizador = new Utilizador();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where IdUtilizador = "+Id+";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    utilizador = new Utilizador()
+                    {
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = result["TipoUtilizador"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"]
+                    };
+                }
+            }
+            return utilizador;
+        }
 
         public Bitmap DesenharEtiqueta80x50 (Produto produto)
         {
@@ -957,7 +1005,6 @@ namespace FT_Management.Models
             return outputPdfStream;
             
         }
-
         public MemoryStream AssinarDocumento(string nomecliente, string nometecnico, string tipodocumento, bool manualentregue, byte[] documento)
         {
             var outputPdfStream = new MemoryStream();
