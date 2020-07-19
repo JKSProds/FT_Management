@@ -351,7 +351,7 @@
                         ("0" + m.getUTCHours()).slice(-2) + ":" +
                         ("0" + m.getUTCMinutes()).slice(-2);
 
-                    alert(JSON.stringify(result));
+                    //alert(JSON.stringify(result));
                     var newRow = document.getElementById('tblAnexos').insertRow();
                     newRow.setAttribute("id", "linha_" + result);
                     newRow.innerHTML = "<td>" + result.name + "</td><td>" + dateString + "</td><td></td>";
