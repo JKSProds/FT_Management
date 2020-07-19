@@ -35,7 +35,7 @@
     <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
 
         <br />
-        <a class="btn btn-primary btn-block btn-lg form-group " style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="btnAddAnexo" data-toggle="modal" data-target="#myModal3"><i class="fas fa-plus"></i> Novo Anexo<span class="spinner-border text-success float-right" style="display:none" id="addAnexo" role="status" aria-hidden="true"></span></a>
+        <a class="btn btn-primary btn-block btn-lg form-group " style="color:white; margin-bottom:5px; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="btnAddAnexo" data-toggle="modal" data-target="#myModal3"><i class="fas fa-plus"></i> Novo Anexo<span class="spinner-border text-success float-right" style="display:none" id="addAnexo" role="status" aria-hidden="true"></span></a>
 
         @if (Model.Anexos.Count() == 0)
         {
@@ -134,7 +134,7 @@
     <div class="tab-pane fade show" id="v-pills-com" role="tabpanel" aria-labelledby="v-pills-com-tab">
 
         <br />
-        <a class="btn btn-primary btn-block btn-lg form-group" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="addCom" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario <span class="spinner-border text-success float-right" style="display:none" id="addComment" role="status" aria-hidden="true"></span></a>
+        <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="addCom" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario <span class="spinner-border text-success float-right" style="display:none" id="addComment" role="status" aria-hidden="true"></span></a>
 
         <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" >Não foram encontrados comentários!</button>
 
