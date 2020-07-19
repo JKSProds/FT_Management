@@ -370,7 +370,7 @@
                                 <span>@item.NomeTecnico</span>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-danger btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
+                                <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarIntervencao(@item.IdIntervencao)"><i class="fas fa-trash"></i> </a>
                             </td>
                         </tr>
                     }
@@ -435,8 +435,8 @@
                                 <div class="input-group col-sm-8">
                                     <div class="input-group-prepend col" id="button-addon3">
                                         <input class="form-control" min="0" max="999" name="txtQuantidade" id="txtQuantidade" value="1" readonly>
-                                        <button onclick="MenosUm()" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" class="btn btn-danger fas fa-minus" type="button"></button>
-                                        <button onclick="MaisUm()" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" class="btn btn-primary fas fa-plus" type="button"></button>
+                                        <button onclick="MenosUm()" class="btn btn-danger fas fa-minus" type="button"></button>
+                                        <button onclick="MaisUm()" class="btn btn-primary fas fa-plus" type="button"></button>
                                     </div>
                                 </div>
                             </div>
@@ -479,7 +479,7 @@
                                 <span>@item.Stock_Fisico</span>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-danger btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
+                                <a href="#" class="btn btn-danger btn-block btn-lg" onclick="ConfirmApagarPeca('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
                             </td>
                         </tr>
                     }

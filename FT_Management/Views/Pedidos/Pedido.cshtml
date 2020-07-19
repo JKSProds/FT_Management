@@ -68,7 +68,7 @@
                             </td>
                             <td>
                                 <div class="btn-group float-right  @(item.MimeType == "application/pdf" ? "" : "d-none") ">
-                                    <a class="btn btn-outline-success btn-lg" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmAssinarDocumento('@Model.IdCartao', '@item.Id')"><i class="fas fa-signature" style="font-size:20px"></i></a>
+                                    <a class="btn btn-outline-success btn-lg" onclick="ConfirmAssinarDocumento('@Model.IdCartao', '@item.Id')"><i class="fas fa-signature" style="font-size:20px"></i></a>
                                 </div>
                             </td>
                         </tr>
@@ -119,8 +119,8 @@
                             </td>
                             <td>
                                 <div class="btn-group float-right">
-                                    <a class="btn btn-outline-success btn-lg" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                                    <a class="btn btn-outline-primary btn-lg" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
+                                    <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                    <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
                                         <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
                                     </a>
                                 </div>
@@ -135,7 +135,7 @@
 
         <br />
         <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="addCom" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario <span class="spinner-border text-success float-right" style="display:none" id="addComment" role="status" aria-hidden="true"></span></a>
-
+<br>
         <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" >Não foram encontrados comentários!</button>
 
         <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
@@ -175,7 +175,7 @@
 </div>
 <div>
     <br />
-    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
+    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'" style="text-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
 </div>
 
 <!-- Modal -->

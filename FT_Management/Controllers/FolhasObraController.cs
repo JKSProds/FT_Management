@@ -164,7 +164,7 @@ namespace FT_Management.Controllers
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
-
+                
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
