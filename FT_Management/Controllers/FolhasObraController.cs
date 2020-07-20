@@ -35,16 +35,20 @@ namespace FT_Management.Controllers
             if (idCartao == null) idCartao = "";
             ViewData["IdCartao"] = idCartao;
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
-            string nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao, "Serial Number:", Environment.NewLine).Trim();
 
+            string nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao, "Serial Number:", Environment.NewLine).Trim();
+            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao, "N/S:", Environment.NewLine).Trim(); }
+            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao, "S/N:", Environment.NewLine).Trim(); }
+ 
             string ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "Ticket#", "\\]").Replace(@"\", "");
             if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "INC", " "); }
             if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "Ticket#", Environment.NewLine).Replace(@"\", ""); }
+            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "OT vinculada N°", "procedente").Replace(@"\", "").Trim(); }
 
             FolhaObra folha = new FolhaObra
             {
                 ReferenciaServico = ticketNumero,
-                ClienteServico = context.ObterClienteNome(cartao.NomeCartao),
+                ClienteServico = context.ObterClienteNome(cartao.NomeCartao.Trim()),
                 EquipamentoServico = context.ObterEquipamentoNS(nSerie),
                 PecasServico = new List<Produto>(),
                 IntervencaosServico = new List<Intervencao>(),
