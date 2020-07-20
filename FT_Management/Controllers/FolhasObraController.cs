@@ -58,8 +58,8 @@ namespace FT_Management.Controllers
                 IdCartao = idCartao
             };
 
-            folha.EquipamentoServico.MarcaEquipamento = folha.EquipamentoServico.MarcaEquipamento == string.Empty ? marca : ""; 
-            folha.EquipamentoServico.ModeloEquipamento = folha.EquipamentoServico.ModeloEquipamento == string.Empty ? modelo : ""; 
+            folha.EquipamentoServico.MarcaEquipamento = String.IsNullOrEmpty(folha.EquipamentoServico.MarcaEquipamento) ? marca : ""; 
+            folha.EquipamentoServico.ModeloEquipamento = String.IsNullOrEmpty(folha.EquipamentoServico.ModeloEquipamento) ? modelo : ""; 
             
 
             folha.ConferidoPor = folha.ClienteServico.PessoaContatoCliente;
