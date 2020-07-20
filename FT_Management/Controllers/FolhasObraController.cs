@@ -44,10 +44,10 @@ namespace FT_Management.Controllers
             string modelo = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "MODELO:", Environment.NewLine).Trim();
 
             string ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", "\\]").Replace(@"\", "");
+            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "OT VINCULADA N° ", " PROCEDENTE").Replace(@"\", ""); }
             if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "INC", " "); }
             if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", Environment.NewLine).Replace(@"\", ""); }
-            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "OT VINCULADA N°", "PROCEDENTE").Replace(@"\", "").Trim(); }
-
+ 
             FolhaObra folha = new FolhaObra
             {
                 ReferenciaServico = ticketNumero,
