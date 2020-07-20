@@ -39,7 +39,10 @@ namespace FT_Management.Controllers
             string nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "SERIAL NUMBER:", Environment.NewLine).Trim();
             if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "N/S:", Environment.NewLine).Trim(); }
             if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "S/N:", Environment.NewLine).Trim(); }
- 
+
+            string marca = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "MARCA:", Environment.NewLine).Trim();
+            string modelo = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "MODELO:", Environment.NewLine).Trim();
+
             string ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", "\\]").Replace(@"\", "");
             if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "INC", " "); }
             if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", Environment.NewLine).Replace(@"\", ""); }
@@ -54,6 +57,10 @@ namespace FT_Management.Controllers
                 IntervencaosServico = new List<Intervencao>(),
                 IdCartao = idCartao
             };
+
+            folha.EquipamentoServico.MarcaEquipamento = folha.EquipamentoServico.MarcaEquipamento == string.Empty ? marca : ""; 
+            folha.EquipamentoServico.ModeloEquipamento = folha.EquipamentoServico.ModeloEquipamento == string.Empty ? modelo : ""; 
+            
 
             folha.ConferidoPor = folha.ClienteServico.PessoaContatoCliente;
 
