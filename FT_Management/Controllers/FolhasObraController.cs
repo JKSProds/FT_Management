@@ -36,14 +36,14 @@ namespace FT_Management.Controllers
             ViewData["IdCartao"] = idCartao;
             TrelloCartoes cartao = trello.ObterCartao(idCartao);
 
-            string nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao, "Serial Number:", Environment.NewLine).Trim();
-            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao, "N/S:", Environment.NewLine).Trim(); }
-            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao, "S/N:", Environment.NewLine).Trim(); }
+            string nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "SERIAL NUMBER:", Environment.NewLine).Trim();
+            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "N/S:", Environment.NewLine).Trim(); }
+            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "S/N:", Environment.NewLine).Trim(); }
  
-            string ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "Ticket#", "\\]").Replace(@"\", "");
-            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "INC", " "); }
-            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "Ticket#", Environment.NewLine).Replace(@"\", ""); }
-            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao, "OT vinculada N°", "procedente").Replace(@"\", "").Trim(); }
+            string ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", "\\]").Replace(@"\", "");
+            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "INC", " "); }
+            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", Environment.NewLine).Replace(@"\", ""); }
+            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "OT VINCULADA N°", "PROCEDENTE").Replace(@"\", "").Trim(); }
 
             FolhaObra folha = new FolhaObra
             {
