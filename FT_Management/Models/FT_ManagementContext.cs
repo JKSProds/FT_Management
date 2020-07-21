@@ -1018,23 +1018,23 @@ namespace FT_Management.Models
                     for (int i = 3; i < pdfReader.NumberOfPages + 1; i++)
                     {
                         canvas = pdfStamper.GetOverContent(i);
-                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_RIGHT, new iTextSharp.text.Phrase(nomecliente, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 30, 290, 0);
+                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_RIGHT, new iTextSharp.text.Phrase(nomecliente, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 30, 350, 0);
                     }
                     break;
                case "1":
                     for (int i = 1; i < pdfReader.NumberOfPages + 1; i++)
                     {
                         canvas = pdfStamper.GetOverContent(i);
-                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase(nomecliente, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 180, 150, 0);
-                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase(nometecnico, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 370, 150, 0);
+                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase(nomecliente, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 170, 160, 0);
+                        ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase(nometecnico, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 360, 160, 0);
 
                         if (manualentregue)
                         {
-                            ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase("X", new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 20, iTextSharp.text.Font.BOLD))), 50, 147, 0);
+                            ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase("X", new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 20, iTextSharp.text.Font.BOLD))), 63, 157, 0);
                         }
                         else
                         {
-                            ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase("X", new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 20, iTextSharp.text.Font.BOLD))), 111, 147, 0);
+                            ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_LEFT, new iTextSharp.text.Phrase("X", new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 20, iTextSharp.text.Font.BOLD))), 122, 157, 0);
                         }
                     }
                     break;
