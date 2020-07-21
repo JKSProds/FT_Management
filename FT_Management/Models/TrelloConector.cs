@@ -345,6 +345,7 @@ namespace FT_Management.Models
                 int Start, End;
                 Start = strSource.IndexOf(strStart, 0) + strStart.Length;
                 End = strSource.IndexOf(strEnd, Start);
+                if (Start > 0 || End > 0) return "";
                 return strSource[Start..End];
             }
 
