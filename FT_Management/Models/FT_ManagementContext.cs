@@ -984,7 +984,7 @@ namespace FT_Management.Models
                     pdfFormFields.SetFieldProperty("DesignaçãoRow" + p, "textsize", 6f, null);
                     if (pecas.Designacao_Produto.Length > 50)
                     {
-                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto.Substring(0,54));
+                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto.Substring(0,50));
                     }
                     else
                     {
