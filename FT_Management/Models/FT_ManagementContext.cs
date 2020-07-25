@@ -542,7 +542,7 @@ namespace FT_Management.Models
         }
         public int NovaFolhaObra(FolhaObra folhaObra)
         {
-            folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") + 1 : folhaObra.IdFolhaObra;
+            folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra"): folhaObra.IdFolhaObra;
 
             string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
 
@@ -562,7 +562,7 @@ namespace FT_Management.Models
 
             if (cliente.NomeCliente != null || cliente.NomeCliente == String.Empty) {  c = ObterClienteNome(cliente.NomeCliente); }
             if (c.IdCliente == 0) {
-                cliente.IdCliente = ObterUltimaEntrada("dat_clientes", "IdCliente") + 1;
+                cliente.IdCliente = ObterUltimaEntrada("dat_clientes", "IdCliente");
             }
             else
             {
@@ -589,7 +589,7 @@ namespace FT_Management.Models
             Equipamento e = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
             if (e.IdEquipamento == 0)
             {
-                equipamento.IdEquipamento = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento") + 1;
+                equipamento.IdEquipamento = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento");
             }
             else
             {
@@ -612,7 +612,7 @@ namespace FT_Management.Models
         }
         public int NovaIntervencao(Intervencao intervencao)
         {
-            intervencao.IdIntervencao = intervencao.IdIntervencao == 0 ? ObterUltimaEntrada("dat_intervencoes_folha_obra", "IdIntervencao") + 1 : intervencao.IdIntervencao;
+            intervencao.IdIntervencao = intervencao.IdIntervencao == 0 ? ObterUltimaEntrada("dat_intervencoes_folha_obra", "IdIntervencao") : intervencao.IdIntervencao;
 
             string sql = "INSERT INTO dat_intervencoes_folha_obra (IdIntervencao, IdFolhaObra,IdTecnico, NomeTecnico, DataServico, HoraInicio, HoraFim) VALUES ";
 
@@ -666,7 +666,8 @@ namespace FT_Management.Models
         {
             using (Database db = ConnectionString)
             {
-                using var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";");
+                //using var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";");
+                using var result = db.Query("SELECT MIN(t1."+CampoID+" + 1) AS nextID FROM "+NomeTabela+" t1 LEFT JOIN "+NomeTabela+" t2 ON t1."+CampoID+" + 1 = t2."+CampoID+" WHERE t2."+CampoID+" IS NULL;");
                 while (result.Read())
                 {
                     return result.Reader.IsDBNull(0) ? 0 : result[0];
