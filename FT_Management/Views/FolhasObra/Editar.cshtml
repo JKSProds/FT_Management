@@ -56,7 +56,8 @@
         <a class="nav-item nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="false">Dados</a>
         <a class="nav-item nav-link" id="v-pills-intervencoes-tab" data-toggle="pill" href="#v-pills-intervencoes" role="tab" aria-controls="v-pills-intervencoes" aria-selected="false">Intervenções</a>
         <a class="nav-item nav-link" id="v-pills-pecas-tab" data-toggle="pill" href="#v-pills-pecas" role="tab" aria-controls="v-pills-pecas" aria-selected="false">Peças</a>
-       @* <a class="nav-item nav-link" id="v-pills-sig-tab" data-toggle="pill" href="#v-pills-sig" role="tab" aria-controls="v-pills-sig" aria-selected="false">Rubricas</a>*@
+        @*<a class="nav-item nav-link" id="v-pills-sig-tab" data-toggle="pill" href="#v-pills-sig" role="tab" aria-controls="v-pills-sig" aria-selected="false">Rubrica</a>*@
+        <a class="nav-item nav-link" id="v-pills-recibo-tab" data-toggle="pill" href="#v-pills-recibo" role="tab" aria-controls="v-pills-recibo" aria-selected="false">Recibo</a>
     </div>
 
     <div class="tab-content" id="v-pills-tabContent">
@@ -194,11 +195,6 @@
                         <label asp-for="ClienteServico.EmailCliente" class="control-label"></label>
                         <input asp-for="ClienteServico.EmailCliente" class="form-control" id="EmailCliente" />
                         <span asp-validation-for="ClienteServico.EmailCliente" class="text-danger"></span>
-                    </div>
-                    <div class="form-group d-none">
-                        <label asp-for="ClienteServico.NumeroContribuinteCliente" class="control-label"></label>
-                        <input asp-for="ClienteServico.NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" />
-                        <span asp-validation-for="ClienteServico.NumeroContribuinteCliente" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="w-100"></div>
@@ -492,7 +488,7 @@
 
 
             <p>
-                <canvas id="signature" width="700" height="700" style="border: 1px solid rgba(0, 0, 0, 0.1);width:100%; height:100%"></canvas><hr />
+                <canvas id="signature" width="1000" height="1000" style="border: 1px solid rgba(0, 0, 0, 0.1);width:100%;height:100%;"></canvas><hr />
             <p class="text-center">Assine acima</p>
             <div class="btn-group btn-block">
                 <button hidden type="button" id="accept"
@@ -506,6 +502,67 @@
             </div>
             <input type="text" hidden id="clienteAssinatura" asp-for="@Model.RubricaCliente">
 
+        </div>
+        <div class="tab-pane fade show" id="v-pills-recibo" role="tabpanel" aria-labelledby="v-pills-recibo-tab">
+            <br>
+            <div class="row">
+            <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="Recibo.MaterialAplicado" class="control-label"></label>
+                        <div class="input-group mb-3">
+                        <input asp-for="Recibo.MaterialAplicado" class="form-control" type="number" id="ReciboMaterialAplicado"/>
+                         <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                        </div>
+                        <span asp-validation-for="Recibo.MaoObra" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="Recibo.MaoObra" class="control-label"></label>
+                        <div class="input-group mb-3">
+                        <input asp-for="Recibo.MaoObra" class="form-control" type="number" id="ReciboMaoObra"/>
+                         <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                        </div>
+                        <span asp-validation-for="Recibo.MaoObra" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="Recibo.Deslocacao" class="control-label"></label>
+                        <div class="input-group mb-3">
+                        <input asp-for="Recibo.Deslocacao" class="form-control" type="number" id="ReciboDeslocacao"/>
+                         <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                        </div>
+                        <span asp-validation-for="Recibo.Deslocacao" class="text-danger"></span>
+                    </div>
+                </div>
+                    <div class="form-group col-lg-12">
+                        <label asp-for="ClienteServico.NumeroContribuinteCliente" class="control-label"></label>
+                        <input asp-for="ClienteServico.NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" />
+                        <span asp-validation-for="ClienteServico.NumeroContribuinteCliente" class="text-danger"></span>
+                    </div>
+
+                <div class="input-group input-group-lg form-group col-lg-12">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-lg">Valor Total</span>
+                    </div>
+                    <input type="text" readonly class="form-control" aria-label="" aria-describedby="inputGroup-sizing-lg" id="ValorTotalRecibo">
+                     <div class="input-group-append">
+                        <span class="input-group-text">€</span>
+                    </div>
+                    <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-lg" onclick="CalcularRecibo()">
+                                    <i class="fas fa-calculator"></i>
+                                </button>
+                            </div>
+                    </div>
+            </div>
         </div>
     </div>
     <br />
@@ -533,39 +590,48 @@
             pad.off();
         });
         $('#clean').click(function () {
-            resizeCanvas();
+            pad.clear();
         });
 
-        function resizeCanvas() {
+          // Event handler to resize the canvas when the document view is changed
+  window.addEventListener('resize', resizeCanvas, false);
 
-            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+    function resizeCanvas() {
+        var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = window.innerHeight / 2 * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        pad.clear();
+        pad.fromDataURL(document.getElementById("clienteAssinatura").value);
+    }
+  resizeCanvas();
+  CalcularRecibo();
 
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = window.innerHeight * ratio / 2;
-            canvas.getContext("2d").scale(ratio, ratio);
-
-            pad.clear();
-        }
-
-        // On mobile devices it might make more sense to listen to orientation change,
-        // rather than window resize events.
-        window.onresize = resizeCanvas;
-
-        window.addEventListener(orientationEvent, function () {
-            resizeCanvas();
-            }, false);
 
         function enviarFolha() {
+            
+
             document.getElementById("accept").click();
             $('form').submit();
         }
 
+  function CalcularRecibo() {
+            var MaterialAplicado = parseFloat(document.getElementById("ReciboMaterialAplicado").value) || 0;
+            var MaoObra = parseFloat(document.getElementById("ReciboMaoObra").value) || 0;
+            var Deslocacao = parseFloat(document.getElementById("ReciboDeslocacao").value) || 0;
 
+            var SubTotal = MaterialAplicado + Deslocacao + MaoObra;
+            var Iva = (SubTotal/100)*23;
+            var ValorFinal = SubTotal + Iva;
+            //alert(MaterialAplicado + " - " + MaoObra + " - " + Deslocacao + " - " + SubTotal + " - " + Iva + " - " + ValorFinal)
+            document.getElementById("ValorTotalRecibo").value = ValorFinal;
+            }
     </script>
 }
 
-<script>
 
+<script>
+  
     function AbrirIntervencao() {
         document.getElementById("txtTecnico").value = document.getElementById("hiddenNomeTecnico").value;
         $('#exampleModal').modal('toggle');

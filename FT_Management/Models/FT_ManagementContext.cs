@@ -294,6 +294,7 @@ namespace FT_Management.Models
                 IdCartao = result["IdCartaoTrello"],
                 EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                 ClienteServico = ObterCliente(result["IdCliente"]),
+                Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                 PecasServico = ObterListaProdutoIntervencao(id),
                 IntervencaosServico = ObterListaIntervencoes(id),
                 RubricaCliente = result["RubricaCliente"]
@@ -507,6 +508,36 @@ namespace FT_Management.Models
             }
             return cliente;
         }
+        public Recibo ObterReciboFolhaObra(int IdFolhaObra)
+        {
+            using Database db = ConnectionString;
+            Recibo recibo = new Recibo();
+            using var result = db.Query("SELECT * FROM dat_recibos where IdFolhaObra = '" + IdFolhaObra + "';");
+            result.Read();
+            if (result.Reader.HasRows)
+            {
+                recibo = new Recibo()
+                {
+                    IdRecibo = result["IdRecibo"],
+                    MaterialAplicado = result["MaterialAplicado"],
+                    MaoObra = result["MaoObra"],
+                    Deslocacao = result["Deslocacao"],
+                    IdFolhaObra = result["IdFolhaObra"]
+                };
+            }
+            else
+            {
+                recibo = new Recibo()
+                {
+                    IdRecibo = 0,
+                    MaterialAplicado = 0.00,
+                    MaoObra = 0.00,
+                    Deslocacao = 0.00,
+                    IdFolhaObra = IdFolhaObra
+                };
+            }
+            return recibo;
+        }
         public List<Cliente> ObterListaClientes(string NomeCliente, bool exact)
         {
 
@@ -542,6 +573,8 @@ namespace FT_Management.Models
         }
         public int NovaFolhaObra(FolhaObra folhaObra)
         {
+            
+
             folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra"): folhaObra.IdFolhaObra;
 
             string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
@@ -581,6 +614,25 @@ namespace FT_Management.Models
             }
 
             return cliente.IdCliente;
+
+        }
+        public int NovoRecibo(Recibo recibo)
+        {
+            recibo.IdRecibo = ObterReciboFolhaObra(recibo.IdFolhaObra).IdRecibo;
+            if (recibo.IdRecibo == 0) recibo.IdRecibo = ObterUltimaEntrada("dat_recibos", "IdRecibo");
+
+            string sql = "INSERT INTO dat_recibos (IdRecibo, MaoObra, MaterialAplicado, Deslocacao, IdFolhaObra) VALUES ";
+
+            sql += ("('" + recibo.IdRecibo + "', '" + recibo.MaoObra + "', '" + recibo.MaterialAplicado + "', '" + recibo.Deslocacao + "', '" + recibo.IdFolhaObra + "') \r\n");
+
+            sql += " ON DUPLICATE KEY UPDATE MaoObra = VALUES(MaoObra), MaterialAplicado = VALUES(MaterialAplicado), Deslocacao = VALUES(Deslocacao);";
+
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
+
+            return recibo.IdRecibo;
 
         }
         public int NovoEquipamento(Equipamento equipamento)
@@ -899,7 +951,7 @@ namespace FT_Management.Models
             if (folhaobra.RubricaCliente != null)
             {
                 var fldPosition = pdfFormFields.GetFieldPositions("assinatura");
-                Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2], (int)fldPosition[3], 20);
+                Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2] - 7, (int)fldPosition[3], 30);
                 folhaobra.RubricaCliente = folhaobra.RubricaCliente.Replace("data:image/png;base64,", "").Trim();
 
                 if ((folhaobra.RubricaCliente.Length % 4 == 0) && Regex.IsMatch(folhaobra.RubricaCliente, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
@@ -916,7 +968,7 @@ namespace FT_Management.Models
                 }
             }
 
-            pdfFormFields.SetField("IdFolhaObra", "FO" + folhaobra.IdFolhaObra.ToString());
+            pdfFormFields.SetField("IdFolhaObra", "A.T.Nº" + folhaobra.IdFolhaObra.ToString());
             if (folhaobra.AssistenciaRemota)
             {
                 pdfFormFields.SetFieldProperty("Remoto", "textsize", 26f, null);
@@ -998,6 +1050,27 @@ namespace FT_Management.Models
             }
             if (folhaobra.ConferidoPor == string.Empty) folhaobra.ConferidoPor = folhaobra.ClienteServico.PessoaContatoCliente;
             pdfFormFields.SetField("o cliente", folhaobra.ConferidoPor);
+
+            double ValorFinal = folhaobra.Recibo.CalcularValorFinal();
+            if (ValorFinal > 0) {
+                pdfFormFields.SetField("Material", folhaobra.Recibo.MaterialAplicado.ToString() + " €");
+                pdfFormFields.SetField("mao-de-obra", folhaobra.Recibo.MaoObra.ToString() + " €");
+                pdfFormFields.SetField("deslocacoes", folhaobra.Recibo.Deslocacao.ToString() + " €");
+                pdfFormFields.SetField("subtotal", folhaobra.Recibo.CalcularSubtotal().ToString() + " €");
+                pdfFormFields.SetField("IVA", "23 %");
+                pdfFormFields.SetField("Total a pagar", ValorFinal.ToString().Split(',')[0].PadLeft(4, ' '));
+                pdfFormFields.SetField("undefined_3", ValorFinal.ToString().Split(',')[1].PadRight(2, '0'));
+                pdfFormFields.SetFieldProperty("recebiquantia", "textsize", 5f, null);
+                pdfFormFields.SetField("recebiquantia", folhaobra.Recibo.ConverterValorPalavras());
+                pdfFormFields.SetField("reciboprovi", folhaobra.Recibo.IdRecibo.ToString());
+                pdfFormFields.SetField("docliente", folhaobra.ClienteServico.NomeCliente);
+                pdfFormFields.SetField("contribuinte", folhaobra.ClienteServico.NumeroContribuinteCliente);
+                pdfFormFields.SetField("Referente à ATN", folhaobra.IdFolhaObra.ToString().PadLeft(5, ' '));
+                pdfFormFields.SetField("Data Pedido", folhaobra.DataServico.ToString("dd/MM/yyyy"));
+                pdfFormFields.SetField("responsaveltecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
+                pdfFormFields.SetField("Total recebido", ValorFinal.ToString().Split(',')[0].PadLeft(4, ' '));
+                pdfFormFields.SetField("undefined_4", ValorFinal.ToString().Split(',')[1].PadRight(2, '0'));
+            }
 
             pdfStamper.FormFlattening = true;
             pdfStamper.SetFullCompression();

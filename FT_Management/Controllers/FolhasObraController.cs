@@ -206,7 +206,10 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             folhaObra.IdFolhaObra = id;
+            folhaObra.Recibo.IdFolhaObra = id;
+            if (folhaObra.Recibo.CalcularValorFinal() > 0) context.NovoRecibo(folhaObra.Recibo);
             folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
+
             context.NovaFolhaObra(folhaObra);
             return RedirectToAction("Pedido", "Pedidos", new { idCartao = folhaObra.IdCartao});
 
