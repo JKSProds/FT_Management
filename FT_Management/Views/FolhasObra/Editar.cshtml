@@ -522,7 +522,7 @@
                     <div class="form-group">
                         <label asp-for="Recibo.MaoObra" class="control-label"></label>
                         <div class="input-group mb-3">
-                        <input asp-for="Recibo.MaoObra" class="form-control" type="number" id="ReciboMaoObra"/>
+                        <input asp-for="Recibo.MaoObra" class="form-control" type="number" min="0.00" max="9999.99" step="0.01" id="ReciboMaoObra"/>
                          <div class="input-group-append">
                             <span class="input-group-text">€</span>
                         </div>
@@ -534,7 +534,7 @@
                     <div class="form-group">
                         <label asp-for="Recibo.Deslocacao" class="control-label"></label>
                         <div class="input-group mb-3">
-                        <input asp-for="Recibo.Deslocacao" class="form-control" type="number" id="ReciboDeslocacao"/>
+                        <input asp-for="Recibo.Deslocacao" class="form-control" type="number" min="0.00" max="9999.99" step="0.01" id="ReciboDeslocacao"/>
                          <div class="input-group-append">
                             <span class="input-group-text">€</span>
                         </div>
@@ -630,7 +630,7 @@
             var MaterialAplicado = parseFloat(document.getElementById("ReciboMaterialAplicado").value) || 0;
             var MaoObra = parseFloat(document.getElementById("ReciboMaoObra").value) || 0;
             var Deslocacao = parseFloat(document.getElementById("ReciboDeslocacao").value) || 0;
-
+            
             var SubTotal = MaterialAplicado + Deslocacao + MaoObra;
             var Iva = (SubTotal/100)*23;
             var ValorFinal = SubTotal + Iva;

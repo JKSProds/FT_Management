@@ -69,7 +69,10 @@ namespace FT_Management
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-PT");
+            System.Globalization.CultureInfo customCulture = new CultureInfo("pt-PT");
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+            CultureInfo.DefaultThreadCurrentCulture = customCulture;
 
             if (env.IsDevelopment())
             {
