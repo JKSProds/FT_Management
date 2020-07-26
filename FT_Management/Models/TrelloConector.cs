@@ -381,6 +381,14 @@ namespace FT_Management.Models
         public string IdLista { get; set; }
         public List<TrelloComentarios> Comentarios { get; set; }
         public List<TrelloAnexos> Anexos { get; set; }
+        public DateTime DataCriacao { get { return DefDataCriacao(); } }
+
+        public DateTime DefDataCriacao() {
+            string FirstDigits = IdCartao.Substring(0,8);
+            int decValue = Convert.ToInt32(FirstDigits, 16);
+
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(decValue);
+        }
     }
 
     public class TrelloComentarios 

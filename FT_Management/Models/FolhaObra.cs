@@ -118,7 +118,7 @@ namespace FT_Management.Models
         public string MoradaCliente { get; set; }
         [Display(Name = "Email")]
         public string EmailCliente { get; set; }
-        [Display(Name = "NIF")]
+        [Display(Name = "Numero de Contribuinte")]
         public string NumeroContribuinteCliente { get; set; }
 
         public bool IsValidContrib()

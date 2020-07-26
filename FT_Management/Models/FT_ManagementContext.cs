@@ -1059,7 +1059,7 @@ namespace FT_Management.Models
                 pdfFormFields.SetField("subtotal", folhaobra.Recibo.CalcularSubtotal().ToString() + " €");
                 pdfFormFields.SetField("IVA", "23 %");
                 pdfFormFields.SetField("Total a pagar", ValorFinal.ToString().Split(',')[0].PadLeft(4, ' '));
-                pdfFormFields.SetField("undefined_3", ValorFinal.ToString().Split(',')[1].PadRight(2, '0'));
+                pdfFormFields.SetField("undefined_3", ValorFinal.ToString().Split(',').Count() > 1 ? ValorFinal.ToString().Split(',')[1].PadRight(2, '0'): "00");
                 pdfFormFields.SetFieldProperty("recebiquantia", "textsize", 5f, null);
                 pdfFormFields.SetField("recebiquantia", folhaobra.Recibo.ConverterValorPalavras());
                 pdfFormFields.SetField("reciboprovi", folhaobra.Recibo.IdRecibo.ToString());
@@ -1067,9 +1067,9 @@ namespace FT_Management.Models
                 pdfFormFields.SetField("contribuinte", folhaobra.ClienteServico.NumeroContribuinteCliente);
                 pdfFormFields.SetField("Referente à ATN", folhaobra.IdFolhaObra.ToString().PadLeft(5, ' '));
                 pdfFormFields.SetField("Data Pedido", folhaobra.DataServico.ToString("dd/MM/yyyy"));
-                pdfFormFields.SetField("responsaveltecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
+                pdfFormFields.SetField("responsaveltecnico", folhaobra.IntervencaosServico.Count() > 0 ? folhaobra.IntervencaosServico.Last().NomeTecnico : "");
                 pdfFormFields.SetField("Total recebido", ValorFinal.ToString().Split(',')[0].PadLeft(4, ' '));
-                pdfFormFields.SetField("undefined_4", ValorFinal.ToString().Split(',')[1].PadRight(2, '0'));
+                pdfFormFields.SetField("undefined_4", ValorFinal.ToString().Split(',').Count() > 1 ? ValorFinal.ToString().Split(',')[1].PadRight(2, '0'): "00");
             }
 
             pdfStamper.FormFlattening = true;

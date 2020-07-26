@@ -515,7 +515,7 @@
                             <span class="input-group-text">€</span>
                         </div>
                         </div>
-                        <span asp-validation-for="Recibo.MaoObra" class="text-danger"></span>
+                        <span asp-validation-for="Recibo.MaterialAplicado" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group col-lg-4">
@@ -547,7 +547,7 @@
                         <input asp-for="ClienteServico.NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" />
                         <span asp-validation-for="ClienteServico.NumeroContribuinteCliente" class="text-danger"></span>
                     </div>
-
+                <input type="text" hidden id="clienteAssinatura" asp-for="Recibo.IdRecibo">
                 <div class="input-group input-group-lg form-group col-lg-12">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="inputGroup-sizing-lg">Valor Total</span>
@@ -559,6 +559,9 @@
                     <div class="btn-group">
                                 <button type="button" class="btn btn-primary btn-lg" onclick="CalcularRecibo()">
                                     <i class="fas fa-calculator"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="LimparRecibo()">
+                                    <i class="fas fa-backspace"></i>
                                 </button>
                             </div>
                     </div>
@@ -613,6 +616,14 @@
 
             document.getElementById("accept").click();
             $('form').submit();
+        }
+
+        function LimparRecibo() {
+         document.getElementById("ReciboMaterialAplicado").value = "0.00"; 
+         document.getElementById("ReciboMaoObra").value = "0.00";
+         document.getElementById("ReciboDeslocacao").value = "0.00";
+
+         CalcularRecibo();
         }
 
   function CalcularRecibo() {
