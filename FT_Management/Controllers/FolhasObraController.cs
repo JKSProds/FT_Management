@@ -207,7 +207,7 @@ namespace FT_Management.Controllers
 
             folhaObra.IdFolhaObra = id;
             folhaObra.Recibo.IdFolhaObra = id;
-            if (folhaObra.Recibo.CalcularValorFinal() > 0) context.NovoRecibo(folhaObra.Recibo);
+            if (folhaObra.Recibo.CalcularValorFinal() > 0 || folhaObra.Recibo.IdRecibo > 0) context.NovoRecibo(folhaObra.Recibo);
             folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
 
             context.NovaFolhaObra(folhaObra);

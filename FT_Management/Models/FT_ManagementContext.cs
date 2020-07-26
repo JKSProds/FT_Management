@@ -1051,7 +1051,7 @@ namespace FT_Management.Models
             if (folhaobra.ConferidoPor == string.Empty) folhaobra.ConferidoPor = folhaobra.ClienteServico.PessoaContatoCliente;
             pdfFormFields.SetField("o cliente", folhaobra.ConferidoPor);
 
-            double ValorFinal = folhaobra.Recibo.CalcularValorFinal();
+            double ValorFinal = Math.Round(folhaobra.Recibo.CalcularValorFinal(), 2);
             if (ValorFinal > 0) {
                 pdfFormFields.SetField("Material", folhaobra.Recibo.MaterialAplicado.ToString() + " €");
                 pdfFormFields.SetField("mao-de-obra", folhaobra.Recibo.MaoObra.ToString() + " €");

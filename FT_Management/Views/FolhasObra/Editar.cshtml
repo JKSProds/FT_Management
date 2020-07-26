@@ -623,6 +623,7 @@
             var SubTotal = MaterialAplicado + Deslocacao + MaoObra;
             var Iva = (SubTotal/100)*23;
             var ValorFinal = SubTotal + Iva;
+            ValorFinal = ValorFinal.toFixed(2);
             //alert(MaterialAplicado + " - " + MaoObra + " - " + Deslocacao + " - " + SubTotal + " - " + Iva + " - " + ValorFinal)
             document.getElementById("ValorTotalRecibo").value = ValorFinal;
             }
