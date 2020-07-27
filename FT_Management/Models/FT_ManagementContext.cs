@@ -37,7 +37,7 @@ namespace FT_Management.Models
             catch
             {
                 throw new Exception("Não foi possivel conectar á BD! Verifique se a base de dados existe e o IP está correto. ");
-            } 
+            }
         }
 
         public List<Produto> ObterListaProdutos(string referencia, string desig)
@@ -46,7 +46,7 @@ namespace FT_Management.Models
 
             Database db = ConnectionString;
 
-            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto like '%"+ referencia + "%' AND designacao_produto like '%"+desig+"%';"))
+            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto like '%" + referencia + "%' AND designacao_produto like '%" + desig + "%';"))
             {
                 while (result.Read())
                 {
@@ -136,9 +136,9 @@ namespace FT_Management.Models
 
             foreach (var item in LstProdutos)
             {
-                sql += ("('"+item.Ref_Produto+"', '"+item.Designacao_Produto+"', '"+item.Stock_PHC.ToString().Replace(",", ".") +"', '"+item.Stock_Fisico.ToString().Replace(",", ".") + "', '" +item.Pos_Stock+"', '"+item.Obs_Produto+"'), \r\n");
+                sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
             }
-            sql = sql.Remove(sql.Count() - 4); 
+            sql = sql.Remove(sql.Count() - 4);
             sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc);";
 
             Database db = ConnectionString;
@@ -146,11 +146,11 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        public void EditarArtigo (Produto produto)
+        public void EditarArtigo(Produto produto)
         {
 
             Database db = ConnectionString;
-            String sql = "update dat_produtos set designacao_produto='"+ produto.Designacao_Produto + "', stock_fisico="+produto.Stock_Fisico+ ", stock_phc="+produto.Stock_PHC+ ", pos_stock='"+produto.Pos_Stock+ "', obs='"+produto.Obs_Produto+"' Where ref_produto='"+produto.Ref_Produto+"';";
+            String sql = "update dat_produtos set designacao_produto='" + produto.Designacao_Produto + "', stock_fisico=" + produto.Stock_Fisico + ", stock_phc=" + produto.Stock_PHC + ", pos_stock='" + produto.Pos_Stock + "', obs='" + produto.Obs_Produto + "' Where ref_produto='" + produto.Ref_Produto + "';";
             db.Execute(sql);
             db.Connection.Close();
         }
@@ -164,7 +164,7 @@ namespace FT_Management.Models
 
         public List<FolhaObra> ObterListaFolhasObra(string data)
         {
-                List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
+            List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
 
             using (Database db = ConnectionString)
             {
@@ -184,6 +184,7 @@ namespace FT_Management.Models
                         GuiaTransporteAtual = result["GuiaTransporteAtual"],
                         AssistenciaRemota = result["Remoto"] == 1,
                         //IdCartao = result.Reader.IsDBNull(result["IdCartaoTrello"]) ? "" : result["IdCartaoTrello"],
+                        Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                         ClienteServico = ObterCliente(result["IdCliente"]),
@@ -193,10 +194,10 @@ namespace FT_Management.Models
                     });
                 }
             }
-            
+
             return LstFolhasObra;
 
-            }
+        }
         public List<FolhaObra> ObterListaFolhasObraCartao(string IdCartao)
         {
             List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
@@ -220,6 +221,7 @@ namespace FT_Management.Models
                         AssistenciaRemota = result["Remoto"] == 1,
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
+                        Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                         ClienteServico = ObterCliente(result["IdCliente"]),
                         PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
                         IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
@@ -274,7 +276,7 @@ namespace FT_Management.Models
             }
             return LstProdutosIntervencao;
         }
-        public FolhaObra ObterFolhaObra (int id)
+        public FolhaObra ObterFolhaObra(int id)
         {
             using Database db = ConnectionString;
             using var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";");
@@ -354,12 +356,12 @@ namespace FT_Management.Models
             }
             return equipamento;
         }
-        public List<FolhaObra> ObterHistorico (string NumeroSerie)
+        public List<FolhaObra> ObterHistorico(string NumeroSerie)
         {
-        List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
+            List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
 
-                using (Database db = ConnectionString)
-                {
+            using (Database db = ConnectionString)
+            {
 
                 using var result = db.Query("SELECT * FROM dat_folhas_obra inner join dat_equipamentos on dat_equipamentos.numeroserieequipamento='" + NumeroSerie + "' AND dat_folhas_obra.idequipamento=dat_equipamentos.idequipamento;");
                 while (result.Read())
@@ -384,7 +386,7 @@ namespace FT_Management.Models
                 }
             }
 
-                return LstFolhasObra;
+            return LstFolhasObra;
         }
         public List<Movimentos> ObterListaMovimentos(string NomeTecnico, string Guia)
         {
@@ -573,14 +575,14 @@ namespace FT_Management.Models
         }
         public int NovaFolhaObra(FolhaObra folhaObra)
         {
-            
 
-            folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra"): folhaObra.IdFolhaObra;
+
+            folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") : folhaObra.IdFolhaObra;
 
             string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '"+folhaObra.ConferidoPor+"', '" + folhaObra.SituacoesPendentes + "', '"+folhaObra.IdCartao+"', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '"+folhaObra.GuiaTransporteAtual+"', '"+ (folhaObra.AssistenciaRemota ? 1 : 0) +"', '"+folhaObra.RubricaCliente+"') \r\n");
-            
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '" + folhaObra.ConferidoPor + "', '" + folhaObra.SituacoesPendentes + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
+
             sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
 
             using (Database db = ConnectionString)
@@ -593,8 +595,9 @@ namespace FT_Management.Models
         {
             Cliente c = new Cliente();
 
-            if (cliente.NomeCliente != null || cliente.NomeCliente == String.Empty) {  c = ObterClienteNome(cliente.NomeCliente); }
-            if (c.IdCliente == 0) {
+            if (cliente.NomeCliente != null || cliente.NomeCliente == String.Empty) { c = ObterClienteNome(cliente.NomeCliente); }
+            if (c.IdCliente == 0)
+            {
                 cliente.IdCliente = ObterUltimaEntrada("dat_clientes", "IdCliente");
             }
             else
@@ -637,7 +640,7 @@ namespace FT_Management.Models
         }
         public int NovoEquipamento(Equipamento equipamento)
         {
- 
+
             Equipamento e = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
             if (e.IdEquipamento == 0)
             {
@@ -668,7 +671,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_intervencoes_folha_obra (IdIntervencao, IdFolhaObra,IdTecnico, NomeTecnico, DataServico, HoraInicio, HoraFim) VALUES ";
 
-            sql += ("('" + intervencao.IdIntervencao + "',  '" + intervencao.IdFolhaObra + "', '"+intervencao.IdTecnico+"', '" + intervencao.NomeTecnico + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "') \r\n");
+            sql += ("('" + intervencao.IdIntervencao + "',  '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '" + intervencao.NomeTecnico + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico), DataServico = VALUES(DataServico), HoraInicio = VALUES(HoraInicio), HoraFim = VALUES(HoraFim);";
 
@@ -681,11 +684,11 @@ namespace FT_Management.Models
 
 
         }
-        public void NovaPecaIntervencao (Produto produto, string IdFolhaObra)
+        public void NovaPecaIntervencao(Produto produto, string IdFolhaObra)
         {
             string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra) VALUES ";
 
-            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto + "', '"+produto.Stock_Fisico+"', '" + IdFolhaObra + "') \r\n");
+            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto + "', '" + produto.Stock_Fisico + "', '" + IdFolhaObra + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade);";
 
@@ -700,26 +703,26 @@ namespace FT_Management.Models
             using Database db = ConnectionString;
             db.Execute(sql);
         }
-        public void ApagarIntervencao (int id)
+        public void ApagarIntervencao(int id)
         {
-            string sql = "DELETE FROM dat_intervencoes_folha_obra where IdIntervencao="+id+";";
+            string sql = "DELETE FROM dat_intervencoes_folha_obra where IdIntervencao=" + id + ";";
 
             using Database db = ConnectionString;
             db.Execute(sql);
         }
         public void ApagarPecaFolhaObra(string Ref_Produto, int idFolhaObra)
         {
-            string sql = "DELETE FROM dat_produto_intervencao where RefProduto='" + Ref_Produto + "' AND IdFolhaObra = "+idFolhaObra+";";
+            string sql = "DELETE FROM dat_produto_intervencao where RefProduto='" + Ref_Produto + "' AND IdFolhaObra = " + idFolhaObra + ";";
 
             using Database db = ConnectionString;
             db.Execute(sql);
         }
-        public int ObterUltimaEntrada (string NomeTabela, string CampoID)
+        public int ObterUltimaEntrada(string NomeTabela, string CampoID)
         {
             using (Database db = ConnectionString)
             {
                 //using var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";");
-                using var result = db.Query("SELECT MIN(t1."+CampoID+" + 1) AS nextID FROM "+NomeTabela+" t1 LEFT JOIN "+NomeTabela+" t2 ON t1."+CampoID+" + 1 = t2."+CampoID+" WHERE t2."+CampoID+" IS NULL;");
+                using var result = db.Query("SELECT MIN(t1." + CampoID + " + 1) AS nextID FROM " + NomeTabela + " t1 LEFT JOIN " + NomeTabela + " t2 ON t1." + CampoID + " + 1 = t2." + CampoID + " WHERE t2." + CampoID + " IS NULL;");
                 while (result.Read())
                 {
                     return result.Reader.IsDBNull(0) ? 0 : result[0];
@@ -730,32 +733,32 @@ namespace FT_Management.Models
         }
         public List<Utilizador> ObterListaUtilizadores()
         {
-                List<Utilizador> LstUtilizadores = new List<Utilizador>();
-                string sqlQuery = "SELECT * FROM sys_utilizadores;";
+            List<Utilizador> LstUtilizadores = new List<Utilizador>();
+            string sqlQuery = "SELECT * FROM sys_utilizadores;";
 
-                using Database db = ConnectionString;
-                using (var result = db.Query(sqlQuery))
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
                 {
-                    while (result.Read())
+                    LstUtilizadores.Add(new Utilizador()
                     {
-                        LstUtilizadores.Add(new Utilizador()
-                        {
-                            Id = result["IdUtilizador"],
-                            NomeUtilizador = result["NomeUtilizador"],
-                            Password = result["Password"],
-                            NomeCompleto = result["NomeCompleto"],
-                            TipoUtilizador = result["TipoUtilizador"],
-                            EmailUtilizador = result["EmailUtilizador"],
-                            IdCartaoTrello = result["IdCartaoTrello"]
-                        });
-                    }
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = result["TipoUtilizador"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"]
+                    });
                 }
+            }
             return LstUtilizadores;
         }
         public Utilizador ObterUtilizador(int Id)
         {
             Utilizador utilizador = new Utilizador();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where IdUtilizador = "+Id+";";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where IdUtilizador = " + Id + ";";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -777,7 +780,7 @@ namespace FT_Management.Models
             return utilizador;
         }
 
-        public Bitmap DesenharEtiqueta80x50 (Produto produto)
+        public Bitmap DesenharEtiqueta80x50(Produto produto)
         {
 
             int x = 30;
@@ -808,10 +811,10 @@ namespace FT_Management.Models
 
                 y += 10;
                 gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 85 + 10, y);
-          
+
                 x = 10;
                 y += 40;
-                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x*2), 35), format);
+                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 35), format);
 
 
                 y += 40;
@@ -824,7 +827,7 @@ namespace FT_Management.Models
                 y += 60;
                 gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2), 20), format);
 
-                gr.DrawString("geral@food-tech.pt", fontBody, Brushes.Black, new Rectangle(x, height-20, width - (x * 2), 20), format);
+                gr.DrawString("geral@food-tech.pt", fontBody, Brushes.Black, new Rectangle(x, height - 20, width - (x * 2), 20), format);
 
             }
 
@@ -865,7 +868,7 @@ namespace FT_Management.Models
 
                 x = 10;
                 y += 165;
-               
+
                 gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
 
                 y += 250;
@@ -895,7 +898,7 @@ namespace FT_Management.Models
             int height = 320;
 
             Bitmap bm = new Bitmap(width, 641);
-           
+
             Font fontHeader = new Font("Tahoma", 40, FontStyle.Bold);
             Font fontBody = new Font("Tahoma", 34, FontStyle.Bold);
             Font fontFooter = new Font("Tahoma", 16, FontStyle.Regular);
@@ -960,10 +963,10 @@ namespace FT_Management.Models
 
                     iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
 
-                        image.ScaleToFit(rectangle.Width, rectangle.Height);
-                        image.SetAbsolutePosition(rectangle.Left + 2, rectangle.Top - 2);
+                    image.ScaleToFit(rectangle.Width, rectangle.Height);
+                    image.SetAbsolutePosition(rectangle.Left + 2, rectangle.Top - 2);
 
-                        pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
+                    pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
 
                 }
             }
@@ -974,7 +977,8 @@ namespace FT_Management.Models
                 pdfFormFields.SetFieldProperty("Remoto", "textsize", 26f, null);
                 pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
                 pdfFormFields.SetField("Remoto", "REMOTO");
-            }else if((folhaobra.DataServico.DayOfWeek == DayOfWeek.Sunday) || (folhaobra.DataServico.DayOfWeek == DayOfWeek.Saturday))
+            }
+            else if ((folhaobra.DataServico.DayOfWeek == DayOfWeek.Sunday) || (folhaobra.DataServico.DayOfWeek == DayOfWeek.Saturday))
             {
                 pdfFormFields.SetFieldProperty("Remoto", "textsize", 20f, null);
                 pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
@@ -1025,7 +1029,7 @@ namespace FT_Management.Models
             pdfFormFields.SetFieldProperty("Text5", "textsize", 9f, null);
             pdfFormFields.SetField("Text5", folhaobra.DataServico.ToString("dd/MM/yyyy"));
 
-            if (folhaobra.PecasServico.Count > 0 )
+            if (folhaobra.PecasServico.Count > 0)
             {
 
                 //Peças
@@ -1037,7 +1041,7 @@ namespace FT_Management.Models
                     pdfFormFields.SetFieldProperty("DesignaçãoRow" + p, "textsize", 6f, null);
                     if (pecas.Designacao_Produto.Length > 50)
                     {
-                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto.Substring(0,50));
+                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto.Substring(0, 50));
                     }
                     else
                     {
@@ -1052,14 +1056,15 @@ namespace FT_Management.Models
             pdfFormFields.SetField("o cliente", folhaobra.ConferidoPor);
 
             double ValorFinal = Math.Round(folhaobra.Recibo.CalcularValorFinal(), 2);
-            if (ValorFinal > 0) {
+            if (ValorFinal > 0)
+            {
                 pdfFormFields.SetField("Material", folhaobra.Recibo.MaterialAplicado.ToString() + " €");
                 pdfFormFields.SetField("mao-de-obra", folhaobra.Recibo.MaoObra.ToString() + " €");
                 pdfFormFields.SetField("deslocacoes", folhaobra.Recibo.Deslocacao.ToString() + " €");
                 pdfFormFields.SetField("subtotal", folhaobra.Recibo.CalcularSubtotal().ToString() + " €");
                 pdfFormFields.SetField("IVA", "23 %");
                 pdfFormFields.SetField("Total a pagar", ValorFinal.ToString().Split('.')[0].PadLeft(4, ' '));
-                pdfFormFields.SetField("undefined_3", ValorFinal.ToString().Split('.').Count() > 1 ? ValorFinal.ToString().Split('.')[1].PadRight(2, '0'): "00");
+                pdfFormFields.SetField("undefined_3", ValorFinal.ToString().Split('.').Count() > 1 ? ValorFinal.ToString().Split('.')[1].PadRight(2, '0') : "00");
                 pdfFormFields.SetFieldProperty("recebiquantia", "textsize", 5f, null);
                 pdfFormFields.SetField("recebiquantia", folhaobra.Recibo.ConverterValorPalavras());
                 pdfFormFields.SetField("reciboprovi", folhaobra.Recibo.IdRecibo.ToString());
@@ -1069,7 +1074,7 @@ namespace FT_Management.Models
                 pdfFormFields.SetField("Data Pedido", folhaobra.DataServico.ToString("dd/MM/yyyy"));
                 pdfFormFields.SetField("responsaveltecnico", folhaobra.IntervencaosServico.Count() > 0 ? folhaobra.IntervencaosServico.Last().NomeTecnico : "");
                 pdfFormFields.SetField("Total recebido", ValorFinal.ToString().Split('.')[0].PadLeft(4, ' '));
-                pdfFormFields.SetField("undefined_4", ValorFinal.ToString().Split('.').Count() > 1 ? ValorFinal.ToString().Split('.')[1].PadRight(2, '0'): "00");
+                pdfFormFields.SetField("undefined_4", ValorFinal.ToString().Split('.').Count() > 1 ? ValorFinal.ToString().Split('.')[1].PadRight(2, '0') : "00");
             }
 
             pdfStamper.FormFlattening = true;
@@ -1077,7 +1082,7 @@ namespace FT_Management.Models
             pdfStamper.Close();
 
             return outputPdfStream;
-            
+
         }
         public MemoryStream AssinarDocumento(string nomecliente, string nometecnico, string tipodocumento, bool manualentregue, byte[] documento)
         {
@@ -1088,14 +1093,14 @@ namespace FT_Management.Models
 
             switch (tipodocumento)
             {
-               case "0":
+                case "0":
                     for (int i = 3; i < pdfReader.NumberOfPages + 1; i++)
                     {
                         canvas = pdfStamper.GetOverContent(i);
                         ColumnText.ShowTextAligned(canvas, iTextSharp.text.Element.ALIGN_RIGHT, new iTextSharp.text.Phrase(nomecliente, new iTextSharp.text.Font(iTextSharp.text.FontFactory.GetFont("Arial", 12, iTextSharp.text.Font.BOLD))), pdfReader.GetPageSize(i).Width - 30, 350, 0);
                     }
                     break;
-               case "1":
+                case "1":
                     for (int i = 1; i < pdfReader.NumberOfPages + 1; i++)
                     {
                         canvas = pdfStamper.GetOverContent(i);
