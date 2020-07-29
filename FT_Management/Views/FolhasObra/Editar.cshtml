@@ -426,15 +426,28 @@
                                     <input type="text" class="form-control" id="txtDesignacao">
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="form-group row">
                                 <label for="horaInicio" class="col-sm-4 col-form-label">Quantidade</label>
                                 <div class="input-group col-sm-8">
                                     <div class="input-group-prepend col" id="button-addon3">
-                                        <input class="form-control" min="0" max="999" name="txtQuantidade" id="txtQuantidade" value="1" readonly>
-                                        <button onclick="MenosUm()" class="btn btn-danger fas fa-minus" type="button"></button>
-                                        <button onclick="MaisUm()" class="btn btn-primary fas fa-plus" type="button"></button>
+                                        <button onclick="MenosUm(0.1)" class="btn btn-danger btn-sm" type="button"><</button>
+                                        <button onclick="MenosUm(1)" class="btn btn-danger btn-sm" type="button"><<</button>
+                                        <button onclick="MenosUm(10)" class="btn btn-danger btn-sm" type="button"><<<</button>
+                                        <input class="form-control" min="0" max="999" name="txtQuantidade" id="txtQuantidade" value="1" readonly style="width:70px;">
+                                        <button onclick="MaisUm(0.1)" class="btn btn-primary btn-sm" type="button">></button>
+                                        <button onclick="MaisUm(1)" class="btn btn-primary btn-sm" type="button">>></button>
+                                        <button onclick="MaisUm(10)" class="btn btn-primary btn-sm" type="button">>>></button>
                                     </div>
                                 </div>
+                            </div>
+                             <div class="row">
+                                  <label class="col-sm-4 col-form-label">Tipo</label>
+                                    <select class="form-control col-sm-8" id="tipoun">
+                                        <option>UN</option>
+                                        <option>MT</option>
+                                        <option>CM</option>
+                                        <option>L</option>
+                                    </select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -730,20 +743,20 @@
         })
 
     }
-    function MaisUm() {
-        var valor = parseInt(document.getElementById("txtQuantidade").value) + 1;
+    function MaisUm(passo) {
+        var valor = parseFloat(document.getElementById("txtQuantidade").value) + parseFloat(passo);
         if (valor > 999) {
             valor = 999
         };
-        document.getElementById("txtQuantidade").value = valor;
+        document.getElementById("txtQuantidade").value = valor.toFixed(2);
     }
-    function MenosUm() {
+    function MenosUm(passo) {
 
-        var valor = parseInt(document.getElementById("txtQuantidade").value) - 1;
+        var valor = parseFloat(document.getElementById("txtQuantidade").value) - parseFloat(passo);
         if (valor < 0) {
             valor = 0
         };
-        document.getElementById("txtQuantidade").value = valor;
+        document.getElementById("txtQuantidade").value = valor.toFixed(2);
     }
     function ObterDesignacao() {
         var RefProduto = document.getElementById("txtRefProduto").value;
@@ -844,12 +857,13 @@
             referencia: document.getElementById("txtRefProduto").value,
             designacao: document.getElementById("txtDesignacao").value,
             quantidade: document.getElementById("txtQuantidade").value,
-            idfolhaobra: document.getElementById("txtIdFolhaObra").value
+            idfolhaobra: document.getElementById("txtIdFolhaObra").value,
+            tipoun: document.getElementById("tipoun").value
         };
 
         $('#exampleModal2').modal('hide');
         $('#exampleModal2')
-            .find("input,textarea,select")
+            .find("input,textarea")
             .val('')
             .end()
             .find("input[type=checkbox], input[type=radio]")

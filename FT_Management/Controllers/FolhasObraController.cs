@@ -105,14 +105,15 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public ActionResult AdicionarPeca(string referencia, string designacao, string quantidade, string idfolhaobra)
+        public ActionResult AdicionarPeca(string referencia, string designacao, string quantidade, string idfolhaobra, string tipoun)
         {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 Produto produto = new Produto()
                 {
                     Ref_Produto = referencia,
                     Designacao_Produto = designacao,
-                    Stock_Fisico = int.Parse(quantidade)
+                    Stock_Fisico = double.Parse(quantidade),
+                    TipoUn = tipoun
                 };
                 context.NovaPecaIntervencao(produto, idfolhaobra);
 

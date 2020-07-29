@@ -21,5 +21,6 @@ namespace FT_Management.Models
         [Display(Name = "Observações")]
         [DataType(DataType.MultilineText)]
         public string Obs_Produto { get; set; }
+        public string TipoUn { get; set; }
     }
 }

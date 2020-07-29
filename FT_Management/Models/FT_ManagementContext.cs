@@ -270,7 +270,7 @@ namespace FT_Management.Models
                     {
                         Ref_Produto = result["RefProduto"],
                         Designacao_Produto = result["Designacao"],
-                        Stock_Fisico = result["Quantidade"]
+                        Stock_Fisico = Math.Round(double.Parse(result["Quantidade"]), 2)
                     });
                 }
             }
@@ -686,11 +686,11 @@ namespace FT_Management.Models
         }
         public void NovaPecaIntervencao(Produto produto, string IdFolhaObra)
         {
-            string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra) VALUES ";
+            string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra, TipoUn) VALUES ";
 
-            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''")  + "', '" + produto.Stock_Fisico + "', '" + IdFolhaObra + "') \r\n");
+            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''")  + "', '" + produto.Stock_Fisico + "', '" + IdFolhaObra + "', '"+ produto.TipoUn +"') \r\n");
 
-            sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade);";
+            sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade), TipoUn = VALUES(TipoUn);";
 
             using Database db = ConnectionString;
             db.Execute(sql);
