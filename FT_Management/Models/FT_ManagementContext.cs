@@ -486,7 +486,7 @@ namespace FT_Management.Models
         {
             using Database db = ConnectionString;
             Cliente cliente = new Cliente();
-            using var result = db.Query("SELECT * FROM dat_clientes where NomeCliente = '" + nome + "';");
+            using var result = db.Query("SELECT * FROM dat_clientes where NomeCliente = '" + nome.Replace("'", "''") + "';");
             result.Read();
             if (result.Reader.HasRows)
             {
@@ -544,8 +544,8 @@ namespace FT_Management.Models
         {
 
             List<Cliente> LstClientes = new List<Cliente>();
-            string sqlQuery = "SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente + "%';";
-            if (exact) sqlQuery = "SELECT * FROM dat_clientes where NomeCliente ='" + NomeCliente + "';";
+            string sqlQuery = "SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente.Replace("'", "''")  + "%';";
+            if (exact) sqlQuery = "SELECT * FROM dat_clientes where NomeCliente ='" + NomeCliente.Replace("'", "''")  + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -581,7 +581,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico + "', '" + folhaObra.ConferidoPor + "', '" + folhaObra.SituacoesPendentes + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''")  + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico.Replace("'", "''")  + "', '" + folhaObra.ConferidoPor.Replace("'", "''")  + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''")  + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
 
@@ -607,7 +607,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_clientes (IdCliente, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, NumeroContribuinteCliente) VALUES ";
 
-            sql += ("('" + cliente.IdCliente + "', '" + cliente.NomeCliente + "', '" + cliente.PessoaContatoCliente + "', '" + cliente.MoradaCliente + "', '" + cliente.EmailCliente + "', '" + cliente.NumeroContribuinteCliente + "') \r\n");
+            sql += ("('" + cliente.IdCliente + "', '" + cliente.NomeCliente.Replace("'", "''")  + "', '" + cliente.PessoaContatoCliente.Replace("'", "''")  + "', '" + cliente.MoradaCliente.Replace("'", "''")  + "', '" + cliente.EmailCliente.Replace("'", "''")  + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''")  + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
 
@@ -653,7 +653,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_equipamentos (IdEquipamento, DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento) VALUES ";
 
-            sql += ("('" + equipamento.IdEquipamento + "',  '" + equipamento.DesignacaoEquipamento + "', '" + equipamento.MarcaEquipamento + "', '" + equipamento.ModeloEquipamento + "', '" + equipamento.NumeroSerieEquipamento + "') \r\n");
+            sql += ("('" + equipamento.IdEquipamento + "',  '" + equipamento.DesignacaoEquipamento.Replace("'", "''")  + "', '" + equipamento.MarcaEquipamento.Replace("'", "''")  + "', '" + equipamento.ModeloEquipamento.Replace("'", "''")  + "', '" + equipamento.NumeroSerieEquipamento.Replace("'", "''")  + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento);";
 
@@ -671,7 +671,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_intervencoes_folha_obra (IdIntervencao, IdFolhaObra,IdTecnico, NomeTecnico, DataServico, HoraInicio, HoraFim) VALUES ";
 
-            sql += ("('" + intervencao.IdIntervencao + "',  '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '" + intervencao.NomeTecnico + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "') \r\n");
+            sql += ("('" + intervencao.IdIntervencao + "',  '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '" + intervencao.NomeTecnico.Replace("'", "''")  + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico), DataServico = VALUES(DataServico), HoraInicio = VALUES(HoraInicio), HoraFim = VALUES(HoraFim);";
 
@@ -688,7 +688,7 @@ namespace FT_Management.Models
         {
             string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra) VALUES ";
 
-            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto + "', '" + produto.Stock_Fisico + "', '" + IdFolhaObra + "') \r\n");
+            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''")  + "', '" + produto.Stock_Fisico + "', '" + IdFolhaObra + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade);";
 
