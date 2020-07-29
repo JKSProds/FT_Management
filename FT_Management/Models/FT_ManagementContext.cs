@@ -581,7 +581,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''")  + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico.Replace("'", "''")  + "', '" + folhaObra.ConferidoPor.Replace("'", "''")  + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''")  + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").ToString()  + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico.Replace("'", "''").ToString()  + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString()  + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString()  + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
 
@@ -1057,14 +1057,14 @@ namespace FT_Management.Models
 
             if (folhaobra.Recibo != null)
             {
-                double ValorFinal = Math.Round(folhaobra.Recibo.CalcularValorFinal(), 2);
+                double ValorFinal = Math.Round(folhaobra.Recibo.TotalRecibo, 2);
                 if (ValorFinal > 0)
                 {
                     pdfFormFields.SetField("Material", folhaobra.Recibo.MaterialAplicado.ToString() + " €");
                     pdfFormFields.SetField("mao-de-obra", folhaobra.Recibo.MaoObra.ToString() + " €");
                     pdfFormFields.SetField("deslocacoes", folhaobra.Recibo.Deslocacao.ToString() + " €");
-                    pdfFormFields.SetField("subtotal", folhaobra.Recibo.CalcularSubtotal().ToString() + " €");
-                    pdfFormFields.SetField("IVA", "23 %");
+                    pdfFormFields.SetField("subtotal", folhaobra.Recibo.SubTotalRecibo.ToString() + " €");
+                    pdfFormFields.SetField("IVA", folhaobra.Recibo.IvaRecibo.ToString() + " €");
                     pdfFormFields.SetField("Total a pagar", ValorFinal.ToString().Split('.')[0].PadLeft(4, ' '));
                     pdfFormFields.SetField("undefined_3", ValorFinal.ToString().Split('.').Count() > 1 ? ValorFinal.ToString().Split('.')[1].PadRight(2, '0') : "00");
                     pdfFormFields.SetFieldProperty("recebiquantia", "textsize", 5f, null);

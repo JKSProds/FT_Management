@@ -15,6 +15,9 @@ namespace FT_Management.Models
                 [Display(Name = "Deslocação")]
         public double Deslocacao { get; set; }
         public int IdFolhaObra { get; set; }
+       public double TotalRecibo { get {return CalcularValorFinal();} }
+        public double SubTotalRecibo { get {return CalcularSubtotal(); } }
+        public double IvaRecibo { get {return CalcularIva(CalcularSubtotal(), 23);} }
 
         private static String[] units = { "Zero", "Um", "Dois", "Três",  
     "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez", "Onze",  
@@ -70,12 +73,15 @@ namespace FT_Management.Models
                 + ((i % 1000000000 > 0) ? " " + Convert(i % 1000000000) : "");  
     } 
 
-        public double CalcularValorFinal() {
+        private double CalcularValorFinal() {
             double SubTotal = CalcularSubtotal();
-            return (SubTotal + (SubTotal/100)*23);
+            return (SubTotal + CalcularIva(SubTotal, 23));
         }
-        public double CalcularSubtotal() {
+        private double CalcularSubtotal() {
             return MaoObra + MaterialAplicado + Deslocacao;
+        }
+        private double CalcularIva(double Valor, int Iva) {
+            return (Valor/100)*Iva;
         }
     }
     public class Intervencao
@@ -83,8 +89,9 @@ namespace FT_Management.Models
         public int IdIntervencao { get; set; }
         public int IdTecnico { get; set; }
         public int IdFolhaObra { get; set; }
+        private string _NomeTecnico;
         [Display(Name = "Técnico")]
-        public string NomeTecnico { get; set; }
+        public string NomeTecnico { get {return _NomeTecnico ?? ""; } set {_NomeTecnico = value ;} }
         [Display(Name = "Data do Serviço")]
         public DateTime DataServiço { get; set; }
         [Display(Name = "Hora de Inicio")]
@@ -96,30 +103,39 @@ namespace FT_Management.Models
     public class Equipamento
     {
         public int IdEquipamento { get; set; }
+        private string _DesignacaoEquipamento;
         [Display(Name = "Designação do Equipamento")]
-        public string DesignacaoEquipamento { get; set; }
+        public string DesignacaoEquipamento { get {return _DesignacaoEquipamento ?? ""; } set {_DesignacaoEquipamento = value ;}  }
+        private string _MarcaEquipamento;
         [Display(Name = "Marca")]
-        public string MarcaEquipamento { get; set; }
+        public string MarcaEquipamento { get {return _MarcaEquipamento ?? ""; } set {_MarcaEquipamento = value ;} }
+        private string _ModeloEquipamento;
         [Display(Name = "Modelo")]
-        public string ModeloEquipamento { get; set; }
+        public string ModeloEquipamento { get {return _ModeloEquipamento ?? ""; } set {_ModeloEquipamento = value ;}  }
+        private string _NumeroSerieEquipamento;
         [Required(ErrorMessage = "Número de Série é Obrigatório")]
         [Display(Name = "Numero de Série")]
-        public string NumeroSerieEquipamento { get; set; }
+        public string NumeroSerieEquipamento { get {return _NumeroSerieEquipamento ?? ""; } set {_NumeroSerieEquipamento = value ;} }
     }
     public class Cliente
     {
         public int IdCliente { get; set; }
+        private string _NomeCliente;
         [Required(ErrorMessage = "Nome do Cliente é Obrigatório")]
         [Display(Name = "Nome do Cliente")]
-        public string NomeCliente { get; set; }
+        public string NomeCliente { get {return _NomeCliente ?? ""; } set {_NomeCliente = value ;} }
+        private string _PessoaContactoCliente;
         [Display(Name = "Pessoa de Contacto")]
-        public string PessoaContatoCliente { get; set; }
+        public string PessoaContatoCliente { get {return _PessoaContactoCliente ?? ""; } set {_PessoaContactoCliente = value ;} }
+        private string _MoradaCliente;
         [Display(Name = "Morada")]
-        public string MoradaCliente { get; set; }
+        public string MoradaCliente { get {return _MoradaCliente ?? ""; } set {_MoradaCliente = value ;} }
+        private string _EmailCliente;
         [Display(Name = "Email")]
-        public string EmailCliente { get; set; }
+        public string EmailCliente { get {return _EmailCliente ?? ""; } set {_EmailCliente = value ;}  }
+        private string _NumeroContribuinteCliente;
         [Display(Name = "Numero de Contribuinte")]
-        public string NumeroContribuinteCliente { get; set; }
+        public string NumeroContribuinteCliente { get {return _NumeroContribuinteCliente ?? ""; } set {_NumeroContribuinteCliente = value ;} }
 
         public bool IsValidContrib()
         {
@@ -168,25 +184,30 @@ namespace FT_Management.Models
         public int IdFolhaObra { get; set; }
         [Display(Name = "Data")]
         public DateTime DataServico { get; set; }
+        private string _ReferenciaServico;
         [Display(Name = "Referência")]
-        public string ReferenciaServico { get; set; }
+        public string ReferenciaServico { get {return _ReferenciaServico ?? ""; } set {_ReferenciaServico = value ;} }
         [Display(Name = "Estado do Equipamento")]
         public string EstadoEquipamento { get; set; }
+        private string _RelatorioServico;
         [DataType(DataType.MultilineText)]
         [Display(Name = "Relatório do Serviço")]
-        public string RelatorioServico { get; set; }
+        public string RelatorioServico { get {return _RelatorioServico ?? ""; } set {_RelatorioServico = value ;}  }
+        private string _SituacoesPendentes;
         [DataType(DataType.MultilineText)]
         [Display(Name = "Situações Pendentes")]
-        public string SituacoesPendentes { get; set; }
+        public string SituacoesPendentes { get {return _SituacoesPendentes ?? ""; } set {_SituacoesPendentes = value ;} }
         public List<Produto> PecasServico { get; set; }
         public List<Intervencao> IntervencaosServico { get; set; }
         public Equipamento EquipamentoServico { get; set; }
         public Cliente ClienteServico { get; set; }
         public string IdCartao { get; set; }
+        private string _ConferidoPor;
         [Display(Name = "Conferido por")]
-        public string ConferidoPor { get; set; }
+        public string ConferidoPor { get {return _ConferidoPor ?? ""; } set {_ConferidoPor = value ;} }
+        private string _GuiaTransporteAtual; 
         [Display(Name = "Número da tua Guia de Transporte")]
-        public string GuiaTransporteAtual { get; set; }
+        public string GuiaTransporteAtual { get {return _GuiaTransporteAtual ?? ""; } set {_GuiaTransporteAtual = value ;} }
         [Display(Name = "Assistência Remota?")]
         public bool AssistenciaRemota { get; set; }
         public string RubricaCliente { get; set; }
