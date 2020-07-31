@@ -388,14 +388,14 @@ namespace FT_Management.Models
 
             return LstFolhasObra;
         }
-        public List<Movimentos> ObterListaMovimentos(string NomeTecnico, string Guia)
+        public List<Movimentos> ObterListaMovimentos(int IdTecnico, string Guia)
         {
             List<Movimentos> LstGuias = new List<Movimentos>();
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT dat_folhas_obra.IdFolhaObra, NomeTecnico, NomeCliente, dat_folhas_obra.DataServico, GuiaTransporteAtual, RefProduto, Designacao, Quantidade FROM dat_folhas_obra inner join dat_clientes, dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND NomeTecnico like '" + NomeTecnico + "' AND GuiaTransporteAtual like '" + Guia + "' AND dat_clientes.idcliente = dat_folhas_obra.idcliente GROUP BY dat_produto_intervencao.RefProduto, dat_folhas_obra.idfolhaobra;");
+                using var result = db.Query("SELECT dat_folhas_obra.IdFolhaObra, NomeTecnico, NomeCliente, dat_folhas_obra.DataServico, GuiaTransporteAtual, RefProduto, Designacao, Quantidade FROM dat_folhas_obra inner join dat_clientes, dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND IdTecnico=" + IdTecnico + " AND GuiaTransporteAtual like '" + Guia + "' AND dat_clientes.idcliente = dat_folhas_obra.idcliente GROUP BY dat_produto_intervencao.RefProduto, dat_folhas_obra.idfolhaobra;");
                 while (result.Read())
                 {
                     LstGuias.Add(new Movimentos()
@@ -440,14 +440,14 @@ namespace FT_Management.Models
 
             return LstGuias;
         }
-        public List<Movimentos> ObterListaMovimentos(string NomeTecnico)
+        public List<Movimentos> ObterListaMovimentos(int IdTecnico)
         {
             List<Movimentos> LstGuias = new List<Movimentos>();
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT GuiaTransporteAtual FROM dat_folhas_obra inner join dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND GuiaTransporteAtual != 'GT" + DateTime.Now.Year + "BO91/' AND NomeTecnico like '" + NomeTecnico + "' GROUP BY dat_folhas_obra.guiatransporteatual;");
+                using var result = db.Query("SELECT GuiaTransporteAtual FROM dat_folhas_obra inner join dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND GuiaTransporteAtual != '' AND GuiaTransporteAtual != 'GT" + DateTime.Now.Year + "BO91/' AND IdTecnico=" + IdTecnico + " GROUP BY dat_folhas_obra.guiatransporteatual;");
                 while (result.Read())
                 {
                     LstGuias.Add(new Movimentos()
@@ -759,6 +759,31 @@ namespace FT_Management.Models
         {
             Utilizador utilizador = new Utilizador();
             string sqlQuery = "SELECT * FROM sys_utilizadores where IdUtilizador = " + Id + ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    utilizador = new Utilizador()
+                    {
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = result["TipoUtilizador"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"]
+                    };
+                }
+            }
+            return utilizador;
+        }
+
+        public Utilizador ObterUtilizadorNome(string Nome)
+        {
+            Utilizador utilizador = new Utilizador();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where NomeCompleto like '" + Nome + "%';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
