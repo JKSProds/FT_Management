@@ -270,7 +270,8 @@ namespace FT_Management.Models
                     {
                         Ref_Produto = result["RefProduto"],
                         Designacao_Produto = result["Designacao"],
-                        Stock_Fisico = Math.Round(double.Parse(result["Quantidade"]), 2)
+                        Stock_Fisico = Math.Round(double.Parse(result["Quantidade"]), 2),
+                        TipoUn = result["tipoun"]
                     });
                 }
             }
@@ -1072,7 +1073,8 @@ namespace FT_Management.Models
                     {
                         pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto);
                     }
-                    pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString());
+                    pdfFormFields.SetFieldProperty("QuantRow" + p, "textsize", 6f, null);
+                    pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString() + " " + pecas.TipoUn.ToString()); ;
                     p++;
                     if (p == 10) break;
                 }
