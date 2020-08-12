@@ -17,7 +17,7 @@ namespace FT_Management.Models
         public int IdFolhaObra { get; set; }
        public double TotalRecibo { get {return CalcularValorFinal();} }
         public double SubTotalRecibo { get {return CalcularSubtotal(); } }
-        public double IvaRecibo { get {return CalcularIva(CalcularSubtotal(), 23);} }
+        public double IvaRecibo { get {return Math.Round(CalcularIva(CalcularSubtotal(), 23), 2);} }
 
         private static String[] units = { "Zero", "Um", "Dois", "Três",  
     "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez", "Onze",  
