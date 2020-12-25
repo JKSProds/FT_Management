@@ -761,7 +761,7 @@
     function ObterDesignacao() {
         var RefProduto = document.getElementById("txtRefProduto").value;
         //alert(RefProduto);
-        $.get('/FolhasObra/ObterDesignacaoProduto', { 'RefProduto': RefProduto }, function (response) {
+        $.get('/FolhasObra/ObterDesignacaoProduto', { 'RefProduto': RefProduto, 'ArmazemId': 3 }, function (response) {
             document.getElementById("txtDesignacao").value = response.result;
         })
     }

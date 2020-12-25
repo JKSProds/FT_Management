@@ -81,6 +81,9 @@ namespace FT_Management.Controllers
             if (folhaObra.ClienteServico.PessoaContatoCliente != string.Empty && folhaObra.ClienteServico.PessoaContatoCliente != null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
             folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
             folhaObra.GuiaTransporteAtual = "GT" + DateTime.Now.Year + "BO91/";
+
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi criada uma folha de obra nova: " + folhaObra.ClienteServico.NomeCliente, 3);
+
             return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
         }
@@ -99,8 +102,9 @@ namespace FT_Management.Controllers
                     HoraFim = DateTime.Parse(horafim),
                     IdTecnico = int.Parse(this.User.Claims.First().Value)
                 };
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi adicionada uma intervenção nova da folha de obra: " + intervencao.IdFolhaObra + ", Data: " + intervencao.DataServiço + "; Inicio: " + intervencao.HoraInicio + ", Fim: " + intervencao.HoraFim, 3);
 
-                return Content(context.NovaIntervencao(intervencao).ToString());
+            return Content(context.NovaIntervencao(intervencao).ToString());
 
         }
 
@@ -116,8 +120,9 @@ namespace FT_Management.Controllers
                     TipoUn = tipoun
                 };
                 context.NovaPecaIntervencao(produto, idfolhaobra);
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi adicionada uma peça á folha de obra: " + idfolhaobra + ", Ref: " + produto.Ref_Produto + ", Qtd: " + produto.Stock_Fisico + " " + produto.TipoUn, 3);
 
-                return Content(referencia);
+            return Content(referencia);
         }
 
         public JsonResult ObterDesignacaoProduto (string RefProduto, int ArmazemId)
@@ -179,6 +184,8 @@ namespace FT_Management.Controllers
                 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi impressa uma folha de obra: " + id, 3);
+
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
         // GET: FolhasObraController/Edit/5
@@ -212,6 +219,8 @@ namespace FT_Management.Controllers
             folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
 
             context.NovaFolhaObra(folhaObra);
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterada uma folha de obra: " + folhaObra.ClienteServico.NomeCliente +  " com o nº " + folhaObra.IdFolhaObra, 3);
+
             return RedirectToAction("Pedido", "Pedidos", new { idCartao = folhaObra.IdCartao});
 
         }
@@ -259,7 +268,8 @@ namespace FT_Management.Controllers
                 myMail.Attachments.Add(att);
 
                 mySmtpClient.Send(myMail);
- 
+                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi enviado uma folha de obra: " + id + " para o email: " + emailDestino, 3);
+
             }
 
             catch (Exception)
@@ -288,6 +298,8 @@ namespace FT_Management.Controllers
             }
 
             context.ApagarFolhaObra(id);
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi apagada uma folha de obra: " + id, 3);
+
             return RedirectToAction(nameof(Index));
         }
         [HttpPost]
@@ -295,7 +307,9 @@ namespace FT_Management.Controllers
         {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 context.ApagarIntervencao(id);
-                return RedirectToAction(nameof(Index));
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi apagada uma intervenção da folha de obra", 3);
+
+            return RedirectToAction(nameof(Index));
         }
         [HttpPost]
         public ActionResult ApagarPeca(string Ref, string Id)
@@ -303,7 +317,9 @@ namespace FT_Management.Controllers
 
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 context.ApagarPecaFolhaObra(Ref, int.Parse(Id));
-                return RedirectToAction(nameof(Index));
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi apagada uma peça de uma folha de obra", 3);
+
+            return RedirectToAction(nameof(Index));
 
         }
     }

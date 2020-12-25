@@ -40,6 +40,16 @@ namespace FT_Management.Models
             }
         }
 
+        public void AdicionarLog(string user, string msg, int tipo)
+        {
+            string sql = "INSERT INTO dat_logs (user, msg_log, tipo_log) VALUES ('"+user+"', '"+msg+"', "+tipo+");";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+
         public List<Armazem> ObterListaArmazens()
         {
             List<Armazem> LstArmazens = new List<Armazem>();

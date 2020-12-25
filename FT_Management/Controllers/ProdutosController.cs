@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FT_Management.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class ProdutosController : Controller
     {
         // GET: Produtos
@@ -112,7 +112,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta80x50(context.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta EAN13 de produto: "+ id, 2);
             //return File(outputStream, "image/bmp");
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
@@ -128,7 +128,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta80x50QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal de produto: " + id, 2);
             //return File(outputStream, "image/bmp");
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
@@ -144,7 +144,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta80x25QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta pequena de produto: " + id, 2);
             //return File(outputStream, "image/bmp");
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
@@ -170,7 +170,7 @@ namespace FT_Management.Controllers
                 };
 
                 context.CriarArtigos(produtos);
-
+                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi criado um novo artigo: " + produto.Ref_Produto, 1);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -184,11 +184,13 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Produto produtoFinal = context.ObterProduto(refproduto, armazemid);
+
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterado o stock fisico do produto " + refproduto + " de " + produtoFinal.Stock_Fisico+ " para " + stockfisico, 1);
+
             Double.TryParse(stockfisico, out double stock_fisico);
             produtoFinal.Stock_Fisico = stock_fisico;
 
             context.EditarArtigo(produtoFinal);
-
             return Json("ok");
         }
 
@@ -216,6 +218,7 @@ namespace FT_Management.Controllers
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 produto.Ref_Produto = id;
                 context.EditarArtigo(produto);
+                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterado o produto " + produto.Ref_Produto, 1);
 
                 return Redirect("~/Produtos/Editar/" + id + "?armazemid=" + produto.Armazem_ID);
             }
@@ -240,6 +243,8 @@ namespace FT_Management.Controllers
 
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 context.ApagarArtigo(context.ObterProduto(Id,armazemid));
+                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi apagado o produto " + Id, 1);
+
                 return RedirectToAction(nameof(Index));
             }
             catch

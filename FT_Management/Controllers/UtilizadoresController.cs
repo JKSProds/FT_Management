@@ -36,7 +36,9 @@ namespace FT_Management.Controllers
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-                    if (ViewData["ReturnUrl"].ToString() != "" && ViewData["ReturnUrl"].ToString() != null)
+                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
+
+                        if (ViewData["ReturnUrl"].ToString() != "" && ViewData["ReturnUrl"].ToString() != null)
                     {
                         Response.Redirect(ViewData["ReturnUrl"].ToString(), true);
                     }
@@ -44,10 +46,13 @@ namespace FT_Management.Controllers
                     {
                         return RedirectToAction("Index", "Home");
                     }
-                }
-                else
+
+                    }
+                    else
                 {
-                    ModelState.AddModelError("", "Password errada!");
+                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
+
+                        ModelState.AddModelError("", "Password errada!");
                 }
             }
             }
@@ -77,6 +82,8 @@ namespace FT_Management.Controllers
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await  HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
+
                     if (ReturnUrl != "" && ReturnUrl != null)
                     {
                         Response.Redirect(ReturnUrl, true);
@@ -85,10 +92,12 @@ namespace FT_Management.Controllers
                     {
                         return RedirectToAction("Index", "Home");
                     }
+
                 }
                 else
                 {
                     ModelState.AddModelError("", "Password errada!");
+                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
                 }
             }
             return View();
@@ -96,6 +105,8 @@ namespace FT_Management.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
+
+
             return RedirectToAction("Index", "Home");
         }
     }
