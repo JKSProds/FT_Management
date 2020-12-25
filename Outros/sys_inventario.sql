@@ -167,15 +167,20 @@ CREATE TABLE `dat_produto_intervencao` (
 -- Definition of table `dat_produtos`
 --
 
-DROP TABLE IF EXISTS `dat_produtos`;
-CREATE TABLE `dat_produtos` (
+DROP TABLE IF EXISTS `sys_inventario_test`.`dat_produtos`;
+CREATE TABLE  `sys_inventario_test`.`dat_produtos` (
   `ref_produto` varchar(254) NOT NULL,
-  `designacao_produto` varchar(1024) default NULL,
-  `stock_fisico` double default NULL,
-  `stock_phc` double default NULL,
-  `pos_stock` varchar(45) default NULL,
-  `obs` varchar(1024) default NULL,
-  PRIMARY KEY  USING BTREE (`ref_produto`)
+  `designacao_produto` varchar(1024) DEFAULT NULL,
+  `stock_fisico` double DEFAULT NULL,
+  `stock_phc` double DEFAULT NULL,
+  `stock_rec` double DEFAULT NULL,
+  `stock_res` double DEFAULT NULL,
+  `pos_stock` varchar(45) DEFAULT NULL,
+  `armazem_id` int(11) NOT NULL,
+  `obs` varchar(1024) DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`ref_produto`,`armazem_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -185,7 +190,12 @@ CREATE TABLE `dat_produtos` (
 /*!40000 ALTER TABLE `dat_produtos` DISABLE KEYS */;
 /*!40000 ALTER TABLE `dat_produtos` ENABLE KEYS */;
 
-
+DROP TABLE IF EXISTS `sys_inventario_test`.`dat_armazem`;
+CREATE TABLE  `sys_inventario_test`.`dat_armazem` (
+  `armazem_id` int(11) NOT NULL,
+  `armazem_nome` varchar(256) NOT NULL DEFAULT ' ',
+  PRIMARY KEY (`armazem_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
