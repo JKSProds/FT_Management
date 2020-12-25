@@ -40,13 +40,35 @@ namespace FT_Management.Models
             }
         }
 
-        public List<Produto> ObterListaProdutos(string referencia, string desig)
+        public List<Armazem> ObterListaArmazens()
+        {
+            List<Armazem> LstArmazens = new List<Armazem>();
+
+            Database db = ConnectionString;
+
+            using (var result = db.Query("SELECT * FROM dat_armazem;"))
+            {
+                while (result.Read())
+                {
+                    LstArmazens.Add(new Armazem()
+                    {
+                        ArmazemId = result["armazem_id"],
+                        ArmazemNome = result["armazem_nome"]                       
+                    });
+                }
+            }
+            db.Connection.Close();
+
+            return LstArmazens;
+        }
+
+        public List<Produto> ObterListaProdutoArmazem(string referencia)
         {
             List<Produto> LstProdutos = new List<Produto>();
 
             Database db = ConnectionString;
 
-            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto like '%" + referencia + "%' AND designacao_produto like '%" + desig + "%';"))
+            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto='" + referencia + "';"))
             {
                 while (result.Read())
                 {
@@ -56,6 +78,37 @@ namespace FT_Management.Models
                         Designacao_Produto = result["designacao_produto"],
                         Stock_Fisico = result["stock_fisico"],
                         Stock_PHC = result["stock_phc"],
+                        Stock_Rec = result["stock_rec"],
+                        Stock_Res = result["stock_res"],
+                        Armazem_ID = result["armazem_id"],
+                        Pos_Stock = result["pos_stock"],
+                        Obs_Produto = result["obs"]
+                    });
+                }
+            }
+            db.Connection.Close();
+            return LstProdutos;
+        }
+
+        public List<Produto> ObterListaProdutos(string referencia, string desig, int ArmazemId)
+        {
+            List<Produto> LstProdutos = new List<Produto>();
+
+            Database db = ConnectionString;
+
+            using (var result = db.Query("SELECT * FROM dat_produtos Where Armazem_Id=" + ArmazemId + " and ref_produto like '%" + referencia + "%' AND designacao_produto like '%" + desig + "%';"))
+            {
+                while (result.Read())
+                {
+                    LstProdutos.Add(new Produto()
+                    {
+                        Ref_Produto = result["ref_produto"],
+                        Designacao_Produto = result["designacao_produto"],
+                        Stock_Fisico = result["stock_fisico"],
+                        Stock_PHC = result["stock_phc"],
+                        Stock_Rec = result["stock_rec"],
+                        Stock_Res = result["stock_res"],
+                        Armazem_ID = result["armazem_id"],
                         Pos_Stock = result["pos_stock"],
                         Obs_Produto = result["obs"]
                     });
@@ -107,12 +160,12 @@ namespace FT_Management.Models
             CriarArtigos(LstProdutos);
         }
 
-        public Produto ObterProduto(string referencia)
+        public Produto ObterProduto(string referencia, int armazemid)
         {
             Produto produto = new Produto();
             Database db = ConnectionString;
 
-            var result = db.Query("SELECT * FROM dat_produtos Where ref_produto = '" + referencia + "';");
+            var result = db.Query("SELECT * FROM dat_produtos Where Armazem_Id=" + armazemid + " and ref_produto = '" + referencia + "';");
 
             while (result.Read())
             {
@@ -124,6 +177,9 @@ namespace FT_Management.Models
                     Stock_Fisico = result["stock_fisico"],
                     Stock_PHC = result["stock_phc"],
                     Pos_Stock = result["pos_stock"],
+                    Stock_Rec = result["stock_rec"],
+                    Stock_Res = result["stock_res"],
+                    Armazem_ID = result["armazem_id"],
                     Obs_Produto = result["obs"]
                 };
             }
@@ -132,11 +188,11 @@ namespace FT_Management.Models
         }
         public void CriarArtigos(List<Produto> LstProdutos)
         {
-            string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_fisico, pos_stock, obs) VALUES ";
+            string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_rec, stock_res, armazem_id, stock_fisico, pos_stock, obs) VALUES ";
 
             foreach (var item in LstProdutos)
             {
-                sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
+                sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Rec.ToString().Replace(",", ".") + "', '" + item.Stock_Res.ToString().Replace(",", ".") + "', '" + item.Armazem_ID + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
             }
             sql = sql.Remove(sql.Count() - 4);
             sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc);";
@@ -150,14 +206,14 @@ namespace FT_Management.Models
         {
 
             Database db = ConnectionString;
-            String sql = "update dat_produtos set designacao_produto='" + produto.Designacao_Produto + "', stock_fisico=" + produto.Stock_Fisico + ", stock_phc=" + produto.Stock_PHC + ", pos_stock='" + produto.Pos_Stock + "', obs='" + produto.Obs_Produto + "' Where ref_produto='" + produto.Ref_Produto + "';";
+            String sql = "update dat_produtos set designacao_produto='" + produto.Designacao_Produto + "', stock_fisico=" + produto.Stock_Fisico + ", pos_stock='" + produto.Pos_Stock + "', obs='" + produto.Obs_Produto + "' Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
             db.Execute(sql);
             db.Connection.Close();
         }
         public void ApagarArtigo(Produto produto)
         {
             Database db = ConnectionString;
-            String sql = "delete from dat_produtos Where ref_produto='" + produto.Ref_Produto + "';";
+            String sql = "delete from dat_produtos Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
             db.Execute(sql);
             db.Connection.Close();
         }

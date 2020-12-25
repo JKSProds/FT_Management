@@ -16,6 +16,11 @@ namespace FT_Management.Models
         public double Stock_Fisico { get; set; }
         [Display(Name = "PHC")]
         public double Stock_PHC { get; set; }
+        [Display(Name = "Reservado")]
+        public double Stock_Res { get; set; }
+        [Display(Name = "Receção")]
+        public double Stock_Rec { get; set; }
+        public int Armazem_ID { get; set; }
         [Display(Name = "Localização")]
         public string Pos_Stock { get; set; }
         [Display(Name = "Observações")]

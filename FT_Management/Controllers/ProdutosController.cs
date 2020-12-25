@@ -12,14 +12,15 @@ using X.PagedList;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Drawing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FT_Management.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class ProdutosController : Controller
     {
         // GET: Produtos
-        public ActionResult Index(int? page, string Ref, string Desig)
+        public ActionResult Index(int? page, string Ref, string Desig, int Armazem)
         {
             ViewData["Ref"] = Ref;
             ViewData["Desig"] = Desig;
@@ -29,10 +30,17 @@ namespace FT_Management.Controllers
 
             if (Ref == null) { Ref = ""; }
             if (Desig == null) { Desig = ""; }
+            if (Armazem == 0) { Armazem = 3; }
+
+            ViewData["Armazem"] = Armazem;
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterListaProdutos(Ref, Desig).ToPagedList(pageNumber, pageSize));
+            var LstArmazens = context.ObterListaArmazens().ToList();
+
+            ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", Armazem);
+
+            return View(context.ObterListaProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
 
         }
 
@@ -93,7 +101,7 @@ namespace FT_Management.Controllers
 
         }
 
-        public ActionResult Print(string id)
+        public ActionResult Print(string id, int armazemid)
         {
             if (id == null)
             {
@@ -102,14 +110,14 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            context.DesenharEtiqueta80x50(context.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
 
             //return File(outputStream, "image/bmp");
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
-        public ActionResult PrintQr(string id)
+        public ActionResult PrintQr(string id, int armazemid)
         {
             if (id == null)
             {
@@ -118,14 +126,14 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            context.DesenharEtiqueta80x50QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
 
             //return File(outputStream, "image/bmp");
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
-        public ActionResult PrintPeq(string id)
+        public ActionResult PrintPeq(string id, int armazemid)
         {
             if (id == null)
             {
@@ -134,7 +142,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x25QR(context.ObterProduto(id)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            context.DesenharEtiqueta80x25QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
 
             //return File(outputStream, "image/bmp");
@@ -172,10 +180,10 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult EditarStockFisico(string refproduto, string stockfisico)
+        public JsonResult EditarStockFisico(string refproduto, string stockfisico, int armazemid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Produto produtoFinal = context.ObterProduto(refproduto);
+            Produto produtoFinal = context.ObterProduto(refproduto, armazemid);
             Double.TryParse(stockfisico, out double stock_fisico);
             produtoFinal.Stock_Fisico = stock_fisico;
 
@@ -185,11 +193,17 @@ namespace FT_Management.Controllers
         }
 
         // GET: Produtos/Edit/5
-        public ActionResult Editar(string id)
+        public ActionResult Editar(string id, int armazemid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             ViewData["LstGuiasPecas"] = context.ObterListaMovimentosProduto(id);
-            return View(context.ObterProduto(id));
+
+            ViewData["LstProdutosArmazem"] = context.ObterListaProdutoArmazem(id);
+
+            var LstArmazens = context.ObterListaArmazens().ToList();
+            ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
+
+            return View(context.ObterProduto(id,armazemid));
         }
 
         // POST: Produtos/Edit/5
@@ -203,7 +217,7 @@ namespace FT_Management.Controllers
                 produto.Ref_Produto = id;
                 context.EditarArtigo(produto);
 
-                return Redirect("~/Produtos/Editar/" + id);
+                return Redirect("~/Produtos/Editar/" + id + "?armazemid=" + produto.Armazem_ID);
             }
             catch
             {
@@ -219,13 +233,13 @@ namespace FT_Management.Controllers
 
         // POST: Produtos/Delete/5
         [HttpPost]
-        public ActionResult Apagar(string Id)
+        public ActionResult Apagar(string Id, int armazemid)
         {
             try
             {
 
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                context.ApagarArtigo(context.ObterProduto(Id));
+                context.ApagarArtigo(context.ObterProduto(Id,armazemid));
                 return RedirectToAction(nameof(Index));
             }
             catch

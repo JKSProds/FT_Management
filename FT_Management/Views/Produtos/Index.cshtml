@@ -34,6 +34,9 @@
                     <input type="text" style="min-width: 100px" class="form-control" placeholder="Referência" aria-label="Referência" aria-describedby="button-addon4" name="Ref" value="@ViewData["Ref"]">
                     <input type="text" style="min-width: 100px" class="form-control" placeholder="Designação" aria-label="Designação" aria-describedby="button-addon4" name="Desig" value="@ViewData["Desig"]">
                 </div>
+                <select class="form-control" id="lstarmazens" asp-items="ViewBag.Armazens" onchange="submitdata()">
+                </select>
+                <input type="hidden" id="hiddenSelectedArmazem" name="Armazem" value="@ViewData["Armazem"]"/>
                 <div class="btn-group float-lg-right" style="margin-top:5px">
                     <button type="submit" class="btn btn-primary float-lg-right">
                         <i class="fas fa-search fa-lg"></i>
@@ -94,6 +97,12 @@ else
                     @Html.DisplayNameFor(model => model.Stock_PHC)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.Stock_Rec)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Stock_Res)
+                </th>
+                <th>
                     <a id="btnEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
                     <a id="btnCloseEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
                 </th>
@@ -102,30 +111,36 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td class="Ref_Produto" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
-                        <span>@item.Ref_Produto</span>
-                    </td>
-                    <td class="Designacao_Produto" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
-                        <span>@item.Designacao_Produto</span>
-                    </td>
-                    <td class="Stock_Fisico">
-                        <span onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">@item.Stock_Fisico</span>
-                        <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
-                    </td>
-                    <td class="Stock_PHC" onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto }))'">
-                        <span>@item.Stock_PHC</span>
-                    </td>
-                    <td style="min-width: 240px">
-                        <div class="btn-group">
-                            <a class="update btn btn-outline-success btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
-                            <a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
-                        </div>
-                            <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
-                            <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, target="_blank" })')"><i class="fas fa-print"></i></a>
+            <tr>
+                <td class="Ref_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
+                    <span>@item.Ref_Produto</span>
+                </td>
+                <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
+                    <span>@item.Designacao_Produto</span>
+                </td>
+                <td class="Stock_Fisico">
+                    <span onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >@item.Stock_Fisico</span>
+                    <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
+                </td>
+                <td class="Stock_PHC" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
+                    <span>@item.Stock_PHC</span>
+                </td>
+                <td class="Stock_Rec" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
+                    <span>@item.Stock_Rec</span>
+                </td>
+                <td class="Stock_Res" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
+                    <span>@item.Stock_Res</span>
+                </td>
+                <td style="min-width: 240px">
+                    <div class="btn-group">
+                        <a class="update btn btn-outline-success btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
+                        <a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>
+                    </div>
+                    <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-print"></i></a>
+                    <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-print"></i></a>
 
-                    </td>
-                </tr>
+                </td>
+            </tr>
             }
         </tbody>
     </table>
@@ -203,7 +218,8 @@ else
 
                 var produto = {
                     refproduto: row.find(".Ref_Produto").find("span").html(),
-                    stockfisico: row.find(".Stock_Fisico").find("span").html()
+                    stockfisico: row.find(".Stock_Fisico").find("span").html(),
+                    armazemid: document.getElementById("hiddenSelectedArmazem").value
                 };
 
 
@@ -246,6 +262,10 @@ else
         }
         $(this).hide();
     }
+    function submitdata() {
+        document.getElementById("hiddenSelectedArmazem").value = document.getElementById("lstarmazens").value;
 
+        $('form').submit();
+    }
 
 </script>

@@ -120,11 +120,11 @@ namespace FT_Management.Controllers
                 return Content(referencia);
         }
 
-        public JsonResult ObterDesignacaoProduto (string RefProduto)
+        public JsonResult ObterDesignacaoProduto (string RefProduto, int ArmazemId)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return Json(new { result = context.ObterProduto(RefProduto).Designacao_Produto });
+            return Json(new { result = context.ObterProduto(RefProduto, ArmazemId).Designacao_Produto });
         }
 
         public JsonResult ObterEquipamento(string NumeroSerieEquipamento)
