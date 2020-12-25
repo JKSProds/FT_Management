@@ -81,6 +81,9 @@
                 <thead>
                     <tr>
                         <th>
+                            ID Folha Obra
+                        </th>
+                        <th>
                             Referencia
                         </th>
                         <th>
@@ -102,6 +105,10 @@
                     @foreach (var item in ViewData["LstGuiasPecas"] as List<Movimentos>)
                     {
                         <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IdFolhaObra)
+
+                            </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.RefProduto)
                             </td>
