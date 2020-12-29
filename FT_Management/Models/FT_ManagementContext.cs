@@ -190,7 +190,8 @@ namespace FT_Management.Models
                     Stock_Rec = result["stock_rec"],
                     Stock_Res = result["stock_res"],
                     Armazem_ID = result["armazem_id"],
-                    Obs_Produto = result["obs"]
+                    Obs_Produto = result["obs"],
+                    ModificadoStock = result["modificado"]
                 };
             }
             db.Connection.Close();
@@ -216,7 +217,7 @@ namespace FT_Management.Models
         {
 
             Database db = ConnectionString;
-            String sql = "update dat_produtos set designacao_produto='" + produto.Designacao_Produto + "', stock_fisico=" + produto.Stock_Fisico + ", pos_stock='" + produto.Pos_Stock + "', obs='" + produto.Obs_Produto + "' Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
+            String sql = "update dat_produtos set modificado=1, designacao_produto='" + produto.Designacao_Produto + "', stock_fisico=" + produto.Stock_Fisico + ", pos_stock='" + produto.Pos_Stock + "', obs='" + produto.Obs_Produto + "' Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
             db.Execute(sql);
             db.Connection.Close();
         }

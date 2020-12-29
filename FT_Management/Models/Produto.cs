@@ -25,6 +25,7 @@ namespace FT_Management.Models
         public string Pos_Stock { get; set; }
         [Display(Name = "Observações")]
         [DataType(DataType.MultilineText)]
+        public bool ModificadoStock { get; set; }
         public string Obs_Produto { get; set; }
         public string TipoUn { get; set; }
     }
