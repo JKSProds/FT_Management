@@ -1222,5 +1222,48 @@ namespace FT_Management.Models
             return outputPdfStream;
         }
 
+        public List<ControloViatura> ObterViaturas()
+        {
+            List<ControloViatura> lstViaturas = new List<ControloViatura>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_viaturas;");
+                while (result.Read())
+                {
+                    lstViaturas.Add(ObterViatura(result["matricula_viatura"]));
+                }
+            }
+
+            return lstViaturas;
+        }
+
+        public ControloViatura ObterViatura(string Matricula)
+        {
+            ControloViatura Viatura = new ControloViatura();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_controlo_viatura where matricula_viatura = '"+Matricula+"' order by data_inicio DESC LIMIT 1;");
+                while (result.Read())
+                {
+                    Viatura = (new ControloViatura()
+                    {
+                        MatriculaViatura = result["matricula_viatura"],
+                        KmsViatura = result["kms_viatura"],
+                        KmsFinais = result["kms_finais"],
+                        Id = result["id_reg"],
+                        Nome_Tecnico = result["nome_tecnico"],
+                        DataInicio = result["data_inicio"],
+                        DataFim = result["data_fim"],
+                        Notas = result["notas_viatura"]
+                    });
+                }
+               
+             }
+            return Viatura;
+        }
     }
 }
