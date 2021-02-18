@@ -17,7 +17,7 @@
 }
 else
 {
-    <table class="table table-hover" id="tblProdutos">
+    <table class="table table-hover table-sm" id="tblViaturas">
         <thead>
             <tr>
                 <th>
@@ -41,16 +41,16 @@ else
             @foreach (var item in Model)
             {
             <tr class="@(item.DataFim.Year == 1 ? "table-primary" : "table-success")">
-                <td class="Ref_Produto">
+                <td class="">
                     <span>@item.MatriculaViatura</span>
                 </td>
-                <td class="Ref_Produto">
+                <td class="">
                     <span>@item.Nome_Tecnico</span>
                 </td>
-                <td class="Designacao_Produto">
+                <td class="">
                     <span>@item.DataInicio</span>
                 </td>
-                <td class="Stock_Fisico">
+                <td class="">
                     <span>@(item.DataFim.Year == 1 ? "EM USO À " + (DateTime.Now - item.DataInicio).ToString(@"dd\ ") + "DIA(S) " + (DateTime.Now - item.DataInicio).ToString(@"hh\:mm") : @item.DataFim.ToString())</span>
                 </td>
 
@@ -127,8 +127,8 @@ else
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                <button type="button" id="btnlevantar" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="LevantarViaturaConfirm()" href="javascript:;">Levantar</button>
-                <button type="button" id="btndevolver" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="DevolverViaturaConfirm()" href="javascript:;">Devolver</button>
+                <button type="button" id="btnlevantar" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="LevantarViaturaConfirm()" href="javascript:;"></button>
+                <button type="button" id="btndevolver" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="DevolverViaturaConfirm()" href="javascript:;"></button>
             </div>
             </div>
         </div>
