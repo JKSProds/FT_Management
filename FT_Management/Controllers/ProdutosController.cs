@@ -152,6 +152,11 @@ namespace FT_Management.Controllers
         // GET: Produtos/Create
         public ActionResult Criar()
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            var LstArmazens = context.ObterListaArmazens().ToList();
+            ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", 3);
+            
             return View();
         }
 
@@ -163,7 +168,6 @@ namespace FT_Management.Controllers
             try
             {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
                 List<Produto> produtos = new List<Produto>
                 {
                     produto
