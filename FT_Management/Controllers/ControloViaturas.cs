@@ -20,10 +20,39 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public ActionResult LevantarViatura(string data, string kms, string tecnico)
+        public ActionResult LevantarViatura(string data, string kms, string tecnico, string matricula)
         {
 
-            return Content("");
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ControloViatura Viatura = (new ControloViatura(){
+                DataInicio = DateTime.Parse(data),
+                KmsViatura = kms,
+                Nome_Tecnico = tecnico,
+                MatriculaViatura = matricula
+            });
+
+            context.LevantamentoViatura(Viatura);
+
+            return Content("1");
+
+        }
+
+        [HttpPost]
+        public ActionResult DevolverViatura(string data, string kms, string tecnico, string matricula)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ControloViatura Viatura = (new ControloViatura()
+            {
+                DataFim = DateTime.Parse(data),
+                KmsFinais = kms,
+                Nome_Tecnico = tecnico,
+                MatriculaViatura = matricula
+            });
+
+            context.DevolverViatura(Viatura);
+
+            return Content("1");
 
         }
 

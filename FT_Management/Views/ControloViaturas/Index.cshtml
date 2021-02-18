@@ -24,6 +24,9 @@ else
                     @Html.DisplayNameFor(model => model.MatriculaViatura)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.Nome_Tecnico)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.DataInicio)
                 </th>
                 <th>
@@ -37,23 +40,26 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td class="Ref_Produto">
-                        <span>@item.MatriculaViatura</span>
-                    </td>
-                    <td class="Designacao_Produto">
-                        <span>@item.DataInicio</span>
-                    </td>
-                    <td class="Stock_Fisico">
-                        <span>@item.DataFim</span>
-                    </td>
+            <tr class="@(item.DataFim.Year == 1 ? "table-primary" : "table-success")">
+                <td class="Ref_Produto">
+                    <span>@item.MatriculaViatura</span>
+                </td>
+                <td class="Ref_Produto">
+                    <span>@item.Nome_Tecnico</span>
+                </td>
+                <td class="Designacao_Produto">
+                    <span>@item.DataInicio</span>
+                </td>
+                <td class="Stock_Fisico">
+                    <span>@(item.DataFim.Year == 1 ? "EM USO À " + (DateTime.Now - item.DataInicio).ToString(@"dd\ ") + "DIA(S) " + (DateTime.Now - item.DataInicio).ToString(@"hh\:mm") : @item.DataFim.ToString())</span>
+                </td>
 
-                    <td style="min-width: 240px">
-                        <a class="btn btn-outline-success btn-lg" onclick="LevantarViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-up"></i></a>
-                        <a class="btn btn-outline-primary btn-lg" onclick="DevolverViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-down"></i></a>
+                <td style="min-width: 240px">
+                    <a class="btn btn-success btn-lg text-white" @(item.DataFim.Year == 1 ? "style=display:none" : "") onclick="LevantarViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-up"></i> LEVANTAR</a>
+                    <a class="btn btn-primary btn-lg text-white" @(item.DataFim.Year != 1 ? "style=display:none" : "") onclick="DevolverViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-down"></i> DEVOLVER</a>
 
-                    </td>
-                </tr>
+                </td>
+            </tr>
             }
         </tbody>
     </table>
@@ -102,7 +108,7 @@ else
                         <input type="text" class="form-control" id="txtHoraAtual">
                         <script>
                             var today = new Date();
-                            $('#txtHoraAtual').timepicker({ mode: '24hr', value: (today.getHours()) + ':00' });
+                            $('#txtHoraAtual').timepicker({ mode: '24hr', value: (today.getHours()) + ":" + (today.getMinutes()) });
                         </script>
                     </div>
                 </div>
@@ -121,11 +127,15 @@ else
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="LevantarViaturaConfirm()" href="javascript:;">Adicionar</button>
+                <button type="button" id="btnlevantar" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="LevantarViaturaConfirm()" href="javascript:;">Levantar</button>
+                <button type="button" id="btndevolver" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="DevolverViaturaConfirm()" href="javascript:;">Devolver</button>
+            </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <input type="hidden" id="hiddenRef" />
 
@@ -133,15 +143,29 @@ else
     var LevantarViatura = function (Matricula) {
         $("#hiddenRef").val(Matricula);
         $("#exampleModal").modal('show');
+        var x = document.getElementById("btnlevantar");
+        var y = document.getElementById("btndevolver");
+        x.style.display = "block";
+        y.style.display = "none";
 
     }
+    var DevolverViatura = function (Matricula) {
+        $("#hiddenRef").val(Matricula);
+        $("#exampleModal").modal('show');
+        var x = document.getElementById("btnlevantar");
+        var y = document.getElementById("btndevolver");
+        y.style.display = "block";
+        x.style.display = "none";
+    }
+
 
     function LevantarViaturaConfirm() {
 
         var intervencao = {
             data: document.getElementById("txtData").value + " " + document.getElementById("txtHoraAtual").value,
             kms: document.getElementById("txtKmsAtuais").value,
-            tecnico: document.getElementById("txtTecnico").value
+            tecnico: document.getElementById("txtTecnico").value,
+            matricula: document.getElementById("hiddenRef").value
         };
         $('#exampleModal').modal('toggle');
 
@@ -153,7 +177,7 @@ else
             success: function (result) {
                 $(function () {
                     $.notify({
-                        message: "Intervenção adicionada com sucesso!"
+                        message: "Informação adicionada com sucesso!"
                     }, {
                         // settings
                         type: 'success',
@@ -162,6 +186,40 @@ else
                         }
                     });
                 });
+                location.reload();
+            }
+        });
+
+    }
+
+    function DevolverViaturaConfirm() {
+
+        var intervencao = {
+            data: document.getElementById("txtData").value + " " + document.getElementById("txtHoraAtual").value,
+            kms: document.getElementById("txtKmsAtuais").value,
+            tecnico: document.getElementById("txtTecnico").value,
+            matricula: document.getElementById("hiddenRef").value
+        };
+        $('#exampleModal2').modal('toggle');
+
+        $.ajax({
+            type: "POST",
+            url: "/ControloViaturas/DevolverViatura",
+            data: intervencao,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    $.notify({
+                        message: "Informação adicionada com sucesso!"
+                    }, {
+                        // settings
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
+                        }
+                    });
+                });
+                location.reload();
             }
         });
 

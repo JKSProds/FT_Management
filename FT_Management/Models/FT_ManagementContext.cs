@@ -1265,5 +1265,23 @@ namespace FT_Management.Models
              }
             return Viatura;
         }
+        public void LevantamentoViatura(ControloViatura viatura)
+        {
+            string sql = "INSERT INTO dat_controlo_viatura (nome_tecnico, matricula_viatura, kms_viatura, data_inicio, data_fim, notas_viatura, devolvida_viatura) VALUES ";
+
+            sql += ("('" + viatura.Nome_Tecnico + "',  '" + viatura.MatriculaViatura + "', '" + viatura.KmsViatura + "', '" + viatura.DataInicio.ToString("yyyy-MM-dd HH:mm:ss") + "','0001-01-01 00:00:00', '" + viatura.Notas + "', 0);");
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+
+        public void DevolverViatura(ControloViatura viatura)
+        {
+            string sql = "UPDATE dat_controlo_viatura SET data_fim = '"+ viatura.DataFim.ToString("yyyy-MM-dd HH:mm:ss") + "', kms_finais= '"+viatura.KmsFinais+"', devolvida_viatura=1 WHERE matricula_viatura='"+viatura.MatriculaViatura+"' AND devolvida_viatura=0;";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+
     }
 }
