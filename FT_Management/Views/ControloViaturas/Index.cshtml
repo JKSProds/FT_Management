@@ -20,10 +20,10 @@ else
     <table class="table table-hover" id="tblViaturas">
         <thead>
             <tr>
-                <th>
+                <th class="">
                     @Html.DisplayNameFor(model => model.MatriculaViatura)
                 </th>
-                <th>
+                <th class="d-none d-lg-block d-xl-none">
                     @Html.DisplayNameFor(model => model.Nome_Tecnico)
                 </th>
                 <th>
@@ -44,7 +44,7 @@ else
                 <td class="">
                     <span>@item.MatriculaViatura</span>
                 </td>
-                <td class="">
+                <td class="d-none d-lg-block d-xl-none">
                     <span>@item.Nome_Tecnico</span>
                 </td>
                 <td class="">
@@ -55,8 +55,8 @@ else
                 </td>
 
                 <td style="min-width: 240px">
-                    <a class="btn btn-success btn-lg text-white" @(item.DataFim.Year == 1 ? "style=display:none" : "") onclick="LevantarViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-up"></i></a>
-                    <a class="btn btn-primary btn-lg text-white" @(item.DataFim.Year != 1 ? "style=display:none" : "") onclick="DevolverViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-down"></i></a>
+                    <a class="btn btn-success btn-lg text-white" @(item.DataFim.Year == 1 ? "style=display:none" : "") onclick="LevantarViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-up"></i> LEVANTAR</a>
+                    <a class="btn btn-primary btn-lg text-white" @(item.DataFim.Year != 1 ? "style=display:none" : "") onclick="DevolverViatura('@item.MatriculaViatura')"><i class="fas fa-caret-square-down"></i> DEVOLVER</a>
 
                 </td>
             </tr>
