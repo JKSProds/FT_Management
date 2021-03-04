@@ -22,7 +22,7 @@ namespace FT_Management.Models
     public class FT_ManagementContext
     {
 
-        private string ConnectionString { get; set; }
+        public string ConnectionString { get; set; }
         private string FT_Logo_Print { get; set; }
 
         public FT_ManagementContext(string connectionString, string FT_Logo)
@@ -198,21 +198,54 @@ namespace FT_Management.Models
             db.Connection.Close();
             return produto;
         }
-        public void CriarArtigos(List<Produto> LstProdutos)
-        {
-            string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_rec, stock_res, armazem_id, stock_fisico, pos_stock, obs) VALUES ";
 
-            foreach (var item in LstProdutos)
+        public DateTime ObterUltimaModificacaoPHC(string tabela)
+        {
+            DateTime res = new DateTime();
+
+            using (Database db = ConnectionString)
             {
-                sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Rec.ToString().Replace(",", ".") + "', '" + item.Stock_Res.ToString().Replace(",", ".") + "', '" + item.Armazem_ID + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
+
+                using var result = db.Query("SELECT ultimamodificacao FROM sys_tabelas where nometabela = '"+tabela+"'; ");
+                while (result.Read())
+                {
+                    res = result[0];
+                }
             }
-            sql = sql.Remove(sql.Count() - 4);
-            sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc);";
+
+
+            return res;
+        }
+
+        public void AtualizarUltimaModificacao(string tabela)
+        {
+            string sql = "UPDATE sys_tabelas set ultimamodificacao='"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+"'";
 
             Database db = ConnectionString;
 
             db.Execute(sql);
             db.Connection.Close();
+        }
+
+        public void CriarArtigos(List<Produto> LstProdutos)
+        {
+            if (LstProdutos.Count() > 0)
+            {
+
+                string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_rec, stock_res, armazem_id, stock_fisico, pos_stock, obs) VALUES ";
+
+                foreach (var item in LstProdutos)
+                {
+                    sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Rec.ToString().Replace(",", ".") + "', '" + item.Stock_Res.ToString().Replace(",", ".") + "', '" + item.Armazem_ID + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
+                }
+                sql = sql.Remove(sql.Count() - 4);
+                sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc), stock_rec = VALUES(stock_rec), stock_res = VALUES(stock_res), stock_fisico = VALUES(stock_fisico);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+            }
         }
         public void EditarArtigo(Produto produto)
         {

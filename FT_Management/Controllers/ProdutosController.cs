@@ -35,6 +35,9 @@ namespace FT_Management.Controllers
             ViewData["Armazem"] = Armazem;
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            context.CriarArtigos(phccontext.ObterProdutos(context.ObterUltimaModificacaoPHC("sa")));
 
             var LstArmazens = context.ObterListaArmazens().ToList();
 
