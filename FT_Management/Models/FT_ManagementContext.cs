@@ -33,10 +33,11 @@ namespace FT_Management.Models
             try
             {
                 Database db = ConnectionString;
+                Console.WriteLine("Connectado á Base de Dados MySQL com sucesso!");
             }
-            catch
+            catch 
             {
-                throw new Exception("Não foi possivel conectar á BD! Verifique se a base de dados existe e o IP está correto. ");
+               Console.WriteLine("Não foi possivel conectar á BD MySQL!");
             }
         }
 

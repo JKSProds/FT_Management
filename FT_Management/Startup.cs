@@ -59,6 +59,7 @@ namespace FT_Management
 
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
             services.Add(new ServiceDescriptor(typeof(TrelloConector), new TrelloConector(Configuration.GetSection("Trello").GetSection("API_KEY").Value, Configuration.GetSection("Trello").GetSection("TOKEN").Value)));
+            services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(Configuration.GetConnectionString("PHCConnection"))));
 
             //var passwordHasher = new PasswordHasher<string>();
             //Console.WriteLine(passwordHasher.HashPassword(null, "Food@001.jmonteiro"));
