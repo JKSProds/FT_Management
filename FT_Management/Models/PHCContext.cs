@@ -21,6 +21,7 @@ namespace FT_Management.Models
             {
                 cnn = new SqlConnection(connectionString);
                 FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
             }
             catch
@@ -74,6 +75,50 @@ namespace FT_Management.Models
 
             return LstProdutos;
         }
+        public List<Cliente> ObterClientes(DateTime dataUltimaLeitura)
+        {
 
+            List<Cliente> LstClientes = new List<Cliente>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT no, estab, nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, email, usrdata, usrhora FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' AND estab=0;", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstClientes.Add(new Cliente()
+                        {
+                            IdCliente = int.Parse(result["no"].ToString()),
+                            NomeCliente = result["nome"].ToString().Trim(),
+                            NumeroContribuinteCliente = result["ncont"].ToString().Trim(),
+                            TelefoneCliente = result["telefone"].ToString().Trim(),
+                            PessoaContatoCliente = result["contacto"].ToString().Trim(),
+                            MoradaCliente = result["endereco"].ToString().Trim(),
+                            EmailCliente = result["email"].ToString().Trim()
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("cl");
+
+                Console.WriteLine("Clientes e Lojas atualizadass com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+            }
+
+            return LstClientes;
+        }
     }
 }

@@ -693,6 +693,29 @@ namespace FT_Management.Models
             }
             return folhaObra.IdFolhaObra;
         }
+
+        public void CriarClientes(List<Cliente> LstClientes)
+        {
+            if (LstClientes.Count() > 0)
+            {
+
+                string sql = "INSERT INTO dat_clientes (IdCliente, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, Telefone, NumeroContribuinteCliente) VALUES ";
+
+                foreach (var cliente in LstClientes)
+                {
+                    sql += ("('" + cliente.IdCliente + "', '" + cliente.NomeCliente.Replace("'", "''") + "', '" + cliente.PessoaContatoCliente.Replace("'", "''") + "', '" + cliente.MoradaCliente.Replace("'", "''") + "', '" + cliente.EmailCliente.Replace("'", "''") + "', '" + cliente.TelefoneCliente.Replace("'", "''") + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''") + "'), \r\n");
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), Telefone = VALUES(Telefone), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+            }
+        }
+
         public int NovoCliente(Cliente cliente)
         {
             Cliente c = new Cliente();

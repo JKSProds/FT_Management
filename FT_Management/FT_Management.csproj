@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Jorge Monteiro</Authors>
+    <Company>JKSProds</Company>
+    <Version>2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -65,7 +65,7 @@ namespace FT_Management
             //var passwordHasher = new PasswordHasher<string>();
             //Console.WriteLine(passwordHasher.HashPassword(null, "Food@001.jmonteiro"));
 
-            Console.WriteLine("Starting app");
+            Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
