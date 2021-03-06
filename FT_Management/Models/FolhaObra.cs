@@ -118,23 +118,10 @@ namespace FT_Management.Models
         public string NumeroSerieEquipamento { get {return _NumeroSerieEquipamento ?? ""; } set {_NumeroSerieEquipamento = value ;} }
     }
 
-    public class Loja
-    {
-        public int IdLoja { get; set; }
-        public int IdCliente { get; set; }
-        private string _NomeLoja;
-        [Required(ErrorMessage = "Nome do Cliente é Obrigatório")]
-        [Display(Name = "Nome da Loja")]
-        public string NomeLoja { get { return _NomeLoja ?? ""; } set { _NomeLoja = value; } }
-        private string _MoradaLoja;
-        [Display(Name = "Morada")]
-        public string MoradaLoja { get { return _MoradaLoja ?? ""; } set { _MoradaLoja = value; } }
-        public string TelefoneLoja { get; set; }
-    }
-
     public class Cliente
     {
         public int IdCliente { get; set; }
+        public int IdLoja { get; set; }
         private string _NomeCliente;
         [Required(ErrorMessage = "Nome do Cliente é Obrigatório")]
         [Display(Name = "Nome do Cliente")]

@@ -699,11 +699,11 @@ namespace FT_Management.Models
             if (LstClientes.Count() > 0)
             {
 
-                string sql = "INSERT INTO dat_clientes (IdCliente, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, Telefone, NumeroContribuinteCliente) VALUES ";
+                string sql = "INSERT INTO dat_clientes (IdCliente, IdLoja, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, Telefone, NumeroContribuinteCliente) VALUES ";
 
                 foreach (var cliente in LstClientes)
                 {
-                    sql += ("('" + cliente.IdCliente + "', '" + cliente.NomeCliente.Replace("'", "''") + "', '" + cliente.PessoaContatoCliente.Replace("'", "''") + "', '" + cliente.MoradaCliente.Replace("'", "''") + "', '" + cliente.EmailCliente.Replace("'", "''") + "', '" + cliente.TelefoneCliente.Replace("'", "''") + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''") + "'), \r\n");
+                    sql += ("('" + cliente.IdCliente + "','" + cliente.IdLoja + "', '" + cliente.NomeCliente.Replace("'", "''") + "', '" + cliente.PessoaContatoCliente.Replace("'", "''") + "', '" + cliente.MoradaCliente.Replace("'", "''") + "', '" + cliente.EmailCliente.Replace("'", "''") + "', '" + cliente.TelefoneCliente.Replace("'", "''") + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''") + "'), \r\n");
                 }
                 sql = sql.Remove(sql.Count() - 4);
 

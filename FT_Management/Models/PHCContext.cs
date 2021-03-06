@@ -87,7 +87,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT no, estab, nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, email, usrdata, usrhora FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' AND estab=0;", conn);
+                SqlCommand command = new SqlCommand("SELECT no, estab, nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, email, usrdata, usrhora FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -96,6 +96,7 @@ namespace FT_Management.Models
                         LstClientes.Add(new Cliente()
                         {
                             IdCliente = int.Parse(result["no"].ToString()),
+                            IdLoja = int.Parse(result["estab"].ToString()),
                             NomeCliente = result["nome"].ToString().Trim(),
                             NumeroContribuinteCliente = result["ncont"].ToString().Trim(),
                             TelefoneCliente = result["telefone"].ToString().Trim(),
