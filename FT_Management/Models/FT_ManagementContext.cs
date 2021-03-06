@@ -694,20 +694,42 @@ namespace FT_Management.Models
             return folhaObra.IdFolhaObra;
         }
 
+        public void CriarVendedores(List<Vendedor> LstVendedor)
+        {
+            if (LstVendedor.Count() > 0)
+            {
+
+                string sql = "INSERT INTO dat_vendedores (IdVendedor, NomeVendedor, uid) VALUES ";
+
+                foreach (var vendedor in LstVendedor)
+                {
+                    sql += ("('" + vendedor.IdVendedor + "','" + vendedor.NomeVendedor + "', '" + vendedor.uid + "'), \r\n");
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE NomeVendedor = VALUES(NomeVendedor), uid = VALUES(uid);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+            }
+        }
+
         public void CriarClientes(List<Cliente> LstClientes)
         {
             if (LstClientes.Count() > 0)
             {
 
-                string sql = "INSERT INTO dat_clientes (IdCliente, IdLoja, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, Telefone, NumeroContribuinteCliente) VALUES ";
+                string sql = "INSERT INTO dat_clientes (IdCliente, IdLoja, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, Telefone, NumeroContribuinteCliente, IdVendedor, TipoCliente) VALUES ";
 
                 foreach (var cliente in LstClientes)
                 {
-                    sql += ("('" + cliente.IdCliente + "','" + cliente.IdLoja + "', '" + cliente.NomeCliente.Replace("'", "''") + "', '" + cliente.PessoaContatoCliente.Replace("'", "''") + "', '" + cliente.MoradaCliente.Replace("'", "''") + "', '" + cliente.EmailCliente.Replace("'", "''") + "', '" + cliente.TelefoneCliente.Replace("'", "''") + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''") + "'), \r\n");
+                    sql += ("('" + cliente.IdCliente + "','" + cliente.IdLoja + "', '" + cliente.NomeCliente.Replace("'", "''") + "', '" + cliente.PessoaContatoCliente.Replace("'", "''") + "', '" + cliente.MoradaCliente.Replace("'", "''") + "', '" + cliente.EmailCliente.Replace("'", "''") + "', '" + cliente.TelefoneCliente.Replace("'", "''") + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''") + "', '" + cliente.IdVendedor + "', '" + cliente.TipoCliente.Replace("'", "''") + "'), \r\n");
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), Telefone = VALUES(Telefone), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
+                sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), Telefone = VALUES(Telefone), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente), IdVendedor = VALUES(IdVendedor), TipoCliente = VALUES(TipoCliente);";
 
                 Database db = ConnectionString;
 

@@ -21,6 +21,7 @@ namespace FT_Management.Models
             {
                 cnn = new SqlConnection(connectionString);
                 FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
             }
@@ -87,7 +88,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT no, estab, nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, email, usrdata, usrhora FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("SELECT no, estab, nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, email, tipo, vendedor, usrdata, usrhora FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -102,7 +103,9 @@ namespace FT_Management.Models
                             TelefoneCliente = result["telefone"].ToString().Trim(),
                             PessoaContatoCliente = result["contacto"].ToString().Trim(),
                             MoradaCliente = result["endereco"].ToString().Trim(),
-                            EmailCliente = result["email"].ToString().Trim()
+                            EmailCliente = result["email"].ToString().Trim(),
+                            IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
+                            TipoCliente = result["tipo"].ToString().Trim()
                         });
                     }
                 }
@@ -111,7 +114,7 @@ namespace FT_Management.Models
 
                 FT_ManagementContext.AtualizarUltimaModificacao("cl");
 
-                Console.WriteLine("Clientes e Lojas atualizadass com sucesso! (PHC -> MYSQL)");
+                Console.WriteLine("Clientes e Lojas atualizadas com sucesso! (PHC -> MYSQL)");
 
             }
             catch
@@ -120,6 +123,46 @@ namespace FT_Management.Models
             }
 
             return LstClientes;
+        }
+        public List<Vendedor> ObterVendedores(DateTime dataUltimaLeitura)
+        {
+
+            List<Vendedor> LstVendedor = new List<Vendedor>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT vendedor, vendnm FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' GROUP BY vendedor, vendnm order by vendedor;", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstVendedor.Add(new Vendedor()
+                        {
+                            IdVendedor = int.Parse(result["vendedor"].ToString()),
+                            NomeVendedor = result["vendnm"].ToString()
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("cl");
+
+                Console.WriteLine("Vendedores atualizados com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+            }
+
+            return LstVendedor;
         }
     }
 }

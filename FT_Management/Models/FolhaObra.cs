@@ -118,6 +118,16 @@ namespace FT_Management.Models
         public string NumeroSerieEquipamento { get {return _NumeroSerieEquipamento ?? ""; } set {_NumeroSerieEquipamento = value ;} }
     }
 
+    public class Vendedor
+    {
+        public int IdVendedor { get; set; }
+        private string _NomeVendedor;
+        [Required(ErrorMessage = "Nome do Vendedor é Obrigatório")]
+        [Display(Name = "Nome do Cliente")]
+        public string NomeVendedor { get { return _NomeVendedor ?? ""; } set { _NomeVendedor = value; } }
+        public string uid { get; set; }
+    }
+
     public class Cliente
     {
         public int IdCliente { get; set; }
@@ -139,7 +149,8 @@ namespace FT_Management.Models
         private string _NumeroContribuinteCliente;
         [Display(Name = "Numero de Contribuinte")]
         public string NumeroContribuinteCliente { get {return _NumeroContribuinteCliente ?? ""; } set {_NumeroContribuinteCliente = value ;} }
-
+        public int IdVendedor { get; set; }
+        public string TipoCliente { get; set; }
         public bool IsValidContrib()
         {
             string Contrib = NumeroContribuinteCliente;
