@@ -694,6 +694,28 @@ namespace FT_Management.Models
             return folhaObra.IdFolhaObra;
         }
 
+        public void CriarFornecedores(List<Fornecedor> LstFornecedor)
+        {
+            if (LstFornecedor.Count() > 0)
+            {
+
+                string sql = "INSERT INTO dat_fornecedores (IdFornecedor,NomeFornecedor, MoradaFornecedor, ContactoFornecedor, ReferenciaFornecedor, EmailFornecedor, PessoaContactoFornecedor, Obs) VALUES ";
+
+                foreach (var fornecedor in LstFornecedor)
+                {
+                    sql += ("('" + fornecedor.IdFornecedor + "', '" + fornecedor.NomeFornecedor + "', '" + fornecedor.MoradaFornecedor + "', '" + fornecedor.ContactoFornecedor + "', '" + fornecedor.ReferenciaFornecedor + "', '" + fornecedor.EmailFornecedor + "', '" + fornecedor.PessoaContactoFornecedor + "', '" + fornecedor.Obs + "'), \r\n");
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE NomeFornecedor = VALUES(NomeFornecedor), MoradaFornecedor = VALUES(MoradaFornecedor), ContactoFornecedor = VALUES(ContactoFornecedor), ReferenciaFornecedor = VALUES(ReferenciaFornecedor), EmailFornecedor = VALUES(EmailFornecedor), PessoaContactoFornecedor = VALUES(PessoaContactoFornecedor), Obs = VALUES(Obs);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+            }
+        }
+
         public void CriarVendedores(List<Vendedor> LstVendedor)
         {
             if (LstVendedor.Count() > 0)
