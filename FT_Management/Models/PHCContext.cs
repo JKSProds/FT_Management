@@ -27,7 +27,7 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
             }
-            catch ()
+            catch
             {
                 Console.WriteLine("Não foi possivel conectar á BD PHC!");
             }
