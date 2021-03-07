@@ -381,7 +381,7 @@ namespace FT_Management.Models
         public FolhaObra ObterFolhaObra(int id)
         {
             using Database db = ConnectionString;
-            using var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";");
+           using var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";");
             result.Read();
 
             FolhaObra folhaObra = new FolhaObra()
@@ -726,16 +726,16 @@ namespace FT_Management.Models
                 {
                     if ((j + max) > LstEquipamento.Count) max = (LstEquipamento.Count - j);
 
-                    string sql = "INSERT INTO dat_equipamentos (DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento, IdCliente, IdLoja, IdFornecedor) VALUES ";
+                    string sql = "INSERT INTO dat_equipamentos (IdEquipamento, DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento, IdCliente, IdLoja, IdFornecedor) VALUES ";
 
                     foreach (var equipamento in LstEquipamento.GetRange(j, max))
                     {
-                        sql += ("('" + equipamento.DesignacaoEquipamento + "', '" + equipamento.MarcaEquipamento + "', '" + equipamento.ModeloEquipamento + "', '" + equipamento.NumeroSerieEquipamento + "', '" + equipamento.IdCliente + "', '" + equipamento.IdLoja + "', '" + equipamento.IdFornecedor + "'), \r\n");
                         i++;
+                        sql += ("(" + i + ", '" + equipamento.DesignacaoEquipamento + "', '" + equipamento.MarcaEquipamento + "', '" + equipamento.ModeloEquipamento + "', '" + equipamento.NumeroSerieEquipamento + "', '" + equipamento.IdCliente + "', '" + equipamento.IdLoja + "', '" + equipamento.IdFornecedor + "'), \r\n");
                     }
                     sql = sql.Remove(sql.Count() - 4);
 
-                    sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento), NumeroSerieEquipamento = VALUES(NumeroSerieEquipamento), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), IdFornecedor = VALUES(IdFornecedor);";
+                    sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), IdFornecedor = VALUES(IdFornecedor);";
 
                     Database db = ConnectionString;
 
@@ -1177,25 +1177,25 @@ namespace FT_Management.Models
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
-            if (folhaobra.RubricaCliente != null)
-            {
-                var fldPosition = pdfFormFields.GetFieldPositions("assinatura");
-                Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2] - 7, (int)fldPosition[3], 30);
-                folhaobra.RubricaCliente = folhaobra.RubricaCliente.Replace("data:image/png;base64,", "").Trim();
+            //if (folhaobra.RubricaCliente != null)
+            //{
+            //    var fldPosition = pdfFormFields.GetFieldPositions("assinatura");
+            //    Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2] - 7, (int)fldPosition[3], 30);
+            //    folhaobra.RubricaCliente = folhaobra.RubricaCliente.Replace("data:image/png;base64,", "").Trim();
 
-                if ((folhaobra.RubricaCliente.Length % 4 == 0) && Regex.IsMatch(folhaobra.RubricaCliente, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
-                {
-                    byte[] imageBytes = Convert.FromBase64String(folhaobra.RubricaCliente);
+            //    if ((folhaobra.RubricaCliente.Length % 4 == 0) && Regex.IsMatch(folhaobra.RubricaCliente, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
+            //    {
+            //        byte[] imageBytes = Convert.FromBase64String(folhaobra.RubricaCliente);
 
-                    iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
+            //        iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
 
-                    image.ScaleToFit(rectangle.Width, rectangle.Height);
-                    image.SetAbsolutePosition(rectangle.Left + 2, rectangle.Top - 2);
+            //        image.ScaleToFit(rectangle.Width, rectangle.Height);
+            //        image.SetAbsolutePosition(rectangle.Left + 2, rectangle.Top - 2);
 
-                    pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
+            //        pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
 
-                }
-            }
+            //    }
+            //}
 
             pdfFormFields.SetField("IdFolhaObra", "A.T.Nº" + folhaobra.IdFolhaObra.ToString());
             if (folhaobra.AssistenciaRemota)

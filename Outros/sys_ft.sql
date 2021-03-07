@@ -78,7 +78,7 @@ CREATE TABLE `dat_clientes` (
   `TipoCliente` varchar(45) DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`IdCliente`,`IdLoja`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=903052 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_clientes`
@@ -104,7 +104,7 @@ CREATE TABLE `dat_controlo_viatura` (
   `data_fim` datetime DEFAULT NULL,
   `kms_finais` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id_reg`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `dat_controlo_viatura`
@@ -120,6 +120,7 @@ CREATE TABLE `dat_controlo_viatura` (
 
 DROP TABLE IF EXISTS `dat_equipamentos`;
 CREATE TABLE `dat_equipamentos` (
+  `IdEquipamento` int(11) NOT NULL,
   `NumeroSerieEquipamento` varchar(250) NOT NULL,
   `DesignacaoEquipamento` varchar(45) DEFAULT NULL,
   `MarcaEquipamento` varchar(45) DEFAULT NULL,
@@ -153,6 +154,7 @@ CREATE TABLE `dat_folhas_obra` (
   `SituacoesPendentes` varchar(1024) DEFAULT NULL,
   `IdEquipamento` int(10) unsigned NOT NULL,
   `IdCliente` int(10) unsigned NOT NULL,
+  `IdLoja` int(10) unsigned NOT NULL,
   `IdCartaoTrello` varchar(100) DEFAULT NULL,
   `ConferidoPor` varchar(250) DEFAULT NULL,
   `GuiaTransporteAtual` varchar(100) DEFAULT NULL,
@@ -160,7 +162,7 @@ CREATE TABLE `dat_folhas_obra` (
   `RubricaCliente` blob DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`IdFolhaObra`)
-) ENGINE=InnoDB AUTO_INCREMENT=1654 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_folhas_obra`
@@ -211,7 +213,7 @@ CREATE TABLE `dat_intervencoes_folha_obra` (
   `HoraFim` varchar(45) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`IdIntervencao`)
-) ENGINE=InnoDB AUTO_INCREMENT=1703 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_intervencoes_folha_obra`
@@ -233,7 +235,7 @@ CREATE TABLE `dat_logs` (
   `msg_log` varchar(1024) NOT NULL,
   `tipo_log` int(11) NOT NULL COMMENT '1 - Stocks 2 - Impressoes, 3 - Folhas de Obra, 4 - Logins',
   PRIMARY KEY (`id_log`)
-) ENGINE=InnoDB AUTO_INCREMENT=3216 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_logs`
@@ -347,7 +349,7 @@ CREATE TABLE `sys_tabelas` (
   `nometabela` varchar(45) NOT NULL,
   `ultimamodificacao` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
   PRIMARY KEY (`idtabela`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sys_tabelas`
@@ -377,7 +379,7 @@ CREATE TABLE `sys_utilizadores` (
   `IdCartaoTrello` varchar(100) DEFAULT NULL,
   `timestamp` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`IdUtilizador`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `sys_utilizadores`
