@@ -716,6 +716,38 @@ namespace FT_Management.Models
             }
         }
 
+        public void CriarEquipamentos(List<Equipamento> LstEquipamento)
+        {
+            if (LstEquipamento.Count() > 0)
+            {
+                int max = 7500;
+                int j = 0;
+                for (int i = 0; i < LstEquipamento.Count; i++)
+                {
+                    if ((j + max) > LstEquipamento.Count) max = (LstEquipamento.Count - j);
+
+                    string sql = "INSERT INTO dat_equipamentos (DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento, IdCliente, IdLoja, IdFornecedor) VALUES ";
+
+                    foreach (var equipamento in LstEquipamento.GetRange(j, max))
+                    {
+                        sql += ("('" + equipamento.DesignacaoEquipamento + "', '" + equipamento.MarcaEquipamento + "', '" + equipamento.ModeloEquipamento + "', '" + equipamento.NumeroSerieEquipamento + "', '" + equipamento.IdCliente + "', '" + equipamento.IdLoja + "', '" + equipamento.IdFornecedor + "'), \r\n");
+                        i++;
+                    }
+                    sql = sql.Remove(sql.Count() - 4);
+
+                    sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento), NumeroSerieEquipamento = VALUES(NumeroSerieEquipamento), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), IdFornecedor = VALUES(IdFornecedor);";
+
+                    Database db = ConnectionString;
+
+                    db.Execute(sql);
+                    db.Connection.Close();
+
+                    j += max;
+                    //Console.WriteLine("A ler equipamentos: " + j + " de " + LstEquipamento.Count());
+                }
+            }
+        }
+
         public void CriarVendedores(List<Vendedor> LstVendedor)
         {
             if (LstVendedor.Count() > 0)

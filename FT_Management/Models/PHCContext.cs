@@ -24,9 +24,10 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
             }
-            catch
+            catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel conectar á BD PHC!");
             }
@@ -210,6 +211,53 @@ namespace FT_Management.Models
             }
 
             return LstFornecedor;
+        }
+        public List<Equipamento> ObterEquipamentos(DateTime dataUltimaLeitura)
+        {
+
+            List<Equipamento> LstEquipamento = new List<Equipamento>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT serie, design, marca, maquina, ref, no, estab, flno FROM ma where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstEquipamento.Add(new Equipamento()
+                        {
+                            DesignacaoEquipamento = result["design"].ToString().Trim(),
+                            MarcaEquipamento = result["marca"].ToString().Trim(),
+                            ModeloEquipamento = result["maquina"].ToString().Trim(),
+                            NumeroSerieEquipamento = result["serie"].ToString().Trim().Replace('\\', ' '),
+                            RefProduto = result["ref"].ToString().Trim(),
+                            IdCliente = int.Parse(result["no"].ToString()),
+                            IdLoja = int.Parse(result["estab"].ToString()),
+                            IdFornecedor = int.Parse(result["flno"].ToString())
+
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("ma");
+
+                Console.WriteLine("Equipamentos atualizados com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+            }
+
+            return LstEquipamento;
         }
     }
 }
