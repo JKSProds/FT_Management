@@ -1362,7 +1362,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_viaturas;");
+                using var result = db.Query("SELECT * FROM sys_viaturas;");
                 while (result.Read())
                 {
                     lstViaturas.Add(ObterViatura(result["matricula_viatura"]));
