@@ -27,7 +27,7 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
             }
-            catch (Exception ex)
+            catch ()
             {
                 Console.WriteLine("Não foi possivel conectar á BD PHC!");
             }
@@ -73,7 +73,7 @@ namespace FT_Management.Models
             }
             catch
             {
-                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+                Console.WriteLine("Não foi possivel ler as referencias do PHC!");
             }
 
             return LstProdutos;
@@ -121,7 +121,7 @@ namespace FT_Management.Models
             }
             catch
             {
-                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+                Console.WriteLine("Não foi possivel ler os clientes do PHC!");
             }
 
             return LstClientes;
@@ -161,7 +161,7 @@ namespace FT_Management.Models
             }
             catch
             {
-                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+                Console.WriteLine("Não foi possivel ler os vendedores do PHC!");
             }
 
             return LstVendedor;
@@ -207,7 +207,7 @@ namespace FT_Management.Models
             }
             catch
             {
-                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+                Console.WriteLine("Não foi possivel ler os Fornecedores do PHC!");
             }
 
             return LstFornecedor;
@@ -254,7 +254,7 @@ namespace FT_Management.Models
             }
             catch
             {
-                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+                Console.WriteLine("Não foi possivel ler os Equipamentos do PHC!");
             }
 
             return LstEquipamento;
