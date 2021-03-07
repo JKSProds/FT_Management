@@ -120,7 +120,7 @@ CREATE TABLE `dat_controlo_viatura` (
 
 DROP TABLE IF EXISTS `dat_equipamentos`;
 CREATE TABLE `dat_equipamentos` (
-  `IdEquipamento` int(11) NOT NULL,
+  `IdEquipamento` int(11) NOT NULL AUTO_INCREMENT,
   `NumeroSerieEquipamento` varchar(250) NOT NULL,
   `DesignacaoEquipamento` varchar(45) DEFAULT NULL,
   `MarcaEquipamento` varchar(45) DEFAULT NULL,
@@ -129,8 +129,9 @@ CREATE TABLE `dat_equipamentos` (
   `IdLoja` int(11) DEFAULT NULL,
   `IdFornecedor` int(10) unsigned DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`NumeroSerieEquipamento`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`NumeroSerieEquipamento`) USING BTREE,
+  KEY `KEY` (`IdEquipamento`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_equipamentos`
