@@ -10,6 +10,7 @@ namespace FT_Management.Models
     {
         private string ConnectionString { get; set; }
         private FT_ManagementContext FT_ManagementContext { get; set; }
+
         public PHCContext(string connectionString, string mySqlConnectionString)
         {
             this.ConnectionString = connectionString;
@@ -20,12 +21,13 @@ namespace FT_Management.Models
             try
             {
                 cnn = new SqlConnection(connectionString);
+                Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
+
                 FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
             }
             catch
             {
