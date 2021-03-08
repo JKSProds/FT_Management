@@ -28,6 +28,7 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
+                ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00"));
             }
             catch
             {
@@ -260,6 +261,64 @@ namespace FT_Management.Models
             }
 
             return LstEquipamento;
+        }
+        public List<FolhaObra> ObterFolhasObra(DateTime dataUltimaLeitura)
+        {
+
+            List<FolhaObra> LstFolhaObra = new List<FolhaObra>();
+            List<Equipamento> LstEquipamentos = FT_ManagementContext.ObterEquipamentos();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie as nserie, pa.u_nincide, pa.stpub, mh.relatorio from pa inner join mh on pa.nopat=mh.nopat where pa.nopat=74942 and pa.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        int ind = LstFolhaObra.FindIndex(f => f.IdFolhaObra == int.Parse(result["nopat"].ToString()));
+
+                        if (ind > -1) { LstFolhaObra[ind].RelatorioServico += "\n" + int.Parse(result["relatorio"].ToString()); }
+                        else {
+                            Cliente cliente = new Cliente()
+                            {
+                                IdCliente = int.Parse(result["no"].ToString().Trim()),
+                                IdLoja = int.Parse(result["estab"].ToString().Trim())
+                            };
+
+                            LstFolhaObra.Add(new FolhaObra()
+                            {
+                                IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
+                                DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
+                                ReferenciaServico = result["u_nincide"].ToString().Trim(),
+                                EstadoEquipamento = result["stpub"].ToString().Trim(),
+                                RelatorioServico = result["relatorio"].ToString().Trim(),
+                                SituacoesPendentes = "",
+                                EquipamentoServico = LstEquipamentos.Find(e => e.NumeroSerieEquipamento == result["nserie"].ToString().Trim()),
+                                ClienteServico = cliente
+                            });
+                        }
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("pa");
+
+                Console.WriteLine("PAT's atualizados com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os PAT's do PHC!");
+            }
+
+            return LstFolhaObra;
         }
     }
 }

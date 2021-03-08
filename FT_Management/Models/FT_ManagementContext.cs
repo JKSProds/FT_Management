@@ -405,6 +405,31 @@ namespace FT_Management.Models
             };
             return folhaObra;
         }
+        public List<Equipamento> ObterEquipamentos()
+        {
+            List<Equipamento> LstEquipamentos = new List<Equipamento>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_equipamentos;");
+                while (result.Read())
+                {
+                    LstEquipamentos.Add(new Equipamento()
+                    {
+                        IdEquipamento = result["IdEquipamento"],
+                        DesignacaoEquipamento = result["DesignacaoEquipamento"],
+                        MarcaEquipamento = result["MarcaEquipamento"],
+                        ModeloEquipamento = result["ModeloEquipamento"],
+                        NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
+
+                    });
+                }
+            }
+            return LstEquipamentos;
+        }
+
+
         public Equipamento ObterEquipamento(int id)
         {
             using (Database db = ConnectionString)
@@ -681,9 +706,9 @@ namespace FT_Management.Models
 
             folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") : folhaObra.IdFolhaObra;
 
-            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
+            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, IdLoja, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").ToString()  + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico.Replace("'", "''").ToString()  + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString()  + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString()  + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").ToString()  + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico.Replace("'", "''").ToString()  + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString()  + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString()  + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.ClienteServico.IdLoja + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
 
@@ -803,12 +828,12 @@ namespace FT_Management.Models
             }
             else
             {
-                cliente.IdCliente = c.IdCliente;
+                cliente = c;
             }
 
-            string sql = "INSERT INTO dat_clientes (IdCliente, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, NumeroContribuinteCliente) VALUES ";
+            string sql = "INSERT INTO dat_clientes (IdCliente, IdLoja, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, NumeroContribuinteCliente) VALUES ";
 
-            sql += ("('" + cliente.IdCliente + "', '" + cliente.NomeCliente.Replace("'", "''")  + "', '" + cliente.PessoaContatoCliente.Replace("'", "''")  + "', '" + cliente.MoradaCliente.Replace("'", "''")  + "', '" + cliente.EmailCliente.Replace("'", "''")  + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''")  + "') \r\n");
+            sql += ("('" + cliente.IdCliente + "','" + cliente.IdLoja + "', '" + cliente.NomeCliente.Replace("'", "''")  + "', '" + cliente.PessoaContatoCliente.Replace("'", "''")  + "', '" + cliente.MoradaCliente.Replace("'", "''")  + "', '" + cliente.EmailCliente.Replace("'", "''")  + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''")  + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
 
