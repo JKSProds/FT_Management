@@ -227,6 +227,35 @@ namespace FT_Management.Models
             db.Connection.Close();
         }
 
+        public void CriarFolhasObra(List<FolhaObra> LstFolhaObra)
+        {
+            int max = 5000;
+            int j = 0;
+            for (int i = 0; i < LstFolhaObra.Count; i++)
+            {
+                if ((j + max) > LstFolhaObra.Count) max = (LstFolhaObra.Count - j);
+
+                string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, IdLoja, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
+
+                foreach (var folhaObra in LstFolhaObra.GetRange(j, max))
+                {
+                    sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").Replace("\\", "").ToString() + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString() + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString() + "', '" + folhaObra.IdCartao + "', '" + folhaObra.EquipamentoServico.IdEquipamento + "', '" + folhaObra.ClienteServico.IdCliente + "', '" + folhaObra.ClienteServico.IdLoja + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler FO: " + j + " de " + LstFolhaObra.Count());
+            }
+        }
+
         public void CriarArtigos(List<Produto> LstProdutos)
         {
             if (LstProdutos.Count() > 0)
@@ -279,7 +308,6 @@ namespace FT_Management.Models
                         DataServico = result["DataServico"],
                         ReferenciaServico = result["ReferenciaServico"],
                         EstadoEquipamento = result["EstadoEquipamento"],
-                        RelatorioServico = result["RelatorioServico"],
                         SituacoesPendentes = result["SituacoesPendentes"],
                         ConferidoPor = result["ConferidoPor"],
                         GuiaTransporteAtual = result["GuiaTransporteAtual"],
@@ -288,7 +316,7 @@ namespace FT_Management.Models
                         Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
-                        ClienteServico = ObterCliente(result["IdCliente"]),
+                        ClienteServico = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
                         IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
 
@@ -315,7 +343,6 @@ namespace FT_Management.Models
                         DataServico = result["DataServico"],
                         ReferenciaServico = result["ReferenciaServico"],
                         EstadoEquipamento = result["EstadoEquipamento"],
-                        RelatorioServico = result["RelatorioServico"],
                         SituacoesPendentes = result["SituacoesPendentes"],
                         ConferidoPor = result["ConferidoPor"],
                         GuiaTransporteAtual = result["GuiaTransporteAtual"],
@@ -323,7 +350,7 @@ namespace FT_Management.Models
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                         Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
-                        ClienteServico = ObterCliente(result["IdCliente"]),
+                        ClienteServico = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
                         IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
 
@@ -380,24 +407,24 @@ namespace FT_Management.Models
         }
         public FolhaObra ObterFolhaObra(int id)
         {
+            FolhaObra folhaObra = new FolhaObra { IdFolhaObra = -1};
             using Database db = ConnectionString;
            using var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";");
             result.Read();
 
-            FolhaObra folhaObra = new FolhaObra()
+             folhaObra = new FolhaObra()
             {
                 IdFolhaObra = result["IdFolhaObra"],
                 DataServico = result["DataServico"],
                 ReferenciaServico = result["ReferenciaServico"],
                 EstadoEquipamento = result["EstadoEquipamento"],
-                RelatorioServico = result["RelatorioServico"],
                 SituacoesPendentes = result["SituacoesPendentes"],
                 ConferidoPor = result["ConferidoPor"],
                 GuiaTransporteAtual = result["GuiaTransporteAtual"],
                 AssistenciaRemota = result["Remoto"] == 1,
                 IdCartao = result["IdCartaoTrello"],
                 EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
-                ClienteServico = ObterCliente(result["IdCliente"]),
+                ClienteServico = ObterCliente(result["IdCliente"], result["IdLoja"]),
                 Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                 PecasServico = ObterListaProdutoIntervencao(id),
                 IntervencaosServico = ObterListaIntervencoes(id),
@@ -499,13 +526,12 @@ namespace FT_Management.Models
                         DataServico = result["DataServico"],
                         ReferenciaServico = result["ReferenciaServico"],
                         EstadoEquipamento = result["EstadoEquipamento"],
-                        RelatorioServico = result["RelatorioServico"],
                         SituacoesPendentes = result["SituacoesPendentes"],
                         ConferidoPor = result["ConferidoPor"],
                         //IdCartao = result.Reader.IsDBNull(result["IdCartaoTrello"]) ? "" : result["IdCartaoTrello"],
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
-                        ClienteServico = ObterCliente(result["IdCliente"]),
+                        ClienteServico = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
                         IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
 
@@ -587,18 +613,19 @@ namespace FT_Management.Models
             return LstGuias;
         }
 
-        public Cliente ObterCliente(int id)
+        public Cliente ObterCliente(int id, int est)
         {
 
             Cliente cliente = new Cliente();
             using Database db = ConnectionString;
-            using var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + ";");
+            using var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + " AND IdLoja=" + est + ";");
             result.Read();
             if (result.Reader.HasRows)
             {
                 cliente = new Cliente()
                 {
                     IdCliente = result["IdCliente"],
+                    IdLoja = result["IdLoja"],
                     NomeCliente = result["NomeCliente"],
                     PessoaContatoCliente = result["PessoaContactoCliente"],
                     MoradaCliente = result["MoradaCliente"],

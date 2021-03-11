@@ -27,8 +27,9 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00"));
+                //FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
+                //ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00"));
             }
             catch
             {
@@ -266,7 +267,7 @@ namespace FT_Management.Models
         {
 
             List<FolhaObra> LstFolhaObra = new List<FolhaObra>();
-            List<Equipamento> LstEquipamentos = FT_ManagementContext.ObterEquipamentos();
+            //List<Equipamento> LstEquipamentos = FT_ManagementContext.ObterEquipamentos();
 
             try
             {
@@ -275,34 +276,34 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie as nserie, pa.u_nincide, pa.stpub, mh.relatorio from pa inner join mh on pa.nopat=mh.nopat where pa.nopat=74942 and pa.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("select pa.mastamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.stpub from pa where pa.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
                     {
-                        int ind = LstFolhaObra.FindIndex(f => f.IdFolhaObra == int.Parse(result["nopat"].ToString()));
+                        //Equipamento e = LstEquipamentos.Find(e => e.NumeroSerieEquipamento == result["nserie"].ToString().Trim());
+                        Equipamento e = FT_ManagementContext.ObterEquipamentoNS(result["serie"].ToString().Trim());
 
-                        if (ind > -1) { LstFolhaObra[ind].RelatorioServico += "\n" + int.Parse(result["relatorio"].ToString()); }
-                        else {
+                        if (e==null) { e = new Equipamento() { NumeroSerieEquipamento = result["serie"].ToString().Trim() }; }
+
                             Cliente cliente = new Cliente()
                             {
                                 IdCliente = int.Parse(result["no"].ToString().Trim()),
                                 IdLoja = int.Parse(result["estab"].ToString().Trim())
                             };
-
+                        
                             LstFolhaObra.Add(new FolhaObra()
                             {
                                 IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                                 DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
                                 ReferenciaServico = result["u_nincide"].ToString().Trim(),
                                 EstadoEquipamento = result["stpub"].ToString().Trim(),
-                                RelatorioServico = result["relatorio"].ToString().Trim(),
                                 SituacoesPendentes = "",
-                                EquipamentoServico = LstEquipamentos.Find(e => e.NumeroSerieEquipamento == result["nserie"].ToString().Trim()),
+                                EquipamentoServico = e,
                                 ClienteServico = cliente
                             });
-                        }
+                            //Console.WriteLine(LstFolhaObra.Count.ToString());
                     }
                 }
 
@@ -320,5 +321,6 @@ namespace FT_Management.Models
 
             return LstFolhaObra;
         }
+
     }
 }

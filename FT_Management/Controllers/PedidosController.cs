@@ -101,7 +101,7 @@ namespace FT_Management.Controllers
 
             foreach (var folhaObra in context.ObterListaFolhasObraCartao(idcartao))
             {
-                if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
+                //if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
                 TrelloAnexos Anexo = new TrelloAnexos
                 {
                     Id = folhaObra.IdCartao,
