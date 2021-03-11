@@ -89,12 +89,12 @@ namespace FT_Management.Models
         public int IdIntervencao { get; set; }
         public int IdTecnico { get; set; }
         public int IdFolhaObra { get; set; }
-        private string _NomeTecnico;
-        [Display(Name = "Técnico")]
         private string _RelatorioServico;
         [DataType(DataType.MultilineText)]
         [Display(Name = "Relatório do Serviço")]
         public string RelatorioServico { get { return _RelatorioServico ?? ""; } set { _RelatorioServico = value; } }
+        private string _NomeTecnico;
+        [Display(Name = "Técnico")]
         public string NomeTecnico { get {return _NomeTecnico ?? ""; } set {_NomeTecnico = value ;} }
         [Display(Name = "Data do Serviço")]
         public DateTime DataServiço { get; set; }

@@ -227,6 +227,37 @@ namespace FT_Management.Models
             db.Connection.Close();
         }
 
+        public void CriarIntervencoes(List<Intervencao> LstIntervencoes)
+        {
+            int max = 4000;
+            int j = 0;
+            for (int i = 0; i < LstIntervencoes.Count; i++)
+            {
+                if ((j + max) > LstIntervencoes.Count) max = (LstIntervencoes.Count - j);
+
+                string sql = "INSERT INTO dat_intervencoes_folha_obra (IdIntervencao, IdFolhaObra,IdTecnico, RelatorioServico, NomeTecnico, DataServico, HoraInicio, HoraFim) VALUES ";
+
+                foreach (var intervencao in LstIntervencoes.GetRange(j, max))
+                {
+                    sql += ("('" + intervencao.IdIntervencao + "', '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '"+intervencao.RelatorioServico.Replace("\r\n", "").Replace("'", "")+"', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico), DataServico = VALUES(DataServico), RelatorioServico = VALUES(RelatorioServico), HoraInicio = VALUES(HoraInicio), HoraFim = VALUES(HoraFim);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                Console.WriteLine("A ler FO: " + j + " de " + LstIntervencoes.Count());
+
+
+            }
+        }
+
         public void CriarFolhasObra(List<FolhaObra> LstFolhaObra)
         {
             int max = 5000;
@@ -377,6 +408,7 @@ namespace FT_Management.Models
                         IdIntervencao = result["IdIntervencao"],
                         IdTecnico = result["IdTecnico"],
                         NomeTecnico = result["NomeTecnico"],
+                        RelatorioServico = result["RelatorioServico"],
                         DataServiço = DateTime.Parse(result["DataServico"]),
                         HoraInicio = DateTime.Parse(result["HoraInicio"]),
                         HoraFim = DateTime.Parse(result["HoraFim"])
@@ -1279,6 +1311,17 @@ namespace FT_Management.Models
             pdfFormFields.SetField("Contribuinte", folhaobra.ClienteServico.NumeroContribuinteCliente);
 
             //Assistencia
+            if (folhaobra.IntervencaosServico.Count > 1)
+            {
+                foreach (var intervencao in folhaobra.IntervencaosServico)
+                {
+                    folhaobra.RelatorioServico += intervencao.DataServiço + " - " + intervencao.HoraInicio + " -> " + intervencao.HoraFim + ": " + intervencao.RelatorioServico + " ";
+                }
+            }
+            else
+            {
+                folhaobra.RelatorioServico = folhaobra.IntervencaosServico.FirstOrDefault().RelatorioServico;
+            }
             pdfFormFields.SetField("trabalho efectuado", folhaobra.RelatorioServico);
             pdfFormFields.SetField("SituacoesPendentes", folhaobra.SituacoesPendentes);
             if (folhaobra.IntervencaosServico.Count > 0)

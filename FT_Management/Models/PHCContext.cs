@@ -23,13 +23,13 @@ namespace FT_Management.Models
                 cnn = new SqlConnection(connectionString);
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
 
-                FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
                 //FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
-                //ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00"));
+                //FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
             }
             catch
             {
@@ -320,6 +320,58 @@ namespace FT_Management.Models
             }
 
             return LstFolhaObra;
+        }
+        public List<Intervencao> ObterIntervencoes(DateTime dataUltimaLeitura)
+        {
+
+            List<Intervencao> LstIntervencao = new List<Intervencao>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio from mh where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstIntervencao.Add(new Intervencao()
+                        {
+                            IdIntervencao = int.Parse(result["mhid"].ToString().Trim()),
+                            IdTecnico = int.Parse(result["tecnico"].ToString().Trim()),
+                            IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
+                            NomeTecnico = result["tecnnm"].ToString().Trim(),
+                            RelatorioServico = result["relatorio"].ToString().Trim(),
+                            DataServiço = DateTime.Parse(result["data"].ToString().Trim())
+                        });
+
+                        DateTime.TryParse(result["hora"].ToString().Trim(), out DateTime horainicio);
+                        LstIntervencao[LstIntervencao.Count - 1].HoraInicio = horainicio;
+                        DateTime.TryParse(result["horaf"].ToString().Trim(), out DateTime horafim);
+                        LstIntervencao[LstIntervencao.Count - 1].HoraFim = horafim;
+
+                        //Console.WriteLine(result["nopat"].ToString().Trim());
+
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("mh");
+
+                Console.WriteLine("Intervenções atualizadas com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as intervenções do PHC!");
+            }
+
+            return LstIntervencao;
         }
 
     }
