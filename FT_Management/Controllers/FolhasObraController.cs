@@ -26,104 +26,104 @@ namespace FT_Management.Controllers
 
         
 
-        // GET: FolhasObraController/Create
-        public ActionResult Adicionar(string idCartao)
-        {
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //// GET: FolhasObraController/Create
+        //public ActionResult Adicionar(string idCartao)
+        //{
+        //    TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (idCartao == null) idCartao = "";
-            ViewData["IdCartao"] = idCartao;
-            TrelloCartoes cartao = trello.ObterCartao(idCartao);
+        //    if (idCartao == null) idCartao = "";
+        //    ViewData["IdCartao"] = idCartao;
+        //    TrelloCartoes cartao = trello.ObterCartao(idCartao);
 
-            string nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "SERIAL NUMBER:", Environment.NewLine).Trim();
-            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "N/S:", Environment.NewLine).Trim(); }
-            if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "S/N:", Environment.NewLine).Trim(); }
+        //    string nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "SERIAL NUMBER:", Environment.NewLine).Trim();
+        //    if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "N/S:", Environment.NewLine).Trim(); }
+        //    if (nSerie == "") { nSerie = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "S/N:", Environment.NewLine).Trim(); }
 
-            string marca = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "MARCA:", Environment.NewLine).Trim();
-            string modelo = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "MODELO:", Environment.NewLine).Trim();
+        //    string marca = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "MARCA:", Environment.NewLine).Trim();
+        //    string modelo = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "MODELO:", Environment.NewLine).Trim();
 
-            string ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", "\\]").Replace(@"\", "");
-            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "OT VINCULADA N° ", " PROCEDENTE").Replace(@"\", ""); }
-            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "INC0", " "); }
-            if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", Environment.NewLine).Replace(@"\", ""); }
+        //    string ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", "\\]").Replace(@"\", "");
+        //    if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "OT VINCULADA N° ", " PROCEDENTE").Replace(@"\", ""); }
+        //    if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "INC0", " "); }
+        //    if (ticketNumero == "") { ticketNumero = TrelloConector.GetBetween(cartao.DescricaoCartao.ToUpper(), "TICKET#", Environment.NewLine).Replace(@"\", ""); }
  
-            FolhaObra folha = new FolhaObra
-            {
-                ReferenciaServico = ticketNumero,
-                ClienteServico = context.ObterClienteNome(cartao.NomeCartao.Trim()),
-                EquipamentoServico = context.ObterEquipamentoNS(nSerie),
-                PecasServico = new List<Produto>(),
-                IntervencaosServico = new List<Intervencao>(),
-                IdCartao = idCartao
-            };
+        //    FolhaObra folha = new FolhaObra
+        //    {
+        //        ReferenciaServico = ticketNumero,
+        //        ClienteServico = context.ObterClienteNome(cartao.NomeCartao.Trim()),
+        //        EquipamentoServico = context.ObterEquipamentoNS(nSerie),
+        //        PecasServico = new List<Produto>(),
+        //        IntervencaosServico = new List<Intervencao>(),
+        //        IdCartao = idCartao
+        //    };
 
-            folha.EquipamentoServico.MarcaEquipamento = String.IsNullOrEmpty(folha.EquipamentoServico.MarcaEquipamento) ? marca : folha.EquipamentoServico.MarcaEquipamento; 
-            folha.EquipamentoServico.ModeloEquipamento = String.IsNullOrEmpty(folha.EquipamentoServico.ModeloEquipamento) ? modelo : folha.EquipamentoServico.ModeloEquipamento; 
+        //    folha.EquipamentoServico.MarcaEquipamento = String.IsNullOrEmpty(folha.EquipamentoServico.MarcaEquipamento) ? marca : folha.EquipamentoServico.MarcaEquipamento; 
+        //    folha.EquipamentoServico.ModeloEquipamento = String.IsNullOrEmpty(folha.EquipamentoServico.ModeloEquipamento) ? modelo : folha.EquipamentoServico.ModeloEquipamento; 
             
 
-            folha.ConferidoPor = folha.ClienteServico.PessoaContatoCliente;
+        //    folha.ConferidoPor = folha.ClienteServico.PessoaContatoCliente;
 
-            return View(folha);
-        }
+        //    return View(folha);
+        //}
 
 
 
-        // POST: FolhasObraController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Adicionar(FolhaObra folhaObra, string IdCartao)
-        {
-            if (folhaObra.EquipamentoServico.NumeroSerieEquipamento == null || folhaObra.ClienteServico.NomeCliente == null) return View(folhaObra);
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
-            folhaObra.IdCartao = IdCartao ?? "";
-            if (folhaObra.ClienteServico.PessoaContatoCliente != string.Empty && folhaObra.ClienteServico.PessoaContatoCliente != null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
-            folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
-            folhaObra.GuiaTransporteAtual = "GT" + DateTime.Now.Year + "BO91/";
+        //// POST: FolhasObraController/Create
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Adicionar(FolhaObra folhaObra, string IdCartao)
+        //{
+        //    if (folhaObra.EquipamentoServico.NumeroSerieEquipamento == null || folhaObra.ClienteServico.NomeCliente == null) return View(folhaObra);
+        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //    folhaObra.DataServico = DateTime.Parse(DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day);
+        //    folhaObra.IdCartao = IdCartao ?? "";
+        //    if (folhaObra.ClienteServico.PessoaContatoCliente != string.Empty && folhaObra.ClienteServico.PessoaContatoCliente != null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
+        //    folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
+        //    folhaObra.GuiaTransporteAtual = "GT" + DateTime.Now.Year + "BO91/";
 
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi criada uma folha de obra nova: " + folhaObra.ClienteServico.NomeCliente, 3);
+        //    context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi criada uma folha de obra nova: " + folhaObra.ClienteServico.NomeCliente, 3);
 
-            return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
+        //    return RedirectToAction("Editar", new { id = context.NovaFolhaObra(folhaObra) });
 
-        }
+        //}
 
-        [HttpPost]
-        public ActionResult AdicionarIntervencao(string data, string horainicio, string horafim, string tecnico, string idfolhaobra)
-        {
+        //[HttpPost]
+        //public ActionResult AdicionarIntervencao(string data, string horainicio, string horafim, string tecnico, string idfolhaobra)
+        //{
  
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                Intervencao intervencao = new Intervencao()
-                {
-                    IdFolhaObra = int.Parse(idfolhaobra),
-                    NomeTecnico = tecnico,
-                    DataServiço = DateTime.Parse(data),
-                    HoraInicio = DateTime.Parse(horainicio),
-                    HoraFim = DateTime.Parse(horafim),
-                    IdTecnico = int.Parse(this.User.Claims.First().Value)
-                };
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi adicionada uma intervenção nova da folha de obra: " + intervencao.IdFolhaObra + ", Data: " + intervencao.DataServiço + "; Inicio: " + intervencao.HoraInicio + ", Fim: " + intervencao.HoraFim, 3);
+        //        FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //        Intervencao intervencao = new Intervencao()
+        //        {
+        //            IdFolhaObra = int.Parse(idfolhaobra),
+        //            NomeTecnico = tecnico,
+        //            DataServiço = DateTime.Parse(data),
+        //            HoraInicio = DateTime.Parse(horainicio),
+        //            HoraFim = DateTime.Parse(horafim),
+        //            IdTecnico = int.Parse(this.User.Claims.First().Value)
+        //        };
+        //    context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi adicionada uma intervenção nova da folha de obra: " + intervencao.IdFolhaObra + ", Data: " + intervencao.DataServiço + "; Inicio: " + intervencao.HoraInicio + ", Fim: " + intervencao.HoraFim, 3);
 
-            return Content(context.NovaIntervencao(intervencao).ToString());
+        //    return Content(context.NovaIntervencao(intervencao).ToString());
 
-        }
+        //}
 
-        [HttpPost]
-        public ActionResult AdicionarPeca(string referencia, string designacao, string quantidade, string idfolhaobra, string tipoun)
-        {
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                Produto produto = new Produto()
-                {
-                    Ref_Produto = referencia,
-                    Designacao_Produto = designacao,
-                    Stock_Fisico = double.Parse(quantidade),
-                    TipoUn = tipoun
-                };
-                context.NovaPecaIntervencao(produto, idfolhaobra);
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi adicionada uma peça á folha de obra: " + idfolhaobra + ", Ref: " + produto.Ref_Produto + ", Qtd: " + produto.Stock_Fisico + " " + produto.TipoUn, 3);
+        //[HttpPost]
+        //public ActionResult AdicionarPeca(string referencia, string designacao, string quantidade, string idfolhaobra, string tipoun)
+        //{
+        //        FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //        Produto produto = new Produto()
+        //        {
+        //            Ref_Produto = referencia,
+        //            Designacao_Produto = designacao,
+        //            Stock_Fisico = double.Parse(quantidade),
+        //            TipoUn = tipoun
+        //        };
+        //        context.NovaPecaIntervencao(produto, idfolhaobra);
+        //    context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi adicionada uma peça á folha de obra: " + idfolhaobra + ", Ref: " + produto.Ref_Produto + ", Qtd: " + produto.Stock_Fisico + " " + produto.TipoUn, 3);
 
-            return Content(referencia);
-        }
+        //    return Content(referencia);
+        //}
 
         public JsonResult ObterDesignacaoProduto (string RefProduto, int ArmazemId)
         {
@@ -188,42 +188,42 @@ namespace FT_Management.Controllers
 
             return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
-        // GET: FolhasObraController/Edit/5
-        public ActionResult Editar(int id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-            string IdQuadro = trello.ObterCartao(context.ObterFolhaObra(id).IdCartao).IdQuadro;
-            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            ViewData["SelectedTecnico"] = user.NomeCompleto;
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != "3").ToList();
+        //// GET: FolhasObraController/Edit/5
+        //public ActionResult Editar(int id)
+        //{
+        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //    TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+        //    string IdQuadro = trello.ObterCartao(context.ObterFolhaObra(id).IdCartao).IdQuadro;
+        //    Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+        //    ViewData["SelectedTecnico"] = user.NomeCompleto;
+        //    ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != "3").ToList();
 
-            FolhaObra folhaObra = context.ObterFolhaObra(id);
-            if (user.TipoUtilizador == "2" && !(folhaObra.IntervencaosServico.Where(t => t.IdTecnico == user.Id).Count() > 0 || folhaObra.IntervencaosServico.Count == 0)) return RedirectToAction("Index", "Pedidos");
+        //    FolhaObra folhaObra = context.ObterFolhaObra(id);
+        //    if (user.TipoUtilizador == "2" && !(folhaObra.IntervencaosServico.Where(t => t.IdTecnico == user.Id).Count() > 0 || folhaObra.IntervencaosServico.Count == 0)) return RedirectToAction("Index", "Pedidos");
 
-            if (folhaObra.ConferidoPor == string.Empty || folhaObra.ConferidoPor == null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
+        //    if (folhaObra.ConferidoPor == string.Empty || folhaObra.ConferidoPor == null) folhaObra.ConferidoPor = folhaObra.ClienteServico.PessoaContatoCliente;
 
-            return View(folhaObra);
-        }
+        //    return View(folhaObra);
+        //}
 
-        // POST: FolhasObraController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Editar(int id, FolhaObra folhaObra)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //// POST: FolhasObraController/Edit/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Editar(int id, FolhaObra folhaObra)
+        //{
+        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            folhaObra.IdFolhaObra = id;
-            folhaObra.Recibo.IdFolhaObra = id;
-            if (folhaObra.Recibo.TotalRecibo > 0 || folhaObra.Recibo.IdRecibo > 0) context.NovoRecibo(folhaObra.Recibo);
-            folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
+        //    folhaObra.IdFolhaObra = id;
+        //    folhaObra.Recibo.IdFolhaObra = id;
+        //    if (folhaObra.Recibo.TotalRecibo > 0 || folhaObra.Recibo.IdRecibo > 0) context.NovoRecibo(folhaObra.Recibo);
+        //    folhaObra.ClienteServico.PessoaContatoCliente = folhaObra.ConferidoPor;
 
-            context.NovaFolhaObra(folhaObra);
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterada uma folha de obra: " + folhaObra.ClienteServico.NomeCliente +  " com o nº " + folhaObra.IdFolhaObra, 3);
+        //    context.NovaFolhaObra(folhaObra);
+        //    context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterada uma folha de obra: " + folhaObra.ClienteServico.NomeCliente +  " com o nº " + folhaObra.IdFolhaObra, 3);
 
-            return RedirectToAction("Pedido", "Pedidos", new { idCartao = folhaObra.IdCartao});
+        //    return RedirectToAction("Pedido", "Pedidos", new { idCartao = folhaObra.IdCartao});
 
-        }
+        //}
 
         public ActionResult EmailFolhaObra(int id, string emailDestino)
         {
