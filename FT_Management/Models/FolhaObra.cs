@@ -106,7 +106,7 @@ namespace FT_Management.Models
 
     public class Equipamento
     {
-        public int IdEquipamento { get; set; }
+        public string IdEquipamento { get; set; }
         private string _DesignacaoEquipamento;
         [Display(Name = "Designação do Equipamento")]
         public string DesignacaoEquipamento { get {return _DesignacaoEquipamento ?? ""; } set {_DesignacaoEquipamento = value ;}  }

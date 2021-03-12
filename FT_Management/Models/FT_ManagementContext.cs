@@ -231,7 +231,7 @@ namespace FT_Management.Models
         {
             int max = 4000;
             int j = 0;
-            for (int i = 0; i < LstIntervencoes.Count; i++)
+            for (int i = 0; j < LstIntervencoes.Count; i++)
             {
                 if ((j + max) > LstIntervencoes.Count) max = (LstIntervencoes.Count - j);
 
@@ -252,7 +252,7 @@ namespace FT_Management.Models
                 db.Connection.Close();
 
                 j += max;
-                Console.WriteLine("A ler FO: " + j + " de " + LstIntervencoes.Count());
+                //Console.WriteLine("A ler FO: " + j + " de " + LstIntervencoes.Count());
 
 
             }
@@ -260,9 +260,9 @@ namespace FT_Management.Models
 
         public void CriarFolhasObra(List<FolhaObra> LstFolhaObra)
         {
-            int max = 5000;
+            int max = 1000;
             int j = 0;
-            for (int i = 0; i < LstFolhaObra.Count; i++)
+            for (int i = 0; j < LstFolhaObra.Count; i++)
             {
                 if ((j + max) > LstFolhaObra.Count) max = (LstFolhaObra.Count - j);
 
@@ -283,7 +283,35 @@ namespace FT_Management.Models
                 db.Connection.Close();
 
                 j += max;
-                //Console.WriteLine("A ler FO: " + j + " de " + LstFolhaObra.Count());
+                Console.WriteLine("A ler FO: " + j + " de " + LstFolhaObra.Count());
+            }
+        }
+        public void CriarPecasFolhaObra(List<Produto> LstProdutos)
+        {
+            int max = 7500;
+            int j = 0;
+            for (int i = 0; j < LstProdutos.Count; i++)
+            {
+                if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
+
+                string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra, TipoUn) VALUES ";
+
+                foreach (var produto in LstProdutos.GetRange(j, max))
+                {
+                    sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''") + "', '" + produto.Stock_Fisico + "', '" + produto.Armazem_ID + "', '" + produto.TipoUn + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade), TipoUn = VALUES(TipoUn);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler peca: " + j + " de " + LstProdutos.Count());
             }
         }
 
@@ -489,12 +517,12 @@ namespace FT_Management.Models
         }
 
 
-        public Equipamento ObterEquipamento(int id)
+        public Equipamento ObterEquipamento(string id)
         {
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_equipamentos where IdEquipamento=" + id + ";");
+                using var result = db.Query("SELECT * FROM dat_equipamentos where IdEquipamento='" + id + "';");
                 result.Read();
                 if (result.Reader.HasRows)
                 {
@@ -806,15 +834,15 @@ namespace FT_Management.Models
             {
                 int max = 7500;
                 int j = 0;
-                for (int i = 0; i < LstEquipamento.Count; i++)
+                for (int i = 0; j < LstEquipamento.Count; i++)
                 {
                     if ((j + max) > LstEquipamento.Count) max = (LstEquipamento.Count - j);
 
-                    string sql = "INSERT INTO dat_equipamentos (DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento, IdCliente, IdLoja, IdFornecedor) VALUES ";
+                    string sql = "INSERT INTO dat_equipamentos (IdEquipamento, DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento, IdCliente, IdLoja, IdFornecedor) VALUES ";
 
                     foreach (var equipamento in LstEquipamento.GetRange(j, max))
                     {
-                        sql += ("('" + equipamento.DesignacaoEquipamento + "', '" + equipamento.MarcaEquipamento + "', '" + equipamento.ModeloEquipamento + "', '" + equipamento.NumeroSerieEquipamento + "', '" + equipamento.IdCliente + "', '" + equipamento.IdLoja + "', '" + equipamento.IdFornecedor + "'), \r\n");
+                        sql += ("('" + equipamento.IdEquipamento + "', '" + equipamento.DesignacaoEquipamento + "', '" + equipamento.MarcaEquipamento + "', '" + equipamento.ModeloEquipamento + "', '" + equipamento.NumeroSerieEquipamento + "', '" + equipamento.IdCliente + "', '" + equipamento.IdLoja + "', '" + equipamento.IdFornecedor + "'), \r\n");
                         i++;
                     }
                     sql = sql.Remove(sql.Count() - 4);
@@ -923,32 +951,15 @@ namespace FT_Management.Models
             return recibo.IdRecibo;
 
         }
-        public int NovoEquipamento(Equipamento equipamento)
+        public string NovoEquipamento(Equipamento equipamento)
         {
+            List<Equipamento> LstEquipamentos = new List<Equipamento>();
+            LstEquipamentos.Add(equipamento);
 
-            Equipamento e = ObterEquipamentoNS(equipamento.NumeroSerieEquipamento);
-            if (e.IdEquipamento == 0)
-            {
-                equipamento.IdEquipamento = ObterUltimaEntrada("dat_equipamentos", "IdEquipamento");
-            }
-            else
-            {
-                equipamento.IdEquipamento = e.IdEquipamento;
-            }
-
-            string sql = "INSERT INTO dat_equipamentos (IdEquipamento, DesignacaoEquipamento, MarcaEquipamento, ModeloEquipamento, NumeroSerieEquipamento) VALUES ";
-
-            sql += ("('" + equipamento.IdEquipamento + "',  '" + equipamento.DesignacaoEquipamento.Replace("'", "''")  + "', '" + equipamento.MarcaEquipamento.Replace("'", "''")  + "', '" + equipamento.ModeloEquipamento.Replace("'", "''")  + "', '" + equipamento.NumeroSerieEquipamento.Replace("'", "''")  + "') \r\n");
-
-            sql += " ON DUPLICATE KEY UPDATE DesignacaoEquipamento = VALUES(DesignacaoEquipamento), MarcaEquipamento = VALUES(MarcaEquipamento), ModeloEquipamento = VALUES(ModeloEquipamento);";
-
-            using (Database db = ConnectionString)
-            {
-                db.Execute(sql);
-            }
+            CriarEquipamentos(LstEquipamentos);
 
             return equipamento.IdEquipamento;
-
+                       
         }
         public int NovaIntervencao(Intervencao intervencao)
         {

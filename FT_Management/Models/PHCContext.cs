@@ -23,13 +23,14 @@ namespace FT_Management.Models
                 cnn = new SqlConnection(connectionString);
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
 
-                //FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
-                //FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
-                //FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
-                //FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
-                //FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                //FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
             }
             catch
             {
@@ -228,7 +229,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT serie, design, marca, maquina, ref, no, estab, flno FROM ma where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -236,6 +237,7 @@ namespace FT_Management.Models
                     {
                         LstEquipamento.Add(new Equipamento()
                         {
+                            IdEquipamento = result["mastamp"].ToString().Trim(),
                             DesignacaoEquipamento = result["design"].ToString().Trim(),
                             MarcaEquipamento = result["marca"].ToString().Trim(),
                             ModeloEquipamento = result["maquina"].ToString().Trim(),
@@ -276,31 +278,30 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select pa.mastamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.stpub from pa where pa.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
+                SqlCommand command = new SqlCommand("select pa.mastamp, pa.problema, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.stpub from pa where pa.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
                     {
-                        //Equipamento e = LstEquipamentos.Find(e => e.NumeroSerieEquipamento == result["nserie"].ToString().Trim());
-                        Equipamento e = FT_ManagementContext.ObterEquipamentoNS(result["serie"].ToString().Trim());
-
-                        if (e==null) { e = new Equipamento() { NumeroSerieEquipamento = result["serie"].ToString().Trim() }; }
 
                             Cliente cliente = new Cliente()
                             {
                                 IdCliente = int.Parse(result["no"].ToString().Trim()),
                                 IdLoja = int.Parse(result["estab"].ToString().Trim())
                             };
-                        
-                            LstFolhaObra.Add(new FolhaObra()
+                            Equipamento equipamento = new Equipamento()
+                            {
+                                IdEquipamento = result["mastamp"].ToString().Trim()
+                            };
+                        LstFolhaObra.Add(new FolhaObra()
                             {
                                 IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                                 DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
                                 ReferenciaServico = result["u_nincide"].ToString().Trim(),
                                 EstadoEquipamento = result["stpub"].ToString().Trim(),
-                                SituacoesPendentes = "",
-                                EquipamentoServico = e,
+                                SituacoesPendentes = result["problema"].ToString().Trim(),
+                                EquipamentoServico = equipamento,
                                 ClienteServico = cliente
                             });
                             //Console.WriteLine(LstFolhaObra.Count.ToString());
@@ -373,6 +374,49 @@ namespace FT_Management.Models
 
             return LstIntervencao;
         }
+        public List<Produto> ObterPecas(DateTime dataUltimaLeitura)
+        {
 
+            List<Produto> LstProduto = new List<Produto>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and bo.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstProduto.Add(new Produto()
+                        {
+                            Armazem_ID = int.Parse(result["nopat"].ToString().Trim()),
+                            Ref_Produto = result["ref"].ToString().Trim(),
+                            Designacao_Produto = result["design"].ToString().Trim(),
+                            TipoUn = "UN",
+                            Stock_Fisico = double.Parse(result["qtt"].ToString().Trim())
+
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("bi");
+
+                Console.WriteLine("Produtos de PAT's atualizados com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as as peças usadas pelos PAT's do PHC!");
+            }
+
+            return LstProduto;
+        }
     }
 }
