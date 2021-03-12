@@ -275,7 +275,7 @@ namespace FT_Management.Models
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
+                sql += " ON DUPLICATE KEY UPDATE IdCartaoTrello=VALUES(IdCartaoTrello), ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
 
                 Database db = ConnectionString;
 
@@ -283,7 +283,7 @@ namespace FT_Management.Models
                 db.Connection.Close();
 
                 j += max;
-                Console.WriteLine("A ler FO: " + j + " de " + LstFolhaObra.Count());
+                //Console.WriteLine("A ler FO: " + j + " de " + LstFolhaObra.Count());
             }
         }
         public void CriarPecasFolhaObra(List<Produto> LstProdutos)
@@ -1329,7 +1329,7 @@ namespace FT_Management.Models
                     folhaobra.RelatorioServico += intervencao.DataServiço + " - " + intervencao.HoraInicio + " -> " + intervencao.HoraFim + ": " + intervencao.RelatorioServico + " ";
                 }
             }
-            else
+            else if (folhaobra.IntervencaosServico.Count > 0)
             {
                 folhaobra.RelatorioServico = folhaobra.IntervencaosServico.FirstOrDefault().RelatorioServico;
             }

@@ -21,6 +21,11 @@ namespace FT_Management.Controllers
             if (context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).TipoUtilizador == "2") return RedirectToAction("Index", "Pedidos");
             if (DataFolhasObra == null || DataFolhasObra == string.Empty) DataFolhasObra = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["DataFolhasObra"] = DataFolhasObra;
+
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            context.CriarFolhasObra(phccontext.ObterFolhasObra(context.ObterUltimaModificacaoPHC("pa")));
+
             return View(context.ObterListaFolhasObra(DateTime.Parse(DataFolhasObra).ToString("yyyy-MM-dd")));
         }
 
