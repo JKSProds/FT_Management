@@ -66,7 +66,8 @@ namespace FT_Management.Controllers
             phccontext.AtualizarFolhasObra();
 
             Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-            marcacao.Tecnicos.FirstOrDefault().Id = int.Parse(IdTecnico);
+            marcacao.Tecnicos = new List<Utilizador>();
+            marcacao.Tecnicos.Add(new Utilizador { Id = int.Parse(IdTecnico) });
 
             ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
 

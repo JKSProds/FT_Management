@@ -835,7 +835,8 @@ namespace FT_Management.Models
                     start = dataMarcacao,
                     end = dataMarcacao.AddMinutes(30),
                     IdTecnico = item.Tecnicos.Count == 0 ? 0 : item.Tecnicos.FirstOrDefault().Id,
-                    color = ("#33FF77")
+                    color = ("#33FF77"),
+                    url = "Pedido/?idMarcacao="+item.IdMarcacao+"&IdTecnico=" + (item.Tecnicos.Count == 0 ? 0 : item.Tecnicos.FirstOrDefault().Id)
                     //color = (item.Dentro_Fora ? "#33FF77" : "#3371FF")
                 });
                 dataMarcacao = dataMarcacao.AddMinutes(30);
