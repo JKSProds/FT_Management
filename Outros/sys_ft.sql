@@ -66,7 +66,7 @@ INSERT INTO `dat_armazem` (`armazem_id`,`armazem_nome`) VALUES
 
 DROP TABLE IF EXISTS `dat_clientes`;
 CREATE TABLE `dat_clientes` (
-  `IdCliente` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `IdCliente` int(10) unsigned NOT NULL,
   `IdLoja` int(10) unsigned NOT NULL,
   `NomeCliente` varchar(1024) NOT NULL,
   `PessoaContactoCliente` varchar(45) DEFAULT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE `dat_clientes` (
   `TipoCliente` varchar(45) DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`IdCliente`,`IdLoja`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_clientes`
@@ -104,7 +104,7 @@ CREATE TABLE `dat_controlo_viatura` (
   `data_fim` datetime DEFAULT NULL,
   `kms_finais` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id_reg`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `dat_controlo_viatura`
@@ -120,7 +120,7 @@ CREATE TABLE `dat_controlo_viatura` (
 
 DROP TABLE IF EXISTS `dat_equipamentos`;
 CREATE TABLE `dat_equipamentos` (
-  `IdEquipamento` int(11) NOT NULL AUTO_INCREMENT,
+  `IdEquipamento` varchar(50) NOT NULL,
   `NumeroSerieEquipamento` varchar(250) NOT NULL,
   `DesignacaoEquipamento` varchar(45) DEFAULT NULL,
   `MarcaEquipamento` varchar(45) DEFAULT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE `dat_equipamentos` (
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`NumeroSerieEquipamento`) USING BTREE,
   KEY `KEY` (`IdEquipamento`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_equipamentos`
@@ -147,12 +147,12 @@ CREATE TABLE `dat_equipamentos` (
 
 DROP TABLE IF EXISTS `dat_folhas_obra`;
 CREATE TABLE `dat_folhas_obra` (
-  `IdFolhaObra` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `IdFolhaObra` int(10) unsigned NOT NULL,
   `DataServico` datetime NOT NULL,
   `ReferenciaServico` varchar(45) DEFAULT NULL,
   `EstadoEquipamento` varchar(45) DEFAULT NULL,
   `SituacoesPendentes` varchar(1024) DEFAULT NULL,
-  `IdEquipamento` int(10) unsigned NOT NULL,
+  `IdEquipamento` varchar(50) NOT NULL,
   `IdCliente` int(10) unsigned NOT NULL,
   `IdLoja` int(10) unsigned NOT NULL,
   `IdCartaoTrello` varchar(100) DEFAULT NULL,
@@ -160,9 +160,10 @@ CREATE TABLE `dat_folhas_obra` (
   `GuiaTransporteAtual` varchar(100) DEFAULT NULL,
   `Remoto` tinyint(1) NOT NULL DEFAULT 0,
   `RubricaCliente` blob DEFAULT NULL,
+  `EstadoFolhaObra` varchar(45) DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`IdFolhaObra`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_folhas_obra`
@@ -204,7 +205,7 @@ CREATE TABLE `dat_fornecedores` (
 
 DROP TABLE IF EXISTS `dat_intervencoes_folha_obra`;
 CREATE TABLE `dat_intervencoes_folha_obra` (
-  `IdIntervencao` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `IdIntervencao` int(10) unsigned NOT NULL,
   `IdTecnico` int(10) unsigned NOT NULL,
   `IdFolhaObra` int(10) unsigned NOT NULL,
   `NomeTecnico` varchar(1024) NOT NULL,
@@ -214,7 +215,7 @@ CREATE TABLE `dat_intervencoes_folha_obra` (
   `HoraFim` varchar(45) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`IdIntervencao`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `dat_intervencoes_folha_obra`
@@ -244,6 +245,54 @@ CREATE TABLE `dat_logs` (
 
 /*!40000 ALTER TABLE `dat_logs` DISABLE KEYS */;
 /*!40000 ALTER TABLE `dat_logs` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dat_marcacoes`
+--
+
+DROP TABLE IF EXISTS `dat_marcacoes`;
+CREATE TABLE `dat_marcacoes` (
+  `IdMarcacao` int(10) unsigned NOT NULL,
+  `DataMarcacao` datetime NOT NULL,
+  `IdCliente` int(10) unsigned NOT NULL,
+  `IdLoja` int(10) unsigned NOT NULL,
+  `TipoMarcacao` tinyint(1) NOT NULL DEFAULT 1,
+  `ResumoMarcacao` varchar(1024) DEFAULT NULL,
+  `EstadoMarcacao` varchar(45) DEFAULT NULL,
+  `PrioridadeMarcacao` varchar(45) DEFAULT NULL,
+  `MarcacaoStamp` varchar(45) DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`IdMarcacao`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `dat_marcacoes`
+--
+
+/*!40000 ALTER TABLE `dat_marcacoes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dat_marcacoes` ENABLE KEYS */;
+
+
+--
+-- Definition of table `dat_marcacoes_tecnico`
+--
+
+DROP TABLE IF EXISTS `dat_marcacoes_tecnico`;
+CREATE TABLE `dat_marcacoes_tecnico` (
+  `IdMarcacaoTecnico` varchar(45) NOT NULL,
+  `MarcacaoStamp` varchar(45) NOT NULL,
+  `IdTecnico` int(10) unsigned NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`IdMarcacaoTecnico`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `dat_marcacoes_tecnico`
+--
+
+/*!40000 ALTER TABLE `dat_marcacoes_tecnico` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dat_marcacoes_tecnico` ENABLE KEYS */;
 
 
 --
@@ -350,7 +399,7 @@ CREATE TABLE `sys_tabelas` (
   `nometabela` varchar(45) NOT NULL,
   `ultimamodificacao` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
   PRIMARY KEY (`idtabela`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `sys_tabelas`
@@ -361,7 +410,12 @@ INSERT INTO `sys_tabelas` (`idtabela`,`nometabela`,`ultimamodificacao`) VALUES
  (1,'sa','1900-01-01 00:00:00'),
  (2,'cl','1900-01-01 00:00:00'),
  (3,'fl','1900-01-01 00:00:00'),
- (4,'ma','1900-01-01 00:00:00');
+ (4,'ma','1900-01-01 00:00:00'),
+ (5,'pa','1900-01-01 00:00:00'),
+ (6,'mh','1900-01-01 00:00:00'),
+ (7,'bi','1900-01-01 00:00:00'),
+ (8,'u_marcacao','1900-01-01 00:00:00'),
+ (9,'u_mtecnicos','1900-01-01 00:00:00');
 /*!40000 ALTER TABLE `sys_tabelas` ENABLE KEYS */;
 
 
@@ -379,31 +433,35 @@ CREATE TABLE `sys_utilizadores` (
   `EmailUtilizador` varchar(250) DEFAULT NULL,
   `IdCartaoTrello` varchar(100) DEFAULT NULL,
   `timestamp` timestamp NULL DEFAULT NULL,
+  `admin` tinyint(1) NOT NULL DEFAULT 0,
+  `enable` tinyint(1) NOT NULL DEFAULT 1,
+  `IdPHC` int(10) unsigned DEFAULT NULL,
+  `IdArmazem` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`IdUtilizador`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `sys_utilizadores`
 --
 
 /*!40000 ALTER TABLE `sys_utilizadores` DISABLE KEYS */;
-INSERT INTO `sys_utilizadores` (`IdUtilizador`,`NomeUtilizador`,`Password`,`NomeCompleto`,`TipoUtilizador`,`EmailUtilizador`,`IdCartaoTrello`,`timestamp`) VALUES 
- (1,'jmonteiro','AQAAAAEAACcQAAAAELeq22xmE9gUCMQun/WymGZPjjucwx/ilg8x8M9V2p8mB2vn6KM0Yiy2DVOzOB31aw==','Jorge Monteiro','1','jmonteiro@food-tech.pt','',NULL),
- (2,'lfernandes','AQAAAAEAACcQAAAAEGZVKT2u/mis91pvh6f+nYWdf717pNoGPsYozocKDUgkmQuoGzXo3C1cmfbuLYa9ZA==','Luis Fernandes','1','lfernandes@food-tech.pt',NULL,NULL),
- (3,'nmartins','AQAAAAEAACcQAAAAEFiEkz1uvmCRGLEvI6Bmbk9WEBcWWTcVYR18Bp4mY3wVLPKu+ffzpGd3fsi2HExmxw==','Nelson Martins','2','nmartins@food-tech.pt','59ccb51b751826836cfd4f95',NULL),
- (4,'ralmeida','AQAAAAEAACcQAAAAEAahhVEsmXwaU/80zNlihzpegFlL3He7ME06rE5SkYw/V4rctBUEF6RyspfjQOlKrg==','Ricardo Almeida','1','ralmeida@food-tech.pt','',NULL),
- (5,'psantos','AQAAAAEAACcQAAAAEKJAEPtx976uQnH8ogf7juNT5YKqY+JswmSrl7fSh/vpbQi+bpr0RJYfIUKaANjYdQ==','Pedro Santos','2','psantos@food-tech.pt','5cffd63b18581a4e74da24a9',NULL),
- (6,'arodrigues','AQAAAAEAACcQAAAAEGb+vnSBz+OsooXZmpq/6ZPWkEOYSlNvPWkySdUky8tznkgEFNLxXKtjIj3tLxymyg==','Armando Rodrigues','2','arodrigues@food-tech.pt','59ccb52aa80fdc78530096ea',NULL),
- (7,'roliveira','AQAAAAEAACcQAAAAEA7IIX+6geOrhV3B7jp9TpDoopWYYTDfocrKjcacqUgq3sVwpHySxlTMVvo/php7Tw==','Ricardo Oliveira','2','hpinto@food-tech.pt','59ccb536db119ea33b01400e',NULL),
- (8,'silvino','AQAAAAEAACcQAAAAEBBfOfMVcgM23Gg6dHJY/zXA+sGNhUpsQ01j3ZjGVNTeEoVk+YsFFbEJ6FXuEUYVBg==','Silvino','2','silvino@food-tech.pt',NULL,NULL),
- (9,'dcorreia','AQAAAAEAACcQAAAAEGzOCegSc8kce1FXkJe/aZULradxJHOHmM8GqOb6wOgkD9Qa5dazX4ke3ahqtOpDSA==','Diogo Correia','2','dcorreia@food-tech.pt','59ccb5722a8d2ef7d1ce17fb',NULL),
- (10,'pdeus','AQAAAAEAACcQAAAAEARXJ+xEuLbpJu3S5sPkzPEJju1BMgKlf/M69TtGVAey/qqVJcINiU5Lp5yqA9VWNQ==','Paulo Deus','2','pdeus@food-tech.pt','5e4124fb4b50a44e13907669',NULL),
- (11,'ddiogo','AQAAAAEAACcQAAAAEHBnt8rzwBHS+Km0cWiDFg7zttD7ZtI8yvmX+3EBdTkqEzGFzKVSExZx3dqEFGBfmQ==','Daniel Diogo','2','ddiogo@food-tech.pt','5db07146e80294682409b74e',NULL),
- (12,'mferreira','AQAAAAEAACcQAAAAEGidEMqvkvZ78Dp9LY8aN8Ee9evNGqOCEKm+96tWDexuXvonazLIamJbz209G/CeDQ==','Mafalda Ferreira','3','mferreira@food-tech.pt',NULL,NULL),
- (13,'cperes','AQAAAAEAACcQAAAAEIdBe7OJkMOy1j3pHhCFpT3RWrqigW/J82K0BZRdfsQZTJkC000XH423UKQ2jQi4Vg==','Cindy Peres','3','cperes@food-tech.pt',NULL,NULL),
- (14,'pecas','AQAAAAEAACcQAAAAEDqkoqMObRWuK8JNAgwbRe3jewdzLpeCqyD3N+tM590Z3d0hTTFHM//Uk/RZM61RLA==','Peças','3','pecas@food-tech.pt',NULL,NULL),
- (15,'hcrispim','AQAAAAEAACcQAAAAEG2jClLgA9a/+Ahq+HXAYSEDaxbEzgOEZuDAJyf2nygBd+lfZNpgkCinEvktwdu1ig==','Henrique Crispim','2','sopesagem@gmail.com','5cf68fd1933da030a49330c6',NULL),
- (16,'fsoares','AQAAAAEAACcQAAAAEDqkoqMObRWuK8JNAgwbRe3jewdzLpeCqyD3N+tM590Z3d0hTTFHM//Uk/RZM61RLA==','Filipe Soares','1','fsoares@food-tech.pt',NULL,NULL);
+INSERT INTO `sys_utilizadores` (`IdUtilizador`,`NomeUtilizador`,`Password`,`NomeCompleto`,`TipoUtilizador`,`EmailUtilizador`,`IdCartaoTrello`,`timestamp`,`admin`,`enable`,`IdPHC`,`IdArmazem`) VALUES 
+ (1,'jmonteiro','AQAAAAEAACcQAAAAELeq22xmE9gUCMQun/WymGZPjjucwx/ilg8x8M9V2p8mB2vn6KM0Yiy2DVOzOB31aw==','Jorge Monteiro','1','jmonteiro@food-tech.pt','',NULL,1,1,33,NULL),
+ (2,'lfernandes','AQAAAAEAACcQAAAAEGZVKT2u/mis91pvh6f+nYWdf717pNoGPsYozocKDUgkmQuoGzXo3C1cmfbuLYa9ZA==','Luis Fernandes','1','lfernandes@food-tech.pt',NULL,NULL,1,1,20,NULL),
+ (3,'nmartins','AQAAAAEAACcQAAAAEFiEkz1uvmCRGLEvI6Bmbk9WEBcWWTcVYR18Bp4mY3wVLPKu+ffzpGd3fsi2HExmxw==','Nelson Martins','1','nmartins@food-tech.pt','59ccb51b751826836cfd4f95',NULL,0,0,40,NULL),
+ (4,'ralmeida','AQAAAAEAACcQAAAAEAahhVEsmXwaU/80zNlihzpegFlL3He7ME06rE5SkYw/V4rctBUEF6RyspfjQOlKrg==','Ricardo Almeida','1','ralmeida@food-tech.pt','',NULL,0,0,34,NULL),
+ (5,'psantos','AQAAAAEAACcQAAAAEKJAEPtx976uQnH8ogf7juNT5YKqY+JswmSrl7fSh/vpbQi+bpr0RJYfIUKaANjYdQ==','Pedro Santos','1','psantos@food-tech.pt','5cffd63b18581a4e74da24a9',NULL,0,0,42,NULL),
+ (6,'arodrigues','AQAAAAEAACcQAAAAEGb+vnSBz+OsooXZmpq/6ZPWkEOYSlNvPWkySdUky8tznkgEFNLxXKtjIj3tLxymyg==','Armando Rodrigues','0','arodrigues@food-tech.pt','59ccb52aa80fdc78530096ea',NULL,0,0,NULL,NULL),
+ (7,'roliveira','AQAAAAEAACcQAAAAEA7IIX+6geOrhV3B7jp9TpDoopWYYTDfocrKjcacqUgq3sVwpHySxlTMVvo/php7Tw==','Ricardo Oliveira','1','hpinto@food-tech.pt','59ccb536db119ea33b01400e',NULL,0,0,43,NULL),
+ (8,'silvino','AQAAAAEAACcQAAAAEBBfOfMVcgM23Gg6dHJY/zXA+sGNhUpsQ01j3ZjGVNTeEoVk+YsFFbEJ6FXuEUYVBg==','Silvino','0','silvino@food-tech.pt',NULL,NULL,0,0,NULL,NULL),
+ (9,'dcorreia','AQAAAAEAACcQAAAAEGzOCegSc8kce1FXkJe/aZULradxJHOHmM8GqOb6wOgkD9Qa5dazX4ke3ahqtOpDSA==','Diogo Correia','1','dcorreia@food-tech.pt','59ccb5722a8d2ef7d1ce17fb',NULL,0,0,7,NULL),
+ (10,'pdeus','AQAAAAEAACcQAAAAEARXJ+xEuLbpJu3S5sPkzPEJju1BMgKlf/M69TtGVAey/qqVJcINiU5Lp5yqA9VWNQ==','Paulo Deus','1','pdeus@food-tech.pt','5e4124fb4b50a44e13907669',NULL,0,0,41,NULL),
+ (11,'ddiogo','AQAAAAEAACcQAAAAEHBnt8rzwBHS+Km0cWiDFg7zttD7ZtI8yvmX+3EBdTkqEzGFzKVSExZx3dqEFGBfmQ==','Daniel Diogo','1','ddiogo@food-tech.pt','5db07146e80294682409b74e',NULL,0,0,44,NULL),
+ (12,'mferreira','AQAAAAEAACcQAAAAEGidEMqvkvZ78Dp9LY8aN8Ee9evNGqOCEKm+96tWDexuXvonazLIamJbz209G/CeDQ==','Mafalda Ferreira','3','mferreira@food-tech.pt',NULL,NULL,1,1,NULL,NULL),
+ (13,'cperes','AQAAAAEAACcQAAAAEIdBe7OJkMOy1j3pHhCFpT3RWrqigW/J82K0BZRdfsQZTJkC000XH423UKQ2jQi4Vg==','Cindy Peres','3','cperes@food-tech.pt',NULL,NULL,0,1,NULL,NULL),
+ (14,'pecas','AQAAAAEAACcQAAAAEDqkoqMObRWuK8JNAgwbRe3jewdzLpeCqyD3N+tM590Z3d0hTTFHM//Uk/RZM61RLA==','Peças','3','pecas@food-tech.pt',NULL,NULL,0,1,NULL,NULL),
+ (15,'hcrispim','AQAAAAEAACcQAAAAEG2jClLgA9a/+Ahq+HXAYSEDaxbEzgOEZuDAJyf2nygBd+lfZNpgkCinEvktwdu1ig==','Henrique Crispim','1','sopesagem@gmail.com','5cf68fd1933da030a49330c6',NULL,0,0,9,NULL),
+ (16,'fsoares','AQAAAAEAACcQAAAAEDqkoqMObRWuK8JNAgwbRe3jewdzLpeCqyD3N+tM590Z3d0hTTFHM//Uk/RZM61RLA==','Filipe Soares','2','fsoares@food-tech.pt',NULL,NULL,1,1,500,NULL);
 /*!40000 ALTER TABLE `sys_utilizadores` ENABLE KEYS */;
 
 
