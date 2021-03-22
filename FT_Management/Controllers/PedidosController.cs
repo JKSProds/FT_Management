@@ -15,81 +15,52 @@ namespace FT_Management.Controllers
     [Authorize]
     public class PedidosController : Controller
     {
+        int Id_Tecnico;
         // GET: Pedidos
-        public ActionResult Index()
+        public ActionResult Index(int Tipo)
         {
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+           FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            if (user.IdCartaoTrello != null && user.IdCartaoTrello != string.Empty) return RedirectToAction("ListaPedidos", new { idQuadro = user.IdCartaoTrello });
-            return View(trello.ObterQuadros());
+            if (!user.Admin) return RedirectToAction("ListaPedidos", new { IdTecnico = user.Id });
+
+            if (Tipo == 1) return View(context.ObterListaTecnicos());
+
+            return View(context.ObterListaComerciais());
         }
 
-        public ActionResult ListaPedidos(string idQuadro, string idlista, string GuiaTransporte)
+        public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
         {
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            List<TrelloListas> trelloListas = trello.ObterListas(idQuadro);
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarMarcacoes();
 
-            if (idlista == null || idlista == string.Empty)
-            {
-                foreach (var lista in trelloListas)
-                {
+            if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
+            ViewData["DataPedidos"] = DataPedidos;
 
-                    if (lista.NomeLista.Contains(DateTime.Now.ToString("dd/MM/yyyy")))
-                    {
-                        idlista = lista.IdLista;
-                    }
-                }
-                if (idlista == null && trelloListas.Count > 0)
-                {
-                    idlista = trelloListas.First().IdLista;
-
-                }
-            }
-
-            Utilizador Tecnico = context.ObterUtilizadorNome(trello.ObterQuadros().Where(q => q.IdQuadro == idQuadro).First().NomeQuadro.Replace("Serviços ", ""));
-               
-            List<Movimentos> LstGuias = context.ObterListaMovimentos(Tecnico.Id);
-            ViewData["LstGuias"] = LstGuias;
-            if (GuiaTransporte == null)
-            {
-                ViewData["LstGuiasPecas"] = context.ObterListaMovimentos(Tecnico.Id, LstGuias.Count > 0 ? LstGuias.Last().GuiaTransporte : "");
-                ViewData["LstGuiasSelected"] = LstGuias.Count > 0 ? LstGuias.Last().GuiaTransporte : "";
-            }
-            else
-            {
-                ViewData["LstGuiasPecas"] = context.ObterListaMovimentos(Tecnico.Id, GuiaTransporte);
-                ViewData["LstGuiasSelected"] = GuiaTransporte;
-            }
-
-            trelloListas.Where(l => l.IdLista == idlista).FirstOrDefault().ListaCartoes = trello.ObterCartoes(idlista);
-
-            ViewData["SelectedLista"] = idlista;
-
-            return View(trelloListas);
+            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
+            Id_Tecnico = int.Parse(IdTecnico);
+            ViewData["IdTecnico"] = IdTecnico;
+            return View(ListaMarcacoes);
         }
-        public ActionResult Pedido(string idCartao)
+        public ActionResult Pedido(string idMarcacao)
         {
-            if (idCartao == null) return RedirectToAction("Index");
+            if (idMarcacao == null) return RedirectToAction("Index");
 
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarMarcacoes();
+            phccontext.AtualizarFolhasObra();
 
-            TrelloCartoes cartao = trello.ObterCartao(idCartao);
-            ViewData["PessoaContacto"] = context.ObterClienteNome(cartao.NomeCartao).PessoaContatoCliente;
+            Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
+            marcacao.Tecnico = Id_Tecnico;
+            ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
 
             Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             ViewData["SelectedTecnico"] = user.NomeCompleto;
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != "3").ToList();
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
 
-
-
-            if (cartao.IdCartao == null) return RedirectToAction("Index");
-            cartao.FolhasObra = context.ObterListaFolhasObraCartao(idCartao);
-
-            return View(cartao);
+            return View(marcacao);
         }
         public ActionResult ValidarPedido(string idcartao, string estado)
         {

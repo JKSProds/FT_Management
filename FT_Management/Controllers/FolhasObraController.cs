@@ -18,7 +18,7 @@ namespace FT_Management.Controllers
         public ActionResult Index(string DataFolhasObra)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).TipoUtilizador == "2") return RedirectToAction("Index", "Pedidos");
+            if (!context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Admin) return RedirectToAction("Index", "Pedidos");
             if (DataFolhasObra == null || DataFolhasObra == string.Empty) DataFolhasObra = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["DataFolhasObra"] = DataFolhasObra;
 

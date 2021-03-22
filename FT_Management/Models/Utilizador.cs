@@ -27,8 +27,10 @@ namespace FT_Management.Models
         [Display(Name = "Password")]
         public string Password { get; set; }
         public string NomeCompleto { get; set; }
-        public string TipoUtilizador { get; set; }
+        public int TipoUtilizador { get; set; }
         public string EmailUtilizador { get; set; }
         public string IdCartaoTrello { get; set; }
+        public bool Admin { get; set; }
+        public bool Enable { get; set; }
     }
 }

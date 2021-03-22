@@ -31,7 +31,8 @@ namespace FT_Management.Models
                 //FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
                 //FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
                 //FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
             }
             catch
             {
@@ -102,7 +103,7 @@ namespace FT_Management.Models
                     {
                         Ref_Produto = result["ref"].ToString(),
                         Designacao_Produto = result["design"].ToString(),
-                        Stock_Fisico = double.Parse(result["stock_fis"].ToString()),
+                        //Stock_Fisico = double.Parse(result["stock_fis"].ToString()),
                         Stock_PHC = double.Parse(result["stock"].ToString()),
                         Stock_Rec = double.Parse(result["qttrec"].ToString()),
                         Stock_Res = double.Parse(result["rescli"].ToString()),
@@ -343,7 +344,7 @@ namespace FT_Management.Models
                                 DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
                                 ReferenciaServico = result["u_nincide"].ToString().Trim(),
                                 EstadoEquipamento = result["situacao"].ToString().Trim(),
-                                SituacoesPendentes = result["problema"].ToString().Trim(),
+                                //SituacoesPendentes = result["problema"].ToString().Trim(),
                                 EquipamentoServico = equipamento,
                                 ClienteServico = cliente,
                                 IdCartao = result["u_marcacaostamp"].ToString().Trim()
@@ -484,8 +485,8 @@ namespace FT_Management.Models
                         {
                             IdMarcacao = int.Parse(result["num"].ToString().Trim()),
                             DataMarcacao = DateTime.Parse(result["data"].ToString().Trim()),
-                            cliente = new Cliente { IdCliente = int.Parse(result["no"].ToString().Trim()), IdLoja = int.Parse(result["estab"].ToString().Trim()) },
-                            IdTecnico = int.Parse(result["tecnno"].ToString().Trim()),
+                            Cliente = new Cliente { IdCliente = int.Parse(result["no"].ToString().Trim()), IdLoja = int.Parse(result["estab"].ToString().Trim()) },
+                            //IdTecnico = int.Parse(result["tecnno"].ToString().Trim()),
                             ResumoMarcacao = result["resumo"].ToString().Trim(),
                             EstadoMarcacao = result["estado"].ToString().Trim(),
                             PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
@@ -499,6 +500,47 @@ namespace FT_Management.Models
                 FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao");
 
                 Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
+            }
+
+            return LstMarcacao;
+        }
+        public List<Marcacao> ObterTecnicosMarcacao(DateTime dataUltimaLeitura)
+        {
+
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno from u_mtecnicos where marcado=1 AND usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstMarcacao.Add(new Marcacao()
+                        {
+                            IdMarcacao = int.Parse(result["tecnno"].ToString().Trim()),
+                            EstadoMarcacao = result["u_mtecnicosstamp"].ToString().Trim(),
+                            MarcacaoStamp = result["marcacaostamp"].ToString().Trim()
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("u_mtecnicos");
+
+                Console.WriteLine("Tecnicos por marcacao atualizadas com sucesso! (PHC -> MYSQL)");
 
             }
             catch

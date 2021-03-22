@@ -187,6 +187,89 @@ namespace FT_Management.Models
             return LstFolhasObra;
 
         }
+        public List<Marcacao> ObterListaMarcacoes(int IdTecnico)
+        {
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico + "; ");
+                while (result.Read())
+                {
+                    //DateTime d = DateTime.Parse(result["DataMarcacao"]);
+
+                    LstMarcacao.Add(new Marcacao()
+                    {
+                        IdMarcacao = result["IdMarcacao"],
+                        DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoMarcacao = result["ResumoMarcacao"],
+                        EstadoMarcacao = result["EstadoMarcacao"],
+                        PrioridadeMarcacao = result["PrioridadeMarcacao"],
+                        MarcacaoStamp = result["MarcacaoStamp"]
+
+                    });
+                }
+            }
+
+            return LstMarcacao;
+
+        }
+ 
+        public List<Marcacao> ObterListaMarcacoes(int IdTecnico, DateTime DataMarcacao)
+        {
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+            String DataM = DataMarcacao.ToString("yyyy-MM-dd");
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico+" AND DataMarcacao like '%"+DataM+"%';");
+                while (result.Read())
+                {
+                    LstMarcacao.Add(new Marcacao()
+                    {
+                        IdMarcacao = result["IdMarcacao"],
+                        DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoMarcacao = result["ResumoMarcacao"],
+                        EstadoMarcacao = result["EstadoMarcacao"],
+                        PrioridadeMarcacao = result["PrioridadeMarcacao"],
+                        MarcacaoStamp = result["MarcacaoStamp"]
+
+                    });
+                }
+            }
+
+            return LstMarcacao;
+
+        }
+        public Marcacao ObterMarcacao(int IdMarcacao)
+        {
+            Marcacao res = new Marcacao();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacoes where IdMarcacao=" + IdMarcacao + ";");
+                while (result.Read())
+                {
+                    res = new Marcacao()
+                    {
+                        IdMarcacao = result["IdMarcacao"],
+                        DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoMarcacao = result["ResumoMarcacao"],
+                        EstadoMarcacao = result["EstadoMarcacao"],
+                        PrioridadeMarcacao = result["PrioridadeMarcacao"],
+                        MarcacaoStamp = result["MarcacaoStamp"]
+                    };
+                }
+            }
+
+            res.LstFolhasObra = ObterListaFolhasObraCartao(res.MarcacaoStamp);
+            return res;
+
+        }
         public List<FolhaObra> ObterListaFolhasObraCartao(string IdCartao)
         {
             List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
@@ -433,7 +516,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT dat_folhas_obra.IdFolhaObra, NomeTecnico, NomeCliente, dat_folhas_obra.DataServico, GuiaTransporteAtual, RefProduto, Designacao, Quantidade FROM dat_folhas_obra inner join dat_clientes, dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND RefProduto = '" + Ref_Produto + "' AND dat_clientes.idcliente = dat_folhas_obra.idcliente GROUP BY dat_produto_intervencao.RefProduto, dat_folhas_obra.idfolhaobra;");
+                using var result = db.Query("SELECT dat_folhas_obra.IdFolhaObra, NomeTecnico, NomeCliente, dat_folhas_obra.DataServico, GuiaTransporteAtual, RefProduto, Designacao, Quantidade FROM dat_folhas_obra inner join dat_clientes, dat_produto_intervencao, dat_intervencoes_folha_obra where dat_produto_intervencao.idfolhaobra = dat_folhas_obra.idfolhaobra AND dat_intervencoes_folha_obra.idfolhaobra = dat_folhas_obra.idfolhaobra AND RefProduto = '" + Ref_Produto + "' AND dat_clientes.idcliente = dat_folhas_obra.idcliente AND dat_clientes.idloja = dat_folhas_obra.idloja GROUP BY dat_produto_intervencao.RefProduto, dat_folhas_obra.idfolhaobra;");
                 while (result.Read())
                 {
                     LstGuias.Add(new Movimentos()
@@ -602,7 +685,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaUtilizadores()
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores;";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where enable=1;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -623,6 +706,48 @@ namespace FT_Management.Models
             }
             return LstUtilizadores;
         }
+        public List<Utilizador> ObterListaTecnicos()
+        {
+            List<Utilizador> LstUtilizadores = new List<Utilizador>();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = "+1+";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstUtilizadores.Add(new Utilizador()
+                    {
+                        Id = result["IdPHC"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        NomeCompleto = result["NomeCompleto"],
+                        EmailUtilizador = result["EmailUtilizador"]
+                    });
+                }
+            }
+            return LstUtilizadores;
+        }
+        public List<Utilizador> ObterListaComerciais()
+        {
+            List<Utilizador> LstUtilizadores = new List<Utilizador>();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 2 + ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstUtilizadores.Add(new Utilizador()
+                    {
+                        Id = result["IdPHC"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        NomeCompleto = result["NomeCompleto"],
+                        EmailUtilizador = result["EmailUtilizador"]
+                    });
+                }
+            }
+            return LstUtilizadores;
+        }
         public Utilizador ObterUtilizador(int Id)
         {
             Utilizador utilizador = new Utilizador();
@@ -635,13 +760,15 @@ namespace FT_Management.Models
                 {
                     utilizador = new Utilizador()
                     {
-                        Id = result["IdUtilizador"],
+                        Id = result["IdPHC"],
                         NomeUtilizador = result["NomeUtilizador"],
                         Password = result["Password"],
                         NomeCompleto = result["NomeCompleto"],
-                        TipoUtilizador = result["TipoUtilizador"],
+                        TipoUtilizador = int.Parse(result["TipoUtilizador"]),
                         EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"]
+                        IdCartaoTrello = result["IdCartaoTrello"],
+                        Admin = result["admin"] == 1,
+                        Enable = result["enable"] == 1
                     };
                 }
             }
@@ -950,16 +1077,44 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
 
-                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,IdTecnico,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp) VALUES ";
+                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp) VALUES ";
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.cliente.IdCliente + "', '" + marcacao.cliente.IdLoja + "', '" + marcacao.IdTecnico + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', '" + marcacao.EstadoMarcacao + "', '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', '" + marcacao.EstadoMarcacao + "', '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), IdTecnico = VALUES(IdTecnico), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp);";
+                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+            }
+        }
+        public void CriarTecnicosMarcacao(List<Marcacao> LstMarcacao)
+        {
+            int max = 5000;
+            int j = 0;
+            for (int i = 0; j < LstMarcacao.Count; i++)
+            {
+                if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
+
+                string sql = "INSERT INTO dat_marcacoes_tecnico (IdMarcacaoTecnico, MarcacaoStamp, IdTecnico) VALUES ";
+
+                foreach (var marcacao in LstMarcacao.GetRange(j, max))
+                {
+                    sql += ("('" + marcacao.EstadoMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.IdMarcacao + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE MarcacaoStamp=VALUES(MarcacaoStamp), IdTecnico = VALUES(IdTecnico);";
 
                 Database db = ConnectionString;
 
@@ -1341,7 +1496,7 @@ namespace FT_Management.Models
             {
                 foreach (var intervencao in folhaobra.IntervencaosServico)
                 {
-                    folhaobra.RelatorioServico += intervencao.DataServiço + " - " + intervencao.HoraInicio + " -> " + intervencao.HoraFim + ": " + intervencao.RelatorioServico + " ";
+                    folhaobra.RelatorioServico += intervencao.DataServiço.ToShortDateString() + " - " + intervencao.HoraInicio.ToShortTimeString() + " -> " + intervencao.HoraFim.ToShortTimeString() + ": " + intervencao.RelatorioServico + " ";
                 }
             }
             else if (folhaobra.IntervencaosServico.Count > 0)

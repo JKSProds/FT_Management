@@ -1,4 +1,4 @@
-﻿@model FT_Management.Models.TrelloCartoes
+﻿@model FT_Management.Models.Marcacao
 
 
 @{
@@ -8,14 +8,14 @@
 <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
     <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
     <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
-    <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
-    <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>
+    @*<a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
+    <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>*@
 </div>
 <br />
 <hr />
 
 <h1 class="text-center">
-    @Html.DisplayFor(model => model.NomeCartao)
+    @Html.DisplayFor(model => model.Cliente.NomeCliente)
 </h1>
 <hr />
 <div class="tab-content" id="v-pills-tabContent">
@@ -26,63 +26,63 @@
         <div>
             <dl class="row">
                 <dd class="col-sm-12">
-                    <span style="white-space: pre-line">@Model.DescricaoCartao</span>
+                    <span style="white-space: pre-line">@Model.ResumoMarcacao</span>
                 </dd>
             </dl>
         </div>
     </div>
 
-    <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
+    @*<div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
 
-        <br />
-        <a class="btn btn-primary btn-block btn-lg form-group " style="color:white; margin-bottom:5px; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="btnAddAnexo" data-toggle="modal" data-target="#myModal3"><i class="fas fa-plus"></i> Novo Anexo<span class="spinner-border text-success float-right" style="display:none" id="addAnexo" role="status" aria-hidden="true"></span></a>
-
-        @if (Model.Anexos.Count() == 0)
-        {
             <br />
-            <button class="btn btn-lg btn-danger btn-block form-group disabled" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados anexos!</button>
-        }
-        else
-        {
-            <table class="table table-hover" id="tblAnexos">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Anexos.First().Name)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Anexos.First().Date)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Anexos)
-                    {
-                        <tr id="anexo_@item.Name">
-                            <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.Id, idcartao = item.IdCartao }))'">
-                                <span>@item.Name</span>
-                            </td>
-                            <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.Id, idcartao = item.IdCartao }))'">
-                                <span>@item.Date.ToString("dd-MM-yyyy HH:mm")</span>
-                            </td>
-                            <td>
-                                <div class="btn-group float-right  @(item.MimeType == "application/pdf" ? "" : "d-none") ">
-                                    <a class="btn btn-outline-success btn-lg" onclick="ConfirmAssinarDocumento('@Model.IdCartao', '@item.Id')"><i class="fas fa-signature" style="font-size:20px"></i></a>
-                                </div>
-                            </td>
+            <a class="btn btn-primary btn-block btn-lg form-group " style="color:white; margin-bottom:5px; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="btnAddAnexo" data-toggle="modal" data-target="#myModal3"><i class="fas fa-plus"></i> Novo Anexo<span class="spinner-border text-success float-right" style="display:none" id="addAnexo" role="status" aria-hidden="true"></span></a>
+
+            @if (Model.Anexos.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block form-group disabled" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados anexos!</button>
+            }
+            else
+            {
+                <table class="table table-hover" id="tblAnexos">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Anexos.First().Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Anexos.First().Date)
+                            </th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Anexos)
+                        {
+                            <tr id="anexo_@item.Name">
+                                <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.Id, idcartao = item.IdCartao }))'">
+                                    <span>@item.Name</span>
+                                </td>
+                                <td onclick="location.href = '@(Url.Action("DescarregarAnexo", "Pedidos", new { id = item.Id, idcartao = item.IdCartao }))'">
+                                    <span>@item.Date.ToString("dd-MM-yyyy HH:mm")</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group float-right  @(item.MimeType == "application/pdf" ? "" : "d-none") ">
+                                        <a class="btn btn-outline-success btn-lg" onclick="ConfirmAssinarDocumento('@Model.IdCartao', '@item.Id')"><i class="fas fa-signature" style="font-size:20px"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>*@
     <div class="tab-pane fade show" id="v-pills-folhas" role="tabpanel" aria-labelledby="v-pills-folhas-tab">
         <br />
-        <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.IdCartao }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
+        <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new { idCartao = Model.MarcacaoStamp }))'"><i class="fas fa-plus"></i> Nova Folha de Obra</a>
 
 
-        @if (Model.FolhasObra.Count() == 0)
+        @if (Model.LstFolhasObra.Count() == 0)
         {
             <br />
             <button class="btn btn-lg btn-danger btn-block form-group disabled" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
@@ -93,19 +93,19 @@
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.FolhasObra.First().DataServico)
+                            @Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.FolhasObra.First().ClienteServico.NomeCliente)
+                            @Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.FolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
+                            @Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
                         </th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.FolhasObra)
+                    @foreach (var item in Model.LstFolhasObra)
                     {
                         <tr>
                             <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
@@ -119,7 +119,7 @@
                             </td>
                             <td>
                                 <div class="btn-group float-right">
-                                    <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                    <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')"><i class="fas fa-print" style="font-size:20px"></i></a>
                                     <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
                                         <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
                                     </a>
@@ -131,413 +131,415 @@
             </table>
         }
     </div>
-    <div class="tab-pane fade show" id="v-pills-com" role="tabpanel" aria-labelledby="v-pills-com-tab">
+    @*<div class="tab-pane fade show" id="v-pills-com" role="tabpanel" aria-labelledby="v-pills-com-tab">
 
-        <br />
-        <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="addCom" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario <span class="spinner-border text-success float-right" style="display:none" id="addComment" role="status" aria-hidden="true"></span></a>
-<br>
-        <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" >Não foram encontrados comentários!</button>
+                <br />
+                <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="addCom" onclick="ConfirmAdicionarComentario('@Model.IdCartao')"><i class="fas fa-plus"></i> Novo Comentario <span class="spinner-border text-success float-right" style="display:none" id="addComment" role="status" aria-hidden="true"></span></a>
+        <br>
+                <button class="btn btn-lg btn-danger form-group btn-block disabled @(Model.Comentarios.Count() == 0 ? "" : "d-none")" id="no-com" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" >Não foram encontrados comentários!</button>
 
-        <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Comentarios.First().Utilizador)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Comentarios.First().Comentario)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Comentarios.First().DataComentario)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Comentarios)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Utilizador)
+                <table class="table table-hover @(Model.Comentarios.Count() == 0 ? "d-none" : "")" id="tblComentarios">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().Utilizador)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().Comentario)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Comentarios.First().DataComentario)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Comentarios)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Utilizador)
 
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Comentario)
-                        </td>
-                        <td>
-                            <span>@item.DataComentario.ToString("dd/MM/yyyy HH:mm")</span>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Comentario)
+                                </td>
+                                <td>
+                                    <span>@item.DataComentario.ToString("dd/MM/yyyy HH:mm")</span>
 
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-<div>
-    <br />
-    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { idQuadro = Model.IdQuadro, idLista = Model.IdLista }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Adicionar Comentário</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <textarea id="txtComentario" class="form-control" rows="5" placeholder="Comentário" required></textarea>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarComentario()" href="javascript:;">Adicionar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enviar Mail</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input id="txtEmail" type="email" class="form-control" placeholder="Email" value="" required />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="EnviarEmail()" href="javascript:;">Enviar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Adicionar Anexo</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post" enctype="multipart/form-data" asp-controller="Pedidos" asp-action="AdicionarAnexo" style="margin-bottom: -10px">
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo()">
-                                <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
-                            </div>
-                            <input type="hidden" id="hiddenCartaoId" name="idcartao" value="@Model.IdCartao" />
-
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Assinar Documento</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <label class="control-label">Nome do Cliente</label>
-                <input id="txtNomeCliente" type="text" class="form-control" placeholder="Nome do Cliente" value='@ViewData["PessoaContacto"]' required />
-                <div class="d-none" id="chkEntregue">
-                    <br />
-                    <input type="checkbox" class="custom-checkbox" id="chkManualEntregue" />
-                    <label class="control-label">Manual entregue ao cliente?</label>
-                    <br />
-                    @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
-                    <label for="tecnico" class="col-form-label">Técnico</label>
-                    <select class="form-control col-sm-12" id="txtTecnico" asp-items="@(new SelectList(LstTecnicos, "NomeCompleto", "NomeCompleto", ViewData["SelectedTecnico"]))"></select>
-                </div>
-                <label class="col-form-label">Tipo de Documento</label>
-                <select id="tipoDocumento" class="form-control" onchange="AlteradoTipoDoc()">
-                    <option value="0">Guia de Transporte</option>
-                    <option value="1">Auto</option>
-                    <option value="2">Outro</option>
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="adicionarAssinatura" onclick="AssinarDocumento()" href="javascript:;">Assinar Documento  <span class="spinner-border text-success float-right" style="display:none" id="addAssinatura" role="status" aria-hidden="true"></span></button>
-            </div>
-        </div>
-    </div>
-</div>
-<input type="hidden" id="hiddenCartaoId" />
-<input type="hidden" id="hiddenFolhaObraId" />
-<input type="hidden" id="hiddenAnexoId" />
-
-
-<script>
-    var ConfirmAdicionarComentario = function (IdCartao) {
-        $("#hiddenCartaoId").val(IdCartao);
-        $("#myModal").modal('show');
-
-    }
-
-    var ConfirmAssinarDocumento = function (IdCartao, IdAnexo) {
-        $("#hiddenCartaoId").val(IdCartao);
-        $("#hiddenAnexoId").val(IdAnexo);
-
-        $("#myModal4").modal('show');
-
-    }
-
-    function AlteradoTipoDoc() {
-        var opcaoAtual = document.getElementById("tipoDocumento").value;
-        if (opcaoAtual == 1) {
-            document.getElementById("chkEntregue").classList.remove("d-none");
-
-        } else {
-            document.getElementById("chkEntregue").classList.add("d-none");
-            $('#chkManualEntregue').prop('checked', false);
-        }
-    }
-
-    function AssinarDocumento() {
-
-        document.getElementById("addAssinatura").style.display = '';
-        document.getElementById("adicionarAssinatura").classList.add("disabled");
-
-        var nomeCliente = document.getElementById("txtNomeCliente").value;
-        var cartaoId = document.getElementById("hiddenCartaoId").value;
-        var checkedManual = $('#chkManualEntregue').is(":checked");
-        var tipoDocumento = document.getElementById("tipoDocumento").value;
-        var anexoid = document.getElementById("hiddenAnexoId").value;
-        var nomeTecnico = document.getElementById("txtTecnico").value;
-
-        var json = {
-            nomecliente: nomeCliente,
-            cartaoid: cartaoId,
-            manualentregue: checkedManual,
-            tipodocumento: tipoDocumento,
-            idanexo: anexoid,
-            nometecnico: nomeTecnico
-        };
-
-
-        $.ajax({
-            type: "POST",
-            url: "/Pedidos/AssinarDocumento",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    var m = new Date(result.date);
-                    var dateString =
-                        ("0" + m.getUTCDate()).slice(-2) + "-" +
-                        ("0" + (m.getUTCMonth() + 1)).slice(-2) + "-" +
-                        m.getUTCFullYear() + " " +
-                        ("0" + m.getUTCHours()).slice(-2) + ":" +
-                        ("0" + m.getUTCMinutes()).slice(-2);
-
-                    //alert(JSON.stringify(result));
-                    var newRow = document.getElementById('tblAnexos').insertRow();
-                    newRow.setAttribute("id", "linha_" + result);
-                    newRow.innerHTML = "<td>" + result.name + "</td><td>" + dateString + "</td><td></td>";
-
-                    document.getElementById("addAssinatura").style.display = 'none';
-                    document.getElementById("adicionarAssinatura").classList.remove("disabled");
-                    $('#myModal4').modal('toggle');
-
-
-                    $.notify({
-                        message: "Anexo adicionado com sucesso!"
-                    }, {
-                        // settings
-                        type: 'success',
-                        onShow: function () {
-                            this.css({ 'width': 'auto', 'height': 'auto' });
+                                </td>
+                            </tr>
                         }
-                    });
-                });
+                    </tbody>
+                </table>
+            </div>
+        </div>*@
+    <div>
+        <br />
+        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = Model.Tecnico, DataPedidos = Model.DataMarcacao.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Adicionar Comentário</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="txtComentario" class="form-control" rows="5" placeholder="Comentário" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarComentario()" href="javascript:;">Adicionar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Enviar Mail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="txtEmail" type="email" class="form-control" placeholder="Email" value="" required />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="EnviarEmail()" href="javascript:;">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Adicionar Anexo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" asp-controller="Pedidos" asp-action="AdicionarAnexo" style="margin-bottom: -10px">
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo()">
+                                    <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                                </div>
+                                <input type="hidden" id="hiddenCartaoId" name="idcartao" value="@Model.MarcacaoStamp" />
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Assinar Documento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label class="control-label">Nome do Cliente</label>
+                    <input id="txtNomeCliente" type="text" class="form-control" placeholder="Nome do Cliente" value='@ViewData["PessoaContacto"]' required />
+                    <div class="d-none" id="chkEntregue">
+                        <br />
+                        <input type="checkbox" class="custom-checkbox" id="chkManualEntregue" />
+                        <label class="control-label">Manual entregue ao cliente?</label>
+                        <br />
+                        @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
+                        <label for="tecnico" class="col-form-label">Técnico</label>
+                        <select class="form-control col-sm-12" id="txtTecnico" asp-items="@(new SelectList(LstTecnicos, "NomeCompleto", "NomeCompleto", ViewData["SelectedTecnico"]))"></select>
+                    </div>
+                    <label class="col-form-label">Tipo de Documento</label>
+                    <select id="tipoDocumento" class="form-control" onchange="AlteradoTipoDoc()">
+                        <option value="0">Guia de Transporte</option>
+                        <option value="1">Auto</option>
+                        <option value="2">Outro</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" id="adicionarAssinatura" onclick="AssinarDocumento()" href="javascript:;">Assinar Documento  <span class="spinner-border text-success float-right" style="display:none" id="addAssinatura" role="status" aria-hidden="true"></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        <input type="hidden" id="hiddenCartaoId" />
+        <input type="hidden" id="hiddenFolhaObraId" />
+        <input type="hidden" id="hiddenAnexoId" />
+
+
+        <script>
+            var ConfirmAdicionarComentario = function (IdCartao) {
+                $("#hiddenCartaoId").val(IdCartao);
+                $("#myModal").modal('show');
+
             }
-        });
 
-    }
+            var ConfirmAssinarDocumento = function (IdCartao, IdAnexo) {
+                $("#hiddenCartaoId").val(IdCartao);
+                $("#hiddenAnexoId").val(IdAnexo);
 
-    var ConfirmEnviarEmail = function (IdFolhaObra) {
-        $("#hiddenFolhaObraId").val(IdFolhaObra);
-        var json = {
-            id: IdFolhaObra
-        };
-        $.ajax({
-            type: "POST",
-            url: "/FolhasObra/ObterEmailClienteFolhaObra",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    // alert(JSON.stringify(result));
-                    document.getElementById("txtEmail").value = result;
-                });
+                $("#myModal4").modal('show');
+
             }
-        });
-        $("#myModal2").modal('show');
 
-    }
-    function AdicionarComentario(IdCartao) {
-        {
-            document.getElementById("addComment").style.display = '';
-            document.getElementById("addCom").classList.add("disabled");
+            function AlteradoTipoDoc() {
+                var opcaoAtual = document.getElementById("tipoDocumento").value;
+                if (opcaoAtual == 1) {
+                    document.getElementById("chkEntregue").classList.remove("d-none");
 
-            var comment = {
-                idcartao: document.getElementById("hiddenCartaoId").value,
-                comentario: document.getElementById("txtComentario").value
-            };
-
-            $('#myModal').modal('toggle');
-            $('#myModal')
-                .find("input,textarea,select")
-                .val('')
-                .end()
-                .find("input[type=checkbox], input[type=radio]")
-                .prop("checked", "")
-                .end();
-
-            $.ajax({
-                type: "POST",
-                url: "/Pedidos/AdicionarComentario",
-                data: comment,
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        //alert(JSON.stringify(result));
-                        document.getElementById('no-com') != null ? document.getElementById('no-com').classList.add("d-none") : "";
-                        document.getElementById('tblComentarios').classList.remove("d-none");
-
-                        var m = new Date(result.dataComentario);
-                        var dateString =
-                            ("0" + m.getUTCDate()).slice(-2) + "/" +
-                            ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" +
-                            m.getUTCFullYear() + " " +
-                            ("0" + m.getUTCHours()).slice(-2) + ":" +
-                            ("0" + m.getUTCMinutes()).slice(-2);
-
-                        //var newRow = document.getElementById('tblComentarios').insertRow();
-                        var row = "<td>" + result.utilizador + "</td><td>" + result.comentario + "</td><td>" + dateString + "</td>";
-                        $(row).insertAfter("#tblComentarios tr:first");
-
-                        $.notify({
-                            message: "Comentário adicionado com sucesso!"
-                        }, {
-                            // settings
-                            type: 'success',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
-                        });
-
-                        document.getElementById("addComment").style.display = 'none';
-                        document.getElementById("addCom").classList.remove("disabled");
-
-                    });
+                } else {
+                    document.getElementById("chkEntregue").classList.add("d-none");
+                    $('#chkManualEntregue').prop('checked', false);
                 }
-            });
+            }
 
-        }
-    }
+            function AssinarDocumento() {
 
-    function EnviarEmail() {
+                document.getElementById("addAssinatura").style.display = '';
+                document.getElementById("adicionarAssinatura").classList.add("disabled");
 
-        var idCartao = document.getElementById("hiddenFolhaObraId").value;
-        var emailDestino = document.getElementById("txtEmail").value;
+                var nomeCliente = document.getElementById("txtNomeCliente").value;
+                var cartaoId = document.getElementById("hiddenCartaoId").value;
+                var checkedManual = $('#chkManualEntregue').is(":checked");
+                var tipoDocumento = document.getElementById("tipoDocumento").value;
+                var anexoid = document.getElementById("hiddenAnexoId").value;
+                var nomeTecnico = document.getElementById("txtTecnico").value;
 
-        document.getElementById("folha_" + idCartao).style.display = '';
-        document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
+                var json = {
+                    nomecliente: nomeCliente,
+                    cartaoid: cartaoId,
+                    manualentregue: checkedManual,
+                    tipodocumento: tipoDocumento,
+                    idanexo: anexoid,
+                    nometecnico: nomeTecnico
+                };
 
 
-        var json = {
-            id: idCartao,
-            emailDestino: emailDestino
-        };
+                $.ajax({
+                    type: "POST",
+                    url: "/Pedidos/AssinarDocumento",
+                    data: json,
+                    traditional: true,
+                    success: function (result) {
+                        $(function () {
+                            var m = new Date(result.date);
+                            var dateString =
+                                ("0" + m.getUTCDate()).slice(-2) + "-" +
+                                ("0" + (m.getUTCMonth() + 1)).slice(-2) + "-" +
+                                m.getUTCFullYear() + " " +
+                                ("0" + m.getUTCHours()).slice(-2) + ":" +
+                                ("0" + m.getUTCMinutes()).slice(-2);
 
-        $('#myModal2').modal('toggle');
-        $('#myModal2')
-            .find("input,textarea,select")
-            .val('')
-            .end();
+                            //alert(JSON.stringify(result));
+                            var newRow = document.getElementById('tblAnexos').insertRow();
+                            newRow.setAttribute("id", "linha_" + result);
+                            newRow.innerHTML = "<td>" + result.name + "</td><td>" + dateString + "</td><td></td>";
 
-        $.ajax({
-            type: "POST",
-            url: "/FolhasObra/EmailFolhaObra",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    document.getElementById("folha_" + idCartao).style.display = 'none';
-                    document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
+                            document.getElementById("addAssinatura").style.display = 'none';
+                            document.getElementById("adicionarAssinatura").classList.remove("disabled");
+                            $('#myModal4').modal('toggle');
 
-                    if (result == "Sucesso") {
-                        $.notify({
-                            message: "Email enviado com sucesso!"
-                        }, {
-                            // settings
-                            type: 'success',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
-                        });
 
-                        var json = {
-                            id: idCartao,
-                            novoemail: emailDestino
-                        };
-                        $.ajax({
-                            type: "POST",
-                            url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
-                            data: json,
-                            traditional: true,
-                            success: function (result) {
-                                $(function () {
-                                });
-                            }
-                        });
-
-                    } else {
-                        $.notify({
-                            message: "Ocorreu um erro!"
-                        }, {
-                            // settings
-                            type: 'danger',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
+                            $.notify({
+                                message: "Anexo adicionado com sucesso!"
+                            }, {
+                                // settings
+                                type: 'success',
+                                onShow: function () {
+                                    this.css({ 'width': 'auto', 'height': 'auto' });
+                                }
+                            });
                         });
                     }
+                });
 
+            }
+
+            var ConfirmEnviarEmail = function (IdFolhaObra) {
+                $("#hiddenFolhaObraId").val(IdFolhaObra);
+                var json = {
+                    id: IdFolhaObra
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/FolhasObra/ObterEmailClienteFolhaObra",
+                    data: json,
+                    traditional: true,
+                    success: function (result) {
+                        $(function () {
+                            // alert(JSON.stringify(result));
+                            document.getElementById("txtEmail").value = result;
+                        });
+                    }
+                });
+                $("#myModal2").modal('show');
+
+            }
+            function AdicionarComentario(IdCartao) {
+                {
+                    document.getElementById("addComment").style.display = '';
+                    document.getElementById("addCom").classList.add("disabled");
+
+                    var comment = {
+                        idcartao: document.getElementById("hiddenCartaoId").value,
+                        comentario: document.getElementById("txtComentario").value
+                    };
+
+                    $('#myModal').modal('toggle');
+                    $('#myModal')
+                        .find("input,textarea,select")
+                        .val('')
+                        .end()
+                        .find("input[type=checkbox], input[type=radio]")
+                        .prop("checked", "")
+                        .end();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Pedidos/AdicionarComentario",
+                        data: comment,
+                        traditional: true,
+                        success: function (result) {
+                            $(function () {
+                                //alert(JSON.stringify(result));
+                                document.getElementById('no-com') != null ? document.getElementById('no-com').classList.add("d-none") : "";
+                                document.getElementById('tblComentarios').classList.remove("d-none");
+
+                                var m = new Date(result.dataComentario);
+                                var dateString =
+                                    ("0" + m.getUTCDate()).slice(-2) + "/" +
+                                    ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" +
+                                    m.getUTCFullYear() + " " +
+                                    ("0" + m.getUTCHours()).slice(-2) + ":" +
+                                    ("0" + m.getUTCMinutes()).slice(-2);
+
+                                //var newRow = document.getElementById('tblComentarios').insertRow();
+                                var row = "<td>" + result.utilizador + "</td><td>" + result.comentario + "</td><td>" + dateString + "</td>";
+                                $(row).insertAfter("#tblComentarios tr:first");
+
+                                $.notify({
+                                    message: "Comentário adicionado com sucesso!"
+                                }, {
+                                    // settings
+                                    type: 'success',
+                                    onShow: function () {
+                                        this.css({ 'width': 'auto', 'height': 'auto' });
+                                    }
+                                });
+
+                                document.getElementById("addComment").style.display = 'none';
+                                document.getElementById("addCom").classList.remove("disabled");
+
+                            });
+                        }
+                    });
+
+                }
+            }
+
+            function EnviarEmail() {
+
+                var idCartao = document.getElementById("hiddenFolhaObraId").value;
+                var emailDestino = document.getElementById("txtEmail").value;
+
+                document.getElementById("folha_" + idCartao).style.display = '';
+                document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
+
+
+                var json = {
+                    id: idCartao,
+                    emailDestino: emailDestino
+                };
+
+                $('#myModal2').modal('toggle');
+                $('#myModal2')
+                    .find("input,textarea,select")
+                    .val('')
+                    .end();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/FolhasObra/EmailFolhaObra",
+                    data: json,
+                    traditional: true,
+                    success: function (result) {
+                        $(function () {
+                            document.getElementById("folha_" + idCartao).style.display = 'none';
+                            document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
+
+                            if (result == "Sucesso") {
+                                $.notify({
+                                    message: "Email enviado com sucesso!"
+                                }, {
+                                    // settings
+                                    type: 'success',
+                                    onShow: function () {
+                                        this.css({ 'width': 'auto', 'height': 'auto' });
+                                    }
+                                });
+
+                                var json = {
+                                    id: idCartao,
+                                    novoemail: emailDestino
+                                };
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
+                                    data: json,
+                                    traditional: true,
+                                    success: function (result) {
+                                        $(function () {
+                                        });
+                                    }
+                                });
+
+                            } else {
+                                $.notify({
+                                    message: "Ocorreu um erro!"
+                                }, {
+                                    // settings
+                                    type: 'danger',
+                                    onShow: function () {
+                                        this.css({ 'width': 'auto', 'height': 'auto' });
+                                    }
+                                });
+                            }
+
+                        });
+                    }
                 });
             }
-        });
-    }
 
-    function AdicionarAnexo() {
-        document.getElementById("addAnexo").style.display = ''
-        document.getElementById("btnAddAnexo").classList.add("disabled");
-        $('#myModal3').modal('toggle');
+            function AdicionarAnexo() {
+                document.getElementById("addAnexo").style.display = ''
+                document.getElementById("btnAddAnexo").classList.add("disabled");
+                $('#myModal3').modal('toggle');
 
-        $('form').submit();
+                $('form').submit();
 
-    }
+            }
 
-</script>
+        </script>
