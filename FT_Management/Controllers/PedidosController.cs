@@ -15,7 +15,6 @@ namespace FT_Management.Controllers
     [Authorize]
     public class PedidosController : Controller
     {
-        int Id_Tecnico;
         // GET: Pedidos
         public ActionResult Index(int Tipo)
         {
@@ -39,11 +38,10 @@ namespace FT_Management.Controllers
             ViewData["DataPedidos"] = DataPedidos;
 
             List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
-            Id_Tecnico = int.Parse(IdTecnico);
             ViewData["IdTecnico"] = IdTecnico;
             return View(ListaMarcacoes);
         }
-        public ActionResult Pedido(string idMarcacao)
+        public ActionResult Pedido(string idMarcacao, string IdTecnico)
         {
             if (idMarcacao == null) return RedirectToAction("Index");
 
@@ -53,7 +51,8 @@ namespace FT_Management.Controllers
             phccontext.AtualizarFolhasObra();
 
             Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-            marcacao.Tecnico = Id_Tecnico;
+            marcacao.Tecnico = int.Parse(IdTecnico);
+
             ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
 
             Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
