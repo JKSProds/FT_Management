@@ -187,18 +187,18 @@ namespace FT_Management.Models
             return LstFolhasObra;
 
         }
-        public List<Marcacao> ObterListaMarcacoes(int IdTecnico)
+        public List<Marcacao> ObterListaMarcacoes()
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico + "; ");
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp order by DataMarcacao, IdTecnico;");
                 while (result.Read())
                 {
                     //DateTime d = DateTime.Parse(result["DataMarcacao"]);
-
+                    List<Utilizador> LstTecnicos = ObterListaTecnicosMarcacao(result["MarcacaoStamp"]);
                     LstMarcacao.Add(new Marcacao()
                     {
                         IdMarcacao = result["IdMarcacao"],
@@ -206,6 +206,7 @@ namespace FT_Management.Models
                         Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         ResumoMarcacao = result["ResumoMarcacao"],
                         EstadoMarcacao = result["EstadoMarcacao"],
+                        Tecnicos = LstTecnicos,
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"]
 
@@ -216,7 +217,6 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
- 
         public List<Marcacao> ObterListaMarcacoes(int IdTecnico, DateTime DataMarcacao)
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
@@ -727,6 +727,25 @@ namespace FT_Management.Models
             }
             return LstUtilizadores;
         }
+        public List<Utilizador> ObterListaTecnicosMarcacao(string MarcacaoStamp)
+        {
+            List<Utilizador> LstUtilizadores = new List<Utilizador>();
+            string sqlQuery = "SELECT * FROM dat_marcacoes_tecnico where marcacaostamp = '" + MarcacaoStamp + "';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstUtilizadores.Add(new Utilizador()
+                    {
+                        Id = result["IdTecnico"],
+                        NomeCompleto = result["NomeTecnico"]
+                    });
+                }
+            }
+            return LstUtilizadores;
+        }
         public List<Utilizador> ObterListaComerciais()
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
@@ -797,6 +816,32 @@ namespace FT_Management.Models
                 }
             }
             return utilizador;
+        }
+        public List<CalendarEvent> ConverterMarcacoesEventos(List<Marcacao> Marcacoes)
+        {
+            List<CalendarEvent> LstEventos = new List<CalendarEvent>();
+            
+            DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 08:00:00");
+            dataMarcacao.AddMinutes(30);
+            foreach (var item in Marcacoes)
+            {
+                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.Tecnicos.FirstOrDefault().Id) dataMarcacao = dataMarcacao.AddMinutes(30);
+                if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 08:00:00");
+                
+                LstEventos.Add(new CalendarEvent
+                {
+                    id = item.IdMarcacao,
+                    title = item.Tecnicos.Count >= 0 ? item.Tecnicos.FirstOrDefault().NomeCompleto + " - "  + item.Cliente.NomeCliente : item.Cliente.NomeCliente,
+                    start = dataMarcacao,
+                    end = dataMarcacao.AddMinutes(30),
+                    IdTecnico = item.Tecnicos.Count == 0 ? 0 : item.Tecnicos.FirstOrDefault().Id,
+                    color = ("#33FF77")
+                    //color = (item.Dentro_Fora ? "#33FF77" : "#3371FF")
+                });
+                dataMarcacao = dataMarcacao.AddMinutes(30);
+            }
+
+            return LstEventos;
         }
 
         public void CarregarFicheiroDB(string FilePath)
@@ -1097,24 +1142,24 @@ namespace FT_Management.Models
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
-        public void CriarTecnicosMarcacao(List<Marcacao> LstMarcacao)
+        public void CriarTecnicosMarcacao(List<Utilizador> LstUtilizador)
         {
             int max = 5000;
             int j = 0;
-            for (int i = 0; j < LstMarcacao.Count; i++)
+            for (int i = 0; j < LstUtilizador.Count; i++)
             {
-                if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
+                if ((j + max) > LstUtilizador.Count) max = (LstUtilizador.Count - j);
 
-                string sql = "INSERT INTO dat_marcacoes_tecnico (IdMarcacaoTecnico, MarcacaoStamp, IdTecnico) VALUES ";
+                string sql = "INSERT INTO dat_marcacoes_tecnico (IdMarcacaoTecnico, MarcacaoStamp, IdTecnico, NomeTecnico) VALUES ";
 
-                foreach (var marcacao in LstMarcacao.GetRange(j, max))
+                foreach (var tecnico in LstUtilizador.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.EstadoMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.IdMarcacao + "'), \r\n");
+                    sql += ("('" + tecnico.NomeUtilizador + "', '" + tecnico.IdCartaoTrello + "', '" + tecnico.Id + "', '" + tecnico.NomeCompleto + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE MarcacaoStamp=VALUES(MarcacaoStamp), IdTecnico = VALUES(IdTecnico);";
+                sql += " ON DUPLICATE KEY UPDATE MarcacaoStamp=VALUES(MarcacaoStamp), IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico);";
 
                 Database db = ConnectionString;
 

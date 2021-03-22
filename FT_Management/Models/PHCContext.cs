@@ -23,16 +23,16 @@ namespace FT_Management.Models
                 cnn = new SqlConnection(connectionString);
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
 
-                FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
             }
             catch
             {
@@ -509,10 +509,10 @@ namespace FT_Management.Models
 
             return LstMarcacao;
         }
-        public List<Marcacao> ObterTecnicosMarcacao(DateTime dataUltimaLeitura)
+        public List<Utilizador> ObterTecnicosMarcacao(DateTime dataUltimaLeitura)
         {
 
-            List<Marcacao> LstMarcacao = new List<Marcacao>();
+            List<Utilizador> LstUtilizador = new List<Utilizador>();
 
             try
             {
@@ -521,17 +521,18 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno from u_mtecnicos where marcado=1 AND usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm from u_mtecnicos where marcado=1 AND usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
                     {
-                        LstMarcacao.Add(new Marcacao()
+                        LstUtilizador.Add(new Utilizador()
                         {
-                            IdMarcacao = int.Parse(result["tecnno"].ToString().Trim()),
-                            EstadoMarcacao = result["u_mtecnicosstamp"].ToString().Trim(),
-                            MarcacaoStamp = result["marcacaostamp"].ToString().Trim()
+                            Id = int.Parse(result["tecnno"].ToString().Trim()),
+                            NomeCompleto = result["tecnnm"].ToString().Trim(),
+                            NomeUtilizador = result["u_mtecnicosstamp"].ToString().Trim(),
+                            IdCartaoTrello = result["marcacaostamp"].ToString().Trim()
                         });
                     }
                 }
@@ -548,7 +549,7 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
             }
 
-            return LstMarcacao;
+            return LstUtilizador;
         }
     }
 }

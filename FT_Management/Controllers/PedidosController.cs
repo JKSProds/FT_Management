@@ -15,6 +15,22 @@ namespace FT_Management.Controllers
     [Authorize]
     public class PedidosController : Controller
     {
+        public JsonResult ObterMarcacoes()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return new JsonResult(context.ConverterMarcacoesEventos(context.ObterListaMarcacoes()).ToList());
+
+        }
+
+        public ActionResult Calendario()
+        {
+            return View();
+        }
+        public ActionResult CalendarioView()
+        {
+            return View();
+        }
+
         // GET: Pedidos
         public ActionResult Index(int Tipo)
         {
@@ -27,7 +43,6 @@ namespace FT_Management.Controllers
 
             return View(context.ObterListaComerciais());
         }
-
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -51,7 +66,7 @@ namespace FT_Management.Controllers
             phccontext.AtualizarFolhasObra();
 
             Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-            marcacao.Tecnico = int.Parse(IdTecnico);
+            marcacao.Tecnicos.FirstOrDefault().Id = int.Parse(IdTecnico);
 
             ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
 
