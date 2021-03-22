@@ -28,14 +28,56 @@ namespace FT_Management.Models
                 //FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
                 //FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
                 //FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
             }
             catch
             {
                 Console.WriteLine("Não foi possivel conectar á BD PHC!");
             }
+        }
+
+        public void AtualizarTudo()
+        {
+            FT_ManagementContext.CriarArtigos(ObterProdutos(FT_ManagementContext.ObterUltimaModificacaoPHC("sa")));
+            FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
+            FT_ManagementContext.CriarClientes(ObterClientes(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
+            FT_ManagementContext.CriarFornecedores(ObterFornecedores(FT_ManagementContext.ObterUltimaModificacaoPHC("fl")));
+            FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(FT_ManagementContext.ObterUltimaModificacaoPHC("ma")));
+            FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(FT_ManagementContext.ObterUltimaModificacaoPHC("pa")));
+            FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(FT_ManagementContext.ObterUltimaModificacaoPHC("mh")));
+            FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(FT_ManagementContext.ObterUltimaModificacaoPHC("bi")));
+        }
+        public void AtualizarArtigos()
+        {
+            FT_ManagementContext.CriarArtigos(ObterProdutos(FT_ManagementContext.ObterUltimaModificacaoPHC("sa")));
+        }
+        public void AtualizarClientes()
+        {
+            FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
+            FT_ManagementContext.CriarClientes(ObterClientes(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
+        }
+        public void AtualizarFornecedores()
+        {
+            FT_ManagementContext.CriarFornecedores(ObterFornecedores(FT_ManagementContext.ObterUltimaModificacaoPHC("fl")));
+        }
+        public void AtualizarEquipamentos()
+        {
+            FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(FT_ManagementContext.ObterUltimaModificacaoPHC("ma")));
+        }
+        public void AtualizarFolhasObra()
+        {
+            AtualizarClientes();
+            AtualizarEquipamentos();
+            FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(FT_ManagementContext.ObterUltimaModificacaoPHC("pa")));
+            FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(FT_ManagementContext.ObterUltimaModificacaoPHC("mh")));
+            FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(FT_ManagementContext.ObterUltimaModificacaoPHC("bi")));
+        }
+        public void AtualizarMarcacoes()
+        { 
+            FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao")));
         }
 
         public List<Produto> ObterProdutos(DateTime dataUltimaLeitura)
@@ -353,9 +395,9 @@ namespace FT_Management.Models
                         });
 
                         DateTime.TryParse(result["hora"].ToString().Trim(), out DateTime horainicio);
-                        LstIntervencao[LstIntervencao.Count - 1].HoraInicio = horainicio;
+                        LstIntervencao[^1].HoraInicio = horainicio;
                         DateTime.TryParse(result["horaf"].ToString().Trim(), out DateTime horafim);
-                        LstIntervencao[LstIntervencao.Count - 1].HoraFim = horafim;
+                        LstIntervencao[^1].HoraFim = horafim;
 
                         //Console.WriteLine(result["nopat"].ToString().Trim());
 
@@ -415,10 +457,56 @@ namespace FT_Management.Models
             }
             catch
             {
-                Console.WriteLine("Não foi possivel ler as as peças usadas pelos PAT's do PHC!");
+                Console.WriteLine("Não foi possivel ler as peças usadas pelos PAT's do PHC!");
             }
 
             return LstProduto;
+        }
+        public List<Marcacao> ObterMarcacoes(DateTime dataUltimaLeitura)
+        {
+
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, resumo, estado, prioridade, u_marcacaostamp FROM u_marcacao where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstMarcacao.Add(new Marcacao()
+                        {
+                            IdMarcacao = int.Parse(result["num"].ToString().Trim()),
+                            DataMarcacao = DateTime.Parse(result["data"].ToString().Trim()),
+                            cliente = new Cliente { IdCliente = int.Parse(result["no"].ToString().Trim()), IdLoja = int.Parse(result["estab"].ToString().Trim()) },
+                            IdTecnico = int.Parse(result["tecnno"].ToString().Trim()),
+                            ResumoMarcacao = result["resumo"].ToString().Trim(),
+                            EstadoMarcacao = result["estado"].ToString().Trim(),
+                            PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
+                            MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim()
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao");
+
+                Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
+            }
+
+            return LstMarcacao;
         }
     }
 }

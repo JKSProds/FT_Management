@@ -37,7 +37,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.CriarArtigos(phccontext.ObterProdutos(context.ObterUltimaModificacaoPHC("sa")));
+            phccontext.AtualizarArtigos();
 
             var LstArmazens = context.ObterListaArmazens().ToList();
 

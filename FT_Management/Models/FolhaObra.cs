@@ -261,4 +261,16 @@ namespace FT_Management.Models
         public string NomeCliente { get; set; }
         public DateTime DataMovimento { get; set; }
     }
+
+    public class Marcacao
+    {
+        public int IdMarcacao { get; set; }
+        public DateTime DataMarcacao { get; set; }
+        public Cliente cliente { get; set; }
+        public int IdTecnico { get; set; }
+        public string ResumoMarcacao { get; set; }
+        public string EstadoMarcacao { get; set; }
+        public string PrioridadeMarcacao { get; set; }
+        public string MarcacaoStamp { get; set; }
+    }
 }

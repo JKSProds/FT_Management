@@ -50,127 +50,6 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-
-        public List<Armazem> ObterListaArmazens()
-        {
-            List<Armazem> LstArmazens = new List<Armazem>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_armazem;"))
-            {
-                while (result.Read())
-                {
-                    LstArmazens.Add(new Armazem()
-                    {
-                        ArmazemId = result["armazem_id"],
-                        ArmazemNome = result["armazem_nome"]                       
-                    });
-                }
-            }
-            db.Connection.Close();
-
-            return LstArmazens;
-        }
-
-        public List<Produto> ObterListaProdutoArmazem(string referencia)
-        {
-            List<Produto> LstProdutos = new List<Produto>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto='" + referencia + "';"))
-            {
-                while (result.Read())
-                {
-                    LstProdutos.Add(new Produto()
-                    {
-                        Ref_Produto = result["ref_produto"],
-                        Designacao_Produto = result["designacao_produto"],
-                        Stock_Fisico = result["stock_fisico"],
-                        Stock_PHC = result["stock_phc"],
-                        Stock_Rec = result["stock_rec"],
-                        Stock_Res = result["stock_res"],
-                        Armazem_ID = result["armazem_id"],
-                        Pos_Stock = result["pos_stock"],
-                        Obs_Produto = result["obs"]
-                    });
-                }
-            }
-            db.Connection.Close();
-            return LstProdutos;
-        }
-
-        public List<Produto> ObterListaProdutos(string referencia, string desig, int ArmazemId)
-        {
-            List<Produto> LstProdutos = new List<Produto>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_produtos Where Armazem_Id=" + ArmazemId + " and ref_produto like '%" + referencia + "%' AND designacao_produto like '%" + desig + "%';"))
-            {
-                while (result.Read())
-                {
-                    LstProdutos.Add(new Produto()
-                    {
-                        Ref_Produto = result["ref_produto"],
-                        Designacao_Produto = result["designacao_produto"],
-                        Stock_Fisico = result["stock_fisico"],
-                        Stock_PHC = result["stock_phc"],
-                        Stock_Rec = result["stock_rec"],
-                        Stock_Res = result["stock_res"],
-                        Armazem_ID = result["armazem_id"],
-                        Pos_Stock = result["pos_stock"],
-                        Obs_Produto = result["obs"]
-                    });
-                }
-            }
-            db.Connection.Close();
-            return LstProdutos;
-        }
-        public void CarregarFicheiroDB(string FilePath)
-        {
-            using ExcelPackage package = new ExcelPackage(new FileInfo(FilePath));
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
-            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-            int totalRows = workSheet.Dimension.Rows;
-
-            var LstProdutos = new List<Produto>();
-
-            for (int i = 1; i <= totalRows; i++)
-            {
-                string ref_prod = workSheet.Cells[i, 1].Value.ToString().Replace(" ", "");
-                string desig = workSheet.Cells[i, 2].Value.ToString().Trim();
-                double stock_Rececao = 0;
-                double.TryParse(workSheet.Cells[i, 3].Value.ToString(), out double stock_PHC);
-                if (workSheet.Dimension.End.Column == 4)
-                {
-                    double.TryParse(workSheet.Cells[i, 4].Value.ToString(), out stock_Rececao);
-                }
-
-                if (LstProdutos.Where(p => p.Ref_Produto == ref_prod).Count() == 0)
-                {
-                    LstProdutos.Add(new Produto
-                    {
-                        Ref_Produto = ref_prod,
-                        Designacao_Produto = desig,
-                        Stock_PHC = stock_PHC + stock_Rececao,
-                        Stock_Fisico = 0.0,
-                        Pos_Stock = "",
-                        Obs_Produto = ""
-                    });
-
-                }
-                else
-                {
-                    LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Stock_PHC += stock_PHC;
-                    LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Designacao_Produto = desig;
-                }
-            }
-
-            CriarArtigos(LstProdutos);
-        }
-
         public Produto ObterProduto(string referencia, int armazemid)
         {
             Produto produto = new Produto();
@@ -198,159 +77,81 @@ namespace FT_Management.Models
             db.Connection.Close();
             return produto;
         }
-
-        public DateTime ObterUltimaModificacaoPHC(string tabela)
+        public List<Armazem> ObterListaArmazens()
         {
-            DateTime res = new DateTime();
+            List<Armazem> LstArmazens = new List<Armazem>();
 
-            using (Database db = ConnectionString)
+            Database db = ConnectionString;
+
+            using (var result = db.Query("SELECT * FROM dat_armazem;"))
             {
-
-                using var result = db.Query("SELECT ultimamodificacao FROM sys_tabelas where nometabela = '"+tabela+"'; ");
                 while (result.Read())
                 {
-                    res = result[0];
+                    LstArmazens.Add(new Armazem()
+                    {
+                        ArmazemId = result["armazem_id"],
+                        ArmazemNome = result["armazem_nome"]                       
+                    });
                 }
             }
+            db.Connection.Close();
 
-
-            return res;
+            return LstArmazens;
         }
-
-        public void AtualizarUltimaModificacao(string tabela)
+        public List<Produto> ObterListaProdutoArmazem(string referencia)
         {
-            string sql = "UPDATE sys_tabelas set ultimamodificacao='"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+"'";
+            List<Produto> LstProdutos = new List<Produto>();
 
             Database db = ConnectionString;
 
-            db.Execute(sql);
+            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto='" + referencia + "';"))
+            {
+                while (result.Read())
+                {
+                    LstProdutos.Add(new Produto()
+                    {
+                        Ref_Produto = result["ref_produto"],
+                        Designacao_Produto = result["designacao_produto"],
+                        Stock_Fisico = result["stock_fisico"],
+                        Stock_PHC = result["stock_phc"],
+                        Stock_Rec = result["stock_rec"],
+                        Stock_Res = result["stock_res"],
+                        Armazem_ID = result["armazem_id"],
+                        Pos_Stock = result["pos_stock"],
+                        Obs_Produto = result["obs"]
+                    });
+                }
+            }
             db.Connection.Close();
+            return LstProdutos;
         }
-
-        public void CriarIntervencoes(List<Intervencao> LstIntervencoes)
+        public List<Produto> ObterListaProdutos(string referencia, string desig, int ArmazemId)
         {
-            int max = 4000;
-            int j = 0;
-            for (int i = 0; j < LstIntervencoes.Count; i++)
-            {
-                if ((j + max) > LstIntervencoes.Count) max = (LstIntervencoes.Count - j);
-
-                string sql = "INSERT INTO dat_intervencoes_folha_obra (IdIntervencao, IdFolhaObra,IdTecnico, RelatorioServico, NomeTecnico, DataServico, HoraInicio, HoraFim) VALUES ";
-
-                foreach (var intervencao in LstIntervencoes.GetRange(j, max))
-                {
-                    sql += ("('" + intervencao.IdIntervencao + "', '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '"+intervencao.RelatorioServico.Replace("\r\n", "").Replace("'", "")+"', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "'), \r\n");
-                    i++;
-                }
-                sql = sql.Remove(sql.Count() - 4);
-
-                sql += " ON DUPLICATE KEY UPDATE IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico), DataServico = VALUES(DataServico), RelatorioServico = VALUES(RelatorioServico), HoraInicio = VALUES(HoraInicio), HoraFim = VALUES(HoraFim);";
-
-                Database db = ConnectionString;
-
-                db.Execute(sql);
-                db.Connection.Close();
-
-                j += max;
-                //Console.WriteLine("A ler FO: " + j + " de " + LstIntervencoes.Count());
-
-
-            }
-        }
-
-        public void CriarFolhasObra(List<FolhaObra> LstFolhaObra)
-        {
-            int max = 1000;
-            int j = 0;
-            for (int i = 0; j < LstFolhaObra.Count; i++)
-            {
-                if ((j + max) > LstFolhaObra.Count) max = (LstFolhaObra.Count - j);
-
-                string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, IdLoja, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
-
-                foreach (var folhaObra in LstFolhaObra.GetRange(j, max))
-                {
-                    sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").Replace("\\", "").ToString() + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString() + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString() + "', '" + folhaObra.IdCartao + "', '" + folhaObra.EquipamentoServico.IdEquipamento + "', '" + folhaObra.ClienteServico.IdCliente + "', '" + folhaObra.ClienteServico.IdLoja + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "'), \r\n");
-                    i++;
-                }
-                sql = sql.Remove(sql.Count() - 4);
-
-                sql += " ON DUPLICATE KEY UPDATE IdCartaoTrello=VALUES(IdCartaoTrello), ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
-
-                Database db = ConnectionString;
-
-                db.Execute(sql);
-                db.Connection.Close();
-
-                j += max;
-                //Console.WriteLine("A ler FO: " + j + " de " + LstFolhaObra.Count());
-            }
-        }
-        public void CriarPecasFolhaObra(List<Produto> LstProdutos)
-        {
-            int max = 7500;
-            int j = 0;
-            for (int i = 0; j < LstProdutos.Count; i++)
-            {
-                if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
-
-                string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra, TipoUn) VALUES ";
-
-                foreach (var produto in LstProdutos.GetRange(j, max))
-                {
-                    sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''") + "', '" + produto.Stock_Fisico + "', '" + produto.Armazem_ID + "', '" + produto.TipoUn + "'), \r\n");
-                    i++;
-                }
-                sql = sql.Remove(sql.Count() - 4);
-
-                sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade), TipoUn = VALUES(TipoUn);";
-
-                Database db = ConnectionString;
-
-                db.Execute(sql);
-                db.Connection.Close();
-
-                j += max;
-                //Console.WriteLine("A ler peca: " + j + " de " + LstProdutos.Count());
-            }
-        }
-
-        public void CriarArtigos(List<Produto> LstProdutos)
-        {
-            if (LstProdutos.Count() > 0)
-            {
-
-                string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_rec, stock_res, armazem_id, stock_fisico, pos_stock, obs) VALUES ";
-
-                foreach (var item in LstProdutos)
-                {
-                    sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Rec.ToString().Replace(",", ".") + "', '" + item.Stock_Res.ToString().Replace(",", ".") + "', '" + item.Armazem_ID + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
-                }
-                sql = sql.Remove(sql.Count() - 4);
-                sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc), stock_rec = VALUES(stock_rec), stock_res = VALUES(stock_res), stock_fisico = VALUES(stock_fisico);";
-
-                Database db = ConnectionString;
-
-                db.Execute(sql);
-                db.Connection.Close();
-            }
-        }
-        public void EditarArtigo(Produto produto)
-        {
+            List<Produto> LstProdutos = new List<Produto>();
 
             Database db = ConnectionString;
-            String sql = "update dat_produtos set modificado=1, designacao_produto='" + produto.Designacao_Produto + "', stock_fisico=" + produto.Stock_Fisico + ", pos_stock='" + produto.Pos_Stock + "', obs='" + produto.Obs_Produto + "' Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
-            db.Execute(sql);
-            db.Connection.Close();
-        }
-        public void ApagarArtigo(Produto produto)
-        {
-            Database db = ConnectionString;
-            String sql = "delete from dat_produtos Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
-            db.Execute(sql);
-            db.Connection.Close();
-        }
 
+            using (var result = db.Query("SELECT * FROM dat_produtos Where Armazem_Id=" + ArmazemId + " and ref_produto like '%" + referencia + "%' AND designacao_produto like '%" + desig + "%';"))
+            {
+                while (result.Read())
+                {
+                    LstProdutos.Add(new Produto()
+                    {
+                        Ref_Produto = result["ref_produto"],
+                        Designacao_Produto = result["designacao_produto"],
+                        Stock_Fisico = result["stock_fisico"],
+                        Stock_PHC = result["stock_phc"],
+                        Stock_Rec = result["stock_rec"],
+                        Stock_Res = result["stock_res"],
+                        Armazem_ID = result["armazem_id"],
+                        Pos_Stock = result["pos_stock"],
+                        Obs_Produto = result["obs"]
+                    });
+                }
+            }
+            db.Connection.Close();
+            return LstProdutos;
+        }
         public List<FolhaObra> ObterListaFolhasObra(string data)
         {
             List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
@@ -467,12 +268,12 @@ namespace FT_Management.Models
         }
         public FolhaObra ObterFolhaObra(int id)
         {
-            FolhaObra folhaObra = new FolhaObra { IdFolhaObra = -1};
+            FolhaObra folhaObra = new FolhaObra { IdFolhaObra = -1 };
             using Database db = ConnectionString;
-           using var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";");
+            using var result = db.Query("SELECT * FROM dat_folhas_obra where IdFolhaObra=" + id + ";");
             result.Read();
 
-             folhaObra = new FolhaObra()
+            folhaObra = new FolhaObra()
             {
                 IdFolhaObra = result["IdFolhaObra"],
                 DataServico = result["DataServico"],
@@ -515,8 +316,6 @@ namespace FT_Management.Models
             }
             return LstEquipamentos;
         }
-
-
         public Equipamento ObterEquipamento(string id)
         {
             using (Database db = ConnectionString)
@@ -672,7 +471,6 @@ namespace FT_Management.Models
 
             return LstGuias;
         }
-
         public Cliente ObterCliente(int id, int est)
         {
 
@@ -758,8 +556,8 @@ namespace FT_Management.Models
         {
 
             List<Cliente> LstClientes = new List<Cliente>();
-            string sqlQuery = "SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente.Replace("'", "''")  + "%';";
-            if (exact) sqlQuery = "SELECT * FROM dat_clientes where NomeCliente ='" + NomeCliente.Replace("'", "''")  + "';";
+            string sqlQuery = "SELECT * FROM dat_clientes where NomeCliente like '%" + NomeCliente.Replace("'", "''") + "%';";
+            if (exact) sqlQuery = "SELECT * FROM dat_clientes where NomeCliente ='" + NomeCliente.Replace("'", "''") + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -787,25 +585,269 @@ namespace FT_Management.Models
             }
             return LstClientes;
         }
-        public int NovaFolhaObra(FolhaObra folhaObra)
+        public int ObterUltimaEntrada(string NomeTabela, string CampoID)
         {
+            using (Database db = ConnectionString)
+            {
+                //using var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";");
+                using var result = db.Query("SELECT MIN(t1." + CampoID + " + 1) AS nextID FROM " + NomeTabela + " t1 LEFT JOIN " + NomeTabela + " t2 ON t1." + CampoID + " + 1 = t2." + CampoID + " WHERE t2." + CampoID + " IS NULL;");
+                while (result.Read())
+                {
+                    return result.Reader.IsDBNull(0) ? 0 : result[0];
+                };
+            }
+            return 0;
 
+        }
+        public List<Utilizador> ObterListaUtilizadores()
+        {
+            List<Utilizador> LstUtilizadores = new List<Utilizador>();
+            string sqlQuery = "SELECT * FROM sys_utilizadores;";
 
-            folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") : folhaObra.IdFolhaObra;
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstUtilizadores.Add(new Utilizador()
+                    {
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = result["TipoUtilizador"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"]
+                    });
+                }
+            }
+            return LstUtilizadores;
+        }
+        public Utilizador ObterUtilizador(int Id)
+        {
+            Utilizador utilizador = new Utilizador();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where IdUtilizador = " + Id + ";";
 
-            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, IdLoja, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    utilizador = new Utilizador()
+                    {
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = result["TipoUtilizador"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"]
+                    };
+                }
+            }
+            return utilizador;
+        }
+        public Utilizador ObterUtilizadorNome(string Nome)
+        {
+            Utilizador utilizador = new Utilizador();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where NomeCompleto like '" + Nome + "%';";
 
-            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").ToString()  + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico.Replace("'", "''").ToString()  + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString()  + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString()  + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.ClienteServico.IdLoja + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    utilizador = new Utilizador()
+                    {
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = result["TipoUtilizador"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"]
+                    };
+                }
+            }
+            return utilizador;
+        }
 
-            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
+        public void CarregarFicheiroDB(string FilePath)
+        {
+            using ExcelPackage package = new ExcelPackage(new FileInfo(FilePath));
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            int totalRows = workSheet.Dimension.Rows;
+
+            var LstProdutos = new List<Produto>();
+
+            for (int i = 1; i <= totalRows; i++)
+            {
+                string ref_prod = workSheet.Cells[i, 1].Value.ToString().Replace(" ", "");
+                string desig = workSheet.Cells[i, 2].Value.ToString().Trim();
+                double stock_Rececao = 0;
+                double.TryParse(workSheet.Cells[i, 3].Value.ToString(), out double stock_PHC);
+                if (workSheet.Dimension.End.Column == 4)
+                {
+                    double.TryParse(workSheet.Cells[i, 4].Value.ToString(), out stock_Rececao);
+                }
+
+                if (LstProdutos.Where(p => p.Ref_Produto == ref_prod).Count() == 0)
+                {
+                    LstProdutos.Add(new Produto
+                    {
+                        Ref_Produto = ref_prod,
+                        Designacao_Produto = desig,
+                        Stock_PHC = stock_PHC + stock_Rececao,
+                        Stock_Fisico = 0.0,
+                        Pos_Stock = "",
+                        Obs_Produto = ""
+                    });
+
+                }
+                else
+                {
+                    LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Stock_PHC += stock_PHC;
+                    LstProdutos.Where(p => p.Ref_Produto == ref_prod).First().Designacao_Produto = desig;
+                }
+            }
+
+            CriarArtigos(LstProdutos);
+        }
+
+        public DateTime ObterUltimaModificacaoPHC(string tabela)
+        {
+            DateTime res = new DateTime();
 
             using (Database db = ConnectionString)
             {
-                db.Execute(sql);
+
+                using var result = db.Query("SELECT ultimamodificacao FROM sys_tabelas where nometabela = '"+tabela+"'; ");
+                while (result.Read())
+                {
+                    res = result[0];
+                }
             }
-            return folhaObra.IdFolhaObra;
+
+
+            return res;
+        }
+        public void AtualizarUltimaModificacao(string tabela)
+        {
+            string sql = "UPDATE sys_tabelas set ultimamodificacao='"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+"'";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
         }
 
+        public void CriarIntervencoes(List<Intervencao> LstIntervencoes)
+        {
+            int max = 4000;
+            int j = 0;
+            for (int i = 0; j < LstIntervencoes.Count; i++)
+            {
+                if ((j + max) > LstIntervencoes.Count) max = (LstIntervencoes.Count - j);
+
+                string sql = "INSERT INTO dat_intervencoes_folha_obra (IdIntervencao, IdFolhaObra,IdTecnico, RelatorioServico, NomeTecnico, DataServico, HoraInicio, HoraFim) VALUES ";
+
+                foreach (var intervencao in LstIntervencoes.GetRange(j, max))
+                {
+                    sql += ("('" + intervencao.IdIntervencao + "', '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '"+intervencao.RelatorioServico.Replace("\r\n", "").Replace("'", "")+"', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico), DataServico = VALUES(DataServico), RelatorioServico = VALUES(RelatorioServico), HoraInicio = VALUES(HoraInicio), HoraFim = VALUES(HoraFim);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler FO: " + j + " de " + LstIntervencoes.Count());
+
+
+            }
+        }
+        public void CriarFolhasObra(List<FolhaObra> LstFolhaObra)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstFolhaObra.Count; i++)
+            {
+                if ((j + max) > LstFolhaObra.Count) max = (LstFolhaObra.Count - j);
+
+                string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, IdLoja, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
+
+                foreach (var folhaObra in LstFolhaObra.GetRange(j, max))
+                {
+                    sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").Replace("\\", "").ToString() + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString() + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString() + "', '" + folhaObra.IdCartao + "', '" + folhaObra.EquipamentoServico.IdEquipamento + "', '" + folhaObra.ClienteServico.IdCliente + "', '" + folhaObra.ClienteServico.IdLoja + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE IdCartaoTrello=VALUES(IdCartaoTrello), ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler FO: " + j + " de " + LstFolhaObra.Count());
+            }
+        }
+        public void CriarPecasFolhaObra(List<Produto> LstProdutos)
+        {
+            int max = 7500;
+            int j = 0;
+            for (int i = 0; j < LstProdutos.Count; i++)
+            {
+                if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
+
+                string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra, TipoUn) VALUES ";
+
+                foreach (var produto in LstProdutos.GetRange(j, max))
+                {
+                    sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''") + "', '" + produto.Stock_Fisico + "', '" + produto.Armazem_ID + "', '" + produto.TipoUn + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade), TipoUn = VALUES(TipoUn);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler peca: " + j + " de " + LstProdutos.Count());
+            }
+        }
+        public void CriarArtigos(List<Produto> LstProdutos)
+        {
+            if (LstProdutos.Count() > 0)
+            {
+
+                string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_rec, stock_res, armazem_id, stock_fisico, pos_stock, obs) VALUES ";
+
+                foreach (var item in LstProdutos)
+                {
+                    sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Rec.ToString().Replace(",", ".") + "', '" + item.Stock_Res.ToString().Replace(",", ".") + "', '" + item.Armazem_ID + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
+                }
+                sql = sql.Remove(sql.Count() - 4);
+                sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc), stock_rec = VALUES(stock_rec), stock_res = VALUES(stock_res), stock_fisico = VALUES(stock_fisico);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+            }
+        }
         public void CriarFornecedores(List<Fornecedor> LstFornecedor)
         {
             if (LstFornecedor.Count() > 0)
@@ -827,7 +869,6 @@ namespace FT_Management.Models
                 db.Connection.Close();
             }
         }
-
         public void CriarEquipamentos(List<Equipamento> LstEquipamento)
         {
             if (LstEquipamento.Count() > 0)
@@ -859,7 +900,6 @@ namespace FT_Management.Models
                 }
             }
         }
-
         public void CriarVendedores(List<Vendedor> LstVendedor)
         {
             if (LstVendedor.Count() > 0)
@@ -881,7 +921,6 @@ namespace FT_Management.Models
                 db.Connection.Close();
             }
         }
-
         public void CriarClientes(List<Cliente> LstClientes)
         {
             if (LstClientes.Count() > 0)
@@ -903,7 +942,62 @@ namespace FT_Management.Models
                 db.Connection.Close();
             }
         }
+        public void CriarMarcacoes(List<Marcacao> LstMarcacao)
+        {
+            int max = 5000;
+            int j = 0;
+            for (int i = 0; j < LstMarcacao.Count; i++)
+            {
+                if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
 
+                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,IdTecnico,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp) VALUES ";
+
+                foreach (var marcacao in LstMarcacao.GetRange(j, max))
+                {
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.cliente.IdCliente + "', '" + marcacao.cliente.IdLoja + "', '" + marcacao.IdTecnico + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', '" + marcacao.EstadoMarcacao + "', '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), IdTecnico = VALUES(IdTecnico), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+            }
+        }
+
+        public void EditarArtigo(Produto produto)
+        {
+
+            Database db = ConnectionString;
+            String sql = "update dat_produtos set modificado=1, designacao_produto='" + produto.Designacao_Produto + "', stock_fisico=" + produto.Stock_Fisico + ", pos_stock='" + produto.Pos_Stock + "', obs='" + produto.Obs_Produto + "' Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+
+        public int NovaFolhaObra(FolhaObra folhaObra)
+        {
+
+
+            folhaObra.IdFolhaObra = folhaObra.IdFolhaObra == 0 ? ObterUltimaEntrada("dat_folhas_obra", "IdFolhaObra") : folhaObra.IdFolhaObra;
+
+            string sql = "INSERT INTO dat_folhas_obra (IdFolhaObra, DataServico, ReferenciaServico, EstadoEquipamento, RelatorioServico, ConferidoPor, SituacoesPendentes, IdCartaoTrello, IdEquipamento, IdCliente, IdLoja, GuiaTransporteAtual, Remoto, RubricaCliente) VALUES ";
+
+            sql += ("('" + folhaObra.IdFolhaObra + "', '" + folhaObra.DataServico.ToString("yy-MM-dd") + "', '" + folhaObra.ReferenciaServico.Replace("'", "''").ToString() + "', '" + folhaObra.EstadoEquipamento + "', '" + folhaObra.RelatorioServico.Replace("'", "''").ToString() + "', '" + folhaObra.ConferidoPor.Replace("'", "''").ToString() + "', '" + folhaObra.SituacoesPendentes.Replace("'", "''").ToString() + "', '" + folhaObra.IdCartao + "', '" + NovoEquipamento(folhaObra.EquipamentoServico) + "', '" + NovoCliente(folhaObra.ClienteServico) + "', '" + folhaObra.ClienteServico.IdLoja + "', '" + folhaObra.GuiaTransporteAtual + "', '" + (folhaObra.AssistenciaRemota ? 1 : 0) + "', '" + folhaObra.RubricaCliente + "') \r\n");
+
+            sql += " ON DUPLICATE KEY UPDATE ReferenciaServico = VALUES(ReferenciaServico), EstadoEquipamento = VALUES(EstadoEquipamento), RelatorioServico = VALUES(RelatorioServico), ConferidoPor = VALUES(ConferidoPor), SituacoesPendentes = VALUES(SituacoesPendentes), IdEquipamento = VALUES(IdEquipamento), IdCliente = VALUES(IdCliente), GuiaTransporteAtual = VALUES(GuiaTransporteAtual), Remoto = VALUES(Remoto), RubricaCliente = VALUES(RubricaCliente);";
+
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
+            return folhaObra.IdFolhaObra;
+        }
         public int NovoCliente(Cliente cliente)
         {
             Cliente c = new Cliente();
@@ -992,6 +1086,7 @@ namespace FT_Management.Models
             db.Execute(sql);
 
         }
+
         public void ApagarFolhaObra(int id)
         {
             string sql = "DELETE FROM dat_folhas_obra where IdFolhaObra=" + id + ";";
@@ -1013,92 +1108,12 @@ namespace FT_Management.Models
             using Database db = ConnectionString;
             db.Execute(sql);
         }
-        public int ObterUltimaEntrada(string NomeTabela, string CampoID)
+        public void ApagarArtigo(Produto produto)
         {
-            using (Database db = ConnectionString)
-            {
-                //using var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";");
-                using var result = db.Query("SELECT MIN(t1." + CampoID + " + 1) AS nextID FROM " + NomeTabela + " t1 LEFT JOIN " + NomeTabela + " t2 ON t1." + CampoID + " + 1 = t2." + CampoID + " WHERE t2." + CampoID + " IS NULL;");
-                while (result.Read())
-                {
-                    return result.Reader.IsDBNull(0) ? 0 : result[0];
-                };
-            }
-            return 0;
-
-        }
-        public List<Utilizador> ObterListaUtilizadores()
-        {
-            List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores;";
-
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    LstUtilizadores.Add(new Utilizador()
-                    {
-                        Id = result["IdUtilizador"],
-                        NomeUtilizador = result["NomeUtilizador"],
-                        Password = result["Password"],
-                        NomeCompleto = result["NomeCompleto"],
-                        TipoUtilizador = result["TipoUtilizador"],
-                        EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"]
-                    });
-                }
-            }
-            return LstUtilizadores;
-        }
-        public Utilizador ObterUtilizador(int Id)
-        {
-            Utilizador utilizador = new Utilizador();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where IdUtilizador = " + Id + ";";
-
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    utilizador = new Utilizador()
-                    {
-                        Id = result["IdUtilizador"],
-                        NomeUtilizador = result["NomeUtilizador"],
-                        Password = result["Password"],
-                        NomeCompleto = result["NomeCompleto"],
-                        TipoUtilizador = result["TipoUtilizador"],
-                        EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"]
-                    };
-                }
-            }
-            return utilizador;
-        }
-
-        public Utilizador ObterUtilizadorNome(string Nome)
-        {
-            Utilizador utilizador = new Utilizador();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where NomeCompleto like '" + Nome + "%';";
-
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    utilizador = new Utilizador()
-                    {
-                        Id = result["IdUtilizador"],
-                        NomeUtilizador = result["NomeUtilizador"],
-                        Password = result["Password"],
-                        NomeCompleto = result["NomeCompleto"],
-                        TipoUtilizador = result["TipoUtilizador"],
-                        EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"]
-                    };
-                }
-            }
-            return utilizador;
+            Database db = ConnectionString;
+            String sql = "delete from dat_produtos Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
+            db.Execute(sql);
+            db.Connection.Close();
         }
 
         public Bitmap DesenharEtiqueta80x50(Produto produto)
@@ -1477,7 +1492,6 @@ namespace FT_Management.Models
 
             return lstViaturas;
         }
-
         public ControloViatura ObterViatura(string Matricula)
         {
             ControloViatura Viatura = new ControloViatura();
@@ -1513,7 +1527,6 @@ namespace FT_Management.Models
             using Database db = ConnectionString;
             db.Execute(sql);
         }
-
         public void DevolverViatura(ControloViatura viatura)
         {
             string sql = "UPDATE dat_controlo_viatura SET data_fim = '"+ viatura.DataFim.ToString("yyyy-MM-dd HH:mm:ss") + "', kms_finais= '"+viatura.KmsFinais+"', devolvida_viatura=1 WHERE matricula_viatura='"+viatura.MatriculaViatura+"' AND devolvida_viatura=0;";

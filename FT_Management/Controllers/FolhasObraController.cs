@@ -24,7 +24,7 @@ namespace FT_Management.Controllers
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.CriarFolhasObra(phccontext.ObterFolhasObra(context.ObterUltimaModificacaoPHC("pa")));
+            phccontext.AtualizarFolhasObra();
 
             return View(context.ObterListaFolhasObra(DateTime.Parse(DataFolhasObra).ToString("yyyy-MM-dd")));
         }
