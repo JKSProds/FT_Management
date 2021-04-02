@@ -1,115 +1,43 @@
-﻿@{
-    Layout = null;
-}
+﻿<link href='~/js/fullcalendar/main.css' rel='stylesheet' />
+<script src='~/js/fullcalendar/main.js'></script>
 
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="~/css/fullcalendar.min.css">
-
-<button style="display: none" type="button" id="btnModal" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
-
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle"></div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modalObs"></div>
-            <div class="modal-footer">
-                <div id="modalApagar"></div>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
+<div id='calendar-container'>
+    <div id='calendar'></div>
 </div>
-
-<!-- Modal Apagar -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Apagar Discurso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-            </div>
-            <div class="modal-body"> Tens a certeza que queres apagar este discurso? </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <div id="modalApagarConfirm"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="calendar"></div>
-<br />
-<br />
-<br />
-<!-- JS includes -->
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-<script src="~/js/moment.min.js"></script>
-
-
 
 <script>
-    $('#calendar').fullCalendar({
-        timeZone: 'UTC',
-        initialView: 'dayGridWeek',
-        headerToolbar: {
-            left: 'prev,next',
-            center: 'title',
-            right: 'dayGridDay,dayGridWeek'
-        },
-        editable: false,
-        views: {
-            basicDay: { buttonText: 'Diário' },
-            basicWeek: { buttonText: 'Semanal' },
-            month: { buttonText: 'Mensal' }
-        },
-        header: {
-            left: 'prev,next,today',
-            center: 'title',
-            right: 'basicDay, basicWeek, month'
-        },
-        displayEventTime: false,
-        events: 'Pedidos/ObterMarcacoes',
-        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-        monthNamesShort: ['Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-        dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
-        dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-        eventRender: function (eventObj, $el) {
-            $el.popover({
-                title: eventObj.title,
-                content: eventObj.tema,
-                trigger: 'hover',
-                placement: 'top',
-                container: 'body'
-            });
-        },
-        eventClick: function (calEvent) {
-            var modalObs = $('#modalObs');
-            var modalTitle = $('#modalTitle');
-            var modalApagar = $('#modalApagar');
-            var modalApagarConfirm = $('#modalApagarConfirm');
-            modalObs.html('Tema: <b>' + calEvent.tema + '</b> <br /> Congregação: <b>' + calEvent.congregacao + ' </b><br />Contacto: <b><a href="tel:' + calEvent.contacto + '">' + calEvent.contacto + '</a></b><br /> E-Mail: <b><a href="mailto:' + calEvent.email + '">' + calEvent.email + '</a></b><br />Data do Discurso: <b>' + calEvent.start.format("DD/MM/YYYY HH:mm") + '</b><br /> <br /> Observações: ' + calEvent.obs);
-            modalTitle.html('<h5>Orador: <b>' + calEvent.title + '</b></h5>');
-            modalApagar.html('<a style="margin: 5px" href="Discursos/Editar/' + calEvent.id + '" class="btn btn-primary" role="button">Editar</a><button type="button" id="btnModal2" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Apagar Discurso</button>');
-            modalApagarConfirm.html('<a href="Discursos/Apagar/' + calEvent.id + '" class="btn btn-danger" role="button">Confirmar</a>');
-            $("#btnModal").trigger("click");
-        },
-        dayClick: function (date, jsEvent, view) {
-            window.location.href = "Discursos/Novo?Data=" + date.format();
-        }
-    });
-</script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            timeZone: 'UTC',
+            initialView: 'timeGridWeek',
+            headerToolbar: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'dayGridDay,timeGridWeek'
+            },
+            contentHeight: 3000,
+            weekNumbers: true,
+            expandRows: true,
+            firstDay: 1,
+            locale: 'pt',
+            editable: false,
+            events: 'ObterMarcacoes',
+            eventTimeFormat: { // like '14:30:00'
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false
+            },
+            scrollTime: '00:00:00',
+            displayEventTime: false,
+            eventClick: function (info) {
+                info.jsEvent.preventDefault(); // don't let the browser navigate
+                if (info.event.url) {
+                    window.open(info.event.url);
+                }
+            }
+        });
+
+        calendar.render();
+    });</script>

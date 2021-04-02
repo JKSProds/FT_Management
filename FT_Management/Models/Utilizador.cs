@@ -32,5 +32,7 @@ namespace FT_Management.Models
         public string IdCartaoTrello { get; set; }
         public bool Admin { get; set; }
         public bool Enable { get; set; }
+        public string CorCalendario { get; set; }
+        public string Iniciais { get; set; }
     }
 }

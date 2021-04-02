@@ -187,18 +187,18 @@ namespace FT_Management.Models
             return LstFolhasObra;
 
         }
-        public List<Marcacao> ObterListaMarcacoes()
+        public List<Marcacao> ObterListaMarcacoes(DateTime DataInicial, DateTime DataFinal)
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
-
+            String DataI = DataInicial.ToString("yyyy-MM-dd");
+            String DataF = DataFinal.ToString("yyyy-MM-dd");
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp order by DataMarcacao, IdTecnico;");
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' order by DataMarcacao, IdTecnico;");
                 while (result.Read())
                 {
                     //DateTime d = DateTime.Parse(result["DataMarcacao"]);
-                    List<Utilizador> LstTecnicos = ObterListaTecnicosMarcacao(result["MarcacaoStamp"]);
                     LstMarcacao.Add(new Marcacao()
                     {
                         IdMarcacao = result["IdMarcacao"],
@@ -206,7 +206,7 @@ namespace FT_Management.Models
                         Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         ResumoMarcacao = result["ResumoMarcacao"],
                         EstadoMarcacao = result["EstadoMarcacao"],
-                        Tecnicos = LstTecnicos,
+                        IdTecnico = result["IdTecnico"],
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"]
 
@@ -217,14 +217,15 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
-        public List<Marcacao> ObterListaMarcacoes(int IdTecnico, DateTime DataMarcacao)
+        public List<Marcacao> ObterListaMarcacoes(int IdTecnico, DateTime DataInicial, DateTime DataFinal)
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
-            String DataM = DataMarcacao.ToString("yyyy-MM-dd");
+            String DataI = DataInicial.ToString("yyyy-MM-dd");
+            String DataF = DataFinal.ToString("yyyy-MM-dd");
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico+" AND DataMarcacao like '%"+DataM+"%';");
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico+ " AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "';");
                 while (result.Read())
                 {
                     LstMarcacao.Add(new Marcacao()
@@ -793,6 +794,34 @@ namespace FT_Management.Models
             }
             return utilizador;
         }
+        public Utilizador ObterTecnico(int Id)
+        {
+            Utilizador utilizador = new Utilizador();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where IdPHC = " + Id + ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    utilizador = new Utilizador()
+                    {
+                        Id = result["IdPHC"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = int.Parse(result["TipoUtilizador"]),
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"],
+                        Admin = result["admin"] == 1,
+                        Enable = result["enable"] == 1,
+                        CorCalendario = result["CorCalendario"],
+                        Iniciais = result["IniciaisUtilizador"]
+                    };
+                }
+            }
+            return utilizador;
+        }
         public Utilizador ObterUtilizadorNome(string Nome)
         {
             Utilizador utilizador = new Utilizador();
@@ -821,23 +850,24 @@ namespace FT_Management.Models
         {
             List<CalendarEvent> LstEventos = new List<CalendarEvent>();
             
-            DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 08:00:00");
+            DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
             dataMarcacao.AddMinutes(30);
             foreach (var item in Marcacoes)
             {
-                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.Tecnicos.FirstOrDefault().Id) dataMarcacao = dataMarcacao.AddMinutes(30);
-                if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 08:00:00");
-                
+                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) dataMarcacao = dataMarcacao.AddMinutes(30);
+                if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 00:00:00");
+                Utilizador tecnico = ObterTecnico(item.IdTecnico);
+
                 LstEventos.Add(new CalendarEvent
                 {
                     id = item.IdMarcacao,
-                    title = item.Tecnicos.Count >= 0 ? item.Tecnicos.FirstOrDefault().NomeCompleto + " - "  + item.Cliente.NomeCliente : item.Cliente.NomeCliente,
+                    title = tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
                     start = dataMarcacao,
-                    end = dataMarcacao.AddMinutes(30),
-                    IdTecnico = item.Tecnicos.Count == 0 ? 0 : item.Tecnicos.FirstOrDefault().Id,
-                    color = ("#33FF77"),
-                    url = "Pedido/?idMarcacao="+item.IdMarcacao+"&IdTecnico=" + (item.Tecnicos.Count == 0 ? 0 : item.Tecnicos.FirstOrDefault().Id)
-                    //color = (item.Dentro_Fora ? "#33FF77" : "#3371FF")
+                    end = dataMarcacao.AddMinutes(29),
+                    IdTecnico = item.IdTecnico,
+                    //color = ("#33FF77"),
+                    url = "Pedido/?idMarcacao="+item.IdMarcacao+"&IdTecnico=" + (item.IdTecnico),
+                    color = (tecnico.CorCalendario == string.Empty ? "#3371FF" : tecnico.CorCalendario)
                 });
                 dataMarcacao = dataMarcacao.AddMinutes(30);
             }

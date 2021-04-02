@@ -15,15 +15,18 @@ namespace FT_Management.Controllers
     [Authorize]
     public class PedidosController : Controller
     {
-        public JsonResult ObterMarcacoes()
+        public JsonResult ObterMarcacoes(DateTime start, DateTime end)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            return new JsonResult(context.ConverterMarcacoesEventos(context.ObterListaMarcacoes()).ToList());
+            return new JsonResult(context.ConverterMarcacoesEventos(context.ObterListaMarcacoes(start, end)).ToList());
 
         }
 
         public ActionResult Calendario()
         {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarMarcacoes();
+
             return View();
         }
         public ActionResult CalendarioView()
@@ -52,7 +55,7 @@ namespace FT_Management.Controllers
             if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["DataPedidos"] = DataPedidos;
 
-            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
+            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos), DateTime.Parse(DataPedidos));
             ViewData["IdTecnico"] = IdTecnico;
             return View(ListaMarcacoes);
         }
@@ -66,8 +69,7 @@ namespace FT_Management.Controllers
             phccontext.AtualizarFolhasObra();
 
             Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-            marcacao.Tecnicos = new List<Utilizador>();
-            marcacao.Tecnicos.Add(new Utilizador { Id = int.Parse(IdTecnico) });
+            marcacao.IdTecnico = int.Parse(IdTecnico);
 
             ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
 

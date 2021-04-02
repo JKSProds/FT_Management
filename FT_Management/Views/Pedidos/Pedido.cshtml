@@ -175,7 +175,7 @@
         </div>*@
     <div>
         <br />
-        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = Model.Tecnicos.FirstOrDefault().Id, DataPedidos = Model.DataMarcacao.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
+        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = Model.IdTecnico, DataPedidos = Model.DataMarcacao.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
     </div>
 
     <!-- Modal -->
