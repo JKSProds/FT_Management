@@ -208,7 +208,9 @@ namespace FT_Management.Models
                         EstadoMarcacao = result["EstadoMarcacao"],
                         IdTecnico = result["IdTecnico"],
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
-                        MarcacaoStamp = result["MarcacaoStamp"]
+                        MarcacaoStamp = result["MarcacaoStamp"],
+                        Oficina = result["Oficina"],
+                        TipoEquipamento = result["TipoEquipamento"]
 
                     });
                 }
@@ -1147,22 +1149,22 @@ namespace FT_Management.Models
         }
         public void CriarMarcacoes(List<Marcacao> LstMarcacao)
         {
-            int max = 5000;
+            int max = 1000;
             int j = 0;
             for (int i = 0; j < LstMarcacao.Count; i++)
             {
                 if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
 
-                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp) VALUES ";
+                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp, Oficina, TipoEquipamento) VALUES ";
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', '" + marcacao.EstadoMarcacao + "', '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', '" + marcacao.EstadoMarcacao + "', '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.TipoEquipamento + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp);";
+                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp), Oficina = VALUES(Oficina), TipoEquipamento = VALUES(TipoEquipamento);";
 
                 Database db = ConnectionString;
 

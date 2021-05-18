@@ -93,7 +93,7 @@ namespace FT_Management.Models
 
             conn.Open();
 
-            SqlCommand command = new SqlCommand("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec FROM sa inner join st on sa.ref=st.ref where sa.usrdata>'"+ dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") +"';", conn);
+            SqlCommand command = new SqlCommand("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec FROM sa inner join st on sa.ref=st.ref where sa.usrdata>='"+ dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") +"';", conn);
 
             using (SqlDataReader result = command.ExecuteReader())
             {
@@ -138,7 +138,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT no, estab, nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, email, tipo, vendedor, usrdata, usrhora FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("SELECT no, estab, nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, email, tipo, vendedor, usrdata, usrhora FROM cl where cl.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -186,7 +186,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT vendedor, vendnm FROM cl where cl.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' GROUP BY vendedor, vendnm order by vendedor;", conn);
+                SqlCommand command = new SqlCommand("SELECT vendedor, vendnm FROM cl where cl.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' GROUP BY vendedor, vendnm order by vendedor;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -226,7 +226,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs FROM fl where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("SELECT no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs FROM fl where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -272,7 +272,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -321,7 +321,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select pa.mastamp, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST where pa.nopat is not null and pa.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
+                SqlCommand command = new SqlCommand("select pa.mastamp, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST where pa.nopat is not null and pa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -379,7 +379,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio from mh where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
+                SqlCommand command = new SqlCommand("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio from mh where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -431,7 +431,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and bo.usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
+                SqlCommand command = new SqlCommand("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and bo.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -475,7 +475,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, resumo, estado, prioridade, u_marcacaostamp FROM u_marcacao where usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
+                SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, resumo, estado, prioridade, u_marcacaostamp, oficina FROM u_marcacao where data>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -490,7 +490,9 @@ namespace FT_Management.Models
                             ResumoMarcacao = result["resumo"].ToString().Trim(),
                             EstadoMarcacao = result["estado"].ToString().Trim(),
                             PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
-                            MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim()
+                            MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
+                            TipoEquipamento = result["tipoe"].ToString().Trim(),
+                            Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0
                         });
                     }
                 }
@@ -521,7 +523,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm from u_mtecnicos where marcado=1 AND usrdata>'" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm from u_mtecnicos where marcado=1 AND usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
