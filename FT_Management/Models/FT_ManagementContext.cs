@@ -1491,7 +1491,7 @@ namespace FT_Management.Models
 
                 y += 10;
 
-                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 150, 160), format);
+                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
 
                 y += 200;
                 gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x + 220, y, width - (x * 2) - 520, 80), format);
@@ -1503,7 +1503,7 @@ namespace FT_Management.Models
                 QRCode qrCode = new QRCode(qrCodeData);
                 Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
-                gr.DrawImage(qrCodeImage, width - 310, height - 150, 150, 150);
+                gr.DrawImage(qrCodeImage, width - 210, height - 150, 150, 150);
 
                 gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 100, 30), format);
 
