@@ -1505,7 +1505,7 @@ namespace FT_Management.Models
 
                 gr.DrawImage(qrCodeImage, width - 210, height - 150, 150, 150);
 
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 100, 30), format);
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2), 30), format);
 
             }
 
