@@ -476,7 +476,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, resumo, estado, prioridade, u_marcacaostamp, oficina FROM u_marcacao where data>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
+                SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, resumo, estado, prioridade, u_marcacaostamp, oficina FROM u_marcacao where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
