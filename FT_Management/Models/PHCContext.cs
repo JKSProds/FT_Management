@@ -79,6 +79,7 @@ namespace FT_Management.Models
         public void AtualizarMarcacoes()
         { 
             FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao")));
+            FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mtecnicos")));
         }
 
         public List<Produto> ObterProdutos(DateTime dataUltimaLeitura)
