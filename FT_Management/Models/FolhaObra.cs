@@ -273,5 +273,7 @@ namespace FT_Management.Models
         public string PrioridadeMarcacao { get; set; }
         public string MarcacaoStamp { get; set; }
         public List<FolhaObra> LstFolhasObra { get; set; }
+        public int Oficina { get; set; }
+        public string TipoEquipamento { get; set; }
     }
 }

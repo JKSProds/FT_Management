@@ -1,0 +1,267 @@
+﻿@model IEnumerable<FT_Management.Models.Marcacao>
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- Bootstrap core JavaScript-->
+<script src="~/js/sb/jquery/jquery.min.js"></script>
+<script src="~/js/sb/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="~/js/sb/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="~/js/sb/sb-admin-2.min.js"></script>
+
+<!-- Page level plugins -->
+<script src="~/js/sb/chart.js/Chart.min.js"></script>
+
+<!-- Custom fonts for this template-->
+<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet">
+
+<!-- Custom styles for this template-->
+<link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i> Gerar Relatório
+        </a>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Pedidos Concluidos (Diário)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["NPedidosConcluidos"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Pedidos Agendados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["NPedidosAgendados"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="far fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Pedidos
+                    </div>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Peças
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["NPedidosPecas"]</div>
+                        </div>
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Orçamentos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["NPedidosOrcamentos"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests Card Example -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Equipamentos Oficina
+                    </div>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pesagem
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["NPedidosOficinaPesagem"]</div>
+                        </div>
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Mecânica
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewData["NPedidosOficinaMecanica"]</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tools fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+
+    <div class="row">
+
+        <!-- Area Chart -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Pedidos Concluidos (Diário)</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="myAreaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Chart -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Pendentes</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="myPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-primary"></i> Pendentes
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Peças
+                        </span>
+                        <br />
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-info"></i> Orçamentos
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-danger"></i> Equipamentos Oficina
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  
+</div>
+<br>
+<!-- /.container-fluid -->
+<!-- End of Main Content -->
+
+<script>
+    var ctx = document.getElementById("myPieChart");
+    $.getJSON(('@Url.Action("ObterDadosGraficoPie", "Dashboard")'), function (dados) {
+
+        var myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ["Pedidos Pendentes", "Pedidos Peças", "Pedidos Orçamentos", "Equipamentos Oficina"],
+                datasets: [{
+                    data: dados,
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#FD0000'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#E30000'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+                legend: {
+                    display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+    });
+
+    var goBackDays = 7;
+
+    var today = new Date();
+    today.setDate(today.getDate() - goBackDays);
+    var daysSorted = [];
+
+    for (var i = 0; i < goBackDays; i++) {
+        var newDate = new Date(today.setDate(today.getDate() + 1));
+        daysSorted.push(newDate.getDate() + '/' + newDate.getMonth());
+    }
+
+
+    var ctx2 = document.getElementById("myAreaChart");
+    $.getJSON(('@Url.Action("ObterDadosGraficoBar", "Dashboard")'), function (dados) {
+
+        var myAreaChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: daysSorted,
+                datasets: [{
+                    label: 'Pedidos Concluidos',
+                    data: dados,
+                    backgroundColor: 'rgba(78, 115, 223, 0.2)',
+                    borderColor: 'rgb(153, 102, 255)',
+                    tension: 0.1
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
+            },
+        });
+    });
+
+</script>
