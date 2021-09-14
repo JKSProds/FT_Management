@@ -144,7 +144,7 @@ else
             }
         </tbody>
     </table>
-    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Produtos", new { page, Ref = @ViewData["Ref"], Desig = @ViewData["Desig"] }), Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast)
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Produtos", new { page, Ref = @ViewData["Ref"], Desig = @ViewData["Desig"], Armazem = @ViewData["Armazem"] }), Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast)
 
 }
 
