@@ -322,7 +322,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select pa.mastamp, pa.qassinou, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST where pa.nopat is not null and pa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
+                SqlCommand command = new SqlCommand("select pa.mastamp, u_intervencao.qassinou, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST where pa.nopat is not null and pa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
