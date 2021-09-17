@@ -152,7 +152,7 @@ namespace FT_Management.Models
                             NomeCliente = result["nome"].ToString().Trim(),
                             NumeroContribuinteCliente = result["ncont"].ToString().Trim(),
                             TelefoneCliente = result["telefone"].ToString().Trim(),
-                            PessoaContatoCliente = result["nomefo"].ToString().Trim(),
+                            PessoaContatoCliente = result["nome"].ToString().Trim(),
                             MoradaCliente = result["endereco"].ToString().Trim(),
                             EmailCliente = result["emailfo"].ToString().Trim(),
                             IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
