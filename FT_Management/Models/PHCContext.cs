@@ -348,7 +348,7 @@ namespace FT_Management.Models
                                 //SituacoesPendentes = result["problema"].ToString().Trim(),
                                 EquipamentoServico = equipamento,
                                 ClienteServico = cliente,
-                                RubricaCliente = result["qassinou"].ToString().Trim(),
+                                ConferidoPor = result["qassinou"].ToString().Trim(),
                             IdCartao = result["u_marcacaostamp"].ToString().Trim()
                             });
                             //Console.WriteLine(LstFolhaObra.Count.ToString() + result["u_marcacaostamp"].ToString().Trim());
