@@ -23,16 +23,16 @@ namespace FT_Management.Models
                 cnn = new SqlConnection(connectionString);
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
 
-                FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
+                //FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
             }
             catch
             {
@@ -322,7 +322,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select pa.mastamp, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST where pa.nopat is not null and pa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
+                SqlCommand command = new SqlCommand("select pa.mastamp, pa.qassinou, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST where pa.nopat is not null and pa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -348,7 +348,8 @@ namespace FT_Management.Models
                                 //SituacoesPendentes = result["problema"].ToString().Trim(),
                                 EquipamentoServico = equipamento,
                                 ClienteServico = cliente,
-                                IdCartao = result["u_marcacaostamp"].ToString().Trim()
+                                RubricaCliente = result["qassinou"].ToString().Trim(),
+                            IdCartao = result["u_marcacaostamp"].ToString().Trim()
                             });
                             //Console.WriteLine(LstFolhaObra.Count.ToString() + result["u_marcacaostamp"].ToString().Trim());
                     }
