@@ -1,0 +1,25 @@
+﻿@model FT_Management.Models.FT_ManagementContext
+
+
+@{
+    ViewData["Title"] = "Admin";
+}
+
+
+
+
+<table width="100%">
+    <tr>
+        <td>
+            <h1>Funções de Administrador</h1>
+        </td>
+    </tr>
+    <tr>
+
+        <td>
+            <hr />
+            <a class="btn btn-primary btn-lg btn-block text-white" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("ResetTabela", "Admin"))'"><i class="fas fa-wrench" style="margin-top:5px"></i> Reset Tabela</a>
+            <a class="btn btn-primary btn-lg btn-block text-white" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("UpdateTabela", "Admin"))'"><i class="fas fa-wrench" style="margin-top:5px"></i> Update Tabela</a>
+        </td>
+    </tr>
+</table>
