@@ -273,7 +273,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                SqlCommand command = new SqlCommand("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where udata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
