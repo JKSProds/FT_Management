@@ -31,5 +31,9 @@ namespace FT_Management.Controllers
             ViewData["IdComercial"] = IdComercial;
             return View(ListaVisitas);
         }
+        public ActionResult Adicionar()
+        {
+            return View();
+        }
     }
 }

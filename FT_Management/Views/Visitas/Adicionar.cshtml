@@ -1,200 +1,68 @@
 ﻿@model FT_Management.Models.FolhaObra
 
 @{
-    ViewData["Title"] = "Adicionar Intervenção";
+    ViewData["Title"] = "Adicionar Visita";
 }
 
-<h1>Adicionar Intervenção</h1>
-<hr />
-<form asp-action="Adicionar">
-    <input type="hidden" id="hiddenCartaoId" value="@ViewData["IdCartao"]" name="IdCartao" />
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-item nav-link active" id="v-pills-equipamento-tab" data-toggle="pill" href="#v-pills-equipamento" role="tab" aria-controls="v-pills-equipamento" aria-selected="true">Equipamento</a>
-        <a class="nav-item nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="false">Dados</a>
-    </div>
-    <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="v-pills-equipamento" role="tabpanel" aria-labelledby="v-pills-equipamento-tab">
-            <br />
-            <div class="row">
-                <div class="form-group col-lg-6">
-                    <div class="form-group d-none">
-                        <label asp-for="EquipamentoServico.IdEquipamento" class="control-label"></label>
-                        <input asp-for="EquipamentoServico.IdEquipamento" class="form-control" id="IdEquipamento" />
-                        <span asp-validation-for="EquipamentoServico.IdEquipamento" class="text-danger"></span>
-                    </div>
-                    <div class="form-group ">
-                        <label asp-for="EquipamentoServico.NumeroSerieEquipamento" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="EquipamentoServico.NumeroSerieEquipamento" class="form-control col-11" id="NumeroSerieEquipamento" />
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary" onclick="ObterEquipamento()">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="ObterHistoricoEquipamento()">
-                                    <i class="fas fa-history"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <span asp-validation-for="EquipamentoServico.NumeroSerieEquipamento" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-6">
-                    <div class="form-group d-none">
-                        <label asp-for="EquipamentoServico.DesignacaoEquipamento" class="control-label"></label>
-                        <input asp-for="EquipamentoServico.DesignacaoEquipamento" class="form-control" id="DesignacaoEquipamento" />
-                        <span asp-validation-for="EquipamentoServico.DesignacaoEquipamento" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="EquipamentoServico.MarcaEquipamento" class="control-label"></label>
-                        <input asp-for="EquipamentoServico.MarcaEquipamento" class="form-control" id="MarcaEquipamento" />
-                        <span asp-validation-for="EquipamentoServico.MarcaEquipamento" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-6">
-                    <div class="form-group">
-                        <label asp-for="EquipamentoServico.ModeloEquipamento" class="control-label"></label>
-                        <input asp-for="EquipamentoServico.ModeloEquipamento" class="form-control" id="ModeloEquipamento" />
-                        <span asp-validation-for="EquipamentoServico.ModeloEquipamento" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-6">
-                    <div class="form-group">
-                        <label asp-for="EstadoEquipamento" class="col-form-label"></label>
-                        <select asp-for="EstadoEquipamento" class="form-control">
-                            <option>Instalação</option>
-                            <option>Garantia</option>
-                            <option selected="selected">Não Garantia</option>
-                            <option>Outro</option>
-                        </select>
-                    </div>
-                </div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+
+<div class="mb-5 p-4 bg-white shadow-sm">
+    <h3>Adicionar Visita</h3>
+    <div id="stepper1" class="bs-stepper linear">
+        <div class="bs-stepper-header" role="tablist">
+            <div class="step active" data-target="#test-l-1">
+                <button type="button" class="step-trigger" role="tab" id="stepper1trigger1" aria-controls="test-l-1" aria-selected="true">
+                    <span class="bs-stepper-circle">1</span>
+                    <span class="bs-stepper-label">Cliente</span>
+                </button>
+            </div>
+            <div class="bs-stepper-line"></div>
+            <div class="step" data-target="#test-l-2">
+                <button type="button" class="step-trigger" role="tab" id="stepper1trigger2" aria-controls="test-l-2" aria-selected="false" disabled="disabled">
+                    <span class="bs-stepper-circle">2</span>
+                    <span class="bs-stepper-label">Comercial</span>
+                </button>
+            </div>
+            <div class="bs-stepper-line"></div>
+            <div class="step" data-target="#test-l-3">
+                <button type="button" class="step-trigger" role="tab" id="stepper1trigger3" aria-controls="test-l-3" aria-selected="false" disabled="disabled">
+                    <span class="bs-stepper-circle">3</span>
+                    <span class="bs-stepper-label">Observações</span>
+                </button>
             </div>
         </div>
-        <div class="tab-pane fade show" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
-            <br />
-            <div class="row">
-                <div class="form-group col-lg-6">
-
-                    <div class="form-group d-none">
-                        <label asp-for="ClienteServico.IdCliente" class="control-label"></label>
-                        <input asp-for="ClienteServico.IdCliente" class="form-control" id="IdCliente" />
-                        <span asp-validation-for="ClienteServico.IdCliente" class="text-danger"></span>
+        <div class="bs-stepper-content">
+            <form onsubmit="return false" data-myki-form-1="MUQTT">
+                <div id="test-l-1" role="tabpanel" class="bs-stepper-pane active dstepper-block" aria-labelledby="stepper1trigger1">
+                    <div class="form-group" style="position: relative;">
+                        <label for="exampleInputEmail1">Cliente</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Nome Cliente">
                     </div>
-                    <div class="form-group d-none">
-                        <label asp-for="IdFolhaObra" class="control-label"></label>
-                        <input asp-for="IdFolhaObra" class="form-control" id="txtIdFolhaObra" />
-                        <span asp-validation-for="IdFolhaObra" class="text-danger"></span>
-                    </div>
+                    <button class="btn btn-primary" onclick="next()">Próximo</button>
+                </div>
+                <div id="test-l-2" role="tabpanel" class="bs-stepper-pane" aria-labelledby="stepper1trigger2">
                     <div class="form-group">
-                        <label asp-for="ClienteServico.NomeCliente" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="ClienteServico.NomeCliente" class="form-control col-10" id="NomeCliente" />
-                            <button type="button" class="btn btn-primary col-2" onclick="ObterCliente()">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                        <span asp-validation-for="ClienteServico.NomeCliente" class="text-danger"></span>
+                        <label for="exampleInputPassword1">Comercial</label>
+                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Nome Comercial">
                     </div>
+                    <button class="btn btn-primary" onclick="previous()">Anterior</button>
+                    <button class="btn btn-primary" onclick="next()">Próximo</button>
                 </div>
-                <div class="form-group col-lg-6">
+                <div id="test-l-3" role="tabpanel" class="bs-stepper-pane text-center" aria-labelledby="stepper1trigger3">
                     <div class="form-group">
-                        <label asp-for="ConferidoPor" class="control-label"></label>
-                        <input asp-for="ConferidoPor" class="form-control" id="PessoaContactoCliente" />
-                        <span asp-validation-for="ConferidoPor" class="text-danger"></span>
-                    </div>
-                    <div class="form-group d-none">
-                        <label asp-for="ClienteServico.MoradaCliente" class="control-label"></label>
-                        <input asp-for="ClienteServico.MoradaCliente" class="form-control" id="MoradaCliente" />
-                        <span asp-validation-for="ClienteServico.MoradaCliente" class="text-danger"></span>
-                    </div>
-                    <div class="form-group d-none">
-                        <label asp-for="ClienteServico.EmailCliente" class="control-label"></label>
-                        <input asp-for="ClienteServico.EmailCliente" class="form-control" id="EmailCliente" />
-                        <span asp-validation-for="ClienteServico.EmailCliente" class="text-danger"></span>
-                    </div>
-                    <div class="form-group d-none">
-                        <label asp-for="ClienteServico.NumeroContribuinteCliente" class="control-label"></label>
-                        <input asp-for="ClienteServico.NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" />
-                        <span asp-validation-for="ClienteServico.NumeroContribuinteCliente" class="text-danger"></span>
+                        <label for="exampleInputPassword1">Observações</label>
+                        <textarea class="form-control" rows="8" placeholder="" required></textarea>
+                        <br />
+                        <button class="btn btn-primary" onclick="previous()">Anterior</button>
+                        <button class="btn btn-primary" onclick="next()">Guardar</button>
                     </div>
                 </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-8">
-
-                    <div class="form-group">
-                        <label asp-for="ReferenciaServico" class="control-label"></label>
-                        <input asp-for="ReferenciaServico" class="form-control" />
-                        <span asp-validation-for="ReferenciaServico" class="text-danger"></span>
-                    </div>
-
-                </div>
-                <div class="form-group col-lg-4">
-                    <input type="checkbox" class="custom-checkbox" style="margin-top:35px; width: 30px; height: 30px;" asp-for="AssistenciaRemota"/>
-                    <label asp-for="AssistenciaRemota" class="control-label" margin-top:10px;font-size:20px;"></label>
-                </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-12">
-
-                    <div class="form-group">
-                        <label asp-for="RelatorioServico" class="control-label"></label>
-                        @Html.EditorFor(model => model.RelatorioServico, new { htmlAttributes = new { @class = "form-control", @rows = "8" } })
-                        <span asp-validation-for="RelatorioServico" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-12">
-
-                    <div class="form-group">
-                        <label asp-for="SituacoesPendentes" class="control-label"></label>
-                        @Html.EditorFor(model => model.SituacoesPendentes, new { htmlAttributes = new { @class = "form-control", @rows = "4" } })
-                        <span asp-validation-for="SituacoesPendentes" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
+                </form>
         </div>
     </div>
-    <div class="form-group">
-        <input type="submit" value="Adicionar" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;"/>
-    </div>
-</form>
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Histórico de Intervenções</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p> </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="myModal2" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Histórico de Intervenções</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <btn class="btn btn-danger btn-block btn-lg disabled">Não existem intervenções!</btn>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div>
-    <br />
-    <a class="btn btn-lg btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idCartao = Model.IdCartao}))'">Cancelar</a>
 </div>
 
 
@@ -204,87 +72,14 @@
 
 <script>
 
-    function ObterHistoricoEquipamento() {
-        var NumeroSerie = document.getElementById("NumeroSerieEquipamento").value;
+    var stepper = new Stepper(document.getElementById("stepper1"));
 
-        $.ajax({
-            url: "/FolhasObra/ObterHistorico",
-            type: "GET",
-            data: "NumeroSerieEquipamento=" + NumeroSerie,
-            dataType: "json", // type of data you're expecting from response
-            success: function (json) {
-                var html = "<table class=\"table table-hover\" <thead><tr><th>Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
-                console.log(json);
-
-                for (var i = 0; i < json.json.length; i++) {
-                    var obj = json.json[i];
-                    var tecnico = "";
-                    if (obj.intervencaosServico.length > 0) tecnico = obj.intervencaosServico[0].nomeTecnico;
-
-                    var date = new Date(obj.dataServico);
-
-                    var year = date.getFullYear();
-                    var month = date.getMonth() + 1;
-                    var day = date.getDate();
-
-                    if (day < 10) {
-                        day = '0' + day;
-                    }
-                    if (month < 10) {
-                        month = '0' + month;
-                    }
-
-                    html += "<tr onclick=\"location.href = '/FolhasObra/Editar/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
-                }
-                html += "</tbody></table>"
-                $('#myModal').find('.modal-body').html(html);
-                if (json.json.length > 0) { $("#myModal").modal("show") } else { $("#myModal2").modal("show") };
-
-            },
-            error: function (error) { }
-        });
+    function next() {
+        stepper.next();
+    }
+    function previous() {
+        stepper.previous();
     }
 
-    function ObterEquipamento() {
-        var NumeroSerie = document.getElementById("NumeroSerieEquipamento").value;
-
-        $.ajax({
-            url: "/FolhasObra/ObterEquipamento",
-            type: "GET",
-            data: "NumeroSerieEquipamento=" + NumeroSerie,
-            dataType: "json", // type of data you're expecting from response
-            success: function (json) {
-                console.log(json);
-                document.getElementById("DesignacaoEquipamento").value = json.json.designacaoEquipamento;
-                document.getElementById("MarcaEquipamento").value = json.json.marcaEquipamento;
-                document.getElementById("ModeloEquipamento").value = json.json.modeloEquipamento;
-                document.getElementById("IdEquipamento").value = json.json.idEquipamento;
-                document.getElementById("NumeroSerie").value = json.json.numeroSerie;
-            },
-            error: function (error) { }
-        });
-    }
-
-    function ObterCliente() {
-        var NomeCliente = document.getElementById("NomeCliente").value;
-        //alert(RefProduto);
-
-        $.ajax({
-            url: "/FolhasObra/ObterCliente",
-            type: "GET",
-            data: "NomeCliente=" + NomeCliente,
-            dataType: "json", // type of data you're expecting from response
-            success: function (json) {
-                console.log(json);
-                document.getElementById("IdCliente").value = json.json.idCliente;
-                document.getElementById("PessoaContactoCliente").value = json.json.pessoaContatoCliente;
-                document.getElementById("MoradaCliente").value = json.json.moradaCliente;
-                document.getElementById("EmailCliente").value = json.json.emailCliente;
-                document.getElementById("NumeroContribuinteCliente").value = json.json.numeroContribuinteCliente;
-                document.getElementById("NomeCliente").value = json.json.nomeCliente;
-            },
-            error: function (error) { }
-        });
-    }
 
 </script>
