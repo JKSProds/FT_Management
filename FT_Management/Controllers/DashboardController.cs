@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FT_Management.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
 

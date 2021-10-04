@@ -22,6 +22,7 @@ namespace FT_Management.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Calendario()
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -34,17 +35,13 @@ namespace FT_Management.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Pedidos
-        public ActionResult Index(int Tipo)
+        public ActionResult Index()
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            if (!user.Admin) return RedirectToAction("ListaPedidos", new { IdTecnico = user.Id });
-
-            if (Tipo == 1) return View(context.ObterListaTecnicos());
-
-            return View(context.ObterListaComerciais());
+            return View(context.ObterListaTecnicos());
         }
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
         {

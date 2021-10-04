@@ -11,9 +11,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class FolhasObraController : Controller
     {
+
         // GET: FolhasObraController
         public ActionResult Index(string DataFolhasObra)
         {

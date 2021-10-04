@@ -50,6 +50,35 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
+
+        public List<Visita> ObterListaVisitas(int IdComercial, DateTime DataInicial, DateTime DataFinal)
+        {
+            List<Visita> LstVisitas = new List<Visita>();
+            String DataI = DataInicial.ToString("yyyy-MM-dd");
+            String DataF = DataFinal.ToString("yyyy-MM-dd");
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_visitas where dat_visitas.idcomercial=" + IdComercial + " AND DataVisita>='" + DataI + "'  AND DataVisita<='" + DataF + "';");
+                while (result.Read())
+                {
+                    LstVisitas.Add(new Visita()
+                    {
+                        IdVisita = result["IdVisita"],
+                        DataVisita = DateTime.Parse(result["DataVisita"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoVisita = result["ResumoVisita"],
+                        EstadoVisita = result["EstadoVisita"],
+                        ObsVisita = result["Obs"],
+                        VisitaStamp = result["VisitaStamp"]
+
+                    });
+                }
+            }
+
+            return LstVisitas;
+
+        }
         public Produto ObterProduto(string referencia, int armazemid)
         {
             Produto produto = new Produto();
@@ -703,7 +732,8 @@ namespace FT_Management.Models
                         NomeCompleto = result["NomeCompleto"],
                         TipoUtilizador = result["TipoUtilizador"],
                         EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"]
+                        IdCartaoTrello = result["IdCartaoTrello"],
+                        Admin = result["admin"]
                     });
                 }
             }

@@ -55,6 +55,7 @@ namespace FT_Management
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(cookieOptions =>
             {
                 cookieOptions.LoginPath = "/Utilizadores/Login";
+                cookieOptions.AccessDeniedPath = "/Home/AcessoNegado";
             });
 
 
@@ -62,7 +63,7 @@ namespace FT_Management
             services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(Configuration.GetConnectionString("PHCConnection"), Configuration.GetConnectionString("DefaultConnection"))));
 
             //var passwordHasher = new PasswordHasher<string>();
-            //Console.WriteLine(passwordHasher.HashPassword(null, "Food@001.jmonteiro"));
+            //Console.WriteLine(passwordHasher.HashPassword(null, "Food@016.fs"));
 
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }

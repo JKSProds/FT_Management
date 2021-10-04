@@ -1,0 +1,45 @@
+﻿@model FT_Management.Models.Visita
+
+
+@{
+    ViewData["Title"] = "Visita";
+}
+
+<div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+    <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
+    <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Observações</a>
+</div>
+<br />
+<hr />
+
+<h1 class="text-center">
+    @Html.DisplayFor(model => model.Cliente.NomeCliente)
+</h1>
+<hr />
+<div class="tab-content" id="v-pills-tabContent">
+    <div class="tab-pane fade show active" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
+        <br />
+
+
+        <div>
+            <dl class="row">
+                <dd class="col-sm-12">
+                    <span style="white-space: pre-line">@Model.ResumoVisita</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+ 
+    <div class="tab-pane fade show" id="v-pills-obs" role="tabpanel" aria-labelledby="v-pills-obs-tab">
+        <br />
+       
+    </div>
+   
+    <div>
+        <br />
+        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { IdComercial = Model.IdComercial, DataPedidos = Model.DataVisita.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
+    </div>
+
+</div>
+
