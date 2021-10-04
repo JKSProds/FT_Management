@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Escritorio")]
     public class FolhasObraController : Controller
     {
 

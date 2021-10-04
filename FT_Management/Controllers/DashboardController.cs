@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
-    [Authorize]
+
+    [Authorize(Roles = "Admin, Escritorio")]
     public class DashboardController : Controller
     {
 

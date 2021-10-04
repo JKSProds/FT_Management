@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class VisitasController : Controller
     {
         // GET: VisitasController

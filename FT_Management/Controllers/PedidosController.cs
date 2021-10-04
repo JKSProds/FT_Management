@@ -12,7 +12,8 @@ using Newtonsoft.Json;
 
 namespace FT_Management.Controllers
 {
-    [Authorize]
+
+    [Authorize(Roles = "Admin, Tech, Escritorio")]
     public class PedidosController : Controller
     {
         public JsonResult ObterMarcacoes(DateTime start, DateTime end)
