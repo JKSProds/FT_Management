@@ -4,42 +4,72 @@
 @{
     ViewData["Title"] = "Visita";
 }
+<form asp-action="Visita" asp-route-returnurl="@ViewData["ReturnUrl"]">
+    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+        <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
+        <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Observações</a>
+        <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
+    </div>
+    <br />
+    <hr />
 
-<div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-    <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
-    <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Observações</a>
-</div>
-<br />
-<hr />
+    <input type="hidden" asp-for="IdVisita" />
+    <input type="hidden" asp-for="EstadoVisita" />
+    <input type="hidden" asp-for="IdComercial" />
+    <input type="hidden" asp-for="ResumoVisita" />
+    <input type="hidden" asp-for="DataVisita" />
+    <input type="hidden" asp-for="Cliente.IdCliente" />
+    <input type="hidden" asp-for="Cliente.IdLoja" />
 
-<h1 class="text-center">
-    @Html.DisplayFor(model => model.Cliente.NomeCliente)
-</h1>
-<hr />
-<div class="tab-content" id="v-pills-tabContent">
-    <div class="tab-pane fade show active" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
-        <br />
+   
+    <div class="input-group mb-3">
+        <h1 class="text-center col-lg-11">
+            @Html.DisplayFor(model => model.Cliente.NomeCliente)
+        </h1>
+            <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Editar", "Clientes", new { idCliente = @Model.Cliente.IdCliente, idLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
+    </div>
 
+    <hr />
+    <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
+            <br />
+
+
+            <div>
+                <dl class="row">
+                    <dd class="col-sm-12">
+                        <span style="white-space: pre-line">@Model.ResumoVisita</span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+
+        <div class="tab-pane fade show" id="v-pills-obs" role="tabpanel" aria-labelledby="v-pills-obs-tab">
+            <br />
+            <div class="form-group">
+                <label for="">Observacões</label>
+                <textarea class="form-control" rows="8" placeholder="" asp-for="ObsVisita"></textarea>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
+            <br />
+        </div>
+        </br>
+
+        <div class="form-group">
+            <input onclick="guardar()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
+        </div>
 
         <div>
-            <dl class="row">
-                <dd class="col-sm-12">
-                    <span style="white-space: pre-line">@Model.ResumoVisita</span>
-                </dd>
-            </dl>
+            <br />
+            <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { IdComercial = Model.IdComercial, DataPedidos = Model.DataVisita.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
         </div>
-    </div>
 
- 
-    <div class="tab-pane fade show" id="v-pills-obs" role="tabpanel" aria-labelledby="v-pills-obs-tab">
-        <br />
-       
     </div>
-   
-    <div>
-        <br />
-        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { ReturnUrl = Model.IdComercial, DataPedidos = Model.DataVisita.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
-    </div>
-
-</div>
-
+</form>
+<script>
+    function guardar() {   
+        $('form').submit();
+    }
+</script>

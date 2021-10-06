@@ -21,7 +21,7 @@ namespace FT_Management.Models
 
             try
             {
-#if DEBUG == false
+            #if DEBUG == false
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
@@ -38,7 +38,7 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
-#endif
+            #endif
             }
             catch
             {

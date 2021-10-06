@@ -123,6 +123,15 @@ namespace FT_Management.Controllers
 
             return Redirect(Request.Query["ReturnUrl"]);
         }
+        [HttpPost]
+        public ActionResult Visita(Visita visita)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+           
+
+            return Redirect(Request.Query["ReturnUrl"]);
+        }
 
         [Authorize(Roles = "Admin, Escritorio")]
         [HttpGet]

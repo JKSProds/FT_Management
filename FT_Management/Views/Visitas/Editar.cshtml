@@ -17,7 +17,6 @@
         <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
     </div>
     <input type="hidden" asp-for="IdVisita" />
-    <input type="hidden" asp-for="ObsVisita" />
     <input type="hidden" asp-for="EstadoVisita" />
 
     <div class="tab-content" id="v-pills-tabContent">
@@ -29,7 +28,7 @@
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" asp-for="Cliente.IdCliente" id="IdCliente" readonly>
                         <input type="hidden" id="IdLoja" name="IdLoja" />
-                        <button class="btn btn-outline-secondary" onclick="location.href = '@(Url.Action("Editar", "Clientes", new { idCliente = @Model.Cliente.IdCliente }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
+                        <button class="btn btn-outline-secondary" onclick="location.href = '@(Url.Action("Editar", "Clientes", new { idCliente = @Model.Cliente.IdCliente, idLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
                     </div>
                 </div>
                 <div class="form-group col-lg-8">
@@ -80,6 +79,11 @@
                 <label for="">Resumo da Visita</label>
                 <textarea class="form-control" rows="8" placeholder="" asp-for="ResumoVisita" required></textarea>
             </div>
+            <div class="form-group">
+                <label for="">Observacões</label>
+                <textarea class="form-control" rows="8" placeholder="" asp-for="ObsVisita"></textarea>
+            </div>
+
         </div>
         <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
             <br />

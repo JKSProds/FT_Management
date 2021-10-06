@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="col-lg-8">
-        <h1>Marcações</h1>
+        <h1>Marcações Técnicas</h1>
     </div>
     <div class="col-lg-4">
         <a class="btn btn-primary btn-lg btn-block text-white" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Calendario", "Pedidos"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
@@ -28,7 +28,7 @@ else
         {
             <div class="col-sm-6 " style="margin-bottom: 10px">
                 <div class="card border-success mb-3">
-                    <div class="card-header"> <h3>Marcações - @item.NomeCompleto </h3></div>
+                    <div class="card-header"> <h3>@item.NomeCompleto </h3></div>
                     <div class="card-body text-primary">
                         <p class="card-text">
                             <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = item.Id }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i> Lista</a>
