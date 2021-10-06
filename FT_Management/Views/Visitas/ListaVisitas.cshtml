@@ -64,7 +64,7 @@ else
                         </div>
                     <div class="card-body text-primary">
                         <p class="card-text">
-                            <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, IdTecnico = @ViewData["IdComercial"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
+                            <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "ListaVisitas/?idComercial=" + item.IdComercial + "&DataVisitas=" + item.DataVisita.ToShortDateString() }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
                         </p>
                         <div class="card-footer">
                             <small>

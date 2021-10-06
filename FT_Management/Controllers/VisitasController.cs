@@ -51,6 +51,8 @@ namespace FT_Management.Controllers
             ViewData["IdComercial"] = IdComercial;
             return View(ListaVisitas);
         }
+
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Adicionar()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -58,7 +60,6 @@ namespace FT_Management.Controllers
             ViewData["Comerciais"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador == 2).ToList();
             return View();
         }
-
         [HttpPost]
         public ActionResult Adicionar(int IdCliente, int IdLoja, DateTime txtData, int txtComercial, string Obs)
         {
@@ -90,6 +91,7 @@ namespace FT_Management.Controllers
 
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Editar(int idVisita)
         {
             ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
@@ -108,6 +110,21 @@ namespace FT_Management.Controllers
             return Redirect(ReturnUrl);
         }
 
+        public ActionResult Visita(int idVisita, int IdComercial)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            if (!User.IsInRole("Admin")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
+            ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
+
+            Visita visita = context.ObterVisita(idVisita);
+
+            if (visita.IdComercial == IdComercial || User.IsInRole("Admin")) return View(visita);
+
+            return Redirect(Request.Query["ReturnUrl"]);
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
         [HttpGet]
         public ActionResult Apagar(int idVisita, string ReturnUrl)
         {

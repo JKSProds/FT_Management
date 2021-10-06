@@ -38,7 +38,7 @@
    
     <div>
         <br />
-        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { IdComercial = Model.IdComercial, DataPedidos = Model.DataVisita.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
+        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { ReturnUrl = Model.IdComercial, DataPedidos = Model.DataVisita.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
     </div>
 
 </div>
