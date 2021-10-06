@@ -36,11 +36,17 @@ namespace FT_Management.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
+        
         // GET: Pedidos
-        public ActionResult Index()
+        public ActionResult Index(int IdTecnico)
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            if (!User.IsInRole("Admin"))
+            {
+                IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
+                return RedirectToAction("ListaPedidos", new { IdTecnico = IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
+            }
 
             return View(context.ObterListaTecnicos());
         }
