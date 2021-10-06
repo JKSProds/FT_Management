@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin, Escritorio")]
+    [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class FolhasObraController : Controller
     {
-
+        [Authorize(Roles = "Admin, Escritorio")]
         // GET: FolhasObraController
         public ActionResult Index(string DataFolhasObra)
         {
@@ -44,6 +44,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
            
+
 
             var file = context.PreencherFormularioFolhaObra(context.ObterFolhaObra(id)).ToArray();
             var output = new MemoryStream();
