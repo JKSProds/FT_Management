@@ -12,6 +12,7 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class VisitasController : Controller
     {
+
         // GET: VisitasController
         public ActionResult Index()
         {
@@ -91,18 +92,17 @@ namespace FT_Management.Controllers
 
         public ActionResult Editar(int idVisita)
         {
+            ViewData["ReturnUrl"] = Request.Query["ReturnURL"];
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             ViewData["Comerciais"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador == 2).ToList();
             return View(context.ObterVisita(idVisita));
         }
         [HttpPost]
-        public ActionResult Editar(Visita visita)
+        public ActionResult Editar(Visita visita, string ReturnUrl)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            
-            return View();
+            return Redirect(ReturnUrl);
         }
 
         [HttpGet]
