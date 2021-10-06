@@ -92,7 +92,7 @@ namespace FT_Management.Controllers
 
         public ActionResult Editar(int idVisita)
         {
-            ViewData["ReturnUrl"] = Request.Query["ReturnURL"];
+            ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             ViewData["Comerciais"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador == 2).ToList();

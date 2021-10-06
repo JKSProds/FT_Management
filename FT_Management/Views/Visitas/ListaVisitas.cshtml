@@ -57,8 +57,8 @@ else
                         <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdVisita" role="status"></span>
                         @if (this.User.IsInRole("Admin"))
                         {
-                            <a class="btn btn-danger btn-lg float-right" style="margin:5px" onclick="location.href = '@(Url.Action("Apagar", "Visitas", new { idVisita = item.IdVisita, ReturnURL = "ListaVisitas/?idComercial=" + item.IdComercial + "&DataVisitas=" + item.DataVisita.ToShortDateString() }))'"><i class="fas fa-trash" style="margin-top:5px"></i></a>
-                            <a class="btn btn-secondary btn-lg float-right" style="margin:5px" onclick="location.href = '@(Url.Action("Editar", "Visitas", new { idVisita = item.IdVisita, ReturnURL = "ListaVisitas/?idComercial=" + item.IdComercial + "&DataVisitas=" + item.DataVisita.ToShortDateString() }))'"><i class="fas fa-pencil-alt" style="margin-top:5px"></i></a>
+                            <a class="btn btn-danger btn-lg float-right" style="margin:5px" onclick="location.href = '@(Url.Action("Apagar", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "ListaVisitas/?idComercial=" + item.IdComercial + "&DataVisitas=" + item.DataVisita.ToShortDateString() }))'"><i class="fas fa-trash" style="margin-top:5px"></i></a>
+                            <a class="btn btn-secondary btn-lg float-right" style="margin:5px" onclick="location.href = '@(Url.Action("Editar", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "ListaVisitas/?idComercial=" + item.IdComercial + "&DataVisitas=" + item.DataVisita.ToShortDateString() }))'"><i class="fas fa-pencil-alt" style="margin-top:5px"></i></a>
                         }
                             <h1>@item.Cliente.NomeCliente </h1>
                         </div>
