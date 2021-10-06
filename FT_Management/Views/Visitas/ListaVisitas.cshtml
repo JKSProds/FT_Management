@@ -55,8 +55,13 @@ else
                 <div class="card mb-3">
                     <div id="headerPedido_@item.IdVisita" class="card-header @(item.EstadoVisita == "Finalizado" ? "card bg-success mb-3" : "") @(item.EstadoVisita == "Criado" ? "bg-info" : "")@(item.EstadoVisita != "Criado" & @item.EstadoVisita != "Agendado" & @item.EstadoVisita != "Finalizado" ? "bg-warning" : "")">
                         <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdVisita" role="status"></span>
-                        <h3>@item.Cliente.NomeCliente </h3>
-                    </div>
+                        @if (this.User.IsInRole("Admin"))
+                        {
+                            <a class="btn btn-danger btn-lg float-right" style="margin:5px" onclick="location.href = '@(Url.Action("Apagar", "Visitas", new { idVisita = item.IdVisita, ReturnURL = "ListaVisitas/?idComercial=" + item.IdComercial + "&DataVisitas=" + item.DataVisita.ToShortDateString() }))'"><i class="fas fa-trash" style="margin-top:5px"></i></a>
+                            <a class="btn btn-secondary btn-lg float-right" style="margin:5px" onclick="location.href = '@(Url.Action("Editar", "Visitas", new { idVisita = item.IdVisita, ReturnURL = "ListaVisitas/?idComercial=" + item.IdComercial + "&DataVisitas=" + item.DataVisita.ToShortDateString() }))'"><i class="fas fa-pencil-alt" style="margin-top:5px"></i></a>
+                        }
+                            <h1>@item.Cliente.NomeCliente </h1>
+                        </div>
                     <div class="card-body text-primary">
                         <p class="card-text">
                             <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, IdTecnico = @ViewData["IdComercial"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>

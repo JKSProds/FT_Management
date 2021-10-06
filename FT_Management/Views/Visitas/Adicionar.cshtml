@@ -9,77 +9,135 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
 
-<div class="mb-5 p-4 bg-white shadow-sm">
-    <h3>Adicionar Visita</h3>
-    <div id="stepper1" class="bs-stepper linear">
-        <div class="bs-stepper-header" role="tablist">
-            <div class="step active" data-target="#test-l-1">
-                <button type="button" class="step-trigger" role="tab" id="stepper1trigger1" aria-controls="test-l-1" aria-selected="true">
-                    <span class="bs-stepper-circle">1</span>
-                    <span class="bs-stepper-label">Cliente</span>
-                </button>
+<form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
+    <div class="mb-5 p-4 bg-white shadow-sm">
+        <h3>Adicionar Visita</h3>
+
+        <div class="bs-stepper">
+            <div class="bs-stepper-header" role="tablist">
+                <!-- your steps here -->
+                <div class="step" data-target="#cliente-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="cliente-part" id="cliente-part-trigger" aria-selected="true">
+                        <span class="bs-stepper-circle">1</span>
+                        <span class="bs-stepper-label">Cliente</span>
+                    </button>
+                </div>
+                <div class="line"></div>
+                <div class="step" data-target="#comercial-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="comercial-part" id="comercial-part-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">Comercial</span>
+                    </button>
+                </div>
+                <div class="line"></div>
+                <div class="step" data-target="#informacao-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="informacao-part" id="informacao-part-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">Dados</span>
+                    </button>
+                </div>
             </div>
-            <div class="bs-stepper-line"></div>
-            <div class="step" data-target="#test-l-2">
-                <button type="button" class="step-trigger" role="tab" id="stepper1trigger2" aria-controls="test-l-2" aria-selected="false" disabled="disabled">
-                    <span class="bs-stepper-circle">2</span>
-                    <span class="bs-stepper-label">Comercial</span>
-                </button>
-            </div>
-            <div class="bs-stepper-line"></div>
-            <div class="step" data-target="#test-l-3">
-                <button type="button" class="step-trigger" role="tab" id="stepper1trigger3" aria-controls="test-l-3" aria-selected="false" disabled="disabled">
-                    <span class="bs-stepper-circle">3</span>
-                    <span class="bs-stepper-label">Observações</span>
-                </button>
-            </div>
-        </div>
-        <div class="bs-stepper-content">
-            <form onsubmit="return false" data-myki-form-1="MUQTT">
-                <div id="test-l-1" role="tabpanel" class="bs-stepper-pane active dstepper-block" aria-labelledby="stepper1trigger1">
+            <div class="bs-stepper-content">
+                <!-- your steps content here -->
+                <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
                     <div class="form-group" style="position: relative;">
-                        <label for="exampleInputEmail1">Cliente</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Nome Cliente">
+                        <label for="">Cliente</label>
+                        <input type="hidden" id="IdCliente" name="IdCliente" />
+                        <input type="hidden" id="IdLoja" name="IdLoja" />
+                        <input type="text" class="form-control" id="txtCustomer" placeholder="Nome Cliente">
                     </div>
                     <button class="btn btn-primary" onclick="next()">Próximo</button>
                 </div>
-                <div id="test-l-2" role="tabpanel" class="bs-stepper-pane" aria-labelledby="stepper1trigger2">
+                <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
                     <div class="form-group">
-                        <label for="exampleInputPassword1">Comercial</label>
-                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Nome Comercial">
+                        <label for="">Comercial</label>
+                        @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
+                        <select class="form-control" id="txtComercial" name="txtComercial" asp-items="@(new SelectList(LstComerciais, "IdPHC", "NomeCompleto"))"></select>
+
+                        <label for="data" class="">Data da Visita</label>
+                        <div class="">
+                            @*DateTimePicker*@
+                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                            <input type="text" class="form-control" id="txtData" name="txtData">
+                            <script>
+                                var today = new Date();
+                                var dd = String(today.getDate()).padStart(2, '0');
+                                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                var yyyy = today.getFullYear();
+
+                                $('#txtData').datepicker({
+                                    format: 'dd-mm-yyyy',
+                                    value: dd + '-' + mm + '-' + yyyy
+                                });
+                            </script>
+                        </div>
                     </div>
                     <button class="btn btn-primary" onclick="previous()">Anterior</button>
                     <button class="btn btn-primary" onclick="next()">Próximo</button>
                 </div>
-                <div id="test-l-3" role="tabpanel" class="bs-stepper-pane text-center" aria-labelledby="stepper1trigger3">
+                <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
                     <div class="form-group">
-                        <label for="exampleInputPassword1">Observações</label>
-                        <textarea class="form-control" rows="8" placeholder="" required></textarea>
+                        <label for="">Observações</label>
+                        <textarea class="form-control" rows="8" placeholder="" id="Obs" name="Obs" required></textarea>
                         <br />
-                        <button class="btn btn-primary" onclick="previous()">Anterior</button>
-                        <button class="btn btn-primary" onclick="next()">Guardar</button>
+                        <div class="form-group">
+                            <button class="btn btn-primary" onclick="previous()">Anterior</button>
+
+                            <input type="submit" onclick="submit()" value="Guardar" class="btn btn-primary" />
+                        </div>
                     </div>
                 </div>
-                </form>
+            </div>
         </div>
     </div>
-</div>
+</form>
 
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-
-<script>
-
-    var stepper = new Stepper(document.getElementById("stepper1"));
-
-    function next() {
-        stepper.next();
-    }
-    function previous() {
-        stepper.previous();
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     }
 
+    <script>
+        $(function () {
+            $("#txtCustomer").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Visitas/ObterClientes/',
+                        data: { "prefix": request.term },
+                        type: "POST",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.idCliente + " - " + item.idLoja + " - " + item.nomeCliente,
+                                    val: item.idCliente,
+                                    val2: item.idLoja
+                                };
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function (e, i) {
+                    $("#IdCliente").val(i.item.val);
+                    $("#IdLoja").val(i.item.val2);
+                },
+                minLength: 1
+            });
+        });
 
-</script>
+        var stepper = new Stepper($('.bs-stepper')[0])
+
+        function next() {
+            stepper.next();
+        }
+        function previous() {
+            stepper.previous();
+        }
+
+    </script>
