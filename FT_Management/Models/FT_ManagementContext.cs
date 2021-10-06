@@ -88,16 +88,17 @@ namespace FT_Management.Models
 
                 using var result = db.Query("SELECT * FROM dat_visitas where IdVisita = "+ IdVisita + ";");
                 result.Read();
-                    visita = new Visita()
-                    {
-                        IdVisita = result["IdVisita"],
-                        DataVisita = DateTime.Parse(result["DataVisita"]),
-                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
-                        ResumoVisita = result["ResumoVisita"],
-                        EstadoVisita = result["EstadoVisita"],
-                        ObsVisita = result["ObsVisita"],
-                        VisitaStamp = result["VisitaStamp"],
-                        IdComercial = result["idcomercial"]
+
+                visita = new Visita()
+                {
+                    IdVisita = result["IdVisita"],
+                    DataVisita = DateTime.Parse(result["DataVisita"]),
+                    Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                    ResumoVisita = result["ResumoVisita"],
+                    EstadoVisita = result["EstadoVisita"],
+                    ObsVisita = result["ObsVisita"],
+                    VisitaStamp = result["VisitaStamp"],
+                    IdComercial = result["idcomercial"]
 
                     };
                 }

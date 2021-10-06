@@ -102,6 +102,9 @@ namespace FT_Management.Controllers
         public ActionResult Editar(Visita visita, string ReturnUrl)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            List<Visita> lstVisitas = new List<Visita>();
+            lstVisitas.Add(visita);
+            context.CriarVisitas(lstVisitas);
             return Redirect(ReturnUrl);
         }
 
