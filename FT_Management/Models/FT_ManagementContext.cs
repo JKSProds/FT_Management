@@ -1248,6 +1248,7 @@ namespace FT_Management.Models
 
                 foreach (var visita in LstVisita.GetRange(j, max))
                 {
+                    if (visita.ObsVisita is null) visita.ObsVisita = String.Empty;
                     sql += ("('" + visita.IdVisita + "', '" + visita.DataVisita.ToString("yy-MM-dd") + "', '" + visita.Cliente.IdCliente + "', '" + visita.Cliente.IdLoja + "', '" + visita.ResumoVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.EstadoVisita + "', '" + visita.ObsVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.IdComercial + "'), \r\n");
                     i++;
                 }
