@@ -80,6 +80,30 @@ namespace FT_Management.Models
             return LstVisitas;
 
         }
+        public Visita ObterVisita(int IdVisita)
+        {
+            Visita visita = new Visita();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_visitas where IdVisita = "+ IdVisita + ";");
+                result.Read();
+                    visita = new Visita()
+                    {
+                        IdVisita = result["IdVisita"],
+                        DataVisita = DateTime.Parse(result["DataVisita"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoVisita = result["ResumoVisita"],
+                        EstadoVisita = result["EstadoVisita"],
+                        ObsVisita = result["ObsVisita"],
+                        VisitaStamp = result["VisitaStamp"],
+                        IdComercial = result["idcomercial"]
+
+                    };
+                }
+            return visita;
+        }
+
         public Produto ObterProduto(string referencia, int armazemid)
         {
             Produto produto = new Produto();

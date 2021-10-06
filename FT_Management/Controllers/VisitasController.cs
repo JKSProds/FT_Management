@@ -57,6 +57,7 @@ namespace FT_Management.Controllers
             ViewData["Comerciais"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador == 2).ToList();
             return View();
         }
+
         [HttpPost]
         public ActionResult Adicionar(int IdCliente, int IdLoja, DateTime txtData, int txtComercial, string Obs)
         {
@@ -86,6 +87,22 @@ namespace FT_Management.Controllers
 
             return RedirectToAction("Index", "Visitas");
 
+        }
+
+        public ActionResult Editar(int idVisita)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            ViewData["Comerciais"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador == 2).ToList();
+            return View(context.ObterVisita(idVisita));
+        }
+        [HttpPost]
+        public ActionResult Editar(Visita visita)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            
+            return View();
         }
 
         [HttpGet]

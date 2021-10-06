@@ -1,0 +1,115 @@
+﻿@model FT_Management.Models.Visita
+
+@{
+    ViewData["Title"] = "Editar Visita";
+}
+
+
+<h1>Editar Visita</h1>
+<hr />
+<form asp-action="Editar">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="true">Cliente</a>
+        <a class="nav-item nav-link" id="v-pills-comercial-tab" data-toggle="pill" href="#v-pills-comercial" role="tab" aria-controls="v-pills-comercial" aria-selected="false">Comercial</a>
+        <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Observações</a>
+        <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
+    </div>
+
+    <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-cliente" role="tabpanel" aria-labelledby="v-pills-cliente-tab">
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-4">
+                    <label asp-for="Cliente.IdCliente" class="control-label"></label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" asp-for="Cliente.IdCliente" id="IdCliente" readonly>
+                        <input type="hidden" id="IdLoja" name="IdLoja" />
+                        @*<button class="btn btn-outline-secondary" onclick="location.href = '@(Url.Action("Editar", "Clientes", new { idCliente = Model.Cliente.IdCliente }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>*@
+                    </div>
+                </div>
+                <div class="form-group col-lg-8">
+                    <div class="form-group" style="position: relative;">
+                        <label class="control-label">Nome do Cliente</label>
+                        <input type="text" class="form-control"  id="txtCustomer"  placeholder="Nome Cliente" asp-for="Cliente.NomeCliente">
+                    </div>
+                </div>
+                <div class="form-group col-lg-4">
+                    <label asp-for="Cliente.NumeroContribuinteCliente" class="control-label"></label>
+                    <input asp-for="Cliente.NumeroContribuinteCliente" class="form-control" id="NIFCliente" readonly />
+                    <span asp-validation-for="Cliente.NumeroContribuinteCliente" class="text-danger"></span>
+                </div>
+                <div class="form-group col-lg-8">
+                    <label asp-for="Cliente.MoradaCliente" class="control-label"></label>
+                    <input asp-for="Cliente.MoradaCliente" class="form-control" id="MoradaCliente" readonly />
+                    <span asp-validation-for="Cliente.MoradaCliente" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="v-pills-comercial" role="tabpanel" aria-labelledby="v-pills-comercial-tab">
+            <br />
+
+        </div>
+        <div class="tab-pane fade show" id="v-pills-obs" role="tabpanel" aria-labelledby="v-pills-obs-tab">
+            <br />
+        </div>
+        <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
+            <br />
+        </div>
+        <br />
+        <div class="form-group">
+            <input onclick="guardar()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+ 
+
+<script>
+
+    $(function () {
+        $("#txtCustomer").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Visitas/ObterClientes/',
+                    data: { "prefix": request.term },
+                    type: "POST",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.nomeCliente,
+                                val: item.idCliente,
+                                val2: item.idLoja,
+                                nif: item.numeroContribuinteCliente,
+                                mor: item.moradaCliente
+                            };
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#IdCliente").val(i.item.val);
+                $("#IdLoja").val(i.item.val2);
+                $("#NIFCliente").val(i.item.nif);
+                $("#MoradaCliente").val(i.item.mor);
+            },
+            minLength: 1
+        });
+    });
+
+    function guardar() {
+        $('form').submit();
+    }
+
+</script>
