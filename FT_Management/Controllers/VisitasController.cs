@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Custom;
 using WebDav;
 
 namespace FT_Management.Controllers
@@ -154,7 +155,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(IdVisita);
 
-            EnviarNextCloud(files, "https://food-tech.cloud/remote.php/dav/files/jmonteiro/Dep. Comercial/", "Anexos", visita.Cliente.NomeCliente);
+            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "Anexos", visita.Cliente.NomeCliente);
 
             return Redirect(Request.Query["ReturnUrl"]);
         }
@@ -165,9 +166,9 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(IdVisita);
 
-            EnviarNextCloud(files, "https://food-tech.cloud/remote.php/dav/files/jmonteiro/Dep. Comercial/", "Propostas", visita.Cliente.NomeCliente);
+            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "Propostas", visita.Cliente.NomeCliente);
 
-            return RedirectToAction("Editar", new { idVisita = IdVisita });
+            return Redirect(Request.Query["ReturnUrl"]);
         }
 
         public async void EnviarNextCloud(List<IFormFile> files, string Url, string Path, string Folder)
@@ -185,7 +186,7 @@ namespace FT_Management.Controllers
                     var clientParams = new WebDavClientParams
                     {
                         BaseAddress = new Uri(Url),
-                        Credentials = new NetworkCredential("", "")
+                        Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
                     };
                     var client = new WebDavClient(clientParams);
 
