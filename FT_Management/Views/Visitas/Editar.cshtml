@@ -14,6 +14,7 @@
         <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="true">Cliente</a>
         <a class="nav-item nav-link" id="v-pills-comercial-tab" data-toggle="pill" href="#v-pills-comercial" role="tab" aria-controls="v-pills-comercial" aria-selected="false">Comercial</a>
         <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Resumo</a>
+        <a class="nav-item nav-link" id="v-pills-proposta-tab" data-toggle="pill" href="#v-pills-proposta" role="tab" aria-controls="v-pills-proposta" aria-selected="false">Propostas</a>
         <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
     </div>
     <input type="hidden" asp-for="IdVisita" />
@@ -61,9 +62,6 @@
                     <label for="data" class="">Data da Visita</label>
 
                     @*DateTimePicker*@
-                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
                     <input type="text" class="form-control" asp-for="DataVisita" id="datepicker">
                     <script>
                         $('#datepicker').datepicker({
@@ -85,82 +83,139 @@
             </div>
 
         </div>
-        <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
+        <div class="tab-pane fade show" id="v-pills-proposta" role="tabpanel" aria-labelledby="v-pills-proposta-tab">
             <br />
-                <div class="form-group">
-                    <label class="control-label">Anexos Generalizados</label>
-                    <div class="input-group mb-3">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
-                            <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
-                        </div>
-                        <div class="input-group-append">
-                            <span class="input-group-text btn-primary" id="" onclick="modalProposta()" value="Anexar Proposta">Anexar Proposta</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Adicionar Proposta</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <div class="input-group mb-3">
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="inputGroupFile01" name="prop" value="Escolher">
-                                            <label class="custom-file-label" for="lblProposta">Proposta</label>
-                                        </div>
-                                        <input type="hidden" id="hiddenId" name="idvisita" value="@Model.IdVisita" />
-                                    </div>
-                                    <label for="data" class="col-form-label">Data da Proposta</label>
-                                    @*DateTimePicker*@
-                                    <input type="text" class="form-control" id="txtData">
-                                    <script>
-                                        var today = new Date();
-                                        var dd = String(today.getDate()).padStart(2, '0');
-                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                        var yyyy = today.getFullYear();
 
-                                        $('#txtData').datepicker({
-                                            format: 'dd-mm-yyyy',
-                                            value: dd + '-' + mm + '-' + yyyy
-                                        });
-                                    </script>
-                                    <label for="" class="col-form-label">Estado da Proposta</label>
-                                    <select class="form-control" id="txtEstado">
-                                        <option selected>Criada</option>
-                                        <option>Enviada</option>
-                                        <option>Por Aceitar</option>
-                                        <option>Aceite</option>
-                                        <option>Finalizada</option>
-                                    </select>
-                                    <label for="" class=" col-form-label">Valor da Proposta</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="txtValor">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">€</span>
-                                        </div>
+
+
+            @if (Model.Propostas.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados Propostas!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                Data da Proposta
+                            </th>
+                            <th>
+                                Estado da Proposta
+                            </th>
+                            <th>
+                                Comercial
+                            </th>
+                            <th>
+                                Valor da Proposta
+                            </th>
+                            <th>
+                                <button type="button" class="btn btn-primary float-right" onclick="modalProposta()" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;"><i class="fas fa-plus"></i> Anexar Proposta</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Propostas)
+                        {
+                            <tr>
+                                <td>
+                                    <span>@item.DataProposta.ToString("dd/MM/yyyy")</span>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EstadoProposta)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Comercial.NomeCompleto)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ValorProposta)
+                                </td>
+                                <td>
+                                    <div class="btn-group float-right">
+                                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
                                     </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Adicionar Proposta</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <div class="input-group mb-3">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="inputGroupFile01" name="prop" value="Escolher">
+                                        <label class="custom-file-label" for="lblProposta">Proposta</label>
+                                    </div>
+                                    <input type="hidden" id="hiddenId" name="idvisita" value="@Model.IdVisita" />
+                                </div>
+                                <label for="data" class="col-form-label">Data da Proposta</label>
+                                @*DateTimePicker*@
+                                <input type="text" class="form-control" id="txtData">
+                                <script>
+                                    var today = new Date();
+                                    var dd = String(today.getDate()).padStart(2, '0');
+                                    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                    var yyyy = today.getFullYear();
+
+                                    $('#txtData').datepicker({
+                                        format: 'dd-mm-yyyy',
+                                        value: dd + '-' + mm + '-' + yyyy
+                                    });
+                                </script>
+                                <label for="" class="col-form-label">Estado da Proposta</label>
+                                <select class="form-control" id="txtEstado">
+                                    <option selected>Criada</option>
+                                    <option>Enviada</option>
+                                    <option>Por Aceitar</option>
+                                    <option>Aceite</option>
+                                    <option>Finalizada</option>
+                                </select>
+                                <label for="" class=" col-form-label">Valor da Proposta</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="txtValor">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">€</span>
                                     </div>
                                 </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                                <button type="button" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarProposta('inputGroupFile01')" href="javascript:;">Adicionar</button>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarProposta('inputGroupFile01')" href="javascript:;">Adicionar</button>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
-        <br />
-        <div class="form-group">
-            <input onclick="guardar()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
+        <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
+            <br />
+            <div class="form-group">
+                <label class="control-label">Anexos Generalizados</label>
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
+                        <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                    </div>
+                    
+                </div>
+            </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <input onclick="guardar()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
+            </div>
         </div>
-    </div>
 </form>
 
 

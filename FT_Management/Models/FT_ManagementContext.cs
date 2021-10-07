@@ -35,15 +35,15 @@ namespace FT_Management.Models
                 Database db = ConnectionString;
                 Console.WriteLine("Connectado á Base de Dados MySQL com sucesso!");
             }
-            catch 
+            catch
             {
-               Console.WriteLine("Não foi possivel conectar á BD MySQL!");
+                Console.WriteLine("Não foi possivel conectar á BD MySQL!");
             }
         }
 
         public void AdicionarLog(string user, string msg, int tipo)
         {
-            string sql = "INSERT INTO dat_logs (user, msg_log, tipo_log) VALUES ('"+user+"', '"+msg+"', "+tipo+");";
+            string sql = "INSERT INTO dat_logs (user, msg_log, tipo_log) VALUES ('" + user + "', '" + msg + "', " + tipo + ");";
 
             Database db = ConnectionString;
 
@@ -80,6 +80,34 @@ namespace FT_Management.Models
             return LstVisitas;
 
         }
+
+        public List<Proposta> ObterListaPropostasVisita(int IdVisita)
+        {
+            List<Proposta> LstPropostas = new List<Proposta>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_propostas where dat_propostas.idvisita=" + IdVisita + ";");
+                while (result.Read())
+                {
+                    LstPropostas.Add(new Proposta()
+                    {
+                        IdProposta = result["IdVisita"],
+                        Comercial = ObterUtilizador(result["IdComercial"]),
+                        //Visita = ObterVisita(result["IdVisita"]),
+                        DataProposta = result["DataProposta"],
+                        EstadoProposta = result["EstadoProposta"],
+                        ValorProposta = result["ValorProposta"],
+                        UrlAnexo = result["UrlAnexo"]
+
+                    });
+                }
+            }
+            return LstPropostas;
+        }
+
+
         public Visita ObterVisita(int IdVisita)
         {
             Visita visita = new Visita();
@@ -99,9 +127,10 @@ namespace FT_Management.Models
                     ObsVisita = result["ObsVisita"],
                     VisitaStamp = result["VisitaStamp"],
                     IdComercial = result["idcomercial"]
-
                     };
-                }
+            }
+
+            visita.Propostas = ObterListaPropostasVisita(IdVisita);
             return visita;
         }
 
@@ -841,7 +870,7 @@ namespace FT_Management.Models
                 {
                     utilizador = new Utilizador()
                     {
-                        Id = result["IdPHC"],
+                        Id = result["IdUtilizador"],
                         NomeUtilizador = result["NomeUtilizador"],
                         Password = result["Password"],
                         NomeCompleto = result["NomeCompleto"],
@@ -1255,6 +1284,33 @@ namespace FT_Management.Models
                 sql = sql.Remove(sql.Count() - 4);
 
                 sql += " ON DUPLICATE KEY UPDATE DataVisita=VALUES(DataVisita), IdCliente = VALUES(IdCliente), ResumoVisita = VALUES(ResumoVisita), EstadoVisita = VALUES(EstadoVisita), ObsVisita = VALUES(ObsVisita), IdComercial = VALUES(IdComercial);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+            }
+        }
+        public void CriarPropostas(List<Proposta> LstPropostas)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstPropostas.Count; i++)
+            {
+                if ((j + max) > LstPropostas.Count) max = (LstPropostas.Count - j);
+
+                string sql = "INSERT INTO dat_propostas (IdProposta,DataProposta,IdComercial,IdVisita,EstadoProposta,ValorProposta,UrlAnexo) VALUES ";
+
+                foreach (var proposta in LstPropostas.GetRange(j, max))
+                {
+                    sql += ("('" + proposta.IdProposta + "', '" + proposta.DataProposta.ToString("yy-MM-dd") + "', '" + proposta.Comercial.Id + "', '" + proposta.Visita.IdVisita + "', '" + proposta.EstadoProposta.Replace("'", "''").Replace("\\", "").ToString() + "', '" + proposta.ValorProposta + "', '" + proposta.UrlAnexo + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE DataProposta=VALUES(DataProposta), IdComercial = VALUES(IdComercial), EstadoProposta = VALUES(EstadoProposta), ValorProposta = VALUES(ValorProposta), UrlAnexo = VALUES(UrlAnexo);";
 
                 Database db = ConnectionString;
 

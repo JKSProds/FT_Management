@@ -10,6 +10,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Custom;
 using WebDav;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace FT_Management.Controllers
 {
@@ -165,9 +166,24 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(IdVisita);
+            if (files.Count > 0)
+            {
+                List<Proposta> LstPropostas = new List<Proposta>();
 
-            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "Propostas", visita.Cliente.NomeCliente);
+                LstPropostas.Add(new Proposta()
+                {
+                    Comercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)),
+                    Visita = context.ObterVisita(IdVisita),
+                    DataProposta = DateTime.Parse(data),
+                    EstadoProposta = estado,
+                    ValorProposta = valor,
+                    UrlAnexo = ConfigurationManager.AppSetting["NextCloud:URL"] + visita.Cliente.NomeCliente + "/Propostas/" + files[0].FileName
 
+                });
+
+                context.CriarPropostas(LstPropostas);
+                EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "Propostas", visita.Cliente.NomeCliente);
+            }
             return Redirect(Request.Query["ReturnUrl"]);
         }
 
@@ -196,8 +212,45 @@ namespace FT_Management.Controllers
                     client = new WebDavClient(clientParams);
 
                     await client.PutFile(formFile.FileName, ms); // upload a resource
+
                 }
             }
+        }
+
+        public async Task<ActionResult> ObterFicheiroNextCloud(string Url)
+        {
+            var clientParams = new WebDavClientParams
+            {
+                BaseAddress = new Uri(Url),
+                Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
+            };
+            var client = new WebDavClient(clientParams);
+
+            using (var response = await client.GetRawFile(Url))
+            using (var reader = new StreamReader(response.Stream))
+            {
+
+                var bytes = default(byte[]);
+                using (var memstream = new MemoryStream())
+                {
+                    reader.BaseStream.CopyTo(memstream);
+                    bytes = memstream.ToArray();
+                }
+
+                new FileExtensionContentTypeProvider().TryGetContentType(Url.Split('/').Last(), out string contentType);
+                var cd = new System.Net.Mime.ContentDisposition
+                {
+                    FileName = Url.Split('/').Last(),
+                    Inline = false,
+                    CreationDate = DateTime.Now,
+
+                };
+                Response.Headers.Add("Content-Disposition", cd.ToString());
+
+                return File(bytes, contentType);
+            }
+
+          
         }
 
     }
