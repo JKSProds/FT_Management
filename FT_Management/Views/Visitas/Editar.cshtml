@@ -188,17 +188,7 @@
                 contentType: false,
                 type: "POST",
                 success: function (data) {
-                    $(function () {
-                        $.notify({
-                            message: "Anexo adicionado com sucesso!"
-                        }, {
-                            // settings
-                            type: 'success',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
-                        });
-                    });
+                    location.reload();
                 }
             }
         );
@@ -225,19 +215,7 @@
                 contentType: false,
                 type: "POST",
                 success: function (data) {
-                    $(function () {
-                        $.notify({
-                            message: "Proposta adicionado com sucesso!"
-                        }, {
-                            // settings
-                            type: 'success',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
-                        });
-                    });
-
-                    $('#myModal3').modal('toggle');
+                    location.reload();
                 }
             }
         );
