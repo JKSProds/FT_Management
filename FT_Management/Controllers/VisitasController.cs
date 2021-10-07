@@ -206,7 +206,9 @@ namespace FT_Management.Controllers
                     };
                     var client = new WebDavClient(clientParams);
 
-                    await client.Mkcol(Folder + "/" + Path);
+
+                    await client.Mkcol(Folder + "/");
+                    await client.Mkcol(Folder + "/" + Path + "/");
 
                     clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
                     client = new WebDavClient(clientParams);
