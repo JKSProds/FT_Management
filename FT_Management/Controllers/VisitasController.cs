@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using WebDav;
 
 namespace FT_Management.Controllers
 {
@@ -144,5 +147,57 @@ namespace FT_Management.Controllers
 
             return Redirect(ReturnUrl);
         }
+
+        [HttpPost]
+        public ActionResult AdicionarAnexo(List<IFormFile> files, int IdVisita, string ReturnUrl)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Visita visita = context.ObterVisita(IdVisita);
+
+            EnviarNextCloud(files, "https://food-tech.cloud/remote.php/dav/files/jmonteiro/Dep. Comercial/", "Anexos", visita.Cliente.NomeCliente);
+
+            return Redirect(Request.Query["ReturnUrl"]);
+        }
+
+        [HttpPost]
+        public ActionResult AdicionarProposta(List<IFormFile> files, int IdVisita, string ReturnUrl, string data, string estado, string valor)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Visita visita = context.ObterVisita(IdVisita);
+
+            EnviarNextCloud(files, "https://food-tech.cloud/remote.php/dav/files/jmonteiro/Dep. Comercial/", "Propostas", visita.Cliente.NomeCliente);
+
+            return RedirectToAction("Editar", new { idVisita = IdVisita });
+        }
+
+        public async void EnviarNextCloud(List<IFormFile> files, string Url, string Path, string Folder)
+        {
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length > 0)
+                {
+                    using var ms = new MemoryStream();
+                    await formFile.CopyToAsync(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+
+
+                    var clientParams = new WebDavClientParams
+                    {
+                        BaseAddress = new Uri(Url),
+                        Credentials = new NetworkCredential("", "")
+                    };
+                    var client = new WebDavClient(clientParams);
+
+                    await client.Mkcol(Folder + "/" + Path);
+
+                    clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
+                    client = new WebDavClient(clientParams);
+
+                    await client.PutFile(formFile.FileName, ms); // upload a resource
+                }
+            }
+        }
+
     }
 }

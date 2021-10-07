@@ -80,13 +80,81 @@
                 <textarea class="form-control" rows="8" placeholder="" asp-for="ResumoVisita" required></textarea>
             </div>
             <div class="form-group">
-                <label for="">Observacões</label>
+                <label for="">Observações</label>
                 <textarea class="form-control" rows="8" placeholder="" asp-for="ObsVisita"></textarea>
             </div>
 
         </div>
         <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
             <br />
+                <div class="form-group">
+                    <label class="control-label">Anexos Generalizados</label>
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
+                            <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                        </div>
+                        <div class="input-group-append">
+                            <span class="input-group-text btn-primary" id="" onclick="modalProposta()" value="Anexar Proposta">Anexar Proposta</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Adicionar Proposta</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <div class="input-group mb-3">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" id="inputGroupFile01" name="prop" value="Escolher">
+                                            <label class="custom-file-label" for="lblProposta">Proposta</label>
+                                        </div>
+                                        <input type="hidden" id="hiddenId" name="idvisita" value="@Model.IdVisita" />
+                                    </div>
+                                    <label for="data" class="col-form-label">Data da Proposta</label>
+                                    @*DateTimePicker*@
+                                    <input type="text" class="form-control" id="txtData">
+                                    <script>
+                                        var today = new Date();
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                        var yyyy = today.getFullYear();
+
+                                        $('#txtData').datepicker({
+                                            format: 'dd-mm-yyyy',
+                                            value: dd + '-' + mm + '-' + yyyy
+                                        });
+                                    </script>
+                                    <label for="" class="col-form-label">Estado da Proposta</label>
+                                    <select class="form-control" id="txtEstado">
+                                        <option selected>Criada</option>
+                                        <option>Enviada</option>
+                                        <option>Por Aceitar</option>
+                                        <option>Aceite</option>
+                                        <option>Finalizada</option>
+                                    </select>
+                                    <label for="" class=" col-form-label">Valor da Proposta</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="txtValor">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">€</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
+                                <button type="button" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarProposta('inputGroupFile01')" href="javascript:;">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
         <br />
         <div class="form-group">
@@ -102,6 +170,78 @@
  
 
 <script>
+
+    function AdicionarAnexo(inputTxt) {
+        var input = document.getElementById(inputTxt);
+        var files = input.files;
+        var formData = new FormData();
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        $.ajax(
+            {
+                url: "/Visitas/AdicionarAnexo?IdVisita=@Model.IdVisita&ReturnUrl=Editar?IdVisita=@Model.IdVisita",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $(function () {
+                        $.notify({
+                            message: "Anexo adicionado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
+                    });
+                }
+            }
+        );
+    }
+
+        function AdicionarProposta(inputTxt) {
+        var input = document.getElementById(inputTxt);
+        var files = input.files;
+        var formData = new FormData();
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+            }
+
+            formData.append("data", document.getElementById("txtData").value);
+            formData.append("estado", document.getElementById("txtEstado").value);
+            formData.append("valor", document.getElementById("txtValor").value);
+
+        $.ajax(
+            {
+                url: "/Visitas/AdicionarProposta?IdVisita=@Model.IdVisita&ReturnUrl=Editar?IdVisita=@Model.IdVisita",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $(function () {
+                        $.notify({
+                            message: "Proposta adicionado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
+                    });
+
+                    $('#myModal3').modal('toggle');
+                }
+            }
+        );
+    }
 
     $(function () {
         $("#txtCustomer").autocomplete({
@@ -143,4 +283,13 @@
         $('form').submit();
     }
 
+    function modalProposta() {
+        $('#myModal3').modal('toggle');
+    }
+
+
+    $('input[type="file"]').change(function (e) {
+        var fileName = e.target.files[0].name;
+        $('.custom-file-label').html(fileName);
+    });
 </script>
