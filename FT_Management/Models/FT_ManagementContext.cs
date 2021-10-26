@@ -863,7 +863,7 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarEvent
                 {
                     id = item.IdMarcacao,
-                    title = tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
+                    title = item.EstadoMarcacao == "Finalizado" ? "✔" : "" +  tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
                     start = dataMarcacao,
                     end = dataMarcacao.AddMinutes(29),
                     IdTecnico = item.IdTecnico,
