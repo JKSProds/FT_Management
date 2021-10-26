@@ -952,7 +952,7 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarEvent
                 {
                     id = item.IdMarcacao,
-                    title = (item.EstadoMarcacao == "Finalizado" ? "✔ " : item.EstadoMarcacao != "Criado" && item.EstadoMarcacao !="Agendado" ? "⌛ " : "") + tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
+                    title = (item.EstadoMarcacao == "Finalizado" ? "✔ " : item.EstadoMarcacao != "Criado" && item.EstadoMarcacao !="Agendado" ? "⌛ " : item.DataMarcacao < DateTime.Now ? "✘ " : "") + tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
                     start = dataMarcacao,
                     end = dataMarcacao.AddMinutes(29),
                     IdTecnico = item.IdTecnico,
