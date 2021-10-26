@@ -29,12 +29,15 @@ namespace FT_Management.Controllers
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
-                    var claims = new List<Claim>
+                        var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
-                        new Claim(ClaimTypes.GivenName, user.NomeCompleto)
+                        new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
+                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
+
                     };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
                         context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
 
