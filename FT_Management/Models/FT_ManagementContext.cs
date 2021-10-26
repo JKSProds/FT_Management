@@ -960,7 +960,7 @@ namespace FT_Management.Models
                     url = "Pedido/?idMarcacao="+item.IdMarcacao+"&IdTecnico=" + (item.IdTecnico),
                     color = (tecnico.CorCalendario == string.Empty ? "#3371FF" : tecnico.CorCalendario)
                 });
-                dataMarcacao = dataMarcacao.AddMinutes(30);
+                dataMarcacao = dataMarcacao.AddMinutes(5);
             }
 
             return LstEventos;
