@@ -945,7 +945,7 @@ namespace FT_Management.Models
             dataMarcacao.AddMinutes(5);
             foreach (var item in Marcacoes)
             {
-                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) dataMarcacao = dataMarcacao.AddMinutes(30);
+                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) dataMarcacao = dataMarcacao.AddMinutes(5);
                 if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 00:00:00");
                 Utilizador tecnico = ObterTecnico(item.IdTecnico);
 
@@ -960,7 +960,7 @@ namespace FT_Management.Models
                     url = "Pedido/?idMarcacao="+item.IdMarcacao+"&IdTecnico=" + (item.IdTecnico),
                     color = (tecnico.CorCalendario == string.Empty ? "#3371FF" : tecnico.CorCalendario)
                 });
-                dataMarcacao = dataMarcacao.AddMinutes(5);
+                dataMarcacao = dataMarcacao.AddMinutes(30);
             }
 
             return LstEventos;
