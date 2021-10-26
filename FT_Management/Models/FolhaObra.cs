@@ -276,4 +276,29 @@ namespace FT_Management.Models
         public int Oficina { get; set; }
         public string TipoEquipamento { get; set; }
     }
+
+    public class Visita
+    {
+        public int IdVisita { get; set; }
+        public DateTime DataVisita { get; set; }
+        public Cliente Cliente { get; set; }
+        public int IdComercial { get; set; }
+        public string ResumoVisita { get; set; }
+        public string EstadoVisita { get; set; }
+        public string PrioridadeVisita { get; set; }
+        public string VisitaStamp { get; set; }
+        public string ObsVisita { get; set; }
+        public List<Proposta> Propostas { get; set; }
+    }
+
+    public class Proposta
+    {
+        public int IdProposta { get; set; }
+        public Visita Visita { get; set; }
+        public DateTime DataProposta { get; set; }
+        public string EstadoProposta { get; set; }
+        public Utilizador Comercial { get; set; }
+        public string ValorProposta { get; set; }
+        public string UrlAnexo { get; set; }
+    }
 }

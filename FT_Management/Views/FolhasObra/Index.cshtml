@@ -64,19 +64,18 @@ else
             @foreach (var item in Model)
             {
             <tr>
-                <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                <td>
                     <span>@item.IdFolhaObra</span>
                 </td>
-                <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                <td>
                     @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
                 </td>
-                <td onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                <td >
                     @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
                 </td>
                 <td>
                     <div class="btn-group float-right">
                         <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                        <a href="#" class="btn btn-danger btn-lg" onclick="ConfirmApagarFolhaObra(@item.IdFolhaObra)"><i class="fas fa-trash"></i> </a>
                     </div>
                 </td>
             </tr>

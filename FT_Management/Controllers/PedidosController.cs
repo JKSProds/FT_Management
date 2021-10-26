@@ -12,7 +12,8 @@ using Newtonsoft.Json;
 
 namespace FT_Management.Controllers
 {
-    [Authorize]
+
+    [Authorize(Roles = "Admin, Tech, Escritorio")]
     public class PedidosController : Controller
     {
         public JsonResult ObterMarcacoes(DateTime start, DateTime end)
@@ -22,6 +23,7 @@ namespace FT_Management.Controllers
 
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Calendario()
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -34,17 +36,19 @@ namespace FT_Management.Controllers
             return View();
         }
 
+        
         // GET: Pedidos
-        public ActionResult Index(int Tipo)
+        public ActionResult Index(int IdTecnico)
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            if (!user.Admin) return RedirectToAction("ListaPedidos", new { IdTecnico = user.Id });
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
+            {
+                IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
+                return RedirectToAction("ListaPedidos", new { IdTecnico = IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
+            }
 
-            if (Tipo == 1) return View(context.ObterListaTecnicos());
-
-            return View(context.ObterListaComerciais());
+            return View(context.ObterListaTecnicos());
         }
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
         {
@@ -105,88 +109,6 @@ namespace FT_Management.Controllers
             trello.NovaLabel(idcartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
             return RedirectToAction("ListaPedidos", new { idQuadro = cartao.IdQuadro, idlista = cartao.IdLista});
         }
-        public ActionResult AdicionarComentario(string idcartao, string comentario)
-        {
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-
-            trello.NovoComentario(idcartao, comentario);
-            TrelloComentarios Comentario = trello.ObterComentarios(idcartao).Where(c => c.Comentario.Replace(Environment.NewLine, "") == comentario).First();
-            return Json(Comentario);
-        }
-        [HttpPost("AdicionarAnexo")]
-        public  ActionResult AdicionarAnexo(List<IFormFile> files, string idcartao)
-        {
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0 )
-                {
-                    using var ms = new MemoryStream();
-                    formFile.CopyTo(ms);
-                    var fileBytes = ms.ToArray();
-
-                    TrelloAnexos Anexo = new TrelloAnexos
-                    {
-                        Id = idcartao,
-                        Name = formFile.FileName,
-                        File = fileBytes,
-                    };
-
-                    if (Anexo.Name.Split('.').Count() > 1)
-                    {
-                        Anexo.dict.TryGetValue("." + Anexo.Name.Split('.').Last().ToString(), out string mimeType);
-                        Anexo.MimeType = mimeType;
-                    }
-                    else
-                    {
-                        Anexo.MimeType = "application/pdf";
-                    }
-
-                    trello.NovoAnexo(Anexo);
-                }
-            }
-
-            return RedirectToAction("Pedido", new { idCartao = idcartao });
-        }
-
-        public virtual ActionResult DescarregarAnexo(string id, string idcartao)
-        {
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-
-            TrelloAnexos Anexo = trello.ObterAnexo(id, idcartao);
-            var file = Anexo.File.ToArray();
-            var output = new MemoryStream();
-            output.Write(file, 0, file.Length);
-            output.Position = 0;
-
-            var cd = new System.Net.Mime.ContentDisposition
-            {
-                FileName = Uri.EscapeDataString(Anexo.Name),
-                Inline = false,
-                Size = file.Length,
-                CreationDate = DateTime.Now,
-
-            };
-
-            Response.Headers.Add("Content-Disposition", cd.ToString());
-            return File(output, Anexo.MimeType);
-        }
-        public virtual ActionResult AssinarDocumento(string cartaoid, string idanexo, string nometecnico, string nomecliente, string tipodocumento, string manualentregue)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-            TrelloAnexos Anexo = trello.ObterAnexo(idanexo, cartaoid);
-
-            Anexo.File = context.AssinarDocumento(nomecliente, nometecnico, tipodocumento, manualentregue == "true", Anexo.File).ToArray();
-            Anexo.Id = cartaoid;
-            Anexo.Name = Anexo.Name.Contains("Assinada_") ? Anexo.Name : "Assinada_" + Anexo.Name;
-            Anexo.Date = DateTime.Parse(DateTime.Now.ToString("dd-MM-yyyy HH:mm"));
-
-            trello.NovoAnexo(Anexo);
-            return Json(Anexo);
-        }
-
 
     }
 }

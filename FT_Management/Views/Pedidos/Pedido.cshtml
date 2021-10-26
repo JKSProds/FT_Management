@@ -290,256 +290,256 @@
         <input type="hidden" id="hiddenAnexoId" />
 
 
-        <script>
-            var ConfirmAdicionarComentario = function (IdCartao) {
-                $("#hiddenCartaoId").val(IdCartao);
-                $("#myModal").modal('show');
+<script>
+    var ConfirmAdicionarComentario = function (IdCartao) {
+        $("#hiddenCartaoId").val(IdCartao);
+        $("#myModal").modal('show');
 
-            }
+    }
 
-            var ConfirmAssinarDocumento = function (IdCartao, IdAnexo) {
-                $("#hiddenCartaoId").val(IdCartao);
-                $("#hiddenAnexoId").val(IdAnexo);
+    var ConfirmAssinarDocumento = function (IdCartao, IdAnexo) {
+        $("#hiddenCartaoId").val(IdCartao);
+        $("#hiddenAnexoId").val(IdAnexo);
 
-                $("#myModal4").modal('show');
+        $("#myModal4").modal('show');
 
-            }
+    }
 
-            function AlteradoTipoDoc() {
-                var opcaoAtual = document.getElementById("tipoDocumento").value;
-                if (opcaoAtual == 1) {
-                    document.getElementById("chkEntregue").classList.remove("d-none");
+    function AlteradoTipoDoc() {
+        var opcaoAtual = document.getElementById("tipoDocumento").value;
+        if (opcaoAtual == 1) {
+            document.getElementById("chkEntregue").classList.remove("d-none");
 
-                } else {
-                    document.getElementById("chkEntregue").classList.add("d-none");
-                    $('#chkManualEntregue').prop('checked', false);
-                }
-            }
+        } else {
+            document.getElementById("chkEntregue").classList.add("d-none");
+            $('#chkManualEntregue').prop('checked', false);
+        }
+    }
 
-            function AssinarDocumento() {
+    function AssinarDocumento() {
 
-                document.getElementById("addAssinatura").style.display = '';
-                document.getElementById("adicionarAssinatura").classList.add("disabled");
+        document.getElementById("addAssinatura").style.display = '';
+        document.getElementById("adicionarAssinatura").classList.add("disabled");
 
-                var nomeCliente = document.getElementById("txtNomeCliente").value;
-                var cartaoId = document.getElementById("hiddenCartaoId").value;
-                var checkedManual = $('#chkManualEntregue').is(":checked");
-                var tipoDocumento = document.getElementById("tipoDocumento").value;
-                var anexoid = document.getElementById("hiddenAnexoId").value;
-                var nomeTecnico = document.getElementById("txtTecnico").value;
+        var nomeCliente = document.getElementById("txtNomeCliente").value;
+        var cartaoId = document.getElementById("hiddenCartaoId").value;
+        var checkedManual = $('#chkManualEntregue').is(":checked");
+        var tipoDocumento = document.getElementById("tipoDocumento").value;
+        var anexoid = document.getElementById("hiddenAnexoId").value;
+        var nomeTecnico = document.getElementById("txtTecnico").value;
 
-                var json = {
-                    nomecliente: nomeCliente,
-                    cartaoid: cartaoId,
-                    manualentregue: checkedManual,
-                    tipodocumento: tipoDocumento,
-                    idanexo: anexoid,
-                    nometecnico: nomeTecnico
-                };
-
-
-                $.ajax({
-                    type: "POST",
-                    url: "/Pedidos/AssinarDocumento",
-                    data: json,
-                    traditional: true,
-                    success: function (result) {
-                        $(function () {
-                            var m = new Date(result.date);
-                            var dateString =
-                                ("0" + m.getUTCDate()).slice(-2) + "-" +
-                                ("0" + (m.getUTCMonth() + 1)).slice(-2) + "-" +
-                                m.getUTCFullYear() + " " +
-                                ("0" + m.getUTCHours()).slice(-2) + ":" +
-                                ("0" + m.getUTCMinutes()).slice(-2);
-
-                            //alert(JSON.stringify(result));
-                            var newRow = document.getElementById('tblAnexos').insertRow();
-                            newRow.setAttribute("id", "linha_" + result);
-                            newRow.innerHTML = "<td>" + result.name + "</td><td>" + dateString + "</td><td></td>";
-
-                            document.getElementById("addAssinatura").style.display = 'none';
-                            document.getElementById("adicionarAssinatura").classList.remove("disabled");
-                            $('#myModal4').modal('toggle');
+        var json = {
+            nomecliente: nomeCliente,
+            cartaoid: cartaoId,
+            manualentregue: checkedManual,
+            tipodocumento: tipoDocumento,
+            idanexo: anexoid,
+            nometecnico: nomeTecnico
+        };
 
 
-                            $.notify({
-                                message: "Anexo adicionado com sucesso!"
-                            }, {
-                                // settings
-                                type: 'success',
-                                onShow: function () {
-                                    this.css({ 'width': 'auto', 'height': 'auto' });
-                                }
-                            });
-                        });
-                    }
-                });
+        $.ajax({
+            type: "POST",
+            url: "/Pedidos/AssinarDocumento",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    var m = new Date(result.date);
+                    var dateString =
+                        ("0" + m.getUTCDate()).slice(-2) + "-" +
+                        ("0" + (m.getUTCMonth() + 1)).slice(-2) + "-" +
+                        m.getUTCFullYear() + " " +
+                        ("0" + m.getUTCHours()).slice(-2) + ":" +
+                        ("0" + m.getUTCMinutes()).slice(-2);
 
-            }
+                    //alert(JSON.stringify(result));
+                    var newRow = document.getElementById('tblAnexos').insertRow();
+                    newRow.setAttribute("id", "linha_" + result);
+                    newRow.innerHTML = "<td>" + result.name + "</td><td>" + dateString + "</td><td></td>";
 
-            var ConfirmEnviarEmail = function (IdFolhaObra) {
-                $("#hiddenFolhaObraId").val(IdFolhaObra);
-                var json = {
-                    id: IdFolhaObra
-                };
-                $.ajax({
-                    type: "POST",
-                    url: "/FolhasObra/ObterEmailClienteFolhaObra",
-                    data: json,
-                    traditional: true,
-                    success: function (result) {
-                        $(function () {
-                            // alert(JSON.stringify(result));
-                            document.getElementById("txtEmail").value = result;
-                        });
-                    }
-                });
-                $("#myModal2").modal('show');
+                    document.getElementById("addAssinatura").style.display = 'none';
+                    document.getElementById("adicionarAssinatura").classList.remove("disabled");
+                    $('#myModal4').modal('toggle');
 
-            }
-            function AdicionarComentario(IdCartao) {
-                {
-                    document.getElementById("addComment").style.display = '';
-                    document.getElementById("addCom").classList.add("disabled");
 
-                    var comment = {
-                        idcartao: document.getElementById("hiddenCartaoId").value,
-                        comentario: document.getElementById("txtComentario").value
-                    };
-
-                    $('#myModal').modal('toggle');
-                    $('#myModal')
-                        .find("input,textarea,select")
-                        .val('')
-                        .end()
-                        .find("input[type=checkbox], input[type=radio]")
-                        .prop("checked", "")
-                        .end();
-
-                    $.ajax({
-                        type: "POST",
-                        url: "/Pedidos/AdicionarComentario",
-                        data: comment,
-                        traditional: true,
-                        success: function (result) {
-                            $(function () {
-                                //alert(JSON.stringify(result));
-                                document.getElementById('no-com') != null ? document.getElementById('no-com').classList.add("d-none") : "";
-                                document.getElementById('tblComentarios').classList.remove("d-none");
-
-                                var m = new Date(result.dataComentario);
-                                var dateString =
-                                    ("0" + m.getUTCDate()).slice(-2) + "/" +
-                                    ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" +
-                                    m.getUTCFullYear() + " " +
-                                    ("0" + m.getUTCHours()).slice(-2) + ":" +
-                                    ("0" + m.getUTCMinutes()).slice(-2);
-
-                                //var newRow = document.getElementById('tblComentarios').insertRow();
-                                var row = "<td>" + result.utilizador + "</td><td>" + result.comentario + "</td><td>" + dateString + "</td>";
-                                $(row).insertAfter("#tblComentarios tr:first");
-
-                                $.notify({
-                                    message: "Comentário adicionado com sucesso!"
-                                }, {
-                                    // settings
-                                    type: 'success',
-                                    onShow: function () {
-                                        this.css({ 'width': 'auto', 'height': 'auto' });
-                                    }
-                                });
-
-                                document.getElementById("addComment").style.display = 'none';
-                                document.getElementById("addCom").classList.remove("disabled");
-
-                            });
+                    $.notify({
+                        message: "Anexo adicionado com sucesso!"
+                    }, {
+                        // settings
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
                         }
                     });
-
-                }
-            }
-
-            function EnviarEmail() {
-
-                var idCartao = document.getElementById("hiddenFolhaObraId").value;
-                var emailDestino = document.getElementById("txtEmail").value;
-
-                document.getElementById("folha_" + idCartao).style.display = '';
-                document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
-
-
-                var json = {
-                    id: idCartao,
-                    emailDestino: emailDestino
-                };
-
-                $('#myModal2').modal('toggle');
-                $('#myModal2')
-                    .find("input,textarea,select")
-                    .val('')
-                    .end();
-
-                $.ajax({
-                    type: "POST",
-                    url: "/FolhasObra/EmailFolhaObra",
-                    data: json,
-                    traditional: true,
-                    success: function (result) {
-                        $(function () {
-                            document.getElementById("folha_" + idCartao).style.display = 'none';
-                            document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
-
-                            if (result == "Sucesso") {
-                                $.notify({
-                                    message: "Email enviado com sucesso!"
-                                }, {
-                                    // settings
-                                    type: 'success',
-                                    onShow: function () {
-                                        this.css({ 'width': 'auto', 'height': 'auto' });
-                                    }
-                                });
-
-                                var json = {
-                                    id: idCartao,
-                                    novoemail: emailDestino
-                                };
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
-                                    data: json,
-                                    traditional: true,
-                                    success: function (result) {
-                                        $(function () {
-                                        });
-                                    }
-                                });
-
-                            } else {
-                                $.notify({
-                                    message: "Ocorreu um erro!"
-                                }, {
-                                    // settings
-                                    type: 'danger',
-                                    onShow: function () {
-                                        this.css({ 'width': 'auto', 'height': 'auto' });
-                                    }
-                                });
-                            }
-
-                        });
-                    }
                 });
             }
+        });
 
-            function AdicionarAnexo() {
-                document.getElementById("addAnexo").style.display = ''
-                document.getElementById("btnAddAnexo").classList.add("disabled");
-                $('#myModal3').modal('toggle');
+    }
 
-                $('form').submit();
-
+    var ConfirmEnviarEmail = function (IdFolhaObra) {
+        $("#hiddenFolhaObraId").val(IdFolhaObra);
+        var json = {
+            id: IdFolhaObra
+        };
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/ObterEmailClienteFolhaObra",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    // alert(JSON.stringify(result));
+                    document.getElementById("txtEmail").value = result;
+                });
             }
+        });
+        $("#myModal2").modal('show');
 
-        </script>
+    }
+    function AdicionarComentario(IdCartao) {
+        {
+            document.getElementById("addComment").style.display = '';
+            document.getElementById("addCom").classList.add("disabled");
+
+            var comment = {
+                idcartao: document.getElementById("hiddenCartaoId").value,
+                comentario: document.getElementById("txtComentario").value
+            };
+
+            $('#myModal').modal('toggle');
+            $('#myModal')
+                .find("input,textarea,select")
+                .val('')
+                .end()
+                .find("input[type=checkbox], input[type=radio]")
+                .prop("checked", "")
+                .end();
+
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/AdicionarComentario",
+                data: comment,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        //alert(JSON.stringify(result));
+                        document.getElementById('no-com') != null ? document.getElementById('no-com').classList.add("d-none") : "";
+                        document.getElementById('tblComentarios').classList.remove("d-none");
+
+                        var m = new Date(result.dataComentario);
+                        var dateString =
+                            ("0" + m.getUTCDate()).slice(-2) + "/" +
+                            ("0" + (m.getUTCMonth() + 1)).slice(-2) + "/" +
+                            m.getUTCFullYear() + " " +
+                            ("0" + m.getUTCHours()).slice(-2) + ":" +
+                            ("0" + m.getUTCMinutes()).slice(-2);
+
+                        //var newRow = document.getElementById('tblComentarios').insertRow();
+                        var row = "<td>" + result.utilizador + "</td><td>" + result.comentario + "</td><td>" + dateString + "</td>";
+                        $(row).insertAfter("#tblComentarios tr:first");
+
+                        $.notify({
+                            message: "Comentário adicionado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
+
+                        document.getElementById("addComment").style.display = 'none';
+                        document.getElementById("addCom").classList.remove("disabled");
+
+                    });
+                }
+            });
+
+        }
+    }
+
+    function EnviarEmail() {
+
+        var idCartao = document.getElementById("hiddenFolhaObraId").value;
+        var emailDestino = document.getElementById("txtEmail").value;
+
+        document.getElementById("folha_" + idCartao).style.display = '';
+        document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
+
+
+        var json = {
+            id: idCartao,
+            emailDestino: emailDestino
+        };
+
+        $('#myModal2').modal('toggle');
+        $('#myModal2')
+            .find("input,textarea,select")
+            .val('')
+            .end();
+
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/EmailFolhaObra",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    document.getElementById("folha_" + idCartao).style.display = 'none';
+                    document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
+
+                    if (result == "Sucesso") {
+                        $.notify({
+                            message: "Email enviado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
+
+                        var json = {
+                            id: idCartao,
+                            novoemail: emailDestino
+                        };
+                        $.ajax({
+                            type: "POST",
+                            url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
+                            data: json,
+                            traditional: true,
+                            success: function (result) {
+                                $(function () {
+                                });
+                            }
+                        });
+
+                    } else {
+                        $.notify({
+                            message: "Ocorreu um erro!"
+                        }, {
+                            // settings
+                            type: 'danger',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
+                    }
+
+                });
+            }
+        });
+    }
+
+    function AdicionarAnexo() {
+        document.getElementById("addAnexo").style.display = ''
+        document.getElementById("btnAddAnexo").classList.add("disabled");
+        $('#myModal3').modal('toggle');
+
+        $('form').submit();
+
+    }
+
+</script>

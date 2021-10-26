@@ -4,7 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Jorge Monteiro</Authors>
     <Company>JKSProds</Company>
-    <Version>2.0</Version>
+    <Version>10.2021</Version>
+    <AssemblyVersion>10.2021.2.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
     <PackageReference Include="Quartz" Version="3.0.7" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="WebDav.Client" Version="2.7.0" />
     <PackageReference Include="X.PagedList" Version="8.0.7" />
     <PackageReference Include="X.PagedList.Mvc.Bootstrap4" Version="8.0.7" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="8.0.7" />

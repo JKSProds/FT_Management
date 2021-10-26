@@ -30,6 +30,7 @@ namespace FT_Management.Models
         public int TipoUtilizador { get; set; }
         public string EmailUtilizador { get; set; }
         public string IdCartaoTrello { get; set; }
+        public int IdPHC { get; set; }
         public bool Admin { get; set; }
         public bool Enable { get; set; }
         public string CorCalendario { get; set; }

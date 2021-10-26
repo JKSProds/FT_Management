@@ -35,21 +35,105 @@ namespace FT_Management.Models
                 Database db = ConnectionString;
                 Console.WriteLine("Connectado á Base de Dados MySQL com sucesso!");
             }
-            catch 
+            catch
             {
-               Console.WriteLine("Não foi possivel conectar á BD MySQL!");
+                Console.WriteLine("Não foi possivel conectar á BD MySQL!");
             }
         }
 
         public void AdicionarLog(string user, string msg, int tipo)
         {
-            string sql = "INSERT INTO dat_logs (user, msg_log, tipo_log) VALUES ('"+user+"', '"+msg+"', "+tipo+");";
+            string sql = "INSERT INTO dat_logs (user, msg_log, tipo_log) VALUES ('" + user + "', '" + msg + "', " + tipo + ");";
 
             Database db = ConnectionString;
 
             db.Execute(sql);
             db.Connection.Close();
         }
+
+        public List<Visita> ObterListaVisitas(int IdComercial, DateTime DataInicial, DateTime DataFinal)
+        {
+            List<Visita> LstVisitas = new List<Visita>();
+            String DataI = DataInicial.ToString("yyyy-MM-dd");
+            String DataF = DataFinal.ToString("yyyy-MM-dd");
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_visitas where dat_visitas.idcomercial=" + IdComercial + " AND DataVisita>='" + DataI + "'  AND DataVisita<='" + DataF + "';");
+                while (result.Read())
+                {
+                    LstVisitas.Add(new Visita()
+                    {
+                        IdVisita = result["IdVisita"],
+                        DataVisita = DateTime.Parse(result["DataVisita"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoVisita = result["ResumoVisita"],
+                        EstadoVisita = result["EstadoVisita"],
+                        ObsVisita = result["ObsVisita"],
+                        VisitaStamp = result["VisitaStamp"],
+                        IdComercial = result["idcomercial"]
+
+                    });
+                }
+            }
+
+            return LstVisitas;
+
+        }
+
+        public List<Proposta> ObterListaPropostasVisita(int IdVisita)
+        {
+            List<Proposta> LstPropostas = new List<Proposta>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_propostas where dat_propostas.idvisita=" + IdVisita + ";");
+                while (result.Read())
+                {
+                    LstPropostas.Add(new Proposta()
+                    {
+                        IdProposta = result["IdVisita"],
+                        Comercial = ObterUtilizador(result["IdComercial"]),
+                        //Visita = ObterVisita(result["IdVisita"]),
+                        DataProposta = result["DataProposta"],
+                        EstadoProposta = result["EstadoProposta"],
+                        ValorProposta = result["ValorProposta"],
+                        UrlAnexo = result["UrlAnexo"]
+
+                    });
+                }
+            }
+            return LstPropostas;
+        }
+
+
+        public Visita ObterVisita(int IdVisita)
+        {
+            Visita visita = new Visita();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_visitas where IdVisita = "+ IdVisita + ";");
+                result.Read();
+
+                visita = new Visita()
+                {
+                    IdVisita = result["IdVisita"],
+                    DataVisita = DateTime.Parse(result["DataVisita"]),
+                    Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                    ResumoVisita = result["ResumoVisita"],
+                    EstadoVisita = result["EstadoVisita"],
+                    ObsVisita = result["ObsVisita"],
+                    VisitaStamp = result["VisitaStamp"],
+                    IdComercial = result["idcomercial"]
+                    };
+            }
+
+            visita.Propostas = ObterListaPropostasVisita(IdVisita);
+            return visita;
+        }
+
         public Produto ObterProduto(string referencia, int armazemid)
         {
             Produto produto = new Produto();
@@ -584,13 +668,14 @@ namespace FT_Management.Models
         {
             using Database db = ConnectionString;
             Cliente cliente = new Cliente();
-            using var result = db.Query("SELECT * FROM dat_clientes where NomeCliente = '" + nome.Replace("'", "''") + "';");
+            using var result = db.Query("SELECT * FROM dat_clientes where NomeCliente like '%" + nome.Replace("'", "''") + "%';");
             result.Read();
             if (result.Reader.HasRows)
             {
                 cliente = new Cliente()
                 {
                     IdCliente = result["IdCliente"],
+                    IdLoja = result["IdLoja"],
                     NomeCliente = result["NomeCliente"],
                     PessoaContatoCliente = result["PessoaContactoCliente"],
                     MoradaCliente = result["MoradaCliente"],
@@ -653,6 +738,7 @@ namespace FT_Management.Models
                     LstClientes.Add(new Cliente()
                     {
                         IdCliente = result["IdCliente"],
+                        IdLoja = result["IdLoja"],
                         NomeCliente = result["NomeCliente"],
                         PessoaContatoCliente = result["PessoaContactoCliente"],
                         MoradaCliente = result["MoradaCliente"],
@@ -703,7 +789,9 @@ namespace FT_Management.Models
                         NomeCompleto = result["NomeCompleto"],
                         TipoUtilizador = result["TipoUtilizador"],
                         EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"]
+                        IdCartaoTrello = result["IdCartaoTrello"],
+                        IdPHC = result["IdPHC"],
+                        Admin = result["admin"]
                     });
                 }
             }
@@ -782,7 +870,7 @@ namespace FT_Management.Models
                 {
                     utilizador = new Utilizador()
                     {
-                        Id = result["IdPHC"],
+                        Id = result["IdUtilizador"],
                         NomeUtilizador = result["NomeUtilizador"],
                         Password = result["Password"],
                         NomeCompleto = result["NomeCompleto"],
@@ -790,7 +878,8 @@ namespace FT_Management.Models
                         EmailUtilizador = result["EmailUtilizador"],
                         IdCartaoTrello = result["IdCartaoTrello"],
                         Admin = result["admin"] == 1,
-                        Enable = result["enable"] == 1
+                        Enable = result["enable"] == 1,
+                        IdPHC = result["IdPHC"]
                     };
                 }
             }
@@ -876,6 +965,7 @@ namespace FT_Management.Models
 
             return LstEventos;
         }
+
 
         public void CarregarFicheiroDB(string FilePath)
         {
@@ -1175,6 +1265,61 @@ namespace FT_Management.Models
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
+        public void CriarVisitas(List<Visita> LstVisita)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstVisita.Count; i++)
+            {
+                if ((j + max) > LstVisita.Count) max = (LstVisita.Count - j);
+
+                string sql = "INSERT INTO dat_visitas (IdVisita,DataVisita,IdCliente,IdLoja,ResumoVisita,EstadoVisita,ObsVisita,IdComercial) VALUES ";
+
+                foreach (var visita in LstVisita.GetRange(j, max))
+                {
+                    if (visita.ObsVisita is null) visita.ObsVisita = String.Empty;
+                    sql += ("('" + visita.IdVisita + "', '" + visita.DataVisita.ToString("yy-MM-dd") + "', '" + visita.Cliente.IdCliente + "', '" + visita.Cliente.IdLoja + "', '" + visita.ResumoVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.EstadoVisita + "', '" + visita.ObsVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.IdComercial + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE DataVisita=VALUES(DataVisita), IdCliente = VALUES(IdCliente), ResumoVisita = VALUES(ResumoVisita), EstadoVisita = VALUES(EstadoVisita), ObsVisita = VALUES(ObsVisita), IdComercial = VALUES(IdComercial);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+            }
+        }
+        public void CriarPropostas(List<Proposta> LstPropostas)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstPropostas.Count; i++)
+            {
+                if ((j + max) > LstPropostas.Count) max = (LstPropostas.Count - j);
+
+                string sql = "INSERT INTO dat_propostas (IdProposta,DataProposta,IdComercial,IdVisita,EstadoProposta,ValorProposta,UrlAnexo) VALUES ";
+
+                foreach (var proposta in LstPropostas.GetRange(j, max))
+                {
+                    sql += ("('" + proposta.IdProposta + "', '" + proposta.DataProposta.ToString("yy-MM-dd") + "', '" + proposta.Comercial.Id + "', '" + proposta.Visita.IdVisita + "', '" + proposta.EstadoProposta.Replace("'", "''").Replace("\\", "").ToString() + "', '" + proposta.ValorProposta + "', '" + proposta.UrlAnexo + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE DataProposta=VALUES(DataProposta), IdComercial = VALUES(IdComercial), EstadoProposta = VALUES(EstadoProposta), ValorProposta = VALUES(ValorProposta), UrlAnexo = VALUES(UrlAnexo);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+            }
+        }
         public void CriarTecnicosMarcacao(List<Utilizador> LstUtilizador)
         {
             int max = 5000;
@@ -1345,6 +1490,13 @@ namespace FT_Management.Models
         {
             Database db = ConnectionString;
             String sql = "delete from dat_produtos Where Armazem_Id=" + produto.Armazem_ID + " and ref_produto='" + produto.Ref_Produto + "';";
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+        public void ApagarVisita(int id)
+        {
+            Database db = ConnectionString;
+            String sql = "delete from dat_visitas Where IdVisita='" + id + "';";
             db.Execute(sql);
             db.Connection.Close();
         }

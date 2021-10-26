@@ -23,7 +23,7 @@ namespace FT_Management.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult AcessoNegado()
         {
             return View();
         }

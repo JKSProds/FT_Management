@@ -78,10 +78,14 @@ namespace FT_Management.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
-                        new Claim(ClaimTypes.GivenName, user.NomeCompleto)
+                        new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
+                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
+
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await  HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
                     context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
 
                     if (ReturnUrl != "" && ReturnUrl != null)
