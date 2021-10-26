@@ -26,8 +26,6 @@ namespace FT_Management.Models
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
                 ConnectedPHC = true;
-
-            #if DEBUG == false
                 FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
@@ -496,7 +494,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, resumo, estado, prioridade, u_marcacaostamp, oficina FROM u_marcacao where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
+                    SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, resumo, estado, prioridade, u_marcacaostamp, oficina FROM u_marcacao where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
 
                     using (SqlDataReader result = command.ExecuteReader())
                     {
