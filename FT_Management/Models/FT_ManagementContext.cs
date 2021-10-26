@@ -942,7 +942,7 @@ namespace FT_Management.Models
             List<CalendarEvent> LstEventos = new List<CalendarEvent>();
             
             DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
-            dataMarcacao.AddMinutes(30);
+            dataMarcacao.AddMinutes(5);
             foreach (var item in Marcacoes)
             {
                 if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) dataMarcacao = dataMarcacao.AddMinutes(30);
