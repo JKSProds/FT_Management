@@ -658,10 +658,11 @@ namespace FT_Management.Models
                     PessoaContatoCliente = result["PessoaContactoCliente"],
                     MoradaCliente = result["MoradaCliente"],
                     EmailCliente = result["EmailCliente"],
-                    NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
-
-                };
+                    NumeroContribuinteCliente = result["NumeroContribuinteCliente"],
+                    TelefoneCliente = result["Telefone"]
+            };
             }
+           
             return cliente;
         }
         public Cliente ObterClienteNome(string nome)
