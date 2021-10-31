@@ -461,6 +461,18 @@ namespace FT_Management.Models
                 IntervencaosServico = ObterListaIntervencoes(id),
                 RubricaCliente = result["RubricaCliente"]
             };
+
+            if (folhaObra.IntervencaosServico.Count > 1)
+            {
+                foreach (var intervencao in folhaObra.IntervencaosServico)
+                {
+                    folhaObra.RelatorioServico += intervencao.DataServiço.ToShortDateString() + " - " + intervencao.HoraInicio.ToShortTimeString() + " -> " + intervencao.HoraFim.ToShortTimeString() + ": " + intervencao.RelatorioServico + " ";
+                }
+            }
+            else if (folhaObra.IntervencaosServico.Count > 0)
+            {
+                folhaObra.RelatorioServico = folhaObra.IntervencaosServico.FirstOrDefault().RelatorioServico;
+            }
             return folhaObra;
         }
         public List<Equipamento> ObterEquipamentos()
@@ -565,6 +577,17 @@ namespace FT_Management.Models
                         IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
 
                     });
+                    if (LstFolhasObra.Last().IntervencaosServico.Count > 1)
+                    {
+                        foreach (var intervencao in LstFolhasObra.Last().IntervencaosServico)
+                        {
+                            LstFolhasObra.Last().RelatorioServico += intervencao.DataServiço.ToShortDateString() + " - " + intervencao.HoraInicio.ToShortTimeString() + " -> " + intervencao.HoraFim.ToShortTimeString() + ": " + intervencao.RelatorioServico + " ";
+                        }
+                    }
+                    else if (LstFolhasObra.Last().IntervencaosServico.Count > 0)
+                    {
+                        LstFolhasObra.Last().RelatorioServico = LstFolhasObra.Last().IntervencaosServico.FirstOrDefault().RelatorioServico;
+                    }
                 }
             }
 
@@ -1040,7 +1063,7 @@ namespace FT_Management.Models
 
         public void CriarIntervencoes(List<Intervencao> LstIntervencoes)
         {
-            int max = 4000;
+            int max = 3000;
             int j = 0;
             for (int i = 0; j < LstIntervencoes.Count; i++)
             {
@@ -1050,7 +1073,7 @@ namespace FT_Management.Models
 
                 foreach (var intervencao in LstIntervencoes.GetRange(j, max))
                 {
-                    sql += ("('" + intervencao.IdIntervencao + "', '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '"+intervencao.RelatorioServico.Replace("\r\n", "").Replace("'", "")+"', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "'), \r\n");
+                    sql += ("('" + intervencao.IdIntervencao + "', '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '"+intervencao.RelatorioServico.Replace("\r\n", "\n").Replace("'", "")+"', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);

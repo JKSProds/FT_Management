@@ -30,9 +30,29 @@ namespace FT_Management.Controllers
             return View(context.ObterListaFolhasObra(DateTime.Parse(DataFolhasObra).ToString("yyyy-MM-dd")));
         }
 
-        
+        [Authorize(Roles = "Admin, Escritorio")]
+        // GET: FolhasObraController
+        public ActionResult Editar(int Id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-       
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarFolhasObra();
+
+                Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                ViewData["SelectedTecnico"] = user.NomeCompleto;
+                ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
+
+            return View(context.ObterFolhaObra(Id));
+        }
+
+        public JsonResult ObterHistorico(string NumeroSerieEquipamento)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return Json(new { json = context.ObterHistorico(NumeroSerieEquipamento) });
+        }
+
         public JsonResult ObterEmailClienteFolhaObra(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

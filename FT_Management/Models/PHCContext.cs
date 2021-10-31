@@ -409,7 +409,7 @@ namespace FT_Management.Models
                                 IdTecnico = int.Parse(result["tecnico"].ToString().Trim()),
                                 IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                                 NomeTecnico = result["tecnnm"].ToString().Trim(),
-                                RelatorioServico = result["relatorio"].ToString().Trim(),
+                                RelatorioServico = result["relatorio"].ToString().TrimEnd(),
                                 DataServiço = DateTime.Parse(result["data"].ToString().Trim())
                             });
 
