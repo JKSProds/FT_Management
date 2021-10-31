@@ -21,7 +21,8 @@ namespace FT_Management.Models
 
             try
             {
-            #if DEBUG == false
+
+#if DEBUG == false
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
@@ -543,7 +544,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm from u_mtecnicos where marcado=1 AND usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                    SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm,marcado from u_mtecnicos where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                     using (SqlDataReader result = command.ExecuteReader())
                     {
@@ -554,7 +555,8 @@ namespace FT_Management.Models
                                 Id = int.Parse(result["tecnno"].ToString().Trim()),
                                 NomeCompleto = result["tecnnm"].ToString().Trim(),
                                 NomeUtilizador = result["u_mtecnicosstamp"].ToString().Trim(),
-                                IdCartaoTrello = result["marcacaostamp"].ToString().Trim()
+                                IdCartaoTrello = result["marcacaostamp"].ToString().Trim(),
+                                Enable = Boolean.Parse(result["marcado"].ToString())
                             });
                         }
                     }
