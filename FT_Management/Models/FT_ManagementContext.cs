@@ -88,7 +88,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_visitas where DataVisita>='" + DataI + "'  AND DataVisita<='" + DataF + "';");
+                using var result = db.Query("SELECT * FROM dat_visitas where DataVisita>='" + DataI + "'  AND DataVisita<='" + DataF + "' order by DataVisita, IdComercial;;");
                 while (result.Read())
                 {
                     LstVisitas.Add(new Visita()
@@ -996,11 +996,12 @@ namespace FT_Management.Models
             
             DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
             dataMarcacao.AddMinutes(5);
+            Utilizador tecnico = new Utilizador();
             foreach (var item in Marcacoes)
             {
-                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) dataMarcacao = dataMarcacao.AddMinutes(5);
+                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) { dataMarcacao = dataMarcacao.AddMinutes(5); tecnico = ObterTecnico(item.IdTecnico); }
                 if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 00:00:00");
-                Utilizador tecnico = ObterTecnico(item.IdTecnico);
+                if (LstEventos.Count == 0) tecnico = ObterTecnico(item.IdTecnico);
 
                 LstEventos.Add(new CalendarEvent
                 {
@@ -1025,22 +1026,23 @@ namespace FT_Management.Models
 
             DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
             dataMarcacao.AddMinutes(5);
+            Utilizador comercial = new Utilizador();
             foreach (var item in Visitas)
             {
-                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdComercial) dataMarcacao = dataMarcacao.AddMinutes(5);
+                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdComercial) { dataMarcacao = dataMarcacao.AddMinutes(5); comercial = ObterTecnico(item.IdComercial); }
                 if (dataMarcacao.ToShortDateString() != item.DataVisita.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataVisita.ToShortDateString() + " 00:00:00");
-                Utilizador tecnico = ObterTecnico(item.IdComercial);
+                if (LstEventos.Count == 0) comercial = ObterTecnico(item.IdComercial);
 
                 LstEventos.Add(new CalendarEvent
                 {
                     id = item.IdVisita,
-                    title = (item.EstadoVisita == "Finalizado" ? "✔ " : item.EstadoVisita != "Criado" && item.EstadoVisita != "Agendado" ? "⌛ " : item.DataVisita < DateTime.Now ? "❌ " : "") + tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
+                    title = (item.EstadoVisita == "Finalizado" ? "✔ " : item.EstadoVisita != "Criado" && item.EstadoVisita != "Agendado" ? "⌛ " : item.DataVisita < DateTime.Now ? "❌ " : "") + comercial.Iniciais + " - " + item.Cliente.NomeCliente,
                     start = dataMarcacao,
                     end = dataMarcacao.AddMinutes(19),
                     IdTecnico = item.IdComercial,
                     //color = ("#33FF77"),
                     url = "Visita/?idVisita=" + item.IdVisita + "&IdComercial=" + (item.IdComercial),
-                    color = (tecnico.CorCalendario == string.Empty ? "#3371FF" : tecnico.CorCalendario)
+                    color = (comercial.CorCalendario == string.Empty ? "#3371FF" : comercial.CorCalendario)
                 });
                 dataMarcacao = dataMarcacao.AddMinutes(20);
             }
