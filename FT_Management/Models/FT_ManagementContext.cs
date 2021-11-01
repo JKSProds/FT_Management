@@ -196,7 +196,7 @@ namespace FT_Management.Models
 
             Database db = ConnectionString;
 
-            using (var result = db.Query("SELECT * FROM dat_armazem;"))
+            using (var result = db.Query("SELECT * FROM sys_armazem;"))
             {
                 while (result.Read())
                 {
