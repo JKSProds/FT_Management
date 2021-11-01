@@ -23,7 +23,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (User.IsInRole("Admin"))
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
 
                 return View(context.ObterListaComerciais());
