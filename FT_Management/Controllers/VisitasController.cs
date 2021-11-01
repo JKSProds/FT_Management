@@ -17,6 +17,18 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class VisitasController : Controller
     {
+        [Authorize(Roles = "Admin, Escritorio")]
+        public JsonResult ObterVisitas(DateTime start, DateTime end)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return new JsonResult(context.ConverterVisitasEventos(context.ObterListaVisitas(start, end)).ToList());
+
+        }
+        [Authorize(Roles = "Admin, Escritorio")]
+        public ActionResult Calendario()
+        {
+            return View();
+        }
 
         // GET: VisitasController
         public ActionResult Index()
@@ -25,12 +37,11 @@ namespace FT_Management.Controllers
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-
-                return View(context.ObterListaComerciais());
+                return RedirectToAction("ListaVisitas");
             }
             else
             {
-                return RedirectToAction("ListaVisitas");
+                return View(context.ObterListaComerciais());
             }
         }
 
@@ -84,7 +95,7 @@ namespace FT_Management.Controllers
                     IdComercial = txtComercial,
                     ResumoVisita = Obs,
                     ObsVisita = "",
-                    EstadoVisita = "Agendada"
+                    EstadoVisita = "Agendado"
                 };
                 List<Visita> lstVisitas = new List<Visita>();
                 lstVisitas.Add(visita);

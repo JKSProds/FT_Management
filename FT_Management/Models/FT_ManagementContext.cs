@@ -80,6 +80,35 @@ namespace FT_Management.Models
             return LstVisitas;
 
         }
+        public List<Visita> ObterListaVisitas(DateTime DataInicial, DateTime DataFinal)
+        {
+            List<Visita> LstVisitas = new List<Visita>();
+            String DataI = DataInicial.ToString("yyyy-MM-dd");
+            String DataF = DataFinal.ToString("yyyy-MM-dd");
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_visitas where DataVisita>='" + DataI + "'  AND DataVisita<='" + DataF + "';");
+                while (result.Read())
+                {
+                    LstVisitas.Add(new Visita()
+                    {
+                        IdVisita = result["IdVisita"],
+                        DataVisita = DateTime.Parse(result["DataVisita"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoVisita = result["ResumoVisita"],
+                        EstadoVisita = result["EstadoVisita"],
+                        ObsVisita = result["ObsVisita"],
+                        VisitaStamp = result["VisitaStamp"],
+                        IdComercial = result["idcomercial"]
+
+                    });
+                }
+            }
+
+            return LstVisitas;
+
+        }
 
         public List<Proposta> ObterListaPropostasVisita(int IdVisita)
         {
@@ -978,18 +1007,46 @@ namespace FT_Management.Models
                     id = item.IdMarcacao,
                     title = (item.EstadoMarcacao == "Finalizado" ? "✔ " : item.EstadoMarcacao != "Criado" && item.EstadoMarcacao !="Agendado" ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
                     start = dataMarcacao,
-                    end = dataMarcacao.AddMinutes(14),
+                    end = dataMarcacao.AddMinutes(19),
                     IdTecnico = item.IdTecnico,
                     //color = ("#33FF77"),
                     url = "Pedido/?idMarcacao="+item.IdMarcacao+"&IdTecnico=" + (item.IdTecnico),
                     color = (tecnico.CorCalendario == string.Empty ? "#3371FF" : tecnico.CorCalendario)
                 });
-                dataMarcacao = dataMarcacao.AddMinutes(15);
+                dataMarcacao = dataMarcacao.AddMinutes(20);
             }
 
             return LstEventos;
         }
 
+        public List<CalendarEvent> ConverterVisitasEventos(List<Visita> Visitas)
+        {
+            List<CalendarEvent> LstEventos = new List<CalendarEvent>();
+
+            DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
+            dataMarcacao.AddMinutes(5);
+            foreach (var item in Visitas)
+            {
+                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdComercial) dataMarcacao = dataMarcacao.AddMinutes(5);
+                if (dataMarcacao.ToShortDateString() != item.DataVisita.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataVisita.ToShortDateString() + " 00:00:00");
+                Utilizador tecnico = ObterTecnico(item.IdComercial);
+
+                LstEventos.Add(new CalendarEvent
+                {
+                    id = item.IdVisita,
+                    title = (item.EstadoVisita == "Finalizado" ? "✔ " : item.EstadoVisita != "Criado" && item.EstadoVisita != "Agendado" ? "⌛ " : item.DataVisita < DateTime.Now ? "❌ " : "") + tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
+                    start = dataMarcacao,
+                    end = dataMarcacao.AddMinutes(19),
+                    IdTecnico = item.IdComercial,
+                    //color = ("#33FF77"),
+                    url = "Visita/?idVisita=" + item.IdVisita + "&IdComercial=" + (item.IdComercial),
+                    color = (tecnico.CorCalendario == string.Empty ? "#3371FF" : tecnico.CorCalendario)
+                });
+                dataMarcacao = dataMarcacao.AddMinutes(20);
+            }
+
+            return LstEventos;
+        }
 
         public void CarregarFicheiroDB(string FilePath)
         {

@@ -166,7 +166,7 @@ namespace FT_Management.Models
         private string _EmailCliente;
         [Display(Name = "Email")]
         public string EmailCliente { get {return _EmailCliente ?? ""; } set {_EmailCliente = value ;}  }
-        public string TelefoneCliente { get { return new string(_TelefoneCliente.Replace(" ", "").Take(9).ToArray()); } set { _TelefoneCliente = value; } }
+        public string TelefoneCliente { get { return string.IsNullOrEmpty(_TelefoneCliente) ? "" : new string(_TelefoneCliente.Replace(" ", "").Take(9).ToArray()); } set { _TelefoneCliente = value; } }
         private string _TelefoneCliente;
         private string _NumeroContribuinteCliente;
         [Display(Name = "Numero de Contribuinte")]
