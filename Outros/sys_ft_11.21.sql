@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Tempo de geração: 01-Nov-2021 às 09:57
+-- Tempo de geração: 02-Nov-2021 às 15:04
 -- Versão do servidor: 5.5.62
 -- versão do PHP: 7.4.16
 
@@ -20,43 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `sys_ft`
 --
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `dat_armazem`
---
-
-CREATE TABLE `dat_armazem` (
-  `armazem_id` int(11) NOT NULL,
-  `armazem_nome` varchar(256) NOT NULL DEFAULT ' '
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Extraindo dados da tabela `dat_armazem`
---
-
-INSERT INTO `dat_armazem` (`armazem_id`, `armazem_nome`) VALUES
-(0, 'Não Definido'),
-(1, 'Aveiro'),
-(2, 'Alverca'),
-(3, 'Maia'),
-(4, 'Quimiloureiro'),
-(31, 'Luis Fernandes'),
-(32, 'Jorge Monteiro'),
-(33, 'Helder Pinto'),
-(34, 'Zarcofrio'),
-(35, 'Pedro Santos'),
-(36, 'Nelson Martins'),
-(37, 'Praiotel'),
-(38, 'Ricardo Oliveira'),
-(39, 'Armando Rodrigues'),
-(42, 'Paulo Deus'),
-(43, 'Diogo Correia'),
-(45, 'Daniel Diogo'),
-(46, 'Henrique Crispim'),
-(48, 'Ricardo Almeida'),
-(99, 'Produção & Montagem');
 
 -- --------------------------------------------------------
 
@@ -199,14 +162,25 @@ CREATE TABLE `dat_marcacoes` (
   `DataMarcacao` datetime NOT NULL,
   `IdCliente` int(10) UNSIGNED NOT NULL,
   `IdLoja` int(10) UNSIGNED NOT NULL,
-  `TipoMarcacao` tinyint(1) NOT NULL DEFAULT '1',
   `ResumoMarcacao` varchar(1024) DEFAULT NULL,
-  `EstadoMarcacao` varchar(45) DEFAULT NULL,
+  `EstadoMarcacao` int(10) DEFAULT '1',
   `PrioridadeMarcacao` varchar(45) DEFAULT NULL,
   `MarcacaoStamp` varchar(45) DEFAULT NULL,
   `TipoEquipamento` varchar(45) NOT NULL,
   `Oficina` tinyint(1) NOT NULL,
+  `Instalacao` int(11) NOT NULL DEFAULT '0',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `dat_marcacoes_estado`
+--
+
+CREATE TABLE `dat_marcacoes_estado` (
+  `IdEstado` int(10) UNSIGNED NOT NULL,
+  `EstadoMarcacaoDesc` varchar(128) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -324,6 +298,43 @@ CREATE TABLE `dat_visitas` (
 -- --------------------------------------------------------
 
 --
+-- Estrutura da tabela `sys_armazem`
+--
+
+CREATE TABLE `sys_armazem` (
+  `armazem_id` int(11) NOT NULL,
+  `armazem_nome` varchar(256) NOT NULL DEFAULT ' '
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Extraindo dados da tabela `sys_armazem`
+--
+
+INSERT INTO `sys_armazem` (`armazem_id`, `armazem_nome`) VALUES
+(0, 'Não Definido'),
+(1, 'Aveiro'),
+(2, 'Alverca'),
+(3, 'Maia'),
+(4, 'Quimiloureiro'),
+(31, 'Luis Fernandes'),
+(32, 'Jorge Monteiro'),
+(33, 'Helder Pinto'),
+(34, 'Zarcofrio'),
+(35, 'Pedro Santos'),
+(36, 'Nelson Martins'),
+(37, 'Praiotel'),
+(38, 'Ricardo Oliveira'),
+(39, 'Armando Rodrigues'),
+(42, 'Paulo Deus'),
+(43, 'Diogo Correia'),
+(45, 'Daniel Diogo'),
+(46, 'Henrique Crispim'),
+(48, 'Ricardo Almeida'),
+(99, 'Produção & Montagem');
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura da tabela `sys_tabelas`
 --
 
@@ -338,15 +349,16 @@ CREATE TABLE `sys_tabelas` (
 --
 
 INSERT INTO `sys_tabelas` (`idtabela`, `nometabela`, `ultimamodificacao`) VALUES
-(1, 'sa', '2021-10-31 00:00:00'),
-(2, 'cl', '2021-11-01 00:00:00'),
-(3, 'fl', '2021-10-31 00:00:00'),
-(4, 'ma', '2021-11-01 00:00:00'),
-(5, 'pa', '2021-11-01 00:00:00'),
-(6, 'mh', '2021-11-01 00:00:00'),
-(7, 'bi', '2021-11-01 00:00:00'),
-(8, 'u_marcacao', '2021-11-01 00:00:00'),
-(9, 'u_mtecnicos', '2021-11-01 00:00:00');
+(1, 'sa', '2021-11-02 00:00:00'),
+(2, 'cl', '2021-11-02 00:00:00'),
+(3, 'fl', '2021-11-02 00:00:00'),
+(4, 'ma', '2021-11-02 00:00:00'),
+(5, 'pa', '2021-11-02 00:00:00'),
+(6, 'mh', '2021-11-02 00:00:00'),
+(7, 'bi', '2021-11-02 00:00:00'),
+(8, 'u_marcacao', '2021-11-02 00:00:00'),
+(9, 'u_mtecnicos', '2021-11-02 00:00:00'),
+(10, 'u_estados', '2021-11-02 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -429,12 +441,6 @@ INSERT INTO `sys_viaturas` (`matricula_viatura`, `marca`, `modelo`, `responsavel
 --
 
 --
--- Índices para tabela `dat_armazem`
---
-ALTER TABLE `dat_armazem`
-  ADD PRIMARY KEY (`armazem_id`);
-
---
 -- Índices para tabela `dat_clientes`
 --
 ALTER TABLE `dat_clientes`
@@ -483,6 +489,12 @@ ALTER TABLE `dat_marcacoes`
   ADD PRIMARY KEY (`IdMarcacao`) USING BTREE;
 
 --
+-- Índices para tabela `dat_marcacoes_estado`
+--
+ALTER TABLE `dat_marcacoes_estado`
+  ADD PRIMARY KEY (`IdEstado`);
+
+--
 -- Índices para tabela `dat_marcacoes_tecnico`
 --
 ALTER TABLE `dat_marcacoes_tecnico`
@@ -523,6 +535,12 @@ ALTER TABLE `dat_vendedores`
 --
 ALTER TABLE `dat_visitas`
   ADD PRIMARY KEY (`IdVisita`);
+
+--
+-- Índices para tabela `sys_armazem`
+--
+ALTER TABLE `sys_armazem`
+  ADD PRIMARY KEY (`armazem_id`);
 
 --
 -- Índices para tabela `sys_tabelas`
@@ -577,6 +595,12 @@ ALTER TABLE `dat_logs`
   MODIFY `id_log` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de tabela `dat_marcacoes_estado`
+--
+ALTER TABLE `dat_marcacoes_estado`
+  MODIFY `IdEstado` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de tabela `dat_propostas`
 --
 ALTER TABLE `dat_propostas`
@@ -592,7 +616,7 @@ ALTER TABLE `dat_visitas`
 -- AUTO_INCREMENT de tabela `sys_tabelas`
 --
 ALTER TABLE `sys_tabelas`
-  MODIFY `idtabela` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idtabela` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `sys_utilizadores`
