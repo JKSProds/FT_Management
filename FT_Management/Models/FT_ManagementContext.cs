@@ -323,6 +323,7 @@ namespace FT_Management.Models
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
+                        Instalacao = result["Instalacao"],
                         TipoEquipamento = result["TipoEquipamento"]
 
                     });
@@ -358,6 +359,7 @@ namespace FT_Management.Models
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
+                        Instalacao = result["Instalacao"],
                         TipoEquipamento = result["TipoEquipamento"]
 
                     });
@@ -387,7 +389,9 @@ namespace FT_Management.Models
                         EstadoMarcacao = result["EstadoMarcacao"],
                         EstadoMarcacaoDesc = result["EstadoMarcacaoDesc"],
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
-                        MarcacaoStamp = result["MarcacaoStamp"]
+                        MarcacaoStamp = result["MarcacaoStamp"],
+                        Oficina = result["Oficina"],
+                        Instalacao = result["Instalacao"],
 
                     });
                 }
@@ -1362,16 +1366,16 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
 
-                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp, Oficina, TipoEquipamento) VALUES ";
+                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp, Oficina, Instalacao, TipoEquipamento) VALUES ";
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"'), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.TipoEquipamento + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"'), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp), Oficina = VALUES(Oficina), TipoEquipamento = VALUES(TipoEquipamento);";
+                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp), Oficina = VALUES(Oficina), Instalacao = VALUES(Instalacao), TipoEquipamento = VALUES(TipoEquipamento);";
 
                 Database db = ConnectionString;
 

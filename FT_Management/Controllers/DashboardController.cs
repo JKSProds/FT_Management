@@ -15,6 +15,13 @@ namespace FT_Management.Controllers
             return View(model.Where(m => m.DataMarcacao == DateTime.Now.Date).OrderBy(e => e.EstadoMarcacao));
         }
     }
+    public class InstalacoesViewComponent : ViewComponent
+    {
+        public IViewComponentResult Invoke(List<Marcacao> model)
+        {
+            return View(model.Where(m => m.Instalacao == 1).OrderBy(e => e.EstadoMarcacao));
+        }
+    }
     public class PedidoOrcamentoViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)

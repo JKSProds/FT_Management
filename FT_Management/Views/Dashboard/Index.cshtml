@@ -11,6 +11,9 @@
             @await Component.InvokeAsync("PedidosDiarios", new { model = Model })
         </div>
         <div class="carousel-item col-md-12">
+            @await Component.InvokeAsync("Instalacoes", new { model = Model })
+        </div>
+        <div class="carousel-item col-md-12">
             @await Component.InvokeAsync("PedidoOrcamento", new { model = Model })
         </div>
         <div class="carousel-item col-md-12">

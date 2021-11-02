@@ -39,7 +39,8 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
 #endif
-
+                ConnectedPHC = true;
+                FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
             }
             catch
             {
@@ -499,7 +500,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, resumo, estado, prioridade, u_marcacaostamp, oficina FROM u_marcacao where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
+                    SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina FROM u_marcacao where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
 
                     using (SqlDataReader result = command.ExecuteReader())
                     {
@@ -516,7 +517,8 @@ namespace FT_Management.Models
                                 PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
                                 MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
                                 TipoEquipamento = result["tipoe"].ToString().Trim(),
-                                Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0
+                                Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0,
+                                Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0
                             });
                         }
                     }
