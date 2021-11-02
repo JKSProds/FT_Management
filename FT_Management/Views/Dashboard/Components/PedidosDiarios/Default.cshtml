@@ -1,0 +1,31 @@
+﻿@model IEnumerable<FT_Management.Models.Marcacao>
+
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Pedidos Agendados para Hoje</h3>
+        </div>
+        <div class="col-md-4 text-right"><h4>Contador: <b>@Model.Count()</b></h4></div>
+    </div>
+<div class="row">
+    <table class="table table-sm table-hover">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Técnico</th>
+                <th scope="col">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+            <tr onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))'" class="@(item.EstadoMarcacao == "Finalizado" ? "table-success" : "") @(item.EstadoMarcacao != "Criado" & @item.EstadoMarcacao != "Agendado" & @item.EstadoMarcacao != "Finalizado" ? "table-warning" : "")">
+                <td>@item.Cliente.NomeCliente</td>
+                <td>@item.Tecnico.NomeCompleto</td>
+                <td>@item.EstadoMarcacao</td>
+            </tr>
+
+                    }
+            </tbody>
+    </table>
+</div>

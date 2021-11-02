@@ -269,6 +269,7 @@ namespace FT_Management.Models
         public DateTime DataMarcacao { get; set; }
         public Cliente Cliente { get; set; }
         public int IdTecnico { get; set; }
+        public Utilizador Tecnico { get; set; }
         public string ResumoMarcacao { get; set; }
         public string EstadoMarcacao { get; set; }
         public string PrioridadeMarcacao { get; set; }

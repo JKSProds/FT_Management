@@ -8,7 +8,41 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
-
+    public class PedidosDiariosViewComponent : ViewComponent
+    {
+        public IViewComponentResult Invoke(List<Marcacao> model)
+        {
+            return View(model.Where(m => m.DataMarcacao == DateTime.Now.Date));
+        }
+    }
+    public class PedidoOrcamentoViewComponent : ViewComponent
+    {
+        public IViewComponentResult Invoke(List<Marcacao> model)
+        {
+            return View(model.Where(m => m.EstadoMarcacao == "Pedido Orçamento"));
+        }
+    }
+    public class PedidoPecasViewComponent : ViewComponent
+    {
+        public IViewComponentResult Invoke(List<Marcacao> model)
+        {
+            return View(model.Where(m => m.EstadoMarcacao == "Pedido Peças"));
+        }
+    }
+    public class AguardarClienteViewComponent : ViewComponent
+    {
+        public IViewComponentResult Invoke(List<Marcacao> model)
+        {
+            return View(model.Where(m => m.EstadoMarcacao == "Enc. a Fornecedor" || m.EstadoMarcacao == "Orçamentado" || m.EstadoMarcacao == "Enc. de Cliente"));
+        }
+    }
+    public class OficinaViewComponent : ViewComponent
+    {
+        public IViewComponentResult Invoke(List<Marcacao> model)
+        {
+            return View(model.Where(m => m.EstadoMarcacao == "Em oficina" || m.EstadoMarcacao == "Em receção" || m.Oficina == 1));
+        }
+    }
     [Authorize(Roles = "Admin, Escritorio")]
     public class DashboardController : Controller
     {
@@ -16,46 +50,9 @@ namespace FT_Management.Controllers
         public IActionResult Index()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(DateTime.Now.AddDays(-365), DateTime.Now.AddDays(365));
-
-            ViewData["NPedidosConcluidos"] = ObterNPedidosConcluidos(DateTime.Today, LstMarcacoes);
-            ViewData["NPedidosAgendados"] = ObterNPedidosAgendados(LstMarcacoes);
-
-            ViewData["NPedidosPecas"] = ObterNPedidosPecas(LstMarcacoes);
-            ViewData["NPedidosOrcamentos"] = ObterNPedidosOrcamentos(LstMarcacoes);
-
-            ViewData["NPedidosOficinaPesagem"] = ObterNPedidosOficinaPesagem(LstMarcacoes);
-            ViewData["NPedidosOficinaMecanica"] = ObterNPedidosOficinaMecanica(LstMarcacoes);
-
-            return View();
-        }
-
-        public JsonResult ObterDadosGraficoPie()
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(DateTime.Now.AddDays(-365), DateTime.Now.AddDays(365));
-
-            int[] lst = new int[] { ObterNPedidosPendentes(LstMarcacoes), ObterNPedidosPecas(LstMarcacoes), ObterNPedidosOrcamentos(LstMarcacoes), ObterNPedidosOficinaPesagem(LstMarcacoes) + ObterNPedidosOficinaMecanica(LstMarcacoes) };
 
 
-            return new JsonResult(lst.ToList());
-        }
-
-        public JsonResult ObterDadosGraficoBar()
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(DateTime.Now.AddDays(-6), DateTime.Now.AddDays(0));
-
-            int[] lst = new int[] { 10, 7, 17, 0, 0, 8, 13};
-
-            DateTime data = DateTime.Today.AddDays(-6);
-
-            for (int i = 0; i < 7; i++)
-            {
-                lst[i] = ObterNPedidosConcluidos(data.AddDays(i), LstMarcacoes);
-            }
-
-            return new JsonResult(lst.ToList());
+            return View(context.ObterListaMarcacoes(DateTime.Parse("01/01/1900 00:00:00"), DateTime.Parse("01/01/2100 00:00:00")));
         }
 
         public int ObterNPedidosPendentes(List<Marcacao> LstMarcacoes)
