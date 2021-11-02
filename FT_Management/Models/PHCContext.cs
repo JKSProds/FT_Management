@@ -35,9 +35,9 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
-                FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(DateTime.Parse("01/01/1900 00:00:00")));
 #endif
 
             }
