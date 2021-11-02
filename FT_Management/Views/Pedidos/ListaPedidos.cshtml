@@ -13,11 +13,6 @@
             <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
             <input type="hidden" id="hiddenTxtData" value="@ViewData["DataPedidos"]" name="DataPedidos">
 
-            @*DateTimePicker*@
-            <script src="~/lib/jquery/dist/jquery.min.js"></script>
-            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
             <input type="text" class="form-control" id="txtData">
             <script>
                         $('#txtData').datepicker({
@@ -65,7 +60,7 @@ else
                         </p>
                         <div class="card-footer">
                             <small>
-                                Estado do pedido: @item.EstadoMarcacao
+                                Estado do pedido: @item.EstadoMarcacaoDesc
                             </small>
                         </div>
                     </div>
