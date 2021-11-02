@@ -20,7 +20,7 @@
             @foreach (var item in Model)
             {
 
-                <tr onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))'" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "")">
+                <tr onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))')" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "")">
                     <td>@item.DataMarcacao.ToShortDateString()</td>
                     <td>@item.Cliente.NomeCliente</td>
                     <td>@item.Tecnico.NomeCompleto</td>
