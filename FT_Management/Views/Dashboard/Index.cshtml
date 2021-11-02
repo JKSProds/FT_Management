@@ -33,3 +33,10 @@
     <button type="button" class="btn btn-primary" onclick="$('#carousel').carousel('next')">Proximo</button>
 </div>
 
+<script>
+    $('#carousel').on('slide.bs.carousel', function () {
+        if ($('div.active').index() == 5)
+            location.reload(true);
+
+    })
+</script>
