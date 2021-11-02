@@ -30,6 +30,19 @@ namespace FT_Management.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
+        public JsonResult AlteracaoCalendario(DateTime data, int id)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            List<Visita> LstVisita = new List<Visita>();
+            LstVisita.Add(context.ObterVisita(id));
+            LstVisita.Last().DataVisita = data;
+
+            context.CriarVisitas(LstVisita);
+            return Json("ok");
+        }
         // GET: VisitasController
         public ActionResult Index()
         {

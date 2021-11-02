@@ -22,7 +22,7 @@
             expandRows: true,
             firstDay: 1,
             locale: 'pt',
-            editable: false,
+            editable: true,
             events: 'ObterVisitas',
             eventTimeFormat: { // like '14:30:00'
                 hour: '2-digit',
@@ -36,6 +36,29 @@
                 if (info.event.url) {
                     window.open(info.event.url);
                 }
+            },
+            eventDrop: function (info) {
+                //alert(info.event.title + " was dropped on " + info.event.start.toISOString());
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Visitas/AlteracaoCalendario",
+                    data: { data: info.event.start.toISOString(), id: info.event.id },
+                    traditional: false,
+                    success: function (result) {
+                        $(function () {
+                            $.notify({
+                                message: "Visita atualizada com sucesso!"
+                            }, {
+                                // settings
+                                type: 'success',
+                                onShow: function () {
+                                    this.css({ 'width': 'auto', 'height': 'auto' });
+                                }
+                            });
+                        });
+                    }
+                });
             }
         });
 
