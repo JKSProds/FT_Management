@@ -12,77 +12,47 @@ namespace FT_Management.Controllers
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.DataMarcacao == DateTime.Now.Date));
+            return View(model.Where(m => m.DataMarcacao == DateTime.Now.Date).OrderBy(e => e.EstadoMarcacao));
         }
     }
     public class PedidoOrcamentoViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.EstadoMarcacao == "Pedido Orçamento"));
+            return View(model.Where(m => m.EstadoMarcacao == 8));
         }
     }
     public class PedidoPecasViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.EstadoMarcacao == "Pedido Peças"));
+            return View(model.Where(m => m.EstadoMarcacao == 7));
         }
     }
     public class AguardarClienteViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.EstadoMarcacao == "Enc. a Fornecedor" || m.EstadoMarcacao == "Orçamentado" || m.EstadoMarcacao == "Enc. de Cliente"));
+            return View(model.Where(m => m.EstadoMarcacao == 10 || m.EstadoMarcacao == 6 || m.EstadoMarcacao == 13));
         }
     }
     public class OficinaViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.EstadoMarcacao == "Em oficina" || m.EstadoMarcacao == "Em receção" || m.Oficina == 1));
+            return View(model.Where(m => m.EstadoMarcacao == 9 || m.EstadoMarcacao == 12 || m.Oficina == 1));
         }
     }
-    [Authorize(Roles = "Admin, Escritorio")]
-    public class DashboardController : Controller
-    {
+        [Authorize(Roles = "Admin, Escritorio")]
+        public class DashboardController : Controller
+        {
 
-        public IActionResult Index()
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            public IActionResult Index()
+            {
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
 
-            return View(context.ObterListaMarcacoes(DateTime.Parse("01/01/1900 00:00:00"), DateTime.Parse("01/01/2100 00:00:00")));
+                return View(context.ObterListaMarcacoesPendentes());
+            }
         }
-
-        public int ObterNPedidosPendentes(List<Marcacao> LstMarcacoes)
-        {
-            return LstMarcacoes.Where(e => e.EstadoMarcacao != "Finalizado").Count();
-        }
-
-        public int ObterNPedidosConcluidos(DateTime data, List<Marcacao> LstMarcacoes) 
-        {
-            return LstMarcacoes.Where(d => d.DataMarcacao == data).Where(e => e.EstadoMarcacao == "Finalizado").Count();
-        }
-        public int ObterNPedidosAgendados(List<Marcacao> LstMarcacoes)
-        {
-            return LstMarcacoes.Where(e => e.EstadoMarcacao == "Agendado" || e.EstadoMarcacao == "Criado").Count();
-        }
-        public int ObterNPedidosPecas(List<Marcacao> LstMarcacoes)
-        {
-            return LstMarcacoes.Where(e => e.EstadoMarcacao == "Pedido Peças").Count();
-        }
-        public int ObterNPedidosOrcamentos(List<Marcacao> LstMarcacoes)
-        {
-            return LstMarcacoes.Where(e => e.EstadoMarcacao == "Pedido Orçamento").Count();
-        }
-        public int ObterNPedidosOficinaPesagem(List<Marcacao> LstMarcacoes)
-        {
-            return LstMarcacoes.Where(e => e.EstadoMarcacao != "Finalizado" && e.TipoEquipamento == "Pesagem" && e.Oficina == 1).Count();
-        }
-        public int ObterNPedidosOficinaMecanica(List<Marcacao> LstMarcacoes)
-        {
-            return LstMarcacoes.Where(e => e.EstadoMarcacao != "Finalizado" && e.TipoEquipamento != "Pesagem" && e.Oficina == 1).Count();
-        }
-    }
 }

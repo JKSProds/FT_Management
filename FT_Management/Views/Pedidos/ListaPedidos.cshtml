@@ -53,7 +53,7 @@ else
 
             <div class="col-sm-6 " style="margin-bottom: 10px">
                 <div class="card mb-3">
-                    <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == "Finalizado" ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == "Criado" ? "bg-info" : "")@(item.EstadoMarcacao != "Criado" & @item.EstadoMarcacao != "Agendado" & @item.EstadoMarcacao != "Finalizado" ? "bg-warning" : "")">
+                    <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
                         <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
                         <h3>@item.Cliente.NomeCliente </h3>
                     </div>

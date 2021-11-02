@@ -271,7 +271,8 @@ namespace FT_Management.Models
         public int IdTecnico { get; set; }
         public Utilizador Tecnico { get; set; }
         public string ResumoMarcacao { get; set; }
-        public string EstadoMarcacao { get; set; }
+        public int EstadoMarcacao { get; set; }
+        public string EstadoMarcacaoDesc { get; set; }
         public string PrioridadeMarcacao { get; set; }
         public string MarcacaoStamp { get; set; }
         public List<FolhaObra> LstFolhasObra { get; set; }
@@ -302,5 +303,10 @@ namespace FT_Management.Models
         public Utilizador Comercial { get; set; }
         public string ValorProposta { get; set; }
         public string UrlAnexo { get; set; }
+    }
+    public class EstadoMarcacao
+    {
+        public int IdEstado { get; set; }
+        public string  EstadoMarcacaoDesc { get; set; }
     }
 }

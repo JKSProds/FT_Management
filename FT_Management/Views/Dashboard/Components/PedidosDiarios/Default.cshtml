@@ -19,13 +19,13 @@
             @foreach (var item in Model)
             {
 
-            <tr onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))'" class="@(item.EstadoMarcacao == "Finalizado" ? "table-success" : "") @(item.EstadoMarcacao != "Criado" & @item.EstadoMarcacao != "Agendado" & @item.EstadoMarcacao != "Finalizado" ? "table-warning" : "")">
-                <td>@item.Cliente.NomeCliente</td>
-                <td>@item.Tecnico.NomeCompleto</td>
-                <td>@item.EstadoMarcacao</td>
-            </tr>
+                <tr onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))'" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "")">
+                    <td>@item.Cliente.NomeCliente</td>
+                    <td>@item.Tecnico.NomeCompleto</td>
+                    <td>@item.EstadoMarcacaoDesc</td>
+                </tr>
 
-                    }
-            </tbody>
+            }
+        </tbody>
     </table>
 </div>

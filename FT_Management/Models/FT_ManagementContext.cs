@@ -300,15 +300,13 @@ namespace FT_Management.Models
             return LstFolhasObra;
 
         }
-        public List<Marcacao> ObterListaMarcacoes(DateTime DataInicial, DateTime DataFinal)
+        public List<Marcacao> ObterListaMarcacoesPendentes()
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
-            String DataI = DataInicial.ToString("yyyy-MM-dd");
-            String DataF = DataFinal.ToString("yyyy-MM-dd");
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1 AND (EstadoMarcacao!='Finalizado' OR DataMarcacao >= '"+DateTime.Now.ToString("yy-MM-dd")+"') order by DataMarcacao, IdTecnico;");
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND Marcado=1 AND (EstadoMarcacao!=4 OR DataMarcacao >= '" + DateTime.Now.ToString("yy-MM-dd") + "') order by DataMarcacao, IdTecnico;");
                 while (result.Read())
                 {
                     //DateTime d = DateTime.Parse(result["DataMarcacao"]);
@@ -319,6 +317,42 @@ namespace FT_Management.Models
                         Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         ResumoMarcacao = result["ResumoMarcacao"],
                         EstadoMarcacao = result["EstadoMarcacao"],
+                        EstadoMarcacaoDesc = result["EstadoMarcacaoDesc"],
+                        IdTecnico = result["IdTecnico"],
+                        Tecnico = ObterTecnico(Int32.Parse(result["IdTecnico"])),
+                        PrioridadeMarcacao = result["PrioridadeMarcacao"],
+                        MarcacaoStamp = result["MarcacaoStamp"],
+                        Oficina = result["Oficina"],
+                        TipoEquipamento = result["TipoEquipamento"]
+
+                    });
+                }
+            }
+
+            return LstMarcacao;
+
+        }
+
+        public List<Marcacao> ObterListaMarcacoes(DateTime DataInicial, DateTime DataFinal)
+        {
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+            String DataI = DataInicial.ToString("yyyy-MM-dd");
+            String DataF = DataFinal.ToString("yyyy-MM-dd");
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1 order by DataMarcacao, IdTecnico;");
+                while (result.Read())
+                {
+                    //DateTime d = DateTime.Parse(result["DataMarcacao"]);
+                    LstMarcacao.Add(new Marcacao()
+                    {
+                        IdMarcacao = result["IdMarcacao"],
+                        DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoMarcacao = result["ResumoMarcacao"],
+                        EstadoMarcacao = result["EstadoMarcacao"],
+                        EstadoMarcacaoDesc = result["EstadoMarcacaoDesc"],
                         IdTecnico = result["IdTecnico"],
                         Tecnico = ObterTecnico(Int32.Parse(result["IdTecnico"])),
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
@@ -341,7 +375,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico where dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico+ " AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1;");
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico+ " AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1;");
                 while (result.Read())
                 {
                     LstMarcacao.Add(new Marcacao()
@@ -351,6 +385,7 @@ namespace FT_Management.Models
                         Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         ResumoMarcacao = result["ResumoMarcacao"],
                         EstadoMarcacao = result["EstadoMarcacao"],
+                        EstadoMarcacaoDesc = result["EstadoMarcacaoDesc"],
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"]
 
@@ -1005,7 +1040,7 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarEvent
                 {
                     id = item.IdMarcacao,
-                    title = (item.EstadoMarcacao == "Finalizado" ? "✔ " : item.EstadoMarcacao != "Criado" && item.EstadoMarcacao !="Agendado" ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
+                    title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
                     start = dataMarcacao,
                     end = dataMarcacao.AddMinutes(19),
                     IdTecnico = item.IdTecnico,
@@ -1331,7 +1366,7 @@ namespace FT_Management.Models
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', '" + marcacao.EstadoMarcacao + "', '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.TipoEquipamento + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"'), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.TipoEquipamento + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
@@ -1430,6 +1465,36 @@ namespace FT_Management.Models
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
+
+        public void CriarMarcacaoEstados(List<EstadoMarcacao> LstEstadoMarcacoes)
+        {
+            int max = 5000;
+            int j = 0;
+            for (int i = 0; j < LstEstadoMarcacoes.Count; i++)
+            {
+                if ((j + max) > LstEstadoMarcacoes.Count) max = (LstEstadoMarcacoes.Count - j);
+
+                string sql = "INSERT INTO dat_marcacoes_estado (IdEstado, EstadoMarcacaoDesc) VALUES ";
+
+                foreach (var estado in LstEstadoMarcacoes.GetRange(j, max))
+                {
+                    sql += ("('" + estado.IdEstado + "', '" + estado.EstadoMarcacaoDesc + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE EstadoMarcacaoDesc=VALUES(EstadoMarcacaoDesc);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+            }
+        }
+
 
         public void EditarArtigo(Produto produto)
         {

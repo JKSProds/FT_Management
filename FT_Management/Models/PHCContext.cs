@@ -37,7 +37,9 @@ namespace FT_Management.Models
                 FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
                 FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
+                FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(DateTime.Parse("01/01/1900 00:00:00")));
 #endif
+
             }
             catch
             {
@@ -87,6 +89,7 @@ namespace FT_Management.Models
         { 
             FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao")));
             FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mtecnicos")));
+            FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(FT_ManagementContext.ObterUltimaModificacaoPHC("u_estados")));
         }
 
         public List<Produto> ObterProdutos(DateTime dataUltimaLeitura)
@@ -508,7 +511,7 @@ namespace FT_Management.Models
                                 Cliente = new Cliente { IdCliente = int.Parse(result["no"].ToString().Trim()), IdLoja = int.Parse(result["estab"].ToString().Trim()) },
                                 //IdTecnico = int.Parse(result["tecnno"].ToString().Trim()),
                                 ResumoMarcacao = result["resumo"].ToString().Trim(),
-                                EstadoMarcacao = result["estado"].ToString().Trim(),
+                                EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
                                 PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
                                 MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
                                 TipoEquipamento = result["tipoe"].ToString().Trim(),
@@ -574,6 +577,48 @@ namespace FT_Management.Models
             }
 
             return LstUtilizador;
+        }
+        public List<EstadoMarcacao> ObterMarcacaoEstados(DateTime dataUltimaLeitura)
+        {
+
+            List<EstadoMarcacao> LstEstadoMarcacao = new List<EstadoMarcacao>();
+
+            try
+            {
+                if (ConnectedPHC)
+                {
+                    SqlConnection conn = new SqlConnection(ConnectionString);
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand("select * from u_estados where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                    int i = 1;
+                    using (SqlDataReader result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            LstEstadoMarcacao.Add(new EstadoMarcacao()
+                            {
+                                IdEstado = i,
+                                EstadoMarcacaoDesc = result["estado"].ToString().Trim()
+                            });
+                            i++;
+                        }
+                    }
+
+                    conn.Close();
+
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_estados");
+
+                    Console.WriteLine("Estados marcação atualizados com sucesso! (PHC -> MYSQL)");
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os Estados do PHC!");
+            }
+
+            return LstEstadoMarcacao;
         }
     }
 }
