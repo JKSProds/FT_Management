@@ -63,12 +63,12 @@
                     <h6 class="m-0">Pedidos Concluidos</h6>
                 </div>
                 <div class="card-body d-flex py-0">
-                    <canvas height="375" id="myChart"></canvas>
+                    <canvas height="375" id="myChart" style="cursor: pointer"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-lg-4 col-md-2 col-sm-12 mb-4">
-            <h6>Top Técnicos (ultimos 30 dias)</h6>
+            <h6>Top Técnicos (últimos 30 dias)</h6>
             <ul id="list">
             </ul>
         </div>
@@ -98,7 +98,7 @@
             const data = {
                 labels: simpleData[0].datas,
                 datasets: [{
-                    label: 'Marcações Concluidas',
+                    label: 'Pedidos Concluídos',
                     data: simpleData[0].contagem,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgb(75, 192, 192)',

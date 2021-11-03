@@ -4,7 +4,7 @@
     <div class="col-md-8">
         <h3>Pedidos de Orçamentos</h3>
     </div>
-    <div class="col-md-4 text-right"><h4>Contador: <b>@Model.Count()</b></h4></div>
+    <div class="col-md-4 text-right"><button type="button" class="btn btn-lg btn-outline-secondary" disabled>@Model.Count()</button></div>
 </div>
 <div class="row">
     <table class="table table-sm table-hover">
@@ -14,17 +14,19 @@
                 <th scope="col">Cliente</th>
                 <th scope="col">Técnico</th>
                 <th scope="col">Estado</th>
+                <th scope="col">Nº de Dias</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-
-                <tr onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))')" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "")">
+                TimeSpan difference = DateTime.Now - item.DataMarcacao;
+                <tr onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))')" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "") @(item.DataMarcacao < DateTime.Now.AddDays(-30) ? "table-danger" : "") ">
                     <td>@item.DataMarcacao.ToShortDateString()</td>
                     <td>@item.Cliente.NomeCliente</td>
                     <td>@item.Tecnico.NomeCompleto</td>
                     <td>@item.EstadoMarcacaoDesc</td>
+                    <td>@difference.Days Dias</td>
                 </tr>
 
             }
