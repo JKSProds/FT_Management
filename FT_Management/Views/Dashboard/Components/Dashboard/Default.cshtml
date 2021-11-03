@@ -7,9 +7,9 @@
 <div class="card-deck">
     <div class="col-sm-12 col-lg-2 col-md-4">
         <div class="card mb-3">
-            <div class="card-header bg-primary text-white text-center">Pedidos Diários <i class="fas fa-calendar-day float-right"></i></div>
+            <div class="card-header bg-primary text-white text-center">Pendentes (Diárias) <i class="fas fa-calendar-day float-right"></i></div>
             <div class="card-body">
-                <h1 class="card-title text-center text-black">@Model.Where(m => m.DataMarcacao == DateTime.Now.Date).Count()</h1>
+                <h1 class="card-title text-center text-black">@Model.Where(m => m.DataMarcacao == DateTime.Now.Date && m.EstadoMarcacao != 4).Count()</h1>
             </div>
         </div>
     </div>
@@ -17,7 +17,7 @@
         <div class="card mb-3">
             <div class="card-header bg-success text-white text-center">Instalações <i class="fas fa-plus-circle float-right"></i></div>
             <div class="card-body">
-                <h1 class="card-title text-center text-black">@Model.Where(m => m.Instalacao == 1).Count()</h1>
+                <h1 class="card-title text-center text-black">@Model.Where(m => m.Instalacao == 1 && m.EstadoMarcacao != 4).Count()</h1>
             </div>
         </div>
     </div>
