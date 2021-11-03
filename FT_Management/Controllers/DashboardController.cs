@@ -74,7 +74,7 @@ namespace FT_Management.Controllers
         public JsonResult ObterMarcacoesConcluidas30Dias()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(DateTime.Now.AddDays(-30), DateTime.Now).Where(m => m.EstadoMarcacao == 4).ToList();
+            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoesSimples(DateTime.Now.AddDays(-30), DateTime.Now).Where(m => m.EstadoMarcacao == 4).ToList();
             List<Utilizador> LstUtilizadores = context.ObterListaTecnicos();
 
             var data = LstMarcacoes.Select(m => m.DataMarcacao.ToShortDateString()).Distinct().ToList();

@@ -369,6 +369,33 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
+
+        public List<Marcacao> ObterListaMarcacoesSimples(DateTime DataInicial, DateTime DataFinal)
+        {
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+            String DataI = DataInicial.ToString("yyyy-MM-dd");
+            String DataF = DataFinal.ToString("yyyy-MM-dd");
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1 order by DataMarcacao, IdTecnico;");
+                while (result.Read())
+                {
+                    //DateTime d = DateTime.Parse(result["DataMarcacao"]);
+                    LstMarcacao.Add(new Marcacao()
+                    {
+                        IdMarcacao = result["IdMarcacao"],
+                        DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
+                        EstadoMarcacao = result["EstadoMarcacao"],
+                        IdTecnico = result["IdTecnico"]                       
+
+                    });
+                }
+            }
+
+            return LstMarcacao;
+
+        }
         public List<Marcacao> ObterListaMarcacoes(int IdTecnico, DateTime DataInicial, DateTime DataFinal)
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
