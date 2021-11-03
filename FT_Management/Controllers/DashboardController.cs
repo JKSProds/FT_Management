@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
-    public class ResumoViewComponent : ViewComponent
+    public class DashboardViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
@@ -70,5 +70,19 @@ namespace FT_Management.Controllers
 
             return View(context.ObterListaMarcacoesPendentes());
             }
+
+        public JsonResult ObterMarcacoesConcluidas30Dias()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(DateTime.Now.AddDays(-30), DateTime.Now).Where(m => m.EstadoMarcacao == 4).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos();
+
+            var data = LstMarcacoes.Select(m => m.DataMarcacao.ToShortDateString()).Distinct().ToList();
+            var marcacoesFinalizadas = LstMarcacoes.GroupBy(i => i.DataMarcacao)
+             .Select(i => i.Count());
+
+            var tecnicosContagem = LstMarcacoes.GroupBy(i => i.IdTecnico).Select(group => new { tecnico = LstUtilizadores.Where(u => u.Id == group.Key).ToList(), marcacoesConcluidas = group.Count() }).OrderByDescending(i => i.marcacoesConcluidas);
+            return new JsonResult(new { datas = data, contagem = marcacoesFinalizadas, tecnicosContagem });
         }
+    }
 }

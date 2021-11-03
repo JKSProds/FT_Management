@@ -8,7 +8,7 @@
 <div id="carousel" class="carousel slide" data-ride="carousel" data-interval="15000">
     <div class="carousel-inner">
         <div class="carousel-item active col-md-12">
-            @await Component.InvokeAsync("Resumo", new { model = Model })
+            @await Component.InvokeAsync("Dashboard", new { model = Model })
         </div>
         <div class="carousel-item col-md-12">
             @await Component.InvokeAsync("PedidosDiarios", new { model = Model })
