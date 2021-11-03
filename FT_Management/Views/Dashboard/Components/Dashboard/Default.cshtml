@@ -5,7 +5,7 @@
 <br />
 
 <div class="card-deck">
-    <div class="col-sm-12 col-lg-2 col-md-4">
+    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
         <div class="card mb-3">
             <div class="card-header bg-primary text-white text-center">Pendentes (Diários) <i class="fas fa-calendar-day float-right"></i></div>
             <div class="card-body">
@@ -13,7 +13,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-lg-2 col-md-4">
+    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
         <div class="card mb-3">
             <div class="card-header bg-success text-white text-center">Instalações <i class="fas fa-plus-circle float-right"></i></div>
             <div class="card-body">
@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-lg-2 col-md-4">
+    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
         <div class="card mb-3">
             <div class="card-header bg-warning text-white text-center">Pedidos de Orçamento <i class="fas fa-copy float-right"></i></div>
             <div class="card-body">
@@ -29,7 +29,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-lg-2 col-md-4">
+    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
         <div class="card mb-3">
             <div class="card-header bg-warning text-white text-center">Pedidos de Peças <i class="fas fa-tools float-right"></i></div>
             <div class="card-body">
@@ -37,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-lg-2 col-md-4">
+    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
         <div class="card mb-3">
             <div class="card-header bg-info text-white text-center">A Aguardar <i class="fas fa-clock float-right"></i></div>
             <div class="card-body">
@@ -45,11 +45,12 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-lg-2 col-md-4">
+    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
         <div class="card mb-3">
             <div class="card-header bg-danger text-white text-center">Em Oficina <i class="fas fa-store-alt float-right"></i></div>
             <div class="card-body">
-                <h1 class="card-title text-center text-black">@Model.Where(m => m.EstadoMarcacao == 9 || m.EstadoMarcacao == 12 || m.Oficina == 1).Count()</h1>
+                <h1 class="card-title float-left text-primary"><i class="fas fa-balance-scale"></i> @Model.Where(m => m.EstadoMarcacao != 4 && m.Oficina == 1 && m.TipoEquipamento == "Pesagem").Count()</h1>
+                <h1 class="card-title float-right text-black text-danger"><i class="fas fa-fan"></i> @Model.Where(m => m.EstadoMarcacao != 4 && m.Oficina == 1 && m.TipoEquipamento != "Pesagem").Count()</h1>
             </div>
         </div>
     </div>

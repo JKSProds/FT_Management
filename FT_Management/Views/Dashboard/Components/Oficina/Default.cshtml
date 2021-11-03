@@ -6,28 +6,59 @@
     </div>
     <div class="col-md-4 text-right"><h4>Contador: <b>@Model.Count()</b></h4></div>
 </div>
+<hr />
 <div class="row">
-    <table class="table table-sm table-hover">
-        <thead class="table-light">
-            <tr>
-                <th scope="col">Data</th>
-                <th scope="col">Cliente</th>
-                <th scope="col">Técnico</th>
-                <th scope="col">Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-
-                <tr onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))')" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "")">
-                    <td>@item.DataMarcacao.ToShortDateString()</td>
-                    <td>@item.Cliente.NomeCliente</td>
-                    <td>@item.Tecnico.NomeCompleto</td>
-                    <td>@item.EstadoMarcacaoDesc</td>
+    <div class="col-sm-6">
+        <button class="btn btn-block btn-primary text-center" disabled>PESAGEM</button>
+        <table class="table table-sm table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Técnico</th>
+                    <th scope="col">Estado</th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Where(m => m.TipoEquipamento == "Pesagem"))
+                {
 
-            }
-        </tbody>
-    </table>
+                    <tr onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))')" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "")">
+                        <td>@item.DataMarcacao.ToShortDateString()</td>
+                        <td>@item.Cliente.NomeCliente</td>
+                        <td>@item.Tecnico.NomeCompleto</td>
+                        <td>@item.EstadoMarcacaoDesc</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-6">
+        <button class="btn btn-block btn-danger text-center" disabled>CORTE</button>
+        <table class="table table-sm table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Técnico</th>
+                    <th scope="col">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Where(m => m.TipoEquipamento != "Pesagem"))
+                {
+
+                    <tr onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico}))')" class="@(item.EstadoMarcacao == 4 ? "table-success" : "") @(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "table-warning" : "")">
+                        <td>@item.DataMarcacao.ToShortDateString()</td>
+                        <td>@item.Cliente.NomeCliente</td>
+                        <td>@item.Tecnico.NomeCompleto</td>
+                        <td>@item.EstadoMarcacaoDesc</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+
+    </div>
 </div>

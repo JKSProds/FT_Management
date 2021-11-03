@@ -54,7 +54,7 @@ namespace FT_Management.Controllers
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.EstadoMarcacao == 9 || m.EstadoMarcacao == 12 || m.Oficina == 1));
+            return View(model.Where(m => m.EstadoMarcacao !=4 && m.Oficina == 1));
         }
     }
         [Authorize(Roles = "Admin, Escritorio")]
