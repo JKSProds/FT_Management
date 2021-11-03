@@ -8,6 +8,9 @@
 <div id="carousel" class="carousel slide" data-ride="carousel" data-interval="15000">
     <div class="carousel-inner">
         <div class="carousel-item active col-md-12">
+            @await Component.InvokeAsync("Resumo", new { model = Model })
+        </div>
+        <div class="carousel-item col-md-12">
             @await Component.InvokeAsync("PedidosDiarios", new { model = Model })
         </div>
         <div class="carousel-item col-md-12">
@@ -27,7 +30,7 @@
         </div>
     </div>
 </div>
-
+<br />
 <div class="btn-group" role="group">
     <button type="button" class="btn btn-primary" onclick="$('#carousel').carousel('prev')">Anterior</button>
     <button type="button" class="btn btn-primary" onclick="$('#carousel').carousel('next')">Proximo</button>
@@ -35,7 +38,7 @@
 
 <script>
     $('#carousel').on('slide.bs.carousel', function () {
-        if ($('div.active').index() == 5)
+        if ($('div.active').index() == 6)
             location.reload(true);
 
     })

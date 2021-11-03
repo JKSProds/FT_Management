@@ -8,6 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
+    public class ResumoViewComponent : ViewComponent
+    {
+        public IViewComponentResult Invoke(List<Marcacao> model)
+        {
+            return View(model);
+        }
+    }
     public class PedidosDiariosViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
