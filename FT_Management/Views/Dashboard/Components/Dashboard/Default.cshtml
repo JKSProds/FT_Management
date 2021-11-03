@@ -48,9 +48,9 @@
     <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
         <div class="card mb-3">
             <div class="card-header bg-danger text-white text-center">Em Oficina <i class="fas fa-store-alt float-right"></i></div>
-            <div class="card-body">
-                <h1 class="card-title float-left text-primary"><i class="fas fa-balance-scale"></i> @Model.Where(m => m.EstadoMarcacao != 4 && m.Oficina == 1 && m.TipoEquipamento == "Pesagem").Count()</h1>
-                <h1 class="card-title float-right text-black text-danger"><i class="fas fa-fan"></i> @Model.Where(m => m.EstadoMarcacao != 4 && m.Oficina == 1 && m.TipoEquipamento != "Pesagem").Count()</h1>
+            <div class="card-body row d-flex justify-content-center">
+                <h1 style="margin-right:10px" class="card-title text-primary"><i class="fas fa-balance-scale"></i> @Model.Where(m => m.EstadoMarcacao != 4 && m.Oficina == 1 && m.TipoEquipamento == "Pesagem").Count()</h1>
+                <h1 class="card-title text-black text-danger"><i class="fas fa-fan"></i> @Model.Where(m => m.EstadoMarcacao != 4 && m.Oficina == 1 && m.TipoEquipamento != "Pesagem").Count()</h1>
             </div>
         </div>
     </div>
