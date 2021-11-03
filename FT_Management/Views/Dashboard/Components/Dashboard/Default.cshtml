@@ -5,8 +5,8 @@
 <br />
 
 <div class="card-deck">
-    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
-        <div class="card mb-3">
+    <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6" >
+        <div class="card mb-3" id="link1" style="cursor: pointer">
             <div class="card-header bg-primary text-white text-center">Pendentes (Diários) <i class="fas fa-calendar-day float-right"></i></div>
             <div class="card-body">
                 <h1 class="card-title text-center text-black">@Model.Where(m => m.DataMarcacao == DateTime.Now.Date && (m.EstadoMarcacao == 1 || m.EstadoMarcacao == 5)).Count()</h1>
@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
-        <div class="card mb-3">
+        <div class="card mb-3"  id="link2" style="cursor: pointer">
             <div class="card-header bg-success text-white text-center">Instalações <i class="fas fa-plus-circle float-right"></i></div>
             <div class="card-body">
                 <h1 class="card-title text-center text-black">@Model.Where(m => m.Instalacao == 1 && m.EstadoMarcacao != 4).Count()</h1>
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
-        <div class="card mb-3">
+        <div class="card mb-3"  id="link3" style="cursor: pointer">
             <div class="card-header bg-warning text-white text-center">Pedidos de Orçamento <i class="fas fa-copy float-right"></i></div>
             <div class="card-body">
                 <h1 class="card-title text-center text-black">@Model.Where(m => m.EstadoMarcacao == 8).Count()</h1>
@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
-        <div class="card mb-3">
+        <div class="card mb-3" id="link4" style="cursor: pointer">
             <div class="card-header bg-warning text-white text-center">Pedidos de Peças <i class="fas fa-tools float-right"></i></div>
             <div class="card-body">
                 <h1 class="card-title text-center text-black">@Model.Where(m => m.EstadoMarcacao == 7).Count()</h1>
@@ -38,7 +38,7 @@
         </div>
     </div>
     <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
-        <div class="card mb-3">
+        <div class="card mb-3" id="link5" style="cursor: pointer">
             <div class="card-header bg-info text-white text-center">A Aguardar <i class="fas fa-clock float-right"></i></div>
             <div class="card-body">
                 <h1 class="card-title text-center text-black">@Model.Where(m => m.EstadoMarcacao == 10 || m.EstadoMarcacao == 6 || m.EstadoMarcacao == 13).Count()</h1>
@@ -46,7 +46,7 @@
         </div>
     </div>
     <div class="col-sm-12 col-xl-2 col-lg-4 col-md-6">
-        <div class="card mb-3">
+        <div class="card mb-3" id="link6" style="cursor: pointer">
             <div class="card-header bg-danger text-white text-center">Em Oficina <i class="fas fa-store-alt float-right"></i></div>
             <div class="card-body row d-flex justify-content-center">
                 <h1 style="margin-right:10px" class="card-title text-primary"><i class="fas fa-balance-scale"></i> @Model.Where(m => m.EstadoMarcacao != 4 && m.Oficina == 1 && m.TipoEquipamento == "Pesagem").Count()</h1>
@@ -88,7 +88,7 @@
                     },
                     error: function (req, status, error) {
                         // do something with error
-                        alert("error");
+                        //alert("error");
                     }
                 });
                 return resp;
@@ -110,16 +110,46 @@
                 data: data,
                 options: {
                     maintainAspectRatio: false,
+                    onClick: graphClickEvent
                 }
             };
 
+            
             const myChart = new Chart(
                 document.getElementById('myChart'),
                 config
             );
 
+            function graphClickEvent(event, array) {
+                if (array[0]) {
+                    //console.log(array);
+                    var label = myChart.data.labels[array[0].index];
+                    console.log(label);
+                    window.open("/FolhasObra?DataFolhasObra="+label, '_blank').focus();
+                }
+            }
+
             $.each(simpleData[0].tecnicosContagem, function (v, i) {
                 $('#list').append("<li>" + simpleData[0].tecnicosContagem[v].tecnico[0].nomeCompleto + "</li>");
                 $('#list').append("<div class='progress'><div class='progress-bar bg-info' role='progressbar' style='width: " + simpleData[0].tecnicosContagem[v].marcacoesConcluidas * 100 / simpleData[0].tecnicosContagem[0].marcacoesConcluidas + "%' aria-valuenow='" + simpleData[0].tecnicosContagem[v].marcacoesConcluidas + "' aria-valuemin='0' aria-valuemax='" + simpleData[0].tecnicosContagem[0].marcacoesConcluidas + "'>" + simpleData[0].tecnicosContagem[v].marcacoesConcluidas + "</div></div>");
             })
+
+            $('#link1').on('click', function () {
+                $('#carousel').carousel(1);
+            });
+            $('#link2').on('click', function () {
+                $('#carousel').carousel(2);
+            });
+            $('#link3').on('click', function () {
+                $('#carousel').carousel(3);
+            });
+            $('#link4').on('click', function () {
+                $('#carousel').carousel(4);
+            });
+            $('#link5').on('click', function () {
+                $('#carousel').carousel(5);
+            });
+            $('#link6').on('click', function () {
+                $('#carousel').carousel(6);
+            });
         </script>
