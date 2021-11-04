@@ -1,0 +1,362 @@
+﻿@model FT_Management.Models.Cliente
+
+@{
+    ViewData["Title"] = "Editar Intervenção";
+}
+
+<h1>Editar Intervenção</h1>
+<hr />
+<form asp-action="Editar">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="false">Dados</a>
+        <a class="nav-item nav-link" id="v-pills-marcacoes-tab" data-toggle="pill" href="#v-pills-marcacoes" role="tab" aria-controls="v-pills-marcacoes" aria-selected="false">Marcações</a>
+        <a class="nav-item nav-link" id="v-pills-folhasobra-tab" data-toggle="pill" href="#v-pills-folhasobra" role="tab" aria-controls="v-pills-folhasobra" aria-selected="false">Folhas de Obra</a>
+        <a class="nav-item nav-link" id="v-pills-visitas-tab" data-toggle="pill" href="#v-pills-visitas" role="tab" aria-controls="v-pills-visitas" aria-selected="false">Visitas</a>
+        <a class="nav-item nav-link" id="v-pills-propostas-tab" data-toggle="pill" href="#v-pills-propostas" role="tab" aria-controls="v-pills-propostas" aria-selected="false">Propostas</a>
+        <a class="nav-item nav-link" id="v-pills-equipamentos-tab" data-toggle="pill" href="#v-pills-equipamentos" role="tab" aria-controls="v-pills-equipamentos" aria-selected="false">Equipamentos</a>
+    </div>
+    <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-cliente" role="tabpanel" aria-labelledby="v-pills-cliente-tab">
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="IdCliente" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="IdCliente" class="form-control" id="IdCliente" readonly />
+                            <input asp-for="IdLoja" class="form-control" id="IdLoja" readonly />
+                        </div>
+                        <span asp-validation-for="IdCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-8">
+                    <div class="form-group">
+                        <label asp-for="NomeCliente" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="NomeCliente" class="form-control" id="NomeCliente" readonly/>
+                        </div>
+                        <span asp-validation-for="NomeCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-8">
+                    <div class="form-group">
+                        <label asp-for="MoradaCliente" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="MoradaCliente" class="form-control" id="MoradaCliente" readonly />
+                            <div class="btn-group">
+                                <a href="https://maps.google.com/?daddr=@Model.MoradaCliente" target="_blank" class="btn btn-info @(Model.MoradaCliente.Length < 2 ? "disabled" : "")"><i class="fas fa-location-arrow"></i></a>
+                            </div>
+                        </div>
+
+                        <span asp-validation-for="MoradaCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="NumeroContribuinteCliente" class="control-label"></label>
+                        <input asp-for="NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" readonly />
+                        <span asp-validation-for="NumeroContribuinteCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="w-100"></div>
+                <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="EmailCliente" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="EmailCliente" class="form-control" id="EmailCliente" readonly />
+                            <div class="btn-group">
+                                <a href="mailto:@Model.EmailCliente" target="_blank" class="btn btn-primary @(Model.EmailCliente.Length < 5 ? "disabled" : "")"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                        <span asp-validation-for="EmailCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="TelefoneCliente" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="TelefoneCliente" class="form-control" id="TelefoneCliente" readonly onclick="tel:@Model.TelefoneCliente" />
+                            <div class="btn-group">
+                                <a href="tel:@Model.TelefoneCliente" target="_blank" class="btn btn-success @(Model.TelefoneCliente.Length < 9 ? "disabled" : "")"><i class="fas fa-phone-alt"></i></a>
+                            </div>
+                        </div>
+                        <span asp-validation-for="TelefoneCliente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="PessoaContatoCliente" class="control-label"></label>
+                        <input asp-for="PessoaContatoCliente" class="form-control" id="PessoaContatoCliente" readonly />
+                        <span asp-validation-for="PessoaContatoCliente" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade show" id="v-pills-marcacoes" role="tabpanel" aria-labelledby="v-pills-marcacoes-tab">
+            <br />
+            @if (Model.Marcacoes.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas marcações!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                Data
+                            </th>
+                            <th>
+                                Técnico
+                            </th>
+                            <th>
+                                Estado
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Marcacoes)
+                        {
+                        <tr>
+                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                <span>@item.IdMarcacao</span>
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                <span>@item.DataMarcacao.ToShortDateString()</span>
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                @Html.DisplayFor(modelItem => item.Tecnico.NomeCompleto)
+
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                @Html.DisplayFor(modelItem => item.EstadoMarcacaoDesc)
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+        </div>
+        <div class="tab-pane fade show" id="v-pills-folhasobra" role="tabpanel" aria-labelledby="v-pills-folhasobra-tab">
+            <br />
+            @if (Model.FolhasObra.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                Equipamento
+                            </th>
+                            <th>
+                                Nº de Série
+                            </th>
+                            <th>
+                                Data
+                            </th>
+                            <th>
+
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.FolhasObra)
+                        {
+                        <tr>
+                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                <span>@item.IdFolhaObra</span>
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                @Html.DisplayFor(modelItem => item.EquipamentoServico.MarcaEquipamento) - @Html.DisplayFor(modelItem => item.EquipamentoServico.ModeloEquipamento)
+
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                <span>@item.DataServico.ToShortDateString()</span>
+                            </td>
+                            <td>
+                                <div class="btn-group float-right">
+                                    <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                    @*<a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
+                    <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
+                </a>*@
+                                </div>
+
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+        <div class="tab-pane fade show" id="v-pills-visitas" role="tabpanel" aria-labelledby="v-pills-visitas-tab">
+            <br />
+            @if (Model.Visitas.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas visitas!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                Data
+                            </th>
+                            <th>
+                                Observações
+                            </th>
+                            <th>
+                                Estado
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Visitas)
+                        {
+                        <tr>
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                                <span>@item.IdVisita</span>
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                                <span>@item.DataVisita.ToShortDateString()</span>
+
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                                <span>@item.ObsVisita</span>
+                            </td>
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                                <span>@item.EstadoVisita</span>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+        <div class="tab-pane fade show" id="v-pills-propostas" role="tabpanel" aria-labelledby="v-pills-propostas-tab">
+            <br />
+            @if (Model.Visitas.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas propostas!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                Data
+                            </th>
+                            <th>
+                                Valor
+                            </th>
+                            <th>
+                                Estado
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var visita in Model.Visitas)
+                        {
+                            foreach (var item in visita.Propostas)
+                            { 
+                            <tr>
+                                <td>
+                                    <span>@item.IdProposta</span>
+                                </td>
+                                <td>
+                                    <span>@item.DataProposta.ToShortDateString()</span>
+
+                                </td>
+                                <td>
+                                    <span>@item.ValorProposta €</span>
+                                </td>
+                                <td>
+                                    <span>@item.EstadoProposta</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group float-right">
+                                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                         }
+                        }
+                    </tbody>
+                </table>
+            }
+
+        </div>
+        <div class="tab-pane fade show" id="v-pills-equipamentos" role="tabpanel" aria-labelledby="v-pills-equipamentos-tab">
+            <br />
+            @if (Model.Equipamentos.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados equipamentos!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                Marca
+                            </th>
+                            <th>
+                                Modelo
+                            </th>
+                            <th>
+                                Nº de Série
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Equipamentos)
+                        {
+                        <tr>
+                            <td>
+                                <span>@item.MarcaEquipamento</span>
+
+                            </td>
+                            <td>
+                                <span>@item.ModeloEquipamento</span>
+                            </td>
+                            <td>
+                                <span>@item.NumeroSerieEquipamento</span>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+        </div>
+</form>

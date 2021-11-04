@@ -5,7 +5,7 @@
     <Authors>Jorge Monteiro</Authors>
     <Company>JKSProds</Company>
     <Version>10.2021</Version>
-    <AssemblyVersion>11.2021.3.2</AssemblyVersion>
+    <AssemblyVersion>11.2021.5.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

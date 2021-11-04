@@ -9,14 +9,17 @@
     <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
     <a class="nav-item nav-link" id="v-pills-folhas-tab" data-toggle="pill" href="#v-pills-folhas" role="tab" aria-controls="v-pills-folhas" aria-selected="false">Folhas de Obra</a>
     @*<a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
-    <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>*@
+        <a class="nav-item nav-link" id="v-pills-com-tab" data-toggle="pill" href="#v-pills-com" role="tab" aria-controls="v-pills-com" aria-selected="false">Comentários</a>*@
 </div>
 <br />
 <hr />
 
-<h1 class="text-center">
-    @Html.DisplayFor(model => model.Cliente.NomeCliente)
-</h1>
+<div class="input-group mb-3">
+    <h1 class="text-center col-lg-11">
+        @Html.DisplayFor(model => model.Cliente.NomeCliente)
+    </h1>
+    <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
+</div>
 <hr />
 <div class="tab-content" id="v-pills-tabContent">
     <div class="tab-pane fade show active" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
@@ -285,9 +288,9 @@
         </div>
     </div>
 </div>
-        <input type="hidden" id="hiddenCartaoId" />
-        <input type="hidden" id="hiddenFolhaObraId" />
-        <input type="hidden" id="hiddenAnexoId" />
+<input type="hidden" id="hiddenCartaoId" />
+<input type="hidden" id="hiddenFolhaObraId" />
+<input type="hidden" id="hiddenAnexoId" />
 
 
 <script>

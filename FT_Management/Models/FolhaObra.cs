@@ -151,6 +151,7 @@ namespace FT_Management.Models
 
     public class Cliente
     {
+        [Display(Name = "ID")]
         public int IdCliente { get; set; }
         public int IdLoja { get; set; }
         private string _NomeCliente;
@@ -166,6 +167,7 @@ namespace FT_Management.Models
         private string _EmailCliente;
         [Display(Name = "Email")]
         public string EmailCliente { get {return _EmailCliente ?? ""; } set {_EmailCliente = value ;}  }
+        [Display(Name = "Telefone")]
         public string TelefoneCliente { get { return string.IsNullOrEmpty(_TelefoneCliente) ? "" : new string(_TelefoneCliente.Replace(" ", "").Take(9).ToArray()); } set { _TelefoneCliente = value; } }
         private string _TelefoneCliente;
         private string _NumeroContribuinteCliente;
@@ -214,6 +216,11 @@ namespace FT_Management.Models
             }
             return functionReturnValue;
         }
+        public List<Marcacao> Marcacoes { get; set; }
+        public List<FolhaObra> FolhasObra { get; set; }
+        public List<Visita> Visitas { get; set; }
+        public List<Equipamento> Equipamentos { get; set; }
+
     }
     public class FolhaObra
     {

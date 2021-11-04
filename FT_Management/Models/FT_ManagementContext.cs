@@ -109,6 +109,33 @@ namespace FT_Management.Models
             return LstVisitas;
 
         }
+        public List<Visita> ObterListaVisitasCliente(int IdCliente, int IdLoja)
+        {
+            List<Visita> LstVisitas = new List<Visita>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_visitas where IdCliente='" + IdCliente + "'  AND IdLoja='" + IdLoja + "' order by DataVisita, IdComercial;;");
+                while (result.Read())
+                {
+                    LstVisitas.Add(new Visita()
+                    {
+                        IdVisita = result["IdVisita"],
+                        DataVisita = DateTime.Parse(result["DataVisita"]),
+                        ResumoVisita = result["ResumoVisita"],
+                        EstadoVisita = result["EstadoVisita"],
+                        ObsVisita = result["ObsVisita"],
+                        VisitaStamp = result["VisitaStamp"],
+                        IdComercial = result["idcomercial"],
+                        Propostas = ObterListaPropostasVisita(result["IdVisita"])
+                        
+                    });
+                }
+            }
+
+            return LstVisitas;
+
+        }
 
         public List<Proposta> ObterListaPropostasVisita(int IdVisita)
         {
@@ -300,6 +327,36 @@ namespace FT_Management.Models
             return LstFolhasObra;
 
         }
+        public List<FolhaObra> ObterListaFolhasObraCliente(int IdCliente, int IdLoja)
+        {
+            List<FolhaObra> LstFolhasObra = new List<FolhaObra>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_folhas_obra Where IdCliente = "+IdCliente+" AND IdLoja = "+IdLoja+" Order By DataServico DESC;");
+                while (result.Read())
+                {
+                    LstFolhasObra.Add(new FolhaObra()
+                    {
+                        IdFolhaObra = result["IdFolhaObra"],
+                        DataServico = result["DataServico"],
+                        ReferenciaServico = result["ReferenciaServico"],
+                        EstadoEquipamento = result["EstadoEquipamento"],
+                        SituacoesPendentes = result["SituacoesPendentes"],
+                        ConferidoPor = result["ConferidoPor"],
+                        EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
+                        GuiaTransporteAtual = result["GuiaTransporteAtual"],
+                        AssistenciaRemota = result["Remoto"] == 1,
+                        IdCartao = result["IdCartaoTrello"],
+
+                    });
+                }
+            }
+
+            return LstFolhasObra;
+
+        }
         public List<Marcacao> ObterListaMarcacoesPendentes()
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
@@ -343,6 +400,39 @@ namespace FT_Management.Models
             {
 
                 using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1 order by DataMarcacao, IdTecnico;");
+                while (result.Read())
+                {
+                    //DateTime d = DateTime.Parse(result["DataMarcacao"]);
+                    LstMarcacao.Add(new Marcacao()
+                    {
+                        IdMarcacao = result["IdMarcacao"],
+                        DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoMarcacao = result["ResumoMarcacao"],
+                        EstadoMarcacao = result["EstadoMarcacao"],
+                        EstadoMarcacaoDesc = result["EstadoMarcacaoDesc"],
+                        IdTecnico = result["IdTecnico"],
+                        Tecnico = ObterTecnico(Int32.Parse(result["IdTecnico"])),
+                        PrioridadeMarcacao = result["PrioridadeMarcacao"],
+                        MarcacaoStamp = result["MarcacaoStamp"],
+                        Oficina = result["Oficina"],
+                        Instalacao = result["Instalacao"],
+                        TipoEquipamento = result["TipoEquipamento"]
+
+                    });
+                }
+            }
+
+            return LstMarcacao;
+
+        }
+        public List<Marcacao> ObterListaMarcacoesCliente(int IdCliente, int IdLoja)
+        {
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND IdCliente='" + IdCliente + "'  AND IdLoja='" + IdLoja + "' AND Marcado=1 order by DataMarcacao DESC, IdTecnico;");
                 while (result.Read())
                 {
                     //DateTime d = DateTime.Parse(result["DataMarcacao"]);
@@ -571,7 +661,7 @@ namespace FT_Management.Models
             }
             return folhaObra;
         }
-        public List<Equipamento> ObterEquipamentos()
+        public List<Equipamento> ObterListaEquipamentos()
         {
             List<Equipamento> LstEquipamentos = new List<Equipamento>();
 
@@ -579,6 +669,29 @@ namespace FT_Management.Models
             {
 
                 using var result = db.Query("SELECT * FROM dat_equipamentos;");
+                while (result.Read())
+                {
+                    LstEquipamentos.Add(new Equipamento()
+                    {
+                        IdEquipamento = result["IdEquipamento"],
+                        DesignacaoEquipamento = result["DesignacaoEquipamento"],
+                        MarcaEquipamento = result["MarcaEquipamento"],
+                        ModeloEquipamento = result["ModeloEquipamento"],
+                        NumeroSerieEquipamento = result["NumeroSerieEquipamento"]
+
+                    });
+                }
+            }
+            return LstEquipamentos;
+        }
+        public List<Equipamento> ObterListaEquipamentosCliente(int IdCliente, int IdLoja)
+        {
+            List<Equipamento> LstEquipamentos = new List<Equipamento>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_equipamentos where IdCliente = "+IdCliente+" AND IdLoja = "+IdLoja+";");
                 while (result.Read())
                 {
                     LstEquipamentos.Add(new Equipamento()
@@ -784,6 +897,34 @@ namespace FT_Management.Models
            
             return cliente;
         }
+        public Cliente ObterClienteCompleto(int id, int est)
+        {
+
+            Cliente cliente = new Cliente();
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT * FROM dat_clientes where IdCliente=" + id + " AND IdLoja=" + est + ";");
+            result.Read();
+            if (result.Reader.HasRows)
+            {
+                cliente = new Cliente()
+                {
+                    IdCliente = result["IdCliente"],
+                    IdLoja = result["IdLoja"],
+                    NomeCliente = result["NomeCliente"],
+                    PessoaContatoCliente = result["PessoaContactoCliente"],
+                    MoradaCliente = result["MoradaCliente"],
+                    EmailCliente = result["EmailCliente"],
+                    NumeroContribuinteCliente = result["NumeroContribuinteCliente"],
+                    TelefoneCliente = result["Telefone"],
+                    Marcacoes = ObterListaMarcacoesCliente(id, est),
+                    FolhasObra = ObterListaFolhasObraCliente(id, est),
+                    Visitas = ObterListaVisitasCliente(id, est),
+                    Equipamentos = ObterListaEquipamentosCliente(id, est)
+                };
+            }
+
+            return cliente;
+        }
         public Cliente ObterClienteNome(string nome)
         {
             using Database db = ConnectionString;
@@ -863,8 +1004,8 @@ namespace FT_Management.Models
                         PessoaContatoCliente = result["PessoaContactoCliente"],
                         MoradaCliente = result["MoradaCliente"],
                         EmailCliente = result["EmailCliente"],
-                        NumeroContribuinteCliente = result["NumeroContribuinteCliente"]
-
+                        NumeroContribuinteCliente = result["NumeroContribuinteCliente"],
+                        TelefoneCliente = result["Telefone"]
                     });
                 }
             }

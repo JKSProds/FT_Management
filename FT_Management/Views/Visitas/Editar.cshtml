@@ -29,7 +29,7 @@
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" asp-for="Cliente.IdCliente" id="IdCliente" readonly>
                         <input type="hidden" id="IdLoja" name="IdLoja" />
-                        <button class="btn btn-outline-secondary" onclick="location.href = '@(Url.Action("Editar", "Clientes", new { idCliente = @Model.Cliente.IdCliente, idLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
+                        <button class="btn btn-outline-secondary" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
                     </div>
                 </div>
                 <div class="form-group col-lg-8">
