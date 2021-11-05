@@ -16,7 +16,7 @@ namespace FT_Management.Models
         {
             this.ConnectionString = connectionString;
             SqlConnection cnn;
-
+            ConnectedPHC = true;
             FT_ManagementContext = new FT_ManagementContext(mySqlConnectionString, "");
 
             try
@@ -593,7 +593,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("select * from u_estados where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                    SqlCommand command = new SqlCommand("select * from u_estados;", conn);
                     int i = 1;
                     using (SqlDataReader result = command.ExecuteReader())
                     {

@@ -127,7 +127,7 @@ namespace FT_Management.Models
                         ObsVisita = result["ObsVisita"],
                         VisitaStamp = result["VisitaStamp"],
                         IdComercial = result["idcomercial"],
-                        Propostas = ObterListaPropostasVisita(result["IdVisita"])
+                        Propostas = ObterListaPropostasVisita(result["IdVisita"]) 
                         
                     });
                 }
@@ -1538,7 +1538,7 @@ namespace FT_Management.Models
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"'), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"' LIMIT 1), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
