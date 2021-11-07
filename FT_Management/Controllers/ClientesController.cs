@@ -15,6 +15,10 @@ namespace FT_Management.Controllers
         public IActionResult Index(int? page, string Nome)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            phccontext.AtualizarClientes();
+
             ViewData["Nome"] = Nome;
             if (Nome == null) Nome = "";
 
@@ -28,7 +32,9 @@ namespace FT_Management.Controllers
         public IActionResult Cliente(int IdCliente, int IdLoja)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
+            phccontext.AtualizarClientes();
             return View(context.ObterClienteCompleto(IdCliente, IdLoja));
         }
     }
