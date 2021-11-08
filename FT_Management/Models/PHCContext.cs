@@ -549,7 +549,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm,marcado from u_mtecnicos where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                    SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm,marcado from u_mtecnicos where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
 
                     using (SqlDataReader result = command.ExecuteReader())
                     {
