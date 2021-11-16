@@ -45,8 +45,11 @@
 
     window.onload = function (event) {
         //alert(window.location.hash.substring(1));
-        $("#carousel").carousel(parseInt(window.location.hash.substring(1)));
-        $("#carousel").carousel('pause');
+        slide = parseInt(window.location.hash.substring(1));
+        if (!isNaN(slide)) {
+            $("#carousel").carousel(slide);
+            $("#carousel").carousel('pause');
 
+        }
     };
 </script>
