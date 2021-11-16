@@ -42,4 +42,11 @@
             location.reload(true);
 
     })
+
+    window.onload = function (event) {
+        //alert(window.location.hash.substring(1));
+        $("#carousel").carousel(parseInt(window.location.hash.substring(1)));
+        $("#carousel").carousel('pause');
+
+    };
 </script>

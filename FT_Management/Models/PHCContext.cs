@@ -16,7 +16,6 @@ namespace FT_Management.Models
         {
             this.ConnectionString = connectionString;
             SqlConnection cnn;
-            ConnectedPHC = true;
             FT_ManagementContext = new FT_ManagementContext(mySqlConnectionString, "");
 
             try
