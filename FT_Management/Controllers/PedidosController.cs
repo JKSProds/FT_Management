@@ -36,7 +36,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             var calendar = new Calendar();
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(33, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
+            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
             foreach (Marcacao m in LstMarcacoes)
             {
                 if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) h = 9;
@@ -44,7 +44,7 @@ namespace FT_Management.Controllers
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(d),
-                    End = new CalDateTime(d.AddMinutes(30)),
+                    End = new CalDateTime(d.AddMinutes(60)),
                     Uid = m.IdMarcacao.ToString(),
                     Description = m.ResumoMarcacao,
                     Summary = m.Cliente.NomeCliente
