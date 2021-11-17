@@ -39,15 +39,15 @@ namespace FT_Management.Controllers
             List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(33, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
             foreach (Marcacao m in LstMarcacoes)
             {
-
+                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) h = 9;
                 d = m.DataMarcacao.Add(TimeSpan.FromHours(h));
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(d),
                     End = new CalDateTime(d.AddMinutes(30)),
                     Uid = m.IdMarcacao.ToString(),
-                    Description = m.ResumoMarcacao
-
+                    Description = m.ResumoMarcacao,
+                    Name = m.Cliente.NomeCliente
                 };
 
                 calendar.Events.Add(e);
@@ -74,7 +74,7 @@ namespace FT_Management.Controllers
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(ms, System.Net.Mime.MediaTypeNames.Text.Plain);
+            return File(ms, System.Net.Mime.MediaTypeNames.Application.Octet);
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
