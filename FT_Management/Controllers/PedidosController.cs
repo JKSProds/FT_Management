@@ -5,6 +5,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FT_Management.Models;
+using Ical;
+using Ical.Net.DataTypes;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +26,36 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             return new JsonResult(context.ConverterMarcacoesEventos(context.ObterListaMarcacoes(start, end)).ToList());
 
+        }
+
+        public String ObterIcs ()
+        {
+            DateTime d = DateTime.Now;
+            int h = 9;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            var calendar = new Calendar();
+            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(33, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
+            foreach (Marcacao m in LstMarcacoes)
+            {
+
+                d = m.DataMarcacao.Add(TimeSpan.FromHours(h));
+                var e = new CalendarEvent
+                {
+                    Start = new CalDateTime(d),
+                    End = new CalDateTime(d.AddMinutes(30)),
+                    Uid = m.IdMarcacao.ToString(),
+                    Description = m.ResumoMarcacao
+
+                };
+
+                calendar.Events.Add(e);
+                h += 1;
+            }
+
+            var serializer = new CalendarSerializer();
+
+            return serializer.SerializeToString(calendar);
         }
 
         [Authorize(Roles = "Admin, Escritorio")]

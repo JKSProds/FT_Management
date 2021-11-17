@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FT_Management.Models
 {
-    public class CalendarEvent
+    public class CalendarioEvent
     {
         public int id { get; set; }
         public string title { get; set; }

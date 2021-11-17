@@ -1198,9 +1198,9 @@ namespace FT_Management.Models
             }
             return utilizador;
         }
-        public List<CalendarEvent> ConverterMarcacoesEventos(List<Marcacao> Marcacoes)
+        public List<CalendarioEvent> ConverterMarcacoesEventos(List<Marcacao> Marcacoes)
         {
-            List<CalendarEvent> LstEventos = new List<CalendarEvent>();
+            List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
             
             DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
             dataMarcacao.AddMinutes(5);
@@ -1209,7 +1209,7 @@ namespace FT_Management.Models
                 if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) dataMarcacao = dataMarcacao.AddMinutes(5);
                 if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 00:00:00");
 
-                LstEventos.Add(new CalendarEvent
+                LstEventos.Add(new CalendarioEvent
                 {
                     id = item.IdMarcacao,
                     title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
@@ -1226,9 +1226,9 @@ namespace FT_Management.Models
             return LstEventos;
         }
 
-        public List<CalendarEvent> ConverterVisitasEventos(List<Visita> Visitas)
+        public List<CalendarioEvent> ConverterVisitasEventos(List<Visita> Visitas)
         {
-            List<CalendarEvent> LstEventos = new List<CalendarEvent>();
+            List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
 
             DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
             dataMarcacao.AddMinutes(5);
@@ -1239,7 +1239,7 @@ namespace FT_Management.Models
                 if (dataMarcacao.ToShortDateString() != item.DataVisita.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataVisita.ToShortDateString() + " 00:00:00");
                 if (LstEventos.Count == 0) comercial = ObterTecnico(item.IdComercial);
 
-                LstEventos.Add(new CalendarEvent
+                LstEventos.Add(new CalendarioEvent
                 {
                     id = item.IdVisita,
                     title = (item.EstadoVisita == "Finalizado" ? "✔ " : item.EstadoVisita != "Criado" && item.EstadoVisita != "Agendado" ? "⌛ " : item.DataVisita < DateTime.Now ? "❌ " : "") + comercial.Iniciais + " - " + item.Cliente.NomeCliente,
