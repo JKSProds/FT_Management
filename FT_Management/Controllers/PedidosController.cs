@@ -58,7 +58,7 @@ namespace FT_Management.Controllers
 
             var serializedCalendar = serializer.SerializeToString(calendar);
 
-            var bytesCalendar = Encoding.ASCII.GetBytes(serializedCalendar);
+            var bytesCalendar = Encoding.UTF8.GetBytes(serializedCalendar);
             MemoryStream ms = new MemoryStream(bytesCalendar);
 
             ms.Write(bytesCalendar, 0, bytesCalendar.Length);
@@ -69,7 +69,7 @@ namespace FT_Management.Controllers
                 FileName = "basic.ics",
                 Inline = false,
                 Size = bytesCalendar.Length,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.Now
 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
