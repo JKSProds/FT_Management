@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace FT_Management.Controllers
 {
@@ -28,7 +29,7 @@ namespace FT_Management.Controllers
 
         }
 
-        public String ObterIcs ()
+        public virtual ActionResult ObterIcs ()
         {
             DateTime d = DateTime.Now;
             int h = 9;
@@ -55,7 +56,25 @@ namespace FT_Management.Controllers
 
             var serializer = new CalendarSerializer();
 
-            return serializer.SerializeToString(calendar);
+            var serializedCalendar = serializer.SerializeToString(calendar);
+
+            var bytesCalendar = Encoding.ASCII.GetBytes(serializedCalendar);
+            MemoryStream ms = new MemoryStream(bytesCalendar);
+
+            ms.Write(bytesCalendar, 0, bytesCalendar.Length);
+            ms.Position = 0;
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "basic.ics",
+                Inline = false,
+                Size = bytesCalendar.Length,
+                CreationDate = DateTime.Now,
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+
+            return File(ms, System.Net.Mime.MediaTypeNames.Text.Plain);
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
