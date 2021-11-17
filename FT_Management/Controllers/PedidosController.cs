@@ -47,7 +47,7 @@ namespace FT_Management.Controllers
                     End = new CalDateTime(d.AddMinutes(30)),
                     Uid = m.IdMarcacao.ToString(),
                     Description = m.ResumoMarcacao,
-                    Name = m.Cliente.NomeCliente
+                    Summary = m.Cliente.NomeCliente
                 };
 
                 calendar.Events.Add(e);
@@ -74,7 +74,7 @@ namespace FT_Management.Controllers
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(ms, System.Net.Mime.MediaTypeNames.Application.Octet);
+            return File(ms, "text/calendar");
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
