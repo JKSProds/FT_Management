@@ -1,0 +1,136 @@
+﻿@model IEnumerable<FT_Management.Models.Ferias>
+
+@{
+    ViewData["Title"] = "Férias";
+}
+
+
+<div class="row">
+    <div class="col-lg-8">
+        <h1>Férias</h1>
+    </div>
+    <div class="col-lg-4">
+        <a class="btn btn-primary text-white float-right" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
+        <a class="btn btn-primary text-white float-right" data-toggle="modal" data-target="#myModal2"><i class="fas fa-plus" style="margin-top:5px"></i> Adicionar</a>
+    </div>
+</div>
+<br />
+<input type="hidden" id="hiddenIdUtilizador" value="@ViewData["IdUtilizador"]" name="IdUtilizador">
+
+@if (Model.Count() == 0)
+{
+    <br />
+    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas férias associadas!</button>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DataInicio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DataFim)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Obs)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Validado)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
+                    </td>
+                    <td>
+                        <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Obs)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Validado)
+                    </td>
+                    <td>
+                        <div class="btn-group float-right">
+                            <a class="btn btn-outline-danger btn-lg" onclick="location.href('@Url.Action("Apagar", "Ferias", new { id = item.Id})')"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                            <a class="btn btn-outline-success btn-lg" onclick="location.href='@Url.Action("Validar", "Ferias", item)'"><i class="fas fa-check" style="font-size:20px"></i></a>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Adicionar Férias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Data Inicio:</label>
+                    <input type="text" class="form-control" id="txtDataInicio">
+                    <script>
+                        $('#txtDataInicio').datepicker({
+                            format: 'dd-mm-yyyy',
+                            size: 'large',
+                            value: '@DateTime.Now.ToShortDateString()',
+                        });
+                    </script>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Data Fim:</label>
+                    <input type="text" class="form-control" id="txtDataFim">
+                    <script>
+                        $('#txtDataFim').datepicker({
+                            format: 'dd-mm-yyyy',
+                            size: 'large',
+                            value: '@DateTime.Now.ToShortDateString()',
+                        });
+                    </script>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarFerias()" href="javascript:;">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function AdicionarFerias() {
+        var json = {
+            datainicio: document.getElementById('txtDataInicio').value,
+            datafim: document.getElementById('txtDataFim').value,
+            idutilizador: document.getElementById('hiddenIdUtilizador').value,
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Ferias/AdicionarFerias",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    // alert(JSON.stringify(result));
+                });
+            }
+        });
+        $("#myModal2").modal('hide');
+    }
+</script>

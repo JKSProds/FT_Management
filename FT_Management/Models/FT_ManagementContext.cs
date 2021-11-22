@@ -426,6 +426,30 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
+       public List<Ferias> ObterListaFerias(int IdUtilizador)
+        {
+            List<Ferias> LstFerias = new List<Ferias>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_ferias where IdUtilizador='"+IdUtilizador+"';");
+                while (result.Read())
+                {
+                    LstFerias.Add(new Ferias()
+                    {
+                        Id = result["Id"],
+                        IdUtilizador = result["IdUtilizador"],
+                        DataInicio = result["DataInicio"],
+                        DataFim = result["DataFim"],
+                        Validado = result["Validado"],
+                        Obs = result["Obs"]
+                    });
+                }
+            }
+
+            return LstFerias;
+
+        }
         public List<Marcacao> ObterListaMarcacoesCliente(int IdCliente, int IdLoja)
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
@@ -1544,6 +1568,34 @@ namespace FT_Management.Models
                 sql = sql.Remove(sql.Count() - 4);
 
                 sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp), Oficina = VALUES(Oficina), Instalacao = VALUES(Instalacao), TipoEquipamento = VALUES(TipoEquipamento);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+            }
+        }
+        public void CriarFerias(List<Ferias> LstFerias)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstFerias.Count; i++)
+            {
+                if ((j + max) > LstFerias.Count) max = (LstFerias.Count - j);
+
+                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs) VALUES ";
+
+                foreach (var ferias in LstFerias.GetRange(j, max))
+                {
+                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE IdUtilizador=VALUES(IdUtilizador), DataInicio = VALUES(DataInicio), DataFim = VALUES(DataFim), Validado = VALUES(Validado), Obs = VALUES(Obs);";
 
                 Database db = ConnectionString;
 
