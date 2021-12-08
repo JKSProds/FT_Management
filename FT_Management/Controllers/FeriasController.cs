@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FT_Management.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FT_Management.Controllers
 {
+    [Authorize]
     public class FeriasController : Controller
     {
 
@@ -25,11 +27,15 @@ namespace FT_Management.Controllers
         public ActionResult Detalhes(int IdUtilizador)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            if (int.Parse(this.User.Claims.First().Value) != IdUtilizador)
+            ViewData["Ano"] = context.ObterAnoAtivo();
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-                return RedirectToAction("Detalhes", new { IdUtilizador = int.Parse(this.User.Claims.First().Value)});
+                if (int.Parse(this.User.Claims.First().Value) != IdUtilizador)
+                {
+                    return RedirectToAction("Detalhes", new { IdUtilizador = int.Parse(this.User.Claims.First().Value) });
+                }
             }
+
             ViewData["IdUtilizador"] = IdUtilizador;
             return View(context.ObterListaFerias(IdUtilizador));
         }
@@ -38,10 +44,20 @@ namespace FT_Management.Controllers
         {
             List<Ferias> LstFerias = new List<Ferias>();
             ferias.Validado = true;
+            ferias.ValidadoPor = int.Parse(this.User.Claims.First().Value);
             LstFerias.Add(ferias);
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.CriarFerias(LstFerias);
+
+            return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
+        }
+
+        public ActionResult Apagar(Ferias ferias)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            context.ApagarFerias(ferias.Id);
 
             return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
         }
@@ -53,13 +69,13 @@ namespace FT_Management.Controllers
                 {
                     IdUtilizador = idutilizador,
                     DataInicio = DateTime.Parse(datainicio),
-                    DataFim = DateTime.Parse(datafim)
+                    DataFim = DateTime.Parse(datafim),
+                    ValidadoPor = 0
                 }
             };
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.CriarFerias(LstFerias);
-
         }
     }
 }

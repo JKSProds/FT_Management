@@ -432,7 +432,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_ferias where IdUtilizador='"+IdUtilizador+"';");
+                using var result = db.Query("SELECT * FROM dat_ferias where IdUtilizador='"+IdUtilizador+"' order by DataInicio;");
                 while (result.Read())
                 {
                     LstFerias.Add(new Ferias()
@@ -442,7 +442,10 @@ namespace FT_Management.Models
                         DataInicio = result["DataInicio"],
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
-                        Obs = result["Obs"]
+                        Obs = result["Obs"],
+                        ValidadoPor = result["ValidadoPor"],
+                        ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
+                        DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador))
                     });
                 }
             }
@@ -450,6 +453,31 @@ namespace FT_Management.Models
             return LstFerias;
 
         }
+
+        public string ObterFeriasMarcadas(int IdUtilizador)
+        {
+
+            using (Database db = ConnectionString)
+            {
+               
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio)),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "';");
+                return result;
+            }
+
+        }
+
+        public string ObterAnoAtivo()
+        {
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.QueryValue("SELECT IFNULL( (SELECT Ano from dat_ferias_ano where Active=1 LIMIT 1), '"+DateTime.Now.Year+"') as Ano;");
+                return result;
+            }
+
+        }
+
         public List<Marcacao> ObterListaMarcacoesCliente(int IdCliente, int IdLoja)
         {
             List<Marcacao> LstMarcacao = new List<Marcacao>();
@@ -1586,16 +1614,16 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstFerias.Count) max = (LstFerias.Count - j);
 
-                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs) VALUES ";
+                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs, ValidadoPor) VALUES ";
 
                 foreach (var ferias in LstFerias.GetRange(j, max))
                 {
-                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "'), \r\n");
+                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', "+ferias.ValidadoPor+"), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE IdUtilizador=VALUES(IdUtilizador), DataInicio = VALUES(DataInicio), DataFim = VALUES(DataFim), Validado = VALUES(Validado), Obs = VALUES(Obs);";
+                sql += " ON DUPLICATE KEY UPDATE IdUtilizador=VALUES(IdUtilizador), DataInicio = VALUES(DataInicio), DataFim = VALUES(DataFim), Validado = VALUES(Validado), Obs = VALUES(Obs), ValidadoPor= VALUES(ValidadoPor);";
 
                 Database db = ConnectionString;
 
@@ -1857,6 +1885,15 @@ namespace FT_Management.Models
             using Database db = ConnectionString;
             db.Execute(sql);
         }
+
+        public void ApagarFerias(int Id)
+        {
+            string sql = "DELETE FROM dat_ferias where Id="+Id+";";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+
         public void ApagarArtigo(Produto produto)
         {
             Database db = ConnectionString;

@@ -6,16 +6,25 @@
 
 
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-4">
         <h1>Férias</h1>
     </div>
-    <div class="col-lg-4">
-        <a class="btn btn-primary text-white float-right" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
+    <div class="btn-group col-lg-4" role="group" aria-label="Basic outlined example">
+        <button type="button" disabled class="btn btn-outline-success btn-lg">
+            Dias Marcados: @(Model.Count() > 0 ? Model.FirstOrDefault().DiasMarcados : 0)
+        </button>
+        <button type="button" disabled class="btn btn-outline-danger btn-lg">
+            Dias por Marcar: @(23 - (Model.Count() > 0 ? Model.FirstOrDefault().DiasMarcados : 0))
+        </button>
+    </div>
+    <div class="btn-group btn-group-lg col-lg-4" role="group" aria-label="Basic example">
+        <a class="btn btn-outline-primary float-right" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
         <a class="btn btn-primary text-white float-right" data-toggle="modal" data-target="#myModal2"><i class="fas fa-plus" style="margin-top:5px"></i> Adicionar</a>
     </div>
 </div>
 <br />
 <input type="hidden" id="hiddenIdUtilizador" value="@ViewData["IdUtilizador"]" name="IdUtilizador">
+<input type="hidden" id="hiddenAno" name="Ano" value="@ViewData["Ano"]" />
 
 @if (Model.Count() == 0)
 {
@@ -24,20 +33,20 @@
 }
 else
 {
-    <table class="table table-hover">
+    <table class=" table table-hover">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.DataInicio)
+                    Data Inicio
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.DataFim)
+                    Data Fim
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Obs)
+                    Aprovado Por
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Validado)
+                    Observações
                 </th>
                 <th></th>
             </tr>
@@ -45,7 +54,7 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr class="@(item.Validado ? "table-success" : "table-danger")">
                     <td>
                         <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
                     </td>
@@ -53,18 +62,21 @@ else
                         <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
                     </td>
                     <td>
+                        @Html.DisplayFor(modelItem => item.ValidadoPorNome)
+                    </td>
+
+                    <td style="width: 60%;">
                         @Html.DisplayFor(modelItem => item.Obs)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Validado)
-                    </td>
-                    <td>
-                        <div class="btn-group float-right">
-                            <a class="btn btn-outline-danger btn-lg" onclick="location.href('@Url.Action("Apagar", "Ferias", new { id = item.Id})')"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                            <a class="btn btn-outline-success btn-lg" onclick="location.href='@Url.Action("Validar", "Ferias", item)'"><i class="fas fa-check" style="font-size:20px"></i></a>
-
-                        </div>
-                    </td>
+                    @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
+                    {
+                        <td>
+                            <div class="btn-group float-right">
+                                <a class="btn btn-outline-danger" onclick="location.href='@Url.Action("Apagar", "Ferias", item)'"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                                <a class="btn btn-outline-success" onclick="location.href='@Url.Action("Validar", "Ferias", item)'"><i class="fas fa-check" style="font-size:20px"></i></a>
+                            </div>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
@@ -83,23 +95,27 @@ else
             <div class="modal-body">
                 <div class="form-group">
                     <label for="recipient-name" class="col-form-label">Data Inicio:</label>
-                    <input type="text" class="form-control" id="txtDataInicio">
+                    <input type="text" class="form-control" id="txtDataInicio" disabled>
                     <script>
                         $('#txtDataInicio').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
                             value: '@DateTime.Now.ToShortDateString()',
+                            minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
+                            maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
                         });
                     </script>
                 </div>
                 <div class="form-group">
                     <label for="recipient-name" class="col-form-label">Data Fim:</label>
-                    <input type="text" class="form-control" id="txtDataFim">
+                    <input type="text" class="form-control" id="txtDataFim" disabled>
                     <script>
                         $('#txtDataFim').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
                             value: '@DateTime.Now.ToShortDateString()',
+                            minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
+                            maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
                         });
                     </script>
                 </div>
@@ -112,7 +128,11 @@ else
     </div>
 </div>
 
+<div>
+    <br />
+    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Ferias"))'" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
 
+</div>
 <script>
     function AdicionarFerias() {
         var json = {
@@ -127,10 +147,11 @@ else
             traditional: true,
             success: function (result) {
                 $(function () {
-                    // alert(JSON.stringify(result));
+                    window.location.reload();
                 });
             }
         });
         $("#myModal2").modal('hide');
     }
+
 </script>
