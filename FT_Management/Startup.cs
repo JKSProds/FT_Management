@@ -35,17 +35,17 @@ namespace FT_Management
             services.AddControllersWithViews();
             services.AddMvc();
 
-            //// Add Quartz services
-            //services.AddSingleton<IJobFactory, SingletonJobFactory>();
-            //services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            // Add Quartz services
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            //// Add our job
-            //services.AddSingleton<HelloWorldJob>();
-            //services.AddSingleton(new JobSchedule(
-            //    jobType: typeof(HelloWorldJob),
-            //    cronExpression: "00 00 23 * * ?")); 
-            
-            //services.AddHostedService<QuartzHostedService>();
+            // Add our job
+            services.AddSingleton<CronJobFerias>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(CronJobFerias),
+                cronExpression: "00 00 23 * * ?"));
+
+            services.AddHostedService<QuartzHostedService>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {

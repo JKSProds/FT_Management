@@ -454,6 +454,33 @@ namespace FT_Management.Models
 
         }
 
+        public List<Ferias> ObterListaFeriasValidar()
+        {
+            List<Ferias> LstFerias = new List<Ferias>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_ferias where Validado=0 order by DataInicio;");
+                while (result.Read())
+                {
+                    LstFerias.Add(new Ferias()
+                    {
+                        Id = result["Id"],
+                        IdUtilizador = result["IdUtilizador"],
+                        DataInicio = result["DataInicio"],
+                        DataFim = result["DataFim"],
+                        Validado = result["Validado"],
+                        Obs = result["Obs"],
+                        ValidadoPor = result["ValidadoPor"],
+                        ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
+                    });
+                }
+            }
+
+            return LstFerias;
+
+        }
+
         public string ObterFeriasMarcadas(int IdUtilizador)
         {
 
