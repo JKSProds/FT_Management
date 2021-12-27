@@ -1503,29 +1503,38 @@ namespace FT_Management.Models
         }
         public void CriarArtigos(List<Produto> LstProdutos)
         {
-            if (LstProdutos.Count() > 0)
+
+            int max = 7500;
+            int j = 0;
+            for (int i = 0; j < LstProdutos.Count; i++)
             {
+                if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
 
                 string sql = "INSERT INTO dat_produtos (ref_produto, designacao_produto, stock_phc, stock_rec, stock_res, armazem_id, stock_fisico, pos_stock, obs) VALUES ";
 
-                foreach (var item in LstProdutos)
+                foreach (var item in LstProdutos.GetRange(j, max))
                 {
                     sql += ("('" + item.Ref_Produto + "', '" + item.Designacao_Produto + "', '" + item.Stock_PHC.ToString().Replace(",", ".") + "', '" + item.Stock_Rec.ToString().Replace(",", ".") + "', '" + item.Stock_Res.ToString().Replace(",", ".") + "', '" + item.Armazem_ID + "', '" + item.Stock_Fisico.ToString().Replace(",", ".") + "', '" + item.Pos_Stock + "', '" + item.Obs_Produto + "'), \r\n");
+                    i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
+
                 sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc), stock_rec = VALUES(stock_rec), stock_res = VALUES(stock_res), stock_fisico = VALUES(stock_fisico);";
 
                 Database db = ConnectionString;
 
                 db.Execute(sql);
                 db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
         public void CriarFornecedores(List<Fornecedor> LstFornecedor)
         {
             if (LstFornecedor.Count() > 0)
             {
-
+              
                 string sql = "INSERT INTO dat_fornecedores (IdFornecedor,NomeFornecedor, MoradaFornecedor, ContactoFornecedor, ReferenciaFornecedor, EmailFornecedor, PessoaContactoFornecedor, Obs) VALUES ";
 
                 foreach (var fornecedor in LstFornecedor)
@@ -1540,7 +1549,8 @@ namespace FT_Management.Models
 
                 db.Execute(sql);
                 db.Connection.Close();
-            }
+
+        }
         }
         public void CriarEquipamentos(List<Equipamento> LstEquipamento)
         {
