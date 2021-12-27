@@ -158,7 +158,10 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-           
+            List<Visita> LstVisitas = new List<Visita> { visita };
+
+            context.CriarVisitas(LstVisitas);
+
 
             return Redirect(Request.Query["ReturnUrl"]);
         }

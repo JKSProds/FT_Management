@@ -237,17 +237,17 @@
                         @foreach (var item in Model.Visitas)
                         {
                         <tr>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                 <span>@item.IdVisita</span>
                             </td>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                 <span>@item.DataVisita.ToShortDateString()</span>
 
                             </td>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                 <span>@item.ObsVisita</span>
                             </td>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                 <span>@item.EstadoVisita</span>
                             </td>
                         </tr>

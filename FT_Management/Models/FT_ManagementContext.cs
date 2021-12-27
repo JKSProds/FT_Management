@@ -481,13 +481,23 @@ namespace FT_Management.Models
 
         }
 
+        public void ValidarEmailEnviado()
+        {
+            string sql = "UPDATE dat_ferias set mail_validacao='1'";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+
         public string ObterFeriasMarcadas(int IdUtilizador)
         {
 
             using (Database db = ConnectionString)
             {
                
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio)),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "';");
                 return result;
             }
 
