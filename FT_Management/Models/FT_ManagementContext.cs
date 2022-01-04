@@ -16,6 +16,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography.Xml;
 using System.Configuration;
+using OfficeOpenXml.Style;
 
 namespace FT_Management.Models
 {
@@ -453,13 +454,37 @@ namespace FT_Management.Models
             return LstFerias;
 
         }
-        public List<Acesso> ObterListaAcessos(string Data)
+        public List<Acesso> ObterListaAcessos(DateTime Data)
         {
             List<Acesso> LstAcessos = new List<Acesso>();
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data + " 00:00:00' AND DataHoraAcesso<'"+ Data +" 23:59:59' order by DataHoraAcesso;");
+                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data.ToString("yyyy-MM-dd") + " 00:00:00' AND DataHoraAcesso<'"+ Data.ToString("yyyy-MM-dd") + " 23:59:59' order by DataHoraAcesso;");
+                while (result.Read())
+                {
+                    LstAcessos.Add(new Acesso()
+                    {
+                        Id = result["Id"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                        Data = result["DataHoraAcesso"],
+                        Temperatura = result["Temperatura"],
+                        Tipo = result["TipoAcesso"]
+                    });
+                }
+            }
+
+            return LstAcessos;
+
+        }
+
+        public List<Acesso> ObterListaAcessosMes(DateTime Data)
+        {
+            List<Acesso> LstAcessos = new List<Acesso>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data.Year + "-" + Data.Month   + "-01 00:00:00' AND DataHoraAcesso<'" + Data.Year + "-" + Data.Month + "-31 23:59:59' order by DataHoraAcesso;");
                 while (result.Read())
                 {
                     LstAcessos.Add(new Acesso()
@@ -1412,6 +1437,56 @@ namespace FT_Management.Models
             CriarArtigos(LstProdutos);
         }
 
+        public byte[] GerarMapaPresencas(DateTime Data)
+        {
+            using ExcelPackage package = new ExcelPackage(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "FT_Presencas.xlsx"));
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            int totalRows = workSheet.Dimension.Rows;
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores();
+            List<Acesso> LstAcessos = ObterListaAcessosMes(Data);
+
+            int y = 5;
+            int x = 1;
+
+            foreach (var utilizador in LstUtilizadores)
+            {
+                workSheet.Cells[y, x].Value = utilizador.NomeCompleto;
+                y += 4;
+            }
+
+
+            for (int i = 1; i < LstAcessos.Last().Data.Day + 1; i++)
+            {
+                y = 5;
+
+                foreach (Utilizador utilizador in LstUtilizadores)
+                {
+                    int j = y;
+                    if (LstAcessos.Where(u => u.Data.Day == i).Count() == 0)
+                    {
+                        workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 3 ? "E: 9:00 Comercial" : "E: 09:00";
+                        workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                        workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 3 ? "S: 18:30 Comercial" : "S: 18:30 ";
+                        workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                    }
+                    else
+                    {
+                        foreach (var acesso in LstAcessos.Where(u => u.Utilizador.Id == utilizador.Id))
+                        {
+                            workSheet.Cells[j, i + 1].Value = acesso.Tipo.Substring(0, 1) + ": " + acesso.Data.ToShortTimeString();
+                            j++;
+                        }
+                    }
+                    y += 4;
+                }
+            }
+
+            return package.GetAsByteArray();
+        }
+
         public DateTime ObterUltimaModificacaoPHC(string tabela)
         {
             DateTime res = new DateTime();
@@ -1686,7 +1761,7 @@ namespace FT_Management.Models
 
             try
             {
-                using Database db_SDP = "server=192.168.105.121;uid=sdp2000;password=sdp2000;port=3358;database=sdp2000;SslMode=none;Connect Timeout=2";
+                using Database db_SDP = "server=192.168.102.201;uid=sdp2000;password=sdp2000;port=3358;database=sdp2000;SslMode=none;Connect Timeout=2";
                 string sqlQuery = "SELECT * FROM t_snap where exception_type is null order by user_code, create_time;";
 
                 using (var result = db_SDP.Query(sqlQuery))
