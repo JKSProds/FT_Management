@@ -1,0 +1,80 @@
+﻿@model IEnumerable<FT_Management.Models.Acesso>
+
+@{
+    ViewData["Title"] = "Acessos";
+}
+<div class="row">
+    <div class="col-lg-8">
+        <h1>Listagem de Acessos</h1>
+    </div>
+    <div class="col-lg-4">
+        <form method="get" action="Acessos">
+
+            <input type="hidden" id="hiddenTxtData" value="@ViewData["Data"]" name="Data">
+
+
+            <input type="text" class="form-control" id="txtData">
+            <script>
+                        $('#txtData').datepicker({
+                            format: 'dd-mm-yyyy',
+                            size: 'large',
+                            value: '@ViewData["Data"]',
+                            change: function (e) {
+                                if (document.getElementById("hiddenTxtData").value != document.getElementById("txtData").value) {
+                                    //alert('Change is fired ' + document.getElementById("txtData").value);
+                                    document.getElementById("hiddenTxtData").value = document.getElementById("txtData").value;
+                                    $('form').submit();
+                                }
+                            }
+                        });
+            </script>
+        </form>
+    </div>
+</div>
+<br />
+@if (Model.Count() == 0)
+{
+    <br />
+    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados acessos!</button>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Nome
+                </th>
+                <th>
+                    Data de Acesso
+                </th>
+                <th>
+                    Temperatura
+                </th>
+                <th>
+                    Tipo de Acesso
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr class="@(item.Tipo == "Entrada" ? "table-primary" : "table-warning")">
+                <td>
+                    <span>@item.Utilizador.NomeCompleto</span>
+                </td>
+                <td>
+                    <span>@item.Data</span>
+                </td>
+                <td>
+                    <span>@item.Temperatura ºC</span>
+                </td>
+                <td>
+                    <span>@item.Tipo</span>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+

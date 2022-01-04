@@ -453,6 +453,29 @@ namespace FT_Management.Models
             return LstFerias;
 
         }
+        public List<Acesso> ObterListaAcessos(string Data)
+        {
+            List<Acesso> LstAcessos = new List<Acesso>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data + " 00:00:00' AND DataHoraAcesso<'"+ Data +" 23:59:59' order by DataHoraAcesso;");
+                while (result.Read())
+                {
+                    LstAcessos.Add(new Acesso()
+                    {
+                        Id = result["Id"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                        Data = result["DataHoraAcesso"],
+                        Temperatura = result["Temperatura"],
+                        Tipo = result["TipoAcesso"]
+                    });
+                }
+            }
+
+            return LstAcessos;
+
+        }
 
         public List<Ferias> ObterListaFeriasValidar()
         {
@@ -1287,6 +1310,7 @@ namespace FT_Management.Models
             }
             return utilizador;
         }
+
         public List<CalendarioEvent> ConverterMarcacoesEventos(List<Marcacao> Marcacoes)
         {
             List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
@@ -1653,6 +1677,70 @@ namespace FT_Management.Models
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
+        public void CriarAcessos()
+        {
+            List<Acesso> LstAcesso = new List<Acesso>();
+            int max = 1000;
+            int j = 0;
+            bool entrada = true;
+
+            try
+            {
+                using Database db_SDP = "server=192.168.105.121;uid=sdp2000;password=sdp2000;port=3358;database=sdp2000;SslMode=none;Connect Timeout=2";
+                string sqlQuery = "SELECT * FROM t_snap where exception_type is null order by user_code, create_time;";
+
+                using (var result = db_SDP.Query(sqlQuery))
+                {
+                    while (result.Read())
+                    {
+                        if (LstAcesso.Count > 0)
+                        {
+                            if (LstAcesso.Last().IdUtilizador != result["user_code"]) entrada = true;
+                        }
+
+                        LstAcesso.Add(new Acesso()
+                        {
+                            Id = result["s_id"],
+                            IdUtilizador = result["user_code"],
+                            Temperatura = result["temperature"],
+                            Data = result["create_time"],
+                            Tipo = entrada ? "Entrada" : "Saida"
+                        });
+                        entrada = !entrada;
+                    }
+
+                }
+
+                for (int i = 0; j < LstAcesso.Count; i++)
+                {
+                    if ((j + max) > LstAcesso.Count) max = (LstAcesso.Count - j);
+
+                    string sql = "INSERT INTO dat_acessos (Id,IdUtilizador,DataHoraAcesso,TipoAcesso,Temperatura) VALUES ";
+
+                    foreach (var acesso in LstAcesso.GetRange(j, max))
+                    {
+                        sql += ("('" + acesso.Id + "', '" + acesso.IdUtilizador + "', '" + acesso.Data.ToString("yy-MM-dd HH:mm:ss") + "', '" + acesso.Tipo + "', '" + acesso.Temperatura + "'), \r\n");
+                        i++;
+                    }
+                    sql = sql.Remove(sql.Count() - 4);
+
+                    sql += " ON DUPLICATE KEY UPDATE IdUtilizador=VALUES(IdUtilizador), DataHoraAcesso = VALUES(DataHoraAcesso), TipoAcesso = VALUES(TipoAcesso), Temperatura = VALUES(Temperatura);";
+
+                    using Database db = ConnectionString;
+                    db.Execute(sql);
+                    db.Connection.Close();
+
+                    j += max;
+                    //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+                }
+
+            }
+            catch (Exception)
+            {
+ 
+            }
+        }
+
         public void CriarFerias(List<Ferias> LstFerias)
         {
             int max = 1000;
