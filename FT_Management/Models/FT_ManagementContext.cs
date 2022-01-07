@@ -446,7 +446,8 @@ namespace FT_Management.Models
                         Obs = result["Obs"],
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
-                        DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador))
+                        DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador)),
+                        DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador))
                     });
                 }
             }
@@ -546,6 +547,17 @@ namespace FT_Management.Models
             {
                
                 using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "';");
+                return result;
+            }
+
+        }
+        public string ObterFeriasDias(int IdUtilizador)
+        {
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where IdUtilizador ='" + IdUtilizador + "';");
                 return result;
             }
 
@@ -1766,7 +1778,7 @@ namespace FT_Management.Models
 
             try
             {
-                using Database db_SDP = "server=192.168.102.201;uid=sdp2000;password=sdp2000;port=3358;database=sdp2000;SslMode=none;Connect Timeout=2";
+                using Database db_SDP = "server=192.168.102.201;uid=sdp2000;password=sdp2000;port=3358;database=sdp2000;SslMode=none;Connect Timeout=5";
                 string sqlQuery = "SELECT * FROM t_snap where exception_type is null order by user_code, create_time;";
 
                 using (var result = db_SDP.Query(sqlQuery))
@@ -1815,9 +1827,9 @@ namespace FT_Management.Models
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
- 
+                Console.WriteLine(ex.Message);
             }
         }
 

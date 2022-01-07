@@ -16,5 +16,6 @@ namespace FT_Management.Models
         public bool Validado { get; set; }
         public string Obs { get; set; }
         public int DiasMarcados { get; set; }
+        public int DiasTotais { get; set; }
     }
 }

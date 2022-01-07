@@ -4,8 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Jorge Monteiro</Authors>
     <Company>JKSProds</Company>
-    <Version>10.2021</Version>
-    <AssemblyVersion>12.2021.1.0</AssemblyVersion>
+    <Version>01.2022</Version>
+    <AssemblyVersion>01.2022.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

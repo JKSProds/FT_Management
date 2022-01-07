@@ -63,16 +63,38 @@ namespace FT_Management.Controllers
         }
 
         public void AdicionarFerias(string datainicio, string datafim, int idutilizador) {
-            List<Ferias> LstFerias = new List<Ferias>
-            {
-                new Ferias
+            DateTime dataInicio = DateTime.Parse(datainicio);
+            DateTime dataFim = DateTime.Parse(datafim);
+            DateTime dataAtual = DateTime.Parse(datainicio);
+
+            List<Ferias> LstFerias = new List<Ferias>();
+            bool weekend = false;
+
+            do 
                 {
-                    IdUtilizador = idutilizador,
-                    DataInicio = DateTime.Parse(datainicio),
-                    DataFim = DateTime.Parse(datafim),
-                    ValidadoPor = 0
+
+                if (weekend)
+                {
+                    
+                    weekend = (dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday);
+                    if (!weekend) dataInicio = dataAtual;
                 }
-            };
+                if (dataAtual == dataFim && weekend) break;
+                    if (dataAtual.DayOfWeek == DayOfWeek.Friday || dataAtual == dataFim)
+                    {
+                        LstFerias.Add(
+                            new Ferias
+                            {
+                                IdUtilizador = idutilizador,
+                                DataInicio = dataInicio,
+                                DataFim = dataAtual,
+                                ValidadoPor = 0
+                            });
+                        weekend = true;
+                    }
+                   
+                    dataAtual = dataAtual.AddDays(1);
+                } while (dataAtual <= dataFim);
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.CriarFerias(LstFerias);

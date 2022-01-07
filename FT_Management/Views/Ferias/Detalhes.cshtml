@@ -4,6 +4,7 @@
     ViewData["Title"] = "Férias";
 }
 
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
 
 <div class="row">
     <div class="col-lg-4">
@@ -100,7 +101,6 @@ else
                         $('#txtDataInicio').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
-                            value: '@DateTime.Now.ToShortDateString()',
                             minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
                             maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
                         });
@@ -113,7 +113,6 @@ else
                         $('#txtDataFim').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
-                            value: '@DateTime.Now.ToShortDateString()',
                             minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
                             maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
                         });
@@ -140,17 +139,41 @@ else
             datafim: document.getElementById('txtDataFim').value,
             idutilizador: document.getElementById('hiddenIdUtilizador').value,
         };
-        $.ajax({
-            type: "POST",
-            url: "/Ferias/AdicionarFerias",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    window.location.reload();
+
+        var dF = moment(document.getElementById('txtDataFim').value, "DD/MM/YYYY").toDate();
+        var dI = moment(document.getElementById('txtDataInicio').value, "DD/MM/YYYY").toDate();
+        var Diff = (dF - dI) / (1000 * 3600 * 24);
+        if (@Model.Count() > 0) {
+            var DiasMarcados = (23 - @(Model.Count() > 0 ? Model.FirstOrDefault().DiasTotais : 0));
+        } else {
+            var DiasMarcados = 23;
+        }
+
+        if (Diff > DiasMarcados) {
+            $(function () {
+                $.notify({
+                    message: "Dias escolhidos excedem dias disponiveis!"
+                }, {
+                    // settings
+                    type: 'danger',
+                    onShow: function () {
+                        this.css({ 'width': 'auto', 'height': 'auto' });
+                    }
                 });
-            }
-        });
+            });
+        }else {
+            $.ajax({
+                type: "POST",
+                url: "/Ferias/AdicionarFerias",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        window.location.reload();
+                    });
+                }
+            });
+        }
         $("#myModal2").modal('hide');
     }
 
