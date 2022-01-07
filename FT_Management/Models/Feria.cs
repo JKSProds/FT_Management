@@ -5,6 +5,14 @@ using System.Threading.Tasks;
 
 namespace FT_Management.Models
 {
+    public class FeriasUtilizador
+    {
+        public Utilizador utilizador { get; set; }
+        public List<Ferias> Ferias { get; set; }
+        public int DiasMarcados { get; set; }
+        public int DiasTotais { get; set; }
+        public int DiasDisponiveis { get; set; }
+    }
     public class Ferias
     {
         public int Id { get; set; }
@@ -15,7 +23,6 @@ namespace FT_Management.Models
         public DateTime DataFim { get; set; }
         public bool Validado { get; set; }
         public string Obs { get; set; }
-        public int DiasMarcados { get; set; }
-        public int DiasTotais { get; set; }
+
     }
 }

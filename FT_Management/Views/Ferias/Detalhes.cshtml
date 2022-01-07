@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FT_Management.Models.Ferias>
+﻿@model FT_Management.Models.FeriasUtilizador
 
 @{
     ViewData["Title"] = "Férias";
@@ -12,11 +12,22 @@
     </div>
     <div class="btn-group col-lg-4" role="group" aria-label="Basic outlined example">
         <button type="button" disabled class="btn btn-outline-success btn-lg">
-            Dias Marcados: @(Model.Count() > 0 ? Model.FirstOrDefault().DiasMarcados : 0)
+            Dias Marcados: @Model.DiasMarcados
         </button>
-        <button type="button" disabled class="btn btn-outline-danger btn-lg">
-            Dias por Marcar: @(23 - (Model.Count() > 0 ? Model.FirstOrDefault().DiasMarcados : 0))
-        </button>
+        @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
+        {
+            <button type="button" data-toggle="modal" data-target="#myModal4" class="btn btn-outline-danger btn-lg">
+                Dias por Marcar: @(Model.DiasDisponiveis - Model.DiasMarcados)
+            </button>
+
+        }
+        else
+        {
+            <button type="button" disabled class="btn btn-outline-danger btn-lg">
+                Dias por Marcar: @(Model.DiasDisponiveis - Model.DiasMarcados)
+            </button>
+
+        }
     </div>
     <div class="btn-group btn-group-lg col-lg-4" role="group" aria-label="Basic example">
         <a class="btn btn-outline-primary float-right" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
@@ -26,8 +37,9 @@
 <br />
 <input type="hidden" id="hiddenIdUtilizador" value="@ViewData["IdUtilizador"]" name="IdUtilizador">
 <input type="hidden" id="hiddenAno" name="Ano" value="@ViewData["Ano"]" />
+<input type="hidden" id="hiddenIdFerias" name="IdFerias" />
 
-@if (Model.Count() == 0)
+@if (Model.Ferias.Count() == 0)
 {
     <br />
     <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas férias associadas!</button>
@@ -53,7 +65,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Ferias)
             {
                 <tr class="@(item.Validado ? "table-success" : "table-danger")">
                     <td>
@@ -74,7 +86,7 @@ else
                         <td>
                             <div class="btn-group float-right">
                                 <a class="btn btn-outline-danger" onclick="location.href='@Url.Action("Apagar", "Ferias", item)'"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                                <a class="btn btn-outline-success" onclick="location.href='@Url.Action("Validar", "Ferias", item)'"><i class="fas fa-check" style="font-size:20px"></i></a>
+                                <a class="btn btn-outline-success"  onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                             </div>
                         </td>
                     }
@@ -83,6 +95,53 @@ else
         </tbody>
     </table>
 }
+
+<div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Alterar Dias de Férias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Dias de Férias</label>
+                    <input type="text" class="form-control" id="txtDiasFerias">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AlterarDiasFerias()" href="javascript:;">Validar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Validar Férias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Observações</label>
+                    <textarea class="form-control" rows="8" placeholder="" id="txtObsValidar" name="Obs" required></textarea>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ValidarFerias()" href="javascript:;">Validar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -143,11 +202,7 @@ else
         var dF = moment(document.getElementById('txtDataFim').value, "DD/MM/YYYY").toDate();
         var dI = moment(document.getElementById('txtDataInicio').value, "DD/MM/YYYY").toDate();
         var Diff = (dF - dI) / (1000 * 3600 * 24);
-        if (@Model.Count() > 0) {
-            var DiasMarcados = (23 - @(Model.Count() > 0 ? Model.FirstOrDefault().DiasTotais : 0));
-        } else {
-            var DiasMarcados = 23;
-        }
+        var DiasMarcados = (@Model.DiasDisponiveis - @Model.DiasTotais);
 
         if (Diff > DiasMarcados) {
             $(function () {
@@ -177,4 +232,51 @@ else
         $("#myModal2").modal('hide');
     }
 
+    function AlterarDiasFerias() {
+        var json = {
+            dias: document.getElementById('txtDiasFerias').value,
+            ano: document.getElementById('hiddenAno').value,
+            idutilizador: document.getElementById('hiddenIdUtilizador').value,
+        };
+
+        
+            $.ajax({
+                type: "POST",
+                url: "/Ferias/AlterarDiasFerias",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        window.location.reload();
+                    });
+                }
+            });
+        $("#myModal4").modal('hide');
+    }
+
+    function ConfirmValidarFerias(Id) {
+        document.getElementById("hiddenIdFerias").value = Id;
+        $("#myModal3").modal('show');
+    }
+
+    function ValidarFerias() {
+        var json = {
+            id: document.getElementById('hiddenIdFerias').value,
+            obs: document.getElementById('txtObsValidar').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Ferias/Validar",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
+
+        $("#myModal3").modal('hide');
+    }
 </script>

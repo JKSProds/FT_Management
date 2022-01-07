@@ -427,13 +427,42 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
-       public List<Ferias> ObterListaFerias(int IdUtilizador)
+       public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador, string Ano)
+        {
+            FeriasUtilizador feriasUtilizador = new FeriasUtilizador();
+
+            using (Database db = ConnectionString)
+            {
+                using var resultQuery = db.QueryValue("SELECT Count(*) from dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + Ano + "';");
+                if (resultQuery == 0) CriarFeriasUtilizador(IdUtilizador, Ano, 23);
+            }
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_ferias_utilizador where IdUtilizador='"+IdUtilizador+"' AND Ano='"+Ano+"';");
+                while (result.Read())
+                {
+
+                    feriasUtilizador.utilizador = ObterUtilizador(int.Parse(result["IdUtilizador"]));
+                    feriasUtilizador.DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador));
+                    feriasUtilizador.DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador));
+                    feriasUtilizador.DiasDisponiveis = int.Parse(result["DiasDireito"]);
+                    feriasUtilizador.Ferias = ObterListaFerias(IdUtilizador, Ano);
+                }
+            }
+
+            return feriasUtilizador;
+
+        }
+
+        public List<Ferias> ObterListaFerias(int IdUtilizador, string Ano)
         {
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-
-                using var result = db.Query("SELECT * FROM dat_ferias where IdUtilizador='"+IdUtilizador+"' order by DataInicio;");
+                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND DataInicio>='" + Ano + "-01-01' AND DataFim<='" + Ano + "-12-31';";
+                using var result = db.Query(sql);
                 while (result.Read())
                 {
                     LstFerias.Add(new Ferias()
@@ -446,13 +475,38 @@ namespace FT_Management.Models
                         Obs = result["Obs"],
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
-                        DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador)),
-                        DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador))
                     });
                 }
             }
 
             return LstFerias;
+
+        }
+
+        public Ferias ObterFerias(int Id)
+        {
+            List<Ferias> LstFerias = new List<Ferias>();
+            using (Database db = ConnectionString)
+            {
+                string sql = "SELECT * FROM dat_ferias where Id='" + Id + "';";
+                using var result = db.Query(sql);
+                while (result.Read())
+                {
+                    LstFerias.Add(new Ferias()
+                    {
+                        Id = result["Id"],
+                        IdUtilizador = result["IdUtilizador"],
+                        DataInicio = result["DataInicio"],
+                        DataFim = result["DataFim"],
+                        Validado = result["Validado"],
+                        Obs = result["Obs"],
+                        ValidadoPor = result["ValidadoPor"],
+                        ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
+                    });
+                }
+            }
+
+            return LstFerias.Count() > 0 ? LstFerias.FirstOrDefault() : new Ferias();
 
         }
         public List<Acesso> ObterListaAcessos(DateTime Data)
@@ -1860,6 +1914,20 @@ namespace FT_Management.Models
                 j += max;
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
+        }
+
+        public void CriarFeriasUtilizador(int IdUtilizador, string Ano, int DiasDireito)
+        {
+            string sqlDelete = "Delete from dat_ferias_utilizador where IdUtilizador = '"+IdUtilizador+"' AND Ano='"+Ano+"';";
+
+            string sqlInsert = "INSERT INTO dat_ferias_utilizador (IdUtilizador,Ano,DiasDireito) VALUES ";
+            sqlInsert += ("('" + IdUtilizador + "', '" + Ano + "', '" + DiasDireito + "');");
+
+                Database db = ConnectionString;
+
+            db.Execute(sqlDelete);
+            db.Execute(sqlInsert);
+                db.Connection.Close();
         }
         public void CriarVisitas(List<Visita> LstVisita)
         {

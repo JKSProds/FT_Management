@@ -37,17 +37,19 @@ namespace FT_Management.Controllers
             }
 
             ViewData["IdUtilizador"] = IdUtilizador;
-            return View(context.ObterListaFerias(IdUtilizador));
+            return View(context.ObterListaFeriasUtilizador(IdUtilizador, ViewData["Ano"].ToString()));
         }
 
-        public ActionResult Validar(Ferias ferias)
+        public ActionResult Validar(string id, string obs)
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<Ferias> LstFerias = new List<Ferias>();
+            Ferias ferias = context.ObterFerias(int.Parse(id));
             ferias.Validado = true;
+            ferias.Obs = obs;
             ferias.ValidadoPor = int.Parse(this.User.Claims.First().Value);
             LstFerias.Add(ferias);
 
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.CriarFerias(LstFerias);
 
             return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
@@ -60,6 +62,12 @@ namespace FT_Management.Controllers
             context.ApagarFerias(ferias.Id);
 
             return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
+        }
+
+        public void AlterarDiasFerias(string ano, string idutilizador, string dias)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            context.CriarFeriasUtilizador(int.Parse(idutilizador), ano, int.Parse(dias));
         }
 
         public void AdicionarFerias(string datainicio, string datafim, int idutilizador) {
