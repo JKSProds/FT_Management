@@ -2395,7 +2395,7 @@ namespace FT_Management.Models
             //    }
             //}
 
-            pdfFormFields.SetField("IdFolhaObra", "A.T.Nº" + folhaobra.IdFolhaObra.ToString());
+            pdfFormFields.SetField("IdFolhaObra", folhaobra.IdFolhaObra.ToString());
             if (folhaobra.AssistenciaRemota)
             {
                 pdfFormFields.SetFieldProperty("Remoto", "textsize", 26f, null);
