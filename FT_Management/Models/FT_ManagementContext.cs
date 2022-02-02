@@ -418,7 +418,8 @@ namespace FT_Management.Models
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
                         Instalacao = result["Instalacao"],
-                        TipoEquipamento = result["TipoEquipamento"]
+                        TipoEquipamento = result["TipoEquipamento"],
+                        DataCriacao = DateTime.Parse(result["DataCriacao"])
 
                     });
                 }
@@ -679,7 +680,8 @@ namespace FT_Management.Models
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
                         Instalacao = result["Instalacao"],
-                        TipoEquipamento = result["TipoEquipamento"]
+                        TipoEquipamento = result["TipoEquipamento"],
+                        DataCriacao = DateTime.Parse(result["DataCriacao"])
 
                     });
                 }
@@ -738,7 +740,7 @@ namespace FT_Management.Models
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
                         Instalacao = result["Instalacao"],
-
+                        DataCriacao = DateTime.Parse(result["DataCriacao"])
                     });
                 }
             }
@@ -1857,16 +1859,16 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
 
-                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp, Oficina, Instalacao, TipoEquipamento) VALUES ";
+                string sql = "INSERT INTO dat_marcacoes (IdMarcacao,DataMarcacao,IdCliente,IdLoja,ResumoMarcacao,EstadoMarcacao,PrioridadeMarcacao,MarcacaoStamp, Oficina, Instalacao, TipoEquipamento, DataCriacao) VALUES ";
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"' LIMIT 1), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"' LIMIT 1), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "', '"+marcacao.DataCriacao.ToString("yy-MM-dd") + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp), Oficina = VALUES(Oficina), Instalacao = VALUES(Instalacao), TipoEquipamento = VALUES(TipoEquipamento);";
+                sql += " ON DUPLICATE KEY UPDATE DataMarcacao=VALUES(DataMarcacao), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), ResumoMarcacao = VALUES(ResumoMarcacao), EstadoMarcacao = VALUES(EstadoMarcacao), PrioridadeMarcacao = VALUES(PrioridadeMarcacao), MarcacaoStamp = VALUES(MarcacaoStamp), Oficina = VALUES(Oficina), Instalacao = VALUES(Instalacao), TipoEquipamento = VALUES(TipoEquipamento), DataCriacao = VALUES(DataCriacao);";
 
                 Database db = ConnectionString;
 

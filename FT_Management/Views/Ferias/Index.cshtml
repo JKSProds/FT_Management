@@ -9,8 +9,10 @@
     <div class="col-lg-8">
         <h1>Mapa de Férias</h1>
     </div>
-    <div class="col-lg-4">
-        <a class="btn btn-primary btn-lg btn-block text-white" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
+
+    <div class="btn-group btn-group-lg col-lg-4" role="group" aria-label="Basic example">
+        <a class="btn btn-outline-primary float-right" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
+        <a class="btn btn-primary text-white float-right" onclick="location.href = '@(Url.Action("Exportar", "Ferias"))'"><i class="fas fa-cloud-download-alt" style="margin-top:5px"></i> Exportar</a>
     </div>
 </div>
 <hr />
