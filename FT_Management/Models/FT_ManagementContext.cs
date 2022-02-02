@@ -1471,7 +1471,7 @@ namespace FT_Management.Models
                     id = item.Id,
                     title = ut.NomeCompleto,
                     start = item.DataInicio,
-                    end = item.DataInicio != item.DataFim ? item.DataFim : item.DataInicio.AddDays(1),
+                    end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     setAllDay = true,
                     IdTecnico = item.IdUtilizador,
                     //color = ("#33FF77"),
