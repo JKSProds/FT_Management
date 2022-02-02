@@ -461,7 +461,7 @@ namespace FT_Management.Models
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND DataInicio>='" + Ano + "-01-01' AND DataFim<='" + Ano + "-12-31';";
+                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND DataInicio>='" + Ano + "-01-01' AND DataFim<='" + Ano + "-12-31' order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
