@@ -55,6 +55,8 @@ else
                     <div class="card-body text-primary">
                         <p class="card-text">
                             <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
+                            <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao }))'">><i class="fas fa-prin float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
+                            <hr />
                             <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
                             <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
                         </p>

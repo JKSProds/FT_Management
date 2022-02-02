@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
 
 namespace FT_Management.Controllers
 {
@@ -90,7 +92,52 @@ namespace FT_Management.Controllers
             return View();
         }
 
-        
+
+        public MemoryStream BitMapToMemoryStream(string filePath)
+        {
+            var ms = new MemoryStream();
+
+            PdfDocument doc = new PdfDocument();
+            PdfPage page = new PdfPage
+            {
+                Width = 810,
+                Height = 504
+            };
+
+            XImage img = XImage.FromFile(filePath);
+            img.Interpolate = false;
+
+            doc.Pages.Add(page);
+
+            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
+            XRect box = new XRect(0, 0, 810, 504);
+            xgr.DrawImage(img, box);
+
+            doc.Save(ms, false);
+
+            System.IO.File.Delete(filePath);
+
+            return ms;
+
+        }
+
+
+        public ActionResult Print(string id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiquetaMarcacao(context.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal da marcação: " + id, 2);
+            //return File(outputStream, "image/bmp");
+            return File(BitMapToMemoryStream(filePath), "application/pdf");
+        }
+
         // GET: Pedidos
         public ActionResult Index(int IdTecnico)
         {
