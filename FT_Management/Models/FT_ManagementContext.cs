@@ -2424,6 +2424,64 @@ namespace FT_Management.Models
 
             return bm;
         }
+        public Bitmap DesenharEtiquetaFolhaObra(FolhaObra fo)
+        {
+
+            int x = 0;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Bitmap bm = new Bitmap(width, height);
+
+            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
+            Font fontBody = new Font("Tahoma", 22, FontStyle.Regular);
+            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
+
+            StringFormat format = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
+
+            using (Graphics gr = Graphics.FromImage(bm))
+            {
+                gr.Clear(Color.White);
+
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+
+                y += 65;
+                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
+
+                x = 10;
+                y += 165;
+
+                gr.DrawString(fo.ClienteServico.NomeCliente + " (N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento + ")\r\n " + fo.RelatorioServico, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
+
+                y += 250;
+                gr.DrawString("FO Nº " + fo.IdFolhaObra.ToString(), fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 200, 80), format);
+
+                y += 95;
+
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.IdFolhaObra.ToString(), QRCodeGenerator.ECCLevel.Q);
+                QRCode qrCode = new QRCode(qrCodeData);
+                Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+                gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
+
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
+
+            }
+
+            return bm;
+        }
+
+
 
         public MemoryStream PreencherFormularioFolhaObra(FolhaObra folhaobra)
         {

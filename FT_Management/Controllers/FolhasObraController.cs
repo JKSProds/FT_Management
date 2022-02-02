@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Custom;
 using Microsoft.AspNetCore.Authorization;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
 
 namespace FT_Management.Controllers
 {
@@ -28,6 +30,51 @@ namespace FT_Management.Controllers
             phccontext.AtualizarFolhasObra();
 
             return View(context.ObterListaFolhasObra(DateTime.Parse(DataFolhasObra).ToString("yyyy-MM-dd")));
+        }
+
+        public MemoryStream BitMapToMemoryStream(string filePath)
+        {
+            var ms = new MemoryStream();
+
+            PdfDocument doc = new PdfDocument();
+            PdfPage page = new PdfPage
+            {
+                Width = 810,
+                Height = 504
+            };
+
+            XImage img = XImage.FromFile(filePath);
+            img.Interpolate = false;
+
+            doc.Pages.Add(page);
+
+            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
+            XRect box = new XRect(0, 0, 810, 504);
+            xgr.DrawImage(img, box);
+
+            doc.Save(ms, false);
+
+            System.IO.File.Delete(filePath);
+
+            return ms;
+
+        }
+
+
+        public ActionResult Print(string id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiquetaFolhaObra(context.ObterFolhaObra(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal da marcação: " + id, 2);
+            //return File(outputStream, "image/bmp");
+            return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
@@ -94,9 +141,10 @@ namespace FT_Management.Controllers
                 Console.WriteLine("Sending email");
                 SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"])
                 {
+
+                    // set smtp-client with basicAuthentication
                     UseDefaultCredentials = false
                 };
-
                 System.Net.NetworkCredential basicAuthenticationInfo = new
                    System.Net.NetworkCredential(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:SenhaEmailOrigem"]);
                 mySmtpClient.Credentials = basicAuthenticationInfo;
@@ -104,15 +152,19 @@ namespace FT_Management.Controllers
                 // add from,to mailaddresses
                 MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
                 MailAddress to = new MailAddress(emailDestino);
-                MailMessage myMail = new MailMessage(from, to)
-                {
-                    Subject = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
-                    SubjectEncoding = System.Text.Encoding.UTF8
-                };
+                MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
+                myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC"]));
 
-                if (int.Parse(DateTime.Now.ToString("dd")) < 13) {
+                // set subject and encoding
+                myMail.Subject = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                myMail.SubjectEncoding = System.Text.Encoding.UTF8;
+
+                // set body-message and encoding
+                if (int.Parse(DateTime.Now.ToString("dd")) < 13)
+                {
                     myMail.Body = "Bom Dia, ";
-                } else
+                }
+                else
                 {
                     myMail.Body = "Boa Tarde, ";
                 }
@@ -129,7 +181,6 @@ namespace FT_Management.Controllers
 
                 mySmtpClient.Send(myMail);
                 context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi enviado uma folha de obra: " + id + " para o email: " + emailDestino, 3);
-
             }
 
             catch (Exception)
