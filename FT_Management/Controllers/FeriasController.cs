@@ -24,6 +24,19 @@ namespace FT_Management.Controllers
             return View(context.ObterListaUtilizadores());
         }
 
+        public JsonResult ObterFeriasCalendario(DateTime start, DateTime end)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end)).ToList());
+
+        }
+
+        public ActionResult Calendario()
+        {
+
+            return View();
+        }
+
         public ActionResult Detalhes(int IdUtilizador)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

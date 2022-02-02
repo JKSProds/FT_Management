@@ -482,6 +482,32 @@ namespace FT_Management.Models
             return LstFerias;
 
         }
+        public List<Ferias> ObterListaFerias(DateTime dataInicio, DateTime dataFim)
+        {
+            List<Ferias> LstFerias = new List<Ferias>();
+            using (Database db = ConnectionString)
+            {
+                string sql = "SELECT * FROM dat_ferias where DataInicio>='" + dataInicio.ToString("yyyy-MM-dd") + "' AND DataFim<='" + dataFim.ToString("yyyy-MM-dd") + "' order by DataInicio;";
+                using var result = db.Query(sql);
+                while (result.Read())
+                {
+                    LstFerias.Add(new Ferias()
+                    {
+                        Id = result["Id"],
+                        IdUtilizador = result["IdUtilizador"],
+                        DataInicio = result["DataInicio"],
+                        DataFim = result["DataFim"],
+                        Validado = result["Validado"],
+                        Obs = result["Obs"],
+                        ValidadoPor = result["ValidadoPor"],
+                        ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
+                    });
+                }
+            }
+
+            return LstFerias;
+
+        }
 
         public Ferias ObterFerias(int Id)
         {
@@ -1345,6 +1371,7 @@ namespace FT_Management.Models
                         IdCartaoTrello = result["IdCartaoTrello"],
                         Admin = result["admin"] == 1,
                         Enable = result["enable"] == 1,
+                        CorCalendario = result["CorCalendario"],
                         IdPHC = result["IdPHC"]
                     };
                 }
@@ -1431,6 +1458,31 @@ namespace FT_Management.Models
 
             return LstEventos;
         }
+
+        public List<CalendarioEvent> ConverterFeriasEventos(List<Ferias> Ferias)
+        {
+            List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
+
+            foreach (var item in Ferias)
+            {
+                Utilizador ut = ObterUtilizador(item.IdUtilizador);
+                LstEventos.Add(new CalendarioEvent
+                {
+                    id = item.Id,
+                    title = ut.NomeCompleto,
+                    start = item.DataInicio,
+                    end = item.DataInicio != item.DataFim ? item.DataFim : item.DataInicio.AddDays(1),
+                    setAllDay = true,
+                    IdTecnico = item.IdUtilizador,
+                    //color = ("#33FF77"),
+                    url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
+                    color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario)
+                });
+            }
+
+            return LstEventos;
+        }
+
 
         public List<CalendarioEvent> ConverterVisitasEventos(List<Visita> Visitas)
         {
