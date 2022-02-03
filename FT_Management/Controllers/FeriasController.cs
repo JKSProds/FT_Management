@@ -44,7 +44,7 @@ namespace FT_Management.Controllers
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(f.DataInicio),
-                    End = new CalDateTime(f.DataFim),
+                    End = new CalDateTime(f.DataFim.AddDays(1)),
                     IsAllDay = true,
                     Uid = f.Id.ToString(),
                     Description = "Validado por: " + f.ValidadoPorNome,
