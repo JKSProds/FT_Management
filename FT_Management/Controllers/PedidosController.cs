@@ -60,7 +60,7 @@ namespace FT_Management.Controllers
 
             var serializedCalendar = serializer.SerializeToString(calendar);
 
-            var bytesCalendar = Encoding.UTF8.GetBytes(serializedCalendar);
+            var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
             MemoryStream ms = new MemoryStream(bytesCalendar);
 
             ms.Write(bytesCalendar, 0, bytesCalendar.Length);
