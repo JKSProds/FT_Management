@@ -17,6 +17,8 @@ using Newtonsoft.Json;
 using System.Text;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
+using System.Net.Http;
+using System.Net;
 
 namespace FT_Management.Controllers
 {
@@ -29,6 +31,56 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             return new JsonResult(context.ConverterMarcacoesEventos(context.ObterListaMarcacoes(start, end)).ToList());
 
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public virtual ActionResult ObterIcsAnonimo()
+        {
+            DateTime d = DateTime.Now;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarMarcacoes();
+
+            var calendar = new Calendar();
+            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(33, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
+            foreach (Marcacao m in LstMarcacoes)
+            {
+                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d = m.DataMarcacao.Add(TimeSpan.FromHours(8));
+                var e = new CalendarEvent
+                {
+                    Start = new CalDateTime(d),
+                    End = new CalDateTime(d.AddMinutes(30)),
+                    Uid = m.IdMarcacao.ToString(),
+                    Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
+                    Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
+                    Url = new Uri("http://" + Request.Host + "/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=33")
+                };
+                calendar.Events.Add(e);
+                d = d.AddMinutes(30);
+            }
+
+            var serializer = new CalendarSerializer();
+
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
+
+            MemoryStream ms = new MemoryStream(bytesCalendar);
+
+            ms.Write(bytesCalendar, 0, bytesCalendar.Length);
+            ms.Position = 0;
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "Calendar.ics",
+                Inline = false,
+                Size = bytesCalendar.Length,
+                CreationDate = DateTime.Now
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+
+            return File(ms, "text/calendar");
         }
 
         public virtual ActionResult ObterIcs ()
@@ -59,14 +111,7 @@ namespace FT_Management.Controllers
             var serializer = new CalendarSerializer();
 
             var serializedCalendar = serializer.SerializeToString(calendar);
-
-            //var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
-
-            Encoding iso = Encoding.GetEncoding("ISO-8859-1");
-            Encoding utf8 = Encoding.UTF8;
-            byte[] bytesCalendar = utf8.GetBytes(serializedCalendar);
-            byte[] isoBytes = Encoding.Convert(utf8, iso, bytesCalendar);
-            string msg = iso.GetString(isoBytes);
+            var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
 
             MemoryStream ms = new MemoryStream(bytesCalendar);
 
@@ -75,7 +120,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "basic.ics",
+                FileName = "Calendar.ics",
                 Inline = false,
                 Size = bytesCalendar.Length,
                 CreationDate = DateTime.Now
