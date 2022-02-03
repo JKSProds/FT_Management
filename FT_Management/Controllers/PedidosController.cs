@@ -35,7 +35,7 @@ namespace FT_Management.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult Calendario()
+        public virtual ActionResult CalendarAnonimo ()
         {
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -84,7 +84,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpGet]
-        public virtual ActionResult Calendario ()
+        public virtual ActionResult Calendar ()
         {
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
