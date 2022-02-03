@@ -1692,9 +1692,9 @@ namespace FT_Management.Models
             int y = 1;
             int x = 1;
 
-            workSheet.Cells[y, 33].Value = "Total";
-            workSheet.Cells[y, 33].Style.Border.BorderAround(ExcelBorderStyle.Medium);
-            workSheet.Cells[y, 33].Style.Font.Bold = true;
+            //workSheet.Cells[y, 33].Value = "Total";
+            //workSheet.Cells[y, 33].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+            //workSheet.Cells[y, 33].Style.Font.Bold = true;
 
             for (int i = 0; i < 12; i++)
             {
@@ -1720,11 +1720,12 @@ namespace FT_Management.Models
                         for (int j = 1; j <= DateTime.DaysInMonth(int.Parse(Ano), i + 1); j++)
                         {
                             DateTime DataAtual = new DateTime(int.Parse(Ano), i + 1, j);
-                            if (LstFerias.Where(f => f.DataInicio <= DataAtual && f.DataFim >= DataAtual && f.IdUtilizador == item.Id).Count() > 0)
+                            List<Ferias> LstFeriasUtilizador = LstFerias.Where(f => f.DataInicio <= DataAtual && f.DataFim >= DataAtual && f.IdUtilizador == item.Id).ToList();
+                            if (LstFeriasUtilizador.Count() > 0)
                             {
                                 workSheet.Cells[y, j + 1].Value = "X";
                                 workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
+                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(LstFeriasUtilizador.First().Validado ? Color.LightGreen : Color.LightBlue);
                                 count += 1;
                             }
 
