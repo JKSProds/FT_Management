@@ -32,7 +32,7 @@ namespace FT_Management.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult CalendarioFerias()
+        public virtual ActionResult Calendar()
         {
             var calendar = new Calendar();
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -48,7 +48,7 @@ namespace FT_Management.Controllers
                     IsAllDay = true,
                     Uid = f.Id.ToString(),
                     Description = "Validado por: " + f.ValidadoPorNome,
-                    Summary = "Férias - " + context.ObterUtilizador(f.Id).NomeCompleto,
+                    Summary = "Férias - " + context.ObterTecnico(f.Id).NomeCompleto,
                 };
                 calendar.Events.Add(e);
             }
