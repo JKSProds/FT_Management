@@ -1678,6 +1678,124 @@ namespace FT_Management.Models
 
             return package.GetAsByteArray();
         }
+        public byte[] GerarMapaFerias(string Ano)
+        {
+            using ExcelPackage package = new ExcelPackage(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "FT_Ferias.xlsx"));
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            //int totalRows = workSheet.Dimension.Rows;
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores();
+            List<Ferias> LstFerias = ObterListaFerias(DateTime.Parse(Ano + "-01-01"), DateTime.Parse(Ano + "-12-31"));
+            List<Feriado> LstFeriados = ObterListaFeriados(Ano);
+            int count = 0;
+
+            int y = 1;
+            int x = 1;
+
+            workSheet.Cells[y, 33].Value = "Total";
+            workSheet.Cells[y, 33].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+            workSheet.Cells[y, 33].Style.Font.Bold = true;
+
+            for (int i = 0; i < 12; i++)
+            {
+                y += 1;
+                workSheet.Cells[y, x].Value = new DateTime(int.Parse(Ano), i + 1, 1).ToString("MMMM");
+                workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+                workSheet.Cells[y, x].Style.Font.Bold = true;
+
+                for (int j = 1; j <= DateTime.DaysInMonth(int.Parse(Ano), i + 1); j++)
+                {
+                    workSheet.Cells[y, j + 1].Value = j;
+                    workSheet.Cells[y, j + 1].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+                }
+
+                y += 1;
+                foreach (var item in LstUtilizadores)
+                {
+                    if (LstFerias.Where(f => f.IdUtilizador == item.Id && (f.DataInicio.Month == i+1 || f.DataFim.Month == i+1)).Count() > 0)
+                    {
+                        workSheet.Cells[y, x].Value = item.NomeCompleto;
+                        workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+                        for (int j = 1; j <= DateTime.DaysInMonth(int.Parse(Ano), i + 1); j++)
+                        {
+                            DateTime DataAtual = new DateTime(int.Parse(Ano), i + 1, j);
+                            if (LstFerias.Where(f => f.DataInicio <= DataAtual && f.DataFim >= DataAtual && f.IdUtilizador == item.Id).Count() > 0)
+                            {
+                                workSheet.Cells[y, j + 1].Value = "X";
+                                workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
+                                count += 1;
+                            }
+
+                            if (DataAtual.DayOfWeek == DayOfWeek.Saturday || DataAtual.DayOfWeek == DayOfWeek.Sunday) {
+                                workSheet.Cells[y, j + 1].Value = DataAtual.ToString("ddd").Substring(0,1).ToUpper();
+                                workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(Color.Gray);
+                            }
+
+                            if (LstFeriados.Where(f => f.DataFeriado == DataAtual).Count() > 0)
+                            {
+                                workSheet.Cells[y, j + 1].Value = "F";
+                                workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(Color.Gray);
+
+                            }
+                            workSheet.Cells[y, j + 1].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+                        }
+
+                        //workSheet.Cells[y, 33].Value = count;
+                        //workSheet.Cells[y, 33].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+                        //count = 0;
+
+                        y += 1;
+                    }
+                }
+
+            }
+
+            y += 1;
+            workSheet.Cells[y, x].Value = "Nome";
+            workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+            x += 1;
+            workSheet.Cells[y, x].Value = "DM";
+            workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+            x += 1;
+            workSheet.Cells[y, x].Value = "DD";
+            workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+            x += 1;
+            workSheet.Cells[y, x].Value = "DT";
+            workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+
+            x = 1;
+
+            foreach (var item in LstUtilizadores)
+            {
+                FeriasUtilizador feriasUtilizador = ObterListaFeriasUtilizador(item.Id, Ano);
+
+                y += 1;
+                workSheet.Cells[y, x].Value = item.NomeCompleto;
+                workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+                x += 1;
+                workSheet.Cells[y, x].Value = feriasUtilizador.DiasMarcados;
+                workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+                x += 1;
+                workSheet.Cells[y, x].Value = feriasUtilizador.DiasDisponiveis - feriasUtilizador.DiasMarcados ;
+                workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+                x += 1;
+                workSheet.Cells[y, x].Value = feriasUtilizador.DiasDisponiveis;
+                workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+
+                x = 1;
+            }
+            return package.GetAsByteArray();
+        }
 
         public DateTime ObterUltimaModificacaoPHC(string tabela)
         {

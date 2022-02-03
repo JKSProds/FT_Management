@@ -85,6 +85,28 @@ namespace FT_Management.Controllers
 
         }
 
+        public virtual ActionResult Exportar(string Ano)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            var file = context.GerarMapaFerias(Ano);
+            var output = new MemoryStream();
+            output.Write(file, 0, file.Length);
+            output.Position = 0;
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "MapaFerias.xlsx",
+                Inline = false,
+                Size = file.Length,
+                CreationDate = DateTime.Now,
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi gerado um mapa de ferias", 5);
+
+            return File(output, System.Net.Mime.MediaTypeNames.Application.Xml);
+        }
         public ActionResult Calendario()
         {
 

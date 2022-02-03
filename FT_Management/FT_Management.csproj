@@ -40,6 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="FT_Ferias.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="FT_FolhaObra.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
