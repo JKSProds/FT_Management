@@ -48,7 +48,7 @@ namespace FT_Management.Controllers
                     IsAllDay = true,
                     Uid = f.Id.ToString(),
                     Description = "Validado por: " + f.ValidadoPorNome,
-                    Summary = "Férias - " + context.ObterTecnico(f.Id).NomeCompleto,
+                    Summary = "Férias - " + context.ObterUtilizador(f.IdUtilizador).NomeCompleto,
                 };
                 calendar.Events.Add(e);
             }
