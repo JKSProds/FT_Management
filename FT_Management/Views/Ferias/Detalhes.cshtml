@@ -88,8 +88,8 @@ else
                     {
                         <td>
                             <div class="btn-group float-right">
-                                <a class="btn btn-outline-danger" onclick="location.href='@Url.Action("Apagar", "Ferias", item)'"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                                <a class="btn btn-outline-success"  onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
+                                <a class="btn btn-outline-danger" onclick="ConfirmApagarFerias(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                                <a class="btn btn-outline-success" onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                             </div>
                         </td>
                     }
@@ -117,6 +117,30 @@ else
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AlterarDiasFerias()" href="javascript:;">Validar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Apagar Férias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Observações</label>
+                    <textarea class="form-control" rows="8" placeholder="" id="txtObsApagar" name="Obs" required></textarea>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ApagarFerias()" href="javascript:;">Apagar</button>
             </div>
         </div>
     </div>
@@ -260,6 +284,31 @@ else
     function ConfirmValidarFerias(Id) {
         document.getElementById("hiddenIdFerias").value = Id;
         $("#myModal3").modal('show');
+    }
+
+    function ConfirmApagarFerias(Id) {
+        document.getElementById("hiddenIdFerias").value = Id;
+        $("#myModal5").modal('show');
+    }
+    function ApagarFerias() {
+        var json = {
+            id: document.getElementById('hiddenIdFerias').value,
+            obs: document.getElementById('txtObsApagar').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Ferias/Apagar",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
+
+        $("#myModal5").modal('hide');
     }
 
     function ValidarFerias() {
