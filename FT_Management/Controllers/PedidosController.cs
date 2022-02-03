@@ -35,7 +35,7 @@ namespace FT_Management.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult ObterIcsAnonimo()
+        public virtual ActionResult Calendario()
         {
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -83,7 +83,8 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
-        public virtual ActionResult ObterIcs ()
+        [HttpGet]
+        public virtual ActionResult Calendario ()
         {
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
