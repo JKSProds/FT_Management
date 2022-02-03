@@ -25,4 +25,12 @@ namespace FT_Management.Models
         public string Obs { get; set; }
 
     }
+
+    public class Feriado
+    {
+        public int Id { get; set; }
+        public DateTime DataFeriado { get; set; }
+        public string DescFeriado { get; set; }
+
+    }
 }

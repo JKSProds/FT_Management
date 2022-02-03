@@ -17,6 +17,9 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography.Xml;
 using System.Configuration;
 using OfficeOpenXml.Style;
+using System.Net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FT_Management.Models
 {
@@ -40,6 +43,8 @@ namespace FT_Management.Models
             {
                 Console.WriteLine("Não foi possivel conectar á BD MySQL!");
             }
+
+            ObterFeriadosAPI("2022");
         }
 
         public void AdicionarLog(string user, string msg, int tipo)
@@ -536,6 +541,51 @@ namespace FT_Management.Models
             return LstFerias.Count() > 0 ? LstFerias.FirstOrDefault() : new Ferias();
 
         }
+        public List<Feriado> ObterListaFeriados(string Ano)
+        {
+            List<Feriado> LstFeriados = new List<Feriado>();
+            using (Database db = ConnectionString)
+            {
+                string sql = "SELECT * FROM dat_feriados where DataFeriado>='" + Ano + "-01-01' AND DataFeriado<='" + Ano + "-12-31' order by DataFeriado;";
+                using var result = db.Query(sql);
+                while (result.Read())
+                {
+                    LstFeriados.Add(new Feriado()
+                    {
+                        Id = result["Id"],
+                        DescFeriado = result["DescFeriado"],
+                        DataFeriado = result["DataFeriado"]
+                    });
+                }
+            }
+
+            return LstFeriados;
+
+        }
+        public void ObterFeriadosAPI (string ano)
+        {
+            List<Feriado> LstFeriados = new List<Feriado>();
+            using (WebClient wc = new WebClient())
+            {
+                var json = wc.DownloadString("https://date.nager.at/api/v3/PublicHolidays/"+ano+"/PT");
+
+                dynamic dynJson = JsonConvert.DeserializeObject(json);
+                foreach (var item in dynJson)
+                {
+                    if (item.global == "True")
+                    {
+                        Feriado feriado = new Feriado()
+                        {
+                            DataFeriado = item.date,
+                            DescFeriado = item.localName
+                        };
+                        LstFeriados.Add(feriado);
+                    }
+                }
+            }
+
+            CriarFeriados(LstFeriados);
+        }
         public List<Acesso> ObterListaAcessos(DateTime Data)
         {
             List<Acesso> LstAcessos = new List<Acesso>();
@@ -643,6 +693,8 @@ namespace FT_Management.Models
             }
 
         }
+
+
 
         public string ObterAnoAtivo()
         {
@@ -1461,7 +1513,7 @@ namespace FT_Management.Models
             return LstEventos;
         }
 
-        public List<CalendarioEvent> ConverterFeriasEventos(List<Ferias> Ferias)
+        public List<CalendarioEvent> ConverterFeriasEventos(List<Ferias> Ferias, List<Feriado> Feriados)
         {
             List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
 
@@ -1479,6 +1531,19 @@ namespace FT_Management.Models
                     //color = ("#33FF77"),
                     url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
                     color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario)
+                });
+            }
+
+            foreach (var item in Feriados)
+            {
+               
+                LstEventos.Add(new CalendarioEvent
+                {
+                    id = item.Id,
+                    title = item.DescFeriado,
+                    start = item.DataFeriado,
+                    setAllDay = true,
+                    color = "#3371FF"
                 });
             }
 
@@ -1972,6 +2037,33 @@ namespace FT_Management.Models
             }
         }
 
+        public void CriarFeriados(List<Feriado> LstFeriados)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstFeriados.Count; i++)
+            {
+                if ((j + max) > LstFeriados.Count) max = (LstFeriados.Count - j);
+
+                string sql = "INSERT INTO dat_feriados (DataFeriado,DescFeriado) VALUES ";
+
+                foreach (var feriado in LstFeriados.GetRange(j, max))
+                {
+                    sql += ("('" + feriado.DataFeriado.ToString("yy-MM-dd") + "', '" + feriado.DescFeriado + "'), \r\n");
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE DataFeriado = VALUES(DataFeriado), DescFeriado = VALUES(DescFeriado);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+            }
+        }
         public void CriarFeriasUtilizador(int IdUtilizador, string Ano, int DiasDireito)
         {
             string sqlDelete = "Delete from dat_ferias_utilizador where IdUtilizador = '"+IdUtilizador+"' AND Ano='"+Ano+"';";

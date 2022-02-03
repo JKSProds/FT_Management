@@ -27,7 +27,7 @@ namespace FT_Management.Controllers
         public JsonResult ObterFeriasCalendario(DateTime start, DateTime end)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end)).ToList());
+            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end), context.ObterListaFeriados(start.Year.ToString())).ToList());
 
         }
 
@@ -87,8 +87,11 @@ namespace FT_Management.Controllers
             DateTime dataInicio = DateTime.Parse(datainicio);
             DateTime dataFim = DateTime.Parse(datafim);
             DateTime dataAtual = DateTime.Parse(datainicio);
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             List<Ferias> LstFerias = new List<Ferias>();
+            List<Feriado> LstFeriados = context.ObterListaFeriados(DateTime.Parse(datainicio).Year.ToString());
+
             bool weekend = false;
 
             do 
@@ -99,6 +102,21 @@ namespace FT_Management.Controllers
                     
                     weekend = (dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday);
                     if (!weekend) dataInicio = dataAtual;
+                }
+                if (LstFeriados.Where(d => d.DataFeriado == dataAtual).Any())
+                {
+                    if (dataInicio == dataAtual) { dataInicio = dataAtual.AddDays(1); }
+                    else {
+                        LstFerias.Add(
+                         new Ferias
+                         {
+                             IdUtilizador = idutilizador,
+                             DataInicio = dataInicio,
+                             DataFim = dataAtual.AddDays(-1),
+                             ValidadoPor = 0
+                         });
+                        dataInicio = dataAtual.AddDays(1);
+                    }
                 }
                 if (dataAtual == dataFim && weekend) break;
                     if (dataAtual.DayOfWeek == DayOfWeek.Friday || dataAtual == dataFim)
@@ -117,7 +135,6 @@ namespace FT_Management.Controllers
                     dataAtual = dataAtual.AddDays(1);
                 } while (dataAtual <= dataFim);
 
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.CriarFerias(LstFerias);
         }
     }
