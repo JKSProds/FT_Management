@@ -35,35 +35,31 @@ namespace FT_Management.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult CalendarioServicos ()
+        public virtual ActionResult CalendarioMarcacoes (string IdTecnico)
         {
             var calendar = new Calendar();
-            if (this.User.Claims.Count() > 0)
+            DateTime d = DateTime.Now;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarMarcacoes();
+
+
+            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(context.ObterUtilizador(int.Parse(IdTecnico)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
+            foreach (Marcacao m in LstMarcacoes)
             {
-                DateTime d = DateTime.Now;
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-                phccontext.AtualizarMarcacoes();
-
-
-                List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
-                foreach (Marcacao m in LstMarcacoes)
+                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d = m.DataMarcacao.Add(TimeSpan.FromHours(8));
+                var e = new CalendarEvent
                 {
-                    if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d = m.DataMarcacao.Add(TimeSpan.FromHours(8));
-                    var e = new CalendarEvent
-                    {
-                        Start = new CalDateTime(d),
-                        End = new CalDateTime(d.AddMinutes(30)),
-                        Uid = m.IdMarcacao.ToString(),
-                        Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
-                        Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                        Url = new Uri("http://" + Request.Host + "/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC)
-                    };
-                    calendar.Events.Add(e);
-                    d = d.AddMinutes(30);
-                }
+                    Start = new CalDateTime(d),
+                    End = new CalDateTime(d.AddMinutes(30)),
+                    Uid = m.IdMarcacao.ToString(),
+                    Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
+                    Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
+                    Url = new Uri("http://" + Request.Host + "/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(int.Parse(IdTecnico)).IdPHC)
+                };
+                calendar.Events.Add(e);
+                d = d.AddMinutes(30);
             }
-
             var serializer = new CalendarSerializer();
 
             var serializedCalendar = serializer.SerializeToString(calendar);
