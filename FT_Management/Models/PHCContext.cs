@@ -22,7 +22,7 @@ namespace FT_Management.Models
             try
             {
 
-#if DEBUG == false
+#if DEBUG == true
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
