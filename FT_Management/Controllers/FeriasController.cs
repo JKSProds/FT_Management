@@ -40,15 +40,19 @@ namespace FT_Management.Controllers
             List<Ferias> LstFerias = context.ObterListaFerias(DateTime.Parse(DateTime.Now.Year + "-01-01"), DateTime.Parse(DateTime.Now.Year + "-12-31"));
             foreach (var f in LstFerias)
             {
-                
+                DateTimeOffset now = DateTimeOffset.UtcNow;
+                long unixTimeMilliseconds = now.ToUnixTimeMilliseconds();
+
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(f.DataInicio),
                     End = new CalDateTime(f.DataFim.AddDays(1)),
                     IsAllDay = true,
+                    Sequence = int.Parse(unixTimeMilliseconds.ToString()),
                     Uid = f.Id.ToString(),
                     Description = "Validado por: " + f.ValidadoPorNome,
                     Summary = "Férias - " + context.ObterUtilizador(f.IdUtilizador).NomeCompleto,
+                    LastModified = new CalDateTime(DateTime.Now)
                 };
                 calendar.Events.Add(e);
             }

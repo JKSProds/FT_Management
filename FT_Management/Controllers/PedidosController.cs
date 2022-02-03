@@ -46,10 +46,16 @@ namespace FT_Management.Controllers
             foreach (Marcacao m in LstMarcacoes)
             {
                 if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d= m.DataMarcacao.Add(TimeSpan.FromHours(8));
+
+                DateTimeOffset now = DateTimeOffset.UtcNow;
+                long unixTimeMilliseconds = now.ToUnixTimeMilliseconds();
+
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(d),
                     End = new CalDateTime(d.AddMinutes(30)),
+                    Sequence = int.Parse(unixTimeMilliseconds.ToString()),
+                    LastModified = new CalDateTime(DateTime.Now),
                     Uid =  m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
                     Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
