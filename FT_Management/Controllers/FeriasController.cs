@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using FT_Management.Models;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +28,51 @@ namespace FT_Management.Controllers
             }
 
             return View(context.ObterListaUtilizadores());
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public virtual ActionResult CalendarioFerias()
+        {
+            var calendar = new Calendar();
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            List<Ferias> LstFerias = context.ObterListaFerias(DateTime.Parse(DateTime.Now.Year + "-01-01"), DateTime.Parse(DateTime.Now.Year + "-12-31"));
+            foreach (var f in LstFerias)
+            {
+                
+                var e = new CalendarEvent
+                {
+                    Start = new CalDateTime(f.DataInicio),
+                    End = new CalDateTime(f.DataFim),
+                    IsAllDay = true,
+                    Uid = f.Id.ToString(),
+                    Description = "Validado por: " + f.ValidadoPorNome,
+                    Summary = "Férias - " + context.ObterUtilizador(f.Id).NomeCompleto,
+                };
+                calendar.Events.Add(e);
+            }
+            var serializer = new CalendarSerializer();
+
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
+
+            MemoryStream ms = new MemoryStream(bytesCalendar);
+
+            ms.Write(bytesCalendar, 0, bytesCalendar.Length);
+            ms.Position = 0;
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "Ferias.ics",
+                Inline = false,
+                Size = bytesCalendar.Length,
+                CreationDate = DateTime.Now
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+
+            return File(ms, "text/calendar");
         }
 
         public JsonResult ObterFeriasCalendario(DateTime start, DateTime end)

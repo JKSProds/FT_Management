@@ -33,33 +33,32 @@ namespace FT_Management.Controllers
 
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult CalendarioMarcacoes (string IdTecnico)
+        public virtual ActionResult ObterIcs ()
         {
-            var calendar = new Calendar();
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             phccontext.AtualizarMarcacoes();
 
-
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(context.ObterUtilizador(int.Parse(IdTecnico)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
+            var calendar = new Calendar();
+            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
             foreach (Marcacao m in LstMarcacoes)
             {
-                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d = m.DataMarcacao.Add(TimeSpan.FromHours(8));
+                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d= m.DataMarcacao.Add(TimeSpan.FromHours(8));
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(d),
                     End = new CalDateTime(d.AddMinutes(30)),
-                    Uid = m.IdMarcacao.ToString(),
+                    Uid =  m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
                     Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                    Url = new Uri("http://" + Request.Host + "/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(int.Parse(IdTecnico)).IdPHC)
+                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC)
                 };
                 calendar.Events.Add(e);
                 d = d.AddMinutes(30);
             }
+
             var serializer = new CalendarSerializer();
 
             var serializedCalendar = serializer.SerializeToString(calendar);
@@ -72,13 +71,14 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "Calendar.ics",
+                FileName = "basic.ics",
                 Inline = false,
                 Size = bytesCalendar.Length,
                 CreationDate = DateTime.Now
 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
+
 
             return File(ms, "text/calendar");
         }
