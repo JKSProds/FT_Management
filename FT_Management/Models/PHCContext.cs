@@ -499,7 +499,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, ousrdata FROM u_marcacao where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
+                    SqlCommand command = new SqlCommand("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, ousrdata, ousrhora FROM u_marcacao where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
                     command.CommandTimeout = TIMEOUT;
                     using (SqlDataReader result = command.ExecuteReader())
                     {
@@ -518,7 +518,7 @@ namespace FT_Management.Models
                                 TipoEquipamento = result["tipoe"].ToString().Trim(),
                                 Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0,
                                 Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0,
-                                DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Trim())
+                                DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Trim() + " " + result["ousrhora"].ToString())
                             });
                         }
                     }
