@@ -1320,7 +1320,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaUtilizadores()
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where enable=1;";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where enable=1 order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -1346,7 +1346,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaTecnicos()
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = "+1+";";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = "+1+" order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -1386,7 +1386,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaComerciais()
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 2 + ";";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 2 + " order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -2063,6 +2063,8 @@ namespace FT_Management.Models
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
+        
+        //OLD - Conexao a sistema facial de login
         public void CriarAcessos()
         {
             List<Acesso> LstAcesso = new List<Acesso>();

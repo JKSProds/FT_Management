@@ -49,7 +49,7 @@ namespace FT_Management.Controllers
                     End = new CalDateTime(f.DataFim.AddDays(1)),
                     IsAllDay = true,
                     Uid = f.Id.ToString(),
-                    Description = "Validado por: " + f.ValidadoPorNome,
+                    Description = "Validado por: " + f.ValidadoPorNome + "\r\nObservações: " + f.Obs,
                     Summary = "Férias - " + context.ObterUtilizador(f.IdUtilizador).NomeCompleto,
                     LastModified = new CalDateTime(DateTime.Now)
                 };

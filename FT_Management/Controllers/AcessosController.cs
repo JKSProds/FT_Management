@@ -16,7 +16,6 @@ namespace FT_Management.Controllers
         public ActionResult Index(string Data)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            context.CriarAcessos();
 
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["Data"] = Data;
