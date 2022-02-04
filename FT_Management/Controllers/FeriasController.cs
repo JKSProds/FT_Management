@@ -172,7 +172,7 @@ namespace FT_Management.Controllers
                 // text or html
                 myMail.IsBodyHtml = true;
 
-                mySmtpClient.Send(myMail);
+                mySmtpClient.SendMailAsync(myMail);
             }
 
             catch (Exception)
@@ -224,24 +224,28 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             List<Ferias> LstFerias = new List<Ferias>();
+            List<Ferias> LstFeriasExistentes = context.ObterListaFerias(idutilizador, dataInicio.Year.ToString());
             List<Feriado> LstFeriados = context.ObterListaFeriados(DateTime.Parse(datainicio).Year.ToString());
 
             bool weekend = false;
 
             do 
                 {
+                if (weekend) { dataInicio = dataAtual; }
 
-                if (weekend)
+                weekend = (dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday);
+
+                if (!weekend)
                 {
-                    
-                    weekend = (dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday);
-                    if (!weekend) dataInicio = dataAtual;
-                }
-                if (LstFeriados.Where(d => d.DataFeriado == dataAtual).Any())
-                {
-                    if (dataInicio == dataAtual) { dataInicio = dataAtual.AddDays(1); }
-                    else {
-                        LstFerias.Add(
+                    if (dataAtual == dataFim && weekend) break;
+                    if (LstFeriados.Where(d => d.DataFeriado == dataAtual).Any() || LstFeriasExistentes.Where(d => d.DataInicio >= dataAtual && d.DataFim <= dataAtual).Any())
+                    {
+                        weekend = (dataAtual.DayOfWeek == DayOfWeek.Friday || dataAtual == dataFim);
+
+                        if (dataInicio == dataAtual) { dataInicio = dataAtual.AddDays(1); }
+                        else
+                        {
+                            LstFerias.Add(
                          new Ferias
                          {
                              IdUtilizador = idutilizador,
@@ -249,11 +253,10 @@ namespace FT_Management.Controllers
                              DataFim = dataAtual.AddDays(-1),
                              ValidadoPor = 0
                          });
-                        dataInicio = dataAtual.AddDays(1);
+                            dataInicio = dataAtual.AddDays(1);
+                        }
                     }
-                }
-                if (dataAtual == dataFim && weekend) break;
-                    if (dataAtual.DayOfWeek == DayOfWeek.Friday || dataAtual == dataFim)
+                    else if (dataAtual.DayOfWeek == DayOfWeek.Friday || dataAtual == dataFim)
                     {
                         LstFerias.Add(
                             new Ferias
@@ -263,9 +266,10 @@ namespace FT_Management.Controllers
                                 DataFim = dataAtual,
                                 ValidadoPor = 0
                             });
+
                         weekend = true;
                     }
-                   
+                }      
                     dataAtual = dataAtual.AddDays(1);
                 } while (dataAtual <= dataFim);
 

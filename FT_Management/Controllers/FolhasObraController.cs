@@ -179,7 +179,7 @@ namespace FT_Management.Controllers
                 Attachment att = new Attachment(pdf, "FolhaObra_" + id, System.Net.Mime.MediaTypeNames.Application.Pdf);
                 myMail.Attachments.Add(att);
 
-                mySmtpClient.Send(myMail);
+                mySmtpClient.SendMailAsync(myMail);
                 context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi enviado uma folha de obra: " + id + " para o email: " + emailDestino, 3);
             }
 
