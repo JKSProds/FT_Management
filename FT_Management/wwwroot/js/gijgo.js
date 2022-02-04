@@ -253,10 +253,10 @@ gj.core = {
     messages: {
         'en-us': {
             monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-            monthShortNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],            
-            weekDaysMin: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-            weekDaysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-            weekDays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            monthShortNames: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],            
+            weekDaysMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+            weekDaysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+            weekDays: ["Domingo", "Segunda", "Terça", "Qaurta", "Quinta", "Sexta", "Sábado"],
             am: 'AM',
             pm: 'PM',
             ok: 'Ok',
