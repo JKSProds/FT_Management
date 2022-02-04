@@ -518,7 +518,7 @@ namespace FT_Management.Models
                                 TipoEquipamento = result["tipoe"].ToString().Trim(),
                                 Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0,
                                 Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0,
-                                DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Trim() + " " + result["ousrhora"].ToString())
+                                DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString())
                             });
                         }
                     }
@@ -530,7 +530,7 @@ namespace FT_Management.Models
                     Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
                 }
             }
-            catch
+            catch 
             {
                 Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
             }
