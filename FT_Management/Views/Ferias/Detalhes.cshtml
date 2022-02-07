@@ -14,7 +14,7 @@
         <button type="button" disabled class="btn btn-outline-primary btn-lg">
             Dias Marcados: @Model.DiasTotais
         </button>
-        @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
+        @if (this.User.IsInRole("Admin"))
         {
             <button type="button" data-toggle="modal" data-target="#myModal4" class="btn btn-outline-danger btn-lg">
                 Dias Disponiveis: @(Model.DiasDisponiveis - Model.DiasTotais)
@@ -85,7 +85,7 @@ else
                 <td style="width: 60%;">
                     @Html.DisplayFor(modelItem => item.Obs)
                 </td>
-                @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
+                @if (this.User.IsInRole("Admin"))
                 {
                     <td>
                         <div class="btn-group float-right">
