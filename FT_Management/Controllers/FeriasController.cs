@@ -85,6 +85,7 @@ namespace FT_Management.Controllers
 
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public virtual ActionResult Exportar(string Ano)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -107,6 +108,7 @@ namespace FT_Management.Controllers
 
             return File(output, System.Net.Mime.MediaTypeNames.Application.Xml);
         }
+
         public ActionResult Calendario()
         {
 
@@ -129,6 +131,7 @@ namespace FT_Management.Controllers
             return View(context.ObterListaFeriasUtilizador(IdUtilizador, ViewData["Ano"].ToString()));
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public void EnviarEmail(string emailDestino, string Assunto, string Mensagem)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -181,6 +184,7 @@ namespace FT_Management.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Validar(string id, string obs)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -198,6 +202,7 @@ namespace FT_Management.Controllers
             return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Apagar(string id, string obs)
         {
 
@@ -211,6 +216,7 @@ namespace FT_Management.Controllers
             return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public void AlterarDiasFerias(string ano, string idutilizador, string dias)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

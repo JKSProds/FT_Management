@@ -60,7 +60,6 @@ namespace FT_Management.Controllers
 
         }
 
-
         public ActionResult Print(string id)
         {
             if (id == null)

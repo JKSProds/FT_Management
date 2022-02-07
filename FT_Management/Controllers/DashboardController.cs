@@ -10,6 +10,7 @@ namespace FT_Management.Controllers
 {
     public class DashboardViewComponent : ViewComponent
     {
+        [Authorize(Roles = "Admin, Escritorio")]
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
             return View(model);

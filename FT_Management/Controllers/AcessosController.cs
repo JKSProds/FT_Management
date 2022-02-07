@@ -9,9 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FT_Management.Controllers
 {
+    [Authorize(Roles = "Admin, Escritorio")]
     public class AcessosController : Controller
     {
-        [Authorize(Roles = "Admin, Escritorio")]
+
         // GET: FolhasObraController
         public ActionResult Index(string Data)
         {

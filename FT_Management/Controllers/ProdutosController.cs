@@ -152,6 +152,7 @@ namespace FT_Management.Controllers
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         // GET: Produtos/Create
         public ActionResult Criar()
         {
@@ -166,6 +167,7 @@ namespace FT_Management.Controllers
         // POST: Produtos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Criar(Produto produto)
         {
             try
@@ -187,6 +189,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Escritorio")]
         public JsonResult EditarStockFisico(string refproduto, string stockfisico, int armazemid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -201,7 +204,9 @@ namespace FT_Management.Controllers
             return Json("ok");
         }
 
+
         // GET: Produtos/Edit/5
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Editar(string id, int armazemid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -215,9 +220,11 @@ namespace FT_Management.Controllers
             return View(context.ObterProduto(id,armazemid));
         }
 
+
         // POST: Produtos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Editar(string id, Produto produto)
         {
             try
@@ -243,6 +250,7 @@ namespace FT_Management.Controllers
 
         // POST: Produtos/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Apagar(string Id, int armazemid)
         {
             try
