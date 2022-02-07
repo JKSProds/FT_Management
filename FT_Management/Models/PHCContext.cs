@@ -43,7 +43,7 @@ namespace FT_Management.Models
             #endif
 
             }
-            catch
+            catch (Exception ex)
             {
                 ConnectedPHC = true;
                 Console.WriteLine("Não foi possivel conectar á BD PHC!");

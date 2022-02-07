@@ -58,7 +58,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT Valor FROM sys_params where Nome = " + NomeParam + ";");
+                using var result = db.Query("SELECT Valor FROM sys_params where Nome = '" + NomeParam + "';");
                 result.Read();
 
                 res = result["Valor"];
