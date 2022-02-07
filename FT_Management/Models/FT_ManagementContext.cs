@@ -47,6 +47,25 @@ namespace FT_Management.Models
             ObterFeriadosAPI("2022");
         }
 
+        public bool SyncPHCOnStartup()
+        {
+            return ObterParam("SyncPHCOnStartup") == "1";
+        }
+
+        public string ObterParam (string NomeParam)
+        {
+            string res = "";
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT Valor FROM sys_params where Nome = " + NomeParam + ";");
+                result.Read();
+
+                res = result["Valor"];
+            }
+
+            return res;
+        }
         public void AdicionarLog(string user, string msg, int tipo)
         {
             string sql = "INSERT INTO dat_logs (user, msg_log, tipo_log) VALUES ('" + user + "', '" + msg + "', " + tipo + ");";
