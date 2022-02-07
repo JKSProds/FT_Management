@@ -16,10 +16,15 @@
     </tr>
     <tr>
 
-        <td>
-            <hr />
-            <a class="btn btn-primary btn-lg btn-block text-white" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("ResetTabela", "Admin"))'"><i class="fas fa-wrench" style="margin-top:5px"></i> Reset Tabela</a>
-            <a class="btn btn-primary btn-lg btn-block text-white" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("UpdateTabela", "Admin"))'"><i class="fas fa-wrench" style="margin-top:5px"></i> Update Tabela</a>
-        </td>
+       
     </tr>
 </table>
+
+<hr />
+<div class="input-group">
+    <input type="text" class="form-control" id="txtTabela" placeholder="Nome da Tabela" aria-label="" aria-describedby="basic-addon2">
+    <div class="input-group-append">
+        <a class="btn btn-outline-danger text-black-50" onclick="location.href='@Url.Action("Reset", "Admin")?tabela=' + $('#txtTabela').val()">RESET</a>
+        <a class="btn btn-outline-primary text-black-50" onclick="location.href='@Url.Action("Update", "Admin")?tabela=' + $('#txtTabela').val()">UPDATE</a>
+    </div>
+</div>

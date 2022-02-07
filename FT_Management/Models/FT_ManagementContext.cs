@@ -1846,6 +1846,17 @@ namespace FT_Management.Models
             db.Connection.Close();
         }
 
+        public void AtualizarUltimaModificacao(string tabela, DateTime data)
+        {
+            string sql = "UPDATE sys_tabelas set ultimamodificacao='" + data.ToString("yyyy-MM-dd 00:00:00") + "' where nometabela='" + tabela + "'";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+
+
         public void CriarIntervencoes(List<Intervencao> LstIntervencoes)
         {
             int max = 3000;
@@ -2481,6 +2492,14 @@ namespace FT_Management.Models
         public void ApagarAcesso(int Id)
         {
             string sql = "DELETE FROM dat_acessos where Id=" + Id + ";";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+
+        public void ApagarTabela(string nome)
+        {
+            string sql = "DELETE FROM " + nome + ";";
 
             using Database db = ConnectionString;
             db.Execute(sql);

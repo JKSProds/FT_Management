@@ -1,0 +1,40 @@
+﻿@model FT_Management.Models.Utilizador
+
+@{
+    ViewData["Title"] = "Editar Utilizador";
+}
+
+<h1>Editar Utilizador</h1>
+<hr />
+<form asp-action="Editar">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <br />
+    <div class="row">
+        <div class="form-group col-lg-6">
+            <div class="form-group">
+                <label asp-for="NomeUtilizador" class="control-label"></label>
+                <input asp-for="NomeUtilizador" class="form-control" id="NomeUtilizador" />
+                <span asp-validation-for="NomeUtilizador" class="text-danger"></span>
+            </div>
+
+        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        <input onclick="submit()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
+    </div>
+</form>
+
+<div>
+    <br />
+    <a class="btn btn-lg btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick=submit()>Cancelar</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+}
+
+   
