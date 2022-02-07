@@ -70,30 +70,36 @@ else
         <tbody>
             @foreach (var item in Model.Ferias)
             {
-                <tr class="@(item.Validado ? "table-success" : "table-danger")">
-                    <td>
-                        <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
-                    </td>
-                    <td>
-                        <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ValidadoPorNome)
-                    </td>
+            <tr class="@(item.Validado ? "table-success" : "table-danger")">
+                <td>
+                    <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
+                </td>
+                <td>
+                    <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValidadoPorNome)
+                </td>
 
-                    <td style="width: 60%;">
-                        @Html.DisplayFor(modelItem => item.Obs)
+                <td style="width: 60%;">
+                    @Html.DisplayFor(modelItem => item.Obs)
+                </td>
+                @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
+                {
+                    <td>
+                        <div class="btn-group float-right">
+                            <a class="btn btn-outline-danger" onclick="ConfirmApagarFerias(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                            <a class="btn btn-outline-success" onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
+                        </div>
                     </td>
-                    @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
-                    {
-                        <td>
-                            <div class="btn-group float-right">
-                                <a class="btn btn-outline-danger" onclick="ConfirmApagarFerias(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                                <a class="btn btn-outline-success" onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
-                            </div>
-                        </td>
-                    }
-                </tr>
+                }
+                else
+                {
+                    <td>
+                        <a class="btn btn-outline-danger float-right" onclick="ConfirmApagarFerias2(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                    </td>
+                }
+            </tr>
             }
         </tbody>
     </table>
@@ -165,6 +171,30 @@ else
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ValidarFerias()" href="javascript:;">Validar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Apagar Férias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <p>Tem a certeza que deseja apagar estas datas? <b>Esta ação é irreversivel!</b></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="ApagarFerias2()" href="javascript:;">Apagar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -290,6 +320,32 @@ else
         document.getElementById("hiddenIdFerias").value = Id;
         $("#myModal5").modal('show');
     }
+
+    function ConfirmApagarFerias2(Id) {
+        document.getElementById("hiddenIdFerias").value = Id;
+        $("#myModal6").modal('show');
+    }
+
+    function ApagarFerias2() {
+        var json = {
+            id: document.getElementById('hiddenIdFerias').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Ferias/ApagarIndividual",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
+
+        $("#myModal6").modal('hide');
+    }
+
     function ApagarFerias() {
         var json = {
             id: document.getElementById('hiddenIdFerias').value,

@@ -216,6 +216,15 @@ namespace FT_Management.Controllers
             return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
         }
 
+        public ActionResult ApagarIndividual(string id)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            context.ApagarFerias(int.Parse(id));
+
+            return RedirectToAction("Detalhes");
+        }
+
         [Authorize(Roles = "Admin, Escritorio")]
         public void AlterarDiasFerias(string ano, string idutilizador, string dias)
         {
