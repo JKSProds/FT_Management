@@ -62,8 +62,8 @@ namespace FT_Management
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
             services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(Configuration.GetConnectionString("PHCConnection"), Configuration.GetConnectionString("DefaultConnection"))));
 
-            var passwordHasher = new PasswordHasher<string>();
-            Console.WriteLine(passwordHasher.HashPassword(null, "Food@014.js"));
+            //var passwordHasher = new PasswordHasher<string>();
+            //Console.WriteLine(passwordHasher.HashPassword(null, "Food@014.js"));
 
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }

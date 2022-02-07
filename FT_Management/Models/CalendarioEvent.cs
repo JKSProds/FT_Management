@@ -15,5 +15,6 @@ namespace FT_Management.Models
         public int IdTecnico { get; set; }
         public string color { get; set; }
         public bool setAllDay { get; set; }
+        public string obs { get; set; }
     }
 }

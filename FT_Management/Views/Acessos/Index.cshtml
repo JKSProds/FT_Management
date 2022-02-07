@@ -3,12 +3,15 @@
 @{
     ViewData["Title"] = "Acessos";
 }
+
 <div class="row">
     <div class="col-lg-8">
     </div>
     <div class="col-lg-4">
     </div>
 </div>
+
+<input type="hidden" id="hiddenIdAcesso" name="IdFerias" />
 
 <div class="row">
     <div class="col-lg-8">
@@ -61,6 +64,7 @@ else
                 <th>
                     Tipo de Acesso
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -71,10 +75,13 @@ else
                         <span>@item.Utilizador.NomeCompleto</span>
                     </td>
                     <td>
-                        <span>@item.Data.ToString("dd-MM-yyyy HH:mm")</span>
+                        <span>@item.Data.ToString("HH:mm")</span>
                     </td>
                     <td>
                         <span>@item.Tipo</span>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-danger float-right" onclick="ConfirmApagarAcesso(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
                     </td>
                 </tr>
             }
@@ -82,3 +89,53 @@ else
     </table>
 }
 
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Apagar Acesso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <p>Tem a certeza que deseja apagar este acesso? <b>Esta ação é irreversivel!</b></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="ApagarAcesso()" href="javascript:;">Apagar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ConfirmApagarAcesso(Id) {
+        document.getElementById("hiddenIdAcesso").value = Id;
+        $("#myModal").modal('show');
+    }
+
+    function ApagarAcesso() {
+        var json = {
+            id: document.getElementById('hiddenIdAcesso').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Acessos/Apagar",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
+
+        $("#myModal").modal('hide');
+    }
+</script>

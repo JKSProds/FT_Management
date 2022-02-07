@@ -1426,7 +1426,8 @@ namespace FT_Management.Models
                         Admin = result["admin"] == 1,
                         Enable = result["enable"] == 1,
                         CorCalendario = result["CorCalendario"],
-                        IdPHC = result["IdPHC"]
+                        IdPHC = result["IdPHC"],
+                        Iniciais = result["IniciaisUtilizador"]
                     };
                 }
             }
@@ -1523,6 +1524,7 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarioEvent
                 {
                     id = item.Id,
+                    obs = item.Obs,
                     title = ut.NomeCompleto,
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
@@ -1543,7 +1545,7 @@ namespace FT_Management.Models
                     title = item.DescFeriado,
                     start = item.DataFeriado,
                     setAllDay = true,
-                    color = "#3371FF"
+                    color = "#FF5733"
                 });
             }
 
@@ -2453,6 +2455,13 @@ namespace FT_Management.Models
         public void ApagarFerias(int Id)
         {
             string sql = "DELETE FROM dat_ferias where Id="+Id+";";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+        public void ApagarAcesso(int Id)
+        {
+            string sql = "DELETE FROM dat_acessos where Id=" + Id + ";";
 
             using Database db = ConnectionString;
             db.Execute(sql);
