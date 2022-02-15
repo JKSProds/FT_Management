@@ -70,7 +70,7 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr class="@(item.Tipo == "Entrada" ? "table-primary" : "table-warning")">
+                <tr class="@(item.Tipo == 1 ? "table-primary" : "table-warning")">
                     <td>
                         <span>@item.Utilizador.NomeCompleto</span>
                     </td>
@@ -78,7 +78,7 @@ else
                         <span>@item.Data.ToString("HH:mm")</span>
                     </td>
                     <td>
-                        <span>@item.Tipo</span>
+                        <span>@item.TipoAcesso</span>
                     </td>
                     <td>
                         <a class="btn btn-outline-danger float-right" onclick="ConfirmApagarAcesso(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>

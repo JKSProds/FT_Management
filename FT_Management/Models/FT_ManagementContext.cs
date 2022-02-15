@@ -620,7 +620,7 @@ namespace FT_Management.Models
                         Utilizador = ObterUtilizador(result["IdUtilizador"]),
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
-                        Tipo = result["TipoAcesso"]
+                        Tipo = result["Tipo"]
                     });
                 }
             }
@@ -1688,7 +1688,7 @@ namespace FT_Management.Models
                         {
                             foreach (var acesso in LstAcessos.Where(u => u.Utilizador.Id == utilizador.Id))
                             {
-                                workSheet.Cells[j, i + 1].Value = acesso.Tipo.Substring(0, 1) + ": " + acesso.Data.ToShortTimeString();
+                                workSheet.Cells[j, i + 1].Value = acesso.TipoAcesso.Substring(0, 1) + ": " + acesso.Data.ToShortTimeString();
                                 j++;
                             }
                         }
@@ -2124,7 +2124,7 @@ namespace FT_Management.Models
                             IdUtilizador = result["user_code"],
                             Temperatura = result["temperature"],
                             Data = result["create_time"],
-                            Tipo = entrada ? "Entrada" : "Saida"
+                            Tipo = entrada ? 1 : 2
                         });
                         entrada = !entrada;
                     }
