@@ -12,7 +12,8 @@ namespace FT_Management.Models
         public Utilizador Utilizador { get; set; }
         public DateTime Data { get; set; }
         public int Tipo { get; set; }
-        public string TipoAcesso { get { return Tipo == 1 ? "Entrada" : Tipo == 2 ? "Saída" : Tipo == 3 ? "Início de Dia" : "Fim de Dia"; } }
+        public bool App { get; set; }
+        public string TipoAcesso { get { return App = 1 ? (Tipo == 1 ? "Entrada" : "Saída") : Tipo == 1 ? "Início de Dia" : "Fim de Dia"; } }
         public string Temperatura { get; set; }
     }
 }

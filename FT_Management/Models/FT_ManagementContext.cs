@@ -634,7 +634,8 @@ namespace FT_Management.Models
                         Utilizador = ObterUtilizador(result["IdUtilizador"]),
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
-                        Tipo = result["Tipo"]
+                        Tipo = result["Tipo"],
+                        App = result["App"] == 1
                     });
                 }
             }
@@ -658,7 +659,8 @@ namespace FT_Management.Models
                         Utilizador = ObterUtilizador(result["IdUtilizador"]),
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
-                        Tipo = result["Tipo"]
+                        Tipo = result["Tipo"],
+                        App = result["App"] == 1
                     });
                 }
             }
@@ -2142,12 +2144,12 @@ namespace FT_Management.Models
         {
             if (LstAcessos.Count > 0)
             {
-                string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura) VALUES ";
+                string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura, App) VALUES ";
                 string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso) VALUES";
 
                 foreach (Acesso acesso in LstAcessos.OrderBy(a => a.Data))
                 {
-                    sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "'),\r\n";
+                    sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "', 1),\r\n";
 
                     if (acesso.Data > ObterUltimoAcesso(acesso.IdUtilizador)) sql2 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + "),\r\n";
                 }
