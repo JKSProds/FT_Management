@@ -52,7 +52,7 @@ namespace FT_Management.Models
             return ObterParam("SyncPHCOnStartup") == "1";
         }
 
-        public string ObterParam (string NomeParam)
+        public string ObterParam(string NomeParam)
         {
             string res = "";
             using (Database db = ConnectionString)
@@ -152,8 +152,8 @@ namespace FT_Management.Models
                         ObsVisita = result["ObsVisita"],
                         VisitaStamp = result["VisitaStamp"],
                         IdComercial = result["idcomercial"],
-                        Propostas = ObterListaPropostasVisita(result["IdVisita"]) 
-                        
+                        Propostas = ObterListaPropostasVisita(result["IdVisita"])
+
                     });
                 }
             }
@@ -195,7 +195,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_visitas where IdVisita = "+ IdVisita + ";");
+                using var result = db.Query("SELECT * FROM dat_visitas where IdVisita = " + IdVisita + ";");
                 result.Read();
 
                 visita = new Visita()
@@ -208,7 +208,7 @@ namespace FT_Management.Models
                     ObsVisita = result["ObsVisita"],
                     VisitaStamp = result["VisitaStamp"],
                     IdComercial = result["idcomercial"]
-                    };
+                };
             }
 
             visita.Propostas = ObterListaPropostasVisita(IdVisita);
@@ -255,7 +255,7 @@ namespace FT_Management.Models
                     LstArmazens.Add(new Armazem()
                     {
                         ArmazemId = result["armazem_id"],
-                        ArmazemNome = result["armazem_nome"]                       
+                        ArmazemNome = result["armazem_nome"]
                     });
                 }
             }
@@ -359,7 +359,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_folhas_obra Where IdCliente = "+IdCliente+" AND IdLoja = "+IdLoja+" Order By DataServico DESC;");
+                using var result = db.Query("SELECT * FROM dat_folhas_obra Where IdCliente = " + IdCliente + " AND IdLoja = " + IdLoja + " Order By DataServico DESC;");
                 while (result.Read())
                 {
                     LstFolhasObra.Add(new FolhaObra()
@@ -459,14 +459,14 @@ namespace FT_Management.Models
 
             using (Database db = ConnectionString)
             {
-                using var resultQuery = db.QueryValue("select count(*) from dat_ferias where DataInicio<='"+Data.ToString("yyyy-MM-dd")+"' AND DataFim >= '"+ Data.ToString("yyyy-MM-dd") + "' AND IdUtilizador="+IdUtilizador+";");
+                using var resultQuery = db.QueryValue("select count(*) from dat_ferias where DataInicio<='" + Data.ToString("yyyy-MM-dd") + "' AND DataFim >= '" + Data.ToString("yyyy-MM-dd") + "' AND IdUtilizador=" + IdUtilizador + ";");
                 res = (resultQuery > 0);
             }
 
             return res;
         }
 
-       public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador, string Ano)
+        public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador, string Ano)
         {
             FeriasUtilizador feriasUtilizador = new FeriasUtilizador();
 
@@ -479,7 +479,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_ferias_utilizador where IdUtilizador='"+IdUtilizador+"' AND Ano='"+Ano+"';");
+                using var result = db.Query("SELECT * FROM dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + Ano + "';");
                 while (result.Read())
                 {
 
@@ -595,12 +595,12 @@ namespace FT_Management.Models
             return LstFeriados;
 
         }
-        public void ObterFeriadosAPI (string ano)
+        public void ObterFeriadosAPI(string ano)
         {
             List<Feriado> LstFeriados = new List<Feriado>();
             using (WebClient wc = new WebClient())
             {
-                var json = wc.DownloadString("https://date.nager.at/api/v3/PublicHolidays/"+ano+"/PT");
+                var json = wc.DownloadString("https://date.nager.at/api/v3/PublicHolidays/" + ano + "/PT");
 
                 dynamic dynJson = JsonConvert.DeserializeObject(json);
                 foreach (var item in dynJson)
@@ -625,7 +625,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data.ToString("yyyy-MM-dd") + " 00:00:00' AND DataHoraAcesso<'"+ Data.ToString("yyyy-MM-dd") + " 23:59:59' order by DataHoraAcesso;");
+                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data.ToString("yyyy-MM-dd") + " 00:00:00' AND DataHoraAcesso<'" + Data.ToString("yyyy-MM-dd") + " 23:59:59' order by DataHoraAcesso;");
                 while (result.Read())
                 {
                     LstAcessos.Add(new Acesso()
@@ -649,7 +649,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data.Year + "-" + Data.Month   + "-01 00:00:00' AND DataHoraAcesso<'" + Data.Year + "-" + Data.Month + "-31 23:59:59' order by DataHoraAcesso;");
+                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + Data.Year + "-" + Data.Month + "-01 00:00:00' AND DataHoraAcesso<'" + Data.Year + "-" + Data.Month + "-31 23:59:59' order by DataHoraAcesso;");
                 while (result.Read())
                 {
                     LstAcessos.Add(new Acesso()
@@ -709,7 +709,7 @@ namespace FT_Management.Models
 
             using (Database db = ConnectionString)
             {
-               
+
                 using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "';");
                 return result;
             }
@@ -735,7 +735,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT IFNULL( (SELECT Ano from dat_ferias_ano where Active=1 LIMIT 1), '"+DateTime.Now.Year+"') as Ano;");
+                using var result = db.QueryValue("SELECT IFNULL( (SELECT Ano from dat_ferias_ano where Active=1 LIMIT 1), '" + DateTime.Now.Year + "') as Ano;");
                 return result;
             }
 
@@ -793,7 +793,7 @@ namespace FT_Management.Models
                         IdMarcacao = result["IdMarcacao"],
                         DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
                         EstadoMarcacao = result["EstadoMarcacao"],
-                        IdTecnico = result["IdTecnico"]                       
+                        IdTecnico = result["IdTecnico"]
 
                     });
                 }
@@ -810,7 +810,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico+ " AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1;");
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico + " AND DataMarcacao>='" + DataI + "'  AND DataMarcacao<='" + DataF + "' AND Marcado=1;");
                 while (result.Read())
                 {
                     LstMarcacao.Add(new Marcacao()
@@ -839,7 +839,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                
+
                 using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_estado where dat_marcacoes_estado.idestado = dat_marcacoes.estadomarcacao AND IdMarcacao=" + IdMarcacao + ";");
                 while (result.Read())
                 {
@@ -1009,7 +1009,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_equipamentos where IdCliente = "+IdCliente+" AND IdLoja = "+IdLoja+";");
+                using var result = db.Query("SELECT * FROM dat_equipamentos where IdCliente = " + IdCliente + " AND IdLoja = " + IdLoja + ";");
                 while (result.Read())
                 {
                     LstEquipamentos.Add(new Equipamento()
@@ -1210,9 +1210,9 @@ namespace FT_Management.Models
                     EmailCliente = result["EmailCliente"],
                     NumeroContribuinteCliente = result["NumeroContribuinteCliente"],
                     TelefoneCliente = result["Telefone"]
-            };
+                };
             }
-           
+
             return cliente;
         }
         public Cliente ObterClienteCompleto(int id, int est)
@@ -1379,7 +1379,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaTecnicos()
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = "+1+" order by NomeCompleto;";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 1 + " order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -1522,7 +1522,7 @@ namespace FT_Management.Models
         public List<CalendarioEvent> ConverterMarcacoesEventos(List<Marcacao> Marcacoes)
         {
             List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
-            
+
             DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
             dataMarcacao.AddMinutes(5);
             foreach (var item in Marcacoes)
@@ -1533,12 +1533,12 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarioEvent
                 {
                     id = item.IdMarcacao,
-                    title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - "  + item.Cliente.NomeCliente,
+                    title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
                     start = dataMarcacao,
                     end = dataMarcacao.AddMinutes(19),
                     IdTecnico = item.IdTecnico,
                     //color = ("#33FF77"),
-                    url = "Pedido/?idMarcacao="+item.IdMarcacao+"&IdTecnico=" + (item.IdTecnico),
+                    url = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.IdTecnico),
                     color = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario)
                 });
                 dataMarcacao = dataMarcacao.AddMinutes(20);
@@ -1571,7 +1571,7 @@ namespace FT_Management.Models
 
             foreach (var item in Feriados)
             {
-               
+
                 LstEventos.Add(new CalendarioEvent
                 {
                     id = item.Id,
@@ -1759,7 +1759,7 @@ namespace FT_Management.Models
                 y += 1;
                 foreach (var item in LstUtilizadores)
                 {
-                    if (LstFerias.Where(f => f.IdUtilizador == item.Id && (f.DataInicio.Month == i+1 || f.DataFim.Month == i+1)).Count() > 0)
+                    if (LstFerias.Where(f => f.IdUtilizador == item.Id && (f.DataInicio.Month == i + 1 || f.DataFim.Month == i + 1)).Count() > 0)
                     {
                         workSheet.Cells[y, x].Value = item.NomeCompleto;
                         workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
@@ -1776,8 +1776,9 @@ namespace FT_Management.Models
                                 count += 1;
                             }
 
-                            if (DataAtual.DayOfWeek == DayOfWeek.Saturday || DataAtual.DayOfWeek == DayOfWeek.Sunday) {
-                                workSheet.Cells[y, j + 1].Value = DataAtual.ToString("ddd").Substring(0,1).ToUpper();
+                            if (DataAtual.DayOfWeek == DayOfWeek.Saturday || DataAtual.DayOfWeek == DayOfWeek.Sunday)
+                            {
+                                workSheet.Cells[y, j + 1].Value = DataAtual.ToString("ddd").Substring(0, 1).ToUpper();
                                 workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                 workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(Color.Gray);
                             }
@@ -1834,7 +1835,7 @@ namespace FT_Management.Models
                 workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
 
                 x += 1;
-                workSheet.Cells[y, x].Value = feriasUtilizador.DiasDisponiveis - feriasUtilizador.DiasMarcados ;
+                workSheet.Cells[y, x].Value = feriasUtilizador.DiasDisponiveis - feriasUtilizador.DiasMarcados;
                 workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
                 x += 1;
                 workSheet.Cells[y, x].Value = feriasUtilizador.DiasDisponiveis;
@@ -1852,7 +1853,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT ultimamodificacao FROM sys_tabelas where nometabela = '"+tabela+"'; ");
+                using var result = db.Query("SELECT ultimamodificacao FROM sys_tabelas where nometabela = '" + tabela + "'; ");
                 while (result.Read())
                 {
                     res = result[0];
@@ -1864,7 +1865,7 @@ namespace FT_Management.Models
         }
         public void AtualizarUltimaModificacao(string tabela)
         {
-            string sql = "UPDATE sys_tabelas set ultimamodificacao='"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+"' where nometabela='"+tabela+"'";
+            string sql = "UPDATE sys_tabelas set ultimamodificacao='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "' where nometabela='" + tabela + "'";
 
             Database db = ConnectionString;
 
@@ -1895,7 +1896,7 @@ namespace FT_Management.Models
 
                 foreach (var intervencao in LstIntervencoes.GetRange(j, max))
                 {
-                    sql += ("('" + intervencao.IdIntervencao + "', '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '"+intervencao.RelatorioServico.Replace("\r\n", "\n").Replace("'", "")+"', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "'), \r\n");
+                    sql += ("('" + intervencao.IdIntervencao + "', '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '" + intervencao.RelatorioServico.Replace("\r\n", "\n").Replace("'", "") + "', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
@@ -2002,7 +2003,7 @@ namespace FT_Management.Models
         {
             if (LstFornecedor.Count() > 0)
             {
-              
+
                 string sql = "INSERT INTO dat_fornecedores (IdFornecedor,NomeFornecedor, MoradaFornecedor, ContactoFornecedor, ReferenciaFornecedor, EmailFornecedor, PessoaContactoFornecedor, Obs) VALUES ";
 
                 foreach (var fornecedor in LstFornecedor)
@@ -2018,7 +2019,7 @@ namespace FT_Management.Models
                 db.Execute(sql);
                 db.Connection.Close();
 
-        }
+            }
         }
         public void CriarEquipamentos(List<Equipamento> LstEquipamento)
         {
@@ -2105,7 +2106,7 @@ namespace FT_Management.Models
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='"+marcacao.EstadoMarcacaoDesc+"' LIMIT 1), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "', '"+marcacao.DataCriacao.ToString("yy-MM-dd HH:mm:ss") + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='" + marcacao.EstadoMarcacaoDesc + "' LIMIT 1), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "', '" + marcacao.DataCriacao.ToString("yy-MM-dd HH:mm:ss") + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
@@ -2129,8 +2130,8 @@ namespace FT_Management.Models
 
             using (Database db = ConnectionString)
             {
-                using var resultQuery = db.QueryValue("select DataUltimoAcesso from dat_acessos_utilizador where IdUtilizador=(SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + IdPHC + "));");
-                res = resultQuery;
+                using var resultQuery = db.QueryValue("select DataUltimoAcesso from dat_acessos_utilizador where IdUtilizador=(SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + IdPHC + " LIMIT 1);");
+                res = resultQuery.HasData() ? DateTime.Parse(resultQuery) : new DateTime();
             }
 
             return res;
@@ -2146,9 +2147,9 @@ namespace FT_Management.Models
 
                 foreach (Acesso acesso in LstAcessos.OrderBy(a => a.Data))
                 {
-                    sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '"+acesso.Temperatura+"'),\r\n";
-                    
-                    if (acesso.Data> ObterUltimoAcesso(acesso.IdUtilizador)) sql2 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + "),\r\n";
+                    sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "'),\r\n";
+
+                    if (acesso.Data > ObterUltimoAcesso(acesso.IdUtilizador)) sql2 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + "),\r\n";
                 }
 
                 sql1 = sql1.Remove(sql1.Count() - 3);
@@ -2183,7 +2184,7 @@ namespace FT_Management.Models
 
                 foreach (var ferias in LstFerias.GetRange(j, max))
                 {
-                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', "+ferias.ValidadoPor+"), \r\n");
+                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', " + ferias.ValidadoPor + "), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
@@ -2229,16 +2230,16 @@ namespace FT_Management.Models
         }
         public void CriarFeriasUtilizador(int IdUtilizador, string Ano, int DiasDireito)
         {
-            string sqlDelete = "Delete from dat_ferias_utilizador where IdUtilizador = '"+IdUtilizador+"' AND Ano='"+Ano+"';";
+            string sqlDelete = "Delete from dat_ferias_utilizador where IdUtilizador = '" + IdUtilizador + "' AND Ano='" + Ano + "';";
 
             string sqlInsert = "INSERT INTO dat_ferias_utilizador (IdUtilizador,Ano,DiasDireito) VALUES ";
             sqlInsert += ("('" + IdUtilizador + "', '" + Ano + "', '" + DiasDireito + "');");
 
-                Database db = ConnectionString;
+            Database db = ConnectionString;
 
             db.Execute(sqlDelete);
             db.Execute(sqlInsert);
-                db.Connection.Close();
+            db.Connection.Close();
         }
         public void CriarVisitas(List<Visita> LstVisita)
         {
@@ -2397,7 +2398,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_clientes (IdCliente, IdLoja, NomeCliente, PessoaContactoCliente, MoradaCliente, EmailCliente, NumeroContribuinteCliente) VALUES ";
 
-            sql += ("('" + cliente.IdCliente + "','" + cliente.IdLoja + "', '" + cliente.NomeCliente.Replace("'", "''")  + "', '" + cliente.PessoaContatoCliente.Replace("'", "''")  + "', '" + cliente.MoradaCliente.Replace("'", "''")  + "', '" + cliente.EmailCliente.Replace("'", "''")  + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''")  + "') \r\n");
+            sql += ("('" + cliente.IdCliente + "','" + cliente.IdLoja + "', '" + cliente.NomeCliente.Replace("'", "''") + "', '" + cliente.PessoaContatoCliente.Replace("'", "''") + "', '" + cliente.MoradaCliente.Replace("'", "''") + "', '" + cliente.EmailCliente.Replace("'", "''") + "', '" + cliente.NumeroContribuinteCliente.Replace("'", "''") + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente);";
 
@@ -2436,7 +2437,7 @@ namespace FT_Management.Models
             CriarEquipamentos(LstEquipamentos);
 
             return equipamento.IdEquipamento;
-                       
+
         }
         public int NovaIntervencao(Intervencao intervencao)
         {
@@ -2444,7 +2445,7 @@ namespace FT_Management.Models
 
             string sql = "INSERT INTO dat_intervencoes_folha_obra (IdIntervencao, IdFolhaObra,IdTecnico, NomeTecnico, DataServico, HoraInicio, HoraFim) VALUES ";
 
-            sql += ("('" + intervencao.IdIntervencao + "',  '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '" + intervencao.NomeTecnico.Replace("'", "''")  + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "') \r\n");
+            sql += ("('" + intervencao.IdIntervencao + "',  '" + intervencao.IdFolhaObra + "', '" + intervencao.IdTecnico + "', '" + intervencao.NomeTecnico.Replace("'", "''") + "', '" + intervencao.DataServiço.ToString("yy-MM-dd") + "', '" + intervencao.HoraInicio.ToString("HH:mm") + "', '" + intervencao.HoraFim.ToString("HH:mm") + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE IdTecnico = VALUES(IdTecnico), NomeTecnico = VALUES(NomeTecnico), DataServico = VALUES(DataServico), HoraInicio = VALUES(HoraInicio), HoraFim = VALUES(HoraFim);";
 
@@ -2461,7 +2462,7 @@ namespace FT_Management.Models
         {
             string sql = "INSERT INTO dat_produto_intervencao (RefProduto, Designacao,Quantidade, IdFolhaObra, TipoUn) VALUES ";
 
-            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''")  + "', '" + produto.Stock_Fisico + "', '" + IdFolhaObra + "', '"+ produto.TipoUn +"') \r\n");
+            sql += ("('" + produto.Ref_Produto + "',  '" + produto.Designacao_Produto.Replace("'", "''") + "', '" + produto.Stock_Fisico + "', '" + IdFolhaObra + "', '" + produto.TipoUn + "') \r\n");
 
             sql += " ON DUPLICATE KEY UPDATE Designacao = VALUES(Designacao), Quantidade = VALUES(Quantidade), TipoUn = VALUES(TipoUn);";
 
@@ -2494,7 +2495,7 @@ namespace FT_Management.Models
 
         public void ApagarFerias(int Id)
         {
-            string sql = "DELETE FROM dat_ferias where Id="+Id+";";
+            string sql = "DELETE FROM dat_ferias where Id=" + Id + ";";
 
             using Database db = ConnectionString;
             db.Execute(sql);
@@ -3029,7 +3030,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_controlo_viatura where matricula_viatura = '"+Matricula+"' order by data_inicio DESC LIMIT 1;");
+                using var result = db.Query("SELECT * FROM dat_controlo_viatura where matricula_viatura = '" + Matricula + "' order by data_inicio DESC LIMIT 1;");
                 while (result.Read())
                 {
                     Viatura = (new ControloViatura()
@@ -3044,8 +3045,8 @@ namespace FT_Management.Models
                         Notas = result["notas_viatura"]
                     });
                 }
-               
-             }
+
+            }
             return Viatura;
         }
         public void LevantamentoViatura(ControloViatura viatura)
@@ -3059,7 +3060,7 @@ namespace FT_Management.Models
         }
         public void DevolverViatura(ControloViatura viatura)
         {
-            string sql = "UPDATE dat_controlo_viatura SET data_fim = '"+ viatura.DataFim.ToString("yyyy-MM-dd HH:mm:ss") + "', kms_finais= '"+viatura.KmsFinais+"', devolvida_viatura=1 WHERE matricula_viatura='"+viatura.MatriculaViatura+"' AND devolvida_viatura=0;";
+            string sql = "UPDATE dat_controlo_viatura SET data_fim = '" + viatura.DataFim.ToString("yyyy-MM-dd HH:mm:ss") + "', kms_finais= '" + viatura.KmsFinais + "', devolvida_viatura=1 WHERE matricula_viatura='" + viatura.MatriculaViatura + "' AND devolvida_viatura=0;";
 
             using Database db = ConnectionString;
             db.Execute(sql);
