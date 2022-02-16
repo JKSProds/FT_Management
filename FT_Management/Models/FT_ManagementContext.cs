@@ -1864,7 +1864,7 @@ namespace FT_Management.Models
         }
         public void AtualizarUltimaModificacao(string tabela)
         {
-            string sql = "UPDATE sys_tabelas set ultimamodificacao='"+DateTime.Now.ToString("yyyy-MM-dd 00:00:00")+"' where nometabela='"+tabela+"'";
+            string sql = "UPDATE sys_tabelas set ultimamodificacao='"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")+"' where nometabela='"+tabela+"'";
 
             Database db = ConnectionString;
 
@@ -2121,71 +2121,39 @@ namespace FT_Management.Models
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
-        
-        //OLD - Conexao a sistema facial de login
-        public void CriarAcessos()
+
+        public void CriarAcesso(List<Acesso> LstAcessos)
         {
-            List<Acesso> LstAcesso = new List<Acesso>();
-            int max = 1000;
-            int j = 0;
-            bool entrada = true;
-
-            try
+            if (LstAcessos.Count > 0)
             {
-                using Database db_SDP = "server=192.168.102.201;uid=sdp2000;password=sdp2000;port=3358;database=sdp2000;SslMode=none;Connect Timeout=5";
-                string sqlQuery = "SELECT * FROM t_snap where exception_type is null order by user_code, create_time;";
+                string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura) VALUES ";
+                string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso) VALUES";
 
-                using (var result = db_SDP.Query(sqlQuery))
+                foreach (Acesso acesso in LstAcessos)
                 {
-                    while (result.Read())
-                    {
-                        if (LstAcesso.Count > 0)
-                        {
-                            if (LstAcesso.Last().IdUtilizador != result["user_code"]) entrada = true;
-                        }
-
-                        LstAcesso.Add(new Acesso()
-                        {
-                            Id = result["s_id"],
-                            IdUtilizador = result["user_code"],
-                            Temperatura = result["temperature"],
-                            Data = result["create_time"],
-                            Tipo = entrada ? 1 : 2
-                        });
-                        entrada = !entrada;
-                    }
-
+                    sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '"+acesso.Temperatura+"'),\r\n";
+                    sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + "),\r\n";
                 }
 
-                for (int i = 0; j < LstAcesso.Count; i++)
+                sql1 = sql1.Remove(sql1.Count() - 3);
+                sql1 += ";";
+                sql2 = sql2.Remove(sql2.Count() - 3);
+                sql2 += " ON DUPLICATE KEY UPDATE DataUltimoAcesso = VALUES(DataUltimoAcesso), TipoUltimoAcesso = VALUES(TipoUltimoAcesso);";
+
+                try
                 {
-                    if ((j + max) > LstAcesso.Count) max = (LstAcesso.Count - j);
+                    Database db = ConnectionString;
 
-                    string sql = "INSERT INTO dat_acessos (Id,IdUtilizador,DataHoraAcesso,TipoAcesso,Temperatura) VALUES ";
-
-                    foreach (var acesso in LstAcesso.GetRange(j, max))
-                    {
-                        sql += ("('" + acesso.Id + "', '" + acesso.IdUtilizador + "', '" + acesso.Data.ToString("yy-MM-dd HH:mm:ss") + "', '" + acesso.Tipo + "', '" + acesso.Temperatura + "'), \r\n");
-                        i++;
-                    }
-                    sql = sql.Remove(sql.Count() - 4);
-
-                    sql += " ON DUPLICATE KEY UPDATE IdUtilizador=VALUES(IdUtilizador), DataHoraAcesso = VALUES(DataHoraAcesso), TipoAcesso = VALUES(TipoAcesso), Temperatura = VALUES(Temperatura);";
-
-                    using Database db = ConnectionString;
-                    db.Execute(sql);
+                    db.Execute(sql1);
+                    db.Execute(sql2);
                     db.Connection.Close();
-
-                    j += max;
-                    //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
                 }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                catch (Exception)
+                {
+                }
             }
         }
+
 
         public void CriarFerias(List<Ferias> LstFerias)
         {

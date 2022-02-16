@@ -22,12 +22,13 @@ namespace FT_Management.Models
             try
             {
 
-            #if DEBUG == false
+#if DEBUG == false
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
                 ConnectedPHC = true;
                 if (FT_ManagementContext.SyncPHCOnStartup()) { 
+                    FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));|
                     FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
                     FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
                     FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
@@ -52,7 +53,7 @@ namespace FT_Management.Models
 
         public void AtualizarTudo()
         {
-          
+            FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
             FT_ManagementContext.CriarArtigos(ObterProdutos(FT_ManagementContext.ObterUltimaModificacaoPHC("sa")));
             FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
             FT_ManagementContext.CriarClientes(ObterClientes(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
@@ -61,6 +62,10 @@ namespace FT_Management.Models
             FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(FT_ManagementContext.ObterUltimaModificacaoPHC("pa")));
             FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(FT_ManagementContext.ObterUltimaModificacaoPHC("mh")));
             FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(FT_ManagementContext.ObterUltimaModificacaoPHC("bi")));
+        }
+        public void AtualizarAcessos()
+        {
+            FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
         }
         public void AtualizarArtigos()
         {
@@ -625,6 +630,50 @@ namespace FT_Management.Models
             }
 
             return LstEstadoMarcacao;
+        }
+
+        public List<Acesso> ObterAcessos(DateTime dataUltimaLeitura)
+        {
+
+            List<Acesso> LstAcessos = new List<Acesso>();
+
+            try
+            {
+                if (ConnectedPHC)
+                {
+                    SqlConnection conn = new SqlConnection(ConnectionString);
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand("select cm, acao, data, hora, CONCAT('KM: ', km, ' | Obs:', obs) as obs from u_dias join cm4 on u_dias.tecnico = cm4.nome where u_dias.usrdata >= '" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' ; ", conn);
+                    command.CommandTimeout = TIMEOUT;
+                    using (SqlDataReader result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            LstAcessos.Add(new Acesso()
+                            {
+                                IdUtilizador = int.Parse(result["cm"].ToString()),
+                                Tipo = result["acao"].ToString().Contains("Inicio") ? 1 : 2,
+                                Data = DateTime.Parse(DateTime.Parse(result["data"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["hora"].ToString().Substring(0,2) + ":" + result["hora"].ToString().Substring(2, 2) + ":" + result["hora"].ToString().Substring(4, 2)).ToLongTimeString()),
+                                Temperatura = result["obs"].ToString()
+                            });
+                        }
+                    }
+
+                    conn.Close();
+
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_dias");
+
+                    Console.WriteLine("Acessos atualizados com sucesso! (PHC -> MYSQL)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os Acessos do PHC");
+            }
+
+            return LstAcessos;
         }
     }
 }
