@@ -2122,6 +2122,21 @@ namespace FT_Management.Models
             }
         }
 
+        public DateTime ObterUltimoAcesso(int IdPHC)
+        {
+
+            DateTime res = new DateTime();
+
+            using (Database db = ConnectionString)
+            {
+                using var resultQuery = db.QueryValue("select DataUltimoAcesso from dat_acessos_utilizador where IdUtilizador=(SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + IdPHC + "));");
+                res = resultQuery;
+            }
+
+            return res;
+
+        }
+
         public void CriarAcesso(List<Acesso> LstAcessos)
         {
             if (LstAcessos.Count > 0)
@@ -2132,7 +2147,8 @@ namespace FT_Management.Models
                 foreach (Acesso acesso in LstAcessos.OrderBy(a => a.Data))
                 {
                     sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '"+acesso.Temperatura+"'),\r\n";
-                    sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + "),\r\n";
+                    
+                    if (acesso.Data> ObterUltimoAcesso(acesso.IdUtilizador)) sql2 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + "),\r\n";
                 }
 
                 sql1 = sql1.Remove(sql1.Count() - 3);
