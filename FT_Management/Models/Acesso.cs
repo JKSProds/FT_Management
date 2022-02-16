@@ -13,7 +13,7 @@ namespace FT_Management.Models
         public DateTime Data { get; set; }
         public int Tipo { get; set; }
         public bool App { get; set; }
-        public string TipoAcesso { get { return App ? (Tipo == 1 ? "Entrada" : "Saída") : (Tipo == 1 ? "Início de Dia" : "Fim de Dia"); } }
+        public string TipoAcesso { get { return !App ? (Tipo == 1 ? "Entrada" : "Saída") : (Tipo == 1 ? "Início de Dia" : "Fim de Dia"); } }
         public string Temperatura { get; set; }
     }
 }
