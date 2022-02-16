@@ -452,6 +452,20 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
+
+        public bool VerificarFeriasUtilizador(int IdUtilizador, DateTime Data)
+        {
+            bool res = false;
+
+            using (Database db = ConnectionString)
+            {
+                using var resultQuery = db.QueryValue("select count(*) from dat_ferias where DataInicio<='"+Data.ToString("yyyy-MM-dd")+"' AND DataFim >= '"+ Data.ToString("yyyy-MM-dd") + "' AND IdUtilizador="+IdUtilizador+";");
+                res = (resultQuery > 0);
+            }
+
+            return res;
+        }
+
        public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador, string Ano)
         {
             FeriasUtilizador feriasUtilizador = new FeriasUtilizador();
@@ -644,7 +658,7 @@ namespace FT_Management.Models
                         Utilizador = ObterUtilizador(result["IdUtilizador"]),
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
-                        Tipo = result["TipoAcesso"]
+                        Tipo = result["Tipo"]
                     });
                 }
             }
@@ -1675,21 +1689,33 @@ namespace FT_Management.Models
                     foreach (Utilizador utilizador in LstUtilizadores)
                     {
                         int j = y;
-                        if (LstAcessos.Where(u => u.Data.Day == i).Count() == 0)
+                        List<Acesso> Lst = LstAcessos.Where(u => u.Data.Day == i).Where(u => u.Utilizador.Id == utilizador.Id).ToList();
+                        DateTime dataAtual = DateTime.Parse(i + "-" + Data.ToString("MM-yyyy"));
+                        if (VerificarFeriasUtilizador(utilizador.Id, dataAtual))
                         {
-                            workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
+                            workSheet.Cells[j, i + 1].Value = "FÉRIAS";
                             workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                            workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-                            workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
-                            workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                            workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                            workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
                         }
                         else
+                        if (!(dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday))
                         {
-                            foreach (var acesso in LstAcessos.Where(u => u.Utilizador.Id == utilizador.Id))
+                            if (Lst.Count() == 0)
                             {
-                                workSheet.Cells[j, i + 1].Value = acesso.TipoAcesso.Substring(0, 1) + ": " + acesso.Data.ToShortTimeString();
-                                j++;
+                                workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
+                                workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
+                                workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                            }
+                            else
+                            {
+                                foreach (var acesso in Lst)
+                                {
+                                    workSheet.Cells[j, i + 1].Value = acesso.TipoAcesso.Substring(0, 1) + ": " + acesso.Data.ToShortTimeString();
+                                    j++;
+                                }
                             }
                         }
                         y += 4;
