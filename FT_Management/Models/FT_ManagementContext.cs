@@ -2129,7 +2129,7 @@ namespace FT_Management.Models
                 string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura) VALUES ";
                 string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso) VALUES";
 
-                foreach (Acesso acesso in LstAcessos)
+                foreach (Acesso acesso in LstAcessos.OrderBy(a => a.Data))
                 {
                     sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '"+acesso.Temperatura+"'),\r\n";
                     sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + "),\r\n";
