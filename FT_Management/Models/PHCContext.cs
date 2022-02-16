@@ -28,7 +28,7 @@ namespace FT_Management.Models
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
                 ConnectedPHC = true;
                 if (FT_ManagementContext.SyncPHCOnStartup()) { 
-                    FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));|
+                    FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
                     FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
                     FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
                     FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
@@ -668,7 +668,7 @@ namespace FT_Management.Models
                     Console.WriteLine("Acessos atualizados com sucesso! (PHC -> MYSQL)");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine("Não foi possivel ler os Acessos do PHC");
             }
