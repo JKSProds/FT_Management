@@ -1865,9 +1865,9 @@ namespace FT_Management.Models
 
             return res;
         }
-        public void AtualizarUltimaModificacao(string tabela)
+        public void AtualizarUltimaModificacao(string tabela, string data)
         {
-            string sql = "UPDATE sys_tabelas set ultimamodificacao='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "' where nometabela='" + tabela + "'";
+            string sql = "UPDATE sys_tabelas set ultimamodificacao='" + data + "' where nometabela='" + tabela + "'";
 
             Database db = ConnectionString;
 

@@ -134,7 +134,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("sa");
+                    FT_ManagementContext.AtualizarUltimaModificacao("sa", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Stock's atualizados com sucesso! (PHC -> MYSQL)");
                 }
@@ -184,7 +184,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("cl");
+                    FT_ManagementContext.AtualizarUltimaModificacao("cl", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Clientes e Lojas atualizadas com sucesso! (PHC -> MYSQL)");
                 }
@@ -225,7 +225,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("cl");
+                    FT_ManagementContext.AtualizarUltimaModificacao("cl", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Vendedores atualizados com sucesso! (PHC -> MYSQL)");
 
@@ -273,7 +273,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("fl");
+                    FT_ManagementContext.AtualizarUltimaModificacao("fl", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Fornecedores atualizados com sucesso! (PHC -> MYSQL)");
                 }
@@ -322,7 +322,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("ma");
+                    FT_ManagementContext.AtualizarUltimaModificacao("ma", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Equipamentos atualizados com sucesso! (PHC -> MYSQL)");
                 }
@@ -383,7 +383,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("pa");
+                    FT_ManagementContext.AtualizarUltimaModificacao("pa", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("PAT's atualizados com sucesso! (PHC -> MYSQL)");
                 }
@@ -436,7 +436,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("mh");
+                    FT_ManagementContext.AtualizarUltimaModificacao("mh", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Intervenções atualizadas com sucesso! (PHC -> MYSQL)");
                 }
@@ -481,7 +481,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("bi");
+                    FT_ManagementContext.AtualizarUltimaModificacao("bi", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Produtos de PAT's atualizados com sucesso! (PHC -> MYSQL)");
                 }
@@ -532,7 +532,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao");
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
                 }
@@ -576,7 +576,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_mtecnicos");
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_mtecnicos", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Tecnicos por marcacao atualizadas com sucesso! (PHC -> MYSQL)");
                 }
@@ -619,7 +619,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_estados");
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_estados", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Estados marcação atualizados com sucesso! (PHC -> MYSQL)");
                 }
@@ -663,7 +663,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_dias");
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_dias", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     Console.WriteLine("Acessos atualizados com sucesso! (PHC -> MYSQL)");
                 }
