@@ -2590,7 +2590,7 @@ namespace FT_Management.Models
         {
 
             int x = 0;
-            int y = 30;
+            int y = 0;
             int width = 1024;
             int height = 641;
 
@@ -2617,7 +2617,7 @@ namespace FT_Management.Models
 
                 if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
 
-                //y += 65;
+                y += 30;
                 gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
 
                 x = 10;
