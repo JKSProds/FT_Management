@@ -2560,6 +2560,7 @@ namespace FT_Management.Models
                 gr.CompositingQuality = CompositingQuality.HighQuality;
                 gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
+
                 if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 85, 50); }
 
                 y += 10;
@@ -2617,6 +2618,7 @@ namespace FT_Management.Models
                 gr.CompositingQuality = CompositingQuality.HighQuality;
                 gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
+                x = 50;
                 if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 280, 165); }
 
                 y += 30;
@@ -2640,7 +2642,7 @@ namespace FT_Management.Models
                 gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
 
                 x += 40;
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 35), format);
 
                 if (produto.Pos_Stock.Length > 0)
                 {
