@@ -240,6 +240,22 @@ namespace FT_Management.Models
                 };
             }
             db.Connection.Close();
+
+            string img = "\\\\192.168.100.251\\phc\\Imagens\\EQUIPAMENTOS\\" + produto.Ref_Produto + ".jpg";
+            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
+            using (Image image = Image.FromFile(img))
+            {
+                using (MemoryStream m = new MemoryStream())
+                {
+                    image.Save(m, image.RawFormat);
+                    byte[] imageBytes = m.ToArray();
+
+                    // Convert byte[] to Base64 String
+                    string base64String = Convert.ToBase64String(imageBytes);
+                    produto.ImgProduto = base64String;
+                }
+            }
+
             return produto;
         }
         public List<Armazem> ObterListaArmazens()

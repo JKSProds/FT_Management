@@ -28,5 +28,6 @@ namespace FT_Management.Models
         [DataType(DataType.MultilineText)]
         public string Obs_Produto { get; set; }
         public string TipoUn { get; set; }
+        public string ImgProduto { get; set; }
     }
 }
