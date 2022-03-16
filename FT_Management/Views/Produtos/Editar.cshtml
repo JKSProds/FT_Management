@@ -18,7 +18,7 @@
 
         <form asp-action="Editar">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="container">
+            <div class="container d-none d-lg-block">
                 <div class="row col-12">
                     <img class="col-4" src="data:image/jpeg;base64,@Model.ImgProduto" style="width:auto; height:auto;object-fit:contain;" />
                     <div class="col-8 row">
@@ -65,13 +65,13 @@
                             </select>
                             <input type="hidden" asp-for="Armazem_ID" class="form-control" />
                         </div>
-                        </div>
-                        <div class="w-100"></div>
-                        <div class="form-group" style="width: 100%">
-                            <label asp-for="Obs_Produto" class="control-label"></label>
-                            @Html.EditorFor(model => model.Obs_Produto, new { htmlAttributes = new { @class = "form-control", @rows = "8" } })
-                            <span asp-validation-for="Obs_Produto" class="text-danger"></span>
-                        </div>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="form-group" style="width: 100%">
+                        <label asp-for="Obs_Produto" class="control-label"></label>
+                        @Html.EditorFor(model => model.Obs_Produto, new { htmlAttributes = new { @class = "form-control", @rows = "8" } })
+                        <span asp-validation-for="Obs_Produto" class="text-danger"></span>
+                    </div>
                     <div class="form-group" style="width: 100%">
                         <button type="submit" class="btn btn-primary btn-lg btn-block">
                             <i class="fas fa-save"></i> Guardar Alterações
@@ -79,7 +79,65 @@
                     </div>
                 </div>
             </div>
-
+            <div class="container d-lg-none">
+                <div class="row col-12">
+                    <img class="col-12" src="data:image/jpeg;base64,@Model.ImgProduto" style="width:auto; height:auto;object-fit:contain;" />
+                    <div class="form-group col-4">
+                        <label asp-for="Ref_Produto" class="control-label"></label>
+                        <input asp-for="Ref_Produto" class="form-control" readonly />
+                        <span asp-validation-for="Ref_Produto" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-8">
+                        <label asp-for="Designacao_Produto" class="control-label"></label>
+                        <input asp-for="Designacao_Produto" class="form-control" />
+                        <span asp-validation-for="Designacao_Produto" class="text-danger"></span>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_PHC" class="control-label"></label>
+                        <input asp-for="Stock_PHC" class="form-control" readonly />
+                        <span asp-validation-for="Stock_PHC" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_Rec" class="control-label"></label>
+                        <input asp-for="Stock_Rec" class="form-control" readonly />
+                        <span asp-validation-for="Stock_Rec" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_Res" class="control-label"></label>
+                        <input asp-for="Stock_Res" class="form-control" readonly />
+                        <span asp-validation-for="Stock_Res" class="text-danger"></span>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_Fisico" class="control-label"></label>
+                        <input asp-for="Stock_Fisico" class="form-control" />
+                        <span asp-validation-for="Stock_Fisico" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Pos_Stock" class="control-label"></label>
+                        <input asp-for="Pos_Stock" class="form-control" readonly />
+                        <span asp-validation-for="Pos_Stock" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label class="control-label">Armazém</label>
+                        <select class="form-control" id="lstarmazens" asp-items="ViewBag.Armazens" disabled>
+                        </select>
+                        <input type="hidden" asp-for="Armazem_ID" class="form-control" />
+                    </div>
+                </div>
+                    <div class="w-100"></div>
+                    <div class="form-group" style="width: 100%">
+                        <label asp-for="Obs_Produto" class="control-label"></label>
+                        @Html.EditorFor(model => model.Obs_Produto, new { htmlAttributes = new { @class = "form-control", @rows = "8" } })
+                        <span asp-validation-for="Obs_Produto" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" style="width: 100%">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fas fa-save"></i> Guardar Alterações
+                        </button>
+                    </div>
+                </div>
         </form>
     </div>
     <div class="tab-pane fade show " id="v-pills-pecas" role="tabpanel" aria-labelledby="v-pills-pecas-tab">
