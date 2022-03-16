@@ -1,10 +1,10 @@
 ﻿@model FT_Management.Models.Produto
 
 @{
-    ViewData["Title"] = "Editar";
+    ViewData["Title"] = "Produto - " + Model.Ref_Produto;
 }
 
-<h1>Editar Referência</h1>
+<h1>@Model.Designacao_Produto</h1>
 
 <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
     <a class="nav-item nav-link active" id="v-pills-editar-tab" data-toggle="pill" href="#v-pills-editar" role="tab" aria-controls="v-pills-editar" aria-selected="true">Produto</a>

@@ -1,11 +1,11 @@
 ﻿@model FT_Management.Models.Visita
 
 @{
-    ViewData["Title"] = "Editar Visita";
+    ViewData["Title"] = "Visita - " + Model.Cliente.NomeCliente;
 }
 
 
-<h1>Editar Visita</h1>
+<h1>@Model.Cliente.NomeCliente</h1>
 <hr />
 <form asp-action="Editar" asp-route-returnurl="@ViewData["ReturnUrl"]">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
