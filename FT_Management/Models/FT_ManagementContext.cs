@@ -241,7 +241,7 @@ namespace FT_Management.Models
             }
             db.Connection.Close();
 
-            string img = "\\\\192.168.100.251\\phc\\Imagens\\EQUIPAMENTOS\\" + produto.Ref_Produto + ".jpg";
+            string img = "/server/Imagens/EQUIPAMENTOS/" + produto.Ref_Produto + ".jpg";
             if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
             using (Image image = Image.FromFile(img))
             {
