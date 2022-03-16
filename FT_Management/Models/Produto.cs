@@ -14,7 +14,7 @@ namespace FT_Management.Models
         public string Designacao_Produto { get; set; }
         [Display(Name = "Stock Fisico")]
         public double Stock_Fisico { get; set; }
-        [Display(Name = "PHC")]
+        [Display(Name = "Stock")]
         public double Stock_PHC { get; set; }
         [Display(Name = "Reservado")]
         public double Stock_Res { get; set; }
@@ -23,9 +23,9 @@ namespace FT_Management.Models
         public int Armazem_ID { get; set; }
         [Display(Name = "Localização")]
         public string Pos_Stock { get; set; }
+        public bool ModificadoStock { get; set; }
         [Display(Name = "Observações")]
         [DataType(DataType.MultilineText)]
-        public bool ModificadoStock { get; set; }
         public string Obs_Produto { get; set; }
         public string TipoUn { get; set; }
     }

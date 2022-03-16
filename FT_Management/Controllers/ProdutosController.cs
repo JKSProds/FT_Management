@@ -43,6 +43,10 @@ namespace FT_Management.Controllers
 
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", Armazem);
 
+            if (Armazem>9)
+            {
+                return View(context.ObterListaProdutos(Ref, Desig, Armazem).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
+            }
             return View(context.ObterListaProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
 
         }

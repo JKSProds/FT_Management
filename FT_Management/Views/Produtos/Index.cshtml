@@ -81,7 +81,8 @@
 }
 else
 {
-    <table class="table table-hover" id="tblProdutos">
+<div class="d-none d-lg-block ">
+    <table class="table table-sm table-hover " id="tblProdutos">
         <thead>
             <tr>
                 <th>
@@ -90,19 +91,19 @@ else
                 <th>
                     @Html.DisplayNameFor(model => model.Designacao_Produto)
                 </th>
-                <th class="d-none d-lg-block ">
+                <th>
                     @Html.DisplayNameFor(model => model.Stock_Fisico)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Stock_PHC)
                 </th>
-                <th class="d-none d-lg-block ">
+                <th>
                     @Html.DisplayNameFor(model => model.Stock_Rec)
                 </th>
-                <th class="d-none d-lg-block ">
+                <th>
                     @Html.DisplayNameFor(model => model.Stock_Res)
                 </th>
-                <th class="d-none d-lg-block ">
+                <th>
                     <a id="btnEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
                     <a id="btnCloseEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
                 </th>
@@ -111,39 +112,75 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-            <tr>
-                <td class="Ref_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
-                    <span>@item.Ref_Produto</span>
-                </td>
-                <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
-                    <span>@item.Designacao_Produto</span>
-                </td>
-                <td class="Stock_Fisico d-none d-lg-block">
-                    <span onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >@item.Stock_Fisico</span>
-                    <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
-                </td>
-                <td class="Stock_PHC" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
-                    <span>@item.Stock_PHC</span>
-                </td>
-                <td class="Stock_Rec d-none d-lg-block" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
-                    <span>@item.Stock_Rec</span>
-                </td>
-                <td class="Stock_Res d-none d-lg-block" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')" >
-                    <span>@item.Stock_Res</span>
-                </td>
-                <td class="d-none d-lg-block " style="min-width: 240px">
-                    <div class="btn-group">
-                        <a class="update btn btn-outline-primary btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
-                        @*<a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>*@
-                    </div>
-                    <a class="btn btn-outline-dark btn-lg printqr" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>
-                    <a class="btn btn-outline-dark printpeq" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>
+                <tr>
+                    <td class="Ref_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@item.Ref_Produto</span>
+                    </td>
+                    <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@item.Designacao_Produto</span>
+                    </td>
+                    <td class="Stock_Fisico">
+                        <span onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">@item.Stock_Fisico</span>
+                        <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
+                    </td>
+                    <td class="Stock_PHC" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@item.Stock_PHC</span>
+                    </td>
+                    <td class="Stock_Rec" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@item.Stock_Rec</span>
+                    </td>
+                    <td class="Stock_Res" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@item.Stock_Res</span>
+                    </td>
+                    <td style="min-width: 240px">
+                        <div class="btn-group">
+                            <a class="update btn btn-outline-primary btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
+                            @*<a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>*@
+                        </div>
+                        <a class="btn btn-outline-dark btn-lg printqr" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>
+                        <a class="btn btn-outline-dark printpeq" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>
 
-                </td>
-            </tr>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
+</div>
+<div class="d-lg-none">
+    <table class="table table-sm table-hover " id="tblProdutos">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ref_Produto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Designacao_Produto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Stock_PHC)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="Ref_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@item.Ref_Produto</span>
+                    </td>
+                    <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@item.Designacao_Produto</span>
+                    </td>
+                   
+                    <td class="Stock_PHC" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <span>@(item.Stock_PHC - item.Stock_Res + item.Stock_Rec)</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
     @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Produtos", new { page, Ref = @ViewData["Ref"], Desig = @ViewData["Desig"], Armazem = @ViewData["Armazem"] }), Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast)
 
 }

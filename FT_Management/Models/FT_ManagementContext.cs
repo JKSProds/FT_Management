@@ -295,7 +295,6 @@ namespace FT_Management.Models
             List<Produto> LstProdutos = new List<Produto>();
 
             Database db = ConnectionString;
-
             using (var result = db.Query("SELECT * FROM dat_produtos Where Armazem_Id=" + ArmazemId + " and ref_produto like '%" + referencia + "%' AND designacao_produto like '%" + desig + "%';"))
             {
                 while (result.Read())
