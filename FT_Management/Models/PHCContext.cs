@@ -71,6 +71,10 @@ namespace FT_Management.Models
         {
             FT_ManagementContext.CriarArtigos(ObterProdutos(FT_ManagementContext.ObterUltimaModificacaoPHC("sa")));
         }
+        public void AtualizarArtigo(string ref_produto)
+        {
+            FT_ManagementContext.CriarArtigos(ObterProduto(ref_produto));
+        }
         public void AtualizarClientes()
         {
             FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
@@ -113,7 +117,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec FROM sa inner join st on sa.ref=st.ref where sa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                    SqlCommand command = new SqlCommand("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref; where sa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
                     command.CommandTimeout = TIMEOUT;
                     using (SqlDataReader result = command.ExecuteReader())
                     {
@@ -127,7 +131,8 @@ namespace FT_Management.Models
                                 Stock_PHC = double.Parse(result["stock"].ToString()),
                                 Stock_Rec = double.Parse(result["qttrec"].ToString()),
                                 Stock_Res = double.Parse(result["rescli"].ToString()),
-                                Armazem_ID = int.Parse(result["armazem"].ToString())
+                                Armazem_ID = int.Parse(result["armazem"].ToString()),
+                                Pos_Stock = result["u_locpt"].ToString()
                             });
                         }
                     }
@@ -147,6 +152,56 @@ namespace FT_Management.Models
 
             return LstProdutos;
         }
+
+        public List<Produto> ObterProduto(string ref_produto)
+        {
+
+            List<Produto> LstProdutos = new List<Produto>();
+
+            try
+            {
+                if (ConnectedPHC)
+                {
+                    SqlConnection conn = new SqlConnection(ConnectionString);
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + ref_produto + "';", conn);
+                    command.CommandTimeout = TIMEOUT;
+                    using (SqlDataReader result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            LstProdutos.Add(new Produto()
+                            {
+                                Ref_Produto = result["ref"].ToString(),
+                                Designacao_Produto = result["design"].ToString(),
+                                //Stock_Fisico = double.Parse(result["stock_fis"].ToString()),
+                                Stock_PHC = double.Parse(result["stock"].ToString()),
+                                Stock_Rec = double.Parse(result["qttrec"].ToString()),
+                                Stock_Res = double.Parse(result["rescli"].ToString()),
+                                Armazem_ID = int.Parse(result["armazem"].ToString()),
+                                Pos_Stock = result["u_locpt"].ToString()
+                            });
+                        }
+                    }
+
+                    conn.Close();
+
+                    FT_ManagementContext.AtualizarUltimaModificacao("sa", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
+
+                    Console.WriteLine("Stock's atualizados com sucesso! (PHC -> MYSQL)");
+                }
+
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as referencias do PHC!");
+            }
+
+            return LstProdutos;
+        }
+
         public List<Cliente> ObterClientes(DateTime dataUltimaLeitura)
         {
 

@@ -1990,7 +1990,7 @@ namespace FT_Management.Models
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc), stock_rec = VALUES(stock_rec), stock_res = VALUES(stock_res), stock_fisico = VALUES(stock_fisico);";
+                sql += " ON DUPLICATE KEY UPDATE designacao_produto = VALUES(designacao_produto), stock_phc = VALUES(stock_phc), stock_rec = VALUES(stock_rec), stock_res = VALUES(stock_res), stock_fisico = VALUES(stock_fisico), pos_stock = VALUES(pos_stock);";
 
                 Database db = ConnectionString;
 
@@ -2590,7 +2590,7 @@ namespace FT_Management.Models
         {
 
             int x = 0;
-            int y = 0;
+            int y = 30;
             int width = 1024;
             int height = 641;
 
@@ -2599,6 +2599,7 @@ namespace FT_Management.Models
             Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
             Font fontBody = new Font("Tahoma", 40, FontStyle.Regular);
             Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
+            Font fontBold = new Font("Rubik", 28, FontStyle.Bold);
 
             StringFormat format = new StringFormat
             {
@@ -2616,7 +2617,7 @@ namespace FT_Management.Models
 
                 if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
 
-                y += 65;
+                //y += 65;
                 gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
 
                 x = 10;
@@ -2636,8 +2637,14 @@ namespace FT_Management.Models
 
                 gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
 
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
+                x += 40;
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(width - 550, y, 300, 30), format);
 
+                if (produto.Pos_Stock.Length > 0)
+                {
+                    gr.DrawString(produto.Pos_Stock, fontBold, Brushes.Black, new Rectangle(x, y, 250, 35), format);
+                    gr.DrawRectangle(new Pen(Color.Black, 5), new Rectangle(x, y - 5, 250, 40));
+                }
             }
 
             return bm;

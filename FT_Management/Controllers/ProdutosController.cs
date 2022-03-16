@@ -216,6 +216,11 @@ namespace FT_Management.Controllers
 
             var LstArmazens = context.ObterListaArmazens().ToList();
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
+            
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            phccontext.AtualizarArtigo(id);
+
 
             return View(context.ObterProduto(id,armazemid));
         }
