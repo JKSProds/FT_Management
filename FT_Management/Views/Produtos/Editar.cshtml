@@ -54,7 +54,7 @@
                     </div>
                     <div class="form-group col-4">
                         <label asp-for="Pos_Stock" class="control-label"></label>
-                        <input asp-for="Pos_Stock" class="form-control" readonly/>
+                        <input asp-for="Pos_Stock" class="form-control" readonly />
                         <span asp-validation-for="Pos_Stock" class="text-danger"></span>
                     </div>
                     <div class="form-group col-4">
@@ -148,33 +148,38 @@
             <tbody>
                 @foreach (var item in LstProdutosArmazem)
                 {
-                <tr onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID }))'">
-                    <td>
-                        @Html.DropDownListFor(modelItem => item.Armazem_ID, (IEnumerable<SelectListItem>)ViewBag.Armazens, new { @class = "form-control", @disabled = "disabled" })
+                    <tr onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID }))'">
+                        <td>
+                            @Html.DropDownListFor(modelItem => item.Armazem_ID, (IEnumerable<SelectListItem>)ViewBag.Armazens, new { @class = "form-control", @disabled = "disabled" })
 
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Stock_Fisico)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Stock_PHC)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Stock_Rec)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Stock_Res)
-                    </td>
-                </tr>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_Fisico)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_PHC)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_Rec)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_Res)
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
-        <div>
-            <a asp-action="Index">Voltar</a>
-        </div>
+<div>
+    <a asp-action="Index">Voltar</a>
+</div>
 
-        @section Scripts {
-            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-        }
+<div>
+    <br />
+    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Produtps"))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

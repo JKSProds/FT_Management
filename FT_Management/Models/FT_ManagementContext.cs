@@ -2607,6 +2607,8 @@ namespace FT_Management.Models
                 Alignment = StringAlignment.Center
             };
 
+   
+
             using (Graphics gr = Graphics.FromImage(bm))
             {
                 gr.Clear(Color.White);
@@ -2615,7 +2617,7 @@ namespace FT_Management.Models
                 gr.CompositingQuality = CompositingQuality.HighQuality;
                 gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 280, 165); }
 
                 y += 30;
                 gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
@@ -2638,12 +2640,11 @@ namespace FT_Management.Models
                 gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
 
                 x += 40;
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(width - 550, y, 300, 30), format);
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
 
                 if (produto.Pos_Stock.Length > 0)
                 {
-                    gr.DrawString(produto.Pos_Stock, fontBold, Brushes.Black, new Rectangle(x, y, 250, 35), format);
-                    gr.DrawRectangle(new Pen(Color.Black, 5), new Rectangle(x, y - 5, 250, 40));
+                    gr.DrawString(produto.Pos_Stock, fontBold, Brushes.Black, new Rectangle(width - 200, height - 235, 150, 35), format);
                 }
             }
 
