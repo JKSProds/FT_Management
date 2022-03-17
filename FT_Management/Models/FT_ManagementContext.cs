@@ -2661,7 +2661,8 @@ namespace FT_Management.Models
 
                 if (produto.Pos_Stock.Length > 0)
                 {
-                    gr.DrawString(produto.Pos_Stock, fontBold, Brushes.Black, new Rectangle(width - 200, height - 235, 150, 35), format);
+                    gr.DrawString(produto.Pos_Stock, fontBold, Brushes.Black, new Rectangle(width - 185, height - 235, 150, 35), format);
+                    gr.DrawRectangle(new Pen(Color.Black, 5), new Rectangle(width - 190, height - 240, 140, 40));
                 }
             }
 
@@ -2713,6 +2714,13 @@ namespace FT_Management.Models
                 Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
                 gr.DrawImage(qrCodeImage, width - 210, height - 150, 150, 150);
+
+                if (produto.Pos_Stock.Length > 0)
+                {
+                    gr.DrawString(produto.Pos_Stock, fontFooter, Brushes.Black, new Rectangle(width - 190, height - 160, 110, 20), format);
+                    gr.DrawRectangle(new Pen(Color.Black, 5), new Rectangle(width - 190, height - 165, 110, 30));
+
+                }
 
                 gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2), 30), format);
 
