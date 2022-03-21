@@ -222,6 +222,21 @@ namespace FT_Management.Models
         public List<Equipamento> Equipamentos { get; set; }
 
     }
+
+    public class Contacto
+    {
+        //ID | Nome | Morada | Pessoa Contacto | Email | Telemovel | NIF | Observacoes 
+        public int IdContacto { get; set; }
+        public string NomeContacto { get; set; }
+        public string MoradaContacto { get; set; }
+        public string PessoaContacto { get; set; }
+        public string EmailContacto { get; set; }
+        public string TelefoneContacto { get; set; }
+        public string NIFContacto { get; set; }
+        public string Obs { get; set; }
+        public int IdCliente { get; set; }
+        public int IdLoja { get; set; }
+    }
     public class FolhaObra
     {
         public int IdFolhaObra { get; set; }

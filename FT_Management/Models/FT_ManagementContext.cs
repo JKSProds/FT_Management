@@ -1232,6 +1232,61 @@ namespace FT_Management.Models
 
             return cliente;
         }
+        public Contacto ObterContacto(int id)
+        {
+
+            Contacto contacto = new Contacto();
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT * FROM dat_contactos where Id=" + id + ";");
+            result.Read();
+            if (result.Reader.HasRows)
+            {
+                contacto = new Contacto()
+                {
+                    IdContacto = result["Id"],
+                    NomeContacto = result["Nome"],
+                    MoradaContacto = result["Morada"],
+                    PessoaContacto = result["PessoaContacto"],
+                    EmailContacto = result["Email"],
+                    TelefoneContacto = result["Telefone"],
+                    NIFContacto = result["NIF"],
+                    Obs = result["Obs"],
+                    IdCliente = result["IdCliente"],
+                    IdLoja = result["IdLoja"]
+                };
+            }
+
+            return contacto;
+        }
+
+        public List<Contacto> ObterListaContactos()
+        {
+
+            List<Contacto> LstContacto = new List<Contacto>();
+            string sqlQuery = "SELECT * FROM dat_contactos;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstContacto.Add(new Contacto()
+                    {
+                        IdContacto = result["Id"],
+                        NomeContacto = result["Nome"],
+                        MoradaContacto = result["Morada"],
+                        PessoaContacto = result["PessoaContacto"],
+                        EmailContacto = result["Email"],
+                        TelefoneContacto = result["Telefone"],
+                        NIFContacto = result["NIF"],
+                        Obs = result["Obs"],
+                        IdCliente = result["IdCliente"],
+                        IdLoja = result["IdLoja"]
+                    });
+                }
+            }
+            return LstContacto;
+        }
         public Cliente ObterClienteCompleto(int id, int est)
         {
 
@@ -2104,6 +2159,27 @@ namespace FT_Management.Models
                 sql = sql.Remove(sql.Count() - 4);
 
                 sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), Telefone = VALUES(Telefone), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente), IdVendedor = VALUES(IdVendedor), TipoCliente = VALUES(TipoCliente);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+            }
+        }
+        public void CriarContactos(List<Contacto> LstContacto)
+        {
+            if (LstContacto.Count() > 0)
+            {
+
+                string sql = "INSERT INTO dat_contactos (Id, Nome, Morada, PessoaContacto, Email, Telefone, NIF, Obs, IdCliente, IdLoja) VALUES ";
+
+                foreach (var contacto in LstContacto)
+                {
+                    sql += ("('" + contacto.IdContacto + "', '" + contacto.NomeContacto.Replace("'", "''") + "', '" + contacto.MoradaContacto.Replace("'", "''") + "', '" + contacto.PessoaContacto.Replace("'", "''") + "', '" + contacto.EmailContacto.Replace("'", "''") + "', '" + contacto.TelefoneContacto.Replace("'", "''") + "', '" + contacto.NIFContacto.Replace("'", "''") + "', '" + contacto.Obs.Replace("'", "''") + "', '" + contacto.IdCliente + "', '" + contacto.IdLoja + "', \r\n");
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE Nome = VALUES(Nome), Morada = VALUES(Morada), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), PessoaContacto = VALUES(PessoaContacto), Email = VALUES(Email), Telefone = VALUES(Telefone), NIF = VALUES(NIF), Obs = VALUES(Obs);";
 
                 Database db = ConnectionString;
 
