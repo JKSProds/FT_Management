@@ -37,7 +37,7 @@ namespace FT_Management.Controllers
                 MoradaContacto = txtMorada ?? "",
                 Obs = txtObs ?? "",
                 TipoContacto = txtTipoContacto,
-                URL = "https://food-tech.cloud/index.php/apps/files/?dir=/Dep.%20Comercial/Contactos/[" + txtNomeEmpresa + "] " + txtNomeCliente,
+                URL = "https://food-tech.cloud/index.php/apps/files/?dir=/FT_Management/Contactos/[" + txtNomeEmpresa + "] " + txtNomeCliente,
                 DataContacto = DateTime.Now
             };  
 
