@@ -7,9 +7,11 @@ using System.IO;
 using WebDav;
 using System.Net;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
+    [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class ContactosController : Controller
     {
         public IActionResult Index()
