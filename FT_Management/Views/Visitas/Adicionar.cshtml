@@ -46,7 +46,7 @@
                         <input type="hidden" id="IdLoja" name="IdLoja" />
                         <input type="text" class="form-control" id="txtCustomer" placeholder="Nome Cliente">
                     </div>
-                    <button class="btn btn-primary" onclick="next()">Próximo</button>
+                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
                 </div>
                 <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
                     <div class="form-group">
@@ -74,8 +74,8 @@
                             </script>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="previous()">Anterior</button>
-                    <button class="btn btn-primary" onclick="next()">Próximo</button>
+                    <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
+                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
                 </div>
                 <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
                     <div class="form-group">
@@ -83,7 +83,7 @@
                         <textarea class="form-control" rows="8" placeholder="" id="Obs" name="Obs" required></textarea>
                         <br />
                         <div class="form-group">
-                            <button class="btn btn-primary" onclick="previous()">Anterior</button>
+                            <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
 
                             <input type="submit" onclick="submit()" value="Guardar" class="btn btn-primary" />
                         </div>

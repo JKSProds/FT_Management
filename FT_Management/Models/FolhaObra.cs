@@ -234,6 +234,9 @@ namespace FT_Management.Models
         public string TelefoneContacto { get; set; }
         public string NIFContacto { get; set; }
         public string Obs { get; set; }
+        public string TipoContacto { get; set; }
+        public string URL { get; set; }
+        public DateTime DataContacto { get; set; }
         public int IdCliente { get; set; }
         public int IdLoja { get; set; }
     }

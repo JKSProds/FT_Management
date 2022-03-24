@@ -145,7 +145,7 @@ namespace FT_Management.Models
                 }
 
             }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine("Não foi possivel ler as referencias do PHC!");
             }

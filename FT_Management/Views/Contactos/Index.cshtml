@@ -1,0 +1,126 @@
+﻿@model IEnumerable<FT_Management.Models.Contacto>
+
+@{
+    ViewData["Title"] = "Contactos";
+}
+
+
+<input type="hidden" id="hiddenIdContacto" name="IdContacto" />
+
+ <div class="row">
+    <div class="col-lg-9">
+ <h1>Listagem de Contactos</h1>
+    </div>
+    <div class="btn-group btn-group-lg col-lg-3" role="group" aria-label="Basic example">
+        <a class="btn btn-primary btn-block text-white float-right" href="/Contactos/Novo"><i class="fas fa-plus"></i> Novo Contacto</a>
+    </div>
+    </div>
+<br />
+<br />
+@if (Model.Count() == 0)
+{
+    <br />
+    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados contactos!</button>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Nome da Empresa
+                </th>
+                <th>
+                    Nome
+                </th>
+                <th>
+                    Tipo de Contacto
+                </th>
+                <th>
+                    Data
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <span>@item.NomeContacto</span>
+                    </td>
+                    <td>
+                        <span>@item.PessoaContacto</span>
+                    </td>
+                    <td>
+                        <span>@item.TipoContacto</span>
+                    </td>
+                    <td>
+                        <span>@item.DataContacto.ToShortDateString()</span>
+                    </td>
+                    <td>
+                        <div class="btn-group float-right">
+                            <a class="btn btn-info btn-lg text-black-50 @(item.TelefoneContacto.Length < 9 ? "disabled" : "")" href="tel:@item.TelefoneContacto"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
+                            <a class="btn btn-secundary btn-lg text-black-50" href="@item.URL" target="_blank"><i class="fas fa-image float-left" style="margin-top:5px"></i></a>
+                            <a class="btn btn-primary btn-lg text-black-50 @(item.EmailContacto.Length < 1 ? "disabled" : "")" href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left" style="margin-top:5px"></i></a>
+                            <a class="btn btn-success btn-lg text-black-50 @(item.MoradaContacto.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.MoradaContacto"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                            <a class="btn btn-outline-danger btn-lg text-black-50" onclick="ConfirmApagarContacto(@item.IdContacto)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Apagar Contacto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <p>Tem a certeza que deseja apagar este contacto? <b>Esta ação é irreversivel!</b></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="ApagarContacto()" href="javascript:;">Apagar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ConfirmApagarContacto(Id) {
+        document.getElementById("hiddenIdContacto").value = Id;
+        $("#myModal").modal('show');
+    }
+
+    function ApagarContacto() {
+        var json = {
+            id: document.getElementById('hiddenIdContacto').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/Apagar",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
+
+        $("#myModal").modal('hide');
+    }
+</script>

@@ -1,0 +1,155 @@
+﻿@model FT_Management.Models.FolhaObra
+
+@{
+    ViewData["Title"] = "Novo Contacto";
+}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+
+<form asp-action="Novo" name="frmNovo" id="frmNovo">
+    <div class="mb-5 p-4 bg-white shadow-sm">
+        <h3>Adicionar Visita</h3>
+
+        <div class="bs-stepper">
+            <div class="bs-stepper-header" role="tablist">
+                <!-- your steps here -->
+                <div class="step" data-target="#cliente-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="cliente-part" id="cliente-part-trigger" aria-selected="true">
+                        <span class="bs-stepper-circle">1</span>
+                        <span class="bs-stepper-label">Contacto</span>
+                    </button>
+                </div>
+                <div class="line"></div>
+                <div class="step" data-target="#comercial-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="comercial-part" id="comercial-part-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">Dados Adicionais</span>
+                    </button>
+                </div>
+                <div class="line"></div>
+                <div class="step" data-target="#informacao-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="informacao-part" id="informacao-part-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">Anexos</span>
+                    </button>
+                </div>
+            </div>
+            <div class="bs-stepper-content">
+                <!-- your steps content here -->
+                <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
+                    <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label for="">Nome da Empresa</label>
+                        <input type="text" class="form-control" id="txtNomeEmpresa" name="txtNomeEmpresa" placeholder="Nome da Empresa">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="">Nome</label>
+                        <input type="text" class="form-control" id="txtNomeCliente" name="txtNomeCliente" placeholder="Nome">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="">Contacto</label>
+                        <input type="text" class="form-control" id="txtContacto" name="txtContacto" placeholder="Contacto">
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="">Email</label>
+                        <input type="text" class="form-control" id="txtEmail" name="txtEmail" placeholder="Email">
+                    </div>
+                     <div class="form-group col-lg-12">
+                        <label>Tipo de Contacto</label>
+                        <select class="form-control" name="txtTipoContacto">
+                            <option selected="selected">Email</option>
+                            <option>Mensagem</option>
+                            <option>Feira</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
+                </div>
+                </div>
+                <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
+                    <div class="row">
+                    <div class="form-group col-lg-6" style="position: relative;">
+                        <label for="">Número de Contribuinte</label>
+                        <input type="text" class="form-control" id="txtNIF" name="txtNIF" placeholder="NIF">
+                    </div>
+                    <div class="form-group col-lg-6" style="position: relative;">
+                        <label for="">Morada da Empresa</label>
+                        <input type="text" class="form-control" id="txtMorada" name="txtMorada" placeholder="Morada">
+                    </div>
+                    <label for="">Observações</label>
+                        <textarea class="form-control" rows="8" placeholder="" id="txtObs" name="txtObs"></textarea>
+                     </div>
+                    <br />
+                    <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
+                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
+                    </div>
+                <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
+                    <div class="form-group">
+                    <label class="control-label">Anexo</label>
+                        <div class="input-group mb-3">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
+                                <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                            </div>
+                        </div>
+            <br />
+                            <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
+
+                            <input type="submit" onclick="submit()" value="Guardar" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+
+    <script>
+    function AdicionarAnexo(inputTxt) {
+        var input = document.getElementById(inputTxt);
+        var name = document.getElementById('txtNomeEmpresa') + '_' + document.getElementById('txtNomeCliente');;
+        var files = input.files;
+        var formData = new FormData();
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        $.ajax(
+            {
+                url: "/Contactos/AdicionarAnexo?NomeEmpresa=" + document.getElementById('txtNomeEmpresa').value + "&NomeCliente=" + document.getElementById('txtNomeCliente').value,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $.notify({
+                        message: "Anexo carregado com sucesso!"
+                    }, {
+                        // settings
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
+                        }
+                    });
+                }
+            }
+        );
+    }
+
+        var stepper = new Stepper($('.bs-stepper')[0])
+
+        function next() {
+            stepper.next();
+        }
+        function previous() {
+            stepper.previous();
+        }
+
+    </script>
