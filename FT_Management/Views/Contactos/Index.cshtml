@@ -4,8 +4,8 @@
     ViewData["Title"] = "Contactos";
 }
 
-
-<input type="hidden" id="hiddenIdContacto" name="IdContacto" />
+ 
+<input type="hidden" View id="hiddenIdContacto" name="IdContacto" />
 
  <div class="row">
     <div class="col-lg-9">
@@ -45,7 +45,7 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr onclick="MostrarInfoContacto(@item.IdContacto)">
                     <td>
                         <span>@item.NomeContacto</span>
                     </td>
@@ -98,7 +98,58 @@ else
     </div>
 </div>
 
+<div class="modal fade" id="modalContacto" tabindex="-1" role="dialog" aria-labelledby="modalContacto" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="txt">Info do Contacto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary disabled" onclick="Editar()" href="javascript:;">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    function MostrarInfoContacto(Id) {
+        document.getElementById("hiddenIdContacto").value = Id;
+
+        var json = {
+            id: Id
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/ObterContacto",
+            data: json,
+            traditional: true,
+            dataType: "text",
+            success: function (response) {
+                $(function () {
+                    // Add response in Modal body
+                    $('.modal-body').html(response);
+
+                    // Display Modal
+                    $('#modalContacto').modal('show');
+                });
+            }
+        });
+    }
+
+    function Editar() {
+
+        window.location.href = "/Contactos/Editar/" + document.getElementById('hiddenIdContacto').value;
+    }
+
     function ConfirmApagarContacto(Id) {
         document.getElementById("hiddenIdContacto").value = Id;
         $("#myModal").modal('show');

@@ -1251,6 +1251,9 @@ namespace FT_Management.Models
                     TelefoneContacto = result["Telefone"],
                     NIFContacto = result["NIF"],
                     Obs = result["Obs"],
+                    TipoContacto = result["TipoContacto"],
+                    URL = result["URL"],
+                    DataContacto = result["DataContacto"],
                     IdCliente = result["IdCliente"],
                     IdLoja = result["IdLoja"]
                 };
