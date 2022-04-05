@@ -38,7 +38,7 @@ namespace FT_Management.Controllers
             res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + context.ObterUtilizador(contacto.IdUtilizador).NomeCompleto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Comercial Associado</label><input type=\"text\" class=\"form-control\" value='" + context.ObterUtilizador(contacto.IdComercial).NomeCompleto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Comercial Associado</label><input type=\"text\" id=\"txtcomercial\" class=\"form-control\" value='" + context.ObterUtilizador(contacto.IdComercial).NomeCompleto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Observações</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + contacto.Obs + "</textarea></div>";
 
             return res;
@@ -48,6 +48,13 @@ namespace FT_Management.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        public IActionResult Editar()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult Novo(string txtNomeEmpresa, string txtNomeCliente, string txtContacto, string txtEmail, string txtNIF, string txtMorada, string txtObs, string txtTipoContacto)
         {
@@ -72,6 +79,7 @@ namespace FT_Management.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult AssociarComercial(string idcontacto, string idcomercial)
         {
@@ -84,6 +92,7 @@ namespace FT_Management.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Apagar(int Id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

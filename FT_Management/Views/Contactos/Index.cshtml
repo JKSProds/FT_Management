@@ -4,17 +4,17 @@
     ViewData["Title"] = "Contactos";
 }
 
- 
+
 <input type="hidden" View id="hiddenIdContacto" name="IdContacto" />
 
- <div class="row">
+<div class="row">
     <div class="col-lg-9">
- <h1>Listagem de Contactos</h1>
+        <h1>Listagem de Contactos</h1>
     </div>
     <div class="btn-group btn-group-lg col-lg-3" role="group" aria-label="Basic example">
         <a class="btn btn-primary btn-block text-white float-right" href="/Contactos/Novo"><i class="fas fa-plus"></i> Novo Contacto</a>
     </div>
-    </div>
+</div>
 <br />
 <br />
 @if (Model.Count() == 0)
@@ -52,8 +52,10 @@ else
                             <a class="btn btn-secundary btn-lg text-black-50" href="@item.URL" target="_blank"><i class="fas fa-image float-left" style="margin-top:5px"></i></a>
                             <a class="btn btn-primary btn-lg text-black-50 @(item.EmailContacto.Length < 1 ? "disabled" : "")" href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left" style="margin-top:5px"></i></a>
                             <a class="btn btn-success btn-lg text-black-50 @(item.MoradaContacto.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.MoradaContacto"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
-                            <a class="btn btn-outline-danger btn-lg text-black-50" onclick="ConfirmApagarContacto(@item.IdContacto)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-
+                            @if (this.User.IsInRole("Admin"))
+                            {
+                                <a class="btn btn-outline-danger btn-lg text-black-50" onclick="ConfirmApagarContacto(@item.IdContacto)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                            }
                         </div>
                     </td>
                 </tr>
@@ -61,36 +63,37 @@ else
         </tbody>
     </table>
 }
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Apagar Contacto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <p>Tem a certeza que deseja apagar este contacto? <b>Esta ação é irreversivel!</b></p>
+@if (this.User.IsInRole("Admin"))
+{
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Apagar Contacto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="ApagarContacto()" href="javascript:;">Apagar</button>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <p>Tem a certeza que deseja apagar este contacto? <b>Esta ação é irreversivel!</b></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" onclick="ApagarContacto()" href="javascript:;">Apagar</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
+}
 <div class="modal fade" id="modalContacto" tabindex="-1" role="dialog" aria-labelledby="modalContacto" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="txt">Info do Contacto</h5>
+                <h5 class="modal-title" id="txt">Informação do Contacto</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -102,128 +105,140 @@ else
             </div>
             <div class="modal-footer">
                 <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-primary" onclick="AssociarComercial()" href="javascript:;">Associar Comercial</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary disabled" onclick="Editar()" href="javascript:;">Editar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalAssociarComercial" tabindex="-1" role="dialog" aria-labelledby="modalComerciais" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="txt">Associar Comercial ao Contacto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="">
-                    <label class="control-label">Deseja a associar este contacto a qual comercial?</label>
-                    <select
-                            class="form-control" id="lstcomerciais"
-                            asp-items="@(new SelectList(@ViewBag.ListaComerciais,"Id", "NomeCompleto"))">
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="AssociarComercialConfirm()" href="javascript:;">Associar Comercial</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function MostrarInfoContacto(Id) {
-        document.getElementById("hiddenIdContacto").value = Id;
-
-        var json = {
-            id: Id
-        };
-        $.ajax({
-            type: "POST",
-            url: "/Contactos/ObterContacto",
-            data: json,
-            traditional: true,
-            dataType: "text",
-            success: function (response) {
-                $(function () {
-                    // Add response in Modal body
-                    $('.info_contacto').html(response);
-
-                    // Display Modal
-                    $('#modalContacto').modal('show');
-                });
-            }
-        });
-    }
-
-    function Editar() {
-
-        window.location.href = "/Contactos/Editar/" + document.getElementById('hiddenIdContacto').value;
-    }
-
-
-    function AssociarComercial() {
-        $("#modalAssociarComercial").modal('show');
-    }
-
-    function AssociarComercialConfirm() {
-        $("#modalAssociarComercial").modal('hide');
-        alert(document.getElementById('lstcomerciais').value);
-
-        var json = {
-            idcontacto: document.getElementById('hiddenIdContacto').value,
-            idcomercial: document.getElementById('lstcomerciais').value
-        };
-
-        $.ajax({
-            type: "POST",
-            url: "/Contactos/AssociarComercial",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $.notify({
-                    message: "Comercial associado com sucesso!"
-                }, {
-                    // settings
-                    type: 'success',
-                    onShow: function () {
-                        this.css({ 'width': 'auto', 'height': 'auto' });
+                    @if (this.User.IsInRole("Admin"))
+                    {
+                        <button type="button" class="btn btn-primary" onclick="AssociarComercial()" href="javascript:;">Associar Comercial</button>
                     }
-                });
-            }
-        });
-    }
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    @if (this.User.IsInRole("Admin"))
+                    {
+                        <button type="button" class="btn btn-primary disabled" onclick="Editar()" href="javascript:;">Editar</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    function ConfirmApagarContacto(Id) {
-        document.getElementById("hiddenIdContacto").value = Id;
-        $("#myModal").modal('show');
-    }
+@if (this.User.IsInRole("Admin"))
+{
+    <div class="modal fade" id="modalAssociarComercial" tabindex="-1" role="dialog" aria-labelledby="modalComerciais" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="txt">Associar Comercial ao Contacto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="">
+                        <label class="control-label">Deseja a associar este contacto a qual comercial?</label>
+                        <select class="form-control" id="lstcomerciais"
+                                asp-items="@(new SelectList(@ViewBag.ListaComerciais, "Id", "NomeCompleto"))">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="AssociarComercialConfirm()" href="javascript:;">Associar Comercial</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    <script>
+        function MostrarInfoContacto(Id) {
+            document.getElementById("hiddenIdContacto").value = Id;
 
-    function ApagarContacto() {
-        var json = {
-            id: document.getElementById('hiddenIdContacto').value
-        };
+            var json = {
+                id: Id
+            };
+            $.ajax({
+                type: "POST",
+                url: "/Contactos/ObterContacto",
+                data: json,
+                traditional: true,
+                dataType: "text",
+                success: function (response) {
+                    $(function () {
+                        // Add response in Modal body
+                        $('.info_contacto').html(response);
 
-        $.ajax({
-            type: "POST",
-            url: "/Contactos/Apagar",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    window.location.reload();
-                });
-            }
-        });
+                        // Display Modal
+                        $('#modalContacto').modal('show');
+                    });
+                }
+            });
+        }
 
-        $("#myModal").modal('hide');
-    }
-</script>
+        function Editar() {
+
+            window.location.href = "/Contactos/Editar/" + document.getElementById('hiddenIdContacto').value;
+        }
+
+
+        function AssociarComercial() {
+            $("#modalAssociarComercial").modal('show');
+        }
+
+        function AssociarComercialConfirm() {
+            //alert(document.getElementById('lstcomerciais').value);
+            var lstComerciais = document.getElementById("lstcomerciais");
+            var txtComercial = lstComerciais.options[lstComerciais.selectedIndex].innerHTML;
+            //alert(txtComercial);
+
+            var json = {
+                idcontacto: document.getElementById('hiddenIdContacto').value,
+                idcomercial: document.getElementById('lstcomerciais').value
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Contactos/AssociarComercial",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    document.getElementById("txtcomercial").value = txtComercial;
+                    $.notify({
+                        message: "Comercial associado com sucesso!"
+                    }, {
+                        // settings
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
+                        }
+                    });
+                }
+            });
+
+            $("#modalAssociarComercial").modal('hide');
+        }
+
+        function ConfirmApagarContacto(Id) {
+            document.getElementById("hiddenIdContacto").value = Id;
+            $("#myModal").modal('show');
+        }
+
+        function ApagarContacto() {
+            var json = {
+                id: document.getElementById('hiddenIdContacto').value
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Contactos/Apagar",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        window.location.reload();
+                    });
+                }
+            });
+
+            $("#myModal").modal('hide');
+        }
+    </script>
