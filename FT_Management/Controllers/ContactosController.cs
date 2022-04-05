@@ -50,9 +50,23 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
-        public IActionResult Editar()
+        public IActionResult Editar(int id)
         {
-            return View();
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return View(context.ObterContacto(id));
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpPost]
+        public IActionResult Editar(Contacto contacto)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            contacto.NIFContacto = contacto.NIFContacto is null ? "" : contacto.NIFContacto;
+
+            context.CriarContactos(new List<Contacto> { contacto });
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

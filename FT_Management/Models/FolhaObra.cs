@@ -226,14 +226,23 @@ namespace FT_Management.Models
     public class Contacto
     {
         //ID | Nome | Morada | Pessoa Contacto | Email | Telemovel | NIF | Observacoes 
+        [Display(Name = "ID")]
         public int IdContacto { get; set; }
+        [Display(Name = "Nome da Empresa")]
         public string NomeContacto { get; set; }
+        [Display(Name = "Morada")]
         public string MoradaContacto { get; set; }
+        [Display(Name = "Pessoa de Contacto")]
         public string PessoaContacto { get; set; }
+        [Display(Name = "Email")]
         public string EmailContacto { get; set; }
+        [Display(Name = "Telemóvel")]
         public string TelefoneContacto { get; set; }
+        [Display(Name = "Número de Contribuinte")]
         public string NIFContacto { get; set; }
+        [Display(Name = "Observações")]
         public string Obs { get; set; }
+        [Display(Name = "Tipo de Contacto")]
         public string TipoContacto { get; set; }
         public string URL { get; set; }
         public DateTime DataContacto { get; set; }

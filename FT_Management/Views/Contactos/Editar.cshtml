@@ -1,0 +1,145 @@
+﻿@model FT_Management.Models.Contacto
+
+@{
+    ViewData["Title"] = "Contacto - " + Model.NomeContacto;
+}
+
+
+<h1>@Model.NomeContacto</h1>
+<hr />
+<form asp-action="Editar" asp-route-returnurl="@ViewData["ReturnUrl"]">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="true">Contacto</a>
+        <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Dados Adicionais</a>
+        <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
+    </div>
+
+    <input type="hidden" asp-for="DataContacto" />
+    <input type="hidden" asp-for="TipoContacto" id="txtTipoContacto"/>
+    <input type="hidden" asp-for="IdLoja" />
+    <input type="hidden" asp-for="IdCliente" />
+    <input type="hidden" asp-for="IdComercial" />
+    <input type="hidden" asp-for="IdUtilizador" />
+    <input type="hidden" asp-for="URL" />
+
+    <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-cliente" role="tabpanel" aria-labelledby="v-pills-cliente-tab">
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-2">
+                    <label asp-for="IdContacto" class="control-label"></label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" asp-for="IdContacto" id="IdContacto" readonly>
+                    </div>
+                </div>
+                <div class="form-group col-lg-5">
+                    <div class="form-group" style="position: relative;">
+                        <label asp-for="NomeContacto" class="control-label"></label>
+                        <input type="text" class="form-control" id="txtNomeEmpresa" placeholder="Nome Empresa" asp-for="NomeContacto">
+                    </div>
+                </div>
+                <div class="form-group col-lg-5">
+                    <label asp-for="PessoaContacto" class="control-label"></label>
+                    <input asp-for="PessoaContacto" class="form-control" id="txtNomeCliente" />
+                </div>
+                <div class="form-group col-lg-4">
+                    <label asp-for="EmailContacto" class="control-label"></label>
+                    <input asp-for="EmailContacto" class="form-control" id="EmailContacto" />
+                </div>
+                <div class="form-group col-lg-4">
+                    <label asp-for="TelefoneContacto" class="control-label"></label>
+                    <input asp-for="TelefoneContacto" class="form-control" id="TelefoneContacto" />
+                </div>
+                <div class="form-group col-lg-4">
+                    <label>Tipo de Contacto</label>
+                    <select class="form-control" onchange="tipoContactoAlterado()" asp-for="TipoContacto" name="ddlTipoContacto" id="ddlTipoContacto">
+                        <option>Email</option>
+                        <option>Mensagem</option>
+                        <option>Feira</option>
+                        <option>Outro</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="v-pills-obs" role="tabpanel" aria-labelledby="v-pills-obs-tab">
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-3">
+                    <label asp-for="NIFContacto" class="control-label"></label>
+                    <input asp-for="NIFContacto" class="form-control" id="NIFContacto" />
+                </div>
+                <div class="form-group col-lg-9">
+                    <label asp-for="MoradaContacto" class="control-label"></label>
+                    <input asp-for="MoradaContacto" class="form-control" id="MoradaContacto" />
+                </div>
+                <div class="form-group col-lg-12">
+                    <label for="">Observações</label>
+                    <textarea class="form-control" rows="8" placeholder="" id="txtObs" asp-for="Obs"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
+            <br />
+            <div class="form-group">
+                <label class="control-label">Anexo</label>
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
+                        <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="form-group">
+            <input type="submit" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+    <script>
+
+        function tipoContactoAlterado() {
+            document.getElementById("txtTipoContacto").value = document.getElementById("ddlTipoContacto").value;
+        }
+
+        function AdicionarAnexo(inputTxt) {
+        var input = document.getElementById(inputTxt);
+        var name = document.getElementById('txtNomeEmpresa') + '_' + document.getElementById('txtNomeCliente');;
+        var files = input.files;
+        var formData = new FormData();
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        $.ajax(
+            {
+            url: "/Contactos/AdicionarAnexo?NomeEmpresa=" + document.getElementById('txtNomeEmpresa').value + "&NomeCliente=" + document.getElementById('txtNomeCliente').value,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+            $.notify({
+                message: "Anexo carregado com sucesso!"
+            }, {
+                // settings
+                type: 'success',
+                onShow: function () {
+                    this.css({ 'width': 'auto', 'height': 'auto' });
+                }
+            });
+                }
+            }
+        );
+    }
+        </script>

@@ -107,12 +107,12 @@ else
                 <div class="btn-group" role="group" aria-label="Basic outlined example">
                     @if (this.User.IsInRole("Admin"))
                     {
-                        <button type="button" class="btn btn-primary" onclick="AssociarComercial()" href="javascript:;">Associar Comercial</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="AssociarComercial()" href="javascript:;">Associar Comercial</button>
                     }
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     @if (this.User.IsInRole("Admin"))
                     {
-                        <button type="button" class="btn btn-primary disabled" onclick="Editar()" href="javascript:;">Editar</button>
+                        <button type="button" class="btn btn-primary" onclick="Editar()" href="javascript:;">Editar</button>
                     }
                 </div>
             </div>
