@@ -71,7 +71,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = int.Parse(this.User.Claims.First().Value);
 
             if (DataVisitas == null || DataVisitas == string.Empty) DataVisitas = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["DataVisitas"] = DataVisitas;

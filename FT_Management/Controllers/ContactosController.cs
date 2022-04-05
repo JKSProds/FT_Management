@@ -8,6 +8,7 @@ using WebDav;
 using System.Net;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace FT_Management.Controllers
 {
@@ -17,6 +18,7 @@ namespace FT_Management.Controllers
         public IActionResult Index()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewBag.ListaComerciais = context.ObterListaComerciais().ToList();
 
             return View(context.ObterListaContactos());
         }
@@ -35,6 +37,8 @@ namespace FT_Management.Controllers
             res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"form-control\" value='" + contacto.NIFContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + context.ObterUtilizador(contacto.IdUtilizador).NomeCompleto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Comercial Associado</label><input type=\"text\" class=\"form-control\" value='" + context.ObterUtilizador(contacto.IdComercial).NomeCompleto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Observações</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + contacto.Obs + "</textarea></div>";
 
             return res;
@@ -59,10 +63,24 @@ namespace FT_Management.Controllers
                 Obs = txtObs ?? "",
                 TipoContacto = txtTipoContacto,
                 URL = "https://food-tech.cloud/index.php/apps/files/?dir=/FT_Management/Contactos/[" + txtNomeEmpresa + "] " + txtNomeCliente,
-                DataContacto = DateTime.Now
-            };  
+                DataContacto = DateTime.Now,
+                IdUtilizador = int.Parse(this.User.Claims.First().Value),
+                IdComercial = int.Parse(this.User.Claims.First().Value)
+        };  
 
             context.CriarContactos(new List<Contacto> { contacto });
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult AssociarComercial(string idcontacto, string idcomercial)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Contacto c = context.ObterContacto(int.Parse(idcontacto));
+            c.IdComercial = int.Parse(idcomercial);
+
+            context.CriarContactos(new List<Contacto> { c });
             return RedirectToAction("Index");
         }
 
