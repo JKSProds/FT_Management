@@ -37,73 +37,78 @@
                     </button>
                 </div>
             </div>
-            <div class="bs-stepper-content">
-                <!-- your steps content here -->
-                <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
-                    <div class="row">
-                    <div class="form-group col-lg-6">
-                        <label for="">Nome da Empresa</label>
-                        <input type="text" class="form-control" id="txtNomeEmpresa" name="txtNomeEmpresa" placeholder="Nome da Empresa">
-                    </div>
-                    <div class="form-group col-lg-6">
-                        <label for="">Nome</label>
-                        <input type="text" class="form-control" id="txtNomeCliente" name="txtNomeCliente" placeholder="Nome">
-                    </div>
-                    <div class="form-group col-lg-6">
-                        <label for="">Contacto</label>
-                        <input type="text" class="form-control" id="txtContacto" name="txtContacto" placeholder="Contacto">
-                    </div>
-                    <div class="form-group col-lg-6">
-                        <label for="">Email</label>
-                        <input type="text" class="form-control" id="txtEmail" name="txtEmail" placeholder="Email">
-                    </div>
-                     <div class="form-group col-lg-12">
-                        <label>Tipo de Contacto</label>
-                        <select class="form-control" name="txtTipoContacto">
-                            <option selected="selected">Email</option>
-                            <option>Mensagem</option>
-                            <option>Feira</option>
-                            <option>Outro</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
-                </div>
-                </div>
-                <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
-                    <div class="row">
-                    <div class="form-group col-lg-6" style="position: relative;">
-                        <label for="">Número de Contribuinte</label>
-                        <input type="text" class="form-control" id="txtNIF" name="txtNIF" placeholder="NIF">
-                    </div>
-                    <div class="form-group col-lg-6" style="position: relative;">
-                        <label for="">Morada da Empresa</label>
-                        <input type="text" class="form-control" id="txtMorada" name="txtMorada" placeholder="Morada">
-                    </div>
-                    <label for="">Observações</label>
-                        <textarea class="form-control" rows="8" placeholder="" id="txtObs" name="txtObs"></textarea>
-                     </div>
-                    <br />
-                    <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
-                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
-                    </div>
-                <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
-                    <div class="form-group">
-                    <label class="control-label">Anexo</label>
-                        <div class="input-group mb-3">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
-                                <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="bs-stepper-content">
+                    <!-- your steps content here -->
+                    <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <label for="">Nome da Empresa</label>
+                                <input type="text" required class="form-control" asp-for="NomeContacto" placeholder="Nome da Empresa">
+                                <span asp-validation-for="NomeContacto" class="text-danger"></span>
                             </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Nome</label>
+                                <input type="text" required class="form-control" asp-for="PessoaContacto" placeholder="Nome">
+                                <span asp-validation-for="PessoaContacto" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Contacto</label>
+                                <input type="tel" required class="form-control" asp-for="TelefoneContacto" placeholder="Contacto">
+                                <span asp-validation-for="TelefoneContacto" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label for="">Email</label>
+                                <input type="email" required class="form-control" asp-for="EmailContacto" placeholder="Email">
+                                <span asp-validation-for="EmailContacto" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-12">
+                                <label>Tipo de Contacto</label>
+                                <select class="form-control" asp-for="TipoContacto">
+                                    <option selected="selected">Email</option>
+                                    <option>Mensagem</option>
+                                    <option>Feira</option>
+                                    <option>Outro</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
                         </div>
-            <br />
+                    </div>
+                    <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
+                        <div class="row">
+                            <div class="form-group col-lg-6" style="position: relative;">
+                                <label for="">Número de Contribuinte</label>
+                                <input type="text" class="form-control" asp-for="NIFContacto" placeholder="NIF">
+                            </div>
+                            <div class="form-group col-lg-6" style="position: relative;">
+                                <label for="">Morada da Empresa</label>
+                                <input type="text" class="form-control" asp-for="MoradaContacto" placeholder="Morada">
+                            </div>
+                            <label for="">Observações</label>
+                            <textarea class="form-control" rows="8" placeholder="" asp-for="Obs"></textarea>
+                        </div>
+                        <br />
+                        <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
+                        <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
+                    </div>
+                    <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
+                        <div class="form-group">
+                            <label class="control-label">Anexo</label>
+                            <div class="input-group mb-3">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
+                                    <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
+                                </div>
+                            </div>
+                            <br />
                             <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
 
-                            <input type="submit" onclick="submit()" value="Guardar" class="btn btn-primary" />
+                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </form>
 
     @section Scripts {

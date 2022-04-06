@@ -49,12 +49,15 @@ namespace FT_Management.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
         public IActionResult Editar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Contacto contacto = context.ObterContacto(id);
 
-            return View(context.ObterContacto(id));
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && contacto.IdComercial != int.Parse(this.User.Claims.First().Value.ToString())) return Redirect("~/Home/AcessoNegado");
+
+            return View(contacto);
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
@@ -63,6 +66,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             contacto.NIFContacto = contacto.NIFContacto is null ? "" : contacto.NIFContacto;
+            contacto.EmailContacto = contacto.EmailContacto is null ? "" : contacto.EmailContacto;
 
             context.CriarContactos(new List<Contacto> { contacto });
 
@@ -70,27 +74,20 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public ActionResult Novo(string txtNomeEmpresa, string txtNomeCliente, string txtContacto, string txtEmail, string txtNIF, string txtMorada, string txtObs, string txtTipoContacto)
+        public ActionResult Novo(Contacto c)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            
-            Contacto contacto = new Contacto {
-                NomeContacto = txtNomeEmpresa ?? "",
-                PessoaContacto = txtNomeCliente ?? "",
-                TelefoneContacto = txtContacto ?? "",
-                EmailContacto = txtEmail ?? "",
-                NIFContacto = txtNIF ?? "",
-                MoradaContacto = txtMorada ?? "",
-                Obs = txtObs ?? "",
-                TipoContacto = txtTipoContacto,
-                URL = "https://food-tech.cloud/index.php/apps/files/?dir=/FT_Management/Contactos/[" + txtNomeEmpresa + "] " + txtNomeCliente,
-                DataContacto = DateTime.Now,
-                IdUtilizador = int.Parse(this.User.Claims.First().Value),
-                IdComercial = int.Parse(this.User.Claims.First().Value)
-        };  
+            if (ModelState.IsValid)
+            {
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                c.CheckNull();
+                c.DataContacto = DateTime.Now;
+                c.IdUtilizador = int.Parse(this.User.Claims.First().ToString());
+                c.IdComercial = int.Parse(this.User.Claims.First().ToString());
 
-            context.CriarContactos(new List<Contacto> { contacto });
-            return RedirectToAction("Index");
+                context.CriarContactos(new List<Contacto> { c });
+                return RedirectToAction("Index");
+            }
+            return View(c);
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
