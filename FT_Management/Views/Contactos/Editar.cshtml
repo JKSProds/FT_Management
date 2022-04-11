@@ -13,6 +13,7 @@
     <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
         <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="true">Contacto</a>
         <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Dados Adicionais</a>
+        <a class="nav-item nav-link" id="v-pills-hist-tab" data-toggle="pill" href="#v-pills-hist" role="tab" aria-controls="v-pills-hist" aria-selected="false">Histórico</a>
         <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
     </div>
 
@@ -79,7 +80,70 @@
                     <textarea class="form-control" rows="8" placeholder="" id="txtObs" asp-for="Obs"></textarea>
                 </div>
             </div>
+            </div>
+        <div class="tab-pane fade show" id="v-pills-hist" role="tabpanel" aria-labelledby="v-pills-hist-tab">
+            <br />
+            <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmAddHistorico()"><i class="fas fa-plus"></i> Adicionar Observação</a>
+
+            @if (Model.Historico.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foi encontrado nenhum histórico para este contacto!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                Data
+                            </th>
+                            <th>
+                                Observações
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Historico)
+                        {
+                            <tr>
+                                <td>
+                                    <span>@item.Data.ToShortDateString()</span>
+                                </td>
+                                <td>
+                                    <span>@item.Obs</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <div class="modal fade" id="modalAddHist" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Adicionar Histórico</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <textarea class="form-control" id="txtHist" rows="8"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" onclick="AddHistorico()" href="javascript:;">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
             <br />
             <div class="form-group">
@@ -141,5 +205,29 @@
                 }
             }
         );
-    }
+        }
+
+        function AddHistorico() {
+            var json = {
+                idcontacto: document.getElementById('IdContacto').value,
+                obs: document.getElementById('txtHist').value
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Contactos/AdicionarObservacao",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    window.location.reload();
+                }
+            });
+
+        }
+
+        function ConfirmAddHistorico() {
+            
+            $("#modalAddHist").modal('show');
+        }
+
         </script>

@@ -1284,7 +1284,8 @@ namespace FT_Management.Models
                     IdComercial = result["IdComercial"],
                     Comercial = ObterUtilizador(result["IdComercial"]),
                     IdUtilizador = result["IdUtilizador"],
-                    Utilizador = ObterUtilizador(result["IdUtilizador"])
+                    Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                    Historico = ObterHistoricoContactos(id)
                 };
             }
 
@@ -1326,6 +1327,30 @@ namespace FT_Management.Models
             }
             return LstContacto;
         }
+
+        public List<HistoricoContacto> ObterHistoricoContactos(int IdContacto)
+        {
+
+            List<HistoricoContacto> LstHistorico = new List<HistoricoContacto>();
+            string sqlQuery = "SELECT * FROM dat_contactos_historico WHERE IdContacto="+IdContacto+";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstHistorico.Add(new HistoricoContacto()
+                    {
+                        Id = result["Id"],
+                        IdContacto = result["IdContacto"],
+                        Data = result["Data"],
+                        Obs = result["Obs"]
+                    });
+                }
+            }
+            return LstHistorico;
+        }
+
         public List<Contacto> ObterListaContactos(string Filtro)
         {
             DateTime dt = new DateTime();
@@ -1484,6 +1509,22 @@ namespace FT_Management.Models
             }
             return LstClientes;
         }
+
+        public int ObterUltimoID(string NomeTabela, string CampoID)
+        {
+            using (Database db = ConnectionString)
+            {
+                //using var result = db.Query("SELECT Max(" + CampoID + ") FROM " + NomeTabela + ";");
+                using var result = db.Query("SELECT "+CampoID+" FROM "+NomeTabela+" ORDER BY "+CampoID+" DESC LIMIT 1;");
+                while (result.Read())
+                {
+                    return result.Reader.IsDBNull(0) ? 0 : result[0];
+                };
+            }
+            return 0;
+
+        }
+
         public int ObterUltimaEntrada(string NomeTabela, string CampoID)
         {
             using (Database db = ConnectionString)
@@ -2242,6 +2283,15 @@ namespace FT_Management.Models
                 db.Connection.Close();
             }
         }
+
+        public void CriarHistoricoContacto(HistoricoContacto historicoContacto)
+        {
+            string sql = "INSERT INTO dat_contactos_historico (Id, IdContacto, Data, Obs) VALUES (" + historicoContacto.Id + ", " + historicoContacto.IdContacto + ", '" + historicoContacto.Data.ToString("yyyy-MM-dd") + "', '" + historicoContacto.Obs + "');";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+
         public void CriarContactos(List<Contacto> LstContacto)
         {
             if (LstContacto.Count() > 0)

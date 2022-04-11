@@ -76,6 +76,21 @@ namespace FT_Management.Controllers
             return RedirectToAction("Index");
         }
 
+        public string AdicionarObservacao(int idcontacto, string obs)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            HistoricoContacto hC = new HistoricoContacto() {
+                IdContacto = idcontacto,
+                Data = DateTime.Now,
+                Obs = obs
+            };
+
+            context.CriarHistoricoContacto(hC);
+
+            return "OK";
+        }
+
         [HttpPost]
         public ActionResult Novo(Contacto c)
         {
@@ -89,6 +104,14 @@ namespace FT_Management.Controllers
                 c.NIFContacto.Replace(" ", "");
 
                 context.CriarContactos(new List<Contacto> { c });
+
+                context.CriarHistoricoContacto(new HistoricoContacto()
+                {
+                    IdContacto = context.ObterUltimoID("dat_contactos", "Id"),
+                    Data = DateTime.Now,
+                    Obs = "Criação do Contacto"
+                });
+
                 return RedirectToAction("Index");
             }
             return View(c);
