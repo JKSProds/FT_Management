@@ -6,15 +6,22 @@
 
 
 <input type="hidden" View id="hiddenIdContacto" name="IdContacto" />
+<form asp-action="Index" method="get">
+    <div class="row">
+        <div class="col-md-8 page-header">
+            <h1>Listagem de Contactos</h1>
+        </div>
 
-<div class="row">
-    <div class="col-lg-9">
-        <h1>Listagem de Contactos</h1>
+        <div class="input-group col-md-4">
+            <input type="text" style="height: 100%" class="form-control" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit"> <i class="fa fa-search"></i> </button>
+                <button class="btn btn-outline-primary" type="button" onclick="window.location.href = '/Contactos/Novo'"><i class="fas fa-plus"></i> </button>
+            </div>
+        </div>
+
     </div>
-    <div class="btn-group btn-group-lg col-lg-3" role="group" aria-label="Basic example">
-        <a class="btn btn-primary btn-block text-white float-right" href="/Contactos/Novo"><i class="fas fa-plus"></i> Novo Contacto</a>
-    </div>
-</div>
+</form>
 <br />
 <br />
 @if (Model.Count() == 0)
@@ -33,6 +40,9 @@ else
                 <th>
                     Nome
                 </th>
+                <th class="d-none d-lg-block ">
+                    Comercial
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -46,6 +56,10 @@ else
                     <td onclick="MostrarInfoContacto(@item.IdContacto)">
                         <span>@item.PessoaContacto</span>
                     </td>
+                    <td onclick="MostrarInfoContacto(@item.IdContacto)" class="d-none d-lg-block ">
+                        <span>@item.Comercial.NomeCompleto</span>
+                    </td>
+
                     <td>
                         <div class="btn-group float-right">
                             <a class="btn btn-info btn-lg text-black-50 @(item.TelefoneContacto.Length < 9 ? "disabled" : "")" href="tel:@item.TelefoneContacto"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
@@ -110,7 +124,7 @@ else
                         <button type="button" class="btn btn-outline-primary" onclick="AssociarComercial()" href="javascript:;">Associar Comercial</button>
                     }
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" onclick="Editar()" href="javascript:;">Editar</button>
+                    <button type="button" class="btn btn-primary" onclick="Editar()" href="javascript:;">Editar</button>
                 </div>
             </div>
         </div>
@@ -146,96 +160,96 @@ else
         </div>
     </div>
 }
-    <script>
-        function MostrarInfoContacto(Id) {
-            document.getElementById("hiddenIdContacto").value = Id;
+<script>
+    function MostrarInfoContacto(Id) {
+        document.getElementById("hiddenIdContacto").value = Id;
 
-            var json = {
-                id: Id
-            };
-            $.ajax({
-                type: "POST",
-                url: "/Contactos/ObterContacto",
-                data: json,
-                traditional: true,
-                dataType: "text",
-                success: function (response) {
-                    $(function () {
-                        // Add response in Modal body
-                        $('.info_contacto').html(response);
+        var json = {
+            id: Id
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/ObterContacto",
+            data: json,
+            traditional: true,
+            dataType: "text",
+            success: function (response) {
+                $(function () {
+                    // Add response in Modal body
+                    $('.info_contacto').html(response);
 
-                        // Display Modal
-                        $('#modalContacto').modal('show');
-                    });
-                }
-            });
-        }
+                    // Display Modal
+                    $('#modalContacto').modal('show');
+                });
+            }
+        });
+    }
 
-        function Editar() {
+    function Editar() {
 
-            window.location.href = "/Contactos/Editar/" + document.getElementById('hiddenIdContacto').value;
-        }
+        window.location.href = "/Contactos/Editar/" + document.getElementById('hiddenIdContacto').value;
+    }
 
 
-        function AssociarComercial() {
-            $("#modalAssociarComercial").modal('show');
-        }
+    function AssociarComercial() {
+        $("#modalAssociarComercial").modal('show');
+    }
 
-        function AssociarComercialConfirm() {
-            //alert(document.getElementById('lstcomerciais').value);
-            var lstComerciais = document.getElementById("lstcomerciais");
-            var txtComercial = lstComerciais.options[lstComerciais.selectedIndex].innerHTML;
-            //alert(txtComercial);
+    function AssociarComercialConfirm() {
+        //alert(document.getElementById('lstcomerciais').value);
+        var lstComerciais = document.getElementById("lstcomerciais");
+        var txtComercial = lstComerciais.options[lstComerciais.selectedIndex].innerHTML;
+        //alert(txtComercial);
 
-            var json = {
-                idcontacto: document.getElementById('hiddenIdContacto').value,
-                idcomercial: document.getElementById('lstcomerciais').value
-            };
+        var json = {
+            idcontacto: document.getElementById('hiddenIdContacto').value,
+            idcomercial: document.getElementById('lstcomerciais').value
+        };
 
-            $.ajax({
-                type: "POST",
-                url: "/Contactos/AssociarComercial",
-                data: json,
-                traditional: true,
-                success: function (result) {
-                    document.getElementById("txtcomercial").value = txtComercial;
-                    $.notify({
-                        message: "Comercial associado com sucesso!"
-                    }, {
-                        // settings
-                        type: 'success',
-                        onShow: function () {
-                            this.css({ 'width': 'auto', 'height': 'auto' });
-                        }
-                    });
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/AssociarComercial",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                document.getElementById("txtcomercial").value = txtComercial;
+                $.notify({
+                    message: "Comercial associado com sucesso!"
+                }, {
+                    // settings
+                    type: 'success',
+                    onShow: function () {
+                        this.css({ 'width': 'auto', 'height': 'auto' });
+                    }
+                });
+            }
+        });
 
-            $("#modalAssociarComercial").modal('hide');
-        }
+        $("#modalAssociarComercial").modal('hide');
+    }
 
-        function ConfirmApagarContacto(Id) {
-            document.getElementById("hiddenIdContacto").value = Id;
-            $("#myModal").modal('show');
-        }
+    function ConfirmApagarContacto(Id) {
+        document.getElementById("hiddenIdContacto").value = Id;
+        $("#myModal").modal('show');
+    }
 
-        function ApagarContacto() {
-            var json = {
-                id: document.getElementById('hiddenIdContacto').value
-            };
+    function ApagarContacto() {
+        var json = {
+            id: document.getElementById('hiddenIdContacto').value
+        };
 
-            $.ajax({
-                type: "POST",
-                url: "/Contactos/Apagar",
-                data: json,
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        window.location.reload();
-                    });
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/Apagar",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
 
-            $("#myModal").modal('hide');
-        }
-    </script>
+        $("#myModal").modal('hide');
+    }
+</script>

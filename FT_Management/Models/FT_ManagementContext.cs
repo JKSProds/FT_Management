@@ -1257,7 +1257,9 @@ namespace FT_Management.Models
                     IdCliente = result["IdCliente"],
                     IdLoja = result["IdLoja"],
                     IdComercial = result["IdComercial"],
-                    IdUtilizador = result["IdUtilizador"]
+                    Comercial = ObterUtilizador(result["IdComercial"]),
+                    IdUtilizador = result["IdUtilizador"],
+                    Utilizador = ObterUtilizador(result["IdUtilizador"])
                 };
             }
 
@@ -1289,7 +1291,48 @@ namespace FT_Management.Models
                         URL = result["URL"],
                         DataContacto = result["DataContacto"],
                         IdCliente = result["IdCliente"],
-                        IdLoja = result["IdLoja"]
+                        IdLoja = result["IdLoja"],
+                        IdComercial = result["IdComercial"],
+                        Comercial = ObterUtilizador(result["IdComercial"]),
+                        IdUtilizador = result["IdUtilizador"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"])
+                    });
+                }
+            }
+            return LstContacto;
+        }
+        public List<Contacto> ObterListaContactos(string Filtro)
+        {
+            DateTime dt = new DateTime();
+            DateTime.TryParse(Filtro, out dt);
+
+            List<Contacto> LstContacto = new List<Contacto>();
+            string sqlQuery = "SELECT * FROM dat_contactos where Nome like '%" + Filtro + "%' or Morada like '%" + Filtro + "%' or PessoaContacto like '%" + Filtro + "%' or Email like '%" + Filtro + "%' or TipoContacto like '%" + Filtro + "%' or DataContacto like '%" + dt.ToString("yyyy-MM-dd") + "%';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstContacto.Add(new Contacto()
+                    {
+                        IdContacto = result["Id"],
+                        NomeContacto = result["Nome"],
+                        MoradaContacto = result["Morada"],
+                        PessoaContacto = result["PessoaContacto"],
+                        EmailContacto = result["Email"],
+                        TelefoneContacto = result["Telefone"],
+                        NIFContacto = result["NIF"],
+                        Obs = result["Obs"],
+                        TipoContacto = result["TipoContacto"],
+                        URL = result["URL"],
+                        DataContacto = result["DataContacto"],
+                        IdCliente = result["IdCliente"],
+                        IdLoja = result["IdLoja"],
+                        IdComercial = result["IdComercial"],
+                        Comercial = ObterUtilizador(result["IdComercial"]),
+                        IdUtilizador = result["IdUtilizador"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"])
                     });
                 }
             }

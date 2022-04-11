@@ -15,12 +15,15 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class ContactosController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(string filter)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             ViewBag.ListaComerciais = context.ObterListaComerciais().ToList();
 
-            return View(context.ObterListaContactos());
+            if (filter == null) { filter = ""; }
+            ViewData["filter"] = filter;
+
+            return View(context.ObterListaContactos(filter));
         }
 
         [HttpPost]
@@ -37,8 +40,8 @@ namespace FT_Management.Controllers
             res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"form-control\" value='" + contacto.NIFContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + context.ObterUtilizador(contacto.IdUtilizador).NomeCompleto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Comercial Associado</label><input type=\"text\" id=\"txtcomercial\" class=\"form-control\" value='" + context.ObterUtilizador(contacto.IdComercial).NomeCompleto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Comercial Associado</label><input type=\"text\" id=\"txtcomercial\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Observações</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + contacto.Obs + "</textarea></div>";
 
             return res;

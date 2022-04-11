@@ -252,8 +252,11 @@ namespace FT_Management.Models
         public DateTime DataContacto { get; set; }
         public int IdCliente { get; set; }
         public int IdLoja { get; set; }
+        public Cliente Cliente { get; set; }
         public int IdUtilizador { get; set; }
         public int IdComercial { get; set; }
+        public Utilizador Comercial { get; set; }
+        public Utilizador Utilizador { get; set; }
 
         public Contacto()
         {
