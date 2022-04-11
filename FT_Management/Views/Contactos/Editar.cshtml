@@ -45,21 +45,27 @@
                     <label asp-for="PessoaContacto" class="control-label"></label>
                     <input asp-for="PessoaContacto" class="form-control" id="txtNomeCliente" />
                 </div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-5">
                     <label asp-for="EmailContacto" class="control-label"></label>
                     <input asp-for="EmailContacto" class="form-control" id="EmailContacto" />
                 </div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-3">
                     <label asp-for="TelefoneContacto" class="control-label"></label>
                     <input asp-for="TelefoneContacto" class="form-control" id="TelefoneContacto" />
                 </div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-2">
                     <label>Tipo de Contacto</label>
                     <select class="form-control" onchange="tipoContactoAlterado()" asp-for="TipoContacto" name="ddlTipoContacto" id="ddlTipoContacto">
                         <option>Email</option>
                         <option>Mensagem</option>
                         <option>Feira</option>
                         <option>Outro</option>
+                    </select>
+                </div>
+                <div class="form-group col-lg-2">
+                    <label>Área de Negócio</label>
+                    <select class="form-control" asp-for="AreaNegocio"
+                            asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text"))">
                     </select>
                 </div>
             </div>

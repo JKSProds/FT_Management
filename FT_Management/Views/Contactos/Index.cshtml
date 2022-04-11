@@ -8,15 +8,20 @@
 <input type="hidden" View id="hiddenIdContacto" name="IdContacto" />
 <form asp-action="Index" method="get">
     <div class="row">
-        <div class="col-md-8 page-header">
+        <div class="col-md-4 page-header">
             <h1>Listagem de Contactos</h1>
         </div>
 
-        <div class="input-group col-md-4">
+        <div class="input-group col-md-8">
             <input type="text" style="height: 100%" class="form-control" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit"> <i class="fa fa-search"></i> </button>
-                <button class="btn btn-outline-primary" type="button" onclick="window.location.href = '/Contactos/Novo'"><i class="fas fa-plus"></i> </button>
+                <select class="form-control" id="lstarea" style="height: 100%" onchange="changeAreaNegocio()"
+                        asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text", @ViewData["area"]))">
+                </select>
+
+                <button class="btn btn-outline-success" type="submit"> <i class="fa fa-search"></i> Procurar</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="window.location.href = '/Contactos'"> <i class="fa fa-backspace"></i> Limpar</button>
+                <button class="btn btn-outline-primary" type="button" onclick="window.location.href = '/Contactos/Novo'"><i class="fas fa-plus"></i> Novo</button>
             </div>
         </div>
 
@@ -191,6 +196,15 @@ else
         window.location.href = "/Contactos/Editar/" + document.getElementById('hiddenIdContacto').value;
     }
 
+    function changeAreaNegocio() {
+        var area = document.getElementById("lstarea").value;
+        var filter = document.getElementById("txtFiltro").value;
+
+        if (document.getElementById("lstarea").selectedIndex == "0") area = "";
+
+        window.location.href = "/Contactos?filter=" + filter + "&area=" + area;
+
+    }
 
     function AssociarComercial() {
         $("#modalAssociarComercial").modal('show');

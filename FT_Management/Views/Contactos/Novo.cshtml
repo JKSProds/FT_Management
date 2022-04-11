@@ -62,7 +62,7 @@
                                 <input type="email" required class="form-control" asp-for="EmailContacto" placeholder="Email">
                                 <span asp-validation-for="EmailContacto" class="text-danger"></span>
                             </div>
-                            <div class="form-group col-lg-12">
+                            <div class="form-group col-lg-6">
                                 <label>Tipo de Contacto</label>
                                 <select class="form-control" asp-for="TipoContacto">
                                     <option selected="selected">Email</option>
@@ -71,6 +71,13 @@
                                     <option>Outro</option>
                                 </select>
                             </div>
+                            <div class="form-group col-lg-6">
+                                <label>Área de Negócio</label>
+                                <select class="form-control" asp-for="AreaNegocio"
+                                        asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text"))">
+                                </select>
+                            </div>
+
                             <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
                         </div>
                     </div>

@@ -9,21 +9,30 @@ using System.Net;
 using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class ContactosController : Controller
     {
-        public IActionResult Index(string filter)
+        public IActionResult Index(string filter, string area)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             ViewBag.ListaComerciais = context.ObterListaComerciais().ToList();
 
-            if (filter == null) { filter = ""; }
-            ViewData["filter"] = filter;
+            List<String> LstAreasNegocio = context.ObterListaAreasNegocio().ToList();
+            LstAreasNegocio.Insert(0, "Todos");
 
-            return View(context.ObterListaContactos(filter));
+            ViewBag.AreasNegocio = LstAreasNegocio.Select(l => new SelectListItem() { Value = l, Text = l });
+
+            if (filter == null) { filter = ""; }
+            if (area == null) { area = ""; }
+
+            ViewData["filter"] = filter;
+            ViewData["area"] = area;
+
+            return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)).ToList());
         }
 
         [HttpPost]
@@ -40,6 +49,7 @@ namespace FT_Management.Controllers
             res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"form-control\" value='" + contacto.NIFContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Área de Negócio</label><input type=\"text\" class=\"form-control\" value='" + contacto.AreaNegocio + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Comercial Associado</label><input type=\"text\" id=\"txtcomercial\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Observações</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + contacto.Obs + "</textarea></div>";
@@ -49,6 +59,9 @@ namespace FT_Management.Controllers
 
         public IActionResult Novo()
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewBag.AreasNegocio = context.ObterListaAreasNegocio().ToList().Select(l => new SelectListItem() { Value = l, Text = l });
+
             return View();
         }
 
@@ -57,6 +70,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Contacto contacto = context.ObterContacto(id);
+            ViewBag.AreasNegocio = context.ObterListaAreasNegocio().ToList().Select(l => new SelectListItem() { Value = l, Text = l });
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && contacto.IdComercial != int.Parse(this.User.Claims.First().Value.ToString())) return Redirect("~/Home/AcessoNegado");
 

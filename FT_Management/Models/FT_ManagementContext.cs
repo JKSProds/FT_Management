@@ -1279,6 +1279,7 @@ namespace FT_Management.Models
                     TipoContacto = result["TipoContacto"],
                     URL = result["URL"],
                     DataContacto = result["DataContacto"],
+                    AreaNegocio = result["AreaNegocio"],
                     IdCliente = result["IdCliente"],
                     IdLoja = result["IdLoja"],
                     IdComercial = result["IdComercial"],
@@ -1290,6 +1291,23 @@ namespace FT_Management.Models
             }
 
             return contacto;
+        }
+
+        public List<String> ObterListaAreasNegocio()
+        {
+
+            List<String> LstAreasNegocio = new List<String>();
+            string sqlQuery = "SELECT * FROM sys_areas_negocio;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstAreasNegocio.Add(result["Nome"]);
+                }
+            }
+            return LstAreasNegocio;
         }
 
         public List<Contacto> ObterListaContactos()
@@ -1316,6 +1334,7 @@ namespace FT_Management.Models
                         TipoContacto = result["TipoContacto"],
                         URL = result["URL"],
                         DataContacto = result["DataContacto"],
+                        AreaNegocio = result["AreaNegocio"],
                         IdCliente = result["IdCliente"],
                         IdLoja = result["IdLoja"],
                         IdComercial = result["IdComercial"],
@@ -1377,6 +1396,7 @@ namespace FT_Management.Models
                         TipoContacto = result["TipoContacto"],
                         URL = result["URL"],
                         DataContacto = result["DataContacto"],
+                        AreaNegocio = result["AreaNegocio"],
                         IdCliente = result["IdCliente"],
                         IdLoja = result["IdLoja"],
                         IdComercial = result["IdComercial"],
@@ -2297,15 +2317,15 @@ namespace FT_Management.Models
             if (LstContacto.Count() > 0)
             {
 
-                string sql = "INSERT INTO dat_contactos (Id, Nome, Morada, PessoaContacto, Email, Telefone, NIF, Obs, URL, DataContacto, TipoContacto, IdCliente, IdLoja, IdUtilizador, IdComercial) VALUES ";
+                string sql = "INSERT INTO dat_contactos (Id, Nome, Morada, PessoaContacto, Email, Telefone, NIF, Obs, URL, DataContacto, TipoContacto, AreaNegocio, IdCliente, IdLoja, IdUtilizador, IdComercial) VALUES ";
 
                 foreach (var contacto in LstContacto)
                 {
-                    sql += ("('" + contacto.IdContacto + "', '" + contacto.NomeContacto.Replace("'", "''") + "', '" + contacto.MoradaContacto.Replace("'", "''") + "', '" + contacto.PessoaContacto.Replace("'", "''") + "', '" + contacto.EmailContacto.Replace("'", "''") + "', '" + contacto.TelefoneContacto.Replace("'", "''") + "', '" + contacto.NIFContacto.Replace("'", "''") + "', '" + contacto.Obs.Replace("'", "''") + "', '" + contacto.URL + "', '" + contacto.DataContacto.ToString("yy-MM-dd") + "', '" + contacto.TipoContacto + "', '" + contacto.IdCliente + "', '" + contacto.IdLoja + "', '" + contacto.IdUtilizador + "', '" + contacto.IdComercial + "'), \r\n");
+                    sql += ("('" + contacto.IdContacto + "', '" + contacto.NomeContacto.Replace("'", "''") + "', '" + contacto.MoradaContacto.Replace("'", "''") + "', '" + contacto.PessoaContacto.Replace("'", "''") + "', '" + contacto.EmailContacto.Replace("'", "''") + "', '" + contacto.TelefoneContacto.Replace("'", "''") + "', '" + contacto.NIFContacto.Replace("'", "''") + "', '" + contacto.Obs.Replace("'", "''") + "', '" + contacto.URL + "', '" + contacto.DataContacto.ToString("yy-MM-dd") + "', '" + contacto.TipoContacto + "', '" + contacto.AreaNegocio + "', '" + contacto.IdCliente + "', '" + contacto.IdLoja + "', '" + contacto.IdUtilizador + "', '" + contacto.IdComercial + "'), \r\n");
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE Nome = VALUES(Nome), Morada = VALUES(Morada), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), PessoaContacto = VALUES(PessoaContacto), Email = VALUES(Email), Telefone = VALUES(Telefone), NIF = VALUES(NIF), Obs = VALUES(Obs), URL = VALUES(URL), TipoContacto = VALUES(TipoContacto), IdComercial = VALUES(IdComercial);";
+                sql += " ON DUPLICATE KEY UPDATE Nome = VALUES(Nome), Morada = VALUES(Morada), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), PessoaContacto = VALUES(PessoaContacto), Email = VALUES(Email), Telefone = VALUES(Telefone), NIF = VALUES(NIF), Obs = VALUES(Obs), URL = VALUES(URL), TipoContacto = VALUES(TipoContacto), AreaNegocio = VALUES(AreaNegocio), IdComercial = VALUES(IdComercial);";
 
                 Database db = ConnectionString;
 

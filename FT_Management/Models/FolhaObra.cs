@@ -250,6 +250,7 @@ namespace FT_Management.Models
         public string TipoContacto { get; set; }
         public string URL { get; set; }
         public DateTime DataContacto { get; set; }
+        public String AreaNegocio { get; set; }
         public int IdCliente { get; set; }
         public int IdLoja { get; set; }
         public Cliente Cliente { get; set; }
