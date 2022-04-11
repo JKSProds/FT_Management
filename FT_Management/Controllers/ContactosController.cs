@@ -86,6 +86,7 @@ namespace FT_Management.Controllers
                 c.DataContacto = DateTime.Now;
                 c.IdUtilizador = int.Parse(this.User.Claims.First().Value.ToString());
                 c.IdComercial = int.Parse(this.User.Claims.First().Value.ToString());
+                c.NIFContacto.Replace(" ", "");
 
                 context.CriarContactos(new List<Contacto> { c });
                 return RedirectToAction("Index");
@@ -114,7 +115,18 @@ namespace FT_Management.Controllers
 
             return RedirectToAction("Index");
         }
-            [HttpPost]
+
+        public string MostrarCliente(int Id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Cliente c = context.ObterClienteContribuinte(context.ObterContacto(Id).NIFContacto);
+
+            if (c.IdCliente == 0) throw new Exception();
+
+            return "/Clientes/Cliente?IdCliente=" + c.IdCliente + "&IdLoja=" + c.IdLoja;
+        }
+
+        [HttpPost]
         public JsonResult AdicionarAnexo(List<IFormFile> files, string NomeEmpresa, string NomeCliente)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

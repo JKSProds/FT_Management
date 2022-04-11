@@ -119,6 +119,7 @@ else
             </div>
             <div class="modal-footer">
                 <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-outline-warning" onclick="MostrarCliente()" href="javascript:;">Mostrar Cliente</button>
                     @if (this.User.IsInRole("Admin"))
                     {
                         <button type="button" class="btn btn-outline-primary" onclick="AssociarComercial()" href="javascript:;">Associar Comercial</button>
@@ -213,6 +214,7 @@ else
             traditional: true,
             success: function (result) {
                 document.getElementById("txtcomercial").value = txtComercial;
+                $("#modalContacto").modal('hide');
                 $.notify({
                     message: "Comercial associado com sucesso!"
                 }, {
@@ -231,6 +233,36 @@ else
     function ConfirmApagarContacto(Id) {
         document.getElementById("hiddenIdContacto").value = Id;
         $("#myModal").modal('show');
+    }
+
+    function MostrarCliente() {
+        var json = {
+            id: document.getElementById('hiddenIdContacto').value
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/MostrarCliente",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.href = result;
+                });
+            },
+            error: function () {
+                $("#modalContacto").modal('hide');
+                $.notify({
+                    message: "Não foi encontrado um cliente com o mesmo NIF!"
+                }, {
+                    // settings
+                        type: 'danger',
+                    onShow: function () {
+                        this.css({ 'width': 'auto', 'height': 'auto' });
+                    }
+                });
+            }
+        });
     }
 
     function ApagarContacto() {

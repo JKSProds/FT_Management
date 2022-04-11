@@ -1232,6 +1232,31 @@ namespace FT_Management.Models
 
             return cliente;
         }
+
+        public Cliente ObterClienteContribuinte(string NIF)
+        {
+
+            Cliente cliente = new Cliente();
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT * FROM dat_clientes where NumeroContribuinteCliente=" + NIF + ";");
+            result.Read();
+            if (result.Reader.HasRows)
+            {
+                cliente = new Cliente()
+                {
+                    IdCliente = result["IdCliente"],
+                    IdLoja = result["IdLoja"],
+                    NomeCliente = result["NomeCliente"],
+                    PessoaContatoCliente = result["PessoaContactoCliente"],
+                    MoradaCliente = result["MoradaCliente"],
+                    EmailCliente = result["EmailCliente"],
+                    NumeroContribuinteCliente = result["NumeroContribuinteCliente"],
+                    TelefoneCliente = result["Telefone"]
+                };
+            }
+
+            return cliente;
+        }
         public Contacto ObterContacto(int id)
         {
 
