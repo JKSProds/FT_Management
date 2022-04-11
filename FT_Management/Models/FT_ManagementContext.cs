@@ -2732,6 +2732,15 @@ namespace FT_Management.Models
 
             using Database db = ConnectionString;
             db.Execute(sql);
+
+            ApagarHistoricoContacto(Id);
+        }
+        public void ApagarHistoricoContacto(int Id)
+        {
+            string sql = "DELETE FROM dat_contactos_historico where IdContacto=" + Id + ";";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
         }
 
         public void ApagarTabela(string nome)

@@ -97,6 +97,7 @@ namespace FT_Management.Controllers
             if (ModelState.IsValid)
             {
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                c.IdContacto = context.ObterUltimoID("dat_contactos", "Id") + 1;
                 c.CheckNull();
                 c.DataContacto = DateTime.Now;
                 c.IdUtilizador = int.Parse(this.User.Claims.First().Value.ToString());
@@ -107,7 +108,7 @@ namespace FT_Management.Controllers
 
                 context.CriarHistoricoContacto(new HistoricoContacto()
                 {
-                    IdContacto = context.ObterUltimoID("dat_contactos", "Id"),
+                    IdContacto = c.IdContacto,
                     Data = DateTime.Now,
                     Obs = "Criação do Contacto"
                 });
