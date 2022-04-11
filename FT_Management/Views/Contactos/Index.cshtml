@@ -13,12 +13,11 @@
         </div>
 
         <div class="input-group col-md-8">
-            <input type="text" style="height: 100%" class="form-control" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
+            <input type="text" style="height: auto" class="form-control" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
             <div class="input-group-append">
-                <select class="form-control" id="lstarea" style="height: 100%" onchange="changeAreaNegocio()"
+                <select class="form-control" id="lstarea" style="height: auto" onchange="changeAreaNegocio()"
                         asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text", @ViewData["area"]))">
                 </select>
-
                 <button class="btn btn-outline-success" type="submit"> <i class="fa fa-search"></i> Procurar</button>
                 <button class="btn btn-outline-secondary" type="button" onclick="window.location.href = '/Contactos'"> <i class="fa fa-backspace"></i> Limpar</button>
                 <button class="btn btn-outline-primary" type="button" onclick="window.location.href = '/Contactos/Novo'"><i class="fas fa-plus"></i> Novo</button>
