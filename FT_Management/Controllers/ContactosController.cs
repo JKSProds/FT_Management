@@ -63,7 +63,7 @@ namespace FT_Management.Controllers
             return View(contacto);
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
         [HttpPost]
         public IActionResult Editar(Contacto contacto)
         {
