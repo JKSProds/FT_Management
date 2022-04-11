@@ -81,8 +81,8 @@ namespace FT_Management.Controllers
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 c.CheckNull();
                 c.DataContacto = DateTime.Now;
-                c.IdUtilizador = int.Parse(this.User.Claims.First().ToString());
-                c.IdComercial = int.Parse(this.User.Claims.First().ToString());
+                c.IdUtilizador = int.Parse(this.User.Claims.First().Value.ToString());
+                c.IdComercial = int.Parse(this.User.Claims.First().Value.ToString());
 
                 context.CriarContactos(new List<Contacto> { c });
                 return RedirectToAction("Index");
