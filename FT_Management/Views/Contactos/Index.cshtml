@@ -53,7 +53,7 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr class="@(!item.ValidadoPorAdmin ? "table-danger" : "")">
                     <td onclick="MostrarInfoContacto(@item.IdContacto)">
                         <span>@item.NomeContacto</span>
                     </td>

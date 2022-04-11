@@ -1280,6 +1280,8 @@ namespace FT_Management.Models
                     URL = result["URL"],
                     DataContacto = result["DataContacto"],
                     AreaNegocio = result["AreaNegocio"],
+                    CargoPessoaContacto = result["CargoPessoaContacto"],
+                    ValidadoPorAdmin = result["ValidadoPorAdmin"],
                     IdCliente = result["IdCliente"],
                     IdLoja = result["IdLoja"],
                     IdComercial = result["IdComercial"],
@@ -1389,6 +1391,7 @@ namespace FT_Management.Models
                         NomeContacto = result["Nome"],
                         MoradaContacto = result["Morada"],
                         PessoaContacto = result["PessoaContacto"],
+                        CargoPessoaContacto = result["CargoPessoaContacto"],
                         EmailContacto = result["Email"],
                         TelefoneContacto = result["Telefone"],
                         NIFContacto = result["NIF"],
@@ -1397,6 +1400,7 @@ namespace FT_Management.Models
                         URL = result["URL"],
                         DataContacto = result["DataContacto"],
                         AreaNegocio = result["AreaNegocio"],
+                        ValidadoPorAdmin = result["ValidadoPorAdmin"],
                         IdCliente = result["IdCliente"],
                         IdLoja = result["IdLoja"],
                         IdComercial = result["IdComercial"],
@@ -2317,15 +2321,15 @@ namespace FT_Management.Models
             if (LstContacto.Count() > 0)
             {
 
-                string sql = "INSERT INTO dat_contactos (Id, Nome, Morada, PessoaContacto, Email, Telefone, NIF, Obs, URL, DataContacto, TipoContacto, AreaNegocio, IdCliente, IdLoja, IdUtilizador, IdComercial) VALUES ";
+                string sql = "INSERT INTO dat_contactos (Id, Nome, Morada, PessoaContacto, CargoPessoaContacto, Email, Telefone, NIF, Obs, URL, DataContacto, TipoContacto, AreaNegocio, ValidadoPorAdmin, IdCliente, IdLoja, IdUtilizador, IdComercial) VALUES ";
 
                 foreach (var contacto in LstContacto)
                 {
-                    sql += ("('" + contacto.IdContacto + "', '" + contacto.NomeContacto.Replace("'", "''") + "', '" + contacto.MoradaContacto.Replace("'", "''") + "', '" + contacto.PessoaContacto.Replace("'", "''") + "', '" + contacto.EmailContacto.Replace("'", "''") + "', '" + contacto.TelefoneContacto.Replace("'", "''") + "', '" + contacto.NIFContacto.Replace("'", "''") + "', '" + contacto.Obs.Replace("'", "''") + "', '" + contacto.URL + "', '" + contacto.DataContacto.ToString("yy-MM-dd") + "', '" + contacto.TipoContacto + "', '" + contacto.AreaNegocio + "', '" + contacto.IdCliente + "', '" + contacto.IdLoja + "', '" + contacto.IdUtilizador + "', '" + contacto.IdComercial + "'), \r\n");
+                    sql += ("('" + contacto.IdContacto + "', '" + contacto.NomeContacto.Replace("'", "''") + "', '" + contacto.MoradaContacto.Replace("'", "''") + "', '" + contacto.PessoaContacto.Replace("'", "''") + "', '" + contacto.CargoPessoaContacto.Replace("'", "''") + "', '" + contacto.EmailContacto.Replace("'", "''") + "', '" + contacto.TelefoneContacto.Replace("'", "''") + "', '" + contacto.NIFContacto.Replace("'", "''") + "', '" + contacto.Obs.Replace("'", "''") + "', '" + contacto.URL + "', '" + contacto.DataContacto.ToString("yy-MM-dd") + "', '" + contacto.TipoContacto + "', '" + contacto.AreaNegocio + "', '" + contacto.ValidadoPorAdmin + "', '" + contacto.IdCliente + "', '" + contacto.IdLoja + "', '" + contacto.IdUtilizador + "', '" + contacto.IdComercial + "'), \r\n");
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE Nome = VALUES(Nome), Morada = VALUES(Morada), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), PessoaContacto = VALUES(PessoaContacto), Email = VALUES(Email), Telefone = VALUES(Telefone), NIF = VALUES(NIF), Obs = VALUES(Obs), URL = VALUES(URL), TipoContacto = VALUES(TipoContacto), AreaNegocio = VALUES(AreaNegocio), IdComercial = VALUES(IdComercial);";
+                sql += " ON DUPLICATE KEY UPDATE Nome = VALUES(Nome), Morada = VALUES(Morada), IdCliente = VALUES(IdCliente), IdLoja = VALUES(IdLoja), PessoaContacto = VALUES(PessoaContacto), CargoPessoaContacto = VALUES(CargoPessoaContacto), Email = VALUES(Email), Telefone = VALUES(Telefone), NIF = VALUES(NIF), Obs = VALUES(Obs), URL = VALUES(URL), TipoContacto = VALUES(TipoContacto), ValidadoPorAdmin = VALUES(ValidadoPorAdmin), AreaNegocio = VALUES(AreaNegocio), IdComercial = VALUES(IdComercial);";
 
                 Database db = ConnectionString;
 

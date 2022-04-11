@@ -236,6 +236,8 @@ namespace FT_Management.Models
         [Display(Name = "Pessoa de Contacto")]
         [Required]
         public string PessoaContacto { get; set; }
+        [Display(Name = "Cargo")]
+        public string CargoPessoaContacto { get; set; }
         [Display(Name = "Email")]
         [Required]
         public string EmailContacto { get; set; }
@@ -251,6 +253,7 @@ namespace FT_Management.Models
         public string URL { get; set; }
         public DateTime DataContacto { get; set; }
         public String AreaNegocio { get; set; }
+        public bool ValidadoPorAdmin { get; set; }
         public int IdCliente { get; set; }
         public int IdLoja { get; set; }
         public Cliente Cliente { get; set; }
@@ -259,11 +262,14 @@ namespace FT_Management.Models
         public Utilizador Comercial { get; set; }
         public Utilizador Utilizador { get; set; }
         public List<HistoricoContacto> Historico { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public Contacto()
         {
             NomeContacto = string.Empty;
         }
+
 
         public void CheckNull()
         {

@@ -43,6 +43,7 @@ namespace FT_Management.Controllers
             Contacto contacto = context.ObterContacto(id);
             string res= "<div class=\"mb-3\"><label>Nome da Empresa</label><input type=\"text\" class=\"form-control\" value='"+contacto.NomeContacto+ "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.PessoaContacto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Email</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.EmailContacto + "' readonly><a class=\"btn btn-outline-secondary "+(contacto.EmailContacto.Length == 0 ? "disabled" : "")+" \" href=\"mailto:" +contacto.EmailContacto+ "\" type=\"button\"><i class=\"fas fa-envelope float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone-alt float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Morada</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.MoradaContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"https://maps.google.com/?daddr=" + contacto.MoradaContacto + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></div></div>";
@@ -84,6 +85,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             contacto.NIFContacto = contacto.NIFContacto is null ? "" : contacto.NIFContacto;
             contacto.EmailContacto = contacto.EmailContacto is null ? "" : contacto.EmailContacto;
+            contacto.MoradaContacto = contacto.MoradaContacto is null ? "" : contacto.MoradaContacto;
+            contacto.Obs = contacto.Obs is null ? "" : contacto.Obs;
 
             context.CriarContactos(new List<Contacto> { contacto });
 
@@ -115,8 +118,9 @@ namespace FT_Management.Controllers
                 c.CheckNull();
                 c.DataContacto = DateTime.Now;
                 c.IdUtilizador = int.Parse(this.User.Claims.First().Value.ToString());
-                c.IdComercial = int.Parse(this.User.Claims.First().Value.ToString());
+                c.IdComercial = 24; //Id do Artur Carneiro
                 c.NIFContacto.Replace(" ", "");
+                c.ValidadoPorAdmin = false;
 
                 context.CriarContactos(new List<Contacto> { c });
 
@@ -140,6 +144,7 @@ namespace FT_Management.Controllers
 
             Contacto c = context.ObterContacto(int.Parse(idcontacto));
             c.IdComercial = int.Parse(idcomercial);
+            c.ValidadoPorAdmin = true;
 
             context.CriarContactos(new List<Contacto> { c });
             return RedirectToAction("Index");

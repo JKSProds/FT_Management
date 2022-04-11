@@ -42,15 +42,20 @@
                     <!-- your steps content here -->
                     <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
                         <div class="row">
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-4">
                                 <label for="">Nome da Empresa</label>
                                 <input type="text" required class="form-control" asp-for="NomeContacto" placeholder="Nome da Empresa">
                                 <span asp-validation-for="NomeContacto" class="text-danger"></span>
                             </div>
-                            <div class="form-group col-lg-6">
+                            <div class="form-group col-lg-4">
                                 <label for="">Nome</label>
                                 <input type="text" required class="form-control" asp-for="PessoaContacto" placeholder="Nome">
                                 <span asp-validation-for="PessoaContacto" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-4">
+                                <label for="">Cargo</label>
+                                <input type="text" required class="form-control" asp-for="CargoPessoaContacto" placeholder="Cargo">
+                                <span asp-validation-for="CargoPessoaContacto" class="text-danger"></span>
                             </div>
                             <div class="form-group col-lg-6">
                                 <label for="">Contacto</label>
