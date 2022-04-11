@@ -38,25 +38,29 @@
                 </div>
                 <div class="form-group col-lg-4">
                     <div class="form-group" style="position: relative;">
-                        <label asp-for="NomeContacto" class="control-label"></label>
+                        <label asp-for="NomeContacto" class="control-label" style="font-weight:bold"></label>
                         <input type="text" class="form-control" id="txtNomeEmpresa" placeholder="Nome Empresa" asp-for="NomeContacto">
+                        <span asp-validation-for="NomeContacto" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group col-lg-4">
-                    <label asp-for="PessoaContacto" class="control-label"></label>
+                    <label asp-for="PessoaContacto" class="control-label" style="font-weight:bold"></label>
                     <input asp-for="PessoaContacto" class="form-control" id="txtNomeCliente" />
+                    <span asp-validation-for="PessoaContacto" class="text-danger"></span>
                 </div>
                 <div class="form-group col-lg-3">
                     <label asp-for="CargoPessoaContacto" class="control-label"></label>
                     <input asp-for="CargoPessoaContacto" class="form-control" id="" />
                 </div>
                 <div class="form-group col-lg-5">
-                    <label asp-for="EmailContacto" class="control-label"></label>
+                    <label asp-for="EmailContacto" class="control-label" style="font-weight:bold"></label>
                     <input asp-for="EmailContacto" class="form-control" id="EmailContacto" />
+                    <span asp-validation-for="EmailContacto" class="text-danger"></span>
                 </div>
                 <div class="form-group col-lg-3">
-                    <label asp-for="TelefoneContacto" class="control-label"></label>
+                    <label asp-for="TelefoneContacto" class="control-label" style="font-weight:bold"></label>
                     <input asp-for="TelefoneContacto" class="form-control" id="TelefoneContacto" />
+                    <span asp-validation-for="TelefoneContacto" class="text-danger"></span>
                 </div>
                 <div class="form-group col-lg-2">
                     <label>Tipo de Contacto</label>

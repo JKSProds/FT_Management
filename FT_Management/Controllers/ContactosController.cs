@@ -87,6 +87,7 @@ namespace FT_Management.Controllers
             contacto.EmailContacto = contacto.EmailContacto is null ? "" : contacto.EmailContacto;
             contacto.MoradaContacto = contacto.MoradaContacto is null ? "" : contacto.MoradaContacto;
             contacto.Obs = contacto.Obs is null ? "" : contacto.Obs;
+            contacto.CargoPessoaContacto = contacto.CargoPessoaContacto is null ? "" : contacto.CargoPessoaContacto;
 
             context.CriarContactos(new List<Contacto> { contacto });
 
@@ -111,9 +112,10 @@ namespace FT_Management.Controllers
         [HttpPost]
         public ActionResult Novo(Contacto c)
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
             if (ModelState.IsValid)
             {
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 c.IdContacto = context.ObterUltimoID("dat_contactos", "Id") + 1;
                 c.CheckNull();
                 c.DataContacto = DateTime.Now;
@@ -121,6 +123,12 @@ namespace FT_Management.Controllers
                 c.IdComercial = 24; //Id do Artur Carneiro
                 c.NIFContacto.Replace(" ", "");
                 c.ValidadoPorAdmin = false;
+
+                c.NIFContacto = c.NIFContacto is null ? "" : c.NIFContacto;
+                c.EmailContacto = c.EmailContacto is null ? "" : c.EmailContacto;
+                c.MoradaContacto = c.MoradaContacto is null ? "" : c.MoradaContacto;
+                c.Obs = c.Obs is null ? "" : c.Obs;
+                c.CargoPessoaContacto = c.CargoPessoaContacto is null ? "" : c.CargoPessoaContacto;
 
                 context.CriarContactos(new List<Contacto> { c });
 
@@ -133,6 +141,8 @@ namespace FT_Management.Controllers
 
                 return RedirectToAction("Index");
             }
+            ViewBag.AreasNegocio = context.ObterListaAreasNegocio().ToList().Select(l => new SelectListItem() { Value = l, Text = l });
+
             return View(c);
         }
 

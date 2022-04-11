@@ -226,17 +226,7 @@ else
             data: json,
             traditional: true,
             success: function (result) {
-                document.getElementById("txtcomercial").value = txtComercial;
-                $("#modalContacto").modal('hide');
-                $.notify({
-                    message: "Comercial associado com sucesso!"
-                }, {
-                    // settings
-                    type: 'success',
-                    onShow: function () {
-                        this.css({ 'width': 'auto', 'height': 'auto' });
-                    }
-                });
+                window.location.reload();
             }
         });
 
