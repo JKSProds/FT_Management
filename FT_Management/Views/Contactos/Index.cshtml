@@ -87,7 +87,7 @@ else
         </tbody>
     </table>
 
-        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Contactos", new { page, filter = @ViewData["filter"], area = @ViewData["area"] }), Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast)
+        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Contactos", new { page, filter = @ViewData["filter"], area = @ViewData["area"], idcomercial = @ViewData["idcomercial"] }), Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast)
 
 }
 @if (this.User.IsInRole("Admin"))
