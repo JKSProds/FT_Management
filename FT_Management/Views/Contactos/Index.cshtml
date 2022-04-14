@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<FT_Management.Models.Contacto>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Bootstrap4.Core;
 
 @{
     ViewData["Title"] = "Contactos";
@@ -80,6 +83,9 @@ else
             }
         </tbody>
     </table>
+
+        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Contactos", new { page, filter = @ViewData["filter"], area = @ViewData["area"] }), Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast)
+
 }
 @if (this.User.IsInRole("Admin"))
 {
@@ -165,6 +171,8 @@ else
         </div>
     </div>
 }
+
+
 <script>
     function MostrarInfoContacto(Id) {
         document.getElementById("hiddenIdContacto").value = Id;

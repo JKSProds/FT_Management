@@ -1364,9 +1364,11 @@ namespace FT_Management.Models
                     {
                         Id = result["Id"],
                         IdContacto = result["IdContacto"],
+                        IdComercial = ObterUtilizador(int.Parse(result["IdComercial"])),
                         Data = result["Data"],
                         Obs = result["Obs"]
                     });
+                    if (LstHistorico.Last().IdComercial.Id == 0) LstHistorico.Last().IdComercial.NomeCompleto = "Não Definido";
                 }
             }
             return LstHistorico;
@@ -1376,6 +1378,8 @@ namespace FT_Management.Models
         {
             DateTime dt = new DateTime();
             DateTime.TryParse(Filtro, out dt);
+
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores();
 
             List<Contacto> LstContacto = new List<Contacto>();
             string sqlQuery = "SELECT * FROM dat_contactos where Nome like '%" + Filtro + "%' or Morada like '%" + Filtro + "%' or PessoaContacto like '%" + Filtro + "%' or Email like '%" + Filtro + "%' or TipoContacto like '%" + Filtro + "%' or DataContacto like '%" + dt.ToString("yyyy-MM-dd") + "%';";
@@ -1391,22 +1395,22 @@ namespace FT_Management.Models
                         NomeContacto = result["Nome"],
                         MoradaContacto = result["Morada"],
                         PessoaContacto = result["PessoaContacto"],
-                        CargoPessoaContacto = result["CargoPessoaContacto"],
+                        //CargoPessoaContacto = result["CargoPessoaContacto"],
                         EmailContacto = result["Email"],
                         TelefoneContacto = result["Telefone"],
-                        NIFContacto = result["NIF"],
-                        Obs = result["Obs"],
-                        TipoContacto = result["TipoContacto"],
+                        //NIFContacto = result["NIF"],
+                        //Obs = result["Obs"],
+                        //TipoContacto = result["TipoContacto"],
                         URL = result["URL"],
-                        DataContacto = result["DataContacto"],
+                        //DataContacto = result["DataContacto"],
                         AreaNegocio = result["AreaNegocio"],
                         ValidadoPorAdmin = result["ValidadoPorAdmin"],
-                        IdCliente = result["IdCliente"],
-                        IdLoja = result["IdLoja"],
-                        IdComercial = result["IdComercial"],
-                        Comercial = ObterUtilizador(result["IdComercial"]),
-                        IdUtilizador = result["IdUtilizador"],
-                        Utilizador = ObterUtilizador(result["IdUtilizador"])
+                        //IdCliente = result["IdCliente"],
+                        //IdLoja = result["IdLoja"],
+                        //IdComercial = result["IdComercial"],
+                        Comercial = LstUtilizadores.Where(u => u.Id == result["IdComercial"]).First(),
+                        //IdUtilizador = result["IdUtilizador"],
+                        Utilizador = LstUtilizadores.Where(u => u.Id == result["IdUtilizador"]).First()
                     });
                 }
             }
@@ -2310,7 +2314,7 @@ namespace FT_Management.Models
 
         public void CriarHistoricoContacto(HistoricoContacto historicoContacto)
         {
-            string sql = "INSERT INTO dat_contactos_historico (Id, IdContacto, Data, Obs) VALUES (" + historicoContacto.Id + ", " + historicoContacto.IdContacto + ", '" + historicoContacto.Data.ToString("yyyy-MM-dd") + "', '" + historicoContacto.Obs + "');";
+            string sql = "INSERT INTO dat_contactos_historico (Id, IdContacto, IdComercial, Data, Obs) VALUES (" + historicoContacto.Id + ", " + historicoContacto.IdContacto + ",  " + historicoContacto.IdComercial.Id + ", '" + historicoContacto.Data.ToString("yyyy-MM-dd") + "', '" + historicoContacto.Obs + "');";
 
             using Database db = ConnectionString;
             db.Execute(sql);

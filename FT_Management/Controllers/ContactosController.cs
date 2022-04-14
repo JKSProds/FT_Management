@@ -10,16 +10,20 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using X.PagedList;
 
 namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class ContactosController : Controller
     {
-        public IActionResult Index(string filter, string area)
+        public IActionResult Index(int? page, string filter, string area)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             ViewBag.ListaComerciais = context.ObterListaComerciais().ToList();
+
+            int pageSize = 20;
+            var pageNumber = page ?? 1;
 
             List<String> LstAreasNegocio = context.ObterListaAreasNegocio().ToList();
             LstAreasNegocio.Insert(0, "Todos");
@@ -32,7 +36,7 @@ namespace FT_Management.Controllers
             ViewData["filter"] = filter;
             ViewData["area"] = area;
 
-            return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)).ToList());
+            return View(context.ObterListaContactos(filter).ToPagedList(pageNumber, pageSize));
         }
 
         [HttpPost]
@@ -101,6 +105,7 @@ namespace FT_Management.Controllers
             HistoricoContacto hC = new HistoricoContacto() {
                 IdContacto = idcontacto,
                 Data = DateTime.Now,
+                IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())),
                 Obs = obs
             };
 
@@ -136,6 +141,7 @@ namespace FT_Management.Controllers
                 {
                     IdContacto = c.IdContacto,
                     Data = DateTime.Now,
+                    IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())),
                     Obs = "Criação do Contacto"
                 });
 
