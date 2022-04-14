@@ -129,11 +129,6 @@ else
             </div>
             <div class="modal-footer">
                 <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-outline-warning" onclick="MostrarCliente()" href="javascript:;">Mostrar Cliente</button>
-                    @if (this.User.IsInRole("Admin"))
-                    {
-                        <button type="button" class="btn btn-outline-primary" onclick="AssociarComercial()" href="javascript:;">Associar Comercial</button>
-                    }
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" onclick="Editar()" href="javascript:;">Editar</button>
                 </div>

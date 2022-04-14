@@ -46,6 +46,7 @@ namespace FT_Management.Controllers
 
             Contacto contacto = context.ObterContacto(id);
             string res= "<div class=\"mb-3\"><label>Nome da Empresa</label><input type=\"text\" class=\"form-control\" value='"+contacto.NomeContacto+ "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Nome da Empresa</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.NomeContacto + "' readonly><a class=\"btn btn-outline-warning\" onclick=MostrarCliente() type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.PessoaContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Email</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.EmailContacto + "' readonly><a class=\"btn btn-outline-secondary "+(contacto.EmailContacto.Length == 0 ? "disabled" : "")+" \" href=\"mailto:" +contacto.EmailContacto+ "\" type=\"button\"><i class=\"fas fa-envelope float-left\" style=\"margin-top:5px\"></i></a></div></div>";
@@ -56,7 +57,7 @@ namespace FT_Management.Controllers
             res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Área de Negócio</label><input type=\"text\" class=\"form-control\" value='" + contacto.AreaNegocio + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Comercial Associado</label><input type=\"text\" id=\"txtcomercial\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly></div>";
+            if (this.User.IsInRole("Admin")) res += "<div class=\"mb-3\"><label>Comercial Associado</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly><a class=\"btn btn-outline-primary\" onclick=AssociarComercial() type=\"button\"><i class=\"fas fa-list float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Observações</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + contacto.Obs + "</textarea></div>";
 
             return res;
