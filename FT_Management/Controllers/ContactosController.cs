@@ -36,7 +36,6 @@ namespace FT_Management.Controllers
 
             if (filter == null) { filter = ""; }
             if (area == null) { area = ""; }
-            if (idcomercial == null) { idcomercial = 0; }
 
             ViewData["filter"] = filter;
             ViewData["area"] = area;
