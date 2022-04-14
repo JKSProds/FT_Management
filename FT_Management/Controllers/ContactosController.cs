@@ -17,10 +17,14 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class ContactosController : Controller
     {
-        public IActionResult Index(int? page, string filter, string area)
+        public IActionResult Index(int? page, string filter, string area, int idcomercial)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            ViewBag.ListaComerciais = context.ObterListaComerciais().ToList();
+            
+            List<Utilizador> LstUtilizadores = context.ObterListaComerciais().ToList();
+            ViewBag.Comerciais = LstUtilizadores;
+                LstUtilizadores.Insert(0, new Utilizador() { Id= 0, NomeCompleto="Todos"});
+            ViewBag.ListaComerciais = LstUtilizadores;
 
             int pageSize = 20;
             var pageNumber = page ?? 1;
@@ -32,11 +36,15 @@ namespace FT_Management.Controllers
 
             if (filter == null) { filter = ""; }
             if (area == null) { area = ""; }
+            if (idcomercial == null) { idcomercial = 0; }
 
             ViewData["filter"] = filter;
             ViewData["area"] = area;
+            ViewData["idcomercial"] = idcomercial;
 
-            return View(context.ObterListaContactos(filter).ToPagedList(pageNumber, pageSize));
+
+            if (idcomercial > 0) return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)).Where(u => u.Comercial.Id == idcomercial).ToPagedList(pageNumber, pageSize));
+            return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)).ToPagedList(pageNumber, pageSize));
         }
 
         [HttpPost]
