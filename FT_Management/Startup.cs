@@ -43,7 +43,7 @@ namespace FT_Management
             services.AddSingleton<CronJobFerias>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(CronJobFerias),
-                cronExpression: "00 00 23 * * ?"));
+                cronExpression: "00 19 17 * * ?"));
 
             services.AddHostedService<QuartzHostedService>();
 

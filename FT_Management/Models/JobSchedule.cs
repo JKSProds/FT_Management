@@ -53,12 +53,12 @@ public class CronJobFerias : IJob
 
             FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
 
-            myMail.Body += "<table><th>Tecnico</th><th>Data Inicio</th><th>Data Fim</th>";
+            myMail.Body += "<table><th>Utilizador</th><th>Inicio</th><th>Fim</th>";
             List<Ferias> LstFerias = dbContext.ObterListaFeriasValidar();
 
             foreach (var f in LstFerias)
             {
-                myMail.Body += "<tr><td>" + dbContext.ObterUtilizador(f.IdUtilizador).NomeCompleto + "</td><td>" + f.DataInicio + "</td><td>" + f.DataFim + "</td></tr>";
+                myMail.Body += "<tr><td>" + dbContext.ObterUtilizador(f.IdUtilizador).NomeCompleto + "</td><td>" + f.DataInicio.ToShortDateString() + "</td><td>" + f.DataFim.ToShortDateString() + "</td><td><a href=\"http://62.28.200.46:8082/Ferias/Detalhes?IdUtilizador=" + f.IdUtilizador + "\" class=\"button\">Aceder</a></td></tr>";
             }
 
             myMail.Body += "</table>";
