@@ -16,12 +16,12 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class FolhasObraController : Controller
     {
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin, Escritorio, Tech")]
         // GET: FolhasObraController
         public ActionResult Index(string DataFolhasObra)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (!context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Admin) return RedirectToAction("Index", "Pedidos");
+            //if (!context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Admin) return RedirectToAction("Index", "Pedidos");
             if (DataFolhasObra == null || DataFolhasObra == string.Empty) DataFolhasObra = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["DataFolhasObra"] = DataFolhasObra;
 
@@ -68,15 +68,19 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            FolhaObra fo = context.ObterFolhaObra(int.Parse(id));
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiquetaFolhaObra(context.ObterFolhaObra(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            context.DesenharEtiquetaFolhaObra(fo).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
             context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal da marcação: " + id, 2);
             //return File(outputStream, "image/bmp");
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin, Escritorio, Tech")]
         // GET: FolhasObraController
         public ActionResult Editar(int Id)
         {
@@ -84,12 +88,15 @@ namespace FT_Management.Controllers
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             phccontext.AtualizarFolhasObra();
+            FolhaObra fo = context.ObterFolhaObra(Id);
 
                 Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 ViewData["SelectedTecnico"] = user.NomeCompleto;
                 ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
 
-            return View(context.ObterFolhaObra(Id));
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
+            return View(fo);
         }
 
         public JsonResult ObterHistorico(string NumeroSerieEquipamento)
@@ -109,10 +116,11 @@ namespace FT_Management.Controllers
         public virtual ActionResult PrintFolhaObra(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-           
+            FolhaObra fo = context.ObterFolhaObra(id);
 
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
 
-            var file = context.PreencherFormularioFolhaObra(context.ObterFolhaObra(id)).ToArray();
+            var file = context.PreencherFormularioFolhaObra(fo).ToArray();
             var output = new MemoryStream();
             output.Write(file, 0, file.Length);
             output.Position = 0;
@@ -134,6 +142,9 @@ namespace FT_Management.Controllers
         public ActionResult EmailFolhaObra(int id, string emailDestino)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            FolhaObra fo = context.ObterFolhaObra(id);
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
 
             try
             {
@@ -174,7 +185,7 @@ namespace FT_Management.Controllers
                 // text or html
                 myMail.IsBodyHtml = true;
 
-                var pdf = new MemoryStream(context.PreencherFormularioFolhaObra(context.ObterFolhaObra(id)).ToArray());
+                var pdf = new MemoryStream(context.PreencherFormularioFolhaObra(fo).ToArray());
                 Attachment att = new Attachment(pdf, "FolhaObra_" + id, System.Net.Mime.MediaTypeNames.Application.Pdf);
                 myMail.Attachments.Add(att);
 
