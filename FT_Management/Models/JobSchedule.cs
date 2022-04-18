@@ -68,8 +68,8 @@ public class CronJobFerias : IJob
             if (LstFerias.Count > 0)
             {
                 mySmtpClient.SendMailAsync(myMail);
-                dbContext.ValidarEmailEnviado();
             }
+            dbContext.ValidarEmailEnviado();
 
 
         }
