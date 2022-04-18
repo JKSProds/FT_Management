@@ -52,7 +52,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Contacto contacto = context.ObterContacto(id);
-            string res= "<div class=\"mb-3\"><label>Nome da Empresa</label><input type=\"text\" class=\"form-control\" value='"+contacto.NomeContacto+ "' readonly></div>";
+            string res= "";
             res += "<div class=\"mb-3\"><label>Nome da Empresa</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.NomeContacto + "' readonly><a class=\"btn btn-outline-warning\" onclick=MostrarCliente() type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.PessoaContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
