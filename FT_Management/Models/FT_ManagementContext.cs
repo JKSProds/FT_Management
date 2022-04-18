@@ -690,7 +690,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_ferias where Validado=0 order by DataInicio;");
+                using var result = db.Query("SELECT * FROM dat_ferias where mail_validacao=0 order by DataInicio;");
                 while (result.Read())
                 {
                     LstFerias.Add(new Ferias()
