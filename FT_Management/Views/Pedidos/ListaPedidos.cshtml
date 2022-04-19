@@ -365,7 +365,7 @@ else
 
         <div class="col-lg-4">
             <div class="card card-margin">
-                <div class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
+                <div style="margin-top:5px; margin-bottom:5px;" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
                     <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
                 </div>
                 <div class="card-body pt-0">
@@ -381,7 +381,9 @@ else
                                 <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString()</span>
                             </div>
                         </div>
+    
                         <div class="widget-49-meeting-action">
+                            <br />
                             <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
                             <a class="btn btn-outline-success btn-lg @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
                             <a class="btn btn-outline-info btn-lg" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
