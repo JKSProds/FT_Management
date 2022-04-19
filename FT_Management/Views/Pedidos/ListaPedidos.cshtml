@@ -321,6 +321,7 @@
     <div class="col-md-8 page-header">
         <h1>Pedidos</h1>
     </div>
+    <input type="hidden" id="hiddenIdPedido" name="IdPedido">
 
     <div class=" col-md-4">
         <form method="get" action="ListaPedidos">
@@ -350,163 +351,210 @@
 
 </div>
 
+<div class="modal fade" id="modalPedido" tabindex="-1" role="dialog" aria-labelledby="modalPedido" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="txt">Informações da Marcação</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="info_pedido">
 
-<hr />
-<br />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
 
-@if (Model.Count() == 0)
-{
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <hr />
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas marcações!</button>
-}
-else
-{
 
-    <div class="row">
-        @foreach (var item in Model)
-        {
+    @if (Model.Count() == 0)
+    {
+        <br />
+        <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas marcações!</button>
+    }
+    else
+    {
 
-            <div class="col-lg-4">
-                <div class="card card-margin">
-                    <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
-                        <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
-                            <i class="fa fa-arrow-down"></i>
-                        </button>
-                    </div>
-                    <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne">
-                        <div class="card-body">
-                            <h5>DETALHES</h5>
-                            <hr />
-                            <p style="white-space: pre-line">@item.ResumoMarcacao</p>
-                            <hr />
+        <div class="row">
+            @foreach (var item in Model)
+            {
+
+                <div class="col-lg-4">
+                    <div class="card card-margin">
+                        <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
+                            <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
+                                <i class="fa fa-arrow-down"></i>
+                            </button>
                         </div>
-                    </div>
-                    <div class="card-body pt-0">
-                        <div class="widget-49">
-                            <div class="widget-49-title-wrapper">
-                                <div class="widget-49-date-primary">
-                                    <span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
-                                        <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>
-                                </div>
-                                <div class="widget-49-meeting-info">
-                                    <span class="widget-49-pro-title">Estado: @item.EstadoMarcacaoDesc</span>
-                                    <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
-                                    <span class="widget-49-meeting-time">Prioridade: @item.PrioridadeMarcacao</span>
-                                </div>
+                        <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne">
+                            <div class="card-body">
+                                <h5>DETALHES</h5>
+                                <hr />
+                                <p style="white-space: pre-line">@item.ResumoMarcacao</p>
+                                <hr />
                             </div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="widget-49">
+                                <div class="widget-49-title-wrapper">
+                                    <div class="widget-49-date-primary">
+                                        <span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
+                                        <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>
+                                    </div>
+                                    <div class="widget-49-meeting-info">
+                                        <span class="widget-49-pro-title">Estado: @item.EstadoMarcacaoDesc</span>
+                                        <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
+                                        <span class="widget-49-meeting-time">Prioridade: @item.PrioridadeMarcacao</span>
+                                    </div>
+                                </div>
 
-                            <div class="widget-49-meeting-action">
-                                <br />
-                                <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
-                                <a class="btn btn-outline-success btn-lg @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
-                                <a class="btn btn-outline-info btn-lg" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
-                                <a class="btn btn-outline-secondary btn-lg" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
+                                <div class="widget-49-meeting-action">
+                                    <br />
+                                    <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
+                                    <a class="btn btn-outline-success btn-lg @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                                    <a class="btn btn-outline-info btn-lg" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
+                                    <a class="btn btn-outline-secondary btn-lg" onclick="MostrarInfoPedido(@item.IdMarcacao)"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            @*<div class="col-sm-6 " style="margin-bottom: 10px">
-                    <div class="card mb-3">
-                        <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
-                            <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
-                            <h3>@item.Cliente.NomeCliente </h3>
-                        </div>
-                        <div class="card-body text-primary">
-                            <p class="card-text">
-                                <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
-                                <a class="btn btn-primary btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
-                                <hr />
-                                <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
-                                <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
-                            </p>
-                            <div class="card-footer">
-                                <small>
-                                    Estado do pedido: @item.EstadoMarcacaoDesc |
-                                    Data do Pedido: @item.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")
-                                </small>
+                @*<div class="col-sm-6 " style="margin-bottom: 10px">
+                        <div class="card mb-3">
+                            <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
+                                <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
+                                <h3>@item.Cliente.NomeCliente </h3>
+                            </div>
+                            <div class="card-body text-primary">
+                                <p class="card-text">
+                                    <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
+                                    <a class="btn btn-primary btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
+                                    <hr />
+                                    <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
+                                    <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
+                                </p>
+                                <div class="card-footer">
+                                    <small>
+                                        Estado do pedido: @item.EstadoMarcacaoDesc |
+                                        Data do Pedido: @item.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")
+                                    </small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>*@
+                    </div>*@
 
-        }
-    </div>
-}
-<div>
-    <br />
-    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Pedidos"))'" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
-
-</div>
-
-<script>
-    function ValidarPedido(idcartao, estado) {
-        document.getElementById("cartao_" + idcartao).style.display = '';
-        document.getElementById("green_" + idcartao).classList.add("disabled");
-        document.getElementById("yellow_" + idcartao).classList.add("disabled");
-        document.getElementById("red_" + idcartao).classList.add("disabled");
-
-        var json = {
-            idcartao: idcartao,
-            estado: estado
-        };
-        var element = document.getElementById("headerPedido_" + idcartao);
-        element.classList = 'card-header';
-        if (estado == '1') {
-            element.classList.add("bg-success");
-        } else if (estado == '2') {
-            element.classList.add("bg-warning");
-        } else {
-            element.classList.add("bg-danger");
-        }
-
-        $.ajax({
-            type: "POST",
-            url: "/Pedidos/ValidarPedido",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    $.notify({
-                        message: "Cartão atualizado com sucesso!"
-                    }, {
-                        // settings
-                        type: 'success',
-                        onShow: function () {
-                            this.css({ 'width': 'auto', 'height': 'auto' });
-                        }
-                    });
-                    document.getElementById("cartao_" + idcartao).style.display = 'none';
-                    document.getElementById("green_" + idcartao).classList.remove("disabled");
-                    document.getElementById("yellow_" + idcartao).classList.remove("disabled");
-                    document.getElementById("red_" + idcartao).classList.remove("disabled");
-                });
             }
-        });
-
+        </div>
     }
-    function ChangeLista() {
+    <div>
+        <br />
+        <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Pedidos"))'" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
 
-        var lista = {
-            idlista: $("#SelectLista").val(),
-            id: document.getElementById("hiddenQuadroID").value
-        };
+    </div>
 
-        $.ajax({
-            type: "POST",
-            url: "/Pedidos/ListaPedidos",
-            data: lista,
-            traditional: true
-        });
-    }
+    <script>
 
-    function submitdata() {
-        document.getElementById("hiddenSelectedGuiaID").value = document.getElementById("SelectLista2").value;
-        document.getElementById("hiddenSelectedListaID").value = document.getElementById("SelectLista").value;
+        function MostrarInfoPedido(Id) {
+            document.getElementById("hiddenIdPedido").value = Id;
 
-        $('form').submit();
-    }
-</script>
+            var json = {
+                id: Id
+            };
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/ObterPedido",
+                data: json,
+                traditional: true,
+                dataType: "text",
+                success: function (response) {
+                    $(function () {
+                        // Add response in Modal body
+                        $('.info_pedido').html(response);
+
+                        // Display Modal
+                        $('#modalPedido').modal('show');
+                    });
+                }
+            });
+        }
+        function ValidarPedido(idcartao, estado) {
+            document.getElementById("cartao_" + idcartao).style.display = '';
+            document.getElementById("green_" + idcartao).classList.add("disabled");
+            document.getElementById("yellow_" + idcartao).classList.add("disabled");
+            document.getElementById("red_" + idcartao).classList.add("disabled");
+
+            var json = {
+                idcartao: idcartao,
+                estado: estado
+            };
+            var element = document.getElementById("headerPedido_" + idcartao);
+            element.classList = 'card-header';
+            if (estado == '1') {
+                element.classList.add("bg-success");
+            } else if (estado == '2') {
+                element.classList.add("bg-warning");
+            } else {
+                element.classList.add("bg-danger");
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/ValidarPedido",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        $.notify({
+                            message: "Cartão atualizado com sucesso!"
+                        }, {
+                            // settings
+                            type: 'success',
+                            onShow: function () {
+                                this.css({ 'width': 'auto', 'height': 'auto' });
+                            }
+                        });
+                        document.getElementById("cartao_" + idcartao).style.display = 'none';
+                        document.getElementById("green_" + idcartao).classList.remove("disabled");
+                        document.getElementById("yellow_" + idcartao).classList.remove("disabled");
+                        document.getElementById("red_" + idcartao).classList.remove("disabled");
+                    });
+                }
+            });
+
+        }
+        function ChangeLista() {
+
+            var lista = {
+                idlista: $("#SelectLista").val(),
+                id: document.getElementById("hiddenQuadroID").value
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/ListaPedidos",
+                data: lista,
+                traditional: true
+            });
+        }
+
+        function submitdata() {
+            document.getElementById("hiddenSelectedGuiaID").value = document.getElementById("SelectLista2").value;
+            document.getElementById("hiddenSelectedListaID").value = document.getElementById("SelectLista").value;
+
+            $('form').submit();
+        }
+    </script>

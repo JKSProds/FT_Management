@@ -33,6 +33,46 @@ namespace FT_Management.Controllers
 
         }
 
+        [HttpPost]
+        public string ObterPedido(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Marcacao marcacao = context.ObterMarcacao(id);
+            string res = "";
+            res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + marcacao.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + marcacao.Cliente.IdCliente+"&IdLoja="+marcacao.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + marcacao.ResumoMarcacao + "</textarea></div>";
+
+            if (marcacao.LstFolhasObra.Count() > 0)
+            {
+                res += "<table class=\"table table-hover\"><thead><tr><th>Data</th><th>Cliente</th><th>Nº Série</th><th></th><tbody>";
+
+                foreach (var item in marcacao.LstFolhasObra)
+                {
+                    res += "<tr><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
+                    res += "<td><div class=\"btn-group float-right\"><a class=\"btn btn-outline-dark btn-lg\" onclick=\"window.open('/FolhasObra/Print/" + item.IdFolhaObra + "?target=_blank')\"><i class=\"fas fa-sticky-note\" style=\"font-size:20px\"></i></a>";                    
+                    res += "<a class=\"btn btn-outline-success btn-lg\" onclick=\"window.open('/FolhasObra/PrintFolhaObra/" + item.IdFolhaObra + "?target=_blank')\"><i class=\"fas fa-print\" style=\"font-size:20px\"></i></a>";
+                    res += "</div></td></tr>";
+                }
+
+                res += "</tbody></table>";
+            }
+            //res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
+            //res += "<div class=\"mb-3\"><label>Email</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.EmailContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.EmailContacto.Length == 0 ? "disabled" : "") + " \" href=\"mailto:" + contacto.EmailContacto + "\" type=\"button\"><i class=\"fas fa-envelope float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+            //res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone-alt float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+            //res += "<div class=\"mb-3\"><label>Morada</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.MoradaContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"https://maps.google.com/?daddr=" + contacto.MoradaContacto + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+            //res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"form-control\" value='" + contacto.NIFContacto + "' readonly></div>";
+            //res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
+            //res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
+            //res += "<div class=\"mb-3\"><label>Área de Negócio</label><input type=\"text\" class=\"form-control\" value='" + contacto.AreaNegocio + "' readonly></div>";
+            //res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
+            //if (this.User.IsInRole("Admin")) res += "<div class=\"mb-3\"><label>Comercial Associado</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly><a class=\"btn btn-outline-primary\" onclick=AssociarComercial() type=\"button\"><i class=\"fas fa-list float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+
+            return res;
+        }
+
+
+
         [HttpGet]
         public virtual ActionResult ObterIcs ()
         {
@@ -182,26 +222,26 @@ namespace FT_Management.Controllers
             ViewData["IdTecnico"] = IdTecnico;
             return View("ListaPedidos", ListaMarcacoes);
         }
-        public ActionResult Pedido(string idMarcacao, string IdTecnico)
-        {
-            if (idMarcacao == null) return RedirectToAction("Index");
+        //public ActionResult Pedido(string idMarcacao, string IdTecnico)
+        //{
+        //    if (idMarcacao == null) return RedirectToAction("Index");
 
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
-            phccontext.AtualizarFolhasObra();
+        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //    PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+        //    phccontext.AtualizarMarcacoes();
+        //    phccontext.AtualizarFolhasObra();
 
-            Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-            marcacao.IdTecnico = int.Parse(IdTecnico);
+        //    Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
+        //    marcacao.IdTecnico = int.Parse(IdTecnico);
 
-            ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
+        //    ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
 
-            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            ViewData["SelectedTecnico"] = user.NomeCompleto;
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
+        //    Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+        //    ViewData["SelectedTecnico"] = user.NomeCompleto;
+        //    ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
 
-            return View(marcacao);
-        }
+        //    return View(marcacao);
+        //}
         public ActionResult ValidarPedido(string idcartao, string estado)
         {
 
