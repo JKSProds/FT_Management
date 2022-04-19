@@ -363,10 +363,19 @@ else
     @foreach (var item in Model)
     {
 
-        <div class="col-lg-4">
+    <div class="col-lg-4">
             <div class="card card-margin">
-                <div style="margin-top:5px; margin-bottom:5px;" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
+                <div style="margin-top:5px; margin-bottom:5px;" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
                     <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
+                        <i class="fa fa-arrow-down"></i>
+                    </button>
+                </div>
+                <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
+                    <div class="card-body" style="white-space: pre-line">
+                        @item.ResumoMarcacao
+                        <br />
+                    </div>
                 </div>
                 <div class="card-body pt-0">
                     <div class="widget-49">
@@ -378,10 +387,10 @@ else
                             <div class="widget-49-meeting-info">
                                 <span class="widget-49-pro-title">Estado: @item.EstadoMarcacaoDesc</span>
                                 <span class="widget-49-meeting-time">Prioridade: @item.PrioridadeMarcacao</span>
-                                <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString()</span>
+                                <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
                             </div>
                         </div>
-    
+
                         <div class="widget-49-meeting-action">
                             <br />
                             <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
@@ -394,31 +403,31 @@ else
         </div>
 
         @*<div class="col-sm-6 " style="margin-bottom: 10px">
-                <div class="card mb-3">
-                    <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
-                        <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
-                        <h3>@item.Cliente.NomeCliente </h3>
-                    </div>
-                    <div class="card-body text-primary">
-                        <p class="card-text">
-                            <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
-                            <a class="btn btn-primary btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
-                            <hr />
-                            <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
-                            <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
-                        </p>
-                        <div class="card-footer">
-                            <small>
-                                Estado do pedido: @item.EstadoMarcacaoDesc |
-                                Data do Pedido: @item.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")
-                            </small>
-                        </div>
+            <div class="card mb-3">
+                <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
+                    <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
+                    <h3>@item.Cliente.NomeCliente </h3>
+                </div>
+                <div class="card-body text-primary">
+                    <p class="card-text">
+                        <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
+                        <a class="btn btn-primary btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
+                        <hr />
+                        <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
+                        <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
+                    </p>
+                    <div class="card-footer">
+                        <small>
+                            Estado do pedido: @item.EstadoMarcacaoDesc |
+                            Data do Pedido: @item.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")
+                        </small>
                     </div>
                 </div>
-            </div>*@
+            </div>
+        </div>*@
 
-    }
-</div>
+        }
+    </div>
 }
 <div>
     <br />
