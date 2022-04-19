@@ -365,16 +365,18 @@ else
 
     <div class="col-lg-4">
             <div class="card card-margin">
-                <div style="margin-top:5px; margin-bottom:5px;" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
+                <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
                     <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
                         <i class="fa fa-arrow-down"></i>
                     </button>
                 </div>
                 <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
-                    <div class="card-body" style="white-space: pre-line">
-                        @item.ResumoMarcacao
-                        <br />
+                    <div class="card-body" >
+                        <h5>DETALHES</h5>
+                        <hr />
+                        <p style="white-space: pre-line">@item.ResumoMarcacao</p>
+                        <hr />
                     </div>
                 </div>
                 <div class="card-body pt-0">
