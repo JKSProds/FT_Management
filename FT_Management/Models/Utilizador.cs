@@ -35,5 +35,6 @@ namespace FT_Management.Models
         public bool Enable { get; set; }
         public string CorCalendario { get; set; }
         public string Iniciais { get; set; }
+        public string URL_Foto { get; set; }
     }
 }

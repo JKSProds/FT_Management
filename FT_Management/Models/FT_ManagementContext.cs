@@ -1623,7 +1623,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaTecnicos()
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 1 + " order by NomeCompleto;";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 1 + " AND enable=1 order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -1635,7 +1635,9 @@ namespace FT_Management.Models
                         Id = result["IdPHC"],
                         NomeUtilizador = result["NomeUtilizador"],
                         NomeCompleto = result["NomeCompleto"],
-                        EmailUtilizador = result["EmailUtilizador"]
+                        EmailUtilizador = result["EmailUtilizador"],
+                        CorCalendario = result["CorCalendario"],
+                        URL_Foto = result["URL_Foto"]
                     });
                 }
             }

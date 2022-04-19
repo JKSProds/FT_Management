@@ -10,7 +10,7 @@
         <h1>Marcações Técnicas</h1>
     </div>
     <div class="col-lg-4">
-        <a class="btn btn-primary btn-lg btn-block text-white" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Calendario", "Pedidos"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
+        <a class="btn btn-outline-primary btn-lg btn-block"  onclick="location.href = '@(Url.Action("Calendario", "Pedidos"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
     </div>
 </div>
 <hr />
@@ -23,12 +23,21 @@
 }
 else
 {
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-sm-6 " style="margin-bottom: 10px">
-                <div class="card border-success mb-3">
-                    <div class="card-header"> <h3>@item.NomeCompleto </h3></div>
+<div class="row">
+    @foreach (var item in Model)
+    {
+
+        <div class="col-xl-3 col-sm-6 mb-5 text-center" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = item.Id }))'">
+            <div class="bg-white rounded shadow-sm py-5 px-4">
+                <img src="@item.URL_Foto" alt="" width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+                <h5 class="mb-0">@item.NomeCompleto</h5>
+
+            </div>
+        </div>
+
+        @*<div class="col-sm-3 " style="margin-bottom: 10px">
+                <div class="card mb-3" style="background-color:@item.CorCalendario" >
+                    <div class="card-header" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = item.Id }))'"> <h3>@item.NomeCompleto </h3></div>
                     <div class="card-body text-primary">
                         <p class="card-text">
                             <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = item.Id }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i> Lista</a>
@@ -40,7 +49,7 @@ else
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            </div>*@
+    }
+</div>
 }
