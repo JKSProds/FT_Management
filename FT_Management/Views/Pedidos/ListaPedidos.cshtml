@@ -5,10 +5,6 @@
 }
 
 <style>
-    body {
-        background: #F4F7FD;
-        margin-top: 20px;
-    }
 
     .card-margin {
         margin-bottom: 1.875rem;
@@ -378,7 +374,7 @@ else
                             <i class="fa fa-arrow-down"></i>
                         </button>
                     </div>
-                    <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
+                    <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne">
                         <div class="card-body">
                             <h5>DETALHES</h5>
                             <hr />
@@ -388,7 +384,7 @@ else
                     </div>
                     <div class="card-body pt-0">
                         <div class="widget-49">
-                            <div class="widget-49-title-wrapper" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
+                            <div class="widget-49-title-wrapper">
                                 <div class="widget-49-date-primary">
                                     <span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
                                         <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>
@@ -405,6 +401,8 @@ else
                                 <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
                                 <a class="btn btn-outline-success btn-lg @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
                                 <a class="btn btn-outline-info btn-lg" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
+                                <a class="btn btn-outline-secondary btn-lg" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
+
                             </div>
                         </div>
                     </div>
