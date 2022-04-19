@@ -1636,8 +1636,7 @@ namespace FT_Management.Models
                         NomeUtilizador = result["NomeUtilizador"],
                         NomeCompleto = result["NomeCompleto"],
                         EmailUtilizador = result["EmailUtilizador"],
-                        CorCalendario = result["CorCalendario"],
-                        URL_Foto = result["URL_Foto"]
+                        Iniciais = result["IniciaisUtilizador"]
                     });
                 }
             }

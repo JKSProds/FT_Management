@@ -4,7 +4,21 @@
     ViewData["Title"] = "Pedidos";
 }
 
-
+<style>
+    .circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        font-size: 50px;
+        font-family: roboto, arial;
+        color: black;
+        line-height: 100px;
+        text-align: center;
+        background: grey;
+        margin: auto;
+        margin-bottom: 10px;
+    }
+</style>
 <div class="row">
     <div class="col-lg-8">
         <h1>Marcações Técnicas</h1>
@@ -29,9 +43,10 @@ else
 
         <div class="col-xl-3 col-sm-6 mb-5 text-center" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = item.Id }))'">
             <div class="bg-white rounded shadow-sm py-5 px-4">
-                <img src="@item.URL_Foto" alt="" width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+                <div class="circle">
+                    <p>@item.Iniciais</p>
+                </div>
                 <h5 class="mb-0">@item.NomeCompleto</h5>
-
             </div>
         </div>
 
