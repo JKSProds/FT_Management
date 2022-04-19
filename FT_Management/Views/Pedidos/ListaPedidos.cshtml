@@ -368,6 +368,8 @@
             <div class="modal-footer">
                 <div class="btn-group" role="group" aria-label="Basic outlined example">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="MostrarMaisInfoPedido()" href="javascript:;">Mais Informação</button>
+
 
                 </div>
             </div>
@@ -467,6 +469,11 @@
     </div>
 
     <script>
+        function MostrarMaisInfoPedido() {
+            Id = document.getElementById("hiddenIdPedido").value;
+            IdTec = document.getElementById("hiddenIdTecnico").value;
+            window.location.replace("/Pedidos/Pedido?idMarcacao=" + Id + "&IdTecnico=" + IdTec);
+        }
 
         function MostrarInfoPedido(Id) {
             document.getElementById("hiddenIdPedido").value = Id;

@@ -41,18 +41,15 @@ namespace FT_Management.Controllers
             Marcacao marcacao = context.ObterMarcacao(id);
             string res = "";
             res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + marcacao.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + marcacao.Cliente.IdCliente+"&IdLoja="+marcacao.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + marcacao.ResumoMarcacao + "</textarea></div>";
+            res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + marcacao.ResumoMarcacao + "</textarea></div>";
 
             if (marcacao.LstFolhasObra.Count() > 0)
             {
-                res += "<table class=\"table table-hover\"><thead><tr><th>Data</th><th>Cliente</th><th>Nº Série</th><th></th><tbody>";
+                res += "<table class=\"table table-hover\"><thead><tr><th>Data</th><th>Cliente</th><th>Nº Série</th><tbody>";
 
                 foreach (var item in marcacao.LstFolhasObra)
                 {
                     res += "<tr><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
-                    res += "<td><div class=\"btn-group float-right\"><a class=\"btn btn-outline-dark btn-lg\" onclick=\"window.open('/FolhasObra/Print/" + item.IdFolhaObra + "?target=_blank')\"><i class=\"fas fa-sticky-note\" style=\"font-size:20px\"></i></a>";                    
-                    res += "<a class=\"btn btn-outline-success btn-lg\" onclick=\"window.open('/FolhasObra/PrintFolhaObra/" + item.IdFolhaObra + "?target=_blank')\"><i class=\"fas fa-print\" style=\"font-size:20px\"></i></a>";
-                    res += "</div></td></tr>";
                 }
 
                 res += "</tbody></table>";
@@ -222,26 +219,26 @@ namespace FT_Management.Controllers
             ViewData["IdTecnico"] = IdTecnico;
             return View("ListaPedidos", ListaMarcacoes);
         }
-        //public ActionResult Pedido(string idMarcacao, string IdTecnico)
-        //{
-        //    if (idMarcacao == null) return RedirectToAction("Index");
+        public ActionResult Pedido(string idMarcacao, string IdTecnico)
+        {
+            if (idMarcacao == null) return RedirectToAction("Index");
 
-        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-        //    PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-        //    phccontext.AtualizarMarcacoes();
-        //    phccontext.AtualizarFolhasObra();
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarMarcacoes();
+            phccontext.AtualizarFolhasObra();
 
-        //    Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-        //    marcacao.IdTecnico = int.Parse(IdTecnico);
+            Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
+            marcacao.IdTecnico = int.Parse(IdTecnico);
 
-        //    ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
+            ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
 
-        //    Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-        //    ViewData["SelectedTecnico"] = user.NomeCompleto;
-        //    ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
+            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            ViewData["SelectedTecnico"] = user.NomeCompleto;
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
 
-        //    return View(marcacao);
-        //}
+            return View(marcacao);
+        }
         public ActionResult ValidarPedido(string idcartao, string estado)
         {
 
