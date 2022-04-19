@@ -70,8 +70,9 @@
             .widget-49 .widget-49-title-wrapper .widget-49-date-primary .widget-49-date-day {
                 color: #4e73e5;
                 font-weight: 500;
-                font-size: 1.5rem;
+                font-size: 10px;
                 line-height: 1;
+
             }
 
             .widget-49 .widget-49-title-wrapper .widget-49-date-primary .widget-49-date-month {
@@ -365,7 +366,7 @@ else
 
     <div class="col-lg-4">
             <div class="card card-margin">
-                <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
+                <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border">
                     <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
                         <i class="fa fa-arrow-down"></i>
@@ -383,13 +384,13 @@ else
                     <div class="widget-49">
                         <div class="widget-49-title-wrapper" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
                             <div class="widget-49-date-primary">
-                                <span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
-                                <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>
+                                @*<span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
+                                <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>*@
+                                <span class="widget-49-date-day text-center text-uppercase @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">@item.EstadoMarcacaoDesc</span>
                             </div>
                             <div class="widget-49-meeting-info">
-                                <span class="widget-49-pro-title">Estado: @item.EstadoMarcacaoDesc</span>
+                                <span class="widget-49-pro-title">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
                                 <span class="widget-49-meeting-time">Prioridade: @item.PrioridadeMarcacao</span>
-                                <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
                             </div>
                         </div>
 
