@@ -316,19 +316,18 @@
         }
 </style>
 
-
-<div class="row">
-    <div class="col-md-8 page-header">
-        <h1>Pedidos</h1>
-    </div>
-    <input type="hidden" id="hiddenIdPedido" name="IdPedido">
-
-    <div class=" col-md-4">
-        <form method="get" action="ListaPedidos">
-            <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
-            <input type="hidden" id="hiddenTxtData" value="@ViewData["DataPedidos"]" name="DataPedidos">
-            <input type="text" class="form-control" id="txtData">
-            <script>
+<table width="100%">
+    <tr>
+        <td>
+            <h1>Pedidos</h1> 
+        </td>
+        <td class="float-right" style="margin-bottom:5px;">
+            <div class="input-group" style="margin-left:auto; margin-right:0;">
+                <form method="get" action="ListaPedidos">
+                    <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
+                    <input type="hidden" id="hiddenTxtData" value="@ViewData["DataPedidos"]" name="DataPedidos">
+                    <input type="text" class="form-control" id="txtData">
+                    <script>
                         $('#txtData').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
@@ -341,15 +340,18 @@
                                 }
                             }
                         });
-            </script>
-        </form>
-        <div class="input-group">
-            <button class="btn btn-outline-primary float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidos?IdTecnico=@ViewData["IdTecnico"]'"> <i class="fa fa-calendar-day"></i> Hoje</button>
-            <button class="btn btn-outline-warning float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidosPendentes?IdTecnico=@ViewData["IdTecnico"]'"><i class="fas fa-exclamation"></i> Pendentes</button>
-        </div>
-    </div>
+                    </script>
+                </form>
+            </div>
+            <div class="btn-group float-lg-right" style="margin-top:5px">
+                <button class="btn btn-outline-primary float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidos?IdTecnico=@ViewData["IdTecnico"]'"> <i class="fa fa-calendar-day"></i> Hoje</button>
+                <button class="btn btn-outline-warning float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidosPendentes?IdTecnico=@ViewData["IdTecnico"]'"><i class="fas fa-exclamation"></i> Pendentes</button>
+            </div>
+        </td>
 
-</div>
+    </tr>
+</table>
+
 
 <div class="modal fade" id="modalPedido" tabindex="-1" role="dialog" aria-labelledby="modalPedido" aria-hidden="true">
     <div class="modal-dialog" role="document">
