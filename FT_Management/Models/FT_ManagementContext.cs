@@ -877,6 +877,35 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
+        public List<Marcacao> ObterListaMarcacoesPendentes(int IdTecnico)
+        {
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico + " AND EstadoMarcacao!=4 AND EstadoMarcacao!=20 AND EstadoMarcacao!=15 AND Marcado=1;");
+                while (result.Read())
+                {
+                    LstMarcacao.Add(new Marcacao()
+                    {
+                        IdMarcacao = result["IdMarcacao"],
+                        DataMarcacao = DateTime.Parse(result["DataMarcacao"]),
+                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        ResumoMarcacao = result["ResumoMarcacao"],
+                        EstadoMarcacao = result["EstadoMarcacao"],
+                        EstadoMarcacaoDesc = result["EstadoMarcacaoDesc"],
+                        PrioridadeMarcacao = result["PrioridadeMarcacao"],
+                        MarcacaoStamp = result["MarcacaoStamp"],
+                        Oficina = result["Oficina"],
+                        Instalacao = result["Instalacao"],
+                        DataCriacao = DateTime.Parse(result["DataCriacao"])
+                    });
+                }
+            }
+
+            return LstMarcacao;
+
+        }
         public Marcacao ObterMarcacao(int IdMarcacao)
         {
             Marcacao res = new Marcacao();

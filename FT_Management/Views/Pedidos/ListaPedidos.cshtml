@@ -19,7 +19,6 @@
         box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
         -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
         -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-        -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
     }
 
     .card {
@@ -70,9 +69,8 @@
             .widget-49 .widget-49-title-wrapper .widget-49-date-primary .widget-49-date-day {
                 color: #4e73e5;
                 font-weight: 500;
-                font-size: 10px;
+                font-size: 1.5rem;
                 line-height: 1;
-
             }
 
             .widget-49 .widget-49-title-wrapper .widget-49-date-primary .widget-49-date-month {
@@ -322,15 +320,16 @@
         }
 </style>
 
+
 <div class="row">
-    <div class="col-lg-8">
+    <div class="col-md-8 page-header">
         <h1>Pedidos</h1>
     </div>
-    <div class="col-lg-4">
+
+    <div class=" col-md-4">
         <form method="get" action="ListaPedidos">
             <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
             <input type="hidden" id="hiddenTxtData" value="@ViewData["DataPedidos"]" name="DataPedidos">
-
             <input type="text" class="form-control" id="txtData">
             <script>
                         $('#txtData').datepicker({
@@ -347,8 +346,15 @@
                         });
             </script>
         </form>
+        <div class="input-group">
+            <button class="btn btn-outline-primary float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidos?IdTecnico=@ViewData["IdTecnico"]'"> <i class="fa fa-calendar-day"></i> Hoje</button>
+            <button class="btn btn-outline-warning float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidosPendentes?IdTecnico=@ViewData["IdTecnico"]'"><i class="fas fa-exclamation"></i> Pendentes</button>
+        </div>
     </div>
+
 </div>
+
+
 <hr />
 <br />
 
@@ -360,74 +366,74 @@
 else
 {
 
-<div class="row">
-    @foreach (var item in Model)
-    {
+    <div class="row">
+        @foreach (var item in Model)
+        {
 
-    <div class="col-lg-4">
-            <div class="card card-margin">
-                <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border">
-                    <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
-                        <i class="fa fa-arrow-down"></i>
-                    </button>
-                </div>
-                <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
-                    <div class="card-body" >
-                        <h5>DETALHES</h5>
-                        <hr />
-                        <p style="white-space: pre-line">@item.ResumoMarcacao</p>
-                        <hr />
+            <div class="col-lg-4">
+                <div class="card card-margin">
+                    <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
+                        <h5 class="card-title text-uppercase">#@item.IdMarcacao - @item.Cliente.NomeCliente</h5>
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
+                            <i class="fa fa-arrow-down"></i>
+                        </button>
                     </div>
-                </div>
-                <div class="card-body pt-0">
-                    <div class="widget-49">
-                        <div class="widget-49-title-wrapper" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
-                            <div class="widget-49-date-primary">
-                                @*<span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
-                                <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>*@
-                                <span class="widget-49-date-day text-center text-uppercase @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">@item.EstadoMarcacaoDesc</span>
-                            </div>
-                            <div class="widget-49-meeting-info">
-                                <span class="widget-49-pro-title">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
-                                <span class="widget-49-meeting-time">Prioridade: @item.PrioridadeMarcacao</span>
-                            </div>
+                    <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
+                        <div class="card-body">
+                            <h5>DETALHES</h5>
+                            <hr />
+                            <p style="white-space: pre-line">@item.ResumoMarcacao</p>
+                            <hr />
                         </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        <div class="widget-49">
+                            <div class="widget-49-title-wrapper" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'">
+                                <div class="widget-49-date-primary">
+                                    <span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
+                                        <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>
+                                </div>
+                                <div class="widget-49-meeting-info">
+                                    <span class="widget-49-pro-title">Estado: @item.EstadoMarcacaoDesc</span>
+                                    <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
+                                    <span class="widget-49-meeting-time">Prioridade: @item.PrioridadeMarcacao</span>
+                                </div>
+                            </div>
 
-                        <div class="widget-49-meeting-action">
-                            <br />
-                            <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
-                            <a class="btn btn-outline-success btn-lg @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
-                            <a class="btn btn-outline-info btn-lg" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
+                            <div class="widget-49-meeting-action">
+                                <br />
+                                <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
+                                <a class="btn btn-outline-success btn-lg @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                                <a class="btn btn-outline-info btn-lg" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        @*<div class="col-sm-6 " style="margin-bottom: 10px">
-            <div class="card mb-3">
-                <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
-                    <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
-                    <h3>@item.Cliente.NomeCliente </h3>
-                </div>
-                <div class="card-body text-primary">
-                    <p class="card-text">
-                        <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
-                        <a class="btn btn-primary btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
-                        <hr />
-                        <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
-                        <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
-                    </p>
-                    <div class="card-footer">
-                        <small>
-                            Estado do pedido: @item.EstadoMarcacaoDesc |
-                            Data do Pedido: @item.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")
-                        </small>
+            @*<div class="col-sm-6 " style="margin-bottom: 10px">
+                    <div class="card mb-3">
+                        <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
+                            <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
+                            <h3>@item.Cliente.NomeCliente </h3>
+                        </div>
+                        <div class="card-body text-primary">
+                            <p class="card-text">
+                                <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
+                                <a class="btn btn-primary btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
+                                <hr />
+                                <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
+                                <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
+                            </p>
+                            <div class="card-footer">
+                                <small>
+                                    Estado do pedido: @item.EstadoMarcacaoDesc |
+                                    Data do Pedido: @item.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")
+                                </small>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>*@
+                </div>*@
 
         }
     </div>

@@ -170,6 +170,18 @@ namespace FT_Management.Controllers
             ViewData["IdTecnico"] = IdTecnico;
             return View(ListaMarcacoes);
         }
+        public ActionResult ListaPedidosPendentes(string IdTecnico)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            phccontext.AtualizarMarcacoes();
+
+            ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
+
+            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoesPendentes(int.Parse(IdTecnico));
+            ViewData["IdTecnico"] = IdTecnico;
+            return View("ListaPedidos", ListaMarcacoes);
+        }
         public ActionResult Pedido(string idMarcacao, string IdTecnico)
         {
             if (idMarcacao == null) return RedirectToAction("Index");
