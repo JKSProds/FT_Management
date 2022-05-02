@@ -612,7 +612,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("select u_mtecnicosstamp, marcacaostamp, tecnno,tecnnm,marcado from u_mtecnicos where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                    SqlCommand command = new SqlCommand("SELECT u_mtecnicosstamp, marcacaostamp, u_mtecnicos.tecnno,u_mtecnicos.tecnnm,marcado FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp where u_marcacao.usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
                     command.CommandTimeout = TIMEOUT;
                     using (SqlDataReader result = command.ExecuteReader())
                     {
