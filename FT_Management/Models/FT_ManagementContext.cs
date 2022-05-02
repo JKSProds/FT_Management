@@ -467,6 +467,30 @@ namespace FT_Management.Models
             return LstMarcacao;
 
         }
+        public List<Comentario> ObterListaComentariosMarcacao(string MarcacaoStamp)
+        {
+            List<Comentario> LstComentarios = new List<Comentario>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_marcacao_comentario where IdMarcacao='"+MarcacaoStamp+"' order by timestamp;");
+                while (result.Read())
+                {
+                    //DateTime d = DateTime.Parse(result["DataMarcacao"]);
+                    LstComentarios.Add(new Comentario()
+                    {
+                        IdComentario = result["IdComentario"],
+                        Descricao =result["Descricao"],
+                        IdMarcacao = result["IdMarcacao"],
+                        NomeUtilizador = result["NomeUtilizador"]
+
+                    });
+                }
+            }
+
+            return LstComentarios;
+
+        }
 
         public bool VerificarFeriasUtilizador(int IdUtilizador, DateTime Data)
         {
@@ -869,7 +893,8 @@ namespace FT_Management.Models
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
                         Instalacao = result["Instalacao"],
-                        DataCriacao = DateTime.Parse(result["DataCriacao"])
+                        DataCriacao = DateTime.Parse(result["DataCriacao"]),
+                        LstComentarios = ObterListaComentariosMarcacao(result["MarcacaoStamp"])
                     });
                 }
             }
@@ -898,7 +923,8 @@ namespace FT_Management.Models
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
                         Instalacao = result["Instalacao"],
-                        DataCriacao = DateTime.Parse(result["DataCriacao"])
+                        DataCriacao = DateTime.Parse(result["DataCriacao"]),
+                        LstComentarios = ObterListaComentariosMarcacao(result["MarcacaoStamp"])
                     });
                 }
             }
@@ -931,6 +957,8 @@ namespace FT_Management.Models
             }
 
             res.LstFolhasObra = ObterListaFolhasObraCartao(res.MarcacaoStamp);
+            res.LstComentarios = ObterListaComentariosMarcacao(res.MarcacaoStamp);
+
             return res;
 
         }
@@ -2361,6 +2389,27 @@ namespace FT_Management.Models
                 sql = sql.Remove(sql.Count() - 4);
 
                 sql += " ON DUPLICATE KEY UPDATE PessoaContactoCliente = VALUES(PessoaContactoCliente), Telefone = VALUES(Telefone), MoradaCliente = VALUES(MoradaCliente), EmailCliente = VALUES(EmailCliente), NumeroContribuinteCliente = VALUES(NumeroContribuinteCliente), IdVendedor = VALUES(IdVendedor), TipoCliente = VALUES(TipoCliente);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+            }
+        }
+        public void CriarComentarios(List<Comentario> LstComentarios)
+        {
+            if (LstComentarios.Count() > 0)
+            {
+
+                string sql = "INSERT INTO dat_marcacao_comentario (IdComentario, Descricao, IdMarcacao, NomeUtilizador) VALUES ";
+
+                foreach (var c in LstComentarios)
+                {
+                    sql += ("('" + c.IdComentario + "','" + c.Descricao + "', '" + c.IdMarcacao + "', '" + c.NomeUtilizador.Replace("'", "''") + "'), \r\n");
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE Descricao = VALUES(Descricao), IdMarcacao = VALUES(IdMarcacao), NomeUtilizador = VALUES(NomeUtilizador);";
 
                 Database db = ConnectionString;
 

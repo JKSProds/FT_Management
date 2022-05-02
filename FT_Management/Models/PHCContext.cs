@@ -102,6 +102,8 @@ namespace FT_Management.Models
             FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(FT_ManagementContext.ObterUltimaModificacaoPHC("u_estados")));
             FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao")));
             FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mtecnicos")));
+            FT_ManagementContext.CriarComentarios(ObterComentariosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_comment")));
+
         }
 
         public List<Produto> ObterProdutos(DateTime dataUltimaLeitura)
@@ -730,5 +732,50 @@ namespace FT_Management.Models
 
             return LstAcessos;
         }
+
+        public List<Comentario> ObterComentariosMarcacao(DateTime dataUltimaLeitura)
+        {
+
+            List<Comentario> LstComentario = new List<Comentario>();
+
+            try
+            {
+                if (ConnectedPHC)
+                {
+                    SqlConnection conn = new SqlConnection(ConnectionString);
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand("select * from u_coment where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
+                    command.CommandTimeout = TIMEOUT;
+                    using (SqlDataReader result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            LstComentario.Add(new Comentario()
+                            {
+                                IdComentario = result["u_comentstamp"].ToString(),
+                                Descricao = result["comentario"].ToString().Trim(),
+                                IdMarcacao = result["marcacaostamp"].ToString().Trim(),
+                                NomeUtilizador = result["usrinis"].ToString().Trim()
+                            });
+                        }
+                    }
+
+                    conn.Close();
+
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_coment", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                    Console.WriteLine("Comentários por marcacao atualizadas com sucesso! (PHC -> MYSQL)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os comentarios das Marcacoes do PHC!");
+            }
+
+            return LstComentario;
+        }
+
     }
 }

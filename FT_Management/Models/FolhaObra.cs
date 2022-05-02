@@ -341,6 +341,14 @@ namespace FT_Management.Models
         public DateTime DataMovimento { get; set; }
     }
 
+    public class Comentario
+    {
+        public string IdComentario { get; set; }
+        public string Descricao { get; set; }
+        public string IdMarcacao { get; set; }
+        public string NomeUtilizador { get; set; }
+    }
+
     public class Marcacao
     {
         public int IdMarcacao { get; set; }
@@ -355,6 +363,7 @@ namespace FT_Management.Models
         public string PrioridadeMarcacao { get; set; }
         public string MarcacaoStamp { get; set; }
         public List<FolhaObra> LstFolhasObra { get; set; }
+        public List<Comentario> LstComentarios { get; set; }
         public int Oficina { get; set; }
         public int Instalacao { get; set; }
         public string TipoEquipamento { get; set; }

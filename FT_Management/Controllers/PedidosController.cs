@@ -43,6 +43,19 @@ namespace FT_Management.Controllers
             res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + marcacao.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + marcacao.Cliente.IdCliente+"&IdLoja="+marcacao.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + marcacao.ResumoMarcacao + "</textarea></div>";
 
+
+            if (marcacao.LstComentarios.Count() > 0)
+            {
+                res += "<table class=\"table table-hover\"><thead><tr><th>Utilizador</th><th>Comentário</th><tbody>";
+
+                foreach (var item in marcacao.LstComentarios)
+                {
+                    res += "<tr><td><span>" + item.NomeUtilizador + "</span></td><td><span>" + item.Descricao + "</span></td>";
+                }
+
+                res += "</tbody></table>";
+            }
+
             if (marcacao.LstFolhasObra.Count() > 0)
             {
                 res += "<table class=\"table table-hover\"><thead><tr><th>Data</th><th>Cliente</th><th>Nº Série</th><tbody>";
@@ -54,6 +67,7 @@ namespace FT_Management.Controllers
 
                 res += "</tbody></table>";
             }
+
             //res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
             //res += "<div class=\"mb-3\"><label>Email</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.EmailContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.EmailContacto.Length == 0 ? "disabled" : "") + " \" href=\"mailto:" + contacto.EmailContacto + "\" type=\"button\"><i class=\"fas fa-envelope float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             //res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone-alt float-left\" style=\"margin-top:5px\"></i></a></div></div>";
