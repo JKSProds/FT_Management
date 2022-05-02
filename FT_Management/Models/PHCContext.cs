@@ -102,7 +102,7 @@ namespace FT_Management.Models
             FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(FT_ManagementContext.ObterUltimaModificacaoPHC("u_estados")));
             FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao")));
             FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mtecnicos")));
-            FT_ManagementContext.CriarComentarios(ObterComentariosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_comment")));
+            FT_ManagementContext.CriarComentarios(ObterComentariosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_coment")));
 
         }
 
@@ -740,7 +740,7 @@ namespace FT_Management.Models
 
             try
             {
-                if (ConnectedPHC)
+                    if (ConnectedPHC)
                 {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
@@ -769,7 +769,7 @@ namespace FT_Management.Models
                     Console.WriteLine("Comentários por marcacao atualizadas com sucesso! (PHC -> MYSQL)");
                 }
             }
-            catch (Exception ex)
+            catch 
             {
                 Console.WriteLine("Não foi possivel ler os comentarios das Marcacoes do PHC!");
             }
