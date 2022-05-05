@@ -53,15 +53,11 @@ namespace FT_Management.Models
 
         public void AtualizarTudo()
         {
-            FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
-            FT_ManagementContext.CriarArtigos(ObterProdutos(FT_ManagementContext.ObterUltimaModificacaoPHC("sa")));
-            FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
-            FT_ManagementContext.CriarClientes(ObterClientes(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
-            FT_ManagementContext.CriarFornecedores(ObterFornecedores(FT_ManagementContext.ObterUltimaModificacaoPHC("fl")));
-            FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(FT_ManagementContext.ObterUltimaModificacaoPHC("ma")));
-            FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(FT_ManagementContext.ObterUltimaModificacaoPHC("pa")));
-            FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(FT_ManagementContext.ObterUltimaModificacaoPHC("mh")));
-            FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(FT_ManagementContext.ObterUltimaModificacaoPHC("bi")));
+            AtualizarAcessos();
+            AtualizarArtigos();
+            AtualizarFolhasObra();
+            AtualizarFornecedores();
+            AtualizarMarcacoes();
         }
         public void AtualizarAcessos()
         {
@@ -101,6 +97,7 @@ namespace FT_Management.Models
 
             FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(FT_ManagementContext.ObterUltimaModificacaoPHC("u_estados")));
             FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao")));
+            FT_ManagementContext.CriarMarcacoes(ObterDatasAdicionaisMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mdatas")));
             FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mtecnicos")));
             FT_ManagementContext.CriarComentarios(ObterComentariosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_coment")));
 
@@ -592,6 +589,57 @@ namespace FT_Management.Models
                     FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
+                }
+            }
+            catch 
+            {
+                Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
+            }
+
+            return LstMarcacao;
+        }
+        public List<Marcacao> ObterDatasAdicionaisMarcacoes(DateTime dataUltimaLeitura)
+        {
+
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+
+            try
+            {
+                if (ConnectedPHC)
+                {
+                    SqlConnection conn = new SqlConnection(ConnectionString);
+
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand("SELECT num, u_mdatas.data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacao.u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp where u_marcacao.usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;", conn);
+                    command.CommandTimeout = TIMEOUT;
+                    using (SqlDataReader result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            LstMarcacao.Add(new Marcacao()
+                            {
+                                IdMarcacao = int.Parse(result["num"].ToString().Trim()),
+                                DataMarcacao = DateTime.Parse(result["data"].ToString().Trim()),
+                                Cliente = new Cliente { IdCliente = int.Parse(result["no"].ToString().Trim()), IdLoja = int.Parse(result["estab"].ToString().Trim()) },
+                                //IdTecnico = int.Parse(result["tecnno"].ToString().Trim()),
+                                ResumoMarcacao = result["resumo"].ToString().Trim(),
+                                EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
+                                PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
+                                MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
+                                TipoEquipamento = result["tipoe"].ToString().Trim(),
+                                Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0,
+                                Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0,
+                                DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString())
+                            });
+                        }
+                    }
+
+                    conn.Close();
+
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_mdatas", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
+
+                    Console.WriteLine("Datas adicionais marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
                 }
             }
             catch 
