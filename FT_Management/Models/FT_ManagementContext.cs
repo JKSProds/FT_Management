@@ -3020,6 +3020,67 @@ namespace FT_Management.Models
 
             return bm;
         }
+
+        public Bitmap DesenharEtiqueta40x25QR(Produto produto)
+        {
+
+            int x = 0;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Bitmap bm = new Bitmap(width, height);
+
+            Font fontHeader = new Font("Rubik", 30, FontStyle.Bold);
+            Font fontBody = new Font("Tahoma", 40, FontStyle.Regular);
+            Font fontFooter = new Font("Rubik", 16, FontStyle.Regular);
+            Font fontBold = new Font("Rubik", 28, FontStyle.Bold);
+
+            StringFormat format = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
+            using (Graphics gr = Graphics.FromImage(bm))
+            {
+                gr.Clear(Color.White);
+
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    y += 50;
+                    for (int j = 0; j < 4; j++)
+                    {
+                            //x +=20;
+                            //if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 84, 50); }
+
+                            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                            QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
+                            QRCode qrCode = new QRCode(qrCodeData);
+                            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+                            gr.DrawImage(qrCodeImage, x, y, 100, 100);
+
+                            x += 100;
+                            gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width/2 - 100, 50), format);
+
+                            gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y + 60, width/2 - 100, 35), format);
+
+                  
+                        x = width / 2;
+
+                    }
+                    x = 0;
+                    y += 100;
+                }
+            }
+
+            return bm;
+        }
+
         public Bitmap DesenharEtiqueta80x25QR(Produto produto)
         {
 

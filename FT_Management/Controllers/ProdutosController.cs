@@ -155,6 +155,22 @@ namespace FT_Management.Controllers
             //return File(outputStream, "image/bmp");
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
+        public ActionResult PrintPeqMulti(string id, int armazemid)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta40x25QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiquetas pequenas de produto: " + id, 2);
+            //return File(outputStream, "image/bmp");
+            return File(BitMapToMemoryStream(filePath), "application/pdf");
+        }
+
 
         [Authorize(Roles = "Admin, Escritorio")]
         // GET: Produtos/Create

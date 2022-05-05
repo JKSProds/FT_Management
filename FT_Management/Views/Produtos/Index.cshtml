@@ -139,6 +139,7 @@ else
                         </div>
                         <a class="btn btn-outline-dark btn-lg printqr" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>
                         <a class="btn btn-outline-dark printpeq" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>
+                        <a class="btn btn-outline-dark" onclick="window.open('@Url.Action("PrintPeqMulti", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-notes-medical"> x8</i></a>
 
                     </td>
                 </tr>
