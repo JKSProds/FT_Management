@@ -764,7 +764,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_coment", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_coment", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Comentários por marcacao atualizadas com sucesso! (PHC -> MYSQL)");
                 }
