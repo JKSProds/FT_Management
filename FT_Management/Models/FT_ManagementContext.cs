@@ -908,7 +908,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico + " AND EstadoMarcacao!=4 AND EstadoMarcacao!=20 AND EstadoMarcacao!=15 AND Marcado=1 order by DataMarcacao ASC;");
+                using var result = db.Query("SELECT * FROM dat_marcacoes, dat_marcacoes_tecnico, dat_marcacoes_estado where dat_marcacoes_estado.idestado=dat_marcacoes.estadomarcacao and dat_marcacoes.marcacaostamp = dat_marcacoes_tecnico.marcacaostamp AND dat_marcacoes_tecnico.idtecnico=" + IdTecnico + " AND EstadoMarcacao!=4 AND EstadoMarcacao!=20 AND EstadoMarcacao!=15 AND EstadoMarcacao!=3 AND Marcado=1 order by DataMarcacao ASC;");
                 while (result.Read())
                 {
                     LstMarcacao.Add(new Marcacao()
