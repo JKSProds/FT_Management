@@ -38,7 +38,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "MapaPresencas.xlsx",
+                FileName = "MapaPresencas_"+DateTime.Parse(data).ToString("MM-yyyy")+".xlsx",
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,

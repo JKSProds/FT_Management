@@ -97,7 +97,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "MapaFerias.xlsx",
+                FileName = "MapaFerias_"+Ano+".xlsx",
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
