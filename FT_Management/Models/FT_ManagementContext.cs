@@ -2475,6 +2475,30 @@ namespace FT_Management.Models
                 //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
+        public void ApagarMarcacoes(List<Marcacao> LstMarcacao)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstMarcacao.Count; i++)
+            {
+                if ((j + max) > LstMarcacao.Count) max = (LstMarcacao.Count - j);
+
+                string sql = "";
+
+                foreach (var marcacao in LstMarcacao.GetRange(j, max))
+                {
+                    sql += "DELETE FROM dat_marcacoes WHERE IdMarcacao=" + marcacao.IdMarcacao + ";\r\n";
+                    i++;
+                }
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+            }
+        }
 
         public DateTime ObterUltimoAcesso(int IdPHC)
         {

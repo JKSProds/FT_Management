@@ -96,7 +96,9 @@ namespace FT_Management.Models
         {
 
             FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(FT_ManagementContext.ObterUltimaModificacaoPHC("u_estados")));
-            FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao")));
+            List<Marcacao> LstMarcacoes = ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao"));
+            FT_ManagementContext.ApagarMarcacoes(LstMarcacoes);
+            FT_ManagementContext.CriarMarcacoes(LstMarcacoes);
             FT_ManagementContext.CriarMarcacoes(ObterDatasAdicionaisMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mdatas")));
             FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mtecnicos")));
             FT_ManagementContext.CriarComentarios(ObterComentariosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_coment")));
