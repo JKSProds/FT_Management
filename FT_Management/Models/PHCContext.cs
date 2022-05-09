@@ -73,7 +73,7 @@ namespace FT_Management.Models
         }
         public void AtualizarClientes()
         {
-            FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
+            FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl_1")));
             FT_ManagementContext.CriarClientes(ObterClientes(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
         }
         public void AtualizarFornecedores()
@@ -281,7 +281,7 @@ namespace FT_Management.Models
 
                     conn.Close();
 
-                    FT_ManagementContext.AtualizarUltimaModificacao("cl", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
+                    FT_ManagementContext.AtualizarUltimaModificacao("cl_1", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
                     Console.WriteLine("Vendedores atualizados com sucesso! (PHC -> MYSQL)");
 
