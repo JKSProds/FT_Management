@@ -35,20 +35,27 @@ namespace FT_Management
             services.AddControllersWithViews();
             services.AddMvc();
 
+            services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
+            services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(Configuration.GetConnectionString("PHCConnection"), Configuration.GetConnectionString("DefaultConnection"))));
+
             // Add Quartz services
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            // Add our job
-            services.AddSingleton<CronJobFerias>();
-            services.AddSingleton(new JobSchedule(
-                jobType: typeof(CronJobFerias),
-                cronExpression: "00 00 23 * * ?"));
+            if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1") {
+                // Add our job
+                services.AddSingleton<CronJobFerias>();
+                services.AddSingleton(new JobSchedule(
+                    jobType: typeof(CronJobFerias),
+                    cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection"))));
+            }
 
-            services.AddSingleton<CronJobAgendamentoCRM>();
-            services.AddSingleton(new JobSchedule(
-                jobType: typeof(CronJobAgendamentoCRM),
-                cronExpression: "00 00 02 * * ?"));
+            if (FT_ManagementContext.ObterParam("EnvioEmailAgendamentoComercial", Configuration.GetConnectionString("DefaultConnection")) == "1") {
+                services.AddSingleton<CronJobAgendamentoCRM>();
+                services.AddSingleton(new JobSchedule(
+                    jobType: typeof(CronJobAgendamentoCRM),
+                    cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAgendamentoComercial", Configuration.GetConnectionString("DefaultConnection"))));
+            }
 
             services.AddHostedService<QuartzHostedService>();
 
@@ -64,8 +71,6 @@ namespace FT_Management
             });
 
 
-            services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
-            services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(Configuration.GetConnectionString("PHCConnection"), Configuration.GetConnectionString("DefaultConnection"))));
 
             //var passwordHasher = new PasswordHasher<string>();
             //Console.WriteLine(passwordHasher.HashPassword(null, "Food@014.js"));
