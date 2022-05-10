@@ -26,7 +26,7 @@ namespace FT_Management.Controllers
                 LstUtilizadores.Insert(0, new Utilizador() { Id= 0, NomeCompleto="Todos"});
             ViewBag.ListaComerciais = LstUtilizadores;
 
-            int pageSize = 20;
+            int pageSize = 50;
             var pageNumber = page ?? 1;
 
             List<String> LstAreasNegocio = context.ObterListaAreasNegocio().ToList();
