@@ -1,7 +1,7 @@
 ﻿@model FT_Management.Models.FolhaObra
 
 @{
-    ViewData["Title"] = "Adicionar Visita";
+    ViewData["Title"] = "Novo Agendamento";
 }
 
 
@@ -11,7 +11,7 @@
 
 <form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
     <div class="mb-5 p-4 bg-white shadow-sm">
-        <h3>Adicionar Visita</h3>
+        <h3>Novo Agendamento</h3>
 
         <div class="bs-stepper">
             <div class="bs-stepper-header" role="tablist">
@@ -52,7 +52,7 @@
                     <div class="form-group">
                         <label for="">Comercial</label>
                         @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
-                        <select class="form-control" id="txtComercial" name="txtComercial" asp-items="@(new SelectList(LstComerciais, "IdPHC", "NomeCompleto"))"></select>
+                        <select class="form-control" id="txtComercial" name="txtComercial" asp-items="@(new SelectList(LstComerciais, "Id", "NomeCompleto"))"></select>
 
                         <label for="data" class="">Data da Visita</label>
                         <div class="">

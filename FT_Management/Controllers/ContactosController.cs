@@ -106,18 +106,34 @@ namespace FT_Management.Controllers
             return RedirectToAction("Index");
         }
 
-        public string AdicionarObservacao(int idcontacto, string obs)
+        public string AdicionarObservacao(int idcontacto, string obs, int lembrete, string datalembrete)
         {
-
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador c = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
+
             HistoricoContacto hC = new HistoricoContacto() {
                 IdContacto = idcontacto,
                 Data = DateTime.Now,
-                IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())),
+                IdComercial = c,
                 Obs = obs
             };
 
+            if (lembrete == 1)
+            {
+                Visita v = new Visita()
+                {
+                    DataVisita = DateTime.Parse(datalembrete),
+                    Cliente = new Cliente() { IdCliente=0, IdLoja =0},
+                    Contacto = new Contacto() { IdContacto = idcontacto},
+                    IdComercial = c.Id,
+                    ResumoVisita = "Lembrete criado:\r\n" + obs,
+                    EstadoVisita = "Agendado"
+                };
+                context.CriarVisitas(new List<Visita> { v });
+            }
+
             context.CriarHistoricoContacto(hC);
+            
 
             return "OK";
         }

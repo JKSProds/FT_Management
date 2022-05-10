@@ -152,6 +152,31 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <textarea class="form-control" id="txtHist" rows="8"></textarea>
+                                <br />
+                                <div class="form-check form-group col">
+                                    <input class="form-check-input" type="checkbox" value="" id="chkLembrete">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Definir Lembrete
+                                    </label>
+                                    @*DateTimePicker*@
+                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                    <input type="text" class="form-control" id="txtDataLembrete" name="txtDataLembrete">
+                                    <script>
+                                        var today = new Date();
+                                        today.setDate(today.getDate() + 31);
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                        var yyyy = today.getFullYear();
+
+                                        $('#txtDataLembrete').datepicker({
+                                            format: 'dd-mm-yyyy',
+                                            value: dd + '-' + mm + '-' + yyyy
+                                        });
+                                    </script>
+
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -192,6 +217,7 @@
 
     <script>
 
+
         function tipoContactoAlterado() {
             document.getElementById("txtTipoContacto").value = document.getElementById("ddlTipoContacto").value;
         }
@@ -231,7 +257,9 @@
         function AddHistorico() {
             var json = {
                 idcontacto: document.getElementById('IdContacto').value,
-                obs: document.getElementById('txtHist').value
+                obs: document.getElementById('txtHist').value,
+                lembrete: document.getElementById('chkLembrete').checked ? 1 : 0,
+                datalembrete: document.getElementById('txtDataLembrete').value
             };
 
             $.ajax({

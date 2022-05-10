@@ -45,6 +45,11 @@ namespace FT_Management
                 jobType: typeof(CronJobFerias),
                 cronExpression: "00 00 23 * * ?"));
 
+            services.AddSingleton<CronJobAgendamentoCRM>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(CronJobAgendamentoCRM),
+                cronExpression: "00 15 15 * * ?"));
+
             services.AddHostedService<QuartzHostedService>();
 
             services.Configure<CookiePolicyOptions>(options =>

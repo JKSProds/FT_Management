@@ -27,7 +27,14 @@
         <h1 class="text-center col-lg-11">
             @Html.DisplayFor(model => model.Cliente.NomeCliente)
         </h1>
-        <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
+        @if (Model.Contacto.IdContacto > 0)
+        {
+            <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Editar", "Contactos", new { id = Model.Contacto.IdContacto }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
+        }
+        else
+        {
+            <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
+        }
     </div>
 
     <hr />

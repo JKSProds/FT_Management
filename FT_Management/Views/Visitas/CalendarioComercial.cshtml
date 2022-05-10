@@ -1,5 +1,4 @@
 ﻿
-
 @{
     ViewData["Title"] = "Calendário";
 }
@@ -8,6 +7,7 @@
 <h1>Agendamento</h1>
 
 <hr />
+
 <link href='~/js/fullcalendar/main.css' rel='stylesheet' />
 <script src='~/js/fullcalendar/main.js'></script>
 
@@ -33,7 +33,7 @@
             firstDay: 1,
             locale: 'pt',
             editable: true,
-            events: 'ObterVisitas',
+            events: 'ObterVisitasComercial',
             eventTimeFormat: { // like '14:30:00'
                 hour: '2-digit',
                 minute: '2-digit',
@@ -74,5 +74,3 @@
 
         calendar.render();
     });</script>
-
-<partial name="~/Views/Visitas/CalendarioView.cshtml" />

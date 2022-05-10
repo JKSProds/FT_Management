@@ -381,6 +381,7 @@ namespace FT_Management.Models
         public string VisitaStamp { get; set; }
         public string ObsVisita { get; set; }
         public List<Proposta> Propostas { get; set; }
+        public  Contacto Contacto { get; set; }
     }
 
     public class Proposta

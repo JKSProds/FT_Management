@@ -91,7 +91,7 @@ namespace FT_Management.Models
                     {
                         IdVisita = result["IdVisita"],
                         DataVisita = DateTime.Parse(result["DataVisita"]),
-                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : ObterCliente(result["IdCliente"], result["IdLoja"]),
                         ResumoVisita = result["ResumoVisita"],
                         EstadoVisita = result["EstadoVisita"],
                         ObsVisita = result["ObsVisita"],
@@ -120,7 +120,7 @@ namespace FT_Management.Models
                     {
                         IdVisita = result["IdVisita"],
                         DataVisita = DateTime.Parse(result["DataVisita"]),
-                        Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : ObterCliente(result["IdCliente"], result["IdLoja"]),
                         ResumoVisita = result["ResumoVisita"],
                         EstadoVisita = result["EstadoVisita"],
                         ObsVisita = result["ObsVisita"],
@@ -202,12 +202,13 @@ namespace FT_Management.Models
                 {
                     IdVisita = result["IdVisita"],
                     DataVisita = DateTime.Parse(result["DataVisita"]),
-                    Cliente = ObterCliente(result["IdCliente"], result["IdLoja"]),
+                    Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : ObterCliente(result["IdCliente"], result["IdLoja"]),
                     ResumoVisita = result["ResumoVisita"],
                     EstadoVisita = result["EstadoVisita"],
                     ObsVisita = result["ObsVisita"],
                     VisitaStamp = result["VisitaStamp"],
-                    IdComercial = result["idcomercial"]
+                    IdComercial = result["idcomercial"],
+                    Contacto = new Contacto() { IdContacto = result["IdContacto"]}
                 };
             }
 
@@ -1366,6 +1367,7 @@ namespace FT_Management.Models
                     AreaNegocio = result["AreaNegocio"],
                     CargoPessoaContacto = result["CargoPessoaContacto"],
                     ValidadoPorAdmin = result["ValidadoPorAdmin"],
+                    Cliente = ObterCliente(int.Parse(result["IdCliente"]), int.Parse(result["IdLoja"])),
                     IdCliente = result["IdCliente"],
                     IdLoja = result["IdLoja"],
                     IdComercial = result["IdComercial"],
@@ -1377,6 +1379,29 @@ namespace FT_Management.Models
             }
 
             return contacto;
+        }
+
+        public Cliente ObterClienteContacto(int id)
+        {
+
+            Cliente cliente = new Cliente();
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT * FROM dat_contactos where Id=" + id + ";");
+            result.Read();
+            if (result.Reader.HasRows)
+            {
+                cliente = new Cliente()
+                {
+                    NomeCliente = result["Nome"],
+                    MoradaCliente = result["Morada"],
+                    PessoaContatoCliente = result["PessoaContacto"],
+                    EmailCliente = result["Email"],
+                    TelefoneCliente = result["Telefone"],
+                    NumeroContribuinteCliente = result["NIF"],
+                };
+            }
+
+            return cliente;
         }
 
         public List<String> ObterListaAreasNegocio()
@@ -1733,7 +1758,9 @@ namespace FT_Management.Models
                         Id = result["IdUtilizador"],
                         NomeUtilizador = result["NomeUtilizador"],
                         NomeCompleto = result["NomeCompleto"],
-                        EmailUtilizador = result["EmailUtilizador"]
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdPHC = result["IdPHC"],
+                        Iniciais = result["IniciaisUtilizador"]
                     });
                 }
             }
@@ -1897,9 +1924,9 @@ namespace FT_Management.Models
             Utilizador comercial = new Utilizador();
             foreach (var item in Visitas)
             {
-                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdComercial) { dataMarcacao = dataMarcacao.AddMinutes(5); comercial = ObterTecnico(item.IdComercial); }
+                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdComercial) { dataMarcacao = dataMarcacao.AddMinutes(5); comercial = ObterUtilizador(item.IdComercial); }
                 if (dataMarcacao.ToShortDateString() != item.DataVisita.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataVisita.ToShortDateString() + " 00:00:00");
-                if (LstEventos.Count == 0) comercial = ObterTecnico(item.IdComercial);
+                if (LstEventos.Count == 0) comercial = ObterUtilizador(item.IdComercial);
 
                 LstEventos.Add(new CalendarioEvent
                 {
@@ -2626,17 +2653,17 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstVisita.Count) max = (LstVisita.Count - j);
 
-                string sql = "INSERT INTO dat_visitas (IdVisita,DataVisita,IdCliente,IdLoja,ResumoVisita,EstadoVisita,ObsVisita,IdComercial) VALUES ";
+                string sql = "INSERT INTO dat_visitas (IdVisita,DataVisita,IdCliente,IdLoja,ResumoVisita,EstadoVisita,ObsVisita,IdComercial, IdContacto) VALUES ";
 
                 foreach (var visita in LstVisita.GetRange(j, max))
                 {
                     if (visita.ObsVisita is null) visita.ObsVisita = String.Empty;
-                    sql += ("('" + visita.IdVisita + "', '" + visita.DataVisita.ToString("yy-MM-dd") + "', '" + visita.Cliente.IdCliente + "', '" + visita.Cliente.IdLoja + "', '" + visita.ResumoVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.EstadoVisita + "', '" + visita.ObsVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.IdComercial + "'), \r\n");
+                    sql += ("('" + visita.IdVisita + "', '" + visita.DataVisita.ToString("yy-MM-dd") + "', '" + visita.Cliente.IdCliente + "', '" + visita.Cliente.IdLoja + "', '" + visita.ResumoVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.EstadoVisita + "', '" + visita.ObsVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.IdComercial + "', '" + visita.Contacto.IdContacto + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE DataVisita=VALUES(DataVisita), IdCliente = VALUES(IdCliente), ResumoVisita = VALUES(ResumoVisita), EstadoVisita = VALUES(EstadoVisita), ObsVisita = VALUES(ObsVisita), IdComercial = VALUES(IdComercial);";
+                sql += " ON DUPLICATE KEY UPDATE DataVisita=VALUES(DataVisita), IdCliente = VALUES(IdCliente), ResumoVisita = VALUES(ResumoVisita), EstadoVisita = VALUES(EstadoVisita), ObsVisita = VALUES(ObsVisita), IdComercial = VALUES(IdComercial), IdContacto = VALUES(IdContacto);";
 
                 Database db = ConnectionString;
 

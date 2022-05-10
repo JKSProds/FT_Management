@@ -24,13 +24,24 @@ namespace FT_Management.Controllers
             return new JsonResult(context.ConverterVisitasEventos(context.ObterListaVisitas(start, end)).ToList());
 
         }
+        public JsonResult ObterVisitasComercial(DateTime start, DateTime end)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return new JsonResult(context.ConverterVisitasEventos(context.ObterListaVisitas(int.Parse(this.User.Claims.First().Value), start, end)).ToList());
+
+        }
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Calendario()
         {
             return View();
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        public ActionResult CalendarioComercial()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
         public JsonResult AlteracaoCalendario(DateTime data, int id)
         {
 
@@ -108,7 +119,8 @@ namespace FT_Management.Controllers
                     IdComercial = txtComercial,
                     ResumoVisita = Obs,
                     ObsVisita = "",
-                    EstadoVisita = "Agendado"
+                    EstadoVisita = "Agendado",
+                    Contacto = new Contacto() { IdContacto = 0}
                 };
                 List<Visita> lstVisitas = new List<Visita>();
                 lstVisitas.Add(visita);
@@ -144,7 +156,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Id;
             ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
 
             Visita visita = context.ObterVisita(idVisita);
