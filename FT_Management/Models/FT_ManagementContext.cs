@@ -52,6 +52,22 @@ namespace FT_Management.Models
             return ObterParam("SyncPHCOnStartup") == "1";
         }
 
+        public bool ExisteNIFDuplicadoContacto(string NIF)
+        {
+            if (String.IsNullOrEmpty(NIF)) return false;
+            int res = 0;
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT Count(*) as Count FROM dat_contactos where NIF = '" + NIF + "';");
+                result.Read();
+
+                res = result["Count"];
+            }
+
+            return res > 0;
+        }
+
         public string ObterParam(string NomeParam)
         {
             string res = "";

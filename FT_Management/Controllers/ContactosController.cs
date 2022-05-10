@@ -142,7 +142,7 @@ namespace FT_Management.Controllers
         public ActionResult Novo(Contacto c)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
+            if (context.ExisteNIFDuplicadoContacto(c.NIFContacto)) ModelState.AddModelError("NIFContacto", "NIF Duplicado");
             if (ModelState.IsValid)
             {
                 c.IdContacto = context.ObterUltimoID("dat_contactos", "Id") + 1;
