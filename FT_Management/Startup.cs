@@ -48,7 +48,7 @@ namespace FT_Management
             services.AddSingleton<CronJobAgendamentoCRM>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(CronJobAgendamentoCRM),
-                cronExpression: "00 15 15 * * ?"));
+                cronExpression: "00 00 02 * * ?"));
 
             services.AddHostedService<QuartzHostedService>();
 
