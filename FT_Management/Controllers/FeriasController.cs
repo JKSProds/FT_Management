@@ -38,7 +38,7 @@ namespace FT_Management.Controllers
         {
             var calendar = new Calendar();
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
+            
             List<Ferias> LstFerias = context.ObterListaFeriasValidadas(DateTime.Parse(DateTime.Now.Year + "-01-01"), DateTime.Parse(DateTime.Now.Year + "-12-31"));
             foreach (var f in LstFerias)
             {
