@@ -26,29 +26,23 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Tech, Escritorio")]
     public class PedidosController : Controller
     {
-        public JsonResult ObterMarcacoes(DateTime start, DateTime end)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            return new JsonResult(context.ConverterMarcacoesEventos(context.ObterListaMarcacoes(start, end)).ToList());
-
-        }
 
         [HttpPost]
         public string ObterPedido(int id)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
 
-            Marcacao marcacao = context.ObterMarcacao(id);
             string res = "";
-            res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + marcacao.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + marcacao.Cliente.IdCliente+"&IdLoja="+marcacao.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + marcacao.ResumoMarcacao + "</textarea></div>";
+            res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + m.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + m.Cliente.IdCliente+"&IdLoja="+m.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + m.ResumoMarcacao + "</textarea></div>";
 
 
-            if (marcacao.LstComentarios.Count() > 0)
+            if (m.LstComentarios.Count() > 0)
             {
                 res += "<table class=\"table table-hover\"><thead><tr><th>Utilizador</th><th>Comentário</th><tbody>";
 
-                foreach (var item in marcacao.LstComentarios)
+                foreach (var item in m.LstComentarios)
                 {
                     res += "<tr><td><span>" + item.NomeUtilizador + "</span></td><td><span>" + item.Descricao + "</span></td>";
                 }
@@ -56,28 +50,17 @@ namespace FT_Management.Controllers
                 res += "</tbody></table>";
             }
 
-            if (marcacao.LstFolhasObra.Count() > 0)
+            if (m.LstFolhasObra.Count() > 0)
             {
                 res += "<table class=\"table table-hover\"><thead><tr><th>Data</th><th>Cliente</th><th>Nº Série</th><tbody>";
 
-                foreach (var item in marcacao.LstFolhasObra)
+                foreach (var item in m.LstFolhasObra)
                 {
                     res += "<tr><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
                 }
 
                 res += "</tbody></table>";
             }
-
-            //res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Email</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.EmailContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.EmailContacto.Length == 0 ? "disabled" : "") + " \" href=\"mailto:" + contacto.EmailContacto + "\" type=\"button\"><i class=\"fas fa-envelope float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            //res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone-alt float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            //res += "<div class=\"mb-3\"><label>Morada</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.MoradaContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"https://maps.google.com/?daddr=" + contacto.MoradaContacto + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            //res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"form-control\" value='" + contacto.NIFContacto + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Área de Negócio</label><input type=\"text\" class=\"form-control\" value='" + contacto.AreaNegocio + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
-            //if (this.User.IsInRole("Admin")) res += "<div class=\"mb-3\"><label>Comercial Associado</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly><a class=\"btn btn-outline-primary\" onclick=AssociarComercial() type=\"button\"><i class=\"fas fa-list float-left\" style=\"margin-top:5px\"></i></a></div></div>";
 
             return res;
         }
@@ -90,10 +73,9 @@ namespace FT_Management.Controllers
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
 
             var calendar = new Calendar();
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
+            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
             foreach (Marcacao m in LstMarcacoes)
             {
                 if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d= m.DataMarcacao.Add(TimeSpan.FromHours(8));
@@ -139,10 +121,15 @@ namespace FT_Management.Controllers
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Calendario()
         {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
-
             return View();
+        }
+
+        public JsonResult ObterMarcacoes(DateTime start, DateTime end)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end)).ToList());
+
         }
         public ActionResult CalendarioView()
         {
@@ -187,8 +174,10 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiquetaMarcacao(context.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            context.DesenharEtiquetaMarcacao(phccontext.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
             context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal da marcação: " + id, 2);
             //return File(outputStream, "image/bmp");
@@ -210,26 +199,23 @@ namespace FT_Management.Controllers
         }
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
 
             if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["DataPedidos"] = DataPedidos;
 
-            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos), DateTime.Parse(DataPedidos));
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
+
             ViewData["IdTecnico"] = IdTecnico;
             return View(ListaMarcacoes);
         }
         public ActionResult ListaPedidosPendentes(string IdTecnico)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
 
             ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
 
-            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoesPendentes(int.Parse(IdTecnico));
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoesPendentes(int.Parse(IdTecnico));
             ViewData["IdTecnico"] = IdTecnico;
             return View("ListaPedidos", ListaMarcacoes);
         }
@@ -239,46 +225,19 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
-            phccontext.AtualizarFolhasObra();
 
-            Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-            marcacao.IdTecnico = int.Parse(IdTecnico);
+            Marcacao m = phccontext.ObterMarcacao(int.Parse(idMarcacao));
+            m.IdTecnico = int.Parse(IdTecnico);
 
-            ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
+            ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;
 
             Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             ViewData["SelectedTecnico"] = user.NomeCompleto;
             ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
 
-            return View(marcacao);
+            return View(m);
         }
-        public ActionResult ValidarPedido(string idcartao, string estado)
-        {
 
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            TrelloCartoes cartao = trello.ObterCartao(idcartao);
-
-            foreach (var folhaObra in context.ObterListaFolhasObraCartao(idcartao))
-            {
-                //if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-                TrelloAnexos Anexo = new TrelloAnexos
-                {
-                    Id = folhaObra.IdCartao,
-                    Name = "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf",
-                    File = context.PreencherFormularioFolhaObra(folhaObra).ToArray(),
-                };
-                Anexo.dict.TryGetValue(Anexo.Name.Split('.').Last(), out string mimeType);
-                Anexo.MimeType = mimeType;
-
-                trello.NovoAnexo(Anexo);
-            }
-
-            trello.NovaLabel(idcartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
-            return RedirectToAction("ListaPedidos", new { idQuadro = cartao.IdQuadro, idlista = cartao.IdLista});
-        }
 
     }
 }
