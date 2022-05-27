@@ -63,7 +63,6 @@ namespace FT_Management.Controllers
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
                 context.AtualizarUltimaModificacao(tabela, DateTime.Parse("01/01/1900 00:00:00"));
-                phccontext.AtualizarTudo();
 
                 return RedirectToAction(nameof(Index));
             }

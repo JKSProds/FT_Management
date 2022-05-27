@@ -37,8 +37,6 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            phccontext.AtualizarArtigos();
-
             var LstArmazens = context.ObterListaArmazens().ToList();
 
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", Armazem);
@@ -238,8 +236,6 @@ namespace FT_Management.Controllers
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
             
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            phccontext.AtualizarArtigo(id);
 
 
             return View(context.ObterProduto(id,armazemid));

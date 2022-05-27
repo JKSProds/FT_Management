@@ -27,8 +27,6 @@ namespace FT_Management.Controllers
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            phccontext.AtualizarFolhasObra();
-
             return View(context.ObterListaFolhasObra(DateTime.Parse(DataFolhasObra).ToString("yyyy-MM-dd")));
         }
 
@@ -87,7 +85,6 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarFolhasObra();
             FolhaObra fo = context.ObterFolhaObra(Id);
 
                 Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));

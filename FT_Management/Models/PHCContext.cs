@@ -31,6 +31,8 @@ namespace FT_Management.Models
             }
         }
 
+
+
         //Obter Referências
         #region REFERENCIA
         public List<Produto> ObterProdutos(DateTime dataUltimaLeitura)
@@ -813,6 +815,11 @@ namespace FT_Management.Models
             }
 
             return LstAcessos;
+        }
+
+        public void AtualizarAcessos()
+        {
+            FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
         }
         #endregion
 
