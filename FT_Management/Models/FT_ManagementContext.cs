@@ -1750,7 +1750,8 @@ namespace FT_Management.Models
                         NomeUtilizador = result["NomeUtilizador"],
                         NomeCompleto = result["NomeCompleto"],
                         EmailUtilizador = result["EmailUtilizador"],
-                        Iniciais = result["IniciaisUtilizador"]
+                        Iniciais = result["IniciaisUtilizador"],
+                        CorCalendario = result["CorCalendario"]
                     });
                 }
             }
@@ -1886,23 +1887,34 @@ namespace FT_Management.Models
 
             DateTime dataMarcacao = DateTime.Parse(DateTime.Now.ToShortDateString() + " 00:00:00");
             dataMarcacao.AddMinutes(5);
-            foreach (var item in Marcacoes)
+            foreach (var item in Marcacoes.OrderBy(m => m.IdTecnico).OrderBy(m => m.DataMarcacao))
             {
-                if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.IdTecnico) dataMarcacao = dataMarcacao.AddMinutes(5);
-                if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 00:00:00");
-
-                LstEventos.Add(new CalendarioEvent
+                try
                 {
-                    id = item.IdMarcacao,
-                    title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
-                    start = dataMarcacao,
-                    end = dataMarcacao.AddMinutes(19),
-                    IdTecnico = item.IdTecnico,
-                    //color = ("#33FF77"),
-                    url = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.IdTecnico),
-                    color = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario)
-                });
-                dataMarcacao = dataMarcacao.AddMinutes(20);
+                    if (item.Tecnico != null)
+                    {
+                        if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.Tecnico.Id) dataMarcacao = dataMarcacao.AddMinutes(5);
+                        if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 00:00:00");
+
+                        LstEventos.Add(new CalendarioEvent
+                        {
+                            id = item.IdMarcacao,
+                            title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
+                            start = dataMarcacao,
+                            end = dataMarcacao.AddMinutes(19),
+                            IdTecnico = item.Tecnico.Id,
+                            //color = ("#33FF77"),
+                            url = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.Tecnico.Id),
+                            color = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario)
+                        });
+                        dataMarcacao = dataMarcacao.AddMinutes(20);
+                    }
+                }
+                catch
+                {
+
+                }
+ 
             }
 
             return LstEventos;

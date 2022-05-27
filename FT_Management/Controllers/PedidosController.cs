@@ -228,7 +228,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Marcacao m = phccontext.ObterMarcacao(int.Parse(idMarcacao));
-            m.IdTecnico = int.Parse(IdTecnico);
+            m.Tecnico.Id = int.Parse(IdTecnico);
 
             ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;
 

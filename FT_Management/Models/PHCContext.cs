@@ -388,10 +388,17 @@ namespace FT_Management.Models
             {
                 fo[0].IntervencaosServico = ObterIntervencoes(fo[0].IdFolhaObra);
                 fo[0].PecasServico = ObterPecas(fo[0].IdFolhaObra);
-                foreach (var item in fo[0].IntervencaosServico)
+                if (fo[0].IntervencaosServico.Count == 1)
                 {
-                    if (!fo[0].RelatorioServico.Contains(item.RelatorioServico))
-                        fo[0].RelatorioServico += item.DataServiço.ToShortDateString() + " - " + item.HoraInicio.ToString("HH:mm") + "->" + item.HoraFim.ToString("HH:mm") + ": " + item.RelatorioServico + "\r\n";
+                    fo[0].RelatorioServico = fo[0].IntervencaosServico[0].RelatorioServico;
+                }
+                else
+                {
+                    foreach (var item in fo[0].IntervencaosServico)
+                    {
+                        if (!fo[0].RelatorioServico.Contains(item.RelatorioServico))
+                            fo[0].RelatorioServico += item.DataServiço.ToShortDateString() + " - " + item.HoraInicio.ToString("HH:mm") + "->" + item.HoraFim.ToString("HH:mm") + ": " + item.RelatorioServico + "\r\n";
+                    }
                 }
                 fo[0].GuiaTransporteAtual = ObterGuiaTransporte(fo[0].PecasServico);
                 return fo[0];
@@ -523,9 +530,8 @@ namespace FT_Management.Models
         #region MARCACOES
         private List<Marcacao> ObterMarcacoes(string SQL_Query)
         {
-
+            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaTecnicos();
             List<Marcacao> LstMarcacao = new List<Marcacao>();
-
             try
             {
                     SqlConnection conn = new SqlConnection(ConnectionString);
@@ -538,24 +544,68 @@ namespace FT_Management.Models
                     {
                         while (result.Read())
                         {
-                            LstMarcacao.Add(new Marcacao()
-                            {
-                                IdMarcacao = int.Parse(result["num"].ToString().Trim()),
-                                DataMarcacao = DateTime.Parse(result["data"].ToString().Trim()),
-                                Cliente = ObterCliente(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim())),
-                                ResumoMarcacao = result["resumo"].ToString().Trim(),
-                                EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
-                                EstadoMarcacao = ObterMarcacaoEstado(result["estado"].ToString().Trim()).IdEstado,
-                                PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
-                                MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
-                                TipoEquipamento = result["tipoe"].ToString().Trim(),
-                                Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0,
-                                Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0,
-                                DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString()),
-                                LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim())),
-                                //LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()))
-                            });
+                        LstMarcacao.Add(new Marcacao()
+                        {
+                            IdMarcacao = int.Parse(result["num"].ToString().Trim()),
+                            DataMarcacao = DateTime.Parse(result["data"].ToString().Trim()),
+                            Cliente = ObterCliente(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim())),
+                            ResumoMarcacao = result["resumo"].ToString().Trim(),
+                            EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
+                            EstadoMarcacao = ObterMarcacaoEstado(result["estado"].ToString().Trim()).IdEstado,
+                            PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
+                            MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
+                            TipoEquipamento = result["tipoe"].ToString().Trim(),
+                            Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0,
+                            Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0,
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString()),
+                            LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim())),
+                            Tecnico = LstUtilizadores.Where(u => u.Id == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault(),
+                            //LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()))
+                        }) ;
                         }
+                    conn.Close();
+
+                    FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
+
+                    Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
+            }
+
+            return LstMarcacao;
+        }
+        private List<Marcacao> ObterMarcacoesCalendario(string SQL_Query)
+        {
+            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaTecnicos();
+            List<Marcacao> LstMarcacao = new List<Marcacao>();
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn);
+                command.CommandTimeout = TIMEOUT;
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstMarcacao.Add(new Marcacao()
+                        {
+                            IdMarcacao = int.Parse(result["num"].ToString().Trim()),
+                            DataMarcacao = DateTime.Parse(result["data"].ToString().Trim()),
+                            Cliente = new Cliente() {NomeCliente = result["nome"].ToString().Trim()},
+                            ResumoMarcacao = result["resumo"].ToString().Trim(),
+                            EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
+                            PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
+                            IdTecnico = int.Parse(result["tecnno"].ToString()),
+                            Tecnico = LstUtilizadores.Where(u => u.Id == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault(),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString())
+                        });
+                    }
                     conn.Close();
 
                     FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
@@ -578,8 +628,9 @@ namespace FT_Management.Models
         }
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacao.u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by u_mdatas.data;");
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, ousrdata, ousrhora FROM u_marcacao WHERE data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by data;").AsEnumerable());
+            
+            List <Marcacao> LstMarcacoes = (ObterMarcacoesCalendario("SELECT num, data, u_mtecnicos.tecnno, u_mtecnicos.tecnnm, nome, estado, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 WHERE data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "';"));
+            LstMarcacoes.AddRange(ObterMarcacoesCalendario("SELECT num, u_mdatas.data, u_mtecnicos.tecnno, u_mtecnicos.tecnnm, nome, estado, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' ;").AsEnumerable());
             return LstMarcacoes;
         }
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataInicio, DateTime DataFim)
@@ -599,7 +650,11 @@ namespace FT_Management.Models
         public Marcacao ObterMarcacao(int IdMarcacao)
         {
             List<Marcacao> m = ObterMarcacoes("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, ousrdata, ousrhora FROM u_marcacao where num='" + IdMarcacao + "' order by num;");
-            if (m.Count > 0) return m[0];
+            if (m.Count > 0)
+            {
+                m[0].LstFolhasObra = ObterFolhasObra(m[0].IdMarcacao);
+                return m[0];
+            }
             return new Marcacao();
         }
 
