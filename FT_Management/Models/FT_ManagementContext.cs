@@ -3399,17 +3399,6 @@ namespace FT_Management.Models
             pdfFormFields.SetField("Contribuinte", folhaobra.ClienteServico.NumeroContribuinteCliente);
 
             //Assistencia
-            if (folhaobra.IntervencaosServico.Count > 1)
-            {
-                foreach (var intervencao in folhaobra.IntervencaosServico)
-                {
-                    folhaobra.RelatorioServico += intervencao.DataServiço.ToShortDateString() + " - " + intervencao.HoraInicio.ToShortTimeString() + " -> " + intervencao.HoraFim.ToShortTimeString() + ": " + intervencao.RelatorioServico + " ";
-                }
-            }
-            else if (folhaobra.IntervencaosServico.Count > 0)
-            {
-                folhaobra.RelatorioServico = folhaobra.IntervencaosServico.FirstOrDefault().RelatorioServico;
-            }
             pdfFormFields.SetField("trabalho efectuado", folhaobra.RelatorioServico);
             pdfFormFields.SetField("SituacoesPendentes", folhaobra.SituacoesPendentes);
             if (folhaobra.IntervencaosServico.Count > 0)

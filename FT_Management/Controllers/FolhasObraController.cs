@@ -146,7 +146,7 @@ namespace FT_Management.Controllers
 
             try
             {
-                Console.WriteLine("Sending email");
+                Console.WriteLine("Enviar email da folha de obra! - " + fo.ClienteServico.NomeCliente);
                 SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"])
                 {
 

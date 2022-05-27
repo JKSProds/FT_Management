@@ -393,6 +393,7 @@ namespace FT_Management.Models
                     if (!fo[0].RelatorioServico.Contains(item.RelatorioServico))
                         fo[0].RelatorioServico += item.DataServiço.ToShortDateString() + " - " + item.HoraInicio.ToString("HH:mm") + "->" + item.HoraFim.ToString("HH:mm") + ": " + item.RelatorioServico + "\r\n";
                 }
+                fo[0].GuiaTransporteAtual = ObterGuiaTransporte(fo[0].PecasServico);
                 return fo[0];
             }
             return new FolhaObra();
@@ -483,6 +484,7 @@ namespace FT_Management.Models
                                 Ref_Produto = result["ref"].ToString().Trim(),
                                 Designacao_Produto = result["design"].ToString().Trim(),
                                 TipoUn = "UN",
+                                Pos_Stock = result["guiatransporte"].ToString().Trim(),
                                 Stock_Fisico = double.Parse(result["qtt"].ToString().Trim())
 
                             });
@@ -504,7 +506,16 @@ namespace FT_Management.Models
         }
         public List<Produto> ObterPecas(int IdFolhaObra)
         {
-            return ObterPecas("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and pa.nopat=" + IdFolhaObra + " order by ref;");
+            return ObterPecas("select pa.nopat, bi.ref, bi.design, bi.qtt, (SELECT TOP 1 obrano from V_DOCS_GLOBAL WHERE ar2mazem=bi.armazem and dataobra<bi.dataobra and bi.ref not like '%SRV%' order by dataobra desc) as guiatransporte from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and pa.nopat=" + IdFolhaObra + " order by ref;");
+        }
+        public string ObterGuiaTransporte(List<Produto> LstProdutos)
+        {
+            string res = "";
+            foreach (var item in LstProdutos)
+            {
+                if (!res.Contains(item.Pos_Stock) && !String.IsNullOrEmpty(item.Pos_Stock)) res += item.Pos_Stock;
+            }
+            return res;
         }
         #endregion
 
