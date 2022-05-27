@@ -96,9 +96,9 @@ namespace FT_Management.Controllers
 
         public JsonResult ObterHistorico(string NumeroSerieEquipamento)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return Json(new { json = context.ObterHistorico(NumeroSerieEquipamento) });
+            return Json(new { json = phccontext.ObterHistorico(NumeroSerieEquipamento) });
         }
 
         public JsonResult ObterEmailClienteFolhaObra(int id)

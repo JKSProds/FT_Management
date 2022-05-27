@@ -398,6 +398,11 @@ namespace FT_Management.Models
             return new FolhaObra();
 
         }
+        public List<FolhaObra> ObterHistorico(string NumeroSerie)
+        {
+
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.serie='"+NumeroSerie+"' order by u_intervencao.data;");
+            }
 
         public List<Intervencao> ObterIntervencoes(string SQL_Query)
         {
