@@ -215,7 +215,7 @@ namespace FT_Management.Controllers
 
             ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
 
-            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoesPendentes(int.Parse(IdTecnico));
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoesPendentes(int.Parse(IdTecnico)).OrderBy(m => m.DataMarcacao).ToList();
             ViewData["IdTecnico"] = IdTecnico;
             return View("ListaPedidos", ListaMarcacoes);
         }

@@ -42,7 +42,6 @@
                         <i class="fas fa-search fa-lg"></i>
                     </button>
                     <a asp-action="Index" class="btn btn-secondary float-lg-right"><i class="fas fa-backspace"></i></a>
-                    <a asp-action="Criar" class="btn btn-primary float-lg-right"><i class="fas fa-plus"></i></a>
                 </div>
             </form>
         </td>
@@ -104,8 +103,8 @@ else
                     @Html.DisplayNameFor(model => model.Stock_Res)
                 </th>
                 <th>
-                    <a id="btnEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
-                    <a id="btnCloseEdit" class="btn btn-primary btn-lg btn-block" onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
+                    <a id="btnEdit" class="btn btn-primary btn-lg btn-block disabled" onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
+                    <a id="btnCloseEdit" class="btn btn-primary btn-lg btn-block disabled" onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
                 </th>
             </tr>
         </thead>
@@ -113,29 +112,28 @@ else
             @foreach (var item in Model)
             {
                 <tr>
-                    <td class="Ref_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Ref_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Ref_Produto</span>
                     </td>
-                    <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Designacao_Produto</span>
                     </td>
                     <td class="Stock_Fisico">
-                        <span onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">@item.Stock_Fisico</span>
+                        <span onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">@item.Stock_Fisico</span>
                         <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
                     </td>
-                    <td class="Stock_PHC" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Stock_PHC" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Stock_PHC</span>
                     </td>
-                    <td class="Stock_Rec" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Stock_Rec" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Stock_Rec</span>
                     </td>
-                    <td class="Stock_Res" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Stock_Res" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Stock_Res</span>
                     </td>
                     <td style="min-width: 240px">
                         <div class="btn-group">
                             <a class="update btn btn-outline-primary btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
-                            @*<a href="#" class="delete btn btn-danger btn-lg" style="display:none;" onclick="ConfirmApagarProduto('@item.Ref_Produto')"><i class="fas fa-trash"></i> </a>*@
                         </div>
                         <a class="btn btn-outline-dark btn-lg printqr" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>
                         <a class="btn btn-outline-dark printpeq" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-sticky-note"></i></a>

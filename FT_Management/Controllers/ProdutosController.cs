@@ -43,39 +43,10 @@ namespace FT_Management.Controllers
 
             if (Armazem>9)
             {
-                return View(context.ObterListaProdutos(Ref, Desig, Armazem).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
+                return View(phccontext.ObterProdutos(Ref, Desig, Armazem).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
-            return View(context.ObterListaProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
+            return View(phccontext.ObterProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
 
-        }
-
-        [HttpPost("FileUpload")]
-        public async Task<IActionResult> FileUpload(List<IFormFile> files)
-        {
-            long size = files.Sum(f => f.Length);
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            var filePaths = new List<string>();
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0 && formFile.FileName.Contains(".xls"))
-                {
-                    // full path to file in temp location
-                    var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.
-                    filePaths.Add(filePath);
-
-                    using var stream = new FileStream(filePath, FileMode.Create);
-                    await formFile.CopyToAsync(stream);
-                }
-            }
-
-            foreach (var item in filePaths)
-            {
-                context.CarregarFicheiroDB(item);
-
-            }
-
-            return Redirect("~/Produtos");
         }
 
         public MemoryStream BitMapToMemoryStream(string filePath)
@@ -114,11 +85,11 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50(context.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta EAN13 de produto: "+ id, 2);
-            //return File(outputStream, "image/bmp");
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta80x50(phccontext.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
@@ -130,11 +101,11 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal de produto: " + id, 2);
-            //return File(outputStream, "image/bmp");
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta80x50QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
@@ -146,11 +117,11 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x25QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta pequena de produto: " + id, 2);
-            //return File(outputStream, "image/bmp");
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta80x25QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
         public ActionResult PrintPeqMulti(string id, int armazemid)
@@ -161,71 +132,34 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta40x25QR(context.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiquetas pequenas de produto: " + id, 2);
-            //return File(outputStream, "image/bmp");
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiqueta40x25QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
             return File(BitMapToMemoryStream(filePath), "application/pdf");
         }
 
+        //Analisar
+        //[HttpPost]
+        //[Authorize(Roles = "Admin, Escritorio")]
+        //public JsonResult EditarStockFisico(string refproduto, string stockfisico, int armazemid)
+        //{
+        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+        //    Produto produtoFinal = context.ObterProduto(refproduto, armazemid);
+
+        //    context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterado o stock fisico do produto " + refproduto + " de " + produtoFinal.Stock_Fisico+ " para " + stockfisico, 1);
+
+        //    Double.TryParse(stockfisico, out double stock_fisico);
+        //    produtoFinal.Stock_Fisico = stock_fisico;
+
+        //    context.EditarArtigo(produtoFinal);
+        //    return Json("ok");
+        //}
+
 
         [Authorize(Roles = "Admin, Escritorio")]
-        // GET: Produtos/Create
-        public ActionResult Criar()
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            var LstArmazens = context.ObterListaArmazens().ToList();
-            ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", 3);
-            
-            return View();
-        }
-
-        // POST: Produtos/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Criar(Produto produto)
-        {
-            try
-            {
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                List<Produto> produtos = new List<Produto>
-                {
-                    produto
-                };
-
-                context.CriarArtigos(produtos);
-                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi criado um novo artigo: " + produto.Ref_Produto, 1);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin, Escritorio")]
-        public JsonResult EditarStockFisico(string refproduto, string stockfisico, int armazemid)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Produto produtoFinal = context.ObterProduto(refproduto, armazemid);
-
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterado o stock fisico do produto " + refproduto + " de " + produtoFinal.Stock_Fisico+ " para " + stockfisico, 1);
-
-            Double.TryParse(stockfisico, out double stock_fisico);
-            produtoFinal.Stock_Fisico = stock_fisico;
-
-            context.EditarArtigo(produtoFinal);
-            return Json("ok");
-        }
-
-
-        // GET: Produtos/Edit/5
-        [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Editar(string id, int armazemid)
+        public ActionResult Detalhes(string id, int armazemid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             ViewData["LstGuiasPecas"] = context.ObterListaMovimentosProduto(id);
@@ -238,55 +172,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
 
-            return View(context.ObterProduto(id,armazemid));
-        }
-
-
-        // POST: Produtos/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Editar(string id, Produto produto)
-        {
-            try
-            {
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                produto.Ref_Produto = id;
-                context.EditarArtigo(produto);
-                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterado o produto " + produto.Ref_Produto, 1);
-
-                return Redirect("~/Produtos/Editar/" + id + "?armazemid=" + produto.Armazem_ID);
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Produtos/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return Content("Em desenvolvimento");
-        //}
-
-        // POST: Produtos/Delete/5
-        [HttpPost]
-        [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Apagar(string Id, int armazemid)
-        {
-            try
-            {
-
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                context.ApagarArtigo(context.ObterProduto(Id,armazemid));
-                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi apagado o produto " + Id, 1);
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return View(phccontext.ObterProduto(id,armazemid));
         }
     }
 }

@@ -1,0 +1,232 @@
+﻿@model FT_Management.Models.Produto
+
+@{
+    ViewData["Title"] = "Produto - " + Model.Ref_Produto;
+}
+
+<h1>@Model.Designacao_Produto</h1>
+
+<div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+    <a class="nav-item nav-link active" id="v-pills-editar-tab" data-toggle="pill" href="#v-pills-editar" role="tab" aria-controls="v-pills-editar" aria-selected="true">Produto</a>
+    <a class="nav-item nav-link" id="v-pills-armazens-tab" data-toggle="pill" href="#v-pills-armazens" role="tab" aria-controls="v-pills-armazens" aria-selected="false">Stock's</a>
+    <a class="nav-item nav-link" id="v-pills-pecas-tab" data-toggle="pill" href="#v-pills-pecas" role="tab" aria-controls="v-pills-pecas" aria-selected="false">Movimentos</a>
+</div>
+<br />
+
+<div class="tab-content" id="v-pills-tabContent">
+    <div class="tab-pane fade show active" id="v-pills-editar" role="tabpanel" aria-labelledby="v-pills-editar-tab">
+
+        <form asp-action="Editar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="container d-none d-lg-block">
+                <div class="row col-12">
+                    <img class="col-4" src="data:image/jpeg;base64,@Model.ImgProduto" style="width:auto; height:auto;object-fit:contain;" />
+                    <div class="col-8 row">
+                        <div class="form-group col-4">
+                            <label asp-for="Ref_Produto" class="control-label"></label>
+                            <input asp-for="Ref_Produto" class="form-control" readonly />
+                            <span asp-validation-for="Ref_Produto" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-8">
+                            <label asp-for="Designacao_Produto" class="control-label"></label>
+                            <input asp-for="Designacao_Produto" class="form-control" />
+                            <span asp-validation-for="Designacao_Produto" class="text-danger"></span>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="form-group col-4">
+                            <label asp-for="Stock_PHC" class="control-label"></label>
+                            <input asp-for="Stock_PHC" class="form-control" readonly />
+                            <span asp-validation-for="Stock_PHC" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-4">
+                            <label asp-for="Stock_Rec" class="control-label"></label>
+                            <input asp-for="Stock_Rec" class="form-control" readonly />
+                            <span asp-validation-for="Stock_Rec" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-4">
+                            <label asp-for="Stock_Res" class="control-label"></label>
+                            <input asp-for="Stock_Res" class="form-control" readonly />
+                            <span asp-validation-for="Stock_Res" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-4">
+                            <label asp-for="Stock_Fisico" class="control-label"></label>
+                            <input asp-for="Stock_Fisico" class="form-control" />
+                            <span asp-validation-for="Stock_Fisico" class="text-danger"></span>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="form-group col-4">
+                            <label asp-for="Pos_Stock" class="control-label"></label>
+                            <input asp-for="Pos_Stock" class="form-control" readonly />
+                            <span asp-validation-for="Pos_Stock" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="control-label">Armazém</label>
+                            <select class="form-control" id="lstarmazens" asp-items="ViewBag.Armazens" disabled>
+                            </select>
+                            <input type="hidden" asp-for="Armazem_ID" class="form-control" />
+                        </div>
+                        <div class="form-group" style="width: 100%">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                <i class="fas fa-save"></i> Guardar Alterações
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container d-lg-none">
+                <div class="row col-12">
+                    <img class="col-12" src="data:image/jpeg;base64,@Model.ImgProduto" style="width:auto; height:auto;object-fit:contain;" />
+                    <div class="form-group col-4">
+                        <label asp-for="Ref_Produto" class="control-label"></label>
+                        <input asp-for="Ref_Produto" class="form-control" readonly />
+                        <span asp-validation-for="Ref_Produto" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-8">
+                        <label asp-for="Designacao_Produto" class="control-label"></label>
+                        <input asp-for="Designacao_Produto" class="form-control" />
+                        <span asp-validation-for="Designacao_Produto" class="text-danger"></span>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_PHC" class="control-label"></label>
+                        <input asp-for="Stock_PHC" class="form-control" readonly />
+                        <span asp-validation-for="Stock_PHC" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_Rec" class="control-label"></label>
+                        <input asp-for="Stock_Rec" class="form-control" readonly />
+                        <span asp-validation-for="Stock_Rec" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_Res" class="control-label"></label>
+                        <input asp-for="Stock_Res" class="form-control" readonly />
+                        <span asp-validation-for="Stock_Res" class="text-danger"></span>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="form-group col-4">
+                        <label asp-for="Stock_Fisico" class="control-label"></label>
+                        <input asp-for="Stock_Fisico" class="form-control" />
+                        <span asp-validation-for="Stock_Fisico" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label asp-for="Pos_Stock" class="control-label"></label>
+                        <input asp-for="Pos_Stock" class="form-control" readonly />
+                        <span asp-validation-for="Pos_Stock" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-4">
+                        <label class="control-label">Armazém</label>
+                        <select class="form-control" id="lstarmazens" asp-items="ViewBag.Armazens" disabled>
+                        </select>
+                        <input type="hidden" asp-for="Armazem_ID" class="form-control" />
+                    </div>
+                </div>
+            
+                    <div class="form-group" style="width: 100%">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fas fa-save"></i> Guardar Alterações
+                        </button>
+                    </div>
+                </div>
+        </form>
+    </div>
+    <div class="tab-pane fade show " id="v-pills-pecas" role="tabpanel" aria-labelledby="v-pills-pecas-tab">
+        @{ var LstGuiaPecas = ViewData["LstGuiasPecas"] as IList<Movimentos>;}
+
+        <br />
+        <button class="btn btn-lg btn-danger btn-block form-group disabled @(LstGuiaPecas.Count() == 0 ? "" : "d-none")">Não foram encontrados movimentos!</button>
+
+        <table class="table table-hover @(LstGuiaPecas.Count() > 0 ? "" : "d-none")">
+            <thead>
+                <tr>
+                    <th>
+                        Data do Movimento
+                    </th>
+                    <th>
+                        Cliente
+                    </th>
+                    <th>Tecnico</th>
+                    <th>
+                        Quantidade
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in LstGuiaPecas)
+                {
+                    <tr onclick="location.href = '@(Url.Action("Editar", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                        <td>
+                            <span>@item.DataMovimento.ToString("dd-MM-yyyy")</span>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NomeCliente)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NomeTecnico)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantidade)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade show " id="v-pills-armazens" role="tabpanel" aria-labelledby="v-pills-armazens-tab">
+        @{ var LstProdutosArmazem = ViewData["LstProdutosArmazem"] as IList<Produto>;}
+
+        <br />
+        <button class="btn btn-lg btn-danger btn-block form-group disabled @(LstProdutosArmazem.Count() == 0 ? "" : "d-none")">Não foram encontrados Stocks!</button>
+
+        <table class="table table-hover @(LstProdutosArmazem.Count() > 0 ? "" : "d-none")">
+            <thead>
+                <tr>
+                    <th>
+                        Armazem
+                    </th>
+                    <th>
+                        Stock Fisico
+                    </th>
+                    <th>PHC</th>
+                    <th>
+                        Receção
+                    </th>
+                    <th>
+                        Reservado
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in LstProdutosArmazem)
+                {
+                    <tr onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID }))'">
+                        <td>
+                            @Html.DropDownListFor(modelItem => item.Armazem_ID, (IEnumerable<SelectListItem>)ViewBag.Armazens, new { @class = "form-control", @disabled = "disabled" })
+
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_Fisico)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_PHC)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_Rec)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stock_Res)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    <br />
+    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Produtos"))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
