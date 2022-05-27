@@ -10,7 +10,6 @@ namespace FT_Management.Models
     public class PHCContext
     {
         private string ConnectionString { get; set; }
-        private bool ConnectedPHC;
         private int TIMEOUT = 2;
         private FT_ManagementContext FT_ManagementContext { get; set; }
 
@@ -22,88 +21,14 @@ namespace FT_Management.Models
 
             try
             {
-
-#if DEBUG == false
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
-                ConnectedPHC = true;
-                if (FT_ManagementContext.SyncPHCOnStartup()) { 
-                    FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
-                    FT_ManagementContext.CriarArtigos(ObterProdutos(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarVendedores(ObterVendedores(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarClientes(ObterClientes(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarFornecedores(ObterFornecedores(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarMarcacoes(ObterMarcacoes(DateTime.Parse("01/01/1900 00:00:00")));
-                    FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(DateTime.Parse("01/01/1900 00:00:00")));
-                }
-#endif
-
             }
             catch
             {
-                ConnectedPHC = true;
                 Console.WriteLine("Não foi possivel conectar á BD PHC!");
             }
-        }
-
-        public void AtualizarTudo()
-        {
-            AtualizarAcessos();
-            AtualizarArtigos();
-            AtualizarFolhasObra();
-            AtualizarFornecedores();
-            AtualizarMarcacoes();
-        }
-        public void AtualizarAcessos()
-        {
-            FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
-        }
-        public void AtualizarArtigos()
-        {
-            //FT_ManagementContext.CriarArtigos(ObterProdutos(FT_ManagementContext.ObterUltimaModificacaoPHC("sa")));
-        }
-        public void AtualizarArtigo(string ref_produto)
-        {
-            //FT_ManagementContext.CriarArtigos(ObterProduto(ref_produto));
-        }
-        public void AtualizarClientes()
-        {
-            //FT_ManagementContext.CriarVendedores(ObterVendedores(FT_ManagementContext.ObterUltimaModificacaoPHC("cl_1")));
-            //FT_ManagementContext.CriarClientes(ObterClientes(FT_ManagementContext.ObterUltimaModificacaoPHC("cl")));
-        }
-        public void AtualizarFornecedores()
-        {
-            //FT_ManagementContext.CriarFornecedores(ObterFornecedores(FT_ManagementContext.ObterUltimaModificacaoPHC("fl")));
-        }
-        public void AtualizarEquipamentos()
-        {
-            //FT_ManagementContext.CriarEquipamentos(ObterEquipamentos(FT_ManagementContext.ObterUltimaModificacaoPHC("ma")));
-        }
-        public void AtualizarFolhasObra()
-        {
-            //AtualizarClientes();
-            //AtualizarEquipamentos();
-            //FT_ManagementContext.CriarFolhasObra(ObterFolhasObra(FT_ManagementContext.ObterUltimaModificacaoPHC("pa")));
-            //FT_ManagementContext.CriarIntervencoes(ObterIntervencoes(FT_ManagementContext.ObterUltimaModificacaoPHC("mh")));
-            //FT_ManagementContext.CriarPecasFolhaObra(ObterPecas(FT_ManagementContext.ObterUltimaModificacaoPHC("bi")));
-        }
-        public void AtualizarMarcacoes()
-        {
-
-            //FT_ManagementContext.CriarMarcacaoEstados(ObterMarcacaoEstados(FT_ManagementContext.ObterUltimaModificacaoPHC("u_estados")));
-            //List<Marcacao> LstMarcacoes = ObterMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_marcacao"));
-            //FT_ManagementContext.ApagarMarcacoes(LstMarcacoes);
-            //FT_ManagementContext.CriarMarcacoes(LstMarcacoes);
-            //FT_ManagementContext.CriarMarcacoes(ObterDatasAdicionaisMarcacoes(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mdatas")));
-            //FT_ManagementContext.CriarTecnicosMarcacao(ObterTecnicosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_mtecnicos")));
-            //FT_ManagementContext.CriarComentarios(ObterComentariosMarcacao(FT_ManagementContext.ObterUltimaModificacaoPHC("u_coment")));
-
         }
 
         //Obter Referências
@@ -115,8 +40,7 @@ namespace FT_Management.Models
 
                 try
                 {
-                    if (ConnectedPHC)
-                    {
+                  
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -148,7 +72,6 @@ namespace FT_Management.Models
                     Console.WriteLine("Stock's atualizados com sucesso! (PHC -> MYSQL)");
                 }
 
-            }
             catch
             {
                 Console.WriteLine("Não foi possivel ler as referencias do PHC!");
@@ -165,8 +88,6 @@ namespace FT_Management.Models
 
             try
             {
-                if (ConnectedPHC)
-                {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -189,7 +110,6 @@ namespace FT_Management.Models
                                 Pos_Stock = result["u_locpt"].ToString()
                             });
                         }
-                    }
 
                     conn.Close();
 
@@ -277,8 +197,6 @@ namespace FT_Management.Models
 
                 try
                 {
-                if (ConnectedPHC)
-                {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -304,7 +222,6 @@ namespace FT_Management.Models
                     Console.WriteLine("Vendedores atualizados com sucesso! (PHC -> MYSQL)");
 
                 }
-            }
             catch
             {
                 Console.WriteLine("Não foi possivel ler os vendedores do PHC!");
@@ -322,8 +239,6 @@ namespace FT_Management.Models
             List<Fornecedor> LstFornecedor = new List<Fornecedor>();
 
                 try
-                {
-                if (ConnectedPHC)
                 {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
@@ -355,7 +270,6 @@ namespace FT_Management.Models
 
                     Console.WriteLine("Fornecedores atualizados com sucesso! (PHC -> MYSQL)");
                 }
-            }
             catch
             {
                 Console.WriteLine("Não foi possivel ler os Fornecedores do PHC!");
@@ -493,8 +407,6 @@ namespace FT_Management.Models
 
             try
             {
-                if (ConnectedPHC)
-                {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -531,7 +443,6 @@ namespace FT_Management.Models
 
                     Console.WriteLine("Intervenções atualizadas com sucesso! (PHC -> MYSQL)");
                 }
-            }
             catch
             {
                 Console.WriteLine("Não foi possivel ler as intervenções do PHC!");
@@ -547,8 +458,6 @@ namespace FT_Management.Models
 
             try
             {
-                if (ConnectedPHC)
-                {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -577,7 +486,6 @@ namespace FT_Management.Models
 
                     Console.WriteLine("Produtos de PAT's atualizados com sucesso! (PHC -> MYSQL)");
                 }
-            }
             catch
             {
                 Console.WriteLine("Não foi possivel ler as peças usadas pelos PAT's do PHC!");
@@ -675,8 +583,6 @@ namespace FT_Management.Models
 
             try
             {
-                if (ConnectedPHC)
-                {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -711,7 +617,6 @@ namespace FT_Management.Models
 
                     Console.WriteLine("Datas adicionais marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
                 }
-            }
             catch 
             {
                 Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
@@ -726,8 +631,6 @@ namespace FT_Management.Models
 
             try
             {
-                if (ConnectedPHC)
-                {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -755,7 +658,6 @@ namespace FT_Management.Models
 
                     Console.WriteLine("Tecnicos por marcacao atualizadas com sucesso! (PHC -> MYSQL)");
                 }
-            }
             catch
             {
                 Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
@@ -879,8 +781,6 @@ namespace FT_Management.Models
 
             try
             {
-                if (ConnectedPHC)
-                {
                     SqlConnection conn = new SqlConnection(ConnectionString);
 
                     conn.Open();
@@ -907,7 +807,6 @@ namespace FT_Management.Models
 
                     Console.WriteLine("Acessos atualizados com sucesso! (PHC -> MYSQL)");
                 }
-            }
             catch (Exception)
             {
                 Console.WriteLine("Não foi possivel ler os Acessos do PHC");
