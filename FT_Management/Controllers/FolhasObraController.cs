@@ -79,7 +79,7 @@ namespace FT_Management.Controllers
 
         [Authorize(Roles = "Admin, Escritorio, Tech")]
         // GET: FolhasObraController
-        public ActionResult Editar(int Id)
+        public ActionResult Detalhes(int Id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;

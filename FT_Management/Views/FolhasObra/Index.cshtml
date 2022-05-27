@@ -60,13 +60,13 @@ else
             @foreach (var item in Model)
             {
                 <tr>
-                    <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                    <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                         <span>@item.IdFolhaObra</span>
                     </td>
-                    <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                    <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                         @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
                     </td>
-                    <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                    <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                         @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
                     </td>
                     <td>

@@ -409,10 +409,11 @@ else
                             <h5>DETALHES</h5>
                             <hr />
                             <p style="white-space: pre-line">@item.ResumoMarcacao</p>
-                            <hr />
-                            <h5>COMENTÁRIOS</h5>
+
                             @if (item.LstComentarios.Count() > 0)
                             {
+                                <hr />
+                                <h5>COMENTÁRIOS</h5>
                                 <table class="table table-hover">
                                     <thead><tr><th>Utilizador</th><th>Comentário</th>
                                     <tbody>

@@ -81,7 +81,7 @@
 else
 {
 <div class="d-none d-lg-block ">
-    <table class="table table-sm table-hover " id="tblProdutos">
+    <table class="table table-sm table-hover" id="tblProdutos">
         <thead>
             <tr>
                 <th>
@@ -111,7 +111,7 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr style="width:auto">
                     <td class="Ref_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Ref_Produto</span>
                     </td>
