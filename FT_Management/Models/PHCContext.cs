@@ -83,10 +83,6 @@ namespace FT_Management.Models
 
             return LstProdutos;
         }
-        public List<Produto> ObterProdutos(DateTime dataUltimaLeitura)
-        {
-            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';");
-        }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem)
         {
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
@@ -171,10 +167,6 @@ namespace FT_Management.Models
             }
 
             return LstClientes;
-        }
-        public List<Cliente> ObterClientes(DateTime dataUltimaLeitura)
-        {
-            return ObterClientes("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';");
         }
         public Cliente ObterCliente(int IdCliente, int IdLoja)
         {
@@ -323,10 +315,6 @@ namespace FT_Management.Models
 
             return LstEquipamento;
         }
-        public List<Equipamento> ObterEquipamentos(DateTime dataUltimaLeitura)
-        {
-            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where udata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';");
-        }
         public Equipamento ObterEquipamento(string IdEquipamento)
         {
             List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='"+ IdEquipamento +"';");
@@ -355,20 +343,16 @@ namespace FT_Management.Models
                     {
                         while (result.Read())
                         {
-
-                        Cliente cliente = ObterCliente(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()));
-                        Equipamento equipamento = ObterEquipamento(result["mastamp"].ToString().Trim());
                             LstFolhaObra.Add(new FolhaObra()
                             {
                                 IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                                 DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
                                 ReferenciaServico = result["u_nincide"].ToString().Trim(),
                                 EstadoEquipamento = result["situacao"].ToString().Trim(),
-                                //SituacoesPendentes = result["problema"].ToString().Trim(),
-                                EquipamentoServico = equipamento,
-                                ClienteServico = cliente,
                                 ConferidoPor = result["qassinou"].ToString().Trim(),
-                                IdCartao = result["u_marcacaostamp"].ToString().Trim()
+                                IdCartao = result["u_marcacaostamp"].ToString().Trim(),
+                                EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim()),
+                                ClienteServico = ObterCliente(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()))
                             });
                         }
                     }
@@ -379,24 +363,43 @@ namespace FT_Management.Models
 
                     Console.WriteLine("PAT's atualizados com sucesso! (PHC -> MYSQL)");
             }
-            catch
+            catch 
             {
                 Console.WriteLine("Não foi possivel ler os PAT's do PHC!");
             }
 
             return LstFolhaObra;
         }
-        public List<FolhaObra> ObterFolhasObra(DateTime dataUltimaLeitura)
-        {
-            return ObterFolhasObra("select pa.mastamp, u_intervencao.qassinou, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST where pa.nopat is not null and pa.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by pa.nopat;");
-        }
         public List<FolhaObra> ObterFolhasObra(int IdMarcacao)
         {
-            return ObterFolhasObra("select pa.mastamp, u_intervencao.qassinou, u_intervencao.u_marcacaostamp, pa.nopat, pa.pdata, pa.no, pa.estab, pa.serie, pa.u_nincide, pa.situacao, pa.fechado, pa.problema from pa full outer join u_intervencao on pa.pastamp=u_intervencao.STAMP_DEST inner join u_marcacao on u_marcacao.u_marcacaostamp=u_intervencao.u_marcacaostamp where pa.nopat is not null and u_marcacao.num='"+IdMarcacao+"' order by pa.nopat;");
+            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (SELECT u_marcacaostamp from u_marcacao where num=" + IdMarcacao + ") as u_marcacaostamp from pa where (select TOP 1 STAMP_DEST from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao+") = pastamp");
  
         }
+        public List<FolhaObra> ObterFolhasObra(DateTime Data)
+        {
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"';");
 
-        public List<Intervencao> ObterIntervencoes(DateTime dataUltimaLeitura)
+        }
+        public FolhaObra ObterFolhaObra(int IdFolhaObra)
+        {
+            List<FolhaObra> fo = ObterFolhasObra("select TOP 1 * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.nopat=" + IdFolhaObra + ";");
+
+            if (fo.Count > 0)
+            {
+                fo[0].IntervencaosServico = ObterIntervencoes(fo[0].IdFolhaObra);
+                fo[0].PecasServico = ObterPecas(fo[0].IdFolhaObra);
+                foreach (var item in fo[0].IntervencaosServico)
+                {
+                    if (!fo[0].RelatorioServico.Contains(item.RelatorioServico))
+                        fo[0].RelatorioServico += item.DataServiço.ToShortDateString() + " - " + item.HoraInicio.ToString("HH:mm") + "->" + item.HoraFim.ToString("HH:mm") + ": " + item.RelatorioServico + "\r\n";
+                }
+                return fo[0];
+            }
+            return new FolhaObra();
+
+        }
+
+        public List<Intervencao> ObterIntervencoes(string SQL_Query)
         {
 
             List<Intervencao> LstIntervencao = new List<Intervencao>();
@@ -407,7 +410,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio from mh where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
+                    SqlCommand command = new SqlCommand(SQL_Query, conn);
                     command.CommandTimeout = TIMEOUT;
                     using (SqlDataReader result = command.ExecuteReader())
                     {
@@ -427,7 +430,8 @@ namespace FT_Management.Models
                             LstIntervencao[^1].HoraInicio = horainicio;
                             DateTime.TryParse(result["horaf"].ToString().Trim(), out DateTime horafim);
                             LstIntervencao[^1].HoraFim = horafim;
-
+                        
+                            
                             //Console.WriteLine(result["nopat"].ToString().Trim());
 
                         }
@@ -446,8 +450,12 @@ namespace FT_Management.Models
 
             return LstIntervencao;
         }
+        public List<Intervencao> ObterIntervencoes(int IdFolhaObra)
+        {
+            return ObterIntervencoes("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio from mh where nopat=" + IdFolhaObra + " order by nopat;");
+        }
 
-        public List<Produto> ObterPecas(DateTime dataUltimaLeitura)
+        public List<Produto> ObterPecas(string SQL_Query)
         {
 
             List<Produto> LstProduto = new List<Produto>();
@@ -458,7 +466,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and bo.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' order by nopat;", conn);
+                    SqlCommand command = new SqlCommand(SQL_Query, conn);
                     command.CommandTimeout = TIMEOUT;
                     using (SqlDataReader result = command.ExecuteReader())
                     {
@@ -488,6 +496,10 @@ namespace FT_Management.Models
             }
 
             return LstProduto;
+        }
+        public List<Produto> ObterPecas(int IdFolhaObra)
+        {
+            return ObterPecas("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and pa.nopat=" + IdFolhaObra + " order by ref;");
         }
         #endregion
 
@@ -525,7 +537,7 @@ namespace FT_Management.Models
                                 Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0,
                                 DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString()),
                                 LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim())),
-                                LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()))
+                                //LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()))
                             });
                         }
                     conn.Close();
@@ -541,12 +553,6 @@ namespace FT_Management.Models
             }
 
             return LstMarcacao;
-        }
-        public List<Marcacao> ObterMarcacoes(DateTime dataUltimaLeitura)
-        {
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacao.u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  where u_mdatas.usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;");
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, ousrdata, ousrhora FROM u_marcacao where usrdata>='" + dataUltimaLeitura.AddDays(-7).ToString("yyyy-MM-dd HH:mm:ss") + "' order by num;").AsEnumerable());
-            return LstMarcacoes;
         }
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataMarcacoes)
         {
@@ -670,10 +676,6 @@ namespace FT_Management.Models
             }
 
             return LstComentario;
-        }
-        public List<Comentario> ObterComentariosMarcacao(DateTime dataUltimaLeitura)
-        {
-            return ObterComentariosMarcacao("select * from u_coment where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';");
         }
         public List<Comentario> ObterComentariosMarcacao(int IdMarcacao)
         {
