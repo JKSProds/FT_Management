@@ -312,15 +312,15 @@
                     data: "NumeroSerieEquipamento=" + NumeroSerie,
                     dataType: "json", // type of data you're expecting from response
                     success: function (json) {
-                        var html = "<table class=\"table table-hover\" <thead><tr><th>Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
+                        var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
                         console.log(json);
                         var existeFolhasObra = false;
                         for (var i = 0; i < json.json.length; i++) {
                             var obj = json.json[i];
-                            var tecnico = "";
-                            if (obj.intervencaosServico.length > 0) tecnico = obj.intervencaosServico[0].nomeTecnico;
+                            var tecnico = obj.nomeTecnico;
+                           
 
-                            var date = new Date(obj.dataServico);
+                            var date = new Date(obj.dataServiço);
 
                             var year = date.getFullYear();
                             var month = date.getMonth() + 1;
@@ -333,7 +333,7 @@
                                 month = '0' + month;
                             }
                             if (obj.idFolhaObra != document.getElementById("txtIdFolhaObra").value) {
-                                html += "<tr onclick=\"location.href = '/FolhasObra/Editar/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
+                                html += "<tr onclick=\"location.href = '/FolhasObra/Detalhes/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
                                 existeFolhasObra = true;
                             }
                         }

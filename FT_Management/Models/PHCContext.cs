@@ -398,11 +398,7 @@ namespace FT_Management.Models
             return new FolhaObra();
 
         }
-        public List<FolhaObra> ObterHistorico(string NumeroSerie)
-        {
 
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.serie='"+NumeroSerie+"' order by u_intervencao.data;");
-            }
 
         public List<Intervencao> ObterIntervencoes(string SQL_Query)
         {
@@ -448,7 +444,7 @@ namespace FT_Management.Models
 
                     Console.WriteLine("Intervenções atualizadas com sucesso! (PHC -> MYSQL)");
                 }
-            catch
+            catch 
             {
                 Console.WriteLine("Não foi possivel ler as intervenções do PHC!");
             }
@@ -458,6 +454,10 @@ namespace FT_Management.Models
         public List<Intervencao> ObterIntervencoes(int IdFolhaObra)
         {
             return ObterIntervencoes("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio from mh where nopat=" + IdFolhaObra + " order by nopat;");
+        }
+        public List<Intervencao> ObterHistorico(string NumeroSerie)
+        {
+            return ObterIntervencoes("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio, serie from mh where serie='" + NumeroSerie + "' order by data;");
         }
 
         public List<Produto> ObterPecas(string SQL_Query)
