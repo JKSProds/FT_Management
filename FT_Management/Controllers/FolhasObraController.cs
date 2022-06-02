@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Custom;
 using Microsoft.AspNetCore.Authorization;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Pdf;
 
 namespace FT_Management.Controllers
 {
@@ -26,34 +24,6 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
-        }
-
-        public MemoryStream BitMapToMemoryStream(string filePath)
-        {
-            var ms = new MemoryStream();
-
-            PdfDocument doc = new PdfDocument();
-            PdfPage page = new PdfPage
-            {
-                Width = 810,
-                Height = 504
-            };
-
-            XImage img = XImage.FromFile(filePath);
-            img.Interpolate = false;
-
-            doc.Pages.Add(page);
-
-            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
-            XRect box = new XRect(0, 0, 810, 504);
-            xgr.DrawImage(img, box);
-
-            doc.Save(ms, false);
-
-            System.IO.File.Delete(filePath);
-
-            return ms;
-
         }
 
         public ActionResult Print(string id)
@@ -74,7 +44,7 @@ namespace FT_Management.Controllers
             context.DesenharEtiquetaFolhaObra(fo).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
             //return File(outputStream, "image/bmp");
-            return File(BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
 
         [Authorize(Roles = "Admin, Escritorio, Tech")]

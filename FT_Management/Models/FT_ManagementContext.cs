@@ -2,24 +2,16 @@
 using MySql.Simple;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using QRCoder;
 using iTextSharp.text.pdf;
-using OfficeOpenXml.FormulaParsing.Utilities;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using System.Text.RegularExpressions;
-using System.Security.Cryptography.Xml;
-using System.Configuration;
 using OfficeOpenXml.Style;
 using System.Net;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using PdfSharpCore.Drawing;
 
 namespace FT_Management.Models
 {
@@ -3106,7 +3098,7 @@ namespace FT_Management.Models
                 x += 40;
                 gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 35), format);
 
-                if (produto.Pos_Stock.Length > 0)
+                if (produto.Pos_Stock.Trim().Length > 0)
                 {
                     gr.DrawString(produto.Pos_Stock, fontBold, Brushes.Black, new Rectangle(width - 185, height - 235, 150, 35), format);
                     gr.DrawRectangle(new Pen(Color.Black, 5), new Rectangle(width - 190, height - 240, 140, 40));
@@ -3497,7 +3489,34 @@ namespace FT_Management.Models
             return outputPdfStream;
 
         }
-        public MemoryStream AssinarDocumento(string nomecliente, string nometecnico, string tipodocumento, bool manualentregue, byte[] documento)
+        public MemoryStream BitMapToMemoryStream(string filePath)
+        {
+            var ms = new MemoryStream();
+
+            PdfSharpCore.Pdf.PdfDocument doc = new PdfSharpCore.Pdf.PdfDocument();
+            PdfSharpCore.Pdf.PdfPage page = new PdfSharpCore.Pdf.PdfPage
+            {
+                Width = 810,
+                Height = 504
+            };
+
+            XImage img = XImage.FromFile(filePath);
+            img.Interpolate = false;
+
+            doc.Pages.Add(page);
+
+            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
+            XRect box = new XRect(0, 0, 810, 504);
+            xgr.DrawImage(img, box);
+
+            doc.Save(ms, false);
+
+            System.IO.File.Delete(filePath);
+
+            return ms;
+        }
+
+            public MemoryStream AssinarDocumento(string nomecliente, string nometecnico, string tipodocumento, bool manualentregue, byte[] documento)
         {
             var outputPdfStream = new MemoryStream();
             PdfReader pdfReader = new PdfReader(documento);
