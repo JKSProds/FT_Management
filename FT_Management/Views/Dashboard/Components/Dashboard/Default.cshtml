@@ -17,7 +17,7 @@
         <div class="card mb-3"  id="link2" style="cursor: pointer">
             <div class="card-header bg-success text-white text-center">Instalações <i class="fas fa-plus-circle float-right"></i></div>
             <div class="card-body">
-                <h1 class="card-title text-center text-black">@Model.Where(m => m.Instalacao == 1 && m.EstadoMarcacao != 4).Count()</h1>
+                <h1 class="card-title text-center text-black">@Model.Where(m => m.Instalacao == 1 && m.EstadoMarcacao != 4 && m.EstadoMarcacao != 3).Count()</h1>
             </div>
         </div>
     </div>

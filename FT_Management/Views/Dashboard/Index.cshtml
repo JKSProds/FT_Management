@@ -5,7 +5,12 @@
 }
 
 
+
 <div id="carousel" class="carousel slide" data-ride="carousel" data-interval="15000" data-pause="false">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary" onclick="$('#carousel').carousel('prev')"><i class="fa-solid fa-arrow-left"></i></button>
+        <button type="button" class="btn btn-primary" onclick="$('#carousel').carousel('next')"><i class="fa-solid fa-arrow-right"></i></button>
+    </div>
     <div class="carousel-inner">
         <div class="carousel-item active col-md-12">
             @await Component.InvokeAsync("Dashboard", new { model = Model })
@@ -31,10 +36,6 @@
     </div>
 </div>
 <br />
-<div class="btn-group" role="group">
-    <button type="button" class="btn btn-primary" onclick="$('#carousel').carousel('prev')">Anterior</button>
-    <button type="button" class="btn btn-primary" onclick="$('#carousel').carousel('next')">Proximo</button>
-</div>
 
 <script>
     $('#carousel').on('slid.bs.carousel', function () {
@@ -48,6 +49,6 @@
     if (!isNaN(slide)) {
         $("#carousel").carousel(slide);
         $("#carousel").carousel('pause');
-
     }
+
 </script>

@@ -11,7 +11,7 @@
     <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
         <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="false">Dados</a>
         <a class="nav-item nav-link" id="v-pills-marcacoes-tab" data-toggle="pill" href="#v-pills-marcacoes" role="tab" aria-controls="v-pills-marcacoes" aria-selected="false">Marcações</a>
-        <a class="nav-item nav-link" id="v-pills-folhasobra-tab" data-toggle="pill" href="#v-pills-folhasobra" role="tab" aria-controls="v-pills-folhasobra" aria-selected="false">Folhas de Obra</a>
+        <a class="nav-item nav-link" id="v-pills-folhasobra-tab" data-toggle="pill" href="#v-pills-folhasobra" role="tab" aria-controls="v-pills-folhasobra" aria-selected="false">INtervenções</a>
         <a class="nav-item nav-link" id="v-pills-visitas-tab" data-toggle="pill" href="#v-pills-visitas" role="tab" aria-controls="v-pills-visitas" aria-selected="false">Visitas</a>
         <a class="nav-item nav-link" id="v-pills-propostas-tab" data-toggle="pill" href="#v-pills-propostas" role="tab" aria-controls="v-pills-propostas" aria-selected="false">Propostas</a>
         <a class="nav-item nav-link" id="v-pills-equipamentos-tab" data-toggle="pill" href="#v-pills-equipamentos" role="tab" aria-controls="v-pills-equipamentos" aria-selected="false">Equipamentos</a>
@@ -149,7 +149,7 @@
             @if (Model.FolhasObra.Count() == 0)
             {
                 <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
+                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas intervenções!</button>
             }
             else
             {
@@ -178,17 +178,17 @@
                         @foreach (var item in Model.FolhasObra)
                         {
                         <tr>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                 <span>@item.IdFolhaObra</span>
                             </td>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                 @Html.DisplayFor(modelItem => item.EquipamentoServico.MarcaEquipamento) - @Html.DisplayFor(modelItem => item.EquipamentoServico.ModeloEquipamento)
 
                             </td>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                 @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
                             </td>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                            <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                 <span>@item.DataServico.ToShortDateString()</span>
                             </td>
                             <td>

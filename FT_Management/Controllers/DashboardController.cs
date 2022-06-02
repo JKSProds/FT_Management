@@ -20,14 +20,14 @@ namespace FT_Management.Controllers
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.DataMarcacao == DateTime.Now.Date).OrderBy(e => e.EstadoMarcacao));
+            return View(model.Where(m => m.DataMarcacao == DateTime.Now.Date).OrderByDescending(e => e.EstadoMarcacao));
         }
     }
     public class InstalacoesViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.Instalacao == 1).OrderBy(e => e.EstadoMarcacao));
+            return View(model.Where(m => m.Instalacao == 1 && m.EstadoMarcacao != 4 && m.EstadoMarcacao != 3).OrderBy(e => e.EstadoMarcacao));
         }
     }
     public class PedidoOrcamentoViewComponent : ViewComponent
@@ -66,13 +66,14 @@ namespace FT_Management.Controllers
             {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return View(phccontext.ObterMarcacoesPendentes());
+            return View(phccontext.ObterMarcacoes());
             }
 
         public JsonResult ObterMarcacoesConcluidas30Dias()
         {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoesSimples(DateTime.Now.AddDays(-30), DateTime.Now).Where(m => m.EstadoMarcacao == 4).ToList();
+            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(DateTime.Now.AddDays(-30), DateTime.Now).Where(m => m.EstadoMarcacao == 4).ToList();
             List<Utilizador> LstUtilizadores = context.ObterListaTecnicos();
 
             var data = LstMarcacoes.Select(m => m.DataMarcacao.ToShortDateString()).Distinct().ToList();
