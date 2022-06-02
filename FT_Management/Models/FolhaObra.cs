@@ -221,6 +221,12 @@ namespace FT_Management.Models
         public List<Visita> Visitas { get; set; }
         public List<Equipamento> Equipamentos { get; set; }
 
+        public Cliente()
+        {
+            this.IdCliente = 0;
+            this.IdLoja = 0;
+            this.NomeCliente = "N/D";
+        }
     }
 
     public class Contacto
@@ -408,5 +414,10 @@ namespace FT_Management.Models
     {
         public int IdEstado { get; set; }
         public string  EstadoMarcacaoDesc { get; set; }
+        public EstadoMarcacao()
+        {
+            this.IdEstado = 0;
+            this.EstadoMarcacaoDesc = "N/D";
+        }
     }
 }

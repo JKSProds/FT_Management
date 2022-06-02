@@ -35,5 +35,15 @@ namespace FT_Management.Models
         public bool Enable { get; set; }
         public string CorCalendario { get; set; }
         public string Iniciais { get; set; }
+
+        public Utilizador()
+        {
+            this.Id = 0;
+            this.NomeUtilizador = "---";
+            this.NomeCompleto = "N/D";
+            this.IdPHC = 0;
+        }
     }
+
+
 }

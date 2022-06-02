@@ -6,8 +6,7 @@
     <title>@ViewData["Title"] - Gestor Food-Tech</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/v4-shims.css">
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
 
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.10.0.min.js" type="text/javascript"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/jquery-ui.min.js" type="text/javascript"></script>
@@ -21,65 +20,64 @@
     <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <header>
-        <!-- example 2 - using auto margins -->
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="~/Dashboard"><i class="fas fa-toggle-on"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list"></i> Tabelas</a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="~/Produtos"><i class="fas fa-dolly-flatbed"></i> Referências</a>
-                            <a class="dropdown-item" href="~/Ferias"><i class="fas fa-umbrella-beach"></i> Mapa de Férias</a>
-                            <a class="dropdown-item" href="~/ControloViaturas"><i class="fas fa-car"></i> Controlo de Viaturas</a>
-                            <a class="dropdown-item" href="~/Acessos"><i class="fas fa-clock"></i> Acessos</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-users-cog"></i> Técnicos</a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="~/Pedidos"><i class="fas fa-calendar-alt"></i> Marcações</a>
-                            <a class="dropdown-item" href="~/FolhasObra"><i class="fas fa-file-alt"></i> Folhas de Obra</a>
-                        </div>
-                    </li>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="~/Dashboard"><i class="fas fa-toggle-on"></i> Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-list"></i> Tabelas</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="~/Produtos"><i class="fas fa-dolly-flatbed"></i> Referências</a>
+                        <a class="dropdown-item" href="~/Ferias"><i class="fas fa-umbrella-beach"></i> Mapa de Férias</a>
+                        <a class="dropdown-item" href="~/ControloViaturas"><i class="fas fa-car"></i> Controlo de Viaturas</a>
+                        <a class="dropdown-item" href="~/Acessos"><i class="fas fa-clock"></i> Acessos</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-wrench"></i> Técnicos</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="~/Pedidos"><i class="fas fa-calendar-alt"></i> Marcações</a>
+                        <a class="dropdown-item" href="~/FolhasObra"><i class="fas fa-file-alt"></i> Folhas de Obra</a>
+                    </div>
+                </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-users"></i> CRM</a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="~/Visitas"><i class="fas fa-calendar-alt"></i> Agendamento</a>
-                            <a class="dropdown-item" href="~/Contactos"><i class="fas fa-address-card"></i> Contactos</a>
-                            <a class="dropdown-item" href="~/Clientes"><i class="fas fa-user"></i> Clientes</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="order-0">
-                <a class="navbar-brand mx-auto align-center" href="~/"><img src="~/img/ft_logo.png" width="85" height="50" class="d-inline-block align-top"></a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-users"></i> CRM</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="~/Visitas"><i class="fas fa-calendar-alt"></i> Agendamento</a>
+                        <a class="dropdown-item" href="~/Contactos"><i class="fas fa-address-card"></i> Contactos</a>
+                        <a class="dropdown-item" href="~/Clientes"><i class="fas fa-user"></i> Clientes</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="order-0">
+            <a class="navbar-brand mx-auto align-center" href="~/"><img src="~/img/ft_logo.png" width="85" height="50" class="d-inline-block align-top"></a>
 
-            </div>
-            <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <a class="nav-link" href="~/Utilizadores/Logout"><i class="fas fa-sign-out-alt"></i> Terminar Sessão (@User.ObterNomeCompleto())</a>
-                        }
-                        else
-                        {
-                            <a class="nav-link" href="~/Utilizadores/Login"><i class="fas fa-sign-in-alt"></i> Iniciar Sessão</a>
-                        }
-                    </li>
-                </ul>
-            </div>
-            <button class="navbar-toggler float-right" type="button" data-toggle="collapse" data-target=".dual-collapse2" style="border-color:transparent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </nav>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a class="nav-link" href="~/Utilizadores/Logout"><i class="fas fa-sign-out-alt"></i> Terminar Sessão (@User.ObterNomeCompleto())</a>
+                    }
+                    else
+                    {
+                        <a class="nav-link" href="~/Utilizadores/Login"><i class="fas fa-sign-in-alt"></i> Iniciar Sessão</a>
+                    }
+                </li>
+            </ul>
+        </div>
+        <button class="navbar-toggler float-right" type="button" data-toggle="collapse" data-target=".dual-collapse2" style="border-color:transparent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
     </header>
     <div class="container-fluid">
         <main role="main" class="pb-3">

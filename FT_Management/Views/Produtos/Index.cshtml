@@ -165,14 +165,14 @@ else
             @foreach (var item in Model)
             {
                 <tr>
-                    <td class="Ref_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Ref_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Ref_Produto</span>
                     </td>
-                    <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@item.Designacao_Produto</span>
                     </td>
                    
-                    <td class="Stock_PHC" onclick="window.open('@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                    <td class="Stock_PHC" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                         <span>@(item.Stock_PHC - item.Stock_Res + item.Stock_Rec)</span>
                     </td>
                 </tr>

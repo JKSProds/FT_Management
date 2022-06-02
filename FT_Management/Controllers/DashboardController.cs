@@ -64,10 +64,9 @@ namespace FT_Management.Controllers
 
             public IActionResult Index()
             {
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return View(context.ObterListaMarcacoesPendentes());
+            return View(phccontext.ObterMarcacoesPendentes());
             }
 
         public JsonResult ObterMarcacoesConcluidas30Dias()
