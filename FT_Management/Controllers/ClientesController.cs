@@ -14,7 +14,6 @@ namespace FT_Management.Controllers
     {
         public IActionResult Index(int? page, string Nome)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             ViewData["Nome"] = Nome;
@@ -24,15 +23,13 @@ namespace FT_Management.Controllers
             var pageNumber = page ?? 1;
 
 
-            return View(context.ObterListaClientes(Nome, false).ToPagedList(pageNumber, pageSize));
+            return View(phccontext.ObterClientes(Nome, true).ToPagedList(pageNumber, pageSize));
         }
 
         public IActionResult Cliente(int IdCliente, int IdLoja)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return View(context.ObterClienteCompleto(IdCliente, IdLoja));
+            return View(phccontext.ObterCliente(IdCliente, IdLoja));
         }
     }
 }

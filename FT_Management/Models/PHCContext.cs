@@ -88,7 +88,6 @@ namespace FT_Management.Models
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
         }
 
-
         public Produto ObterProduto(string Referencia, int IdArmazem)
         {
             List<Produto> p = ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
@@ -122,6 +121,56 @@ namespace FT_Management.Models
 
         //Obter Clientes
         #region CLIENTES
+        public Cliente ObterCliente(string SQL_Query)
+        {
+
+            List<Cliente> LstClientes = new List<Cliente>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn);
+                command.CommandTimeout = TIMEOUT;
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstClientes.Add(new Cliente()
+                        {
+                            IdCliente = int.Parse(result["no"].ToString()),
+                            IdLoja = int.Parse(result["estab"].ToString()),
+                            NomeCliente = result["nome"].ToString().Trim(),
+                            NumeroContribuinteCliente = result["ncont"].ToString().Trim(),
+                            TelefoneCliente = result["telefone"].ToString().Trim(),
+                            PessoaContatoCliente = result["contacto"].ToString().Trim(),
+                            MoradaCliente = result["endereco"].ToString().Trim(),
+                            EmailCliente = result["emailfo"].ToString().Trim(),
+                            IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
+                            TipoCliente = result["tipo"].ToString().Trim(),
+                            Marcacoes = ObterMarcacoes(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) }),
+                            FolhasObra = ObterFolhasObra(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) }),
+                            Visitas = FT_ManagementContext.ObterListaVisitasCliente(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
+                            Equipamentos = ObterEquipamentos(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) })
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("cl", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
+
+                Console.WriteLine("Clientes e Lojas atualizadas com sucesso! (PHC -> MYSQL)");
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os clientes do PHC!");
+            }
+
+            return LstClientes.DefaultIfEmpty(new Cliente()).First();
+        }
         public List<Cliente> ObterClientes(string SQL_Query)
         {
 
@@ -168,17 +217,22 @@ namespace FT_Management.Models
 
             return LstClientes;
         }
-
         public List<Cliente> ObterClientes()
         {
             return ObterClientes("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp;");
         }
-
+        public List<Cliente> ObterClientes(string filtro, bool filtrar)
+        {
+            if (filtrar)
+            {
+                return ObterClientes("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.nome like '%"+filtro+"%';");
+            }
+            return new List<Cliente>() { new Cliente() { } };
+        }
         public Cliente ObterCliente(int IdCliente, int IdLoja)
         {
-            List<Cliente> c = ObterClientes("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and estab=" + IdLoja + ";");
-            if (c.Count > 0) return c[0];
-            return new Cliente();
+            return ObterCliente("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and estab=" + IdLoja + ";");
+           
         }
         #endregion
 
@@ -321,6 +375,14 @@ namespace FT_Management.Models
 
             return LstEquipamento;
         }
+        public List<Equipamento> ObterEquipamentos()
+        {
+            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma;");
+        }
+        public List<Equipamento> ObterEquipamentos(Cliente c)
+        {
+            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where no='" + c.IdCliente + "' and estab='"+c.IdLoja+"';");
+        }
         public Equipamento ObterEquipamento(string IdEquipamento)
         {
             List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='"+ IdEquipamento +"';");
@@ -380,6 +442,11 @@ namespace FT_Management.Models
         {
             return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (SELECT u_marcacaostamp from u_marcacao where num=" + IdMarcacao + ") as u_marcacaostamp from pa where (select TOP 1 STAMP_DEST from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao+") = pastamp");
  
+        }
+        public List<FolhaObra> ObterFolhasObra(Cliente c)
+        {
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and no='"+c.IdCliente+"' and estab='"+c.IdLoja+"'");
+
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
@@ -649,6 +716,12 @@ namespace FT_Management.Models
             LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and  data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND DataMarcacao<='" + DataFim.ToString("yyyy-MM-dd") + "' order by data;").AsEnumerable());
             return LstMarcacoes;
         }
+        public List<Marcacao> ObterMarcacoes(Cliente c)
+        {
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacao.u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE no='"+c.IdCliente+"' and estab='"+c.IdLoja+"' order by u_mdatas.data;");
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE no='" + c.IdCliente + "' and estab='" + c.IdLoja + "' order by data;").AsEnumerable());
+            return LstMarcacoes;
+        }
         public List<Marcacao> ObterMarcacoesPendentes(int IdTecnico)
         {
             List<EstadoMarcacao> LstEstados = ObterMarcacaoEstados();
@@ -663,7 +736,6 @@ namespace FT_Management.Models
             LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado!='" + LstEstados[3].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[14].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[19].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[2].EstadoMarcacaoDesc + "' order by data;").AsEnumerable());
             return LstMarcacoes;
         }
-
         public Marcacao ObterMarcacao(int IdMarcacao)
         {
             List<Marcacao> m = ObterMarcacoes("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacaostamp, oficina, ousrdata, ousrhora FROM u_marcacao where num='" + IdMarcacao + "' order by num;");
@@ -674,7 +746,6 @@ namespace FT_Management.Models
             }
             return new Marcacao();
         }
-
         public List<EstadoMarcacao> ObterMarcacaoEstados(string SQL_Query)
         {
 
