@@ -103,59 +103,59 @@
                     </div>
                 </div>
             </div>
-    </div>
         </div>
-    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-        @if (Model.LstFolhasObra.Count() == 0)
-        {
-            <br />
-            <button class="btn btn-lg btn-danger btn-block form-group disabled" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
-        }
-        else
-        {
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.LstFolhasObra)
-                    {
+        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+            @if (Model.LstFolhasObra.Count() == 0)
+            {
+                <br />
+                <button class="btn btn-lg btn-danger btn-block form-group disabled" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
                         <tr>
-                            <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
-                            </td>
-                            <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
-                            </td>
-                            <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
-                            </td>
-                            <td>
-                                <div class="btn-group float-right">
-                                    <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')"><i class="fas fa-sticky-note" style="font-size:20px"></i></a>
-                                    <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                                    <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
-                                        <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
-                                    </a>
-                                </div>
-                            </td>
+                            <th>
+                                @Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
+                            </th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        }
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.LstFolhasObra)
+                        {
+                            <tr>
+                                <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                    <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
+                                </td>
+                                <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                    @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                                </td>
+                                <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                    @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                                </td>
+                                <td>
+                                    <div class="btn-group float-right">
+                                        <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')"><i class="fas fa-sticky-note" style="font-size:20px"></i></a>
+                                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                        <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
+                                            <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
 
+        </div>
     </div>
 </div>
 
