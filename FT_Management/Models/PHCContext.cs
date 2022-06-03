@@ -422,7 +422,7 @@ namespace FT_Management.Models
                             LstFolhaObra.Add(new FolhaObra()
                             {
                                 IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
-                                DataServico = DateTime.Parse(result["data"].ToString().Trim()),
+                                DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
                                 ReferenciaServico = result["u_nincide"].ToString().Trim(),
                                 EstadoEquipamento = result["situacao"].ToString().Trim(),
                                 ConferidoPor = result["qassinou"].ToString().Trim(),
@@ -439,31 +439,32 @@ namespace FT_Management.Models
 
                     Console.WriteLine("PAT's atualizados com sucesso! (PHC -> MYSQL)");
             }
-            catch 
+            catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler os PAT's do PHC!");
+                throw new Exception(ex.Message);
             }
 
             return LstFolhaObra;
         }
         public List<FolhaObra> ObterFolhasObra(int IdMarcacao)
         {
-            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (SELECT u_marcacaostamp from u_marcacao where num=" + IdMarcacao + ") as u_marcacaostamp from pa where (select TOP 1 STAMP_DEST from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao+") = pastamp");
+            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (SELECT u_marcacaostamp from u_marcacao where num=" + IdMarcacao + ") as u_marcacaostamp from pa where (select TOP 1 STAMP_DEST from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao+") = pastamp order by nopat");
  
         }
         public List<FolhaObra> ObterFolhasObra(Cliente c)
         {
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.no='"+c.IdCliente+"' and pa.estab='"+c.IdLoja+"'");
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.no='"+c.IdCliente+"' and pa.estab='"+c.IdLoja+"' order by nopat;");
 
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"';");
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"' order by nopat;");
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
         {
-            List<FolhaObra> fo = ObterFolhasObra("select TOP 1 * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.nopat=" + IdFolhaObra + ";");
+            List<FolhaObra> fo = ObterFolhasObra("select TOP 1 * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.nopat=" + IdFolhaObra + " order by nopat;");
 
             if (fo.Count > 0)
             {
