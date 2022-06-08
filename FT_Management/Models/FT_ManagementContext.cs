@@ -39,6 +39,115 @@ namespace FT_Management.Models
             ObterFeriadosAPI("2022");
         }
 
+        public string ObterParam(string NomeParam)
+        {
+            string res = "";
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT Valor FROM sys_params where Nome = '" + NomeParam + "';");
+                result.Read();
+
+                res = result["Valor"];
+            }
+
+            return res;
+        }
+        public static string ObterParam(string NomeParam, string ConnectionString)
+        {
+            string res = "";
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT Valor FROM sys_params where Nome = '" + NomeParam + "';");
+                result.Read();
+
+                res = result["Valor"];
+            }
+
+            return res;
+        }
+        public List<Utilizador> ObterListaUtilizadores(bool Enable)
+        {
+            List<Utilizador> LstUtilizadores = new List<Utilizador>();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where enable=" + (Enable ? 1 : 0) + " order by NomeCompleto;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstUtilizadores.Add(new Utilizador()
+                    {
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = result["TipoUtilizador"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        IdCartaoTrello = result["IdCartaoTrello"],
+                        IdPHC = result["IdPHC"],
+                        Admin = result["admin"]
+                    });
+                }
+            }
+            return LstUtilizadores;
+        }
+        public List<Utilizador> ObterListaTecnicos(bool Enable)
+        {
+            List<Utilizador> LstUtilizadores = new List<Utilizador>();
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 1 + " AND enable=" + (Enable ? 1 : 0) + " order by NomeCompleto;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstUtilizadores.Add(new Utilizador()
+                    {
+                        Id = result["IdPHC"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        NomeCompleto = result["NomeCompleto"],
+                        EmailUtilizador = result["EmailUtilizador"],
+                        Iniciais = result["IniciaisUtilizador"],
+                        CorCalendario = result["CorCalendario"]
+                    });
+                }
+            }
+            return LstUtilizadores;
+        }
+
+        public bool VerificarApiKey(Utilizador u, string ApiKey)
+        {
+            string sqlQuery = "SELECT COUNT(*) FROM sys_api_keys where IdUtilizador = " + u.Id + " AND ApiKey=" +ApiKey+ ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    return int.Parse(result[0].ToString()) > 0;
+                }
+            }
+            return false;
+        }
+
+        public int ObterIdUtilizadorApiKey(string ApiKey)
+        {
+            string sqlQuery = "SELECT IdUtilizador FROM sys_api_keys where ApiKey=" + ApiKey + ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    return int.Parse(result[0].ToString());
+                }
+            }
+            return 0;
+        }
+
+
         public bool SyncPHCOnStartup()
         {
             return ObterParam("SyncPHCOnStartup") == "1";
@@ -60,35 +169,7 @@ namespace FT_Management.Models
             return res > 0;
         }
 
-        public string ObterParam(string NomeParam)
-        {
-            string res = "";
-            using (Database db = ConnectionString)
-            {
 
-                using var result = db.Query("SELECT Valor FROM sys_params where Nome = '" + NomeParam + "';");
-                result.Read();
-
-                res = result["Valor"];
-            }
-
-            return res;
-        }
-
-        public static string ObterParam(string NomeParam, string ConnectionString)
-        {
-            string res = "";
-            using (Database db = ConnectionString)
-            {
-
-                using var result = db.Query("SELECT Valor FROM sys_params where Nome = '" + NomeParam + "';");
-                result.Read();
-
-                res = result["Valor"];
-            }
-
-            return res;
-        }
 
         public void AdicionarLog(string user, string msg, int tipo)
         {
@@ -1504,7 +1585,7 @@ namespace FT_Management.Models
             DateTime dt = new DateTime();
             DateTime.TryParse(Filtro, out dt);
 
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false);
 
             List<Contacto> LstContacto = new List<Contacto>();
             string sqlQuery = "SELECT * FROM dat_contactos where Nome like '%" + Filtro + "%' or Morada like '%" + Filtro + "%' or PessoaContacto like '%" + Filtro + "%' or Email like '%" + Filtro + "%' or TipoContacto like '%" + Filtro + "%' or DataContacto like '%" + dt.ToString("yyyy-MM-dd") + "%';";
@@ -1662,55 +1743,7 @@ namespace FT_Management.Models
             return 0;
 
         }
-        public List<Utilizador> ObterListaUtilizadores()
-        {
-            List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where enable=1 order by NomeCompleto;";
 
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    LstUtilizadores.Add(new Utilizador()
-                    {
-                        Id = result["IdUtilizador"],
-                        NomeUtilizador = result["NomeUtilizador"],
-                        Password = result["Password"],
-                        NomeCompleto = result["NomeCompleto"],
-                        TipoUtilizador = result["TipoUtilizador"],
-                        EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"],
-                        IdPHC = result["IdPHC"],
-                        Admin = result["admin"]
-                    });
-                }
-            }
-            return LstUtilizadores;
-        }
-        public List<Utilizador> ObterListaTecnicos()
-        {
-            List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 1 + " AND enable=1 order by NomeCompleto;";
-
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    LstUtilizadores.Add(new Utilizador()
-                    {
-                        Id = result["IdPHC"],
-                        NomeUtilizador = result["NomeUtilizador"],
-                        NomeCompleto = result["NomeCompleto"],
-                        EmailUtilizador = result["EmailUtilizador"],
-                        Iniciais = result["IniciaisUtilizador"],
-                        CorCalendario = result["CorCalendario"]
-                    });
-                }
-            }
-            return LstUtilizadores;
-        }
         public List<Utilizador> ObterListaTecnicosMarcacao(string MarcacaoStamp)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
@@ -1992,7 +2025,7 @@ namespace FT_Management.Models
             //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             int totalRows = workSheet.Dimension.Rows;
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true);
             List<Acesso> LstAcessos = ObterListaAcessosMes(Data);
 
             int y = 5;
@@ -2058,7 +2091,7 @@ namespace FT_Management.Models
             //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             //int totalRows = workSheet.Dimension.Rows;
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true);
             List<Ferias> LstFerias = ObterListaFerias(DateTime.Parse(Ano + "-01-01"), DateTime.Parse(Ano + "-12-31"));
             List<Feriado> LstFeriados = ObterListaFeriados(Ano);
             int count = 0;

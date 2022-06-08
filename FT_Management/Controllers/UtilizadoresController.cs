@@ -19,7 +19,7 @@ namespace FT_Management.Controllers
 
             if (nome != null && password != null) {
 
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores().Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
             if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
 
@@ -63,13 +63,56 @@ namespace FT_Management.Controllers
             return View();
         }
 
+        public IActionResult Login(string ApiKey)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador utilizador = new Utilizador { Id=context.ObterIdUtilizadorApiKey(ApiKey) };
+
+            if (utilizador.Id > 0)
+            {
+
+                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.Id == utilizador.Id).ToList();
+
+                if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com essa API KEY!");
+
+                foreach (var user in LstUtilizadores)
+                {
+                   
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.Id.ToString()),
+                        new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
+                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
+
+                    };
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
+
+                        if (ViewData["ReturnUrl"].ToString() != "" && ViewData["ReturnUrl"].ToString() != null)
+                        {
+                            Response.Redirect(ViewData["ReturnUrl"].ToString(), true);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                }
+            }
+
+            ViewData["ReturnUrl"] = Request.Query["ReturnURL"];
+            return View();
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl)
         {
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores().Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
             if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
 

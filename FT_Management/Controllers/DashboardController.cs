@@ -74,7 +74,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(DateTime.Now.AddDays(-30), DateTime.Now).Where(m => m.EstadoMarcacao == 4).ToList();
-            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos();
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(false);
 
             var data = LstMarcacoes.Select(m => m.DataMarcacao.ToShortDateString()).Distinct().ToList();
             var marcacoesFinalizadas = LstMarcacoes.GroupBy(i => i.DataMarcacao)

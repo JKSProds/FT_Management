@@ -98,7 +98,7 @@ public class CronJobAgendamentoCRM : IJob
         {
             FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
 
-            foreach (var u in dbContext.ObterListaUtilizadores())
+            foreach (var u in dbContext.ObterListaUtilizadores(true))
             {
                 List<Visita> LstVisitas = dbContext.ObterListaVisitas(u.Id, DateTime.Parse(DateTime.Now.ToShortDateString()), DateTime.Parse(DateTime.Now.ToShortDateString()));
 
