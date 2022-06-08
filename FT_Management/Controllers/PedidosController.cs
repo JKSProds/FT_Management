@@ -32,7 +32,6 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Marcacao m = phccontext.ObterMarcacao(id);
-            m.LstFolhasObra = phccontext.ObterFolhasObra(id);
 
             string res = "";
             res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + m.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + m.Cliente.IdCliente+"&IdLoja="+m.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
@@ -77,10 +76,10 @@ namespace FT_Management.Controllers
 
             var calendar = new Calendar();
             List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
+
             foreach (Marcacao m in LstMarcacoes)
             {
                 if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d= m.DataMarcacao.Add(TimeSpan.FromHours(8));
-
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(d),
@@ -96,7 +95,6 @@ namespace FT_Management.Controllers
             }
 
             var serializer = new CalendarSerializer();
-
             var serializedCalendar = serializer.SerializeToString(calendar);
             var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
 
@@ -115,7 +113,6 @@ namespace FT_Management.Controllers
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-
             return File(ms, "text/calendar");
         }
 
@@ -129,50 +126,17 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end)).ToList());
 
+            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end)).ToList());
         }
         public ActionResult CalendarioView()
         {
             return View();
         }
 
-
-        public MemoryStream BitMapToMemoryStream(string filePath)
-        {
-            var ms = new MemoryStream();
-
-            PdfDocument doc = new PdfDocument();
-            PdfPage page = new PdfPage
-            {
-                Width = 810,
-                Height = 504
-            };
-
-            XImage img = XImage.FromFile(filePath);
-            img.Interpolate = false;
-
-            doc.Pages.Add(page);
-
-            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
-            XRect box = new XRect(0, 0, 810, 504);
-            xgr.DrawImage(img, box);
-
-            doc.Save(ms, false);
-
-            System.IO.File.Delete(filePath);
-
-            return ms;
-
-        }
-
-
         public ActionResult Print(string id)
         {
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
+            if (id == null) return RedirectToAction("Index");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -180,9 +144,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiquetaMarcacao(phccontext.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal da marcação: " + id, 2);
-            //return File(outputStream, "image/bmp");
-            return File(BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
 
         // GET: Pedidos
@@ -198,28 +160,33 @@ namespace FT_Management.Controllers
 
             return View(context.ObterListaTecnicos());
         }
+
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
         {
+            if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
+
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewData["DataPedidos"] = DataPedidos;
-
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
-
+           
+            ViewData["DataPedidos"] = DataPedidos;
             ViewData["IdTecnico"] = IdTecnico;
+
             return View(ListaMarcacoes);
         }
+
         public ActionResult ListaPedidosPendentes(string IdTecnico)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
-
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoesPendentes(int.Parse(IdTecnico)).OrderBy(m => m.DataMarcacao).ToList();
+ 
+            ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["IdTecnico"] = IdTecnico;
+   
             return View("ListaPedidos", ListaMarcacoes);
         }
+
         public ActionResult Pedido(string idMarcacao, string IdTecnico)
         {
             if (idMarcacao == null) return RedirectToAction("Index");
@@ -228,11 +195,9 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Marcacao m = phccontext.ObterMarcacao(int.Parse(idMarcacao));
-            m.Tecnico.Id = int.Parse(IdTecnico);
+            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;
-
-            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             ViewData["SelectedTecnico"] = user.NomeCompleto;
             ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
 
