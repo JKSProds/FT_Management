@@ -16,12 +16,13 @@ namespace FT_Management.Controllers
         // GET: FolhasObraController
         public ActionResult Index(string Data)
         {
+            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
+
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
             phccontext.AtualizarAcessos();
 
-
-            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["Data"] = Data;
 
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
@@ -45,14 +46,12 @@ namespace FT_Management.Controllers
 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi gerado um mapa de presenças", 5);
 
             return File(output, System.Net.Mime.MediaTypeNames.Application.Xml);
         }
 
         public ActionResult Apagar(string id)
         {
-
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             
             context.ApagarAcesso(int.Parse(id));
