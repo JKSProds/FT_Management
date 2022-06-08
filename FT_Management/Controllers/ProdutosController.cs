@@ -21,8 +21,9 @@ namespace FT_Management.Controllers
         // GET: Produtos
         public ActionResult Index(int? page, string Ref, string Desig, int Armazem)
         {
-            ViewData["Ref"] = Ref;
-            ViewData["Desig"] = Desig;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            var LstArmazens = context.ObterListaArmazens().ToList();
 
             int pageSize = 100;
             var pageNumber = page ?? 1;
@@ -31,21 +32,17 @@ namespace FT_Management.Controllers
             if (Desig == null) { Desig = ""; }
             if (Armazem == 0) { Armazem = 3; }
 
+            ViewData["Ref"] = Ref;
+            ViewData["Desig"] = Desig;
             ViewData["Armazem"] = Armazem;
-
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            var LstArmazens = context.ObterListaArmazens().ToList();
-
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", Armazem);
 
             if (Armazem>9)
             {
                 return View(phccontext.ObterProdutos(Ref, Desig, Armazem).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
-            return View(phccontext.ObterProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
 
+            return View(phccontext.ObterProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
         }
 
 
@@ -135,16 +132,13 @@ namespace FT_Management.Controllers
         public ActionResult Detalhes(string id, int armazemid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            ViewData["LstGuiasPecas"] = context.ObterListaMovimentosProduto(id);
-
-            ViewData["LstProdutosArmazem"] = context.ObterListaProdutoArmazem(id);
-
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             var LstArmazens = context.ObterListaArmazens().ToList();
+
+            ViewData["LstGuiasPecas"] = context.ObterListaMovimentosProduto(id);
+            ViewData["LstProdutosArmazem"] = context.ObterListaProdutoArmazem(id);
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
             
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-
             return View(phccontext.ObterProduto(id,armazemid));
         }
     }
