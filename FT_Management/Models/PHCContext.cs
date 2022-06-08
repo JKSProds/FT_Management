@@ -34,6 +34,81 @@ namespace FT_Management.Models
         }
 
 
+        public string ExecutarQuery(string SQL_Query)
+        {
+            string res = "";
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn);
+                command.CommandTimeout = TIMEOUT;
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res = result.GetString(0);
+                    }
+                }
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Não foi possivel executar query");
+            }
+
+            return res;
+        }
+
+        public string ValidarMarcacao(Marcacao m)
+        {
+            //Tem de retornar 1 para poder proceder
+            if (ExecutarQuery("SELECT 'valor'	= COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '"+m.Cliente.IdCliente+"' AND bo.estab = '"+m.Cliente.IdLoja+"' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');") == "0") return "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.";
+
+            //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
+            if (m.Cliente.IdCliente == 878 && m.QuemPediuNome != String.Empty) return "Tem que indicar Quem Pediu!";
+
+            //O cliente não pode ter as marcacoes canceladas
+            if (ExecutarQuery("SELECT U_MARCCANC FROM cl (NOLOCK) WHERE no = '"+m.Cliente.IdCliente+"' AND estab = '"+m.Cliente.IdLoja+"'") == "1") return "O Cliente escolhido na Marcação tem as marcações canceladas. Não pode gravar.";
+
+            return "";
+        }
+
+        public bool CriarMarcacao(Marcacao m)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("", conn);
+                command.CommandTimeout = TIMEOUT;
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.Add(new SqlParameter("@CustomerID", ""));
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+
+                }
+
+                conn.Close();
+
+                Console.WriteLine("Enviada marcacao para o PHC");
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao enviar marcacao para o PHC");
+            }
+
+            return true;
+        }
 
         //Obter Referências
         #region REFERENCIA
@@ -175,6 +250,7 @@ namespace FT_Management.Models
         {
                 return ObterClientes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Cliente()).First();
         }
+
         public List<Cliente> ObterClientes()
         {
             return ObterClientes("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where no is not null order by no, estab ;", false, false, false, false);
@@ -183,7 +259,7 @@ namespace FT_Management.Models
         {
             if (filtrar)
             {
-                return ObterClientes("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.nome like '%"+filtro+ "%' and no is not null order by no, estab;", false, false, false, false);
+                return ObterClientes("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, (select TOP 1 emailfo from u_clresp where cl.clstamp=u_clresp.clstamp) as emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl where cl.nome like '%"+filtro+"%' and no is not null order by no, estab;", false, false, false, false);
             }
             return new List<Cliente>() { new Cliente() { } };
         }
@@ -337,6 +413,7 @@ namespace FT_Management.Models
 
             return LstEquipamento;
         }
+
         public List<Equipamento> ObterEquipamentos()
         {
             return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma;");
@@ -578,7 +655,7 @@ namespace FT_Management.Models
                                 MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
                                 TipoEquipamento = result["tipoe"].ToString().Trim(),
                                 Oficina = result["oficina"].ToString().Trim() == "True" ? 1 : 0,
-                                Instalacao = result["tipos"].ToString().Trim() == "Instalação" ? 1 : 0,
+                                TipoServico = result["tipos"].ToString().Trim(),
                                 DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString()),
                            
                             }) ;
@@ -606,6 +683,7 @@ namespace FT_Management.Models
         {
             return ObterMarcacoes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Marcacao()).First();
         }
+
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataMarcacoes)
         {
             List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, prioridade, u_marcacao.u_marcacaostamp, oficina, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and u_mdatas.data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' order by num;", true, true, true, false);
@@ -690,6 +768,7 @@ namespace FT_Management.Models
 
             return LstEstadoMarcacao;
         }
+
         public List<EstadoMarcacao> ObterMarcacaoEstados()
         {
             return ObterMarcacaoEstados("select ROW_NUMBER()  OVER (ORDER BY (Select 0)) as Id, * from u_estados;");
@@ -700,6 +779,136 @@ namespace FT_Management.Models
             return e.Where(e => e.EstadoMarcacaoDesc == Estado).FirstOrDefault();
         }
 
+        public List<String> ObterTipoEquipamento() {
+
+            List<String> res = new List<String>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select tequip from u_tequip", conn);
+                command.CommandTimeout = TIMEOUT;
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(result[0].ToString());
+                    }
+                }
+                conn.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Erro ao obter tipos de equipamento!");
+            }
+
+            return res;
+        }
+        public List<String> ObterTipoServico()
+        {
+
+            List<String> res = new List<String>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select tipo from u_tservico", conn);
+                command.CommandTimeout = TIMEOUT;
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(result[0].ToString());
+                    }
+                }
+                conn.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Erro ao obter tipos de serviço!");
+            }
+
+            return res;
+        }
+
+        public List<String> ObterPeriodo()
+        {
+
+            List<String> res = new List<String>();
+
+            try
+            {
+                res.Add("Manhã");
+                res.Add("Tarde");
+            }
+            catch
+            {
+                Console.WriteLine("Erro ao obter periodos!");
+            }
+
+            return res;
+        }
+
+        public List<String> ObterPrioridade()
+        {
+
+            List<String> res = new List<String>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select prioridade from u_prioridade", conn);
+                command.CommandTimeout = TIMEOUT;
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(result[0].ToString());
+                    }
+                }
+                conn.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Erro ao obter prioridades!");
+            }
+
+            return res;
+        }
+        public List<String> ObterTipoPedido()
+        {
+
+            List<String> res = new List<String>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select tpedido from u_tpedido", conn);
+                command.CommandTimeout = TIMEOUT;
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(result[0].ToString());
+                    }
+                }
+                conn.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Erro ao obter prioridades!");
+            }
+
+            return res;
+        }
         private List<Comentario> ObterComentariosMarcacao(string SQL_Query)
         {
 

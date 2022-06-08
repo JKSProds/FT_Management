@@ -63,7 +63,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-   \        return View(context.ObterListaComerciais());
+          return View(context.ObterListaComerciais());
         }
 
         [HttpPost]
@@ -158,11 +158,10 @@ namespace FT_Management.Controllers
 
         public ActionResult Visita(int idVisita, int IdComercial)
         {
-            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Id;
-
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(idVisita);
 
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Id;
             if (visita.IdComercial == IdComercial || User.IsInRole("Admin")) return View(visita);
 
             ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];

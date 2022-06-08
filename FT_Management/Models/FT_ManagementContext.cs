@@ -378,7 +378,6 @@ namespace FT_Management.Models
                         GuiaTransporteAtual = result["GuiaTransporteAtual"],
                         AssistenciaRemota = result["Remoto"] == 1,
                         //IdCartao = result.Reader.IsDBNull(result["IdCartaoTrello"]) ? "" : result["IdCartaoTrello"],
-                        Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                         ClienteServico = ObterCliente(result["IdCliente"], result["IdLoja"]),
@@ -445,7 +444,6 @@ namespace FT_Management.Models
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
-                        Instalacao = result["Instalacao"],
                         TipoEquipamento = result["TipoEquipamento"]
 
                     });
@@ -481,7 +479,6 @@ namespace FT_Management.Models
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
-                        Instalacao = result["Instalacao"],
                         TipoEquipamento = result["TipoEquipamento"],
                         DataCriacao = DateTime.Parse(result["DataCriacao"])
 
@@ -857,7 +854,6 @@ namespace FT_Management.Models
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
-                        Instalacao = result["Instalacao"],
                         TipoEquipamento = result["TipoEquipamento"],
                         DataCriacao = DateTime.Parse(result["DataCriacao"])
 
@@ -917,7 +913,6 @@ namespace FT_Management.Models
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
-                        Instalacao = result["Instalacao"],
                         DataCriacao = DateTime.Parse(result["DataCriacao"]),
                         LstComentarios = ObterListaComentariosMarcacao(result["MarcacaoStamp"])
                     });
@@ -947,7 +942,6 @@ namespace FT_Management.Models
                         PrioridadeMarcacao = result["PrioridadeMarcacao"],
                         MarcacaoStamp = result["MarcacaoStamp"],
                         Oficina = result["Oficina"],
-                        Instalacao = result["Instalacao"],
                         DataCriacao = DateTime.Parse(result["DataCriacao"]),
                         LstComentarios = ObterListaComentariosMarcacao(result["MarcacaoStamp"])
                     });
@@ -1009,7 +1003,6 @@ namespace FT_Management.Models
                         AssistenciaRemota = result["Remoto"] == 1,
                         IdCartao = result["IdCartaoTrello"],
                         EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
-                        Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                         ClienteServico = ObterCliente(result["IdCliente"], result["IdLoja"]),
                         PecasServico = ObterListaProdutoIntervencao(result["IdFolhaObra"]),
                         IntervencaosServico = ObterListaIntervencoes(result["IdFolhaObra"])
@@ -1086,7 +1079,6 @@ namespace FT_Management.Models
                 IdCartao = result["IdCartaoTrello"],
                 EquipamentoServico = ObterEquipamento(result["IdEquipamento"]),
                 ClienteServico = ObterCliente(result["IdCliente"], result["IdLoja"]),
-                Recibo = ObterReciboFolhaObra(result["IdFolhaObra"]),
                 PecasServico = ObterListaProdutoIntervencao(id),
                 IntervencaosServico = ObterListaIntervencoes(id),
                 RubricaCliente = result["RubricaCliente"]
@@ -1605,36 +1597,6 @@ namespace FT_Management.Models
                 };
             }
             return cliente;
-        }
-        public Recibo ObterReciboFolhaObra(int IdFolhaObra)
-        {
-            using Database db = ConnectionString;
-            Recibo recibo = new Recibo();
-            using var result = db.Query("SELECT * FROM dat_recibos where IdFolhaObra = '" + IdFolhaObra + "';");
-            result.Read();
-            if (result.Reader.HasRows)
-            {
-                recibo = new Recibo()
-                {
-                    IdRecibo = result["IdRecibo"],
-                    MaterialAplicado = result["MaterialAplicado"],
-                    MaoObra = result["MaoObra"],
-                    Deslocacao = result["Deslocacao"],
-                    IdFolhaObra = result["IdFolhaObra"]
-                };
-            }
-            else
-            {
-                recibo = new Recibo()
-                {
-                    IdRecibo = 0,
-                    MaterialAplicado = 0.00,
-                    MaoObra = 0.00,
-                    Deslocacao = 0.00,
-                    IdFolhaObra = IdFolhaObra
-                };
-            }
-            return recibo;
         }
         public List<Cliente> ObterListaClientes(string NomeCliente, bool exact)
         {
@@ -2522,7 +2484,7 @@ namespace FT_Management.Models
 
                 foreach (var marcacao in LstMarcacao.GetRange(j, max))
                 {
-                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='" + marcacao.EstadoMarcacaoDesc + "' LIMIT 1), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.Instalacao + "', '" + marcacao.TipoEquipamento + "', '" + marcacao.DataCriacao.ToString("yy-MM-dd HH:mm:ss") + "'), \r\n");
+                    sql += ("('" + marcacao.IdMarcacao + "', '" + marcacao.DataMarcacao.ToString("yy-MM-dd") + "', '" + marcacao.Cliente.IdCliente + "', '" + marcacao.Cliente.IdLoja + "', '" + marcacao.ResumoMarcacao.Replace("'", "''").Replace("\\", "").ToString() + "', (SELECT IdEstado FROM dat_marcacoes_estado where dat_marcacoes_estado.EstadoMarcacaoDesc='" + marcacao.EstadoMarcacaoDesc + "' LIMIT 1), '" + marcacao.PrioridadeMarcacao + "', '" + marcacao.MarcacaoStamp + "', '" + marcacao.Oficina + "', '" + marcacao.TipoServico + "', '" + marcacao.TipoEquipamento + "', '" + marcacao.DataCriacao.ToString("yy-MM-dd HH:mm:ss") + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
@@ -2848,25 +2810,6 @@ namespace FT_Management.Models
             }
 
             return cliente.IdCliente;
-
-        }
-        public int NovoRecibo(Recibo recibo)
-        {
-            recibo.IdRecibo = ObterReciboFolhaObra(recibo.IdFolhaObra).IdRecibo;
-            if (recibo.IdRecibo == 0) recibo.IdRecibo = ObterUltimaEntrada("dat_recibos", "IdRecibo");
-
-            string sql = "INSERT INTO dat_recibos (IdRecibo, MaoObra, MaterialAplicado, Deslocacao, IdFolhaObra) VALUES ";
-
-            sql += ("('" + recibo.IdRecibo + "', '" + recibo.MaoObra + "', '" + recibo.MaterialAplicado + "', '" + recibo.Deslocacao + "', '" + recibo.IdFolhaObra + "') \r\n");
-
-            sql += " ON DUPLICATE KEY UPDATE MaoObra = VALUES(MaoObra), MaterialAplicado = VALUES(MaterialAplicado), Deslocacao = VALUES(Deslocacao);";
-
-            using (Database db = ConnectionString)
-            {
-                db.Execute(sql);
-            }
-
-            return recibo.IdRecibo;
 
         }
         public string NovoEquipamento(Equipamento equipamento)
@@ -3458,30 +3401,6 @@ namespace FT_Management.Models
             if (folhaobra.ConferidoPor == string.Empty) folhaobra.ConferidoPor = folhaobra.ClienteServico.PessoaContatoCliente;
             pdfFormFields.SetField("o cliente", folhaobra.ConferidoPor);
 
-            if (folhaobra.Recibo != null)
-            {
-                double ValorFinal = Math.Round(folhaobra.Recibo.TotalRecibo, 2);
-                if (ValorFinal > 0)
-                {
-                    pdfFormFields.SetField("Material", folhaobra.Recibo.MaterialAplicado.ToString() + " €");
-                    pdfFormFields.SetField("mao-de-obra", folhaobra.Recibo.MaoObra.ToString() + " €");
-                    pdfFormFields.SetField("deslocacoes", folhaobra.Recibo.Deslocacao.ToString() + " €");
-                    pdfFormFields.SetField("subtotal", folhaobra.Recibo.SubTotalRecibo.ToString() + " €");
-                    pdfFormFields.SetField("IVA", folhaobra.Recibo.IvaRecibo.ToString() + " €");
-                    pdfFormFields.SetField("Total a pagar", ValorFinal.ToString().Split('.')[0].PadLeft(4, ' '));
-                    pdfFormFields.SetField("undefined_3", ValorFinal.ToString().Split('.').Count() > 1 ? ValorFinal.ToString().Split('.')[1].PadRight(2, '0') : "00");
-                    pdfFormFields.SetFieldProperty("recebiquantia", "textsize", 5f, null);
-                    pdfFormFields.SetField("recebiquantia", folhaobra.Recibo.ConverterValorPalavras());
-                    pdfFormFields.SetField("reciboprovi", folhaobra.Recibo.IdRecibo.ToString());
-                    pdfFormFields.SetField("docliente", folhaobra.ClienteServico.NomeCliente);
-                    pdfFormFields.SetField("contribuinte", folhaobra.ClienteServico.NumeroContribuinteCliente);
-                    pdfFormFields.SetField("Referente à ATN", folhaobra.IdFolhaObra.ToString().PadLeft(5, ' '));
-                    pdfFormFields.SetField("Data Pedido", folhaobra.DataServico.ToString("dd/MM/yyyy"));
-                    pdfFormFields.SetField("responsaveltecnico", folhaobra.IntervencaosServico.Count() > 0 ? folhaobra.IntervencaosServico.Last().NomeTecnico : "");
-                    pdfFormFields.SetField("Total recebido", ValorFinal.ToString().Split('.')[0].PadLeft(4, ' '));
-                    pdfFormFields.SetField("undefined_4", ValorFinal.ToString().Split('.').Count() > 1 ? ValorFinal.ToString().Split('.')[1].PadRight(2, '0') : "00");
-                }
-            }
             pdfStamper.FormFlattening = true;
             pdfStamper.SetFullCompression();
             pdfStamper.Close();

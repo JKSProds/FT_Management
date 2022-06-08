@@ -26,7 +26,7 @@ namespace FT_Management.Controllers
     {
         public IViewComponentResult Invoke(List<Marcacao> model)
         {
-            return View(model.Where(m => m.Instalacao == 1 && m.EstadoMarcacao != 4 && m.EstadoMarcacao != 3).OrderBy(e => e.EstadoMarcacao));
+            return View(model.Where(m => m.TipoServico == "Instalação" && m.EstadoMarcacao != 4 && m.EstadoMarcacao != 3).OrderBy(e => e.EstadoMarcacao));
         }
     }
     public class PedidoOrcamentoViewComponent : ViewComponent
