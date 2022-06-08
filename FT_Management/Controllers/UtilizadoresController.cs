@@ -1,5 +1,4 @@
-﻿    using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -109,6 +108,7 @@ namespace FT_Management.Controllers
             }
             return View();
         }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();

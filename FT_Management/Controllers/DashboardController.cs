@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FT_Management.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -58,16 +57,17 @@ namespace FT_Management.Controllers
             return View(model.Where(m => m.EstadoMarcacao !=4 && m.Oficina == 1));
         }
     }
-        [Authorize(Roles = "Admin, Escritorio")]
-        public class DashboardController : Controller
-        {
 
-            public IActionResult Index()
-            {
+    [Authorize(Roles = "Admin, Escritorio")]
+    public class DashboardController : Controller
+    {
+
+        public IActionResult Index()
+        {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return View(phccontext.ObterMarcacoes());
-            }
+        }
 
         public JsonResult ObterMarcacoesConcluidas30Dias()
         {

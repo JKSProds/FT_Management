@@ -26,7 +26,6 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Tech, Escritorio")]
     public class PedidosController : Controller
     {
-
         [HttpPost]
         public string ObterPedido(int id)
         {
@@ -36,7 +35,6 @@ namespace FT_Management.Controllers
             string res = "";
             res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + m.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + m.Cliente.IdCliente+"&IdLoja="+m.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + m.ResumoMarcacao + "</textarea></div>";
-
 
             if (m.LstComentarios.Count() > 0)
             {
@@ -61,11 +59,8 @@ namespace FT_Management.Controllers
 
                 res += "</tbody></table>";
             }
-
             return res;
         }
-
-
 
         [HttpGet]
         public virtual ActionResult ObterIcs ()
@@ -129,6 +124,7 @@ namespace FT_Management.Controllers
 
             return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end)).ToList());
         }
+
         public ActionResult CalendarioView()
         {
             return View();
@@ -147,7 +143,6 @@ namespace FT_Management.Controllers
             return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
 
-        // GET: Pedidos
         public ActionResult Index(int IdTecnico)
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -203,7 +198,5 @@ namespace FT_Management.Controllers
 
             return View(m);
         }
-
-
     }
 }

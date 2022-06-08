@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
-using System.Threading.Tasks;
 using Custom;
 using FT_Management.Models;
 using Ical.Net;
@@ -19,7 +18,6 @@ namespace FT_Management.Controllers
     [Authorize]
     public class FeriasController : Controller
     {
-
         public ActionResult Index()
         {
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))

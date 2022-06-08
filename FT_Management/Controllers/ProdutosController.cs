@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using FT_Management.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -18,7 +12,6 @@ namespace FT_Management.Controllers
     [Authorize]
     public class ProdutosController : Controller
     {
-        // GET: Produtos
         public ActionResult Index(int? page, string Ref, string Desig, int Armazem)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -44,8 +37,6 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
         }
-
-
 
         public ActionResult Print(string id, int armazemid)
         {
@@ -94,6 +85,7 @@ namespace FT_Management.Controllers
 
             return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
+
         public ActionResult PrintPeqMulti(string id, int armazemid)
         {
             if (id == null)

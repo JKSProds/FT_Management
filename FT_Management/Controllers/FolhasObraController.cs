@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -158,7 +157,6 @@ namespace FT_Management.Controllers
 
                 mySmtpClient.SendMailAsync(myMail);
             }
-
             catch
             {
                 return Content("Erro");
