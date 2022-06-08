@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FT_Management.Models
 {
@@ -13,6 +11,7 @@ namespace FT_Management.Models
         public int DiasTotais { get; set; }
         public int DiasDisponiveis { get; set; }
     }
+
     public class Ferias
     {
         public int Id { get; set; }
@@ -23,7 +22,6 @@ namespace FT_Management.Models
         public DateTime DataFim { get; set; }
         public bool Validado { get; set; }
         public string Obs { get; set; }
-
     }
 
     public class Feriado
@@ -31,6 +29,5 @@ namespace FT_Management.Models
         public int Id { get; set; }
         public DateTime DataFeriado { get; set; }
         public string DescFeriado { get; set; }
-
     }
 }
