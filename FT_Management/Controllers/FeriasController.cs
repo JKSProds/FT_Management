@@ -30,12 +30,15 @@ namespace FT_Management.Controllers
             return View(context.ObterListaUtilizadores(true));
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult Calendar()
+        public virtual ActionResult Calendar(string ApiKey)
         {
             var calendar = new Calendar();
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;  
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (IdUtilizador == 0) return File("", "");
+
             List<Ferias> LstFerias = context.ObterListaFeriasValidadas(DateTime.Parse(DateTime.Now.Year + "-01-01"), DateTime.Parse(DateTime.Now.Year + "-12-31"));
 
             foreach (var f in LstFerias)

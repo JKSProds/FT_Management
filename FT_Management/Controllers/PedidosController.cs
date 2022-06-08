@@ -98,14 +98,17 @@ namespace FT_Management.Controllers
         }
 
         [HttpGet]
-        public virtual ActionResult ObterIcs ()
+        public virtual ActionResult ObterIcs (string ApiKey)
         {
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (IdUtilizador == 0) return File("", "");
+
             var calendar = new Calendar();
-            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
+            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(IdUtilizador).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
 
             foreach (Marcacao m in LstMarcacoes)
             {
