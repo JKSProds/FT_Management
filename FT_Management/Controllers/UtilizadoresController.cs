@@ -15,10 +15,10 @@ namespace FT_Management.Controllers
     {
         public IActionResult Login(string nome, string password)
         {
-            ViewData["ReturnUrl"] = Request.Query["ReturnURL"];
             Utilizador utilizador = new Utilizador {NomeUtilizador = nome, Password = password};
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
             if (nome != null && password != null) {
-                            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores().Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
@@ -29,7 +29,7 @@ namespace FT_Management.Controllers
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
-                        var claims = new List<Claim>
+                    var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
@@ -37,11 +37,11 @@ namespace FT_Management.Controllers
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
 
                     };
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
+                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
 
-                        if (ViewData["ReturnUrl"].ToString() != "" && ViewData["ReturnUrl"].ToString() != null)
+                    if (ViewData["ReturnUrl"].ToString() != "" && ViewData["ReturnUrl"].ToString() != null)
                     {
                         Response.Redirect(ViewData["ReturnUrl"].ToString(), true);
                     }
@@ -50,15 +50,17 @@ namespace FT_Management.Controllers
                         return RedirectToAction("Index", "Home");
                     }
 
-                    }
-                    else
+                }
+                else
                 {
-                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
+                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
 
-                        ModelState.AddModelError("", "Password errada!");
+                    ModelState.AddModelError("", "Password errada!");
                 }
             }
             }
+            ViewData["ReturnUrl"] = Request.Query["ReturnURL"];
+
             return View();
         }
 
@@ -68,7 +70,6 @@ namespace FT_Management.Controllers
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores().Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
             if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
@@ -99,7 +100,6 @@ namespace FT_Management.Controllers
                     {
                         return RedirectToAction("Index", "Home");
                     }
-
                 }
                 else
                 {
@@ -112,7 +112,6 @@ namespace FT_Management.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-
 
             return RedirectToAction("Index", "Home");
         }
