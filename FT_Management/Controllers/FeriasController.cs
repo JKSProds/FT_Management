@@ -30,6 +30,7 @@ namespace FT_Management.Controllers
             return View(context.ObterListaUtilizadores(true));
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public virtual ActionResult Calendar(string ApiKey)
         {

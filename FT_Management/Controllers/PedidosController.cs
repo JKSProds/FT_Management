@@ -129,6 +129,7 @@ namespace FT_Management.Controllers
             return res;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public virtual ActionResult ObterIcs (string ApiKey)
         {
