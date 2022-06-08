@@ -70,7 +70,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaUtilizadores(bool Enable)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where enable=" + (Enable ? 1 : 0) + " order by NomeCompleto;";
+            string sqlQuery = "SELECT * FROM sys_utilizadores " + (Enable ? "WHERE enable=1" : "") + " order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -96,7 +96,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaTecnicos(bool Enable)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 1 + " AND enable=" + (Enable ? 1 : 0) + " order by NomeCompleto;";
+            string sqlQuery = "SELECT * FROM sys_utilizadores where TipoUtilizador = " + 1 + " " + (Enable ? "AND enable=1" :"") + " order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))

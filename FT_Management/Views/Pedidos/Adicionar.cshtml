@@ -23,111 +23,213 @@
                     </button>
                 </div>
                 <div class="line"></div>
-                <div class="step" data-target="#comercial-part">
+                <div class="step" data-target="#tecnico-part">
                     <button type="button" class="step-trigger" role="tab" aria-controls="tecnico-part" id="tecnico-part-trigger">
                         <span class="bs-stepper-circle">2</span>
                         <span class="bs-stepper-label">Técnico</span>
                     </button>
                 </div>
                 <div class="line"></div>
+                <div class="step" data-target="#datas-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="datas-part" id="datas-part-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">Datas</span>
+                    </button>
+                </div>
+                <div class="line"></div>
                 <div class="step" data-target="#informacao-part">
                     <button type="button" class="step-trigger" role="tab" aria-controls="informacao-part" id="informacao-part-trigger">
-                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-circle">4</span>
                         <span class="bs-stepper-label">Dados</span>
                     </button>
                 </div>
-            </div>
-            <div class="bs-stepper-content">
-                <!-- your steps content here -->
-                <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
-                    
-                    <div class="form-group" style="position: relative;">
-                        <label for="">Cliente</label>
-                        <input type="hidden" asp-for="Cliente.IdCliente" id="txtIdCliente"/>
-                        <input type="hidden" asp-for="Cliente.IdLoja"  id="txtIdLoja"/>
-                        <input type="text" class="form-control"  asp-for="Cliente.NomeCliente" id="txtCustomer">
-                    </div>
-                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
+                <div class="line"></div>
+                <div class="step" data-target="#resumo-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="resumo-part" id="resumo-part-trigger">
+                        <span class="bs-stepper-circle">5</span>
+                        <span class="bs-stepper-label">Resumo</span>
+                    </button>
                 </div>
-                <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
-                    <div class="row">
-                        <div class="form-group col-lg-12">
-                            <label for="">Técnico</label>
-                            @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
-                            <select class="form-control" asp-for="Tecnico.Id" asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger">    </div>
+                <div class="bs-stepper-content">
+                    <!-- your steps content here -->
+                    <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
+                        <div class="row">
+                            <div class="form-group col-lg-12" style="position: relative;">
+                                <label asp-for="Cliente"></label>
+                                <input type="hidden" asp-for="Cliente.IdCliente" id="txtIdCliente" />
+                                <input type="hidden" asp-for="Cliente.IdLoja" id="txtIdLoja" />
+                                <input type="text" class="form-control" asp-for="Cliente.NomeCliente" id="txtCustomer">
+                                <span asp-validation-for="Cliente.IdCliente" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label asp-for="TipoEquipamento"></label>
+                                @{ var LstTipoEquipamento = ViewData["TipoEquipamento"] as IList<String>;}
+                                <select class="form-control" asp-for="TipoEquipamento" asp-items="@(new SelectList(LstTipoEquipamento))" onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
+                                <span asp-validation-for="TipoEquipamento" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label asp-for="QuemPediuNome"></label>
+                                <input type="text" class="form-control" asp-for="QuemPediuNome" id="txtQuemPediuNome">
+                                <span asp-validation-for="QuemPediuNome" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label asp-for="QuemPediuEmail"></label>
+                                <input type="text" class="form-control" asp-for="QuemPediuEmail" id="txtQuemPediuEmail">
+                                <span asp-validation-for="QuemPediuEmail" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-3">
+                                <label asp-for="QuemPediuTelefone"></label>
+                                <input type="text" class="form-control" asp-for="QuemPediuTelefone" id="txtQuemPediuTelefone">
+                                <span asp-validation-for="QuemPediuTelefone" class="text-danger"></span>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
                         </div>
-                        <div class="form-group col-lg-4">
-                            <label for="data" class="">Data da Marcação</label>
-                            <div class="">
-                                @*DateTimePicker*@
-                                <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+                    </div>
+                    <div id="tecnico-part" class="content" role="tabpanel" aria-labelledby="tecnico-part-trigger">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Tecnico"></label>
+                                @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
+                                <select class="form-control" asp-for="Tecnico.Id" asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="EstadoMarcacaoDesc"></label>
+                                @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
+                                <select class="form-control" asp-for="EstadoMarcacaoDesc" asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                                <span asp-validation-for="EstadoMarcacaoDesc" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Piquete"></label>
+                                <input type="checkbox" class="form-control" asp-for="Piquete">
+                                <span asp-validation-for="Piquete" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Oficina"></label>
+                                <input type="checkbox" class="form-control" asp-for="Oficina">
+                                <span asp-validation-for="Oficina" class="text-danger"></span>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
+                            <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
+                        </div>
+                    </div>
+                    <div id="datas-part" class="content" role="tabpanel" aria-labelledby="datas-part-trigger">
+                        <div class="row">
+                            <div class="form-group col-lg-6">
+                                <label asp-for="DataPedido"></label>
+                                <div>
+                                    @*DateTimePicker*@
+                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 
-                                <input type="text" class="form-control" asp-for="DataMarcacao" id="txtData">
+                                    <input type="text" class="form-control" asp-for="DataPedido" id="txtDataPedido">
+                                    <script>
+                                        var today = new Date();
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                        var yyyy = today.getFullYear();
+
+                                        $('#txtDataPedido').datepicker({
+                                            format: 'dd-mm-yyyy',
+                                            value: dd + '-' + mm + '-' + yyyy
+                                        });
+                                    </script>
+                                    <span asp-validation-for="DataPedido" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-lg-6">
+                                <label asp-for="DataMarcacao"></label>
+                                <div>
+                                    @*DateTimePicker*@
+                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                    <input type="text" class="form-control" asp-for="DataMarcacao" id="txtData">
+                                    <script>
+                                        var today = new Date();
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                        var yyyy = today.getFullYear();
+
+                                        $('#txtData').datepicker({
+                                            format: 'dd-mm-yyyy',
+                                            value: dd + '-' + mm + '-' + yyyy
+                                        });
+                                    </script>
+                                    <span asp-validation-for="DataMarcacao" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Hora"></label>
+                                <input asp-for="Hora" class="form-control" id="txtHora" type="text" />
                                 <script>
-                                    var today = new Date();
-                                    var dd = String(today.getDate()).padStart(2, '0');
-                                    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                    var yyyy = today.getFullYear();
-
-                                    $('#txtData').datepicker({
-                                        format: 'dd-mm-yyyy',
-                                        value: dd + '-' + mm + '-' + yyyy
+                                    $('#txtHora').timepicker({
+                                        mode: '24hr'
                                     });
                                 </script>
+                                <span asp-validation-for="Hora" class="text-danger"></span>
                             </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Periodo"></label>
+                                @{ var LstPeriodo = ViewData["Periodo"] as IList<String>;}
+                                <select class="form-control" asp-for="Periodo" asp-items="@(new SelectList(LstPeriodo))"></select>
+                                <span asp-validation-for="Periodo" class="text-danger"></span>
+                            </div>
+
+                            <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
+                            <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
                         </div>
-                        <div class="form-group col-lg-4">
-                            <label for="">Periodo</label>
-                            @{ var LstPeriodo = ViewData["Periodo"] as IList<String>;}
-                            <select class="form-control" asp-for="Periodo" asp-items="@(new SelectList(LstPeriodo))"></select>
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <label for="">Estado</label>
-                            @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
-                            <select class="form-control" asp-for="EstadoMarcacaoDesc" asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
-                        </div>
-                        <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
-                        <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
                     </div>
-                    </div>
+
                     <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
                         <div class="row">
-                            <div class="form-group col-lg-3">
-                                <label for="">Tipo Equipamento</label>
-                                @{ var LstTipoEquipamento = ViewData["TipoEquipamento"] as IList<String>;}
-                                <select class="form-control" asp-for="TipoEquipamento" asp-items="@(new SelectList(LstTipoEquipamento))"></select>
-                            </div>
-                            <div class="form-group col-lg-3">
-                                <label for="">Tipo Serviço</label>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="TipoServico"></label>
                                 @{ var LstTipoServico = ViewData["TipoServico"] as IList<String>;}
                                 <select class="form-control" asp-for="TipoServico" asp-items="@(new SelectList(LstTipoServico))"></select>
+                                <span asp-validation-for="TipoServico" class="text-danger"></span>
                             </div>
-                            <div class="form-group col-lg-3">
-                                <label for="">Prioridade</label>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="PrioridadeMarcacao"></label>
                                 @{ var LstPrioridade = ViewData["Prioridade"] as IList<String>;}
                                 <select class="form-control" asp-for="PrioridadeMarcacao" asp-items="@(new SelectList(LstPrioridade))"></select>
+                                <span asp-validation-for="PrioridadeMarcacao" class="text-danger"></span>
                             </div>
-                            <div class="form-group col-lg-3">
-                                <label for="">Tipo Pedido</label>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="TipoPedido"></label>
                                 @{ var LstTipoPedido = ViewData["TipoPedido"] as IList<String>;}
                                 <select class="form-control" asp-for="TipoPedido" asp-items="@(new SelectList(LstTipoPedido))"></select>
+                                <span asp-validation-for="TipoPedido" class="text-danger"></span>
                             </div>
+                            <div class="form-group col-lg-6">
+                                <label asp-for="Referencia"></label>
+                                <input type="text" class="form-control" asp-for="Referencia">
+                                <span asp-validation-for="Referencia" class="text-danger"></span>
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
+                            <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
+                        </div>
+                    </div>
+                    <div id="resumo-part" class="content" role="tabpanel" aria-labelledby="resumo-part-trigger">
+                        <div class="row">
                             <div class="form-group col-lg-12">
-                                <label for="">Resumo</label>
+                                <label asp-for="ResumoMarcacao"></label>
                                 <textarea class="form-control" rows="8" placeholder="" asp-for="ResumoMarcacao" required></textarea>
+                                <span asp-validation-for="ResumoMarcacao" class="text-danger"></span>
                                 <br />
                                 <div class="form-group">
                                     <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
 
-                                    <input type="submit" onclick="submit()" value="Guardar" class="btn btn-primary" />
+                                    <input type="submit" onclick="submit()" value="Criar Marcação" class="btn btn-primary" />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
-    </div>
 </form>
 
     @section Scripts {
@@ -135,6 +237,26 @@
     }
 
     <script>
+        function CarregarDadosResponsavel() {
+            $.ajax({
+                url: '/Pedidos/ObterResponsavel/',
+                data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value, "TipoEquipamento": document.getElementById("TipoEquipamento").value},
+                type: "POST",
+                success: function (response) {
+                    $("#txtQuemPediuNome").val(response.quemPediuNome);
+                    $("#txtQuemPediuEmail").val(response.quemPediuEmail);
+                    $("#txtQuemPediuTelefone").val(response.quemPediuTelefone)
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+
+
         $(function () {
             $("#txtCustomer").autocomplete({
                 source: function (request, response) {
@@ -160,8 +282,9 @@
                     });
                 },
                 select: function (e, i) {
-                    $("#IdCliente").val(i.item.val);
-                    $("#IdLoja").val(i.item.val2);
+                    $("#txtIdCliente").val(i.item.val);
+                    $("#txtIdLoja").val(i.item.val2);
+                    CarregarDadosResponsavel();
                 },
                 minLength: 1
             });

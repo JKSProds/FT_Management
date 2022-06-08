@@ -32,7 +32,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 1).ToList();
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -47,7 +47,32 @@ namespace FT_Management.Controllers
         [HttpPost]
         public ActionResult Adicionar(Marcacao m)
         {
-            return RedirectToAction("Index", "Pedidos");
+            int IdMarcacao = 0;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            m.Utilizador = User.ObterNomeCompleto();
+            m.Tecnico = context.ObterUtilizador(m.Tecnico.Id);
+            ModelState.Remove("Tecnico.Password");
+
+            string mes = phccontext.ValidarMarcacao(m);
+             if (mes.Count() > 0) ModelState.AddModelError("", mes);
+
+            if (ModelState.IsValid)
+            {
+                IdMarcacao = phccontext.CriarMarcacao(m);
+                return RedirectToAction("Pedido", "Pedidos", new { idMarcacao=IdMarcacao, IdTecnico=this.User.Claims.First() });
+            }
+
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
+            ViewData["TipoServico"] = phccontext.ObterTipoServico();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+            ViewData["Periodo"] = phccontext.ObterPeriodo();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+
+            return View(m);
         }
 
         [HttpPost]
@@ -60,6 +85,13 @@ namespace FT_Management.Controllers
             return Json(phccontext.ObterClientes(prefix, true));
         }
 
+        [HttpPost]
+        public JsonResult ObterResponsavel(string IdCliente, string IdLoja, string TipoEquipamento)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.ObterResponsavelCliente(int.Parse(IdCliente), int.Parse(IdLoja), TipoEquipamento));
+        }
 
         [HttpPost]
         public string ObterPedido(int id)
@@ -160,7 +192,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end)).ToList());
+            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end).OrderBy(m => m.Tecnico.Id).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
         }
 
         public ActionResult CalendarioView()
