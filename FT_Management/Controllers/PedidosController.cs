@@ -61,7 +61,7 @@ namespace FT_Management.Controllers
             if (ModelState.IsValid)
             {
                 IdMarcacao = phccontext.CriarMarcacao(m);
-                return RedirectToAction("Pedido", "Pedidos", new { idMarcacao=IdMarcacao, IdTecnico=this.User.Claims.First() });
+                return RedirectToAction("Pedido", "Pedidos", new { idMarcacao=IdMarcacao, IdTecnico=this.User.Claims.First().Value });
             }
 
             ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 1).ToList();

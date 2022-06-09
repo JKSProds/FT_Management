@@ -128,7 +128,6 @@ namespace FT_Management.Models
                     conn.Close();
 
                     Console.WriteLine("Enviada marcacao para o PHC");
-                    return res;
                 }
 
             }
