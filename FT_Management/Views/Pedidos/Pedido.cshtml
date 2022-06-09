@@ -15,7 +15,7 @@
 
 
 <div class="d-flex align-items-start" style="flex-grow: 1">
-    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
         <a class="nav-link active" id="v-pills-equipamento-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Dados</a>
         <a class="nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Folhas de Obra</a>
     </div>
@@ -33,7 +33,7 @@
                 <div class="form-group col-lg-4">
                     <div class="form-group">
                         <label asp-for="Cliente.NomeCliente" class="control-label"></label>
-                        <input asp-for="Cliente.NomeCliente" readonly class="form-control col-11" />
+                        <input asp-for="Cliente.NomeCliente" readonly class="form-control" />
                         <span asp-validation-for="Cliente.NomeCliente" class="text-danger"></span>
                     </div>
                 </div>
@@ -55,14 +55,17 @@
                 <div class="form-group col-lg-4">
                     <div class="form-group">
                         <label asp-for="DataCriacao" class="control-label"></label>
-                        <input asp-for="DataCriacao" readonly class="form-control" />
+                        <input asp-for="DataCriacao" readonly class="form-control col-lg-12" />
                         <span asp-validation-for="DataCriacao" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group col-lg-4">
                     <div class="form-group">
                         <label asp-for="DataMarcacao" class="control-label"></label>
-                        <input asp-for="DataMarcacao" readonly class="form-control" />
+                        <div class="input-group">
+                            <input asp-for="DataMarcacao" readonly class="form-control col-lg-8" type="date" />
+                            <input asp-for="Hora" readonly class="form-control col-lg-4" type="time" />
+                        </div>
                         <span asp-validation-for="DataMarcacao" class="text-danger"></span>
                     </div>
                 </div>
