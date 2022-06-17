@@ -1,143 +1,194 @@
-﻿@model FT_Management.Models.FolhaObra
+﻿@model FT_Management.Models.Visita
 
 @{
     ViewData["Title"] = "Novo Agendamento";
 }
 
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
-
-<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+<link rel="stylesheet" href="~/lib/bulma-steps/dist/css/bulma-steps.min.css">
+<script src="~/lib/bulma-steps/dist/js/bulma-steps.min.js"></script>
 
 <form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
-    <div class="mb-5 p-4 bg-white shadow-sm">
-        <h3>Novo Agendamento</h3>
-
-        <div class="bs-stepper">
-            <div class="bs-stepper-header" role="tablist">
-                <!-- your steps here -->
-                <div class="step" data-target="#cliente-part">
-                    <button type="button" class="step-trigger" role="tab" aria-controls="cliente-part" id="cliente-part-trigger" aria-selected="true">
-                        <span class="bs-stepper-circle">1</span>
-                        <span class="bs-stepper-label">Cliente</span>
-                    </button>
-                </div>
-                <div class="line"></div>
-                <div class="step" data-target="#comercial-part">
-                    <button type="button" class="step-trigger" role="tab" aria-controls="comercial-part" id="comercial-part-trigger">
-                        <span class="bs-stepper-circle">2</span>
-                        <span class="bs-stepper-label">Comercial</span>
-                    </button>
-                </div>
-                <div class="line"></div>
-                <div class="step" data-target="#informacao-part">
-                    <button type="button" class="step-trigger" role="tab" aria-controls="informacao-part" id="informacao-part-trigger">
-                        <span class="bs-stepper-circle">3</span>
-                        <span class="bs-stepper-label">Dados</span>
-                    </button>
-                </div>
-            </div>
-            <div class="bs-stepper-content">
-                <!-- your steps content here -->
-                <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
-                    <div class="form-group" style="position: relative;">
-                        <label for="">Cliente</label>
-                        <input type="hidden" id="IdCliente" name="IdCliente" />
-                        <input type="hidden" id="IdLoja" name="IdLoja" />
-                        <input type="text" class="form-control" id="txtCustomer" placeholder="Nome Cliente">
-                    </div>
-                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
-                </div>
-                <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
-                    <div class="form-group">
-                        <label for="">Comercial</label>
-                        @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
-                        <select class="form-control" id="txtComercial" name="txtComercial" asp-items="@(new SelectList(LstComerciais, "Id", "NomeCompleto"))"></select>
-
-                        <label for="data" class="">Data da Visita</label>
-                        <div class="">
-                            @*DateTimePicker*@
-                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                            <input type="text" class="form-control" id="txtData" name="txtData">
-                            <script>
-                                var today = new Date();
-                                var dd = String(today.getDate()).padStart(2, '0');
-                                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                var yyyy = today.getFullYear();
-
-                                $('#txtData').datepicker({
-                                    format: 'dd-mm-yyyy',
-                                    value: dd + '-' + mm + '-' + yyyy
-                                });
-                            </script>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
-                    <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
-                </div>
-                <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
-                    <div class="form-group">
-                        <label for="">Observações</label>
-                        <textarea class="form-control" rows="8" placeholder="" id="Obs" name="Obs" required></textarea>
-                        <br />
-                        <div class="form-group">
-                            <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
-
-                            <input type="submit" onclick="submit()" value="Guardar" class="btn btn-primary" />
-                        </div>
+    <div class="container">
+        <div class="columns is-mobile is-centered">
+            <div class="column is-12">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">Novo Agendamento</p>
+                        </article>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <hr />
+
+    <div class="container">
+        <div class="steps" id="stepsDemo">
+            <div class="step-item is-active">
+                <div class="step-marker">1</div>
+                <div class="step-details">
+                    <p class="step-title">Cliente</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-marker">2</div>
+                <div class="step-details">
+                    <p class="step-title">Comercial</p>
+                </div>
+            </div>
+            <div class="step-item  is-success">
+                <div class="step-marker">3</div>
+                <div class="step-details">
+                    <p class="step-title">Dados</p>
+                </div>
+            </div>
+            <div class="steps-content">
+                <div class="step-content is-active">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-12">
+                            <div class="field">
+                                <label asp-for="Cliente"></label>
+                                <div class="control">
+                                    <input type="hidden" asp-for="Cliente.IdCliente" id="txtIdCliente" />
+                                    <input type="hidden" asp-for="Cliente.IdLoja" id="txtIdLoja" />
+                                    <input type="text" class="input" asp-for="Cliente.NomeCliente" id="txtCustomer">
+                                </div>
+                                <span asp-validation-for="Cliente.IdCliente" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-content">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="IdComercial"></label>
+                                <div class="select" style="width:100%">
+                                    @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
+                                    <select class="select" style="width:100%" asp-for="IdComercial" asp-items="@(new SelectList(LstComerciais, "Id", "NomeCompleto"))"></select>
+                                </div>
+                                <span asp-validation-for="IdComercial" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="PrioridadeVisita"></label>
+                                <div class="select" style="width:100%">
+                                    @{ var LstPrioridade = ViewData["Prioridade"] as IList<String>;}
+                                    <select class="select" style="width:100%" asp-for="PrioridadeVisita" asp-items="@(new SelectList(LstPrioridade))"></select>
+                                </div>
+                                <span asp-validation-for="PrioridadeVisita" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="EstadoVisita"></label>
+                                <div class="select" style="width:100%">
+                                    @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
+                                    <select style="width:100%" asp-for="EstadoVisita" asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                                </div>
+                                <span asp-validation-for="EstadoVisita" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="DataVisita"></label>
+                                <div class="control">
+                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                    <input type="text" class="form-control" id="txtData" asp-for="DataVisita">
+                                    <script>
+                                        var today = new Date();
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                        var yyyy = today.getFullYear();
+
+                                        $('#txtData').datepicker({
+                                            format: 'dd-mm-yyyy',
+                                            value: dd + '-' + mm + '-' + yyyy
+                                        });
+                                    </script>
+                                </div>
+                                <span asp-validation-for="DataVisita" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-content">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-12">
+                            <div class="field">
+                                <label asp-for="ResumoVisita"></label>
+                                <div class="control">
+                                    <textarea class="textarea" rows="8" placeholder="" asp-for="ResumoVisita" required></textarea>
+                                </div>
+                                <span asp-validation-for="ResumoVisita" class="text-danger"></span>
+                            </div>
+                        </div>
+                        &nbsp;
+                        <input type="submit" onclick="submit()" value="Criar Visita" class="button is-info is-outlined is-fullwidth" />
+                    </div>
+                </div>
+                &nbsp;
+                <div class="steps-actions">
+                    <div class="steps-action">
+                        <a href="#" data-nav="previous" class="button is-light">Anterior</a>
+                    </div>
+                    <div class="steps-action">
+                        <a href="#" data-nav="next" class="button is-light">Próximo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" asp-for="Contacto.IdContacto" value="0" />
+    <input type="hidden" asp-for="Contacto.NomeContacto" value="N/D" />
+    <input type="hidden" asp-for="Contacto.EmailContacto" value="N/D" />
+    <input type="hidden" asp-for="Contacto.PessoaContacto" value="N/D" />
+    <input type="hidden" asp-for="Contacto.TelefoneContacto" value="N/D" />
 </form>
 
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
 
-    <script>
-        $(function () {
-            $("#txtCustomer").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '/Visitas/ObterClientes/',
-                        data: { "prefix": request.term },
-                        type: "POST",
-                        success: function (data) {
-                            response($.map(data, function (item) {
-                                return {
-                                    label: item.idCliente + " - " + item.idLoja + " - " + item.nomeCliente,
-                                    val: item.idCliente,
-                                    val2: item.idLoja
-                                };
-                            }))
-                        },
-                        error: function (response) {
-                            alert(response.responseText);
-                        },
-                        failure: function (response) {
-                            alert(response.responseText);
-                        }
-                    });
-                },
-                select: function (e, i) {
-                    $("#IdCliente").val(i.item.val);
-                    $("#IdLoja").val(i.item.val2);
-                },
-                minLength: 1
-            });
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+    bulmaSteps.attach();
+
+    $(function () {
+        $("#txtCustomer").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Visitas/ObterClientes/',
+                    data: { "prefix": request.term },
+                    type: "POST",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.idCliente + " - " + item.idLoja + " - " + item.nomeCliente,
+                                val: item.idCliente,
+                                val2: item.idLoja
+                            };
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#txtIdCliente").val(i.item.val);
+                $("#txtIdLoja").val(i.item.val2);
+            },
+            minLength: 1
         });
+    });
 
-        var stepper = new Stepper($('.bs-stepper')[0])
-
-        function next() {
-            stepper.next();
-        }
-        function previous() {
-            stepper.previous();
-        }
-
-    </script>
+</script>

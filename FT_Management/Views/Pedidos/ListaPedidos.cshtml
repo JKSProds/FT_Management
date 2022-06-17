@@ -1,335 +1,33 @@
 ﻿@model IEnumerable<FT_Management.Models.Marcacao>
 
 @{
-    ViewData["Title"] = "Marcações";
+    ViewData["Title"] = "Agendamento";
 }
 
-<style>
-
-    .card-margin {
-        margin-bottom: 1.875rem;
-    }
-
-    .card {
-        border: 0;
-        box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-        -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-        -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-    }
-
-    .card {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
-        background-color: #ffffff;
-        background-clip: border-box;
-        border: 1px solid #e6e4e9;
-        border-radius: 8px;
-    }
-
-        .card .card-header.no-border {
-            border: 0;
-        }
-
-        .card .card-header {
-            background: none;
-            padding: 0 0.9375rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            min-height: 50px;
-        }
-
-    .card-header:first-child {
-        border-radius: calc(8px - 1px) calc(8px - 1px) 0 0;
-    }
-
-    .widget-49 .widget-49-title-wrapper {
-        display: flex;
-        align-items: center;
-    }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-primary {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #edf1fc;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-primary .widget-49-date-day {
-                color: #4e73e5;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-primary .widget-49-date-month {
-                color: #4e73e5;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-secondary {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #fcfcfd;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-secondary .widget-49-date-day {
-                color: #dde1e9;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-secondary .widget-49-date-month {
-                color: #dde1e9;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-success {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #e8faf8;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-success .widget-49-date-day {
-                color: #17d1bd;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-success .widget-49-date-month {
-                color: #17d1bd;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-info {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #ebf7ff;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-info .widget-49-date-day {
-                color: #36afff;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-info .widget-49-date-month {
-                color: #36afff;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-warning {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: floralwhite;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-warning .widget-49-date-day {
-                color: #FFC868;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-warning .widget-49-date-month {
-                color: #FFC868;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-danger {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #feeeef;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-danger .widget-49-date-day {
-                color: #F95062;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-danger .widget-49-date-month {
-                color: #F95062;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-light {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #fefeff;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-light .widget-49-date-day {
-                color: #f7f9fa;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-light .widget-49-date-month {
-                color: #f7f9fa;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-dark {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #ebedee;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-dark .widget-49-date-day {
-                color: #394856;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-dark .widget-49-date-month {
-                color: #394856;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-date-base {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background-color: #f0fafb;
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-base .widget-49-date-day {
-                color: #68CBD7;
-                font-weight: 500;
-                font-size: 1.5rem;
-                line-height: 1;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-date-base .widget-49-date-month {
-                color: #68CBD7;
-                line-height: 1;
-                font-size: 1rem;
-                text-transform: uppercase;
-            }
-
-        .widget-49 .widget-49-title-wrapper .widget-49-meeting-info {
-            display: flex;
-            flex-direction: column;
-            margin-left: 1rem;
-        }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-meeting-info .widget-49-pro-title {
-                color: #3c4142;
-                font-size: 14px;
-            }
-
-            .widget-49 .widget-49-title-wrapper .widget-49-meeting-info .widget-49-meeting-time {
-                color: #B1BAC5;
-                font-size: 13px;
-            }
-
-    .widget-49 .widget-49-meeting-points {
-        font-weight: 400;
-        font-size: 13px;
-        margin-top: .5rem;
-    }
-
-        .widget-49 .widget-49-meeting-points .widget-49-meeting-item {
-            display: list-item;
-            color: #727686;
-        }
-
-            .widget-49 .widget-49-meeting-points .widget-49-meeting-item span {
-                margin-left: .5rem;
-            }
-
-    .widget-49 .widget-49-meeting-action {
-        text-align: right;
-    }
-
-        .widget-49 .widget-49-meeting-action a {
-            text-transform: uppercase;
-        }
-</style>
 <input type="hidden" id="hiddenIdPedido" name="IdPedido">
-<table width="100%">
-    <tr>
-        <td>
-            <h1>Pedidos</h1>
-        </td>
 
-
-        <td class="float-right" style="margin-bottom:5px;">
-            <div class="input-group" style="margin-left:auto; margin-right:0;">
-                <form method="get" action="ListaPedidos">
-                    <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
-                    <input type="hidden" id="hiddenTxtData" value="@ViewData["DataPedidos"]" name="DataPedidos">
-                    <input type="text" class="form-control" id="txtData">
-                    <script>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-calendar-days"></i>
+                            </span>
+                            <span>Agendamento Técnico</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-right my-auto">
+            <form method="get" action="ListaPedidos">
+                <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
+                <input type="hidden" id="hiddenTxtData" value="@ViewData["DataPedidos"]" name="DataPedidos">
+                <input type="text" class="datepicker" id="txtData">
+                <script>
                         $('#txtData').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
@@ -342,248 +40,123 @@
                                 }
                             }
                         });
-                    </script>
-                </form>
+                </script>
+            </form>
+            <div class="buttons is-right my-1">
+                <p class="control">
+                    <a class="button is-primary is-outlined" onclick="window.location.href = '/Pedidos/ListaPedidos?IdTecnico=@ViewData["IdTecnico"]'">
+                        <span class="icon">
+                            <i class="fa fa-calendar-day"></i>
+                        </span>
+                        <span>Hoje</span>
+                    </a>
+                </p>
+
+                <p class="control">
+                    <a class="button is-warning is-outlined" onclick="window.location.href = '/Pedidos/ListaPedidosPendentes?IdTecnico=@ViewData["IdTecnico"]'">
+                        <span class="icon">
+                            <i class="fas fa-exclamation"></i>
+                        </span>
+                        <span>Pendentes</span>
+                    </a>
+                </p>
+                <p class="control">
+                    <a class="button is-info is-outlined" asp-action="Calendario">
+                        <span class="icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                        <span>Calendário</span>
+                    </a>
+                </p>
             </div>
-            <div class="btn-group float-lg-right" style="margin-top:5px">
-                <button class="btn btn-outline-primary float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidos?IdTecnico=@ViewData["IdTecnico"]'"> <i class="fa fa-calendar-day"></i> Hoje</button>
-                <button class="btn btn-outline-warning float-right" type="button" onclick="window.location.href = '/Pedidos/ListaPedidosPendentes?IdTecnico=@ViewData["IdTecnico"]'"><i class="fas fa-exclamation"></i> Pendentes</button>
-            </div>
-        </td>
 
-    </tr>
-</table>
-
-
-<div class="modal fade" id="modalPedido" tabindex="-1" role="dialog" aria-labelledby="modalPedido" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="txt">Informações da Marcação</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="info_pedido">
-
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="MostrarMaisInfoPedido()" href="javascript:;">Mais Informação</button>
-
-
-                </div>
-            </div>
         </div>
     </div>
 </div>
-
 <hr />
-<br />
 
 @if (Model.Count() == 0)
 {
+<div class="container">
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas marcações!</button>
+    <button class="button is-danger is-fullwidth" disabled>Não foram encontradas marcações!</button>
+</div>
 }
 else
 {
-
-    <div class="row">
-        @foreach (var item in Model)
-        {
-
-            <div class="col-lg-4">
-                <div class="card card-margin">
-                    <div style="margin-top:5px; margin-bottom:5px;" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" class="card-header no-border @(item.EstadoMarcacao == 4 ? "text-success" : "") @(item.EstadoMarcacao == 1 ? "text-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "text-warning" : "")">
-                        <h5 class="card-title text-uppercase"><b>#@item.IdMarcacao</b> - @item.Cliente.NomeCliente</h5>
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item.IdMarcacao" aria-expanded="true" aria-controls="@item.IdMarcacao" style="position: absolute; right: 0;">
-                            <i class="fa fa-arrow-down">@(item.LstComentarios.Count>0 ? " +" : "")</i>
-                        </button>
-                    </div>
-                    <div id="collapse_@item.IdMarcacao" class="collapse" aria-labelledby="headingOne">
-                        <div class="card-body">
-                            <h5>DETALHES</h5>
-                            <hr />
-                            <p style="white-space: pre-line">@item.ResumoMarcacao</p>
-
-                            @if (item.LstComentarios.Count() > 0)
-                            {
+    <div class="container ">
+        <div class="task-container columns is-multiline mx-1">
+            @foreach (var item in Model)
+            {
+                <div class="column is-6">
+                    <div class="card">
+                        <header class="card-header @(item.EstadoMarcacao == 4 ? "has-background-success" : "") @(item.EstadoMarcacao == 1 ? "has-background-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "has-background-warning" : "")">
+                            <button class="button mx-1 is-rounded my-auto @(item.PrioridadeMarcacao == "Normal" ? "is-info" : item.PrioridadeMarcacao == "Urgente" ? "is-warning" : "is-danger") "><p class="is-uppercase has-text-weight-bold is-size-6">@item.DataMarcacao.Day.ToString() @item.DataMarcacao.ToString("MMM")</p></button>
+                            <p class="subtitle my-1 has-text-centered column">
+                                <b>@item.IdMarcacao</b> - @item.Cliente.NomeCliente
+                            </p>
+                            <button class="card-header-icon card-toggle" style="text-align:right" aria-label="more options">
+                                <span class="icon">
+                                    <i class="fas @(item.LstComentarios.Count() != 0 ? "fa-angles-down" : "fa-angle-down")" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </header>
+                        <div class="card-content is-hidden">
+                            <div class="content">
+                                Data do Pedido: <b>@item.DataPedido.ToShortDateString()</b><br />
+                                Estado: <b>@item.EstadoMarcacaoDesc</b><br />
+                                Prioridade: <b>@item.PrioridadeMarcacao</b><br />
+                                Referência: <b>@item.Referencia</b>
                                 <hr />
-                                <h5>COMENTÁRIOS</h5>
-                                <table class="table table-hover">
-                                    <thead><tr><th>Utilizador</th><th>Comentário</th>
-                                    <tbody>
+                                <p style="white-space: pre-line">@item.ResumoMarcacao</p>
+                                <hr />
+                                @if (item.LstComentarios.Count > 0)
+                                {
+                                    <p class="subtitle">Comentários</p>
 
-                                        @foreach (var c in item.LstComentarios)
-                                        {
-                                            <tr>
-                                                <td><span>@c.NomeUtilizador</span></td>
-                                                <td><span>@c.Descricao</span></td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            }
-                        </div>
-                    </div>
-                    <div class="card-body pt-0">
-                        <div class="widget-49">
-                            <div class="widget-49-title-wrapper">
-                                <div class="widget-49-date-primary">
-                                    <span class="widget-49-date-day">@item.DataMarcacao.Day.ToString()</span>
-                                    <span class="widget-49-date-month">@item.DataMarcacao.ToString("MMM")</span>
-                                </div>
-                                <div class="widget-49-meeting-info">
-                                    <span class="widget-49-pro-title">Estado: @item.EstadoMarcacaoDesc</span>
-                                    <span class="widget-49-meeting-time">Data do Pedido: @item.DataCriacao.ToShortDateString() @item.DataCriacao.ToShortTimeString()</span>
-                                    <span class="widget-49-meeting-time">Prioridade: @item.PrioridadeMarcacao</span>
-                                </div>
-                            </div>
+                                    <table class="table table-hover">
+                                        <thead><tr><th>Utilizador</th><th>Comentário</th><th>Data</th>
+                                        <tbody>
 
-                            <div class="widget-49-meeting-action">
-                                <br />
-                                <a class="btn btn-outline-primary btn-lg  @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
-                                <a class="btn btn-outline-success btn-lg @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
-                                <a class="btn btn-outline-info btn-lg" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
-                                <a class="btn btn-outline-secondary btn-lg" onclick="MostrarInfoPedido(@item.IdMarcacao)"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
-
+                                            @foreach (var c in item.LstComentarios)
+                                            {
+                                                <tr>
+                                                    <td><span>@c.NomeUtilizador</span></td>
+                                                    <td><span>@c.Descricao</span></td>
+                                                    <td><span>@c.DataComentario</span></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
                             </div>
                         </div>
+                        <footer class="card-footer">
+                            <div class="container is-12">
+                                <div class="buttons has-addons">
+                                    <a class="button is-outlined is-info is-large card-footer-item @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.Cliente.TelefoneCliente"><i class="fa-solid fa-phone" style="margin-top:5px"></i></a>
+                                    <a class="button is-outlined is-primary is-large card-footer-item @(item.Cliente.MoradaCliente.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                                    <a class="button is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
+                                    <a class="button is-outlined is-link is-large card-footer-item" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
+
+                                </div>
+                            </div>
+                        </footer>
                     </div>
                 </div>
-            </div>
-
-            @*<div class="col-sm-6 " style="margin-bottom: 10px">
-                    <div class="card mb-3">
-                        <div id="headerPedido_@item.IdMarcacao" class="card-header @(item.EstadoMarcacao == 4 ? "card bg-success mb-3" : "") @(item.EstadoMarcacao == 1 ? "bg-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 5 & @item.EstadoMarcacao != 4 ? "bg-warning" : "")">
-                            <span class="spinner-border text-primary float-right" style="display:none" id="cartao_@item.IdMarcacao" role="status"></span>
-                            <h3>@item.Cliente.NomeCliente </h3>
-                        </div>
-                        <div class="card-body text-primary">
-                            <p class="card-text">
-                                <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new { idMarcacao = item.IdMarcacao, IdTecnico = @ViewData["IdTecnico"] }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i>Informação</a>
-                                <a class="btn btn-primary btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i>Imprimir Etiqueta</a>
-                                <hr />
-                                <a class="btn btn-secondary btn-lg btn-block text-black-50 @(item.Cliente.TelefoneCliente.Length < 9 ? "disabled" : "")" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="tel:@item.Cliente.TelefoneCliente"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i>Ligar</a>
-                                <a class="btn btn-success btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" href="https://maps.google.com/?daddr=@item.Cliente.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i>Direções</a>
-                            </p>
-                            <div class="card-footer">
-                                <small>
-                                    Estado do pedido: @item.EstadoMarcacaoDesc |
-                                    Data do Pedido: @item.DataCriacao.ToString("dd/MM/yyyy HH:mm:ss")
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </div>*@
-
-        }
+            }
+        </div>
     </div>
 }
-<div>
-    <br />
-    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Pedidos"))'" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
 
-</div>
 
 <script>
-    function MostrarMaisInfoPedido() {
-        Id = document.getElementById("hiddenIdPedido").value;
-        IdTec = document.getElementById("hiddenIdTecnico").value;
-        window.location.replace("/Pedidos/Pedido?idMarcacao=" + Id + "&IdTecnico=" + IdTec);
-    }
-
-    function MostrarInfoPedido(Id) {
-        document.getElementById("hiddenIdPedido").value = Id;
-
-        var json = {
-            id: Id
-        };
-        $.ajax({
-            type: "POST",
-            url: "/Pedidos/ObterPedido",
-            data: json,
-            traditional: true,
-            dataType: "text",
-            success: function (response) {
-                $(function () {
-                    // Add response in Modal body
-                    $('.info_pedido').html(response);
-
-                    // Display Modal
-                    $('#modalPedido').modal('show');
-                });
-            }
-        });
-    }
-    function ValidarPedido(idcartao, estado) {
-        document.getElementById("cartao_" + idcartao).style.display = '';
-        document.getElementById("green_" + idcartao).classList.add("disabled");
-        document.getElementById("yellow_" + idcartao).classList.add("disabled");
-        document.getElementById("red_" + idcartao).classList.add("disabled");
-
-        var json = {
-            idcartao: idcartao,
-            estado: estado
-        };
-        var element = document.getElementById("headerPedido_" + idcartao);
-        element.classList = 'card-header';
-        if (estado == '1') {
-            element.classList.add("bg-success");
-        } else if (estado == '2') {
-            element.classList.add("bg-warning");
-        } else {
-            element.classList.add("bg-danger");
+    document.addEventListener('DOMContentLoaded', function () {
+        let cardToggles = document.getElementsByClassName('card-toggle');
+        for (let i = 0; i < cardToggles.length; i++) {
+            cardToggles[i].addEventListener('click', e => {
+                e.currentTarget.parentElement.parentElement.childNodes[3].classList.toggle('is-hidden');
+            });
         }
-
-        $.ajax({
-            type: "POST",
-            url: "/Pedidos/ValidarPedido",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    $.notify({
-                        message: "Cartão atualizado com sucesso!"
-                    }, {
-                        // settings
-                        type: 'success',
-                        onShow: function () {
-                            this.css({ 'width': 'auto', 'height': 'auto' });
-                        }
-                    });
-                    document.getElementById("cartao_" + idcartao).style.display = 'none';
-                    document.getElementById("green_" + idcartao).classList.remove("disabled");
-                    document.getElementById("yellow_" + idcartao).classList.remove("disabled");
-                    document.getElementById("red_" + idcartao).classList.remove("disabled");
-                });
-            }
-        });
-
-    }
-    function ChangeLista() {
-
-        var lista = {
-            idlista: $("#SelectLista").val(),
-            id: document.getElementById("hiddenQuadroID").value
-        };
-
-        $.ajax({
-            type: "POST",
-            url: "/Pedidos/ListaPedidos",
-            data: lista,
-            traditional: true
-        });
-    }
-
-    function submitdata() {
-        document.getElementById("hiddenSelectedGuiaID").value = document.getElementById("SelectLista2").value;
-        document.getElementById("hiddenSelectedListaID").value = document.getElementById("SelectLista").value;
-
-        $('form').submit();
-    }
+    });
 </script>

@@ -10,170 +10,240 @@
 
 <input type="hidden" View id="hiddenIdContacto" name="IdContacto" />
 <form asp-action="Index" method="get">
-    <div class="row">
-        <div class="col-md-4 page-header">
-            <h1>Listagem de Contactos</h1>
-        </div>
-
-        <div class="input-group col-md-8">
-            <input type="text" style="height: auto" class="form-control" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-                <select class="form-control" id="lstarea" style="height: auto" onchange="filtrar()"
-                        asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text", @ViewData["area"]))">
-                </select>
-                <select class="form-control" id="idcomercial" style="height: auto" onchange="filtrar()"
-                        asp-items="@(new SelectList(@ViewBag.ListaComerciais, "Id", "NomeCompleto", @ViewData["idcomercial"]))">
-                </select>
-                <button class="btn btn-outline-success" type="submit"> <i class="fa fa-search"></i> Procurar</button>
-                <button class="btn btn-outline-secondary" type="button" onclick="window.location.href = '/Contactos'"> <i class="fa fa-backspace"></i> Limpar</button>
-                <button class="btn btn-outline-primary" type="button" onclick="window.location.href = '/Contactos/Novo'"><i class="fas fa-plus"></i> Novo</button>
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fas fa-user-tie"></i>
+                                </span>
+                                <span>Contactos</span>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="field has-addons has-addons-right mx-1">
+                    <p class="control has-icons-left">
+                        <input type="text" class="input" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-arrow-down-a-z"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <span class="select">
+                            <select class="select" id="lstarea" style="height: auto" onchange="filtrar()"
+                                    asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text", @ViewData["area"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-filter"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <span class="select">
+                            <select class="select" id="idcomercial" style="height: auto" onchange="filtrar()"
+                                    asp-items="@(new SelectList(@ViewBag.ListaComerciais, "Id", "NomeCompleto", @ViewData["idcomercial"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="buttons is-right">
+                    <p class="control">
+                        <button type="submit" class="button is-info is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-search fa-lg"></i>
+                            </span>
+                            <span>Pesquisar</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button type="button" onclick="window.location.href = '/Contactos'" class="button is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-backspace fa-lg"></i>
+                            </span>
+                            <span>Limpar Pesquisa</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button class="button is-primary is-info" type="button" onclick="window.location.href = '/Contactos/Novo'">
+                            <span class="icon">
+                                <i class="fas fa-plus fa-lg"></i>
+                            </span>
+                            <span>Adicionar</span>
+                        </button>
+                    </p>
+                </div>
             </div>
         </div>
-
     </div>
 </form>
-<br />
-<br />
-@if (Model.Count() == 0)
-{
-    <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados contactos!</button>
-}
-else
-{
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>
-                    Nome da Empresa
-                </th>
-                <th>
-                    Nome
-                </th>
-                <th class="d-none d-lg-block ">
-                    Comercial
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="@(!item.ValidadoPorAdmin ? "table-danger" : "")">
-                    <td onclick="MostrarInfoContacto(@item.IdContacto)">
-                        <span>@item.NomeContacto</span>
-                    </td>
-                    <td onclick="MostrarInfoContacto(@item.IdContacto)">
-                        <span>@item.PessoaContacto</span>
-                    </td>
-                    <td onclick="MostrarInfoContacto(@item.IdContacto)" class="d-none d-lg-block ">
-                        <span>@item.Comercial.NomeCompleto</span>
-                    </td>
-
-                    <td>
-                        <div class="btn-group float-right">
-                            <a class="btn btn-info btn-lg  @(item.TelefoneContacto.Length < 9 ? "disabled" : "")" href="tel:@item.TelefoneContacto"><i class="fas fa-phone-alt float-left" style="margin-top:5px"></i></a>
-                            <a class="btn btn-outline-warning btn-lg " href="@item.URL" target="_blank"><i class="fas fa-paperclip float-left" style="margin-top:5px"></i></a>
-                            <a class="btn btn-primary btn-lg @(item.EmailContacto.Length < 1 ? "disabled" : "")" href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left" style="margin-top:5px"></i></a>
-                            <a class="btn btn-outline-success btn-lg @(item.MoradaContacto.Length < 1 ? "disabled" : "")" href="https://maps.google.com/?daddr=@item.MoradaContacto"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
-                            @if (this.User.IsInRole("Admin"))
-                            {
-                                <a class="btn btn-outline-danger btn-lg text-black-50" onclick="ConfirmApagarContacto(@item.IdContacto)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                            }
-                        </div>
-                    </td>
+<hr />
+<div class="container">
+    @if (Model.Count() == 0)
+    {
+        <br />
+        <button class="button is-danger is-fullwidth is-disabled">Não foram encontrados contactos!</button>
+    }
+    else
+    {
+        <table class="table is-narrow is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th>
+                        Nome da Empresa
+                    </th>
+                    <th>
+                        Nome
+                    </th>
+                    <th class="is-hidden-touch">
+                        Comercial
+                    </th>
+                    <th class="is-hidden-touch"></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="@(!item.ValidadoPorAdmin ? "table-danger" : "")">
+                        <td onclick="MostrarInfoContacto(@item.IdContacto)">
+                            <span>@item.NomeContacto</span>
+                        </td>
+                        <td onclick="MostrarInfoContacto(@item.IdContacto)">
+                            <span>@item.PessoaContacto</span>
+                        </td>
+                        <td onclick="MostrarInfoContacto(@item.IdContacto)" class="is-hidden-touch">
+                            <span>@item.Comercial.NomeCompleto</span>
+                        </td>
 
-        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Contactos", new { page, filter = @ViewData["filter"], area = @ViewData["area"], idcomercial = @ViewData["idcomercial"] }), Bootstrap4PagedListRenderOptions.ClassicPlusFirstAndLast)
+                        <td class="is-hidden-touch">
+                            <div class="buttons is-pulled-right">
+                                <a class="button is-info" @(item.TelefoneContacto.Length < 9 ? "disabled" : "") href="tel:@item.TelefoneContacto"><i class="fas fa-phone"></i></a>
+                                <a class="button is-warning " href="@item.URL" target="_blank"><i class="fas fa-paperclip"></i></a>
+                                <a class="button is-primary" @(item.EmailContacto.Length < 1 ? "disabled" : "") href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left" style="margin-top:5px"></i></a>
+                                <a class="button is-primary is-outlined" @(item.MoradaContacto.Length < 1 ? "disabled" : "") href="https://maps.google.com/?daddr=@item.MoradaContacto"><i class="fas fa-location-arrow"></i></a>
+                                @if (this.User.IsInRole("Admin"))
+                                {
+                                    <a class="button is-danger" onclick="ConfirmApagarContacto(@item.IdContacto)" href="javascript:;"><i class="fas fa-trash"></i></a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-}
+        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Contactos", new { page, filter = @ViewData["filter"], area = @ViewData["area"], idcomercial = @ViewData["idcomercial"] }))
+
+    }
+</div>
 @if (this.User.IsInRole("Admin"))
 {
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Apagar Contacto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <div id="modalApagarContacto" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                    <span class="icon">
+                        <i class="fas fa-circle-minus"></i>
+                    </span>
+                    <span>Apagar Contacto</span>
+                </p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>Tem a certeza que deseja apagar este contacto? <b>Esta ação é irreversivel!</b></p>
+            </section>
+            <footer class="modal-card-foot">
+                <button type="button" class="button is-danger" onclick="ApagarContacto()" href="javascript:;">
+                    <span class="icon">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    <span>Apagar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <div id="modalAssociarComercial" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                    <span class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span>Associar Comercial ao Contacto</span>
+                </p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="field">
+                    <label>Deseja a associar este contacto a qual comercial?</label>
+                    <p class="control has-icons-left">
+                        @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
+                        <span class="select" style="width:100%">
+                            <select class="select" style="width:100%" id="lstcomerciais"
+                                    asp-items="@(new SelectList(@ViewBag.Comerciais, "Id", "NomeCompleto"))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </p>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <p>Tem a certeza que deseja apagar este contacto? <b>Esta ação é irreversivel!</b></p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger" onclick="ApagarContacto()" href="javascript:;">Apagar</button>
-                    </div>
-                </div>
-            </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button type="button" class="button is-info" onclick="AssociarComercialConfirm()" href="javascript:;">
+                    <span class="icon">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span>Associar</span>
+                </button>
+            </footer>
         </div>
     </div>
 }
-<div class="modal fade" id="modalContacto" tabindex="-1" role="dialog" aria-labelledby="modalContacto" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="txt">Informação do Contacto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="info_contacto">
 
-                </div>
+<div id="modalContacto" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-info-circle"></i>
+                </span>
+                <span>Informação de Contacto</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="info_contacto">
+
             </div>
-            <div class="modal-footer">
-                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="Editar()" href="javascript:;">Editar</button>
-                </div>
-            </div>
-        </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" onclick="Editar()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-pen"></i>
+                </span>
+                <span>Editar Contacto</span>
+            </button>
+        </footer>
     </div>
 </div>
 
-@if (this.User.IsInRole("Admin"))
-{
-    <div class="modal fade" id="modalAssociarComercial" tabindex="-1" role="dialog" aria-labelledby="modalComerciais" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="txt">Associar Comercial ao Contacto</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="">
-                        <label class="control-label">Deseja a associar este contacto a qual comercial?</label>
-                        <select class="form-control" id="lstcomerciais"
-                                asp-items="@(new SelectList(@ViewBag.Comerciais, "Id", "NomeCompleto"))">
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary" onclick="AssociarComercialConfirm()" href="javascript:;">Associar Comercial</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
 
 <script>
-     var lstComerciais = document.getElementById("lstcomerciais");
-     lstComerciais.remove(0);
+    var lstComerciais = document.getElementById("lstcomerciais");
+    lstComerciais.remove(0);
 
     function MostrarInfoContacto(Id) {
         document.getElementById("hiddenIdContacto").value = Id;
@@ -192,8 +262,8 @@ else
                     // Add response in Modal body
                     $('.info_contacto').html(response);
 
-                    // Display Modal
-                    $('#modalContacto').modal('show');
+                    var modal = Bulma('#modalContacto').modal();
+                    modal.open();
                 });
             }
         });
@@ -214,7 +284,7 @@ else
 
     }
 
-        function filtrar() {
+    function filtrar() {
         var area = document.getElementById("lstarea").value;
         var filter = document.getElementById("txtFiltro").value;
         var idcomercial = document.getElementById("idcomercial").value;
@@ -227,8 +297,8 @@ else
     }
 
     function AssociarComercial() {
-        $("#modalAssociarComercial").modal('show');
-    }
+        var modal = Bulma('#modalAssociarComercial').modal();
+        modal.open();    }
 
     function AssociarComercialConfirm() {
         //alert(document.getElementById('lstcomerciais').value);
@@ -255,8 +325,8 @@ else
     }
 
     function ConfirmApagarContacto(Id) {
-        document.getElementById("hiddenIdContacto").value = Id;
-        $("#myModal").modal('show');
+        var modal = Bulma('#modalApagarContacto').modal();
+        modal.open();
     }
 
     function MostrarCliente() {
@@ -280,7 +350,7 @@ else
                     message: "Não foi encontrado um cliente com o mesmo NIF!"
                 }, {
                     // settings
-                        type: 'danger',
+                    type: 'danger',
                     onShow: function () {
                         this.css({ 'width': 'auto', 'height': 'auto' });
                     }

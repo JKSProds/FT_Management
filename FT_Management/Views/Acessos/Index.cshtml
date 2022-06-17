@@ -4,29 +4,31 @@
     ViewData["Title"] = "Acessos";
 }
 
-<div class="row">
-    <div class="col-lg-8">
-    </div>
-    <div class="col-lg-4">
-    </div>
-</div>
 
 <input type="hidden" id="hiddenIdAcesso" name="IdFerias" />
 
-<div class="row">
-    <div class="col-lg-8">
-        <h1>Listagem de Acessos</h1>
-    </div>
-    <div class="btn-group btn-group-lg col-lg-2" role="group" aria-label="Basic example">
-        <a class="btn btn-primary text-white float-right" onclick="window.open('@Url.Action("ExportarListagemAcessos", "Acessos", new { data = @ViewData["Data"]})')"><i class="fas fa-file-download"></i> Exportar</a>
-    </div>
 
-    <div class="btn-group col-lg-2" role="group" aria-label="Basic outlined example">
-        <form method="get" style="width:100%" action="Acessos">
-
-            <input type="hidden" id="hiddenTxtData" value="@ViewData["Data"]" name="Data">
-            <input type="text" class="form-control float-right" id="txtData">
-            <script>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-clock"></i>
+                            </span>
+                            <span>Acessos</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-right my-auto mx-0">
+            <form method="get" style="width:100%" action="Acessos">
+                <input type="hidden" id="hiddenTxtData" value="@ViewData["Data"]" name="Data">
+                <input type="text" class="datepicker" id="txtData">
+                <script>
                         $('#txtData').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
@@ -39,103 +41,135 @@
                                 }
                             }
                         });
-            </script>
-        </form>
-    </div>
-</div>
-<br />
-<br />
-@if (Model.Count() == 0)
-{
-    <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados acessos!</button>
-}
-else
-{
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>
-                    Nome
-                </th>
-                <th>
-                    Data de Acesso
-                </th>
-                <th>
-                    Tipo de Acesso
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr class="@(item.Tipo == 1 ? "table-primary" : "table-warning")">
-                    <td>
-                        <span>@item.Utilizador.NomeCompleto</span>
-                    </td>
-                    <td>
-                        <span>@item.Data.ToString("HH:mm")</span>
-                    </td>
-                    <td>
-                        <span>@item.TipoAcesso</span>
-                    </td>
-                    <td>
-                        <a class="btn btn-outline-danger float-right" onclick="ConfirmApagarAcesso(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Apagar Acesso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <p>Tem a certeza que deseja apagar este acesso? <b>Esta ação é irreversivel!</b></p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="ApagarAcesso()" href="javascript:;">Apagar</button>
-                </div>
-            </div>
+                </script>
+            </form>
+            <p class="control">
+                <a class="button is-primary is-outlined is-fullwidth" id="addFerias" onclick="window.open('@Url.Action("ExportarListagemAcessos", "Acessos", new { data = @ViewData["Data"]})')">
+                    <span class="icon">
+                        <i class="fas fa-cloud-download-alt"></i>
+                    </span>
+                    <span>Exportar</span>
+                </a>
+            </p>
         </div>
     </div>
 </div>
+<hr />
 
-<script>
-    function ConfirmApagarAcesso(Id) {
-        document.getElementById("hiddenIdAcesso").value = Id;
-        $("#myModal").modal('show');
-    }
+@if (Model.Count() == 0)
+{
+    <div class="container">
+        <br />
+        <button class="button is-danger is-fullwidth" disabled>Não foram encontrados acessos!</button>
+        </div>
+        }
+        else
+        {
+        <div class="container">
+            <table class="table is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            Nome
+                        </th>
+                        <th>
+                            Data de Acesso
+                        </th>
+                        <th>
+                            Tipo de Acesso
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="@(item.Tipo == 1 ? "table-primary" : "table-warning")">
+                            <td>
+                                <span class="icon  mr-2">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span>@item.Utilizador.NomeCompleto</span>
+                            </td>
+                            <td>
+                                <span class="icon  mr-2">
+                                    <i class="fas fa-business-time"></i>
+                                </span>
+                                <span>@item.Data.ToString("HH:mm")</span>
+                            </td>
+                            <td>
+                                <span class="icon  mr-2">
+                                    <i class="fas @(item.Tipo == 1 ? "fa-arrow-right-to-bracket" : "fa-arrow-right-from-bracket")"></i>
+                                </span>
+                                <span class="is-hidden-touch">@item.TipoAcesso</span>
+                            </td>
+                            <td>
+                                <a class="button is-danger is-outlined is-pulled-right" onclick="ConfirmApagarAcesso(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
 
-    function ApagarAcesso() {
-        var json = {
-            id: document.getElementById('hiddenIdAcesso').value
-        };
 
-        $.ajax({
-            type: "POST",
-            url: "/Acessos/Apagar",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    window.location.reload();
-                });
+        <div id="modalApagarAcesso" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">
+                        <span class="icon">
+                            <i class="fas fa-circle-minus"></i>
+                        </span>
+                        <span>Apagar Acesso</span>
+                    </p>
+
+                    <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="form-group">
+                        <p>Tem a certeza que deseja apagar este acesso? <b>Esta ação é irreversivel!</b></p>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button type="button" class="button is-danger" id="btnApagarAcesso" onclick="ApagarAcesso()" href="javascript:;">
+                        <span class="icon">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <span>Apagar</span>
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+
+
+        <script>
+            function ConfirmApagarAcesso(Id) {
+                document.getElementById("hiddenIdAcesso").value = Id;
+                var modal = Bulma('#modalApagarAcesso').modal();
+                modal.open();
             }
-        });
 
-        $("#myModal").modal('hide');
-    }
-</script>
+            function ApagarAcesso() {
+                document.getElementById("btnApagarAcesso").classList.add("is-loading");
+                var json = {
+                    id: document.getElementById('hiddenIdAcesso').value
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Acessos/Apagar",
+                    data: json,
+                    traditional: true,
+                    success: function (result) {
+                        $(function () {
+                            window.location.reload();
+                        });
+                    }
+                });
+
+                $("#myModal").modal('hide');
+            }
+        </script>

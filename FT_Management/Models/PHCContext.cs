@@ -538,7 +538,25 @@ namespace FT_Management.Models
                             }
 
                         }
-                        if (LoadPecas) LstFolhaObra.Last().PecasServico = ObterPecas(int.Parse(result["nopat"].ToString().Trim()));
+                        if (LoadPecas) {
+                            LstFolhaObra.Last().PecasServico = ObterPecas(int.Parse(result["nopat"].ToString().Trim()));
+                            LstFolhaObra.Last().GuiaTransporteAtual = LstFolhaObra.Last().PecasServico.Count() == 0 ? "" : (LstFolhaObra.Last().PecasServico.FirstOrDefault(p => p.Pos_Stock.Length > 0)?.Pos_Stock.ToString() ?? "");
+                        }
+
+                        //Obter rubrica
+                        string img = "wwwroot/img/no_photo.png";
+                        using (Image image = Image.FromFile(img))
+                        {
+                            using (MemoryStream m = new MemoryStream())
+                            {
+                                image.Save(m, image.RawFormat);
+                                byte[] imageBytes = m.ToArray();
+
+                                // Convert byte[] to Base64 String
+                                string base64String = Convert.ToBase64String(imageBytes);
+                                LstFolhaObra.Last().RubricaCliente = base64String;
+                            }
+                        }
 
                     }
                 }
@@ -574,7 +592,7 @@ namespace FT_Management.Models
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"' order by nopat;", true, true, false, false);
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"' order by nopat;", true, true, true, false);
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
@@ -669,7 +687,6 @@ namespace FT_Management.Models
                                 TipoUn = "UN",
                                 Pos_Stock = result["guiatransporte"].ToString().Trim(),
                                 Stock_Fisico = double.Parse(result["qtt"].ToString().Trim())
-
                             });
                         }
                     }
@@ -758,7 +775,7 @@ namespace FT_Management.Models
                     Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
             }
@@ -1019,7 +1036,8 @@ namespace FT_Management.Models
                                 IdComentario = result["u_comentstamp"].ToString(),
                                 Descricao = result["comentario"].ToString().Trim(),
                                 IdMarcacao = result["marcacaostamp"].ToString().Trim(),
-                                NomeUtilizador = result["ousrinis"].ToString().Trim()
+                                NomeUtilizador = result["ousrinis"].ToString().Trim(),
+                                DataComentario = DateTime.Parse(result["ousrdata"].ToString().Substring(0, 10) + " " + result["ousrhora"].ToString())
                             });
                         }
                     }
@@ -1039,7 +1057,7 @@ namespace FT_Management.Models
         }
         public List<Comentario> ObterComentariosMarcacao(int IdMarcacao)
         {
-            return ObterComentariosMarcacao("select u_comentstamp, num as marcacaostamp, comentario, u_coment.ousrinis from u_coment inner join u_marcacao on u_marcacao.u_marcacaostamp = u_coment.marcacaostamp WHERE num=" + IdMarcacao+";");
+            return ObterComentariosMarcacao("select u_comentstamp, num as marcacaostamp, comentario, u_coment.ousrinis, u_coment.ousrdata, u_coment.ousrhora from u_coment inner join u_marcacao on u_marcacao.u_marcacaostamp = u_coment.marcacaostamp WHERE num=" + IdMarcacao+";").OrderBy(c => c.DataComentario).ToList();
             
         }
         #endregion

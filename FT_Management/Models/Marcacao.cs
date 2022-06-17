@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -61,8 +62,14 @@ namespace FT_Management.Models
         [Display(Name = "Técnico")]
         public Utilizador Tecnico { get; set; }
         public List<Utilizador> LstTecnicos { get; set; }
+        public List<int> LstTecnicosSelect { get; set; }
         public List<FolhaObra> LstFolhasObra { get; set; }
         public List<Comentario> LstComentarios { get; set; }
+
+        public Marcacao()
+        {
+            this.LstTecnicos = new List<Utilizador>();
+        }
     }
 
     public class EstadoMarcacao
@@ -82,6 +89,7 @@ namespace FT_Management.Models
         public string Descricao { get; set; }
         public string IdMarcacao { get; set; }
         public string NomeUtilizador { get; set; }
+        public DateTime DataComentario { get; set; }
     }
 
 }

@@ -3,18 +3,28 @@
 @{
     ViewData["Title"] = "Folhas de Obra";
 }
-<div class="row">
-    <div class="col-lg-8">
-        <h1>Listagem de Folhas de Obra</h1>
-    </div>
-    <div class="col-lg-4">
-        <form method="get" action="FolhasObra">
 
-            <input type="hidden" id="hiddenTxtData" value="@ViewData["DataFolhasObra"]" name="DataFolhasObra">
-
-
-            <input type="text" class="form-control" id="txtData">
-            <script>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-file-alt"></i>
+                            </span>
+                            <span>Folhas de Obra</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-right my-auto">
+            <form method="get" style="width:100%" asp-action="Index">
+                <input type="hidden" id="hiddenTxtData" value="@ViewData["DataFolhasObra"]" name="DataFolhasObra">
+                <input type="text" class="datepicker" id="txtData">
+                <script>
                         $('#txtData').datepicker({
                             format: 'dd-mm-yyyy',
                             size: 'large',
@@ -27,19 +37,23 @@
                                 }
                             }
                         });
-            </script>
-        </form>
+                </script>
+            </form>
+        </div>
     </div>
 </div>
-<br />
+<hr />
 @if (Model.Count() == 0)
 {
-    <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
+    <div class="container">
+        <br />
+        <button class="button is-danger is-fullwidth" disabled>Não foram encontradas folhas de obra!</button>
+    </div>
 }
 else
 {
-    <table class="table table-hover">
+<div class="container">
+    <table class="table is-narrow is-hoverable is-fullwidth">
         <thead>
             <tr>
                 <th>
@@ -52,6 +66,9 @@ else
                     @Html.DisplayNameFor(model => model.EquipamentoServico.NumeroSerieEquipamento)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)
+                </th>
+                <th>
 
                 </th>
             </tr>
@@ -59,98 +76,112 @@ else
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                        <span>@item.IdFolhaObra</span>
-                    </td>
-                    <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                        @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
-                    </td>
-                    <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                        @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
-                    </td>
-                    <td>
-                        <div class="btn-group float-right">
-                            <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')"><i class="fas fa-sticky-note" style="font-size:20px"></i></a>
-                            <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                            <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
-                                <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
-                            </a>
-                        </div>
+            <tr>
+                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                    <span>@item.IdFolhaObra</span>
+                </td>
+                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                    @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                </td>
+                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                    @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                </td>
+                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                    @Html.DisplayFor(modelItem => item.IntervencaosServico.FirstOrDefault().NomeTecnico)
+                </td>
+                <td>
+                    <div class="field has-addons">
+                        <p class="control">
+                            <button class="button" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
+                                <span class="icon is-small">
+                                    <i class="fas fa-sticky-note"></i>
+                                </span>
+                            </button>
+                        </p>
+                        <p class="control">
+                            <button class="button" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')">
+                                <span class="icon is-small">
+                                    <i class="fas fa-print"></i>
+                                </span>
+                            </button>
+                        </p>
+                        <p class="control">
+                            <button class="button" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
+                                <span class="icon is-small">
+                                    <i class="fas fa-paper-plane"></i>
+                                </span>
+                            </button>
+                        </p>
+                    </div>
 
-                    </td>
-                </tr>
+                </td>
+            </tr>
             }
         </tbody>
     </table>
+</div>
 }
 
-<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Enviar Mail</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+
+<div id="modalEnviarFolhaObra" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Enviar Folha de Obra</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <input id="txtEmail" type="email" class="input" placeholder="Email" value="" required />
             </div>
-            <div class="modal-body">
-                <input id="txtEmail" type="email" class="form-control" placeholder="Email" value="" required />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="EnviarEmail()" href="javascript:;">Enviar</button>
-            </div>
-        </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" onclick="EnviarEmail()" href="javascript:;">Enviar</button>
+        </footer>
     </div>
 </div>
 
 <input type="hidden" id="hiddenFolhaObraId" />
 
 <script>
-    var ConfirmApagarFolhaObra = function (IdFolhaObra) {
+    function ConfirmEnviarEmail(IdFolhaObra) {
+
         $("#hiddenFolhaObraId").val(IdFolhaObra);
-        $("#myModal").modal('show');
+        document.getElementById("btnEnviarMail_" + IdFolhaObra).classList.add("is-loading");
 
-    }
-
-
-    var ApagarFolhaObra = function () {
-        var IdFolhaObra = $("#hiddenFolhaObraId").val();
+        var json = {
+            id: IdFolhaObra
+        };
         $.ajax({
-
             type: "POST",
-            url: "/FolhasObra/ApagarFolhaObra",
-            data: { Id: IdFolhaObra },
+            url: "/FolhasObra/ObterEmailClienteFolhaObra",
+            data: json,
+            traditional: true,
             success: function (result) {
-
-                $("#myModal").modal("hide");
-                $("#row_" + IdFolhaObra).remove();
-                location.reload(true);
+                $(function () {
+                    // alert(JSON.stringify(result));
+                    document.getElementById("txtEmail").value = result;
+                    var modal = Bulma('#modalEnviarFolhaObra').modal();
+                    modal.open();
+                    document.getElementById("btnEnviarMail_" + IdFolhaObra).classList.remove("is-loading");
+                });
             }
-
-        })
+        });
     }
 
     function EnviarEmail() {
 
-        var idCartao = document.getElementById("hiddenFolhaObraId").value;
+        var idFolhaObra = document.getElementById("hiddenFolhaObraId").value;
         var emailDestino = document.getElementById("txtEmail").value;
-
-        document.getElementById("folha_" + idCartao).style.display = '';
-        document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
-
+        document.getElementById("btnEnviarMail_" + idFolhaObra).classList.add("is-loading");
 
         var json = {
-            id: idCartao,
+            id: idFolhaObra,
             emailDestino: emailDestino
         };
 
-        $('#myModal2').modal('toggle');
-        $('#myModal2')
-            .find("input,textarea,select")
-            .val('')
-            .end();
+        var modal = Bulma('#modalEnviarFolhaObra').modal();
+        modal.close();
 
         $.ajax({
             type: "POST",
@@ -159,8 +190,7 @@ else
             traditional: true,
             success: function (result) {
                 $(function () {
-                    document.getElementById("folha_" + idCartao).style.display = 'none';
-                    document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
+                    document.getElementById("btnEnviarMail_" + idFolhaObra).classList.remove("is-loading");
 
                     if (result == "Sucesso") {
                         $.notify({
@@ -174,7 +204,7 @@ else
                         });
 
                         var json = {
-                            id: idCartao,
+                            id: idFolhaObra,
                             novoemail: emailDestino
                         };
                         $.ajax({
@@ -204,24 +234,5 @@ else
             }
         });
     }
-    var ConfirmEnviarEmail = function (IdFolhaObra) {
-        $("#hiddenFolhaObraId").val(IdFolhaObra);
-        var json = {
-            id: IdFolhaObra
-        };
-        $.ajax({
-            type: "POST",
-            url: "/FolhasObra/ObterEmailClienteFolhaObra",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    // alert(JSON.stringify(result));
-                    document.getElementById("txtEmail").value = result;
-                });
-            }
-        });
-        $("#myModal2").modal('show');
 
-    }
 </script>

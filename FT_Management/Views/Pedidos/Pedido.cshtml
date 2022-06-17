@@ -5,169 +5,424 @@
     ViewData["Title"] = "Pedido - " + Model.Cliente.NomeCliente;
 }
 
-<div class="input-group mb-3">
-    <h1 class="text-center col-lg-11">
-        @Html.DisplayFor(model => model.Cliente.NomeCliente)
-    </h1>
-    <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
-</div>
-<hr />
+<style>
+    .tabs-content li {
+        display: none;
+        list-style: none;
+    }
 
+        .tabs-content li.is-active {
+            display: block;
+        }
+</style>
 
-<div class="d-flex align-items-start" style="flex-grow: 1">
-    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-        <a class="nav-link active" id="v-pills-equipamento-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Dados</a>
-        <a class="nav-link" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Folhas de Obra</a>
-    </div>
-
-    <div class="tab-content disabled col-lg-11" id="v-pills-tabContent" style="margin-left:auto">
-        <div class="tab-pane fade show active " id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-            <div class="row">
-                <div class="form-group col-lg-2">
-                    <div class="form-group">
-                        <label asp-for="IdMarcacao" class="control-label"></label>
-                        <input asp-for="IdMarcacao" class="form-control" readonly id="IdEquipamento" />
-                        <span asp-validation-for="IdMarcacao" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="Cliente.NomeCliente" class="control-label"></label>
-                        <input asp-for="Cliente.NomeCliente" readonly class="form-control" />
-                        <span asp-validation-for="Cliente.NomeCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-6">
-                    <div class="form-group">
-                        <label asp-for="Cliente.MoradaCliente" class="control-label"></label>
-                        <input asp-for="Cliente.MoradaCliente" readonly class="form-control" />
-                        <span asp-validation-for="Cliente.MoradaCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label class="control-label">Técnico</label>
-                        <input asp-for="Tecnico.NomeCompleto" readonly class="form-control" />
-                        <span asp-validation-for="Tecnico.NomeCompleto" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="DataCriacao" class="control-label"></label>
-                        <input asp-for="DataCriacao" readonly class="form-control col-lg-12" />
-                        <span asp-validation-for="DataCriacao" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="DataMarcacao" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="DataMarcacao" readonly class="form-control col-lg-8" type="date" />
-                            <input asp-for="Hora" readonly class="form-control col-lg-4" type="time" />
-                        </div>
-                        <span asp-validation-for="DataMarcacao" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-3">
-                    <div class="form-group">
-                        <label asp-for="Referencia" class="control-label"></label>
-                        <input asp-for="Referencia" readonly class="form-control" />
-                        <span asp-validation-for="Referencia" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-3">
-                    <div class="form-group">
-                        <label asp-for="Periodo" class="control-label"></label>
-                        <input asp-for="Periodo" readonly class="form-control" />
-                        <span asp-validation-for="Periodo" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-3">
-                    <div class="form-group">
-                        <label asp-for="PrioridadeMarcacao" class="control-label"></label>
-                        <input asp-for="PrioridadeMarcacao" readonly class="form-control" />
-                        <span asp-validation-for="PrioridadeMarcacao" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-3">
-                    <div class="form-group">
-                        <label asp-for="TipoEquipamento" class="control-label"></label>
-                        <input asp-for="TipoEquipamento" readonly class="form-control" />
-                        <span asp-validation-for="TipoEquipamento" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-12">
-                    <div class="form-group">
-                        <span style="white-space: pre-line">@Model.ResumoMarcacao</span>
-                        <span asp-validation-for="ResumoMarcacao" class="text-danger"></span>
-                    </div>
+<div class="container">
+    <div class="columns is-mobile is-centered">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title has-text-centered is-hoverable" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'">
+                            <span class="icon mr-3">
+                                <i class="fas fa-calendar-day"></i>
+                            </span>
+                            <span><b>@Model.IdMarcacao</b> - @Model.Cliente.NomeCliente</span>
+                        </p>
+                    </article>
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-            @if (Model.LstFolhasObra.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block form-group disabled" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
-                            </th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.LstFolhasObra)
-                        {
-                            <tr>
-                                <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                    <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
-                                </td>
-                                <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                    @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
-                                </td>
-                                <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                    @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
-                                </td>
-                                <td>
-                                    <div class="btn-group float-right">
-                                        <a class="btn btn-outline-dark btn-lg" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')"><i class="fas fa-sticky-note" style="font-size:20px"></i></a>
-                                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                                        <a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
-                                            <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
 
+    </div>
+</div>
+<hr />
+
+<div class="container">
+    <div class="tabs-wrapper">
+        <div class="tabs is-centered is-boxed">
+            <ul>
+                <li class="is-active">
+                    <a>
+                        <span>Dados</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span>Folhas de Obra</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span>Comentários</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tabs-content mx-2">
+            <ul>
+                <li class="is-active">
+                    <div class="columns is-multiline">
+                        <div class="column is-6">
+                            <div class="field">
+                                <label asp-for="Cliente.NomeCliente" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="Cliente.NomeCliente" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-user-check"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="Cliente.MoradaCliente" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="Cliente.MoradaCliente" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-location"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="Cliente.TelefoneCliente" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="Cliente.TelefoneCliente" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-phone"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="DataCriacao" class="label"></label>
+                                <div class="control">
+                                </div>
+                                <p class="control has-icons-left">
+                                    <input asp-for="DataCriacao" class="input" type="datetime-local" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="DataPedido" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="DataPedido" class="input" type="date" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="DataMarcacao" class="label"></label>
+                                <div class="control has-icons-left">
+                                    <p class="control " style="width:100%">
+                                        <input class="input" type="text" readonly value="@Model.DataMarcacao.ToShortDateString() @Model.Hora">
+                                    </p>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-calendar-day"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="Periodo" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="Periodo" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-cloud-sun"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="EstadoMarcacaoDesc" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="EstadoMarcacaoDesc" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="PrioridadeMarcacao" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="PrioridadeMarcacao" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-hourglass"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="TipoServico" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="TipoServico" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-wrench"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="TipoEquipamento" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="TipoEquipamento" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-cogs"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="TipoPedido" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="TipoPedido" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-phone-slash"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="Referencia" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="Referencia" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-asterisk"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-4 my-auto">
+                            <div class="field">
+                                <input id="Piquete" type="checkbox" name="Oficina" class="switch is-rounded is-info " disabled checked="@(Model.Piquete)">
+                                <label for="Piquete" asp-for="Piquete"></label>
+                            </div>
+                        </div>
+                        <div class="column is-4 my-auto">
+                            <div class="field">
+                                <input id="Oficina" type="checkbox" name="Oficina" class="switch is-rounded is-info" disabled checked="@(Model.Oficina)">
+                                <label for="Oficina" asp-for="Oficina"></label>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <label asp-for="ResumoMarcacao" class="label"></label>
+                                <div class="control">
+                                    <textarea class="textarea is-primary" rows="15" asp-for="ResumoMarcacao"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <p class="control is-right">
+                        <button class="button is-primary is-pulled-right is-fullwidth" disabled asp-action="Adicionar" asp-controller="FolhasObra">
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Nova Folha de Obra</span>
+                        </button>
+                    </p>
+                    &nbsp;
+                    @if (Model.LstFolhasObra.Count() == 0)
+                    {
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas folhas de obra!</button>
+                    }
+                    else
+                    {
+                        <table class="table is-narrow is-hoverable is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.LstFolhasObra)
+                                {
+                                    <tr>
+                                        <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                            <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
+                                        </td>
+                                        <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                            @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                                        </td>
+                                        <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                            @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                                        </td>
+                                        <td>
+                                            <div class="field has-addons">
+                                                <p class="control">
+                                                    <button class="button" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
+                                                        <span class="icon is-small">
+                                                            <i class="fas fa-sticky-note"></i>
+                                                        </span>
+                                                    </button>
+                                                </p>
+                                                <p class="control">
+                                                    <button class="button" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')">
+                                                        <span class="icon is-small">
+                                                            <i class="fas fa-print"></i>
+                                                        </span>
+                                                    </button>
+                                                </p>
+                                                <p class="control">
+                                                    <button class="button" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
+                                                        <span class="icon is-small">
+                                                            <i class="fas fa-paper-plane"></i>
+                                                        </span>
+                                                    </button>
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </li>
+                <li>
+                    <p class="control">
+                        <button class="button is-primary is-pulled-right is-fullwidth" disabled id="adicionarComentario">
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Novo Comentário</span>
+                        </button>
+                    </p>
+                    &nbsp;
+                    @if (Model.LstComentarios.Count() == 0)
+                    {
+
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados comentários!</button>
+                    }
+                    else
+                    {
+
+                        <table class="table is-narrow is-hoverable is-fullwidth">
+                            <thead><tr><th>Utilizador</th><th>Comentário</th><th>Data</th>
+                            <tbody>
+
+                                @foreach (var c in Model.LstComentarios)
+                                {
+                                    <tr>
+                                        <td><span>@c.NomeUtilizador</span></td>
+                                        <td><span>@c.Descricao</span></td>
+                                        <td><span>@c.DataComentario</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </li>
+            </ul>
         </div>
     </div>
 </div>
 
 
-<script>
-    
+<input type="hidden" id="hiddenFolhaObraId" />
+<input type="hidden" id="hiddenIdMarcacao" value="@Model.IdMarcacao" />
 
-    var ConfirmEnviarEmail = function (IdFolhaObra) {
+
+<div id="modalAdicionarComentario" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Adicionar Comentário</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <textarea id="txtComentario" class="textarea is-info" rows="5" placeholder="Comentário" required></textarea>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" onclick="AdicionarComentario()" id="btnConfirmAddComentario" href="javascript:;">Adicionar</button>
+        </footer>
+    </div>
+</div>
+
+<div id="modalEnviarFolhaObra" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Enviar Folha de Obra</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <input id="txtEmail" type="email" class="input" placeholder="Email" value="" required />
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" onclick="EnviarEmail()" href="javascript:;">Enviar</button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    document.querySelector('#adicionarComentario').addEventListener('click', function (e) {
+        var modal = Bulma('#modalAdicionarComentario').modal();
+        modal.open();
+    });
+
+    function AdicionarComentario() {
+
+        var idMarcacao = document.getElementById("hiddenIdMarcacao").value;
+        var txtcomentario = document.getElementById("txtComentario").value;
+
+        document.getElementById("btnConfirmAddComentario").classList.add("is-loading");
+
+        var json = {
+            id: idMarcacao,
+            comentario: txtcomentario
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/AdicionarComentario",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
+    }
+
+    function ConfirmEnviarEmail(IdFolhaObra) {
+
         $("#hiddenFolhaObraId").val(IdFolhaObra);
+        document.getElementById("btnEnviarMail_" + IdFolhaObra).classList.add("is-loading");
+
         var json = {
             id: IdFolhaObra
         };
@@ -180,32 +435,28 @@
                 $(function () {
                     // alert(JSON.stringify(result));
                     document.getElementById("txtEmail").value = result;
+                    var modal = Bulma('#modalEnviarFolhaObra').modal();
+                    modal.open();
+                    document.getElementById("btnEnviarMail_" + IdFolhaObra).classList.remove("is-loading");
                 });
             }
         });
-        $("#myModal2").modal('show');
-
     }
 
     function EnviarEmail() {
 
-        var idCartao = document.getElementById("hiddenFolhaObraId").value;
+        var idFolhaObra = document.getElementById("hiddenFolhaObraId").value;
         var emailDestino = document.getElementById("txtEmail").value;
 
-        document.getElementById("folha_" + idCartao).style.display = '';
-        document.getElementById("btnEnviarMail_" + idCartao).classList.add("disabled");
-
+        document.getElementById("btnEnviarMail_" + idFolhaObra).classList.add("is-loading");
 
         var json = {
-            id: idCartao,
+            id: idFolhaObra,
             emailDestino: emailDestino
         };
 
-        $('#myModal2').modal('toggle');
-        $('#myModal2')
-            .find("input,textarea,select")
-            .val('')
-            .end();
+        var modal = Bulma('#modalEnviarFolhaObra').modal();
+        modal.close();
 
         $.ajax({
             type: "POST",
@@ -214,8 +465,7 @@
             traditional: true,
             success: function (result) {
                 $(function () {
-                    document.getElementById("folha_" + idCartao).style.display = 'none';
-                    document.getElementById("btnEnviarMail_" + idCartao).classList.remove("disabled");
+                    document.getElementById("btnEnviarMail_" + idFolhaObra).classList.remove("is-loading");
 
                     if (result == "Sucesso") {
                         $.notify({
@@ -229,7 +479,7 @@
                         });
 
                         var json = {
-                            id: idCartao,
+                            id: idFolhaObra,
                             novoemail: emailDestino
                         };
                         $.ajax({
@@ -259,7 +509,6 @@
             }
         });
     }
-
 
 
 </script>

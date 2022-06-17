@@ -51,9 +51,21 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            m.Utilizador = User.ObterNomeCompleto();
-            m.Tecnico = context.ObterUtilizador(m.Tecnico.Id);
-            ModelState.Remove("Tecnico.Password");
+            if (m.LstTecnicosSelect.Count() == 0)
+            {
+                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
+            }
+            else
+            {
+                foreach (var item in m.LstTecnicosSelect)
+                {
+                    m.LstTecnicos.Add(context.ObterUtilizador(item));
+                }
+                m.Utilizador = User.ObterNomeCompleto();
+                m.Tecnico = m.LstTecnicos.First();
+                ModelState.Remove("Tecnico.Password");
+            }
+
 
             string mes = phccontext.ValidarMarcacao(m);
              if (mes.Count() > 0) ModelState.AddModelError("", mes);
@@ -88,6 +100,7 @@ namespace FT_Management.Controllers
         [HttpPost]
         public JsonResult ObterResponsavel(string IdCliente, string IdLoja, string TipoEquipamento)
         {
+            if (string.IsNullOrEmpty(IdCliente)) return Json("");
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return Json(phccontext.ObterResponsavelCliente(int.Parse(IdCliente), int.Parse(IdLoja), TipoEquipamento));
@@ -196,11 +209,6 @@ namespace FT_Management.Controllers
             return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end).OrderBy(m => m.Tecnico.Id).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
         }
 
-        public ActionResult CalendarioView()
-        {
-            return View();
-        }
-
         public ActionResult Print(string id)
         {
             if (id == null) return RedirectToAction("Index");
@@ -253,7 +261,7 @@ namespace FT_Management.Controllers
             return View("ListaPedidos", ListaMarcacoes);
         }
 
-        public ActionResult Pedido(string idMarcacao, string IdTecnico)
+        public ActionResult Pedido(string idMarcacao)
         {
             if (idMarcacao == null) return RedirectToAction("Index");
 

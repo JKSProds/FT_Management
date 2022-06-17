@@ -4,30 +4,42 @@
     ViewData["Title"] = "Iniciar Sessão";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-            <div class="card card-signin my-5" style=" border: 0; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);">
-                <div class="card-body">
-                    <img src="~/img/ft_logo.png" width="150" height="90" class="" style="display:block;margin:auto;">
-                    <br />
-                    <form class="form-signin" method="post">
-                        <div class="form-label-group">
-                            <input type="text" asp-for="NomeUtilizador" id="inputNome" class="form-control" placeholder="Nome de Utilizador" style=" height: auto; border-radius: 2rem;" required autofocus>
-                        </div>
+<div class="hero is-fullheight">
+    <div>
+        <div class="container has-text-centered">
+            <div class="column is-8 is-offset-2">
+                <div class="card card-signin my-5" style=" border: 0; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);">
+                    <div class="card-body">
+                        <img src="~/img/ft_logo.png" width="150" height="90" class="" style="display:block;margin:auto;">
                         <br />
-                        <div class="form-label-group" style=" position: relative; margin-bottom: 1rem; ">
-                            <input type="password" asp-for="Password" id="inputPassword" class="form-control" style=" height: auto; border-radius: 2rem;" placeholder="Password" required>
-                        </div>
+                        <form class="form-signin" method="post">
+                            <div class="field mx-2">
+                                <p class="control has-icons-left has-icons-right">
+                                    <input type="text" asp-for="NomeUtilizador" id="inputNome" class="input is-success" placeholder="Nome de Utilizador" required autofocus>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="field mx-2">
+                                <p class="control has-icons-left">
+                                    <input type="password" asp-for="Password" id="inputPassword" class="input is-success" placeholder="Password" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-key"></i>
+                                    </span>
+                                </p>
+                            </div>
 
-                        <div class="custom-control custom-checkbox mb-3">
-                            <input type="checkbox" class="custom-control-input" id="customCheck1">
-                            <label class="custom-control-label" for="customCheck1">Lembrar password</label>
-                        </div>
-                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Iniciar Sessão</button>
-                        <br />
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    </form>
+                            <button class="button is-info is-rounded mx-6 my-2" type="submit">
+                                <span class="icon">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </span>
+                                <span>Iniciar Sessão</span>
+                            </button>
+                            <br />
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

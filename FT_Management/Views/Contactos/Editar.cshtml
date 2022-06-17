@@ -3,20 +3,38 @@
 @{
     ViewData["Title"] = "Contacto - " + Model.NomeContacto;
 }
+<style>
+    .tabs-content li {
+        display: none;
+        list-style: none;
+    }
 
+        .tabs-content li.is-active {
+            display: block;
+        }
+</style>
 
-<h1>@Model.NomeContacto</h1>
+<div class="container">
+    <div class="columns is-mobile is-centered">
+        <div class="column is-12">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-user-tie"></i>
+                            </span>
+                            <span>@Model.NomeContacto</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <hr />
 <form asp-action="Editar" asp-route-returnurl="@ViewData["ReturnUrl"]">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="true">Contacto</a>
-        <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Dados Adicionais</a>
-        <a class="nav-item nav-link" id="v-pills-hist-tab" data-toggle="pill" href="#v-pills-hist" role="tab" aria-controls="v-pills-hist" aria-selected="false">Comentários</a>
-        <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
-    </div>
-
     <input type="hidden" asp-for="DataContacto" />
     <input type="hidden" asp-for="TipoContacto" id="txtTipoContacto" />
     <input type="hidden" asp-for="IdLoja" />
@@ -26,186 +44,262 @@
     <input type="hidden" asp-for="URL" />
     <input type="hidden" asp-for="ValidadoPorAdmin" />
 
-    <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="v-pills-cliente" role="tabpanel" aria-labelledby="v-pills-cliente-tab">
-            <br />
-            <div class="row">
-                <div class="form-group col-lg-1">
-                    <label asp-for="IdContacto" class="control-label"></label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" asp-for="IdContacto" id="IdContacto" readonly>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group" style="position: relative;">
-                        <label asp-for="NomeContacto" class="control-label" style="font-weight:bold"></label>
-                        <input type="text" class="form-control" id="txtNomeEmpresa" placeholder="Nome Empresa" asp-for="NomeContacto">
-                        <span asp-validation-for="NomeContacto" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <label asp-for="PessoaContacto" class="control-label" style="font-weight:bold"></label>
-                    <input asp-for="PessoaContacto" class="form-control" id="txtNomeCliente" />
-                    <span asp-validation-for="PessoaContacto" class="text-danger"></span>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label asp-for="CargoPessoaContacto" class="control-label"></label>
-                    <input asp-for="CargoPessoaContacto" class="form-control" id="" />
-                </div>
-                <div class="form-group col-lg-5">
-                    <label asp-for="EmailContacto" class="control-label" style="font-weight:bold"></label>
-                    <input asp-for="EmailContacto" class="form-control" id="EmailContacto" />
-                    <span asp-validation-for="EmailContacto" class="text-danger"></span>
-                </div>
-                <div class="form-group col-lg-3">
-                    <label asp-for="TelefoneContacto" class="control-label" style="font-weight:bold"></label>
-                    <input asp-for="TelefoneContacto" class="form-control" id="TelefoneContacto" />
-                    <span asp-validation-for="TelefoneContacto" class="text-danger"></span>
-                </div>
-                <div class="form-group col-lg-2">
-                    <label>Tipo de Contacto</label>
-                    <select class="form-control" onchange="tipoContactoAlterado()" asp-for="TipoContacto" name="ddlTipoContacto" id="ddlTipoContacto">
-                        <option>Email</option>
-                        <option>Mensagem</option>
-                        <option>Feira</option>
-                        <option>Outro</option>
-                    </select>
-                </div>
-                <div class="form-group col-lg-2">
-                    <label>Área de Negócio</label>
-                    <select class="form-control" asp-for="AreaNegocio"
-                            asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text"))">
-                    </select>
-                </div>
+    <div class="container">
+        <div class="tabs-wrapper">
+            <div class="tabs is-centered is-boxed">
+                <ul>
+                    <li class="is-active">
+                        <a>
+                            <span>Contacto</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Dados</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Comentários</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Anexos</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="tab-pane fade show" id="v-pills-obs" role="tabpanel" aria-labelledby="v-pills-obs-tab">
-            <br />
-            <div class="row">
-                <div class="form-group col-lg-3">
-                    <label asp-for="NIFContacto" class="control-label"></label>
-                    <input asp-for="NIFContacto" class="form-control" id="NIFContacto" />
-                </div>
-                <div class="form-group col-lg-9">
-                    <label asp-for="MoradaContacto" class="control-label"></label>
-                    <input asp-for="MoradaContacto" class="form-control" id="MoradaContacto" />
-                </div>
-                <div class="form-group col-lg-12">
-                    <label for="">Observações</label>
-                    <textarea class="form-control" rows="8" placeholder="" id="txtObs" asp-for="Obs"></textarea>
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane fade show" id="v-pills-hist" role="tabpanel" aria-labelledby="v-pills-hist-tab">
-            <br />
-            <a class="btn btn-primary btn-block btn-lg form-group" style="color:white; margin-bottom:5px;border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ConfirmAddHistorico()"><i class="fas fa-plus"></i> Adicionar Comentário</a>
 
-            @if (Model.Historico.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foi encontrado nenhum comentário para este contacto!</button>
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                Data
-                            </th>
-                            <th>
-                                Comercial
-                            </th>
-                            <th>
-                                Comentário
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Historico)
-                        {
-                            <tr>
-                                <td>
-                                    <span>@item.Data.ToShortDateString()</span>
-                                </td>
-                                                                <td>
-                                    <span>@item.IdComercial.NomeCompleto</span>
-                                </td>
-                                <td>
-                                    <span>@item.Obs</span>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-
-            <div class="modal fade" id="modalAddHist" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Adicionar Comentário</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <textarea class="form-control" id="txtHist" rows="8"></textarea>
-                                <br />
-                                <div class="form-check form-group col">
-                                    <input class="form-check-input" type="checkbox" value="" id="chkLembrete">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                        Definir Lembrete
-                                    </label>
-                                    @*DateTimePicker*@
-                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                    <input type="text" class="form-control" id="txtDataLembrete" name="txtDataLembrete">
-                                    <script>
-                                        var today = new Date();
-                                        today.setDate(today.getDate() + 31);
-                                        var dd = String(today.getDate()).padStart(2, '0');
-                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                        var yyyy = today.getFullYear();
-
-                                        $('#txtDataLembrete').datepicker({
-                                            format: 'dd-mm-yyyy',
-                                            value: dd + '-' + mm + '-' + yyyy
-                                        });
-                                    </script>
-
+            <div class="tabs-content mx-2">
+                <ul>
+                    <li class="is-active">
+                        <div class="columns is-multiline">
+                            <div class="column is-1">
+                                <div class="field">
+                                    <label asp-for="IdContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" id="IdContacto" readonly asp-for="IdContacto">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-7">
+                                <div class="field">
+                                    <label asp-for="NomeContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="NomeContacto" id="txtNomeEmpresa">
+                                    </div>
+                                    <span asp-validation-for="NomeContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-4">
+                                <div class="field">
+                                    <label asp-for="PessoaContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="PessoaContacto" id="txtNomeContacto">
+                                    </div>
+                                    <span asp-validation-for="PessoaContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-4">
+                                <div class="field">
+                                    <label asp-for="CargoPessoaContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="CargoPessoaContacto">
+                                    </div>
+                                    <span asp-validation-for="CargoPessoaContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-4">
+                                <div class="field">
+                                    <label asp-for="EmailContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="EmailContacto">
+                                    </div>
+                                    <span asp-validation-for="EmailContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-4">
+                                <div class="field">
+                                    <label asp-for="TelefoneContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="TelefoneContacto">
+                                    </div>
+                                    <span asp-validation-for="TelefoneContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label asp-for="TipoContacto" class="label"></label>
+                                    <div class="select" style="width:100%">
+                                        <select class="select" style="width:100%" onchange="tipoContactoAlterado()" asp-for="TipoContacto" name="ddlTipoContacto" id="ddlTipoContacto">
+                                            <option>Email</option>
+                                            <option>Mensagem</option>
+                                            <option>Feira</option>
+                                            <option>Outro</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="TipoContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label asp-for="AreaNegocio" class="label"></label>
+                                    <div class="select" style="width:100%">
+                                        <select class="select" style="width:100%" asp-for="AreaNegocio"
+                                                asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text"))">
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="AreaNegocio" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" onclick="AddHistorico()" href="javascript:;">Adicionar</button>
+                    </li>
+                    <li>
+                        <div class="columns is-multiline">
+                            <div class="column is-3">
+                                <div class="field">
+                                    <label asp-for="NIFContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="NIFContacto">
+                                    </div>
+                                    <span asp-validation-for="NIFContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-9">
+                                <div class="field">
+                                    <label asp-for="MoradaContacto" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="MoradaContacto">
+                                    </div>
+                                    <span asp-validation-for="MoradaContacto" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-12">
+                                <div class="field">
+                                    <label asp-for="Obs" class="label"></label>
+                                    <div class="control">
+                                        <textarea class="textarea" rows="8" placeholder="Observações" id="txtObs" asp-for="Obs"></textarea>
+                                    </div>
+                                    <span asp-validation-for="Obs" class="text-danger"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    </li>
+                    <li>
+                        <p class="control is-right">
+                            <button class="button is-primary is-pulled-right is-fullwidth" onclick="ConfirmAddHistorico()">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Novo Comentário</span>
+                            </button>
+                        </p>
+                        &nbsp;
 
-        <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
-            <br />
-            <div class="form-group">
-                <label class="control-label">Anexo</label>
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
-                        <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
-                    </div>
-                </div>
+                        @if (Model.Historico.Count() == 0)
+                        {
+                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados comentários!</button>
+                        }
+                        else
+                        {
+                            <table class="table is-hoverable is-narrow is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Data
+                                        </th>
+                                        <th>
+                                            Comercial
+                                        </th>
+                                        <th>
+                                            Comentário
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Historico)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span>@item.Data.ToShortDateString()</span>
+                                            </td>
+                                            <td>
+                                                <span>@item.IdComercial.NomeCompleto</span>
+                                            </td>
+                                            <td>
+                                                <span>@item.Obs</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+
+                        <div id="modalAdicionarComentario" class="modal">
+                            <div class="modal-background"></div>
+                            <div class="modal-card">
+                                <header class="modal-card-head">
+                                    <p class="modal-card-title">Adicionar Comentário</p>
+                                    <button class="delete" aria-label="close"></button>
+                                </header>
+                                <section class="modal-card-body">
+                                    <div class="form-group">
+                                        <textarea id="txtHist" class="textarea is-info" rows="5" placeholder="Comentário" required></textarea>
+                                        <div class="form-check form-group col">
+                                            <input class="switch is-rounded is-info" type="checkbox" value="" id="chkLembrete">
+                                            <label for="chkLembrete">
+                                                Definir Lembrete
+                                            </label>
+                                            @*DateTimePicker*@
+                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
+                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+                                            <input type="text" class="input" id="txtDataLembrete" name="txtDataLembrete">
+                                            <script>
+                                                var today = new Date();
+                                                today.setDate(today.getDate() + 31);
+                                                var dd = String(today.getDate()).padStart(2, '0');
+                                                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                                var yyyy = today.getFullYear();
+
+                                                $('#txtDataLembrete').datepicker({
+                                                    format: 'dd-mm-yyyy',
+                                                    value: dd + '-' + mm + '-' + yyyy
+                                                });
+                                            </script>
+                                        </div>
+                                    </div>
+                                </section>
+                                <footer class="modal-card-foot">
+                                    <button type="button" class="button is-info" onclick="AddHistorico();" id="btnConfirmAddComentario" href="javascript:;">Adicionar</button>
+                                </footer>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="file has-name is-fullwidth" id="file-with-js">
+                            <label class="file-label">
+                                <input class="file-input" id="fileinput" type="file" name="resume">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fa fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Escolha um ficheiro...
+                                    </span>
+                                </span>
+                                <span class="file-name">Por favor escolha um ficheiro</span>
+                            </label>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
-        <br />
-        <div class="form-group">
-            <input type="submit" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
-        </div>
+    </div>
+    <br />
+    <div class="container">
+        <input type="submit" value="Guardar Alterações" class="button is-info is-outlined is-fullwidth"/>
     </div>
 </form>
 
@@ -215,68 +309,67 @@
 }
 
 
-    <script>
-
-
-        function tipoContactoAlterado() {
-            document.getElementById("txtTipoContacto").value = document.getElementById("ddlTipoContacto").value;
+<script>
+        var input = document.querySelector(
+            "#file-with-js>.file-label>.file-input"
+        );
+        input.onchange = function () {
+            if (input.files.length > 0) {
+                AdicionarAnexo();
+            }
         }
+    function tipoContactoAlterado() {
+        document.getElementById("txtTipoContacto").value = document.getElementById("ddlTipoContacto").value;
+    }
 
-        function AdicionarAnexo(inputTxt) {
-        var input = document.getElementById(inputTxt);
-        var name = document.getElementById('txtNomeEmpresa') + '_' + document.getElementById('txtNomeCliente');;
-        var files = input.files;
+        function AdicionarAnexo(input) {
         var formData = new FormData();
-
-        for (var i = 0; i != files.length; i++) {
-            formData.append("files", files[i]);
-        }
-
+            formData.append("files", document.getElementById('fileinput').files[0]);
         $.ajax(
             {
-            url: "/Contactos/AdicionarAnexo?NomeEmpresa=" + document.getElementById('txtNomeEmpresa').value + "&NomeCliente=" + document.getElementById('txtNomeCliente').value,
+                url: "/Contactos/AdicionarAnexo?NomeEmpresa=" + document.getElementById('txtNomeEmpresa').value + "&NomeCliente=" + document.getElementById('txtNomeContacto').value,
                 data: formData,
                 processData: false,
                 contentType: false,
                 type: "POST",
                 success: function (data) {
-            $.notify({
-                message: "Anexo carregado com sucesso!"
-            }, {
-                // settings
-                type: 'success',
-                onShow: function () {
-                    this.css({ 'width': 'auto', 'height': 'auto' });
-                }
-            });
+                    $.notify({
+                        message: "Anexo carregado com sucesso!"
+                    }, {
+                        // settings
+                        type: 'success',
+                        onShow: function () {
+                            this.css({ 'width': 'auto', 'height': 'auto' });
+                        }
+                    });
                 }
             }
         );
-        }
+    }
 
-        function AddHistorico() {
-            var json = {
-                idcontacto: document.getElementById('IdContacto').value,
-                obs: document.getElementById('txtHist').value,
-                lembrete: document.getElementById('chkLembrete').checked ? 1 : 0,
-                datalembrete: document.getElementById('txtDataLembrete').value
-            };
+    function AddHistorico() {
+        var json = {
+            idcontacto: document.getElementById('IdContacto').value,
+            obs: document.getElementById('txtHist').value,
+            lembrete: document.getElementById('chkLembrete').checked ? 1 : 0,
+            datalembrete: document.getElementById('txtDataLembrete').value
+        };
 
-            $.ajax({
-                type: "POST",
-                url: "/Contactos/AdicionarObservacao",
-                data: json,
-                traditional: true,
-                success: function (result) {
-                    window.location.reload();
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/AdicionarObservacao",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                window.location.reload();
+            }
+        });
 
-        }
+    }
 
-        function ConfirmAddHistorico() {
-            
-            $("#modalAddHist").modal('show');
-        }
+    function ConfirmAddHistorico() {
+        var modal = Bulma('#modalAdicionarComentario').modal();
+        modal.open();
+    }
 
-        </script>
+</script>

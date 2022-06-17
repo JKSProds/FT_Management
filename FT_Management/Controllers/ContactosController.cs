@@ -53,24 +53,24 @@ namespace FT_Management.Controllers
 
             Contacto contacto = context.ObterContacto(id);
             string res= "";
-            res += "<div class=\"mb-3\"><label>Nome da Empresa</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.NomeContacto + "' readonly><a class=\"btn btn-outline-warning\" onclick=MostrarCliente() type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.PessoaContacto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Email</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.EmailContacto + "' readonly><a class=\"btn btn-outline-secondary "+(contacto.EmailContacto.Length == 0 ? "disabled" : "")+" \" href=\"mailto:" +contacto.EmailContacto+ "\" type=\"button\"><i class=\"fas fa-envelope float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone-alt float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Morada</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.MoradaContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"https://maps.google.com/?daddr=" + contacto.MoradaContacto + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"form-control\" value='" + contacto.NIFContacto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Área de Negócio</label><input type=\"text\" class=\"form-control\" value='" + contacto.AreaNegocio + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
-            if (this.User.IsInRole("Admin")) res += "<div class=\"mb-3\"><label>Comercial Associado</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly><a class=\"btn btn-outline-primary\" onclick=AssociarComercial() type=\"button\"><i class=\"fas fa-list float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Observações</label><textarea type=\"text\" class=\"form-control\" rows=\"6\" readonly>" + contacto.Obs + "</textarea></div>";
+            res += "<div class=\"mb-3\"><label>Nome da Empresa</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.NomeContacto + "' readonly><a class=\"button is-outline is-warning\" onclick=MostrarCliente() type=\"button\"><i class=\"fas fa-eye float-left\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Contacto</label><input type=\"text\" class=\"input\" value='" + contacto.PessoaContacto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"input\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Email</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.EmailContacto + "' readonly><a class=\"button is-primary "+(contacto.EmailContacto.Length == 0 ? "disabled" : "")+" \" href=\"mailto:" +contacto.EmailContacto+ "\" type=\"button\"><i class=\"fas fa-envelope float-left\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"button is-info " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone float-left\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Morada</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.MoradaContacto + "' readonly><a class=\"button is-primary is-outlined " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"https://maps.google.com/?daddr=" + contacto.MoradaContacto + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"input\" value='" + contacto.NIFContacto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"input\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"input\" value='" + contacto.TipoContacto + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Área de Negócio</label><input type=\"text\" class=\"input\" value='" + contacto.AreaNegocio + "' readonly></div>";
+            res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"input\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
+            if (this.User.IsInRole("Admin")) res += "<div class=\"mb-3\"><label>Comercial Associado</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.Comercial.NomeCompleto + "' readonly><a class=\"button is-primary is-outline\" onclick=AssociarComercial() type=\"button\"><i class=\"fas fa-list float-left\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Observações</label><textarea type=\"text\" class=\"textarea\" rows=\"6\" readonly>" + contacto.Obs + "</textarea></div>";
 
             return res;
         }
 
-        public IActionResult Novo()
+        public IActionResult Adicionar()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             ViewBag.AreasNegocio = context.ObterListaAreasNegocio().ToList().Select(l => new SelectListItem() { Value = l, Text = l });
@@ -139,7 +139,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public ActionResult Novo(Contacto c)
+        public ActionResult Adicionar(Contacto c)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (context.ExisteNIFDuplicadoContacto(c.NIFContacto)) ModelState.AddModelError("NIFContacto", "NIF Duplicado");

@@ -93,6 +93,7 @@ namespace FT_Management.Models
             }
             return LstUtilizadores;
         }
+
         public List<Utilizador> ObterListaTecnicos(bool Enable)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();

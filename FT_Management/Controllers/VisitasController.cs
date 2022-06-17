@@ -1,16 +1,16 @@
-﻿using FT_Management.Models;
+﻿using Custom;
+using FT_Management.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Custom;
 using WebDav;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace FT_Management.Controllers
 {
@@ -63,7 +63,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-          return View(context.ObterListaComerciais());
+            return View(context.ObterListaComerciais());
         }
 
         [HttpPost]
@@ -94,41 +94,30 @@ namespace FT_Management.Controllers
         public ActionResult Adicionar()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
 
             return View();
         }
 
         [HttpPost]
-        public ActionResult Adicionar(int IdCliente, int IdLoja, DateTime txtData, int txtComercial, string Obs)
+        public ActionResult Adicionar(Visita v)
         {
-            if (IdCliente == 0 && IdLoja == 0 && txtComercial == 0) return View();
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Visita visita = new Visita()
-            {
-                IdVisita = 0,
-                DataVisita = txtData,
-                Cliente = new Cliente()
-                {
-                    IdCliente = IdCliente,
-                    IdLoja = IdLoja
-                },
-                IdComercial = txtComercial,
-                ResumoVisita = Obs,
-                ObsVisita = "",
-                EstadoVisita = "Agendado",
-                Contacto = new Contacto() { IdContacto = 0}
-            };
+            List<Visita> lstVisitas = new List<Visita>() { v };
+            if (ModelState.IsValid) { context.CriarVisitas(lstVisitas); return RedirectToAction("Index", "Visitas"); }
 
-            List<Visita> lstVisitas = new List<Visita>();
-            lstVisitas.Add(visita);
+            ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
 
-            context.CriarVisitas(lstVisitas);
-
-            return RedirectToAction("Index", "Visitas");
+            return View(v);
 
         }
 
@@ -136,7 +125,7 @@ namespace FT_Management.Controllers
         public ActionResult Editar(int idVisita)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-           
+
             ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
             ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
 

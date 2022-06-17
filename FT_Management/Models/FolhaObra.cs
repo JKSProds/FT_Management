@@ -38,5 +38,16 @@ namespace FT_Management.Models
         [Display(Name = "Assistência Remota?")]
         public bool AssistenciaRemota { get; set; }
         public string RubricaCliente { get; set; }
+
+        public FolhaObra()
+        {
+            this.IntervencaosServico = new List<Intervencao>()
+            {
+                new Intervencao()
+                {
+                    NomeTecnico = "N/D"
+                }
+            };
+        }
     }
 }

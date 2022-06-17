@@ -4,14 +4,25 @@
     ViewData["Title"] = "Calendário";
 }
 
-
-<h1>Agendamento</h1>
-
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">Agendamento de Visitas Comerciais</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <hr />
+
 <link href='~/js/fullcalendar/main.css' rel='stylesheet' />
 <script src='~/js/fullcalendar/main.js'></script>
 
-<div id='calendar-container'>
+<div id='calendar-container' class="mx-2">
     <div id='calendar'></div>
 </div>
 
