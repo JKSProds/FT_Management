@@ -12,7 +12,7 @@ namespace FT_Management.Models
     public class PHCContext
     {
         private string ConnectionString { get; set; }
-        private int TIMEOUT = 2;
+        private readonly int TIMEOUT = 2;
         private FT_ManagementContext FT_ManagementContext { get; set; }
 
         public PHCContext(string connectionString, string mySqlConnectionString)
@@ -45,8 +45,10 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand(SQL_Query, conn);
-                command.CommandTimeout = TIMEOUT;
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
@@ -102,9 +104,11 @@ namespace FT_Management.Models
                     Tecnicos += item.IdPHC + ";";
                 }
 
-                SqlCommand command = new SqlCommand("Gera_Marcacao", conn);
-                command.CommandTimeout = TIMEOUT;
-                command.CommandType = CommandType.StoredProcedure;
+                SqlCommand command = new SqlCommand("Gera_Marcacao", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
 
                 command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
                 command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
@@ -128,16 +132,14 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador));
 
-                using (SqlDataReader result = command.ExecuteReader())
-                {
-                    result.Read();
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
 
-                    if (result[0].ToString() != "-1") res = int.Parse(result[3].ToString());
+                if (result[0].ToString() != "-1") res = int.Parse(result[3].ToString());
 
-                    conn.Close();
+                conn.Close();
 
-                    Console.WriteLine("Enviada marcacao para o PHC");
-                }
+                Console.WriteLine("Enviada marcacao para o PHC");
 
             }
 
@@ -158,22 +160,22 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select u_clresp.nome, u_clresp.email, u_clresp.tlmvl from u_clresp inner join cl on cl.clstamp=u_clresp.clstamp where cl.no="+IdCliente+" and cl.estab="+IdLoja+" and u_clresp.tipoe='"+TipoEquipamento+"'", conn);
-                command.CommandTimeout = TIMEOUT;
-                using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand("select u_clresp.nome, u_clresp.email, u_clresp.tlmvl from u_clresp inner join cl on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and cl.estab=" + IdLoja + " and u_clresp.tipoe='" + TipoEquipamento + "'", conn)
                 {
-                    while (result.Read())
+                    CommandTimeout = TIMEOUT
+                };
+                using SqlDataReader result = command.ExecuteReader();
+                while (result.Read())
+                {
+                    m = new Marcacao()
                     {
-                         m = new Marcacao()
-                        {
-                            QuemPediuNome = result["nome"].ToString(),
-                            QuemPediuEmail = result["email"].ToString(),
-                            QuemPediuTelefone = result["tlmvl"].ToString(),
+                        QuemPediuNome = result["nome"].ToString(),
+                        QuemPediuEmail = result["email"].ToString(),
+                        QuemPediuTelefone = result["tlmvl"].ToString(),
 
-                        };
-                    }
-                    conn.Close();
+                    };
                 }
+                conn.Close();
             }
             catch
             {
@@ -197,8 +199,10 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand(SQL_Query, conn);
-                command.CommandTimeout = TIMEOUT;
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
@@ -253,15 +257,13 @@ namespace FT_Management.Models
             if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
             using (Image image = Image.FromFile(img))
             {
-                using (MemoryStream m = new MemoryStream())
-                {
-                    image.Save(m, image.RawFormat);
-                    byte[] imageBytes = m.ToArray();
+                using MemoryStream m = new MemoryStream();
+                image.Save(m, image.RawFormat);
+                byte[] imageBytes = m.ToArray();
 
-                    // Convert byte[] to Base64 String
-                    string base64String = Convert.ToBase64String(imageBytes);
-                    res = base64String;
-                }
+                // Convert byte[] to Base64 String
+                string base64String = Convert.ToBase64String(imageBytes);
+                res = base64String;
             }
             return res;
         }
@@ -280,8 +282,10 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand(SQL_Query, conn);
-                command.CommandTimeout = TIMEOUT;
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
@@ -360,9 +364,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("SELECT vendedor, vendnm FROM cl where cl.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' GROUP BY vendedor, vendnm order by vendedor;", conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand("SELECT vendedor, vendnm FROM cl where cl.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' GROUP BY vendedor, vendnm order by vendedor;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -403,9 +409,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("SELECT no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs FROM fl where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand("SELECT no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs FROM fl where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -451,9 +459,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SQL_Query, conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -517,9 +527,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SQL_Query, conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -554,18 +566,14 @@ namespace FT_Management.Models
 
                         //Obter rubrica
                         string img = "wwwroot/img/no_photo.png";
-                        using (Image image = Image.FromFile(img))
-                        {
-                            using (MemoryStream m = new MemoryStream())
-                            {
-                                image.Save(m, image.RawFormat);
-                                byte[] imageBytes = m.ToArray();
+                        using Image image = Image.FromFile(img);
+                        using MemoryStream m = new MemoryStream();
+                        image.Save(m, image.RawFormat);
+                        byte[] imageBytes = m.ToArray();
 
-                                // Convert byte[] to Base64 String
-                                string base64String = Convert.ToBase64String(imageBytes);
-                                LstFolhaObra.Last().RubricaCliente = base64String;
-                            }
-                        }
+                        // Convert byte[] to Base64 String
+                        string base64String = Convert.ToBase64String(imageBytes);
+                        LstFolhaObra.Last().RubricaCliente = base64String;
 
                     }
                 }
@@ -622,9 +630,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SQL_Query, conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -682,9 +692,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SQL_Query, conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -742,47 +754,47 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SQL_Query, conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using SqlDataReader result = command.ExecuteReader();
+                while (result.Read())
+                {
+                    LstMarcacao.Add(new Marcacao()
                     {
-                        while (result.Read())
-                        {
-                            LstMarcacao.Add(new Marcacao()
-                            {
-                                IdMarcacao = int.Parse(result["num"].ToString().Trim()),
-                                DataMarcacao = DateTime.Parse(result["data"].ToString()),
-                                ResumoMarcacao = result["resumo"].ToString().Trim(),
-                                EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
-                                EstadoMarcacao = LstEstadoMarcacao.Where(e => e.EstadoMarcacaoDesc == result["estado"].ToString().Trim()).DefaultIfEmpty(new EstadoMarcacao()).First().IdEstado,
-                                PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
-                                MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
-                                TipoEquipamento = result["tipoe"].ToString().Trim(),
-                                Oficina = result["oficina"].ToString().Trim() == "True",
-                                Piquete = result["piquete"].ToString().Trim() == "True",
-                                TipoServico = result["tipos"].ToString().Trim(),
-                                DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString()),
-                                Periodo = result["Periodo"].ToString(),
-                                Referencia = result["nincidente"].ToString(),
-                                DataPedido = DateTime.Parse(result["datapedido"].ToString()),
-                                TipoPedido = result["tipopedido"].ToString(),
-                                QuemPediuNome = result["qpediu"].ToString(),
-                                QuemPediuEmail = result["respemail"].ToString(),
-                                QuemPediuTelefone = result["resptlm"].ToString(),
-                                Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString().Substring(0,2) + ":" + result["hora"].ToString().Substring(2, 2) : ""
-                            }) ;
+                        IdMarcacao = int.Parse(result["num"].ToString().Trim()),
+                        DataMarcacao = DateTime.Parse(result["data"].ToString()),
+                        ResumoMarcacao = result["resumo"].ToString().Trim(),
+                        EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
+                        EstadoMarcacao = LstEstadoMarcacao.Where(e => e.EstadoMarcacaoDesc == result["estado"].ToString().Trim()).DefaultIfEmpty(new EstadoMarcacao()).First().IdEstado,
+                        PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
+                        MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
+                        TipoEquipamento = result["tipoe"].ToString().Trim(),
+                        Oficina = result["oficina"].ToString().Trim() == "True",
+                        Piquete = result["piquete"].ToString().Trim() == "True",
+                        TipoServico = result["tipos"].ToString().Trim(),
+                        DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString().Trim()).ToShortDateString() + " " + result["ousrhora"].ToString()),
+                        Periodo = result["Periodo"].ToString(),
+                        Referencia = result["nincidente"].ToString(),
+                        DataPedido = DateTime.Parse(result["datapedido"].ToString()),
+                        TipoPedido = result["tipopedido"].ToString(),
+                        QuemPediuNome = result["qpediu"].ToString(),
+                        QuemPediuEmail = result["respemail"].ToString(),
+                        QuemPediuTelefone = result["resptlm"].ToString(),
+                        Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : ""
+                    });
 
-                            if(LoadCliente) LstMarcacao.Last().Cliente = LstClientes.Where(c => c.IdCliente == int.Parse(result["no"].ToString().Trim())).Where(c => c.IdLoja == int.Parse(result["estab"].ToString().Trim())).DefaultIfEmpty(new Cliente()).First();
-                            if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
-                            if (LoadTecnico) LstMarcacao.Last().Tecnico = LstUtilizadores.Where(u => u.Id == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador();
-                            if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
-                        }
-                    conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
+                    if (LoadCliente) LstMarcacao.Last().Cliente = LstClientes.Where(c => c.IdCliente == int.Parse(result["no"].ToString().Trim())).Where(c => c.IdLoja == int.Parse(result["estab"].ToString().Trim())).DefaultIfEmpty(new Cliente()).First();
+                    if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
+                    if (LoadTecnico) LstMarcacao.Last().Tecnico = LstUtilizadores.Where(u => u.Id == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador();
+                    if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
                 }
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
+
+                Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
             }
             catch
             {
@@ -830,7 +842,6 @@ namespace FT_Management.Models
         }
         public List<Marcacao> ObterMarcacoes()
         {
-            List<EstadoMarcacao> LstEstados = ObterMarcacaoEstados();
             List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp order by u_mdatas.data;", false, true, true, false);
             LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 order by data;", false, true, true, false).AsEnumerable());
             return LstMarcacoes;
@@ -899,8 +910,10 @@ namespace FT_Management.Models
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
                 conn.Open();
-                SqlCommand command = new SqlCommand("select tequip from u_tequip", conn);
-                command.CommandTimeout = TIMEOUT;
+                SqlCommand command = new SqlCommand("select tequip from u_tequip", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -921,15 +934,19 @@ namespace FT_Management.Models
         public List<String> ObterTipoServico()
         {
 
-            List<String> res = new List<String>();
-            res.Add("");
+            List<String> res = new List<String>
+            {
+                ""
+            };
 
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
                 conn.Open();
-                SqlCommand command = new SqlCommand("select tipo from u_tservico order by lordem", conn);
-                command.CommandTimeout = TIMEOUT;
+                SqlCommand command = new SqlCommand("select tipo from u_tservico order by lordem", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -950,8 +967,10 @@ namespace FT_Management.Models
         public List<String> ObterPeriodo()
         {
 
-            List<String> res = new List<String>();
-            res.Add("");
+            List<String> res = new List<String>
+            {
+                ""
+            };
 
             try
             {
@@ -974,8 +993,10 @@ namespace FT_Management.Models
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
                 conn.Open();
-                SqlCommand command = new SqlCommand("select prioridade from u_prioridade order by lordem", conn);
-                command.CommandTimeout = TIMEOUT;
+                SqlCommand command = new SqlCommand("select prioridade from u_prioridade order by lordem", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -996,15 +1017,19 @@ namespace FT_Management.Models
         public List<String> ObterTipoPedido()
         {
 
-            List<String> res = new List<String>();
-            res.Add("");
+            List<String> res = new List<String>
+            {
+                ""
+            };
 
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
                 conn.Open();
-                SqlCommand command = new SqlCommand("select tpedido from u_tpedido", conn);
-                command.CommandTimeout = TIMEOUT;
+                SqlCommand command = new SqlCommand("select tpedido from u_tpedido", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
 
                 using (SqlDataReader result = command.ExecuteReader())
                 {
@@ -1034,9 +1059,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand(SQL_Query, conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -1046,7 +1073,7 @@ namespace FT_Management.Models
                                 Descricao = result["comentario"].ToString().Trim(),
                                 IdMarcacao = result["marcacaostamp"].ToString().Trim(),
                                 NomeUtilizador = result["ousrinis"].ToString().Trim(),
-                                DataComentario = DateTime.Parse(result["ousrdata"].ToString().Substring(0, 10) + " " + result["ousrhora"].ToString())
+                                DataComentario = DateTime.Parse(result["ousrdata"].ToString()[..10] + " " + result["ousrhora"].ToString())
                             });
                         }
                     }
@@ -1084,9 +1111,11 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                    SqlCommand command = new SqlCommand("select cm, acao, data, hora, CONCAT('KM: ', km, ' | Obs:', obs) as obs from u_dias join cm4 on u_dias.tecnico = cm4.nome where u_dias.usrdata >= '" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' ; ", conn);
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand("select cm, acao, data, hora, CONCAT('KM: ', km, ' | Obs:', obs) as obs from u_dias join cm4 on u_dias.tecnico = cm4.nome where u_dias.usrdata >= '" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' ; ", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
                     {
                         while (result.Read())
                         {
@@ -1094,7 +1123,7 @@ namespace FT_Management.Models
                             {
                                 IdUtilizador = int.Parse(result["cm"].ToString()),
                                 Tipo = result["acao"].ToString().Contains("Inicio") ? 1 : 2,
-                                Data = DateTime.Parse(DateTime.Parse(result["data"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["hora"].ToString().Substring(0,2) + ":" + result["hora"].ToString().Substring(2, 2) + ":" + result["hora"].ToString().Substring(4, 2)).ToLongTimeString()),
+                                Data = DateTime.Parse(DateTime.Parse(result["data"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) + ":" + result["hora"].ToString().Substring(4, 2)).ToLongTimeString()),
                                 Temperatura = result["obs"].ToString()
                             });
                         }

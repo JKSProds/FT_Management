@@ -222,14 +222,14 @@ namespace FT_Management.Controllers
             return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
 
-        public ActionResult Index(int IdTecnico)
+        public ActionResult Index()
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-                IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
-                return RedirectToAction("ListaPedidos", new { IdTecnico = IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
+                int IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
+                return RedirectToAction("ListaPedidos", new { IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
             }
 
             return View(context.ObterListaTecnicos(true));
