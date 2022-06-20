@@ -81,7 +81,10 @@ namespace FT_Management.Models
                 //Verificar documentos vencidos
                 if (ExecutarQuery("select 'valor' = COUNT(*) from cc (nolock) left join re (nolock) on cc.restamp = re.restamp where cc.no = "+m.Cliente.IdCliente+" and (case when cc.moeda ='EURO' or cc.moeda=space(11) then abs((cc.edeb-cc.edebf)-(cc.ecred-cc.ecredf)) else abs((cc.debm-cc.debfm)-(cc.credm-cc.credfm)) end) > (case when cc.moeda='EURO' or cc.moeda=space(11) then 0.010000 else 0 end) AND cc.dataven < GETDATE();") != "0") return "O Cliente escolhido na Marcação tem documentos não regularizados vencidos!!! Verifique por favor!";
             }
-
+            foreach (var item in m.LstTecnicos)
+            {
+                if (FT_ManagementContext.VerificarFeriasUtilizador(item.Id, m.DataMarcacao)) return "O utilizador, " + item.NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.";
+            }
             return "";
         }
         public int CriarMarcacao(Marcacao m)

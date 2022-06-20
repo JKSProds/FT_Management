@@ -34,7 +34,8 @@
 </div>
 <hr />
 <form asp-action="Editar" asp-route-returnurl="@ViewData["ReturnUrl"]">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+
     <input type="hidden" asp-for="DataContacto" />
     <input type="hidden" asp-for="TipoContacto" id="txtTipoContacto" />
     <input type="hidden" asp-for="IdLoja" />
