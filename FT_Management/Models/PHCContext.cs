@@ -93,6 +93,12 @@ namespace FT_Management.Models
 
                 conn.Open();
 
+                string Tecnicos = "";
+                foreach (var item in m.LstTecnicos)
+                {
+                    Tecnicos += item.IdPHC + ";";
+                }
+
                 SqlCommand command = new SqlCommand("Gera_Marcacao", conn);
                 command.CommandTimeout = TIMEOUT;
                 command.CommandType = CommandType.StoredProcedure;
@@ -100,7 +106,7 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
                 command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
                 command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
-                command.Parameters.Add(new SqlParameter("@TECNICOS", m.Tecnico.IdPHC));
+                command.Parameters.Add(new SqlParameter("@TECNICOS", Tecnicos));
                 command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
                 command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
                 command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
