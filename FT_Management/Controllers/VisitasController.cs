@@ -147,7 +147,7 @@ namespace FT_Management.Controllers
             lstVisitas.Add(v);
             context.CriarVisitas(lstVisitas);
 
-            return RedirectToAction("Editar", v.IdVisita);
+            return RedirectToAction("Editar", new { idVisita = v.IdVisita });
         }
 
         public ActionResult Visita(int idVisita, int IdComercial)
@@ -172,7 +172,7 @@ namespace FT_Management.Controllers
 
             context.CriarVisitas(LstVisitas);
 
-            return Redirect(Request.Query["ReturnUrl"]);
+            return RedirectToAction("Visita", new { idVisita = visita.IdVisita, IdComercial = visita.IdComercial});
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
