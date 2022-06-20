@@ -5,125 +5,261 @@
 }
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+<link rel="stylesheet" href="~/lib/bulma-steps/dist/css/bulma-steps.min.css">
+<script src="~/lib/bulma-steps/dist/js/bulma-steps.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
-
-<form asp-action="Novo" name="frmNovo" id="frmNovo">
-    <div class="mb-5 p-4 bg-white shadow-sm">
-        <h3>Adicionar Contacto</h3>
-
-        <div class="bs-stepper">
-            <div class="bs-stepper-header" role="tablist">
-                <!-- your steps here -->
-                <div class="step" data-target="#cliente-part">
-                    <button type="button" class="step-trigger" role="tab" aria-controls="cliente-part" id="cliente-part-trigger" aria-selected="true">
-                        <span class="bs-stepper-circle">1</span>
-                        <span class="bs-stepper-label">Contacto</span>
-                    </button>
-                </div>
-                <div class="line"></div>
-                <div class="step" data-target="#comercial-part">
-                    <button type="button" class="step-trigger" role="tab" aria-controls="comercial-part" id="comercial-part-trigger">
-                        <span class="bs-stepper-circle">2</span>
-                        <span class="bs-stepper-label">Dados Adicionais</span>
-                    </button>
-                </div>
-                <div class="line"></div>
-                <div class="step" data-target="#informacao-part">
-                    <button type="button" class="step-trigger" role="tab" aria-controls="informacao-part" id="informacao-part-trigger">
-                        <span class="bs-stepper-circle">3</span>
-                        <span class="bs-stepper-label">Anexos</span>
-                    </button>
-                </div>
-            </div>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="bs-stepper-content">
-                    <!-- your steps content here -->
-                    <div id="cliente-part" class="content" role="tabpanel" aria-labelledby="cliente-part-trigger">
-                        <div class="row">
-                            <div class="form-group col-lg-4">
-                                <label style="font-weight:bold" for="">Nome da Empresa</label>
-                                <input type="text" required class="form-control" asp-for="NomeContacto" placeholder="Nome da Empresa">
-                                <span asp-validation-for="NomeContacto" class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-lg-4">
-                                <label style="font-weight:bold" for="">Nome</label>
-                                <input type="text" required class="form-control" asp-for="PessoaContacto" placeholder="Nome">
-                                <span asp-validation-for="PessoaContacto" class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-lg-4">
-                                <label for="">Cargo</label>
-                                <input type="text" required class="form-control" asp-for="CargoPessoaContacto" placeholder="Cargo">
-                                <span asp-validation-for="CargoPessoaContacto" class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <label style="font-weight:bold" for="">Contacto</label>
-                                <input type="tel" required class="form-control" asp-for="TelefoneContacto" placeholder="Contacto">
-                                <span asp-validation-for="TelefoneContacto" class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <label style="font-weight:bold" for="">Email</label>
-                                <input type="email" required class="form-control" asp-for="EmailContacto" placeholder="Email">
-                                <span asp-validation-for="EmailContacto" class="text-danger"></span>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <label>Tipo de Contacto</label>
-                                <select class="form-control" asp-for="TipoContacto">
-                                    <option selected="selected">Email</option>
-                                    <option>Mensagem</option>
-                                    <option>Feira</option>
-                                    <option>Visita</option>
-                                    <option>Outro</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <label>Área de Negócio</label>
-                                <select class="form-control" asp-for="AreaNegocio"
-                                        asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text"))">
-                                </select>
-                            </div>
-
-                            <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
-                        </div>
-                    </div>
-                    <div id="comercial-part" class="content" role="tabpanel" aria-labelledby="comercial-part-trigger">
-                        <div class="row">
-                            <div class="form-group col-lg-6" style="position: relative;">
-                                <label for="">Número de Contribuinte</label>
-                                <input type="text" class="form-control" asp-for="NIFContacto" placeholder="NIF">
-                                <span asp-validation-for="NIFContacto" class="text-danger"></span>
-
-                            </div>
-                            <div class="form-group col-lg-6" style="position: relative;">
-                                <label for="">Morada da Empresa</label>
-                                <input type="text" class="form-control" asp-for="MoradaContacto" placeholder="Morada">
-                            </div>
-                            <label for="">Observações</label>
-                            <textarea class="form-control" rows="8" placeholder="" asp-for="Obs"></textarea>
-                        </div>
-                        <br />
-                        <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
-                        <button class="btn btn-primary" type="button" onclick="next()">Próximo</button>
-                    </div>
-                    <div id="informacao-part" class="content" role="tabpanel" aria-labelledby="informacao-part-trigger">
-                        <div class="form-group">
-                            <label class="control-label">Anexo</label>
-                            <div class="input-group mb-3">
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
-                                    <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
-                                </div>
-                            </div>
-                            <br />
-                            <button class="btn btn-primary" type="button" onclick="previous()">Anterior</button>
-
-                            <input type="submit" value="Guardar" class="btn btn-primary" />
-                        </div>
+<form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
+    <div class="container">
+        <div class="columns is-mobile is-centered">
+            <div class="column is-12">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fas fa-plus-square"></i>
+                                </span>
+                                <span>Novo Contacto</span>
+                            </p>
+                        </article>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <hr />
+    <div class="container">
+        <div class="steps" id="stepsDemo">
+            <div class="step-item is-active is-success">
+                <div class="step-marker">1</div>
+                <div class="step-details">
+                    <p class="step-title">Contacto</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-marker">2</div>
+                <div class="step-details">
+                    <p class="step-title">Dados</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-marker">3</div>
+                <div class="step-details">
+                    <p class="step-title">Anexos</p>
+                </div>
+            </div>
+            <div class="steps-content">
+                <div class="step-content is-active">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-6">
+                            <div class="field">
+                                <label asp-for="NomeContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <input type="text" class="input" asp-for="NomeContacto" id="txtNomeEmpresa">                                        
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="NomeContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="PessoaContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <input type="text" class="input" asp-for="PessoaContacto" id="txtNomeCliente">                                        
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="PessoaContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="CargoPessoaContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <input type="text" class="input" asp-for="CargoPessoaContacto">                                        
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="CargoPessoaContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="TelefoneContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <input type="tel" class="input" asp-for="TelefoneContacto">                                        
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="TelefoneContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="EmailContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <input type="email" class="input" asp-for="EmailContacto">                                        
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="EmailContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="TipoContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <span class="select" style="width:100%">
+                                            <select class="select" asp-for="TipoContacto" style="width:100%">
+                                                <option selected="selected">Email</option>
+                                                <option>Mensagem</option>
+                                                <option>Feira</option>
+                                                <option>Visita</option>
+                                                <option>Outro</option>
+                                            </select>                                     
+                                        </span>
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="TipoContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="AreaNegocio"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                    <span class="select" style="width:100%">
+                                        <select class="select" asp-for="AreaNegocio"
+                                                asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text"))">
+                                        </select>
+                                    </span>
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="AreaNegocio" class="text-danger"></span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="step-content">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="NIFContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <input type="number" class="input" asp-for="NIFContacto">                                        
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="NIFContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-9">
+                            <div class="field">
+                                <label asp-for="MoradaContacto"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                        <input type="text" class="input" asp-for="MoradaContacto">                                        
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="MoradaContacto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-12">
+                            <div class="field">
+                                <label asp-for="Obs"></label>
+                                <div class="control">
+                                    <p class="control has-icons-left">
+                                    <textarea class="textarea" rows="8" placeholder="" asp-for="Obs"></textarea>
+                                        <span class="icon is-small is-left">
+                                            <i></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="Obs" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                <div class="step-content">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-12">
+                            <div class="file has-name is-fullwidth" id="file-with-js">
+                                <label class="file-label">
+                                    <input class="file-input" id="fileinput" type="file" name="resume">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i class="fa fa-upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Escolha um ficheiro...
+                                        </span>
+                                    </span>
+                                    <span class="file-name">Por favor escolha um ficheiro</span>
+                                </label>
+                            </div>
+                        </div>
+                         &nbsp;
+                        <button type="submit" class="button is-info is-outlined is-fullwidth">
+                            <span class="icon">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Criar Contacto</span>
+                        </button>
+
+                    </div>
+                </div>
+                 &nbsp;
+                <div class="steps-actions">
+                    <div class="steps-action">
+                        <a href="#" data-nav="previous" class="button is-light">
+                            <span class="icon">
+                                <i class="fas fa-arrow-left"></i>
+                            </span>
+                            <span>Anterior</span>
+                        </a>
+                    </div>
+                    <div class="steps-action">
+                        <a href="#" data-nav="next" class="button is-light">
+                            <span class="icon">
+                                <i class="fas fa-arrow-right"></i>
+                            </span>
+                            <span>Próximo</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
     @section Scripts {
@@ -131,16 +267,19 @@
     }
 
     <script>
-    function AdicionarAnexo(inputTxt) {
-        var input = document.getElementById(inputTxt);
-        var name = document.getElementById('txtNomeEmpresa') + '_' + document.getElementById('txtNomeCliente');;
-        var files = input.files;
-        var formData = new FormData();
-
-        for (var i = 0; i != files.length; i++) {
-            formData.append("files", files[i]);
+    bulmaSteps.attach();
+           var input = document.querySelector(
+            "#file-with-js>.file-label>.file-input"
+        );
+        input.onchange = function () {
+            if (input.files.length > 0) {
+                AdicionarAnexo();
+            }
         }
 
+    function AdicionarAnexo(inputTxt) {
+        var formData = new FormData();
+            formData.append("files", document.getElementById('fileinput').files[0]);
         $.ajax(
             {
                 url: "/Contactos/AdicionarAnexo?NomeEmpresa=" + document.getElementById('txtNomeEmpresa').value + "&NomeCliente=" + document.getElementById('txtNomeCliente').value,
@@ -162,14 +301,4 @@
             }
         );
     }
-
-        var stepper = new Stepper($('.bs-stepper')[0])
-
-        function next() {
-            stepper.next();
-        }
-        function previous() {
-            stepper.previous();
-        }
-
     </script>

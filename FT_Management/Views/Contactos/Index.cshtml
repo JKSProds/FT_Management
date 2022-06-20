@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="column">
-                <div class="field has-addons has-addons-right mx-1">
+                <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                     <p class="control has-icons-left">
                         <input type="text" class="input" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
@@ -73,7 +73,7 @@
                         </button>
                     </p>
                     <p class="control">
-                        <button class="button is-primary is-info" type="button" onclick="window.location.href = '/Contactos/Novo'">
+                        <button class="button is-primary is-info" type="button" onclick="window.location.href = '/Contactos/Adicionar'">
                             <span class="icon">
                                 <i class="fas fa-plus fa-lg"></i>
                             </span>
@@ -124,7 +124,7 @@
                         </td>
 
                         <td class="is-hidden-touch">
-                            <div class="buttons is-pulled-right">
+                            <div class="buttons is-pulled-right is-flex-wrap-nowrap">
                                 <a class="button is-info" @(item.TelefoneContacto.Length < 9 ? "disabled" : "") href="tel:@item.TelefoneContacto"><i class="fas fa-phone"></i></a>
                                 <a class="button is-warning " href="@item.URL" target="_blank"><i class="fas fa-paperclip"></i></a>
                                 <a class="button is-primary" @(item.EmailContacto.Length < 1 ? "disabled" : "") href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left" style="margin-top:5px"></i></a>

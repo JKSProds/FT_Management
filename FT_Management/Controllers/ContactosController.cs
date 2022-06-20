@@ -215,6 +215,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            if (String.IsNullOrEmpty(NomeEmpresa) || String.IsNullOrEmpty(NomeCliente)) return Json("nok");
             EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "[" + NomeEmpresa + "] " + NomeCliente, "Contactos");
 
             return Json("ok");
