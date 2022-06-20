@@ -139,16 +139,22 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<Visita> lstVisitas = new List<Visita>();
 
-            lstVisitas.Add(visita);
+            Visita v = context.ObterVisita(visita.IdVisita);
+            v.ResumoVisita = visita.ResumoVisita;
+            v.DataVisita = visita.DataVisita;
+            v.IdComercial = visita.IdComercial;
+
+            lstVisitas.Add(v);
             context.CriarVisitas(lstVisitas);
 
-            return Redirect(ReturnUrl);
+            return RedirectToAction("Editar", v.IdVisita);
         }
 
         public ActionResult Visita(int idVisita, int IdComercial)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(idVisita);
+            ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Id;
             if (visita.IdComercial == IdComercial || User.IsInRole("Admin")) return View(visita);

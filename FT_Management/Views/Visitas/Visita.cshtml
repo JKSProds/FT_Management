@@ -54,9 +54,7 @@
 
     <input type="hidden" asp-for="IdVisita" />
     <input type="hidden" asp-for="EstadoVisita" />
-    <input type="hidden" asp-for="IdComercial" />
     <input type="hidden" asp-for="ResumoVisita" />
-    <input type="hidden" asp-for="DataVisita" />
     <input type="hidden" asp-for="Cliente.IdCliente" />
     <input type="hidden" asp-for="Cliente.IdLoja" />
 
@@ -91,21 +89,51 @@
                 <ul>
                     <li class="is-active">
                         <div class="columns is-multiline">
-                            <div class="column is-1">
-                                <div class="field">
-                                    <label asp-for="IdVisita" class="label"></label>
+                            <div class="column is-3">
+                            <label asp-for="IdVisita" class="label"></label>
+                            <div class="field has-addons">
+                              <div class="control">
+                                  <input class="input" type="text" id="IdVisita" readonly asp-for="IdVisita">
+                              </div>
+                              @if (this.User.IsInRole("Admin"))
+                                {
                                     <div class="control">
-                                        <input class="input" type="text" id="IdVisita" readonly asp-for="IdVisita">
+                                    <a class="button is-info" href="~/Visitas/Editar?idVisita=@Model.IdVisita">
+                                        Editar
+                                    </a>
                                     </div>
+                                }
                                 </div>
                             </div>
-                            <div class="column is-11">
+                            <div class="column is-9">
                                 <div class="field">
                                     <label asp-for="Cliente.NomeCliente" class="label"></label>
                                     <div class="control">
                                         <input class="input" type="text" asp-for="Cliente.NomeCliente" readonly>
                                     </div>
                                     <span asp-validation-for="Cliente.NomeCliente" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                <label asp-for="IdComercial" class="label"></label>
+                                <div class="select" style="width:100%">
+                                     @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
+                                    <select class="select" style="width:100%" asp-for="IdComercial"
+                                            asp-items="@(new SelectList(@LstComerciais, "Id", "NomeCompleto", Model.IdComercial))">
+                                    </select>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label asp-for="DataVisita" class="label"></label>
+                                    <p class="control has-icons-left">
+                                        <input asp-for="DataVisita" class="input" type="text" readonly/>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </span>
+                                    </p>
                                 </div>
                             </div>
                             <div class="column is-12">
