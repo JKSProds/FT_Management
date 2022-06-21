@@ -140,7 +140,7 @@ namespace FT_Management.Models
 
                 conn.Close();
 
-                Console.WriteLine("Enviada marcacao para o PHC");
+                Console.WriteLine("Enviada marcacao para o PHC pelo utilizador " + m.Utilizador);
 
             }
 

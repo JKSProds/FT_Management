@@ -142,7 +142,7 @@ namespace FT_Management.Models
             {
                 while (result.Read())
                 {
-                    return int.Parse(result[0].ToString());
+                    return int.Parse(result["IdUtilizador"]);
                 }
             }
             return 0;
