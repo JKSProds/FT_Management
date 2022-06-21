@@ -101,7 +101,8 @@ namespace FT_Management.Models
                 string Tecnicos = "";
                 foreach (var item in m.LstTecnicos)
                 {
-                    Tecnicos += item.IdPHC + ";";
+                    if (Tecnicos.Length > 0) Tecnicos += ";";
+                    Tecnicos += item.IdPHC;
                 }
 
                 SqlCommand command = new SqlCommand("Gera_Marcacao", conn)
