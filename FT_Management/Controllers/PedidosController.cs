@@ -167,7 +167,7 @@ namespace FT_Management.Controllers
                     Uid =  m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
                     Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC)
+                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC)
                 };
                 calendar.Events.Add(e);
                 d = d.AddMinutes(30);
