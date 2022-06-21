@@ -135,7 +135,7 @@ namespace FT_Management.Models
 
         public int ObterIdUtilizadorApiKey(string ApiKey)
         {
-            string sqlQuery = "SELECT IdUtilizador FROM sys_api_keys where ApiKey=" + ApiKey + ";";
+            string sqlQuery = "SELECT IdUtilizador FROM sys_api_keys where ApiKey='" + ApiKey + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
