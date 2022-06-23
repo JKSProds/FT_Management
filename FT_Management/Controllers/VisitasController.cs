@@ -168,6 +168,8 @@ namespace FT_Management.Controllers
         public ActionResult Visita(Visita visita)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Visita v = context.ObterVisita(visita.IdVisita);
+            v.ObsVisita = visita.ObsVisita;
             List<Visita> LstVisitas = new List<Visita> { visita };
 
             context.CriarVisitas(LstVisitas);

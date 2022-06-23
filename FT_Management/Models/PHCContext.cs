@@ -223,10 +223,6 @@ namespace FT_Management.Models
                 }
 
                 conn.Close();
-
-                FT_ManagementContext.AtualizarUltimaModificacao("sa", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                Console.WriteLine("Stock's atualizados com sucesso! (PHC -> MYSQL)");
             }
 
             catch
@@ -312,10 +308,6 @@ namespace FT_Management.Models
                 }
 
                 conn.Close();
-
-                FT_ManagementContext.AtualizarUltimaModificacao("cl", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                Console.WriteLine("Clientes e Lojas atualizadas com sucesso! (PHC -> MYSQL)");
             }
             catch
             {
@@ -348,7 +340,7 @@ namespace FT_Management.Models
         }
         public Cliente ObterClienteSimples(int IdCliente, int IdLoja)
         {
-            return ObterCliente("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and estab=" + IdLoja + " and no is not null;", false);
+            return ObterCliente("SELECT TOP 1 no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and estab=" + IdLoja + " and no is not null;", false);
         }
         #endregion
 
@@ -382,11 +374,6 @@ namespace FT_Management.Models
                     }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("cl_1", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Vendedores atualizados com sucesso! (PHC -> MYSQL)");
-
                 }
             catch
             {
@@ -433,10 +420,6 @@ namespace FT_Management.Models
                     }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("fl", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Fornecedores atualizados com sucesso! (PHC -> MYSQL)");
                 }
             catch
             {
@@ -485,10 +468,6 @@ namespace FT_Management.Models
                     }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("ma", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Equipamentos atualizados com sucesso! (PHC -> MYSQL)");
             }
             catch
             {
@@ -516,7 +495,7 @@ namespace FT_Management.Models
 
         //Obter Folhas de Obra
         #region FOLHASOBRA
-        private List<FolhaObra> ObterFolhasObra(string SQL_Query, bool LoadEquipamento, bool LoadCliente, bool LoadIntervencoes, bool LoadPecas)
+        private List<FolhaObra> ObterFolhasObra(string SQL_Query, bool LoadEquipamento, bool LoadCliente, bool LoadIntervencoes, bool LoadPecas, bool LoadRubrica)
         {
 
             List<FolhaObra> LstFolhaObra = new List<FolhaObra>();
@@ -565,26 +544,23 @@ namespace FT_Management.Models
                             LstFolhaObra.Last().GuiaTransporteAtual = LstFolhaObra.Last().PecasServico.Count() == 0 ? "" : (LstFolhaObra.Last().PecasServico.FirstOrDefault(p => p.Pos_Stock.Length > 0)?.Pos_Stock.ToString() ?? "");
                         }
 
-                        //Obter rubrica
-                        string img = ObterRubrica(LstFolhaObra.Last().IdFolhaObra);
-                        if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
-                        using Image image = Image.FromFile(img);
-                        using MemoryStream m = new MemoryStream();
-                        image.Save(m, image.RawFormat);
-                        byte[] imageBytes = m.ToArray();
+                        if (LoadRubrica)
+                        {
+                            string img = ObterRubrica(LstFolhaObra.Last().IdFolhaObra);
+                            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
+                            using Image image = Image.FromFile(img);
+                            using MemoryStream m = new MemoryStream();
+                            image.Save(m, image.RawFormat);
+                            byte[] imageBytes = m.ToArray();
 
-                        // Convert byte[] to Base64 String
-                        string base64String = Convert.ToBase64String(imageBytes);
-                        LstFolhaObra.Last().RubricaCliente = base64String;
-
+                            // Convert byte[] to Base64 String
+                            string base64String = Convert.ToBase64String(imageBytes);
+                            LstFolhaObra.Last().RubricaCliente = base64String;
+                        }
                     }
                 }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("pa", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("PAT's atualizados com sucesso! (PHC -> MYSQL)");
             }
             catch (Exception ex)
             {
@@ -596,22 +572,22 @@ namespace FT_Management.Models
         }
         public FolhaObra ObterFolhaObra(string SQL_Query, bool LoadAll)
         {
-                return ObterFolhasObra(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new FolhaObra()).First();
+                return ObterFolhasObra(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new FolhaObra()).First();
         }
 
         public List<FolhaObra> ObterFolhasObra(int IdMarcacao)
         {
-            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (SELECT u_marcacaostamp from u_marcacao where num=" + IdMarcacao + ") as u_marcacaostamp from pa where (select TOP 1 STAMP_DEST from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao+") = pastamp order by nopat", true, true, false, false);
+            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (SELECT u_marcacaostamp from u_marcacao where num=" + IdMarcacao + ") as u_marcacaostamp from pa where (select TOP 1 STAMP_DEST from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao+") = pastamp order by nopat", true, true, false, false, false);
  
         }
         public List<FolhaObra> ObterFolhasObra(Cliente c)
         {
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.no='"+c.IdCliente+"' and pa.estab='"+c.IdLoja+"' order by nopat;", true, true, false, false);
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.no='"+c.IdCliente+"' and pa.estab='"+c.IdLoja+"' order by nopat;", true, true, false, false, false);
 
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"' order by nopat;", true, true, true, false);
+            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"' order by nopat;", true, true, true, false, false);
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
@@ -686,10 +662,6 @@ namespace FT_Management.Models
                     }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("mh", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Intervenções atualizadas com sucesso! (PHC -> MYSQL)");
                 }
             catch 
             {
@@ -739,10 +711,6 @@ namespace FT_Management.Models
                     }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("bi", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Produtos de PAT's atualizados com sucesso! (PHC -> MYSQL)");
                 }
             catch
             {
@@ -817,10 +785,6 @@ namespace FT_Management.Models
                     if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
                 }
                 conn.Close();
-
-                FT_ManagementContext.AtualizarUltimaModificacao("u_marcacao", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                Console.WriteLine("Marcacoes atualizadas com sucesso! (PHC -> MYSQL)");
             }
             catch
             {
@@ -905,10 +869,6 @@ namespace FT_Management.Models
                     }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_estados", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Estados marcação atualizados com sucesso! (PHC -> MYSQL)");
                 }
             catch
             {
@@ -1105,10 +1065,6 @@ namespace FT_Management.Models
                     }
 
                     conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_coment", DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
-
-                    Console.WriteLine("Comentários por marcacao atualizadas com sucesso! (PHC -> MYSQL)");
             }
             catch 
             {
@@ -1158,8 +1114,6 @@ namespace FT_Management.Models
                     conn.Close();
 
                     FT_ManagementContext.AtualizarUltimaModificacao("u_dias", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
-                    Console.WriteLine("Acessos atualizados com sucesso! (PHC -> MYSQL)");
                 }
             catch (Exception)
             {

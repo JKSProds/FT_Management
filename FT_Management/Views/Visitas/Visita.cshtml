@@ -93,7 +93,7 @@
                             <div class="column is-3">
                             <label asp-for="IdVisita" class="label"></label>
                             <div class="field has-addons">
-                              <div class="control">
+                              <div class="control" style="width:100%">
                                   <input class="input" type="text" id="IdVisita" readonly asp-for="IdVisita">
                               </div>
                               @if (this.User.IsInRole("Admin"))
@@ -120,7 +120,7 @@
                                 <label asp-for="IdComercial" class="label"></label>
                                 <div class="select" style="width:100%">
                                      @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
-                                    <select class="select" style="width:100%" asp-for="IdComercial"
+                                    <select class="select" style="width:100%" disabled asp-for="IdComercial"
                                             asp-items="@(new SelectList(@LstComerciais, "Id", "NomeCompleto", Model.IdComercial))">
                                     </select>
                                 </div>
