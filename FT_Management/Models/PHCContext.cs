@@ -629,7 +629,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select u_vestigio from bo where pastamp = (select pastamp from pa where nopat=111453);", conn)
+                SqlCommand command = new SqlCommand("select u_vestigio from bo where pastamp = (select pastamp from pa where nopat="+IdFolhaObra+");", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
