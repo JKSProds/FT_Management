@@ -566,7 +566,8 @@ namespace FT_Management.Models
                         }
 
                         //Obter rubrica
-                        string img = "wwwroot/img/no_photo.png";
+                        string img = ObterRubrica(LstFolhaObra.Last().IdFolhaObra);
+                        if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
                         using Image image = Image.FromFile(img);
                         using MemoryStream m = new MemoryStream();
                         image.Save(m, image.RawFormat);
@@ -619,6 +620,30 @@ namespace FT_Management.Models
 
         }
 
+        public string ObterRubrica(int IdFolhaObra)
+        {
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select u_vestigio from bo where pastamp = (select pastamp from pa where nopat=111453);", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    result.Read();
+                    return result["u_vestigio"].ToString().Replace("\\", "/").Replace("S:", "/server");
+                }
+            }
+            catch { 
+
+            }
+            return "wwwroot/img/no_photo.png";
+        }
 
         private List<Intervencao> ObterIntervencoes(string SQL_Query)
         {

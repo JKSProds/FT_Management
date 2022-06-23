@@ -32,7 +32,7 @@ namespace FT_Management.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult Calendar(string ApiKey)
+        public virtual ActionResult Calendario(string ApiKey)
         {
             var calendar = new Calendar();
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

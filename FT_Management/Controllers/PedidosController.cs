@@ -144,7 +144,7 @@ namespace FT_Management.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult ObterIcs (string ApiKey)
+        public virtual ActionResult Calendario(string ApiKey)
         {
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
