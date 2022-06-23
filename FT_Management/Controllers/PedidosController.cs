@@ -40,7 +40,7 @@ namespace FT_Management.Controllers
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
 
-            return View();
+            return View(new Marcacao());
         }
 
         [Authorize(Roles = "Admin, Escritorio")]

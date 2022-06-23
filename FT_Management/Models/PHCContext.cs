@@ -119,7 +119,7 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
                 command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
                 command.Parameters.Add(new SqlParameter("@DATA", m.DataMarcacao.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? DateTime.Parse(m.Hora).ToString("HHmm") : "")));
+                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "")));
                 command.Parameters.Add(new SqlParameter("@PRIORIDADE", m.PrioridadeMarcacao));
                 command.Parameters.Add(new SqlParameter("@TIPOS", m.TipoServico));
                 command.Parameters.Add(new SqlParameter("@TIPOE", m.TipoEquipamento));

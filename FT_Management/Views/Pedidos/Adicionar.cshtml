@@ -195,22 +195,8 @@
                             <div class="field">
                                 <label asp-for="DataPedido"></label>
                                 <div class="control">
-                                    @*DateTimePicker*@
-                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                    <input type="text" class="input" asp-for="DataPedido" id="txtDataPedido">
-                                    <script>
-                                        var today = new Date();
-                                        var dd = String(today.getDate()).padStart(2, '0');
-                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                        var yyyy = today.getFullYear();
-
-                                        $('#txtDataPedido').datepicker({
-                                            format: 'dd-mm-yyyy',
-                                            value: dd + '-' + mm + '-' + yyyy
-                                        });
-                                    </script>
+                                    <input type="date" class="input bulmaCalendarInline" value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataPedido" id="txtDataPedido">
+                                   
                                 </div>
                                 <span asp-validation-for="DataPedido" class="text-danger"></span>
                             </div>
@@ -219,22 +205,8 @@
                             <div class="field">
                                 <label asp-for="DataMarcacao"></label>
                                 <div class="control">
-                                    @*DateTimePicker*@
-                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                    <input type="text" class="input" asp-for="DataMarcacao" id="txtData">
-                                    <script>
-                                        var today = new Date();
-                                        var dd = String(today.getDate()).padStart(2, '0');
-                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                        var yyyy = today.getFullYear();
-
-                                        $('#txtData').datepicker({
-                                            format: 'dd-mm-yyyy',
-                                            value: dd + '-' + mm + '-' + yyyy
-                                        });
-                                    </script>
+                                    <input type="date" class="input bulmaCalendarInline" value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData">
+                                    
                                 </div>
                                 <span asp-validation-for="DataMarcacao" class="text-danger"></span>
                             </div>
@@ -243,16 +215,7 @@
                             <div class="field">
                                 <label asp-for="Hora"></label>
                                 <div class="control">
-                                    @*DateTimePicker*@
-                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                    <input type="text" class="input" asp-for="Hora" id="txtHora">
-                                    <script>
-                                        $('#txtHora').timepicker({
-                                            mode: '24hr'
-                                        });
-                                    </script>
+                                  <input type="time" class="input bulmaCalendar" asp-for="Hora" id="txtHora">
                                 </div>
                                 <span asp-validation-for="Hora" class="text-danger"></span>
                             </div>
@@ -325,9 +288,7 @@
                             <div class="field">
                                 <label asp-for="Referencia"></label>
                                 <p class="control has-icons-left">
-                                    <span class="input">
-                                        <input type="text" class="input" asp-for="Referencia">
-                                    </span>
+                                    <input type="text" class="input" asp-for="Referencia">
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-asterisk"></i>
                                     </span>

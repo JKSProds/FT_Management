@@ -26,22 +26,14 @@
         </div>
         <div class="column is-right my-auto mx-0">
             <form method="get" style="width:100%" action="Acessos">
-                <input type="hidden" id="hiddenTxtData" value="@ViewData["Data"]" name="Data">
-                <input type="text" class="datepicker" id="txtData">
-                <script>
-                        $('#txtData').datepicker({
-                            format: 'dd-mm-yyyy',
-                            size: 'large',
-                            value: '@ViewData["Data"]',
-                            change: function (e) {
-                                if (document.getElementById("hiddenTxtData").value != document.getElementById("txtData").value) {
-                                    //alert('Change is fired ' + document.getElementById("txtData").value);
-                                    document.getElementById("hiddenTxtData").value = document.getElementById("txtData").value;
-                                    $('form').submit();
-                                }
-                            }
-                        });
-                </script>
+                <div class="field has-addons">
+                    <p class="control" style="width:100%">
+                        <input class="input bulmaCalendar" type="date" value="@(DateTime.Parse(ViewData["Data"].ToString()).ToString("yyyy-MM-dd"))" name="Data"/>
+                         <div class="control">
+                            <button type="submit" class="button is-info"><i class="fas fa-search"></i></button>
+                        </div>
+                    </p>
+                </div>
             </form>
             <p class="control">
                 <a class="button is-primary is-outlined is-fullwidth" id="addFerias" onclick="window.open('@Url.Action("ExportarListagemAcessos", "Acessos", new { data = @ViewData["Data"]})')">
@@ -171,5 +163,13 @@
                 });
 
                 $("#myModal").modal('hide');
+            }
+
+            function DataAlterada() {
+                alert("Data Alterada");
+                 if (document.getElementById("hiddenTxtData").value != document.getElementById("txtData").value) {
+                    document.getElementById("hiddenTxtData").value = document.getElementById("txtData").value;
+                    $('form').submit();
+                }
             }
         </script>

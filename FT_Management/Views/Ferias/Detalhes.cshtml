@@ -287,28 +287,7 @@ else
         </header>
         <section class="modal-card-body">
             <div class="control">
-                <label for="recipient-name" class="col-form-label">Data Inicio:</label>
-                <input type="text" class="form-control" id="txtDataInicio" disabled>
-                <script>
-                    $('#txtDataInicio').datepicker({
-                        format: 'dd-mm-yyyy',
-                        size: 'large',
-                        minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
-                        maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
-                    });
-                </script>
-            </div>
-            <div class="control">
-                <label for="recipient-name" class="col-form-label">Data Fim:</label>
-                <input type="text" class="form-control" id="txtDataFim" disabled>
-                <script>
-                    $('#txtDataFim').datepicker({
-                        format: 'dd-mm-yyyy',
-                        size: 'large',
-                        minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
-                        maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
-                    });
-                </script>
+                <input type="date" class="input bulmaCalendarRange" id="txtDataInicio" disabled>
             </div>
         </section>
         <footer class="modal-card-foot">
@@ -337,27 +316,19 @@ else
     function AdicionarFerias() {
         document.getElementById("btnAdicionarFerias").classList.add("is-loading");
         var json = {
-            datainicio: document.getElementById('txtDataInicio').value,
-            datafim: document.getElementById('txtDataFim').value,
+            datainicio: document.getElementById('txtDataInicio').value.split('-')[0],
+            datafim: document.getElementById('txtDataInicio').value.split('-')[1],
             idutilizador: document.getElementById('hiddenIdUtilizador').value,
         };
 
-        var dF = moment(document.getElementById('txtDataFim').value, "DD/MM/YYYY").toDate();
-        var dI = moment(document.getElementById('txtDataInicio').value, "DD/MM/YYYY").toDate();
+        var dF = moment(document.getElementById('txtDataInicio').value.split('-')[1], "DD/MM/YYYY").toDate();
+        var dI = moment(document.getElementById('txtDataInicio').value.split('-')[0], "DD/MM/YYYY").toDate();
         var Diff = (dF - dI) / (1000 * 3600 * 24);
         var DiasMarcados = (@Model.DiasDisponiveis - @Model.DiasTotais);
 
         if (Diff > DiasMarcados) {
             $(function () {
-                $.notify({
-                    message: "Dias escolhidos excedem dias disponiveis!"
-                }, {
-                    // settings
-                    type: 'danger',
-                    onShow: function () {
-                        this.css({ 'width': 'auto', 'height': 'auto' });
-                    }
-                });
+                //NOTIFICAR : Dias escolhidos excedem dias disponiveis!
             });
         }else {
             $.ajax({

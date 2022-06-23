@@ -24,6 +24,11 @@
       "provider": "unpkg",
       "library": "bulma-switch@2.0.4",
       "destination": "wwwroot/lib/bulma-switch/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-calendar@6.1.18",
+      "destination": "wwwroot/lib/bulma-calendar/"
     }
   ]
 }

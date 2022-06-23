@@ -69,6 +69,8 @@ namespace FT_Management.Models
         public Marcacao()
         {
             this.LstTecnicos = new List<Utilizador>();
+            this.DataPedido = DateTime.Now;
+            this.DataMarcacao = DateTime.Now;
         }
     }
 
