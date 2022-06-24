@@ -32,7 +32,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -76,7 +76,7 @@ namespace FT_Management.Controllers
                 return RedirectToAction("Pedido", "Pedidos", new { idMarcacao=IdMarcacao, IdTecnico=this.User.Claims.First().Value });
             }
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -151,6 +151,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return File("", "");
 
             var calendar = new Calendar();
@@ -196,9 +197,9 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Calendario()
+        public ActionResult CalendarioView()
         {
-            return View();
+            return View("Calendario");
         }
 
         public JsonResult ObterMarcacoes(DateTime start, DateTime end)

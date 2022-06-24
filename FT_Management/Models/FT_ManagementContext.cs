@@ -2791,6 +2791,19 @@ namespace FT_Management.Models
             }
         }
 
+        public void NovoUtilizador(Utilizador utilizador)
+        {
+            string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, IdCartaoTrello, admin, enable, IdPHC, IdArmazem, IniciaisUtilizador, CorCalendario) VALUES ";
+
+            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + utilizador.IdCartaoTrello + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "') \r\n");
+
+            sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), IdCartaoTrello = VALUES(IdCartaoTrello), admin = VALUES(admin), enable = VALUES(enable), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario);";
+
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
+        }
 
         public void EditarArtigo(Produto produto)
         {

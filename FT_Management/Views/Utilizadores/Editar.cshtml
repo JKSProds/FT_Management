@@ -1,7 +1,7 @@
 ﻿@model FT_Management.Models.Utilizador
 
 @{
-    ViewData["Title"] = "Perfil - #EM DESENVOLVIMENTO";
+    ViewData["Title"] = "Perfil";
 }
 
 <div class="container">
@@ -14,7 +14,7 @@
                             <span class="icon mr-3">
                                 <i class="fas fa-user"></i>
                             </span>
-                            <span>Perfil de Utilizador</span>
+                            <span>Perfil de Utilizador - @Model.NomeUtilizador.ToUpper()</span>
                         </p>
                     </article>
                 </div>
@@ -22,89 +22,214 @@
         </div>
     </div>
 </div>
- <section class="section is-main-section"><div class="tile is-ancestor"><div class="tile is-parent"><div class="card tile is-child"><header class="card-header"><p class="card-header-title"><span class="icon"><i class="mdi mdi-account-circle default"></i></span> Editar Perfil </p>
-</header><div class="card-content">
-<form method="post" style="width:100%" action="AtualizarUtilizador">
-@*<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Avatar</label></div><div class="field-body"><div class="field"><div class="field file">
-<label class="upload control"><a class="button is-info"><span class="icon"><i class="mdi mdi-upload default"></i></span><span>Pick a file</span></a><input type="file" control-id="ControlID-14"></label>
 
-</div>
-</div></div>
-</div><hr>*@
-<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Nome</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="text" autocomplete="on" name="name" required="required" class="input" control-id="ControlID-15" asp-for="NomeCompleto">
+<section class="section is-main-section">
+    <div class="tile is-ancestor">
+        <div class="tile is-parent">
+            <div class="card tile is-child">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        <span class="icon">
+                            <i class="fa-solid @(Model.Admin ? "fa-user-graduate" : "fa-user")"></i>
+                        </span>
+                        - Perfil
+                    </p>
+                </header>
+                <div class="card-content">
 
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Nome</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly  asp-for="NomeCompleto"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Email</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly asp-for="EmailUtilizador"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">PHC</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly  asp-for="IdPHC"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Iniciais</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly  asp-for="Iniciais" ></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Pin</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly asp-for="Pin"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Tipo</label></div><div class="field-body">
+                            <div class="field">
+                                    <span class="select" style="width:100%">
+                                        <select style="width:100%" asp-for="TipoUtilizador" id="LstTipoUtilizador" disabled >
+                                            <option id="1">Técnico</option>
+                                            <option id="2">Comercial</option>
+                                            <option id="3">Escritório</option>
+                                        </select>
+                                    </span>
+                                    <script>
+                                        document.getElementById("LstTipoUtilizador").selectedIndex = @Model.TipoUtilizador - 1;
+                                    </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tile is-parent">
+            <div class="card tile is-child">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        <span class="icon">
+                            <i class="fa-solid fa-user-pen"></i>
+                        </span>
+                         - Editar Perfil
+                    </p>
+                </header>
 
-</div><p class="help"> Required. Your name 
-</p></div></div>
-</div><div class="field is-horizontal"><div class="field-label is-normal"><label class="label">E-mail</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="email" autocomplete="on" name="email" required="required" class="input" control-id="ControlID-16"  asp-for="EmailUtilizador">
-
-
-</div><p class="help"> Required. Your e-mail 
-</p></div></div>
-</div>
-
-<hr><div class="field is-horizontal"><div class="field-label is-normal">
-</div><div class="field-body"><div class="field">
-<div class="field">
-<div class="field-body"><div class="field is-grouped">
-<div class="control"><button type="submit" class="button is-info" control-id="ControlID-17">
-<span> Atualizar </span>
-</button></div>
-</div></div>
-</div>
-</div></div>
-</div></form>
-</div></div></div><div class="tile is-parent"><div class="card tile is-child"><header class="card-header"><p class="card-header-title"><span class="icon"><i class="mdi mdi-account default"></i></span> Perfil </p>
-</header>
-<div class="card-content"><div class="card-image has-text-centered">
-        <figure class="image is-64x64 is-inline-block">
-            <img class="is-rounded" src="data:image/jpeg;base64,@Model.ImgUtilizador"/>
-        </figure>
+                <div class="card-content">
+                    <form method="post" style="width:100%" action="AtualizarUtilizador">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Nome</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="text" autocomplete="on" name="name" required="required" class="input" asp-for="NomeCompleto">
+                                    </div>
+                                    <p class="help"> Required. Your name</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">E-mail</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="email" autocomplete="on" name="email" required="required" class="input" asp-for="EmailUtilizador">
+                                    </div>
+                                    <p class="help"> Required. Your e-mail</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Pin</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" name="pin" maxlength=4 class="input" asp-for="Pin"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Iniciais</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" name="iniciais" maxlength=2 class="input" asp-for="Iniciais"></div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Cor</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="color" name="cor" class="input" asp-for="CorCalendario"></div>
+                            </div>
+                        </div>
+                    </div>
+                        <hr>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="field">
+                                        <div class="field-body">
+                                            <div class="field is-grouped">
+                                                <div class="control">
+                                                    <button type="submit" class="button is-info" control-id="ControlID-17">
+                                                        <span> Atualizar </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-   <hr>
-<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Nome</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="text" autocomplete="on" name="name" required="required" class="input" readonly control-id="ControlID-15" asp-for="NomeCompleto"></div></div></div></div>
-<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Nome de Utilizador</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="text" autocomplete="on" name="name" required="required" class="input" control-id="ControlID-15" asp-for="NomeUtilizador" readonly></div></div></div></div>
-<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Email</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="text" autocomplete="on" name="name" required="required" class="input" readonly control-id="ControlID-15" asp-for="EmailUtilizador"></div></div></div></div>
-<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">ID PHC</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="text" autocomplete="on" name="name" required="required" class="input" control-id="ControlID-15" asp-for="IdPHC" readonly></div></div></div></div>
-<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Iniciais</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="text" autocomplete="on" name="name" required="required" class="input" control-id="ControlID-15" asp-for="Iniciais" readonly></div></div></div></div>
-<div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Pin</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="text" autocomplete="on" name="name" required="required" class="input" readonly control-id="ControlID-15" asp-for="Pin"></div></div></div></div>
-
-</div></div></div></div>
-<div class="card"><header class="card-header"><p class="card-header-title"><span class="icon"><i class="mdi mdi-lock default"></i></span> Alterar Senha </p>
-</header><div class="card-content">
-<form method="post" style="width:100%" action="AtualizarSenha"><div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Senha Atual</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="password" autocomplete="on" name="password_current" required="required" autcomplete="current-password" class="input" control-id="ControlID-19">
-
-
-</div><p class="help"> Required. Your current password 
-</p></div></div>
-</div><hr><div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Nova Senha</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="password" autocomplete="new-password" name="password" required="required" class="input" control-id="ControlID-20">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title"><span class="icon"><i class="fa-solid fa-user-lock"></i></span> - Alterar Senha </p>
+        </header><div class="card-content">
+            <form method="post" style="width:100%" action="AtualizarSenha">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">Senha Atual</label></div><div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input type="password" autocomplete="on" name="password_current" required="required" autcomplete="current-password" class="input" control-id="ControlID-19">
+                            </div><p class="help">
+                                Required. Your current password
+                            </p>
+                        </div>
+                    </div>
+                </div><hr><div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">Nova Senha</label></div><div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input type="password" autocomplete="new-password" name="password" required="required" class="input" control-id="ControlID-20">
 
 
-</div><p class="help"> Required. New password 
-</p></div></div>
-</div><div class="field is-horizontal"><div class="field-label is-normal"><label class="label">Confirmar Nova Senha</label></div><div class="field-body"><div class="field">
-<div class="control"><input type="password" autocomplete="new-password" name="password_confirmation" required="required" class="input" control-id="ControlID-21">
+                            </div><p class="help">
+                                Required. New password
+                            </p>
+                        </div>
+                    </div>
+                </div><div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">Confirmar Nova Senha</label></div><div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input type="password" autocomplete="new-password" name="password_confirmation" required="required" class="input" control-id="ControlID-21">
 
 
-</div><p class="help"> Required. New password one more time 
-</p></div></div>
-</div>
-<div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
-<hr><div class="field is-horizontal"><div class="field-label is-normal">
-</div><div class="field-body"><div class="field">
-<div class="control"><button type="submit" class="button is-info" control-id="ControlID-22">
-<span> Atualizar </span>
-</button></div>
-</div></div>
-</div></form>
-</div></div></section></div>
+                            </div><p class="help">
+                                Required. New password one more time
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+                <hr><div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                    </div><div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-info" control-id="ControlID-22">
+                                    <span> Atualizar </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

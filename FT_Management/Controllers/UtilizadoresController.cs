@@ -115,13 +115,18 @@ namespace FT_Management.Controllers
             return View(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())));
         }
 
-        public IActionResult AtualizarUtilizador(string name, string email)
+        public IActionResult AtualizarUtilizador(string name, string email, string pin, string iniciais, string cor)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
 
             u.NomeCompleto = name;
             u.EmailUtilizador = email;
+            u.Pin = pin;
+            u.Iniciais = iniciais;
+            u.CorCalendario = cor;
+
+            context.NovoUtilizador(u);
 
             return RedirectToAction("Editar");
         }
@@ -131,6 +136,9 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
 
             if (password != password_confirmation) ModelState.AddModelError("", "Passwords não condizem");
+            if (password.Length < 8) ModelState.AddModelError("", "Password demasiado pequena! Tem de ter pelo menos 8 digitos!");
+            if (!password.Any(char.IsUpper)) ModelState.AddModelError("", "Tem de ter pelo menos uma letra maiscula!");
+            if (!password.Any(char.IsNumber)) ModelState.AddModelError("", "Tem de ter pelo menos um número");
 
             if (ModelState.IsValid)
             {
@@ -138,6 +146,12 @@ namespace FT_Management.Controllers
                 if (passwordHasher.VerifyHashedPassword(null, u.Password, password_current) == PasswordVerificationResult.Success)
                 {
                     u.Password = passwordHasher.HashPassword(null, password);
+                    context.NovoUtilizador(u);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Password atual incorreta!");
+                    return View("Editar", u);
                 }
             }
             else
@@ -145,7 +159,7 @@ namespace FT_Management.Controllers
                 return View("Editar", u);
             }
 
-            return RedirectToAction("Editar");
+            return RedirectToAction("Logout");
         }
         public async Task<IActionResult> Logout()
         {

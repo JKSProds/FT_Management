@@ -786,7 +786,7 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
             }
@@ -808,7 +808,7 @@ namespace FT_Management.Models
         {
             
             List <Marcacao> LstMarcacoes = (ObterMarcacoes("SELECT num, data, u_mtecnicos.tecnno, no, estab, tipos, tipoe, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 WHERE data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "';", false, true, true, false));
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, u_mdatas.data, u_mtecnicos.tecnno,  u_marcacao.u_marcacaostamp, no, estab, tipos, tipoe, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' ;", false, true, true, false).AsEnumerable());
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, u_mdatas.data, u_mtecnicos.tecnno,  u_marcacao.u_marcacaostamp, no, estab, tipos, tipoe, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, u_mdatas.periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' ;", false, true, true, false).AsEnumerable());
             return LstMarcacoes;
         }
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataInicio, DateTime DataFim)
