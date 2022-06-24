@@ -87,7 +87,8 @@ namespace FT_Management.Models
                         EmailUtilizador = result["EmailUtilizador"],
                         IdCartaoTrello = result["IdCartaoTrello"],
                         IdPHC = result["IdPHC"],
-                        Admin = result["admin"]
+                        Admin = result["admin"],
+                        Enable = result["enable"]
                     });
                 }
             }

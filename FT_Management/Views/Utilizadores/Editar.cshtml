@@ -103,7 +103,8 @@
                 </header>
 
                 <div class="card-content">
-                    <form method="post" style="width:100%" action="AtualizarUtilizador">
+                    <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="AtualizarUtilizador">
+                        <input type="hidden" class="input"   asp-for="Id" name="id">
                         <div class="field is-horizontal">
                             <div class="field-label is-normal">
                                 <label class="label">Nome</label>
@@ -180,7 +181,8 @@
         <header class="card-header">
             <p class="card-header-title"><span class="icon"><i class="fa-solid fa-user-lock"></i></span> - Alterar Senha </p>
         </header><div class="card-content">
-            <form method="post" style="width:100%" action="AtualizarSenha">
+            <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="AtualizarSenha">
+                <input type="hidden" class="input"   asp-for="Id" name="id">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal"><label class="label">Senha Atual</label></div><div class="field-body">
                         <div class="field">

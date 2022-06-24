@@ -13,7 +13,14 @@ namespace FT_Management.Controllers
 {
     public class UtilizadoresController : Controller
     {
-        public IActionResult Login(string nome, string password, string ReturnUrl)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return View(context.ObterListaUtilizadores(false));
+        }
+            public IActionResult Login(string nome, string password, string ReturnUrl)
         {
             Utilizador utilizador = new Utilizador {NomeUtilizador = nome, Password = password};
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -108,17 +115,17 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
-        public IActionResult Editar()
+        public IActionResult Editar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            return View(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())));
+            if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
+            return View(context.ObterUtilizador(id));
         }
-
-        public IActionResult AtualizarUtilizador(string name, string email, string pin, string iniciais, string cor)
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult AtualizarUtilizador(int id, string name, string email, string pin, string iniciais, string cor)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
+            Utilizador u = context.ObterUtilizador(id);
 
             u.NomeCompleto = name;
             u.EmailUtilizador = email;
@@ -128,12 +135,13 @@ namespace FT_Management.Controllers
 
             context.NovoUtilizador(u);
 
-            return RedirectToAction("Editar");
+            return View("Editar", u);
         }
-        public IActionResult AtualizarSenha(string password_current, string password, string password_confirmation)
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult AtualizarSenha(int id, string password_current, string password, string password_confirmation)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
+            Utilizador u = context.ObterUtilizador(id);
 
             if (password != password_confirmation) ModelState.AddModelError("", "Passwords não condizem");
             if (password.Length < 8) ModelState.AddModelError("", "Password demasiado pequena! Tem de ter pelo menos 8 digitos!");
