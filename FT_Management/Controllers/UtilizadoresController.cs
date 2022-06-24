@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
@@ -106,6 +107,46 @@ namespace FT_Management.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult Editar()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return View(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())));
+        }
+
+        public IActionResult AtualizarUtilizador(string name, string email)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
+
+            u.NomeCompleto = name;
+            u.EmailUtilizador = email;
+
+            return RedirectToAction("Editar");
+        }
+        public IActionResult AtualizarSenha(string password_current, string password, string password_confirmation)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
+
+            if (password != password_confirmation) ModelState.AddModelError("", "Passwords não condizem");
+
+            if (ModelState.IsValid)
+            {
+                var passwordHasher = new PasswordHasher<string>();
+                if (passwordHasher.VerifyHashedPassword(null, u.Password, password_current) == PasswordVerificationResult.Success)
+                {
+                    u.Password = passwordHasher.HashPassword(null, password);
+                }
+            }
+            else
+            {
+                return View("Editar", u);
+            }
+
+            return RedirectToAction("Editar");
+        }
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();

@@ -164,11 +164,17 @@
                     <div class="navbar-item">
                         @if (User.Identity.IsAuthenticated)
                         {
+                            <a class="button is-primary is-light" href="~/Utilizadores/Editar">
+                                <span class="icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </a>
+
                             <a class="button is-danger is-light" href="~/Utilizadores/Logout">
                                 <span class="icon">
                                     <i class="fas fa-sign-out-alt"></i>
                                 </span>
-                                <span>Terminar Sessão (@User.ObterNomeCompleto())</span>
+                                <span>Terminar Sessão</span>
                             </a>
                         }
                         else

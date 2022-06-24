@@ -1810,7 +1810,8 @@ namespace FT_Management.Models
                         Enable = result["enable"] == 1,
                         CorCalendario = result["CorCalendario"],
                         IdPHC = result["IdPHC"],
-                        Iniciais = result["IniciaisUtilizador"]
+                        Iniciais = result["IniciaisUtilizador"],
+                        Pin = result["PinUtilizador"]
                     };
                 }
             }
