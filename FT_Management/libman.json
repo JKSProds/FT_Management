@@ -29,6 +29,11 @@
       "provider": "unpkg",
       "library": "bulma-calendar@6.1.18",
       "destination": "wwwroot/lib/bulma-calendar/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-toast@2.4.1",
+      "destination": "wwwroot/lib/bulma-toast/"
     }
   ]
 }

@@ -136,7 +136,7 @@ namespace FT_Management.Controllers
                 myMail.SubjectEncoding = System.Text.Encoding.UTF8;
 
                 // set body-message and encoding
-                if (int.Parse(DateTime.Now.ToString("dd")) < 13)
+                if (int.Parse(DateTime.Now.ToString("HH")) < 13)
                 {
                     myMail.Body = "Bom Dia, ";
                 }

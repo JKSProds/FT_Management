@@ -468,15 +468,14 @@
                     document.getElementById("btnEnviarMail_" + idFolhaObra).classList.remove("is-loading");
 
                     if (result == "Sucesso") {
-                        $.notify({
-                            message: "Email enviado com sucesso!"
-                        }, {
-                            // settings
-                            type: 'success',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
-                        });
+                        bulmaToast.toast({
+                          message: 'Email enviado com sucesso',
+                          type: 'is-success',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
 
                         var json = {
                             id: idFolhaObra,
@@ -494,15 +493,14 @@
                         });
 
                     } else {
-                        $.notify({
-                            message: "Ocorreu um erro!"
-                        }, {
-                            // settings
-                            type: 'danger',
-                            onShow: function () {
-                                this.css({ 'width': 'auto', 'height': 'auto' });
-                            }
-                        });
+                        bulmaToast.toast({
+                          message: 'Ocorreu um erro!',
+                          type: 'is-danger',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
                     }
 
                 });

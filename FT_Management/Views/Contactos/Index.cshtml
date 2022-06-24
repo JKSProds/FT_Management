@@ -345,16 +345,15 @@
                 });
             },
             error: function () {
-                $("#modalContacto").modal('hide');
-                $.notify({
-                    message: "Não foi encontrado um cliente com o mesmo NIF!"
-                }, {
-                    // settings
-                    type: 'danger',
-                    onShow: function () {
-                        this.css({ 'width': 'auto', 'height': 'auto' });
-                    }
-                });
+               Bulma('#modalContacto').modal().close();
+                        bulmaToast.toast({
+                          message: 'Não foi encontrado um cliente com o mesmo NIF!',
+                          type: 'is-danger',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
             }
         });
     }

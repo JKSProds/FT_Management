@@ -189,16 +189,16 @@ else
                     data: produto,
                     traditional: false,
                     success: function (result) {
-                        $(function () {
-                            $.notify({
-                                message: "Stock atualizado com sucesso!"
-                            }, {
-                                // settings
-                                type: 'success',
-                                onShow: function () {
-                                    this.css({ 'width': 'auto', 'height': 'auto' });
-                                }
-                            });
+                    $(function () {
+                        bulmaToast.toast({
+                          message: 'Stock atualizado com sucesso!',
+                          type: 'is-success',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
+                    });
                         });
                     }
                 });
