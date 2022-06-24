@@ -12,23 +12,24 @@ namespace FT_Management.Controllers
 {
     public class UtilizadoresController : Controller
     {
-        public IActionResult Login(string nome, string password)
+        public IActionResult Login(string nome, string password, string ReturnUrl)
         {
             Utilizador utilizador = new Utilizador {NomeUtilizador = nome, Password = password};
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (nome != null && password != null) {
-
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
-
-            if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
-
-            foreach (var user in LstUtilizadores)
+            if (nome != null && password != null)
             {
-                var passwordHasher = new PasswordHasher<string>();
-                if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
+
+                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+
+                if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
+
+                foreach (var user in LstUtilizadores)
                 {
-                    var claims = new List<Claim>
+                    var passwordHasher = new PasswordHasher<string>();
+                    if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
+                    {
+                        var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
@@ -36,31 +37,27 @@ namespace FT_Management.Controllers
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
 
                     };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
 
-                    if (ViewData["ReturnUrl"].ToString() != "" && ViewData["ReturnUrl"].ToString() != null)
-                    {
-                        Response.Redirect(ViewData["ReturnUrl"].ToString(), true);
+                        if (ReturnUrl != "" && ReturnUrl != null)
+                        {
+                            Response.Redirect(ReturnUrl, true);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
+                        ModelState.AddModelError("", "Password errada!");
+                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
                     }
-
-                }
-                else
-                {
-                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
-
-                    ModelState.AddModelError("", "Password errada!");
                 }
             }
-            }
-            ViewData["ReturnUrl"] = Request.Query["ReturnURL"];
-
-            return View();
+                return View();
         }
 
         [HttpPost]
