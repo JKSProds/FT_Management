@@ -56,7 +56,7 @@
             </div>
             <div class="buttons is-right is-grouped">
                 <p class="control">
-                    <a class="button is-info is-outlined" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'">
+                    <a class="button is-info is-outlined" onclick="location.href = '@(Url.Action("CalendarioView", "Ferias"))'">
                         <span class="icon">
                             <i class="far fa-calendar-alt"></i>
                         </span>
@@ -292,6 +292,7 @@ else
                      bulmaCalendar.attach('#txtDataInicio', {
                         color: 'info',
                         isRange:   true,
+                        lang: 'pt',
                         labelFrom: 'Inicio',
                         labelTo:   'Fim',
                         displayMode: 'inline',

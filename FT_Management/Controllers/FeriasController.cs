@@ -109,9 +109,9 @@ namespace FT_Management.Controllers
             return File(output, System.Net.Mime.MediaTypeNames.Application.Xml);
         }
 
-        public ActionResult Calendario()
+        public ActionResult CalendarioView()
         {
-            return View();
+            return View("Calendario");
         }
 
         public ActionResult Detalhes(int IdUtilizador)
