@@ -26,12 +26,23 @@
         </div>
         <div class="column is-right my-auto mx-0">
             <form method="get" style="width:100%" action="Acessos">
-                <div class="field has-addons">
+                <div class="field">
                     <p class="control" style="width:100%">
-                        <input class="input bulmaCalendar" type="date" value="@(DateTime.Parse(ViewData["Data"].ToString()).ToString("yyyy-MM-dd"))" name="Data"/>
-                         <div class="control">
-                            <button type="submit" class="button is-info"><i class="fas fa-search"></i></button>
-                        </div>
+                        <input class="input" type="date" value="@(DateTime.Parse(ViewData["Data"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="Data"/>
+                        <script>
+                            bulmaCalendar.attach('#txtData', {
+                                color: 'info',
+                                lang: 'pt',
+                                dateFormat: 'dd/MM/yyyy',
+                                todayLabel: 'Hoje',
+                                showClearButton: false,
+                                cancelLabel: 'Cancelar'
+                            });
+                            document.getElementById('txtData').bulmaCalendar.on('select', function(datepicker) {
+                                  document.getElementById('txtData').value = datepicker.data.value();
+                                  $('form').submit();
+                            });
+                        </script>
                     </p>
                 </div>
             </form>

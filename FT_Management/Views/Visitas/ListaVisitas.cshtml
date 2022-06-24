@@ -18,21 +18,20 @@
         <div class="column is-right my-auto">
             <form method="get" action="ListaVisitas">
                 <input type="hidden" id="hiddenIdComercial" value="@ViewData["IdComercial"]" name="IdComercial">
-                <input type="hidden" id="hiddenTxtData" value="@ViewData["DataVisitas"]" name="DataVisitas">
-                <input type="text" class="datepicker" id="txtData">
+               <input class="input" type="date" value="@(DateTime.Parse(ViewData["DataVisitas"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="DataVisitas"/>
                 <script>
-                        $('#txtData').datepicker({
-                            format: 'dd-mm-yyyy',
-                            size: 'large',
-                            value: '@ViewData["DataVisitas"]',
-                            change: function (e) {
-                                if (document.getElementById("hiddenTxtData").value != document.getElementById("txtData").value) {
-                                    //alert('Change is fired ' + document.getElementById("txtData").value);
-                                    document.getElementById("hiddenTxtData").value = document.getElementById("txtData").value;
-                                    $('form').submit();
-                                }
-                            }
-                        });
+                    bulmaCalendar.attach('#txtData', {
+                        color: 'info',
+                        lang: 'pt',
+                        dateFormat: 'dd/MM/yyyy',
+                        todayLabel: 'Hoje',
+                        showClearButton: false,
+                        cancelLabel: 'Cancelar'
+                    });
+                    document.getElementById('txtData').bulmaCalendar.on('select', function(datepicker) {
+                            document.getElementById('txtData').value = datepicker.data.value();
+                            $('form').submit();
+                    });
                 </script>
             </form>
             <div class="buttons is-right my-1">

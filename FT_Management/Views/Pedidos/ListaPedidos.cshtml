@@ -25,22 +25,21 @@
         <div class="column is-right my-auto">
             <form method="get" action="ListaPedidos">
                 <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
-                <input type="hidden" id="hiddenTxtData" value="@ViewData["DataPedidos"]" name="DataPedidos">
-                <input type="text" class="datepicker" id="txtData">
-                <script>
-                        $('#txtData').datepicker({
-                            format: 'dd-mm-yyyy',
-                            size: 'large',
-                            value: '@ViewData["DataPedidos"]',
-                            change: function (e) {
-                                if (document.getElementById("hiddenTxtData").value != document.getElementById("txtData").value) {
-                                    //alert('Change is fired ' + document.getElementById("txtData").value);
-                                    document.getElementById("hiddenTxtData").value = document.getElementById("txtData").value;
-                                    $('form').submit();
-                                }
-                            }
-                        });
-                </script>
+                        <input class="input" type="date" value="@(DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="DataPedidos"/>
+                        <script>
+                            bulmaCalendar.attach('#txtData', {
+                                color: 'info',
+                                lang: 'pt',
+                                dateFormat: 'dd/MM/yyyy',
+                                todayLabel: 'Hoje',
+                                showClearButton: false,
+                                cancelLabel: 'Cancelar'
+                            });
+                            document.getElementById('txtData').bulmaCalendar.on('select', function(datepicker) {
+                                  document.getElementById('txtData').value = datepicker.data.value();
+                                  $('form').submit();
+                            });
+                        </script>
             </form>
             <div class="buttons is-right my-1">
                 <p class="control">

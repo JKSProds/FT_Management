@@ -179,9 +179,6 @@
                                     <span class="select" style="width:100%">
                                         <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect" asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
                                     </span>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-user"></i>
-                                    </span>
                                 </div>
                             </div>
                             <span asp-validation-for="Tecnico" class="text-danger"></span>
@@ -195,8 +192,18 @@
                             <div class="field">
                                 <label asp-for="DataPedido"></label>
                                 <div class="control">
-                                    <input type="date" class="input bulmaCalendarInline" value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataPedido" id="txtDataPedido">
-                                   
+                                    <input type="date" class="input" value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataPedido" id="txtDataPedido">
+                                    <script>
+                                        bulmaCalendar.attach('#txtDataPedido', {
+                                            color: 'info',
+                                            lang: 'pt',
+                                            displayMode: 'inline',
+                                            dateFormat: 'dd/MM/yyyy',
+                                            todayLabel: 'Hoje',
+                                            showClearButton: false,
+                                            cancelLabel: 'Cancelar'
+                                        });
+                                    </script>
                                 </div>
                                 <span asp-validation-for="DataPedido" class="text-danger"></span>
                             </div>
@@ -205,8 +212,18 @@
                             <div class="field">
                                 <label asp-for="DataMarcacao"></label>
                                 <div class="control">
-                                    <input type="date" class="input bulmaCalendarInline" value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData">
-                                    
+                                    <input type="date" class="input " value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData">
+                                    <script>
+                                        bulmaCalendar.attach('#txtData', {
+                                            color: 'info',
+                                            lang: 'pt',
+                                            displayMode: 'inline',
+                                            dateFormat: 'dd/MM/yyyy',
+                                            todayLabel: 'Hoje',
+                                            showClearButton: false,
+                                            cancelLabel: 'Cancelar'
+                                        });
+                                    </script>
                                 </div>
                                 <span asp-validation-for="DataMarcacao" class="text-danger"></span>
                             </div>
@@ -216,6 +233,15 @@
                                 <label asp-for="Hora"></label>
                                 <div class="control">
                                   <input type="time" class="input bulmaCalendar" asp-for="Hora" id="txtHora">
+                                  <script>
+                                        bulmaCalendar.attach('#txtHora', {
+                                            color: 'info',
+                                            lang: 'pt',
+                                            timeFormat: 'HH:mm',
+                                            cancelLabel: 'Cancelar',
+                                            validateLabel: 'Guardar'
+                                        });
+                                   </script>
                                 </div>
                                 <span asp-validation-for="Hora" class="text-danger"></span>
                             </div>

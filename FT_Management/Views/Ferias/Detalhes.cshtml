@@ -287,7 +287,22 @@ else
         </header>
         <section class="modal-card-body">
             <div class="control">
-                <input type="date" class="input bulmaCalendarRange" id="txtDataInicio" disabled>
+                <input type="date" class="input" id="txtDataInicio" disabled>
+                <script>
+                     bulmaCalendar.attach('#txtDataInicio', {
+                        color: 'info',
+                        isRange:   true,
+                        labelFrom: 'Inicio',
+                        labelTo:   'Fim',
+                        displayMode: 'inline',
+                        dateFormat: 'dd/MM/yyyy',
+                        todayLabel: 'Hoje',
+                        clearLabel: 'Limpar',
+                        cancelLabel: 'Cancelar',
+                        minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
+                        maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
+                    });
+                </script>
             </div>
         </section>
         <footer class="modal-card-foot">

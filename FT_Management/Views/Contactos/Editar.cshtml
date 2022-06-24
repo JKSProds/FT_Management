@@ -253,21 +253,16 @@
                                             <label for="chkLembrete">
                                                 Definir Lembrete
                                             </label>
-                                            @*DateTimePicker*@
-                                            <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                            <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                            <input type="text" class="input" id="txtDataLembrete" name="txtDataLembrete">
+                                           <input class="input" type="date" value="@(DateTime.Parse(DateTime.Now.AddDays(30).ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="txtDataLembrete"/>
                                             <script>
-                                                var today = new Date();
-                                                today.setDate(today.getDate() + 31);
-                                                var dd = String(today.getDate()).padStart(2, '0');
-                                                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                                var yyyy = today.getFullYear();
-
-                                                $('#txtDataLembrete').datepicker({
-                                                    format: 'dd-mm-yyyy',
-                                                    value: dd + '-' + mm + '-' + yyyy
+                                                bulmaCalendar.attach('#txtData', {
+                                                    color: 'info',
+                                                    lang: 'pt',
+                                                    displayMode: 'inline',
+                                                    dateFormat: 'dd/MM/yyyy',
+                                                    todayLabel: 'Hoje',
+                                                    showClearButton: false,
+                                                    cancelLabel: 'Cancelar'
                                                 });
                                             </script>
                                         </div>

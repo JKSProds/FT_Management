@@ -97,21 +97,17 @@
                             <div class="field">
                                 <label asp-for="DataVisita"></label>
                                 <div class="control">
-                                    <script src="~/js/gijgo.min.js" type="text/javascript"></script>
-                                    <link href="~/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-
-                                    <input type="text" class="form-control" id="txtData" asp-for="DataVisita">
-                                    <script>
-                                        var today = new Date();
-                                        var dd = String(today.getDate()).padStart(2, '0');
-                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                        var yyyy = today.getFullYear();
-
-                                        $('#txtData').datepicker({
-                                            format: 'dd-mm-yyyy',
-                                            value: dd + '-' + mm + '-' + yyyy
-                                        });
-                                    </script>
+                                <input class="input" type="date" value="@(DateTime.Now)" id="txtData" asp-for="DataVisita"/>
+                                <script>
+                                    bulmaCalendar.attach('#txtData', {
+                                        color: 'info',
+                                        lang: 'pt',
+                                        dateFormat: 'dd/MM/yyyy',
+                                        todayLabel: 'Hoje',
+                                        showClearButton: false,
+                                        cancelLabel: 'Cancelar'
+                                    });
+                                </script>
                                 </div>
                                 <span asp-validation-for="DataVisita" class="text-danger"></span>
                             </div>
