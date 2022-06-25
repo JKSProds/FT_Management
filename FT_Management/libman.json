@@ -34,6 +34,11 @@
       "provider": "unpkg",
       "library": "bulma-toast@2.4.1",
       "destination": "wwwroot/lib/bulma-toast/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-responsive-tables@1.2.5",
+      "destination": "wwwroot/lib/bulma-responsive-tables/"
     }
   ]
 }
