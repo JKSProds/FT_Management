@@ -212,14 +212,20 @@
                         </div>
                         <div class="column is-4 my-auto">
                             <div class="field">
-                                <input id="Piquete" type="checkbox" name="Oficina" class="switch is-rounded is-info " disabled checked="@(Model.Piquete)">
-                                <label for="Piquete" asp-for="Piquete"></label>
-                            </div>
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="Piquete">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Piquete)</span>
+                                </label>                         
+                                </div>
                         </div>
                         <div class="column is-4 my-auto">
                             <div class="field">
-                                <input id="Oficina" type="checkbox" name="Oficina" class="switch is-rounded is-info" disabled checked="@(Model.Oficina)">
-                                <label for="Oficina" asp-for="Oficina"></label>
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="Oficina">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Oficina)</span>
+                                </label>
                             </div>
                         </div>
                         <div class="column">

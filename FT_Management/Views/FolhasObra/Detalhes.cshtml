@@ -95,8 +95,11 @@
                         </div>
                         <div class="column is-2 my-auto">
                                 <div class="field">
-                                    <input id="AssistenciaRemota" type="checkbox" name="AssistenciaRemota" class="switch is-rounded is-info " disabled checked="@(Model.AssistenciaRemota)">
-                                    <label for="AssistenciaRemota" asp-for="AssistenciaRemota"></label>
+                                <label class="switch is-rounded">
+                                    <input id="AssistenciaRemota" type="checkbox" name="AssistenciaRemota" disabled checked="@(Model.AssistenciaRemota)">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.AssistenciaRemota)</span>
+                                </label>
                                 </div>
                         </div>
                         <div class="column is-12">

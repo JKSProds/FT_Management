@@ -66,7 +66,6 @@ namespace FT_Management.Controllers
                 ModelState.Remove("Tecnico.Password");
             }
 
-
             string mes = phccontext.ValidarMarcacao(m);
              if (mes.Count() > 0) ModelState.AddModelError("", mes);
 

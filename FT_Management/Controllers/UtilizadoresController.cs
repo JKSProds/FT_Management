@@ -169,6 +169,46 @@ namespace FT_Management.Controllers
 
             return RedirectToAction("Logout");
         }
+
+        [HttpPost]
+        public IActionResult AlterarEstado(int id, bool estado)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(id);
+            u.Enable = estado;
+
+            context.NovoUtilizador(u);
+
+            return Content("Ok");
+        }
+
+        [HttpPost]
+        public IActionResult AlterarAdmin(int id, bool admin)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(id);
+            u.Admin = admin;
+
+            context.NovoUtilizador(u);
+
+            return Content("Ok");
+        }
+
+        [HttpPost]
+        public IActionResult ResetSenha(int id, string senha)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var passwordHasher = new PasswordHasher<string>();
+
+            Utilizador u = context.ObterUtilizador(id);
+            u.Password = passwordHasher.HashPassword(null, senha);
+
+            context.NovoUtilizador(u);
+
+            return Content("Ok");
+        }
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
