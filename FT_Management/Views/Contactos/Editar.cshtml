@@ -205,17 +205,19 @@
                         }
                         else
                         {
-                            <table class="table is-hoverable is-narrow is-fullwidth">
+                            <div class="b-table">
+                            <div class="table-wrapper has-mobile-cards">                
+                            <table class="table is-hoverable is-fullwidth">
                                 <thead>
                                     <tr>
                                         <th>
-                                            Data
+                                            @Html.DisplayNameFor(model => model.Historico.FirstOrDefault().Data)
                                         </th>
                                         <th>
-                                            Comercial
+                                            @Html.DisplayNameFor(model => model.Historico.FirstOrDefault().IdComercial.NomeCompleto)
                                         </th>
                                         <th>
-                                            Comentário
+                                            @Html.DisplayNameFor(model => model.Historico.FirstOrDefault().Obs)
                                         </th>
                                     </tr>
                                 </thead>
@@ -223,19 +225,21 @@
                                     @foreach (var item in Model.Historico)
                                     {
                                         <tr>
-                                            <td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Historico.FirstOrDefault().Data)">
                                                 <span>@item.Data.ToShortDateString()</span>
                                             </td>
-                                            <td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Historico.FirstOrDefault().IdComercial)">
                                                 <span>@item.IdComercial.NomeCompleto</span>
                                             </td>
-                                            <td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Historico.FirstOrDefault().Obs)">
                                                 <span>@item.Obs</span>
                                             </td>
                                         </tr>
                                     }
                                 </tbody>
                             </table>
+                            </div>
+                            </div>
                         }
 
                         <div id="modalAdicionarComentario" class="modal">

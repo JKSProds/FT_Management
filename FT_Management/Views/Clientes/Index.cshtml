@@ -63,8 +63,9 @@
     }
     else
     {
-
-        <table class="table is-narrow is-hoverable is-fullwidth">
+          <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+        <table class="table is-hoverable is-fullwidth">
             <thead>
                 <tr>
                     <th>
@@ -85,16 +86,16 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.IdCliente)" onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
                             <span>@item.IdCliente - @item.IdLoja</span>
                         </td>
-                        <td onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.NomeCliente)" onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
                             @Html.DisplayFor(modelItem => item.NomeCliente)
                         </td>
-                        <td onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.TelefoneCliente)" onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
                             @Html.DisplayFor(modelItem => item.TelefoneCliente)
                         </td>
-                        <td>
+                        <td class="is-actions-cell">
                             <div class="btn-group float-right">
                                 <a class="button is-info is-outlined @(item.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.TelefoneCliente"><i class="fas fa-phone float-left" style="margin-top:5px"></i></a>
                                 <a class="button is-primary is-outlined" href="https://maps.google.com/?daddr=@item.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
@@ -105,6 +106,8 @@
                 }
             </tbody>
         </table>
+        </div>
+        </div>
     }
 </div>
 @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Clientes", new { page, Nome = @ViewData["Nome"] }))

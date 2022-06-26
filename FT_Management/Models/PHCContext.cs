@@ -219,6 +219,7 @@ namespace FT_Management.Models
                             Armazem_ID = int.Parse(result["armazem"].ToString()),
                             Pos_Stock = result["u_locpt"].ToString()
                         });
+                        //LstProdutos.Last().ImgProduto = ObterProdutoImagem(LstProdutos.Last());
                     }
                 }
 

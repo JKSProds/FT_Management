@@ -82,7 +82,9 @@
 else
 {
     <div class="container">
-        <table class="table is-narrow is-hoverable is-fullwidth" id="tblProdutos">
+    <div class="b-table">
+    <div class="table-wrapper has-mobile-cards"> 
+        <table class="table is-hoverable is-fullwidth" id="tblProdutos">
             <thead>
                 <tr>
                     <th>
@@ -91,19 +93,19 @@ else
                     <th>
                         @Html.DisplayNameFor(model => model.Designacao_Produto)
                     </th>
-                    <th class="is-hidden-touch">
+                    <th>
                         @Html.DisplayNameFor(model => model.Stock_Fisico)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Stock_PHC)
                     </th>
-                    <th class="is-hidden-touch">
+                    <th>
                         @Html.DisplayNameFor(model => model.Stock_Rec)
                     </th>
-                    <th class="is-hidden-touch">
+                    <th>
                         @Html.DisplayNameFor(model => model.Stock_Res)
                     </th>
-                    <th class="is-hidden-touch">
+                    <th>
                         <a id="btnEdit" class="button is-info is-fullwidth" disabled onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
                         <a id="btnCloseEdit" class="button is-info is-fullwidth" disabled onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
                     </th>
@@ -113,30 +115,28 @@ else
                 @foreach (var item in Model)
                 {
                     <tr style="width:auto">
-                        <td class="Ref_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.Ref_Produto)" class="Ref_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                             <span>@item.Ref_Produto</span>
                         </td>
-                        <td class="Designacao_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.Designacao_Produto)" class="Designacao_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                             <span>@item.Designacao_Produto</span>
                         </td>
-                        <td class="Stock_Fisico is-hidden-touch">
+                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Fisico)" class="Stock_Fisico">
                             <span onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">@item.Stock_Fisico</span>
                             <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
                         </td>
-                        <td class="Stock_PHC" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.Stock_PHC)" class="Stock_PHC" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                             <span>@item.Stock_PHC</span>
                         </td>
-                        <td class="Stock_Rec is-hidden-touch" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Rec)" class="Stock_Rec" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                             <span>@item.Stock_Rec</span>
                         </td>
-                        <td class="Stock_Res is-hidden-touch" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Res)" class="Stock_Res" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
                             <span>@item.Stock_Res</span>
                         </td>
-                        <td style="min-width: 240px" class="is-hidden-touch">
-                            <div class="btn-group">
-                                <a class="update btn btn-outline-primary btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
-                            </div>
+                        <td style="min-width: 240px" class="is-actions-cell">
                             <div class="buttons">
+                                <a class="update btn btn-outline-primary btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
                                 <a class="button is-outlined is-primary is-small printpeq" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fa-solid fa-qrcode"></i></a>
                                 <a class="button is-outlined is-normal is-primary printqr" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fa-solid fa-qrcode"></i></a>
                                 <a class="button is-outlined is-primary" onclick="window.open('@Url.Action("PrintPeqMulti", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-notes-medical"> x8</i></a>
@@ -146,6 +146,8 @@ else
                 }
             </tbody>
         </table>
+        </div>
+        </div>
     </div>
     <br />
     <div class="container">
@@ -199,7 +201,6 @@ else
                           duration: 5000
                         })
                     });
-                        });
                     }
                 });
             });

@@ -248,7 +248,9 @@
                     }
                     else
                     {
-                        <table class="table is-narrow is-hoverable is-fullwidth">
+                        <div class="b-table">
+                        <div class="table-wrapper has-mobile-cards"> 
+                        <table class="table is-hoverable is-fullwidth">
                             <thead>
                                 <tr>
                                     <th>
@@ -267,16 +269,16 @@
                                 @foreach (var item in Model.LstFolhasObra)
                                 {
                                     <tr>
-                                        <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                        <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)" onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
                                             <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
                                         </td>
-                                        <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                        <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)" onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
                                             @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
                                         </td>
-                                        <td onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                        <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)" onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
                                             @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
                                         </td>
-                                        <td>
+                                        <td class="is-actions-cell">
                                             <div class="field has-addons">
                                                 <p class="control">
                                                     <button class="button" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
@@ -305,6 +307,8 @@
                                 }
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     }
                 </li>
                 <li>
@@ -324,21 +328,24 @@
                     }
                     else
                     {
-
-                        <table class="table is-narrow is-hoverable is-fullwidth">
-                            <thead><tr><th>Utilizador</th><th>Comentário</th><th>Data</th>
+                         <div class="b-table">
+                        <div class="table-wrapper has-mobile-cards"> 
+                        <table class="table is-hoverable is-fullwidth">
+                            <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.First().NomeUtilizador)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)</th>
                             <tbody>
 
                                 @foreach (var c in Model.LstComentarios)
                                 {
                                     <tr>
-                                        <td><span>@c.NomeUtilizador</span></td>
-                                        <td><span>@c.Descricao</span></td>
-                                        <td><span>@c.DataComentario</span></td>
+                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().NomeUtilizador)"><span>@c.NomeUtilizador</span></td>
+                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)"><span>@c.Descricao</span></td>
+                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)"><span>@c.DataComentario</span></td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
+                        </div>
+                        </div>
                     }
                 </li>
             </ul>

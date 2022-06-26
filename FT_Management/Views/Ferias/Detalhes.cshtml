@@ -28,7 +28,7 @@
                 <p class="control">
                     <button class="button is-info disabled">
                         <span class="icon"><i class="fa fa-calendar-days"></i></span>
-                        <span>Dias Marcados: @Model.DiasTotais</span>
+                        <span>@Html.DisplayNameFor(model => model.DiasTotais): @Model.DiasTotais</span>
                     </button>
                 </p>
                 <p class="control">
@@ -36,21 +36,21 @@
                     {
                     <button class="button is-danger" id="alterarDiasFerias">
                         <span class="icon"><i class="fa fa-calendar-xmark"></i></span>
-                        <span>Dias Disponiveis: @(Model.DiasDisponiveis - Model.DiasTotais)</span>
+                        <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis - Model.DiasTotais)</span>
                     </button>
                     }
                     else
                     {
                 <button class="button is-danger disabled">
                     <span class="icon"><i class="fa fa-calendar-plus"></i></span>
-                    <span>Dias Disponiveis: @(Model.DiasDisponiveis - Model.DiasTotais)</span>
+                    <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis - Model.DiasTotais)</span>
                 </button>
                     }
                 </p>
                 <p class="control">
                     <button class="button is-primary disabled">
                         <span class="icon"><i class="fa fa-calendar-check"></i></span>
-                        <span>Dias Aprovados: @Model.DiasMarcados</span>
+                        <span>@Html.DisplayNameFor(model => model.DiasMarcados): @Model.DiasMarcados</span>
                     </button>
                 </p>
             </div>
@@ -84,25 +84,27 @@
 @if (Model.Ferias.Count() == 0)
 {
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas férias associadas!</button>
+    <button class="button is-fullwidth is-danger is-outlined">Não foram encontradas férias associadas!</button>
 }
 else
 {
     <div class="container">
-        <table class="table is-narrow is-hoverable is-fullwidth">
+        <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">        
+        <table class="table is-hoverable is-fullwidth">
             <thead>
                 <tr>
                     <th>
-                        Data Inicio
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)
                     </th>
                     <th>
-                        Data Fim
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)
                     </th>
                     <th>
-                        Aprovado Por
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)
                     </th>
                     <th>
-                        Observações
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)
                     </th>
                     <th></th>
                 </tr>
@@ -111,20 +113,20 @@ else
                 @foreach (var item in Model.Ferias)
                 {
                 <tr class="@(item.Validado ? "has-background-success-light" : "has-background-danger-light")">
-                    <td>
+                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)">
                         <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
                     </td>
-                    <td>
+                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)">
                         <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
                     </td>
-                    <td>
+                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)">
                         @Html.DisplayFor(modelItem => item.ValidadoPorNome)
                     </td>
 
-                    <td class="is-hidden-touch" style="width: 60%;">
+                    <td  data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)" style="width: 60%;">
                         @Html.DisplayFor(modelItem => item.Obs)
                     </td>
-                    <td>
+                    <td class="is-actions-cell">
                         <div class="field has-addons is-pulled-right">
 
                             @if (this.User.IsInRole("Admin"))
@@ -145,6 +147,8 @@ else
                 }
             </tbody>
         </table>
+        </div>
+        </div>
     </div>
 }
 

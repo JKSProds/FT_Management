@@ -52,7 +52,9 @@
 else
 {
 <div class="container">
-    <table class="table is-narrow is-hoverable is-fullwidth">
+    <div class="b-table">
+    <div class="table-wrapper has-mobile-cards"> 
+    <table class="table is-hoverable is-fullwidth">
         <thead>
             <tr>
                 <th>
@@ -76,19 +78,19 @@ else
             @foreach (var item in Model)
             {
             <tr>
-                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                <td data-label="@Html.DisplayNameFor(model => model.IdFolhaObra)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                     <span>@item.IdFolhaObra</span>
                 </td>
-                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                <td data-label="@Html.DisplayNameFor(model => model.ClienteServico.NomeCliente)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                     @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
                 </td>
-                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                <td data-label="@Html.DisplayNameFor(model => model.EquipamentoServico.NumeroSerieEquipamento)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                     @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
                 </td>
-                <td onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                     @Html.DisplayFor(modelItem => item.IntervencaosServico.FirstOrDefault().NomeTecnico)
                 </td>
-                <td>
+                <td class="is-actions-cell">
                     <div class="field has-addons">
                         <p class="control">
                             <button class="button" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
@@ -118,6 +120,8 @@ else
             }
         </tbody>
     </table>
+    </div>
+    </div>
 </div>
 }
 
