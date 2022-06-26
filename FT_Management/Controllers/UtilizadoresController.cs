@@ -47,7 +47,7 @@ namespace FT_Management.Controllers
                     };
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
+                        context.AdicionarLog(user.Id, "LOGIN SUCESSO", 4);
 
                         if (ReturnUrl != "" && ReturnUrl != null)
                         {
@@ -61,7 +61,7 @@ namespace FT_Management.Controllers
                     else
                     {
                         ModelState.AddModelError("", "Password errada!");
-                        context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
+                        context.AdicionarLog(user.Id, "LOGIN SEM SUCESSO", 4);
                     }
                 }
             }
@@ -94,7 +94,7 @@ namespace FT_Management.Controllers
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await  HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SUCESSO", 4);
+                    context.AdicionarLog(user.Id, "LOGIN SUCESSO", 4);
 
                     if (ReturnUrl != "" && ReturnUrl != null)
                     {
@@ -108,10 +108,18 @@ namespace FT_Management.Controllers
                 else
                 {
                     ModelState.AddModelError("", "Password errada!");
-                    context.AdicionarLog(utilizador.NomeUtilizador, "LOGIN SEM SUCESSO", 4);
+                    context.AdicionarLog(user.Id, "LOGIN SEM SUCESSO", 4);
                 }
             }
             return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Logs(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewData["NomeUtilizador"] = context.ObterUtilizador(id).NomeUtilizador;
+            return View(context.ObterListaLogs(id));
         }
 
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
@@ -171,6 +179,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult AlterarEstado(int id, bool estado)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -184,6 +193,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult AlterarAdmin(int id, bool admin)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -197,6 +207,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult ResetSenha(int id, string senha)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

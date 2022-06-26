@@ -61,7 +61,7 @@ namespace FT_Management.Controllers
                 {
                     m.LstTecnicos.Add(context.ObterUtilizador(item));
                 }
-                m.Utilizador = User.ObterNomeCompleto();
+                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 m.Tecnico = m.LstTecnicos.First();
                 ModelState.Remove("Tecnico.Password");
             }

@@ -50,7 +50,7 @@ namespace FT_Management.Controllers
 
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta80x50(phccontext.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
+            
             return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
 

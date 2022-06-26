@@ -131,7 +131,7 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
                 command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
@@ -140,7 +140,7 @@ namespace FT_Management.Models
 
                 conn.Close();
 
-                Console.WriteLine("Enviada marcacao para o PHC pelo utilizador " + m.Utilizador);
+                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Criada marcação com sucesso!", 5);
 
             }
 

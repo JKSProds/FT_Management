@@ -95,6 +95,31 @@ namespace FT_Management.Models
             return LstUtilizadores;
         }
 
+        public List<Log> ObterListaLogs(int IdUtilizador)
+        {
+            List<Log> LstLogs = new List<Log>();
+            Utilizador u = ObterUtilizador(IdUtilizador);
+            string sqlQuery = "SELECT * FROM dat_logs where id_user="+u.Id+" order by data_log;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstLogs.Add(new Log()
+                    {
+                        Id = result["id_log"],
+                        Utilizador = u,
+                        Descricao = result["msg_log"],
+                        Data = result["data_log"],
+                        Tipo = result["tipo_log"]
+                    });
+                }
+            }
+            return LstLogs;
+        }
+
+
         public List<Utilizador> ObterListaTecnicos(bool Enable)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
@@ -173,9 +198,9 @@ namespace FT_Management.Models
 
 
 
-        public void AdicionarLog(string user, string msg, int tipo)
+        public void AdicionarLog(int id_user, string msg, int tipo)
         {
-            string sql = "INSERT INTO dat_logs (user, msg_log, tipo_log) VALUES ('" + user + "', '" + msg + "', " + tipo + ");";
+            string sql = "INSERT INTO dat_logs (id_user, msg_log, tipo_log) VALUES ('" + id_user + "', '" + msg + "', " + tipo + ");";
 
             Database db = ConnectionString;
 

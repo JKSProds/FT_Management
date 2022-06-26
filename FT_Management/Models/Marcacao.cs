@@ -54,7 +54,7 @@ namespace FT_Management.Models
         public bool Oficina { get; set; }
         [Display(Name = "Serviço de Piquete?")]
         public bool Piquete { get; set; }
-        public string Utilizador { get; set; }
+        public Utilizador Utilizador { get; set; }
         public string MarcacaoStamp { get; set; }
 
 
