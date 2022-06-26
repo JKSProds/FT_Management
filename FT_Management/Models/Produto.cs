@@ -20,6 +20,7 @@ namespace FT_Management.Models
         public double Stock_Res { get; set; }
         [Display(Name = "Receção")]
         public double Stock_Rec { get; set; }
+        [Display(Name = "Armazém")]
         public int Armazem_ID { get; set; }
         [Display(Name = "Localização")]
         public string Pos_Stock { get; set; }
@@ -27,7 +28,9 @@ namespace FT_Management.Models
         [Display(Name = "Observações")]
         [DataType(DataType.MultilineText)]
         public string Obs_Produto { get; set; }
+        [Display(Name = "Tipo de Unidade")]
         public string TipoUn { get; set; }
+        [Display(Name = "Imagem")]
         public string ImgProduto { get; set; }
     }
 

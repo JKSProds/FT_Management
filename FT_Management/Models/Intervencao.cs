@@ -7,8 +7,11 @@ namespace FT_Management.Models
 {
     public class Intervencao
     {
+        [Display(Name = "Num. da Intervenção")]
         public int IdIntervencao { get; set; }
+        [Display(Name = "Num. do Técnico")]
         public int IdTecnico { get; set; }
+        [Display(Name = "Num. da Folha de Obra")]
         public int IdFolhaObra { get; set; }
         private string _RelatorioServico;
         [DataType(DataType.MultilineText)]

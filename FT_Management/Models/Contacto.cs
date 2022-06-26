@@ -8,7 +8,7 @@ namespace FT_Management.Models
     public class Contacto
     {
         //ID | Nome | Morada | Pessoa Contacto | Email | Telemovel | NIF | Observacoes 
-        [Display(Name = "ID")]
+        [Display(Name = "Num. do Contacto")]
         public int IdContacto { get; set; }
         [Display(Name = "Nome da Empresa")]
         [Required]
@@ -32,17 +32,29 @@ namespace FT_Management.Models
         public string Obs { get; set; }
         [Display(Name = "Tipo de Contacto")]
         public string TipoContacto { get; set; }
+        [Display(Name = "Link/Anexos")]
         public string URL { get; set; }
+        [Display(Name = "Data do Contacto")]
         public DateTime DataContacto { get; set; }
-        public String AreaNegocio { get; set; }
+        [Display(Name = "Área de Negócio")]
+        public string AreaNegocio { get; set; }
+        [Display(Name = "Validado por Admin?")]
         public bool ValidadoPorAdmin { get; set; }
+        [Display(Name = "Num. do Cliente")]
         public int IdCliente { get; set; }
+        [Display(Name = "Ñum. do Estabelecimento")]
         public int IdLoja { get; set; }
+        [Display(Name = "Cliente")]
         public Cliente Cliente { get; set; }
+        [Display(Name = "Num. do Utilizador")]
         public int IdUtilizador { get; set; }
+        [Display(Name = "Num. do Comercial")]
         public int IdComercial { get; set; }
+        [Display(Name = "Comercial")]
         public Utilizador Comercial { get; set; }
+        [Display(Name = "Criador por:")]
         public Utilizador Utilizador { get; set; }
+        [Display(Name = "Histórico")]
         public List<HistoricoContacto> Historico { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
@@ -67,11 +79,15 @@ namespace FT_Management.Models
     }
     public class HistoricoContacto
     {
-
+        [Display(Name = "Num. da Observação")]
         public int Id { get; set; }
+        [Display(Name = "Num. do Contacto")]
         public int IdContacto { get; set; }
+        [Display(Name = "Comercial")]
         public Utilizador IdComercial { get; set; }
+        [Display(Name = "Data")]
         public DateTime Data { get; set; }
+        [Display(Name = "Comentário")]
         public string Obs { get; set; }
 
     }

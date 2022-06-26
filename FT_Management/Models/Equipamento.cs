@@ -21,9 +21,13 @@ namespace FT_Management.Models
         [Required(ErrorMessage = "Número de Série é Obrigatório")]
         [Display(Name = "Numero de Série")]
         public string NumeroSerieEquipamento { get { return _NumeroSerieEquipamento ?? ""; } set { _NumeroSerieEquipamento = value; } }
+        [Display(Name = "Num. do Cliente")]
         public int IdCliente { get; set; }
+        [Display(Name = "Num. do Estabelecimento")]
         public int IdLoja { get; set; }
+        [Display(Name = "Num. do Fornecedor")]
         public int IdFornecedor { get; set; }
+        [Display(Name = "Referência do Equipamento")]
         public string RefProduto { get; set; }
     }
 }

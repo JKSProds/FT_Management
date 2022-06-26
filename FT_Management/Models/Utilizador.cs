@@ -26,17 +26,29 @@ namespace FT_Management.Models
         [Required(ErrorMessage = "A password é obrigatória!")]
         [Display(Name = "Password")]
         public string Password { get; set; }
+        [Display(Name = "Nome Completo")]
         public string NomeCompleto { get; set; }
+        [Display(Name = "Tipo de Utilizador")]
         public int TipoUtilizador { get; set; }
+        [Display(Name = "Email")]
         public string EmailUtilizador { get; set; }
+        [Display(Name = "IdAssociado - Fora de Uso")]
         public string IdCartaoTrello { get; set; }
+        [Display(Name = "Num. do PHC")]
         public int IdPHC { get; set; }
+        [Display(Name = "Num. do Armazém")]
         public int IdArmazem { get; set; }
+        [Display(Name = "Admin?")]
         public bool Admin { get; set; }
+        [Display(Name = "Ativo?")]
         public bool Enable { get; set; }
+        [Display(Name = "Cor")]
         public string CorCalendario { get; set; }
+        [Display(Name = "Iniciais")]
         public string Iniciais { get; set; }
+        [Display(Name = "Pin")]
         public string Pin { get; set; }
+        [Display(Name = "Imagem")]
         public string ImgUtilizador { get; set; }
 
         public Utilizador()

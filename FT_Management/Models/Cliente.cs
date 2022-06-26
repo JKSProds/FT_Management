@@ -7,8 +7,9 @@ namespace FT_Management.Models
 {
     public class Cliente
     {
-        [Display(Name = "ID")]
+        [Display(Name = "Num. do Cliente")]
         public int IdCliente { get; set; }
+        [Display(Name = "Num. do Estabelecimento")]
         public int IdLoja { get; set; }
         private string _NomeCliente;
         [Required(ErrorMessage = "Nome do Cliente é Obrigatório")]
@@ -29,7 +30,9 @@ namespace FT_Management.Models
         private string _NumeroContribuinteCliente;
         [Display(Name = "Numero de Contribuinte")]
         public string NumeroContribuinteCliente { get { return _NumeroContribuinteCliente ?? ""; } set { _NumeroContribuinteCliente = value; } }
+        [Display(Name = "Num. do Vendedor")]
         public int IdVendedor { get; set; }
+        [Display(Name = "Tipo de Cliente")]
         public string TipoCliente { get; set; }
         public bool IsValidContrib()
         {

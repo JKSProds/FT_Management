@@ -37,6 +37,7 @@ namespace FT_Management.Models
         public string GuiaTransporteAtual { get {return _GuiaTransporteAtual ?? ""; } set {_GuiaTransporteAtual = value ;} }
         [Display(Name = "Assistência Remota?")]
         public bool AssistenciaRemota { get; set; }
+        [Display(Name = "Rúbrica")]
         public string RubricaCliente { get; set; }
 
         public FolhaObra()

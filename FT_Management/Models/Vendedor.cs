@@ -7,6 +7,7 @@ namespace FT_Management.Models
 {
     public class Vendedor
     {
+        [Display(Name = "Num. do Vendedor")]
         public int IdVendedor { get; set; }
         private string _NomeVendedor;
         [Required(ErrorMessage = "Nome do Vendedor é Obrigatório")]
