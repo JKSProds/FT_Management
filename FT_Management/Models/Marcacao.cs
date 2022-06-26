@@ -10,7 +10,7 @@ namespace FT_Management.Models
     {
         [Display(Name = "Num. da Marcação")]
         public int IdMarcacao { get; set; }
-        [Display(Name = "Agendado para:")]
+        [Display(Name = "Cliente")]
         public Cliente Cliente { get; set; }
         public int EstadoMarcacao { get; set; }
         [Required]
