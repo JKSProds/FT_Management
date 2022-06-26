@@ -38,42 +38,42 @@
                 <div class="card-content">
 
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Nome</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" class="input" readonly  asp-for="NomeCompleto"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Email</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.EmailUtilizador)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" class="input" readonly asp-for="EmailUtilizador"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">PHC</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.IdPHC)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" class="input" readonly  asp-for="IdPHC"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Iniciais</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" class="input" readonly  asp-for="Iniciais" ></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Pin</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" class="input" readonly asp-for="Pin"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Tipo</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.TipoUtilizador)</label></div><div class="field-body">
                             <div class="field">
                                     <span class="select" style="width:100%">
                                         <select style="width:100%" asp-for="TipoUtilizador" id="LstTipoUtilizador" disabled >
@@ -107,7 +107,7 @@
                         <input type="hidden" class="input"   asp-for="Id" name="id">
                         <div class="field is-horizontal">
                             <div class="field-label is-normal">
-                                <label class="label">Nome</label>
+                                <label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label>
                             </div>
                             <div class="field-body">
                                 <div class="field">
@@ -120,7 +120,7 @@
                         </div>
                         <div class="field is-horizontal">
                             <div class="field-label is-normal">
-                                <label class="label">E-mail</label>
+                                <label class="label">@Html.DisplayNameFor(model => model.EmailUtilizador)</label>
                             </div>
                             <div class="field-body">
                                 <div class="field">
@@ -132,21 +132,21 @@
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Pin</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" name="pin" maxlength=4 class="input" asp-for="Pin"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Iniciais</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" name="iniciais" maxlength=2 class="input" asp-for="Iniciais"></div>
                             </div>
                         </div>
                     </div>
                      <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Cor</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.CorCalendario)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="color" name="cor" class="input" asp-for="CorCalendario"></div>
                             </div>
