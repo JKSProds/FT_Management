@@ -65,12 +65,12 @@
                                 <label class="switch is-rounded">
                                     <input type="checkbox" id="chkEnable_@item.Id" checked="@item.Enable" onchange="AtualizarEnableUtilizador(@item.Id)">
                                     <span class="check is-info"></span>
-                                    <span class="control-label">Ativo</span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Enable)</span>
                                 </label>
                                 <label class="switch is-rounded">
                                     <input type="checkbox" id="chkAdmin_@item.Id" checked="@item.Admin" onchange="AtualizarAdminUtilizador(@item.Id)">
                                     <span class="check"></span>
-                                    <span class="control-label">Admin</span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Admin)</span>
                                 </label>
                                 <a class="button is-danger" onclick="ConfirmResetSenha(@item.Id)"><i class="fas fa-unlock"></i></a>
                             </td>

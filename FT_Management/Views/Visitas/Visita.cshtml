@@ -177,20 +177,22 @@
                         }
                         else
                         {
+                            <div class="b-table">
+                            <div class="table-wrapper has-mobile-cards">            
                             <table class="table is-hoverable is-narrow is-fullwidth">
                                 <thead>
                                     <tr>
                                         <th>
-                                            Data da Proposta
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().DataProposta)
                                         </th>
                                         <th>
-                                            Estado da Proposta
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().EstadoProposta)
                                         </th>
                                         <th>
-                                            Comercial
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().Comercial.NomeCompleto)
                                         </th>
                                         <th>
-                                            Valor da Proposta
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().ValorProposta)
                                         </th>
                                         <th>
                                         </th>
@@ -200,19 +202,19 @@
                                     @foreach (var item in Model.Propostas)
                                     {
                                         <tr>
-                                            <td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().DataProposta)">
                                                 <span>@item.DataProposta.ToString("dd/MM/yyyy")</span>
                                             </td>
-                                            <td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().EstadoProposta)">
                                                 @Html.DisplayFor(modelItem => item.EstadoProposta)
                                             </td>
-                                            <td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().Comercial.NomeCompleto)">
                                                 @Html.DisplayFor(modelItem => item.Comercial.NomeCompleto)
                                             </td>
-                                            <td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().ValorProposta)">
                                                 @Html.DisplayFor(modelItem => item.ValorProposta)
                                             </td>
-                                            <td>
+                                            <td data-label="">
                                                 <div class="btn-group float-right">
                                                     <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
                                                 </div>
@@ -221,6 +223,8 @@
                                     }
                                 </tbody>
                             </table>
+                            </div>
+                            </div>
                         }
                         <div id="modalAdicionaProposta" class="modal">
                             <div class="modal-background"></div>

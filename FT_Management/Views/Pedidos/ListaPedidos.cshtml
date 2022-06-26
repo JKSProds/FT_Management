@@ -102,31 +102,34 @@ else
                         </header>
                         <div class="card-content is-hidden">
                             <div class="content">
-                                Data do Pedido: <b>@item.DataPedido.ToShortDateString()</b><br />
-                                Estado: <b>@item.EstadoMarcacaoDesc</b><br />
-                                Prioridade: <b>@item.PrioridadeMarcacao</b><br />
-                                Referência: <b>@item.Referencia</b>
+                                @Html.DisplayNameFor(model => model.DataPedido): <b>@item.DataPedido.ToShortDateString()</b><br />
+                                @Html.DisplayNameFor(model => model.EstadoMarcacaoDesc): <b>@item.EstadoMarcacaoDesc</b><br />
+                                @Html.DisplayNameFor(model => model.PrioridadeMarcacao): <b>@item.PrioridadeMarcacao</b><br />
+                                @Html.DisplayNameFor(model => model.Referencia): <b>@item.Referencia</b>
                                 <hr />
                                 <p style="white-space: pre-line">@item.ResumoMarcacao</p>
                                 <hr />
                                 @if (item.LstComentarios.Count > 0)
                                 {
                                     <p class="subtitle">Comentários</p>
-
+                                    <div class="b-table">
+                                    <div class="table-wrapper has-mobile-cards">    
                                     <table class="table table-hover">
-                                        <thead><tr><th>Utilizador</th><th>Comentário</th><th>Data</th>
+                                        <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().NomeUtilizador)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)</th>
                                         <tbody>
 
                                             @foreach (var c in item.LstComentarios)
                                             {
                                                 <tr>
-                                                    <td><span>@c.NomeUtilizador</span></td>
-                                                    <td><span>@c.Descricao</span></td>
-                                                    <td><span>@c.DataComentario</span></td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().NomeUtilizador)"><span>@c.NomeUtilizador</span></td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)"><span>@c.Descricao</span></td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)"><span>@c.DataComentario</span></td>
                                                 </tr>
                                             }
                                         </tbody>
                                     </table>
+                                    </div>
+                                    </div>
                                 }
                             </div>
                         </div>
