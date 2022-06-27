@@ -50,10 +50,10 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td data-label="@Html.DisplayNameFor(model => model.Data)" onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                            <td data-label="@Html.DisplayNameFor(model => model.Data)">
                                 <span>@item.Data</span>
                             </td>
-                            <td data-label="@Html.DisplayNameFor(model => model.Descricao)"  onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                            <td data-label="@Html.DisplayNameFor(model => model.Descricao)" >
                                 <span>@item.Descricao</span>
                             </td>
                         </tr>
