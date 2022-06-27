@@ -252,15 +252,17 @@
                                 <section class="modal-card-body">
                                     <div class="form-group">
                                         <textarea id="txtHist" class="textarea is-info" rows="5" placeholder="Comentário" required></textarea>
+                                        &nbsp;
                                         <div class="form-check form-group col">
                                             <label class="switch is-rounded">
                                                 <input type="checkbox" id="chkLembrete">
                                                 <span class="check is-info"></span>
                                                 <span class="control-label">Definir Lembrete</span>
                                             </label> 
-                                           <input class="input" type="date" value="@(DateTime.Parse(DateTime.Now.AddDays(30).ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="txtDataLembrete"/>
+                                            &nbsp;
+                                           <input class="input" type="date" value="@(DateTime.Parse(DateTime.Now.AddDays(30).ToString()).ToString("yyyy-MM-dd"))" id="txtDataLembrete" name="txtDataLembrete"/>
                                             <script>
-                                                bulmaCalendar.attach('#txtData', {
+                                                bulmaCalendar.attach('#txtDataLembrete', {
                                                     color: 'info',
                                                     lang: 'pt',
                                                     displayMode: 'inline',
