@@ -805,7 +805,7 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch (Exception ex)
+            catch 
             {
                 Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
             }

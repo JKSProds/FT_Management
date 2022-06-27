@@ -251,7 +251,7 @@ namespace FT_Management.Controllers
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult CalendarioView()
         {
-            return View("Calendario");
+            return View("CalendarioNew");
         }
 
         public JsonResult ObterMarcacoes(DateTime start, DateTime end)

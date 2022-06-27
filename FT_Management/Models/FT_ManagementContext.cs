@@ -1920,21 +1920,27 @@ namespace FT_Management.Models
                 {
                     if (item.Tecnico != null)
                     {
-                        if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.Tecnico.Id) dataMarcacao = dataMarcacao.AddMinutes(5);
+                        if (LstEventos.Count > 0 && LstEventos.Last().IdTecnico != item.Tecnico.Id) dataMarcacao = dataMarcacao.AddMinutes(10);
                         if (dataMarcacao.ToShortDateString() != item.DataMarcacao.ToShortDateString()) dataMarcacao = DateTime.Parse(item.DataMarcacao.ToShortDateString() + " 00:00:00");
 
                         LstEventos.Add(new CalendarioEvent
                         {
-                            id = item.IdMarcacao,
+                            id = item.IdMarcacao.ToString(),
+                            calendarId = "1",
                             title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
                             start = dataMarcacao,
-                            end = dataMarcacao.AddMinutes(19),
+                            end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
                             //color = ("#33FF77"),
-                            url = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.Tecnico.Id),
-                            color = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario)
+                             location = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.Tecnico.Id),
+                            category = "time",
+                            dueDateClass = "",
+                            bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
+                            body = item.ResumoMarcacao,
+                            state = item.EstadoMarcacaoDesc,
+                            attendees = item.Tecnico.NomeCompleto
                         });
-                        dataMarcacao = dataMarcacao.AddMinutes(20);
+                        dataMarcacao = dataMarcacao.AddMinutes(30);
                     }
                 }
                 catch
@@ -1956,7 +1962,7 @@ namespace FT_Management.Models
                 Utilizador ut = ObterUtilizador(item.IdUtilizador);
                 LstEventos.Add(new CalendarioEvent
                 {
-                    id = item.Id,
+                    id = item.Id.ToString(),
                     obs = item.Obs,
                     title = ut.NomeCompleto,
                     start = item.DataInicio,
@@ -1965,8 +1971,8 @@ namespace FT_Management.Models
                     IdTecnico = item.IdUtilizador,
                     //color = ("#33FF77"),
                     url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
-                    color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario)
-                });
+                    bgColor = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario)
+                }) ;
             }
 
             foreach (var item in Feriados)
@@ -1974,11 +1980,11 @@ namespace FT_Management.Models
 
                 LstEventos.Add(new CalendarioEvent
                 {
-                    id = item.Id,
+                    id = item.Id.ToString(),
                     title = item.DescFeriado,
                     start = item.DataFeriado,
                     setAllDay = true,
-                    color = "#FF5733"
+                    bgColor = "#FF5733"
                 });
             }
 
@@ -2001,14 +2007,14 @@ namespace FT_Management.Models
 
                 LstEventos.Add(new CalendarioEvent
                 {
-                    id = item.IdVisita,
+                    id = item.IdVisita.ToString(),
                     title = (item.EstadoVisita == "Finalizado" ? "✔ " : item.EstadoVisita != "Criado" && item.EstadoVisita != "Agendado" ? "⌛ " : item.DataVisita < DateTime.Now ? "❌ " : "") + comercial.Iniciais + " - " + item.Cliente.NomeCliente,
                     start = dataMarcacao,
                     end = dataMarcacao.AddMinutes(19),
                     IdTecnico = item.IdComercial,
                     //color = ("#33FF77"),
                     url = "Visita/?idVisita=" + item.IdVisita + "&IdComercial=" + (item.IdComercial),
-                    color = (comercial.CorCalendario == string.Empty ? "#3371FF" : comercial.CorCalendario)
+                    bgColor = (comercial.CorCalendario == string.Empty ? "#3371FF" : comercial.CorCalendario)
                 });
                 dataMarcacao = dataMarcacao.AddMinutes(20);
             }

@@ -39,6 +39,10 @@
       "provider": "unpkg",
       "library": "bulma-switch-control@1.2.2",
       "destination": "wwwroot/lib/bulma-switch-control/"
+    },
+    {
+      "library": "tui-calendar@1.15.3",
+      "destination": "wwwroot/lib/tui-calendar/"
     }
   ]
 }
