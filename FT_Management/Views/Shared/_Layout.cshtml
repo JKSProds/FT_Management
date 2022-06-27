@@ -87,7 +87,7 @@
                         </a>
 
                         <div class="navbar-dropdown buttons">
-                            @if (this.User.IsInRole("Admin"))
+                            @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
                             {
                                 <p class="control mx-1">
                                     <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Adicionar">
@@ -122,7 +122,7 @@
                         </a>
 
                         <div class="navbar-dropdown buttons">
-                            @if (this.User.IsInRole("Admin"))
+                            @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
                             {
                                 <p class="control mx-1">
                                     <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/Adicionar">

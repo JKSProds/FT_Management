@@ -41,6 +41,7 @@ namespace FT_Management.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
 
@@ -87,6 +88,7 @@ namespace FT_Management.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
 
@@ -185,7 +187,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(id);
-            u.Enable = estado;
+
+            if (!u.Admin || this.User.IsInRole("Master")) u.Enable = estado;
 
             context.NovoUtilizador(u);
 
@@ -199,7 +202,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(id);
-            u.Admin = admin;
+            if (this.User.IsInRole("Master")) u.Admin = admin;
 
             context.NovoUtilizador(u);
 
@@ -214,7 +217,7 @@ namespace FT_Management.Controllers
             var passwordHasher = new PasswordHasher<string>();
 
             Utilizador u = context.ObterUtilizador(id);
-            u.Password = passwordHasher.HashPassword(null, senha);
+            if (!u.Admin || this.User.IsInRole("Master")) u.Password = passwordHasher.HashPassword(null, senha);
 
             context.NovoUtilizador(u);
 
