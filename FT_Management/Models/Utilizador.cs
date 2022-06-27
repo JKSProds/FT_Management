@@ -50,7 +50,8 @@ namespace FT_Management.Models
         public string Pin { get; set; }
         [Display(Name = "Imagem")]
         public string ImgUtilizador { get; set; }
-
+        [Display(Name = "Api Key")]
+        public ApiKey ApiKey { get; set; }
         public Utilizador()
         {
             this.Id = 0;

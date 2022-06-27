@@ -36,39 +36,39 @@
                     </p>
                 </header>
                 <div class="card-content">
-
+                    <input type="hidden" asp-for="Id" id="txtHiddenIdUtilizador"/>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly  asp-for="NomeCompleto"></div>
+                                <div class="control"><input type="text" class="input" disabled  asp-for="NomeCompleto"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.EmailUtilizador)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly asp-for="EmailUtilizador"></div>
+                                <div class="control"><input type="text" class="input" disabled asp-for="EmailUtilizador"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.IdPHC)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly  asp-for="IdPHC"></div>
+                                <div class="control"><input type="text" class="input" disabled  asp-for="IdPHC"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly  asp-for="Iniciais" ></div>
+                                <div class="control"><input type="text" class="input" disabled  asp-for="Iniciais" ></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly asp-for="Pin"></div>
+                                <div class="control"><input type="text" class="input" disabled asp-for="Pin"></div>
                             </div>
                         </div>
                     </div>
@@ -87,6 +87,25 @@
                                     </script>
                             </div>
                         </div>
+                    </div>
+                    <div class="field has-addons is-horizontal">
+                      <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.ApiKey.Key)</label></div><div class="field-body">
+                      <div class="control">
+                        <input class="input" type="text" disabled id="txtApiKey" asp-for="ApiKey.Key">
+                      </div>
+                      <div class="field has-addons">
+                          <p class="control">
+                            <button class="button is-info" onclick="copiarTexto();">
+                              Copiar
+                            </button>
+                          </p>
+                          <p class="control">
+                            <button class="button is-primary" onclick="GerarApiKey();">
+                              Gerar
+                            </button>
+                          </p>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -235,3 +254,56 @@
         </div>
     </div>
 </section>
+
+<script>
+ function copiarTexto() {
+      
+            /* Copy text into clipboard */
+            navigator.clipboard.writeText
+                (document.getElementById("txtApiKey").value);
+
+                bulmaToast.toast({
+                  message: 'Api Key copiada com sucesso!',
+                  type: 'is-success',
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  opacity: 0.8,
+                  duration: 5000
+                })
+        }
+
+    
+        function GerarApiKey() {
+            $.ajax({
+                type: "POST",
+                url: "/Utilizadores/GerarApiKey/" + document.getElementById("txtHiddenIdUtilizador").value,
+                traditional: true,
+                success: function (result) {
+                    if (result != "") {
+                    $(function () {
+                        document.getElementById("txtApiKey").value = result;
+                        bulmaToast.toast({
+                          message: 'Api Key gerada com sucesso!',
+                          type: 'is-success',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
+                    });
+                    }else{
+                    $(function () {
+                        bulmaToast.toast({
+                          message: 'Não foi possivel gerar a Api Key!',
+                          type: 'is-danger',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
+                    });
+                    }
+                }
+            });
+        }
+</script>

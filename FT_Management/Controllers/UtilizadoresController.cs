@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace FT_Management.Controllers
 {
@@ -207,6 +208,15 @@ namespace FT_Management.Controllers
             context.NovoUtilizador(u);
 
             return Content("Ok");
+        }
+        public IActionResult GerarApiKey(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            if (!this.User.IsInRole("Admin")) id = int.Parse(this.User.Claims.First().Value.ToString());
+
+            Utilizador u = context.ObterUtilizador(id);
+            if ((u.Admin & !this.User.IsInRole("Master")) && u.Id != int.Parse(this.User.Claims.First().Value.ToString())) return Content("");
+            return Content(context.NovaApiKey(u));
         }
 
         [HttpPost]

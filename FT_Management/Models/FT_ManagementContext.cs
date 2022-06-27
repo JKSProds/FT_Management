@@ -12,6 +12,7 @@ using OfficeOpenXml.Style;
 using System.Net;
 using Newtonsoft.Json;
 using PdfSharpCore.Drawing;
+using System.Security.Cryptography;
 
 namespace FT_Management.Models
 {
@@ -1816,7 +1817,7 @@ namespace FT_Management.Models
         public Utilizador ObterUtilizador(int Id)
         {
             Utilizador utilizador = new Utilizador();
-            string sqlQuery = "SELECT * FROM sys_utilizadores where IdUtilizador = " + Id + ";";
+            string sqlQuery = "SELECT * FROM sys_utilizadores left join sys_api_keys on sys_utilizadores.IdUtilizador=sys_api_keys.IdUtilizador where sys_utilizadores.IdUtilizador=" + Id + ";";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -1839,6 +1840,16 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         Pin = result["PinUtilizador"]
                     };
+                    if (!string.IsNullOrEmpty(result["ID"]))
+                    {
+                        utilizador.ApiKey = new ApiKey()
+                        {
+                            Id = result["ID"],
+                            Descricao = result["Descricao"],
+                            Utilizador = new Utilizador() { Id = result["IdUtilizador"] },
+                            Key = result["ApiKey"]
+                        };
+                    }
                 }
             }
             return utilizador;
@@ -2829,6 +2840,43 @@ namespace FT_Management.Models
             {
                 db.Execute(sql);
             }
+        }
+
+        public string NovaApiKey(Utilizador utilizador)
+        {
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+            static string GetRandomString(int length)
+            {
+                string s = "";
+                using (RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider())
+                {
+                    while (s.Length != length)
+                    {
+                        byte[] oneByte = new byte[1];
+                        provider.GetBytes(oneByte);
+                        char character = (char)oneByte[0];
+                        if (valid.Contains(character))
+                        {
+                            s += character;
+                        }
+                    }
+                }
+                return s;
+            }
+
+            string RandomApiKey = GetRandomString(40);
+            string sql = "INSERT INTO sys_api_keys (ID, Descricao, IdUtilizador, ApiKey) VALUES ";
+
+            sql += ("(0, '" + utilizador.NomeUtilizador + "', '" + utilizador.Id + "', '" + RandomApiKey  + "') \r\n");
+
+            sql += " ON DUPLICATE KEY UPDATE Descricao = VALUES(Descricao), ApiKey = VALUES(ApiKey);";
+
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
+            return RandomApiKey;
         }
 
         public void EditarArtigo(Produto produto)
