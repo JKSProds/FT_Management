@@ -26,7 +26,7 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Tech, Escritorio")]
     public class PedidosController : Controller
     {
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Adicionar()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -43,7 +43,7 @@ namespace FT_Management.Controllers
             return View(new Marcacao());
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult ValidarMarcacao(Marcacao m)
         {
@@ -51,7 +51,7 @@ namespace FT_Management.Controllers
             return Content(phccontext.ValidarMarcacao(m));
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult Adicionar(Marcacao m)
         {
@@ -74,6 +74,7 @@ namespace FT_Management.Controllers
                 ModelState.Remove("Tecnico.Password");
             }
 
+
             if (ModelState.IsValid)
             {
                 IdMarcacao = phccontext.CriarMarcacao(m);
@@ -90,8 +91,55 @@ namespace FT_Management.Controllers
 
             return View(m);
         }
+        [Authorize(Roles = "Admin")]
+        public ActionResult Editar(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
+            ViewData["TipoServico"] = phccontext.ObterTipoServico();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+            ViewData["Periodo"] = phccontext.ObterPeriodo();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            Marcacao m = phccontext.ObterMarcacao(id);
+            return View(m);
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
+        public ActionResult Editar(int id, Marcacao m)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (m.LstTecnicosSelect.Count() == 0)
+            {
+                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
+            }
+            else
+            {
+                foreach (var item in m.LstTecnicosSelect)
+                {
+                    m.LstTecnicos.Add(context.ObterUtilizador(item));
+                }
+                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                m.Tecnico = m.LstTecnicos.First();
+                ModelState.Remove("Tecnico.Password");
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                //phccontext.AtualizaMarcacao(m);
+                return RedirectToAction("Editar", "Pedidos", new { id = id });
+            }
+            return View();
+        }
+
+            [HttpPost]
         public JsonResult ObterClientes(string prefix)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;

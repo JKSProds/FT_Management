@@ -779,12 +779,28 @@ namespace FT_Management.Models
                         QuemPediuNome = result["qpediu"].ToString(),
                         QuemPediuEmail = result["respemail"].ToString(),
                         QuemPediuTelefone = result["resptlm"].ToString(),
-                        Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : ""
+                        Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : "",
                     });
-
                     if (LoadCliente) LstMarcacao.Last().Cliente = LstClientes.Where(c => c.IdCliente == int.Parse(result["no"].ToString().Trim())).Where(c => c.IdLoja == int.Parse(result["estab"].ToString().Trim())).DefaultIfEmpty(new Cliente()).First();
                     if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
-                    if (LoadTecnico) LstMarcacao.Last().Tecnico = LstUtilizadores.Where(u => u.Id == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador();
+                    if (LoadTecnico)
+                    {
+                        LstMarcacao.Last().Tecnico = LstUtilizadores.Where(u => u.IdPHC == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador();
+
+                        try
+                        {
+                            foreach (var item in result["LstTecnicos"].ToString().Split(";"))
+                            {
+                                LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
+                            }
+                            foreach (var item in LstMarcacao.Last().LstTecnicos)
+                            {
+                                LstMarcacao.Last().LstTecnicosSelect.Add(item.Id);
+                            }
+
+                        }
+                        catch { }
+                    }
                     if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
                 }
                 conn.Close();
@@ -841,7 +857,7 @@ namespace FT_Management.Models
         }
         public Marcacao ObterMarcacao(int IdMarcacao)
         {
-           return ObterMarcacao("SELECT num, data, no, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
+           return ObterMarcacao("SELECT num, data, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
         }
 
         private List<EstadoMarcacao> ObterMarcacaoEstados(string SQL_Query)

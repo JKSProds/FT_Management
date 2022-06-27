@@ -133,12 +133,13 @@ namespace FT_Management.Models
                 {
                     LstUtilizadores.Add(new Utilizador()
                     {
-                        Id = result["IdPHC"],
+                        Id = result["IdUtilizador"],
                         NomeUtilizador = result["NomeUtilizador"],
                         NomeCompleto = result["NomeCompleto"],
                         EmailUtilizador = result["EmailUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
-                        CorCalendario = result["CorCalendario"]
+                        CorCalendario = result["CorCalendario"],
+                        IdPHC = result["IdPHC"]
                     });
                 }
             }
