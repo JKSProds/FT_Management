@@ -40,35 +40,35 @@
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" disabled  asp-for="NomeCompleto"></div>
+                                <div class="control"><input type="text" class="input" readonly  asp-for="NomeCompleto"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.EmailUtilizador)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" disabled asp-for="EmailUtilizador"></div>
+                                <div class="control"><input type="text" class="input" readonly asp-for="EmailUtilizador"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.IdPHC)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" disabled  asp-for="IdPHC"></div>
+                                <div class="control"><input type="text" class="input" readonly  asp-for="IdPHC"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" disabled  asp-for="Iniciais" ></div>
+                                <div class="control"><input type="text" class="input" readonly  asp-for="Iniciais" ></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" disabled asp-for="Pin"></div>
+                                <div class="control"><input type="text" class="input" readonly asp-for="Pin"></div>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                     <div class="field has-addons is-horizontal">
                       <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.ApiKey.Key)</label></div><div class="field-body">
                       <div class="control" style="width:100%">
-                        <input class="input" type="text" disabled id="txtApiKey" asp-for="ApiKey.Key">
+                        <input class="input" type="text" readonly id="txtApiKey" asp-for="ApiKey.Key">
                       </div>
                       <div class="field has-addons">
                           <p class="control">
