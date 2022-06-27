@@ -184,7 +184,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "basic.ics",
+                FileName = "Servicos.ics",
                 Inline = false,
                 Size = bytesCalendar.Length,
                 CreationDate = DateTime.Now
