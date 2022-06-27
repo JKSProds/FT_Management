@@ -154,7 +154,7 @@ namespace FT_Management.Controllers
                 MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
                 MailAddress to = new MailAddress(emailDestino);
                 MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
-                //myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC"]));
+                myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC2"]));
 
                 // set subject and encoding
                 myMail.Subject = Assunto;

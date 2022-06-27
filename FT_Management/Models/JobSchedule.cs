@@ -38,7 +38,7 @@ public class CronJobFerias : IJob
             MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
             MailAddress to = new MailAddress(ConfigurationManager.AppSetting["Email:EmailDestino"], ConfigurationManager.AppSetting["Email:NomeDestino"]);
             MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
-            myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC"]));
+            myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC2"]));
 
             // set subject and encoding
             myMail.Subject = "Férias Pendentes Validação";
@@ -118,7 +118,7 @@ public class CronJobAgendamentoCRM : IJob
                     MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
                     MailAddress to = new MailAddress(u.EmailUtilizador, u.NomeCompleto);
                     MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
-                    myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC"]));
+                    myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC2"]));
 
                     // set subject and encoding
                     myMail.Subject = "Agendamento - " + DateTime.Now.ToShortDateString();
