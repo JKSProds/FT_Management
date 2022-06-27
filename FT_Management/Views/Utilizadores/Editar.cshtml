@@ -95,7 +95,7 @@
                       </div>
                       <div class="field has-addons">
                           <p class="control">
-                            <button class="button is-info" onclick="copiarTexto('txtApiKey');">
+                            <button class="button is-info" @(Model.ApiKey.Key == "" ? "disabled" : "" ) onclick="copiarTexto('txtApiKey');">
                               Copiar
                             </button>
                           </p>
@@ -105,7 +105,7 @@
                             </button>
                           </p>
                            <p class="control">
-                            <button class="button is-link" onclick="Bulma('#modalLinks').modal().open();">
+                            <button class="button is-link" @(Model.ApiKey.Key == "" ? "disabled" : "" ) onclick="Bulma('#modalLinks').modal().open();">
                               <i class="fa-solid fa-info"></i>
                             </button>
                           </p>

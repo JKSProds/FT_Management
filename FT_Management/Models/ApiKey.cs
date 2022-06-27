@@ -15,5 +15,14 @@ namespace FT_Management.Models
         public string Key { get; set; }
         [Display(Name = "Utilizador")]
         public Utilizador Utilizador { get; set; }
+
+        public ApiKey()
+        {
+            Id = 0;
+            Descricao = "N/D";
+            Key = "";
+        }
     }
+
+
 }
