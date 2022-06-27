@@ -205,21 +205,6 @@ else
                           duration: 5000
                         })
 
-                        var json = {
-                            id: idFolhaObra,
-                            novoemail: emailDestino
-                        };
-                        $.ajax({
-                            type: "POST",
-                            url: "/FolhasObra/AtualizarEmailClienteFolhaObra",
-                            data: json,
-                            traditional: true,
-                            success: function (result) {
-                                $(function () {
-                                });
-                            }
-                        });
-
                     } else {
                         bulmaToast.toast({
                           message: 'Ocorreu um erro!',
