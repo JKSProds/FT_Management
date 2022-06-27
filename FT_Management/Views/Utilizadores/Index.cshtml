@@ -120,7 +120,25 @@
                 traditional: true,
                 success: function (result) {
                     $(function () {
-                        window.location.reload();
+                        if (result == "Ok") {
+                            bulmaToast.toast({
+                              message: 'Utilizador atualizado com sucesso!',
+                              type: 'is-success',
+                              closeOnClick: true,
+                              pauseOnHover: true,
+                              opacity: 0.8,
+                              duration: 5000
+                            })
+                        }else{
+                            bulmaToast.toast({
+                              message: 'Erro ao atualizar o utilizador!',
+                              type: 'is-danger',
+                              closeOnClick: true,
+                              pauseOnHover: true,
+                              opacity: 0.8,
+                              duration: 5000
+                            })
+                        }
                     });
                 }
             });
@@ -134,7 +152,25 @@
                 traditional: true,
                 success: function (result) {
                     $(function () {
-                        window.location.reload();
+                        if (result == "Ok") {
+                            bulmaToast.toast({
+                              message: 'Utilizador atualizado com sucesso!',
+                              type: 'is-success',
+                              closeOnClick: true,
+                              pauseOnHover: true,
+                              opacity: 0.8,
+                              duration: 5000
+                            })
+                        }else{
+                            bulmaToast.toast({
+                              message: 'Erro ao atualizar o utilizador!',
+                              type: 'is-danger',
+                              closeOnClick: true,
+                              pauseOnHover: true,
+                              opacity: 0.8,
+                              duration: 5000
+                            })
+                        }
                     });
                 }
             });
@@ -154,7 +190,26 @@
                 traditional: true,
                 success: function (result) {
                     $(function () {
-                        window.location.reload();
+                        Bulma('#modalResetSenha').modal().close();
+                        if (result == "Ok") {
+                            bulmaToast.toast({
+                              message: 'Senha alterada com sucesso!',
+                              type: 'is-success',
+                              closeOnClick: true,
+                              pauseOnHover: true,
+                              opacity: 0.8,
+                              duration: 5000
+                            })
+                        }else{
+                            bulmaToast.toast({
+                              message: 'Erro ao alterar a senha!',
+                              type: 'is-danger',
+                              closeOnClick: true,
+                              pauseOnHover: true,
+                              opacity: 0.8,
+                              duration: 5000
+                            })
+                        }
                     });
                 }
             });

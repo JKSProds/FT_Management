@@ -71,6 +71,7 @@ namespace FT_Management.Models
             this.LstTecnicos = new List<Utilizador>();
             this.DataPedido = DateTime.Now;
             this.DataMarcacao = DateTime.Now;
+            this.LstTecnicosSelect = new List<int> { };
         }
     }
 

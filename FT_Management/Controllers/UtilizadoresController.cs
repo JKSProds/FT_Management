@@ -225,7 +225,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var passwordHasher = new PasswordHasher<string>();
-
+            if (string.IsNullOrEmpty(senha)) return Content("Nok");
             Utilizador u = context.ObterUtilizador(id);
             if (!u.Admin || this.User.IsInRole("Master")) u.Password = passwordHasher.HashPassword(null, senha);
 

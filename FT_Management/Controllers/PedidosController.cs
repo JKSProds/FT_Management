@@ -45,6 +45,14 @@ namespace FT_Management.Controllers
 
         [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
+        public ActionResult ValidarMarcacao(Marcacao m)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            return Content(phccontext.ValidarMarcacao(m));
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpPost]
         public ActionResult Adicionar(Marcacao m)
         {
             int IdMarcacao = 0;
@@ -65,9 +73,6 @@ namespace FT_Management.Controllers
                 m.Tecnico = m.LstTecnicos.First();
                 ModelState.Remove("Tecnico.Password");
             }
-
-            string mes = phccontext.ValidarMarcacao(m);
-             if (mes.Count() > 0) ModelState.AddModelError("", mes);
 
             if (ModelState.IsValid)
             {

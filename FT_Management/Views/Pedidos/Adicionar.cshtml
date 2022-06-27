@@ -28,7 +28,6 @@
     </div>
     <hr />
     <div class="container">
-        
        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
         <div class="steps" id="stepsDemo">
             <div class="step-item is-active is-success">
@@ -334,7 +333,7 @@
                             </div>
                         </div>
                         &nbsp;
-                        <button type="submit" onclick="submit()" value="Criar Marcação" class="button is-info is-outlined is-fullwidth">
+                        <button type="button" onclick="ValidarMarcacao()" value="Criar Marcação" class="button is-info is-outlined is-fullwidth">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -364,6 +363,32 @@
         </div>
     </div>
  </div>
+         <div class="modal" id="modalValidacao">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Validar Mensagens</p>
+              <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
+                            <div class="field" style="width:100%">
+                                <div class="control"><textarea type="text" class="textarea"  id="txtMensagens" disabled rows=8 value=""></textarea></div>
+                            </div>
+                        </div>
+                    </div>
+            </section>
+             <footer class="modal-card-foot">
+            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                <span>Ignorar e Criar Marcação</span>
+            </button>
+        </footer>
+          </div>
+        </div>
 
 </form>
 
@@ -392,6 +417,25 @@
         });
     }
 
+    
+         function ValidarMarcacao() {
+            $.ajax({
+                type: "POST",
+                url: "/Pedidos/ValidarMarcacao",
+                data: $("#frmAdicionar").serialize(),
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8', 
+                success: function (result) {
+                    $(function () {
+                        document.getElementById("txtMensagens").value = result;
+                        if(result != "") {
+                        Bulma('#modalValidacao').modal().open();
+                        }else{
+                            document.getElementById('frmAdicionar').submit();
+                        }
+                    });
+                }
+            });
+        }
 
     $(function () {
         $("#txtCustomer").autocomplete({
