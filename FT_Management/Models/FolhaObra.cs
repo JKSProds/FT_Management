@@ -8,6 +8,7 @@ namespace FT_Management.Models
 {
     public class FolhaObra
     {
+        [Display(Name = "Num. da Folha de Obra")]
         public int IdFolhaObra { get; set; }
         [Display(Name = "Data")]
         public DateTime DataServico { get; set; }

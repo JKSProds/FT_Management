@@ -76,7 +76,9 @@ namespace FT_Management.Models
 
     public class EstadoMarcacao
     {
+        [Display(Name = "Num. do Estado")]
         public int IdEstado { get; set; }
+        [Display(Name = "Estado")]
         public string EstadoMarcacaoDesc { get; set; }
         public EstadoMarcacao()
         {
@@ -87,10 +89,15 @@ namespace FT_Management.Models
 
     public class Comentario
     {
+        [Display(Name = "Num. do Comentário")]
         public string IdComentario { get; set; }
+        [Display(Name = "Comentário")]
         public string Descricao { get; set; }
+        [Display(Name = "Num. da Marcação")]
         public string IdMarcacao { get; set; }
+        [Display(Name = "Utilizador")]
         public string NomeUtilizador { get; set; }
+        [Display(Name = "Data")]
         public DateTime DataComentario { get; set; }
     }
 
