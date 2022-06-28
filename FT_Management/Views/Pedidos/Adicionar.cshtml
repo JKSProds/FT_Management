@@ -233,16 +233,7 @@
                             <div class="field">
                                 <label asp-for="Hora"></label>
                                 <div class="control">
-                                  <input type="time" class="input bulmaCalendar" asp-for="Hora" id="txtHora">
-                                  <script>
-                                        bulmaCalendar.attach('#txtHora', {
-                                            color: 'info',
-                                            lang: 'pt',
-                                            timeFormat: 'HH:mm',
-                                            cancelLabel: 'Cancelar',
-                                            validateLabel: 'Guardar'
-                                        });
-                                   </script>
+                                  <input type="time" class="input " asp-for="Hora" id="txtHora">
                                 </div>
                                 <span asp-validation-for="Hora" class="has-text-danger"></span>
                             </div>

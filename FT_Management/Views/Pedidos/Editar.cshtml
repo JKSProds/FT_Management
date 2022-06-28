@@ -65,7 +65,7 @@
                 <div class="control">
                 </div>
                 <p class="control has-icons-left">
-                    <input asp-for="DataCriacao" class="input" type="datetime-local" readonly />
+                    <input asp-for="DataCriacao" class="input" type="datetime-local" disabled />
                     <span class="icon is-small is-left">
                         <i class="fas fa-calendar-day"></i>
                     </span>
@@ -76,18 +76,7 @@
             <div class="field">
                 <label asp-for="DataPedido" class="label"></label>
                 <p class="control has-icons-left">
-                <input type="date" class="input" value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataPedido" id="txtDataPedido">
-                <script>
-                    bulmaCalendar.attach('#txtDataPedido', {
-                        color: 'info',
-                        lang: 'pt',
-                        displayMode: 'dialog',
-                        dateFormat: 'dd/MM/yyyy',
-                        todayLabel: 'Hoje',
-                        showClearButton: false,
-                        cancelLabel: 'Cancelar'
-                    });
-                </script>
+                <input type="date" class="input" value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataPedido" id="txtDataPedido" disabled>
                 </p>
             </div>
         </div>
@@ -116,16 +105,7 @@
             <div class="field">
                 <label asp-for="Hora"  class="label"></label>
                 <div class="control">
-                    <input type="time" class="input bulmaCalendar" asp-for="Hora" id="txtHora">
-                    <script>
-                        bulmaCalendar.attach('#txtHora', {
-                            color: 'info',
-                            lang: 'pt',
-                            timeFormat: 'HH:mm',
-                            cancelLabel: 'Cancelar',
-                            validateLabel: 'Guardar'
-                        });
-                    </script>
+                    <input type="time" class="input" asp-for="Hora" id="txtHora">
                 </div>
                 <span asp-validation-for="Hora" class="has-text-danger"></span>
             </div>
