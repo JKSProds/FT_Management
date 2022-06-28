@@ -67,9 +67,9 @@
                                     <span class="check is-info"></span>
                                     <span class="control-label">@Html.DisplayNameFor(model => model.Enable)</span>
                                 </label>
-                                <label @(!this.User.IsInRole("Master") ? "disabled" : "") class="switch is-rounded" >
-                                    <input @(!this.User.IsInRole("Master") ? "disabled" : "") type="checkbox"  id="chkAdmin_@item.Id" checked="@item.Admin" onchange="AtualizarAdminUtilizador(@item.Id)">
-                                    <span class="check"></span>
+                                <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "") class="switch is-rounded">
+                                    <input type="checkbox" id="chkAdmin_@item.Id" checked="@item.Admin" onchange="AtualizarAdminUtilizador(@item.Id)" @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")>
+                                    <span class="check is-primary"></span>
                                     <span class="control-label">@Html.DisplayNameFor(model => model.Admin)</span>
                                 </label>
                                 <a class="button is-warning" href="~/Utilizadores/Logs/@item.Id"><i class="fas fa-eye"></i></a>
