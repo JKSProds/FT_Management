@@ -133,7 +133,7 @@ namespace FT_Management.Controllers
 
             if (ModelState.IsValid)
             {
-                //phccontext.AtualizaMarcacao(m);
+                phccontext.AtualizaMarcacao(m);
                 return RedirectToAction("Editar", "Pedidos", new { id = id });
             }
             return View();
@@ -248,17 +248,36 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult CalendarioView()
+        [Authorize(Roles = "Admin, Escritorio, Tech")]
+        public ActionResult CalendarioView(int id)
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            if (id != 0) id = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
+            {
+                if (id == 0) id = int.Parse(this.User.Claims.First().Value);
+                Utilizador u = context.ObterUtilizador(id);
+                return View("CalendarioTecnico", u);
+            }
             return View("CalendarioNew");
         }
 
-        public JsonResult ObterMarcacoes(DateTime start, DateTime end)
+        [Authorize(Roles = "Admin, Escritorio")]
+        public JsonResult AlteracaoCalendario(int id, DateTime date)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+            m.DataMarcacao = date;
+
+            phccontext.AtualizaMarcacao(m);
+
+            return Json("Ok");
+        }
+            public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
+            if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
             return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end).OrderBy(m => m.Tecnico.Id).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
         }
 

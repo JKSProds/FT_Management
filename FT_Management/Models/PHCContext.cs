@@ -153,6 +153,12 @@ namespace FT_Management.Models
 
             return res;
         }
+
+        public bool AtualizaMarcacao(Marcacao m)
+        {
+            return true;
+        }
+
         public Marcacao ObterResponsavelCliente(int IdCliente, int IdLoja, string TipoEquipamento)
         {
             Marcacao m = new Marcacao();

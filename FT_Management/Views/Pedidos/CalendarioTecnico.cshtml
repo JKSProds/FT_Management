@@ -79,7 +79,7 @@
     };
 
     var calendar = new Calendar('#calendar', {
-      defaultView: isMobile ? 'day' : 'week',
+      defaultView: isMobile ? 'day' : 'month',
      template: templates,
      useDetailPopup: true,
      disableClick: true,
@@ -88,29 +88,10 @@
      taskView: false
     });
 
-    calendar.on({
-    'beforeUpdateSchedule': function(e) {
-        if(e.changes != null){
-         $.ajax({
-            type: "POST",
-            url: "/Pedidos/AlteracaoCalendario/" + e.schedule.id,
-            data: {date: new Date(e.changes.start).toLocaleDateString("pt-PT")},
-            traditional: true,
-            success: function (result) {
-                calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.changes);
-                 bulmaToast.toast({
-                          message: 'Agendamento atualizado com sucesso! - EM DESENVOLVIMENTO',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
-                        })
-            }
-         });
-        }else{
-       window.open(e.schedule.raw);
-       }
+    calendar.on({'beforeUpdateSchedule': function(e) {
+        if(e.changes == null){
+                window.open(e.schedule.raw);
+        }
     }
 });
 
@@ -120,7 +101,7 @@
     function obterEventos() {
          $.ajax({
         type: "POST",
-        url: "/Pedidos/ObterMarcacoes",
+        url: "/Pedidos/ObterMarcacoes/@Model.Id",
         data: {start: calendar.getDateRangeStart().toUTCString(), end: calendar.getDateRangeEnd().toUTCString()},
         traditional: true,
         success: function (result) {
@@ -152,7 +133,7 @@
                 calendar.today();
                 break;
             case 'change-view':
-               if (calendar.getViewName() == "day") {
+                if (calendar.getViewName() == "day") {
                     calendar.changeView("week", true)
                 }else if (calendar.getViewName() == "week"){
                     calendar.changeView("month", true)

@@ -23,5 +23,6 @@ namespace FT_Management.Models
         public string state { get; set; }
         public string attendees { get; set; }
         public string url { get; set; }
+        public string raw { get; set; }
     }
 }

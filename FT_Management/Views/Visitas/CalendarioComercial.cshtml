@@ -47,7 +47,7 @@
             expandRows: true,
             firstDay: 1,
             locale: 'pt',
-            editable: true,
+            editable: false,
             events: 'ObterVisitasComercial',
             eventTimeFormat: { // like '14:30:00'
                 hour: '2-digit',
@@ -61,28 +61,6 @@
                 if (info.event.url) {
                     window.open(info.event.url);
                 }
-            },
-            eventDrop: function (info) {
-                //alert(info.event.title + " was dropped on " + info.event.start.toISOString());
-
-                $.ajax({
-                    type: "POST",
-                    url: "/Visitas/AlteracaoCalendario",
-                    data: { data: info.event.start.toISOString(), id: info.event.id },
-                    traditional: false,
-                    success: function (result) {
-                        $(function () {
-                            bulmaToast.toast({
-                              message: 'Agendamento atualizado com sucesso!',
-                              type: 'is-success',
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              opacity: 0.8,
-                              duration: 5000
-                            })
-                        });
-                    }
-                });
             }
         });
 
