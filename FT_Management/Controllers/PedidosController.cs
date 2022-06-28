@@ -136,7 +136,16 @@ namespace FT_Management.Controllers
                 phccontext.AtualizaMarcacao(m);
                 return RedirectToAction("Editar", "Pedidos", new { id = id });
             }
-            return View();
+
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
+            ViewData["TipoServico"] = phccontext.ObterTipoServico();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+            ViewData["Periodo"] = phccontext.ObterPeriodo();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+
+            return View(m);
         }
 
             [HttpPost]

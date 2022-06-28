@@ -88,15 +88,15 @@
     calendar.on({
     'beforeUpdateSchedule': function(e) {
         if(e.changes != null){
+         calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.changes);
          $.ajax({
             type: "POST",
             url: "/Pedidos/AlteracaoCalendario/" + e.schedule.id,
             data: {date: new Date(e.changes.start).toLocaleDateString("pt-PT")},
             traditional: true,
             success: function (result) {
-                calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.changes);
                  bulmaToast.toast({
-                          message: 'Agendamento atualizado com sucesso! - EM DESENVOLVIMENTO',
+                          message: 'Agendamento atualizado com sucesso!',
                           type: 'is-success',
                           closeOnClick: true,
                           pauseOnHover: true,

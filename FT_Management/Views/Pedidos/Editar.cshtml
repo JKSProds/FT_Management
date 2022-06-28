@@ -40,7 +40,8 @@
 <form asp-action="Editar" name="frmAdicionar" id="frmAdicionar">
 <div class="container">
     <div class="columns is-multiline">
-        
+                            <input type="hidden" asp-for="MarcacaoStamp" />
+                            <input type="hidden" asp-for="IdMarcacao" />
        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
         <div class="column is-12">
             <div class="field">
@@ -269,6 +270,7 @@
                         <i class="fas fa-asterisk"></i>
                     </span>
                 </p>
+               <span asp-validation-for="Referencia" class="has-text-danger"></span>
             </div>
         </div>
         <div class="column is-3 my-auto">
@@ -295,6 +297,7 @@
                 <div class="control">
                     <textarea class="textarea is-primary" rows="15" asp-for="ResumoMarcacao"></textarea>
                 </div>
+             <span asp-validation-for="ResumoMarcacao" class="has-text-danger"></span>
             </div>
         </div>
     </div>
