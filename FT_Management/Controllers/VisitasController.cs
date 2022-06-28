@@ -35,7 +35,7 @@ namespace FT_Management.Controllers
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult CalendarioView()
         {
-            return View("Calendario");
+            return View("CalendarioNew");
         }
 
         public ActionResult CalendarioComercial()

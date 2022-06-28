@@ -697,7 +697,7 @@ namespace FT_Management.Models
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where DataInicio>='" + dataInicio.ToString("yyyy-MM-dd") + "' AND DataFim<='" + dataFim.ToString("yyyy-MM-dd") + "' order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias where DataInicio between '" + dataInicio.ToString("yyyy-MM-dd") + "' AND '" + dataFim.ToString("yyyy-MM-dd")  + "' or '" + dataInicio.ToString("yyyy-MM-dd") + "' between DataInicio and DataFim  order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
@@ -1932,7 +1932,7 @@ namespace FT_Management.Models
                             start = dataMarcacao,
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
-                             raw = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.Tecnico.Id),
+                            raw = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.Tecnico.Id),
                             category = "time",
                             dueDateClass = "",
                             bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
@@ -1963,14 +1963,17 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarioEvent
                 {
                     id = item.Id.ToString(),
-                    obs = item.Obs,
+                    calendarId = "1",
+                    body = item.Obs,
                     title = ut.NomeCompleto,
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
-                    setAllDay = true,
+                    isAllDay = true,
                     IdTecnico = item.IdUtilizador,
                     //color = ("#33FF77"),
-                    url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
+                    raw = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
+                    category = "time",
+                    dueDateClass = "",
                     bgColor = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario)
                 }) ;
             }
@@ -1983,7 +1986,7 @@ namespace FT_Management.Models
                     id = item.Id.ToString(),
                     title = item.DescFeriado,
                     start = item.DataFeriado,
-                    setAllDay = true,
+                    isAllDay = true,
                     bgColor = "#FF5733"
                 });
             }
@@ -2008,13 +2011,17 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarioEvent
                 {
                     id = item.IdVisita.ToString(),
+                    calendarId = "1",
                     title = (item.EstadoVisita == "Finalizado" ? "✔ " : item.EstadoVisita != "Criado" && item.EstadoVisita != "Agendado" ? "⌛ " : item.DataVisita < DateTime.Now ? "❌ " : "") + comercial.Iniciais + " - " + item.Cliente.NomeCliente,
+                    location = item.Cliente.MoradaCliente,
                     start = dataMarcacao,
-                    end = dataMarcacao.AddMinutes(19),
+                    end = dataMarcacao.AddMinutes(25),
                     IdTecnico = item.IdComercial,
-                    //color = ("#33FF77"),
-                    url = "Visita/?idVisita=" + item.IdVisita + "&IdComercial=" + (item.IdComercial),
-                    bgColor = (comercial.CorCalendario == string.Empty ? "#3371FF" : comercial.CorCalendario)
+                    raw = "Visita/?idVisita=" + item.IdVisita + "&IdComercial=" + (item.IdComercial),
+                    category = "time",
+                    dueDateClass = "",
+                    bgColor = (comercial.CorCalendario == string.Empty ? "#3371FF" : comercial.CorCalendario),
+                    body = item.ResumoVisita
                 });
                 dataMarcacao = dataMarcacao.AddMinutes(20);
             }

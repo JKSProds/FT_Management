@@ -21,15 +21,6 @@
 </div>
 <hr />
 
-<link rel="stylesheet" type="text/css" href="~/lib/tui-calendar/tui-calendar.min.css" />
-
-<!-- If you use the default popups, use this. -->
-
-
-<script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
-
-<script src="~/lib/tui-calendar/tui-calendar.min.js"></script>
-
 <div id='calendar-container' class="mx2">
   <div id="menu">
       <span id="menu-navi">
@@ -42,7 +33,7 @@
           <i class="fa-solid fa-arrow-right" data-action="move-next"></i>
         </button>
       </span>
-      <span id="renderRange" class="render-range"></span>
+      <span id="renderRange" class="render-range subtitle"></span>
     </div>
     &nbsp;
     <div id="calendar" style="height: 1500px;"></div></div>
@@ -85,7 +76,13 @@
      disableClick: true,
      disableDblClick: true,
      scheduleView: true,
-     taskView: false
+     taskView: false,
+     week: {
+        daynames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
+     },
+     month: {
+        daynames: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+     }
     });
 
     calendar.on({
@@ -115,6 +112,7 @@
 });
 
     setEventListener();
+    setRenderRangeText();
     obterEventos();
 
     function obterEventos() {
@@ -127,11 +125,28 @@
             calendar.clear();
             calendar.createSchedules(result);
             calendar.render();
-
-
         }
     });
     }
+
+    function setRenderRangeText() {
+        var renderRange = document.getElementById('renderRange');
+        var options = calendar.getOptions();
+        var viewName = calendar.getViewName();
+        var html = [];
+        if (viewName === 'day') {
+            html.push(moment(calendar.getDate().getTime()).locale('pt-pt').format('DD MMMM YYYY'));
+        } else if (viewName === 'month' &&
+            (!options.month.visibleWeeksCount || options.month.visibleWeeksCount > 4)) {
+            html.push(moment(calendar.getDate().getTime()).locale('pt-pt').format('MMMM YYYY'));
+        } else {
+            html.push(moment(calendar.getDateRangeStart().getTime()).locale('pt-pt').format('DD MMMM'));
+            html.push(' - ');
+            html.push(moment(calendar.getDateRangeEnd().getTime()).locale('pt-pt').format('DD MMMM YYYY'));
+        }
+        renderRange.innerHTML = html.join('');
+    }
+
     function getDataAction(target) {
         return target.dataset ? target.dataset.action : target.getAttribute('data-action');
     }
@@ -164,6 +179,7 @@
             default:
                 return;
         }
+        setRenderRangeText();
         obterEventos();
        
     }

@@ -111,7 +111,7 @@ namespace FT_Management.Controllers
 
         public ActionResult CalendarioView()
         {
-            return View("Calendario");
+            return View("CalendarioNew");
         }
 
         public ActionResult Detalhes(int IdUtilizador)
