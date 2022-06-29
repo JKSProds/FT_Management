@@ -646,7 +646,7 @@ namespace FT_Management.Models
 
         public List<FolhaObra> ObterFolhasObra(int IdMarcacao)
         {
-            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (SELECT u_marcacaostamp from u_marcacao where num=" + IdMarcacao + ") as u_marcacaostamp from pa where (select TOP 1 STAMP_DEST from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao+") = pastamp order by nopat", true, true, false, false, false);
+            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ") as u_marcacaostamp, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide from pa where pastamp in (select STAMP_DEST from u_intervencao where u_marcacaostamp = (select u_marcacao.u_marcacaostamp from u_marcacao where num = "+IdMarcacao+ ")) order by nopat", true, true, false, false, false);
  
         }
         public List<FolhaObra> ObterFolhasObra(Cliente c)
