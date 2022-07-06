@@ -72,10 +72,6 @@ namespace FT_Management
             });
 
 
-
-            //var passwordHasher = new PasswordHasher<string>();
-            //Console.WriteLine(passwordHasher.HashPassword(null, "Food@014.js"));
-
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
 
