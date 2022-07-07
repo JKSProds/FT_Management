@@ -27,7 +27,7 @@ namespace FT_Management.Controllers
     public class PedidosController : Controller
     {
         [Authorize(Roles = "Admin")]
-        public ActionResult Adicionar()
+        public ActionResult Adicionar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -40,8 +40,11 @@ namespace FT_Management.Controllers
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
 
+            if (id != 0) return View(phccontext.ObterMarcacao(id));
+
             return View(new Marcacao());
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpPost]

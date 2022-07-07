@@ -40,21 +40,26 @@
 <form asp-action="Editar" name="frmAdicionar" id="frmAdicionar">
 <div class="container">
     <div class="columns is-multiline">
-                            <input type="hidden" asp-for="MarcacaoStamp" />
-                            <input type="hidden" asp-for="IdMarcacao" />
+        <input type="hidden" asp-for="MarcacaoStamp" />
+        <input type="hidden" asp-for="IdMarcacao" />
        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
         <div class="column is-12">
             <div class="field">
                 <label asp-for="Cliente" class="label"></label>
-                <div class="control">
+                <div class="field has-addons">
                     <input type="hidden" asp-for="Cliente.IdCliente" id="txtIdCliente" />
                     <input type="hidden" asp-for="Cliente.IdLoja" id="txtIdLoja" />
-                    <p class="control has-icons-left">
+                    <p class="control has-icons-left" style="width:100%">
                         <input type="text" class="input" asp-for="Cliente.NomeCliente" id="txtCustomer">
                         <span class="icon is-small is-left">
                             <i class="fas fa-user-check"></i>
                         </span>
                     </p>
+                    <div class="control">
+                        <a class="button is-info" href="~/Pedidos/Adicionar/@Model.IdMarcacao">
+                            <i class="fa-solid fa-copy"></i>
+                        </a>
+                    </div>
                 </div>
                 <span asp-validation-for="Cliente.IdCliente" class="has-text-danger"></span>
             </div>
@@ -359,7 +364,7 @@
                     });
                 }
             });
-        }
+    }
 
     function EnviarEmail() {
 
