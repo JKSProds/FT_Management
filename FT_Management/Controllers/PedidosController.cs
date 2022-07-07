@@ -26,7 +26,7 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Tech, Escritorio")]
     public class PedidosController : Controller
     {
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Adicionar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -46,7 +46,7 @@ namespace FT_Management.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult ValidarMarcacao(Marcacao m)
         {
@@ -54,7 +54,7 @@ namespace FT_Management.Controllers
             return Content(phccontext.ValidarMarcacao(m));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult Adicionar(Marcacao m)
         {
@@ -94,7 +94,8 @@ namespace FT_Management.Controllers
 
             return View(m);
         }
-        [Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Editar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -111,7 +112,7 @@ namespace FT_Management.Controllers
             return View(m);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult Editar(int id, Marcacao m)
         {
@@ -150,6 +151,8 @@ namespace FT_Management.Controllers
 
             return View(m);
         }
+
+        [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult EmailPedidoTecnico(int id)
         {
@@ -164,6 +167,7 @@ namespace FT_Management.Controllers
             return Content("Sucesso");
         }
 
+        [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult EmailPedidoCliente(int id, string email)
         {
@@ -256,7 +260,7 @@ namespace FT_Management.Controllers
                     Uid =  m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
                     Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC)
+                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?id=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC)
                 };
                 calendar.Events.Add(e);
                 d = d.AddMinutes(30);
@@ -284,7 +288,6 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
-        [Authorize(Roles = "Admin, Escritorio, Tech")]
         public ActionResult CalendarioView(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -309,7 +312,8 @@ namespace FT_Management.Controllers
 
             return Json("Ok");
         }
-            public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
+
+        public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -369,14 +373,14 @@ namespace FT_Management.Controllers
             return View("ListaPedidos", ListaMarcacoes);
         }
 
-        public ActionResult Pedido(string idMarcacao)
+        public ActionResult Pedido(int id)
         {
-            if (idMarcacao == null) return RedirectToAction("Index");
+            if (id == 0) return RedirectToAction("Index");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Marcacao m = phccontext.ObterMarcacao(int.Parse(idMarcacao));
+            Marcacao m = phccontext.ObterMarcacao(id);
             Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;

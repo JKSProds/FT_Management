@@ -172,17 +172,17 @@
                                         @foreach (var item in Model.Marcacoes)
                                         {
                                             <tr>
-                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().IdMarcacao)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().IdMarcacao)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                     <span>@item.IdMarcacao</span>
                                                 </td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().DataMarcacao)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().DataMarcacao)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                     <span>@item.DataMarcacao.ToShortDateString()</span>
                                                 </td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().Utilizador)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().Utilizador)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                     @Html.DisplayFor(modelItem => item.Tecnico.NomeCompleto)
 
                                                 </td>
-                                                <td  data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().EstadoMarcacaoDesc)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                <td  data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().EstadoMarcacaoDesc)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                     @Html.DisplayFor(modelItem => item.EstadoMarcacaoDesc)
                                                 </td>
                                             </tr>

@@ -1932,7 +1932,7 @@ namespace FT_Management.Models
                             start = dataMarcacao,
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
-                            raw = "Pedido/?idMarcacao=" + item.IdMarcacao + "&IdTecnico=" + (item.Tecnico.Id),
+                            raw = "Pedido/" + item.IdMarcacao + "?IdTecnico=" + (item.Tecnico.IdPHC),
                             category = "time",
                             dueDateClass = "",
                             bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
