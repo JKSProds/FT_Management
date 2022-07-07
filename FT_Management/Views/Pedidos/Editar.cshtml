@@ -325,100 +325,101 @@
         </button>
 
     </div>
-    <div class="modal" id="modalValidacao">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Validar Mensagens</p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
-                        <div class="field" style="width:100%">
-                            <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
-                    <span class="icon">
-                        <i class="fas fa-check-circle"></i>
-                    </span>
-                    <span>Ignorar e Guardar Marcação</span>
-                </button>
-            </footer>
-        </div>
-    </div>
 
-    <div class="modal" id="modalEnviarEmailTecnico">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Enviar Email</p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <p>Tem a certeza que deseja enviar um email aos tecnicos associados a esta marcacao?</p>
-            </section>
-            <footer class="modal-card-foot">
-                <button id="btnEnviarEmailMarcacaoTecnico" type="button" class="button is-info" onclick="EnviarEmailMarcacaoTecnico(@Model.IdMarcacao)" href="javascript:;">
-                    <span class="icon">
-                        <i class="fas fa-paper-plane"></i>
-                    </span>
-                    <span>Enviar</span>
-                </button>
-            </footer>
-        </div>
-    </div>
-
-
-    <div class="modal" id="modalEnviarEmailCliente">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Enviar Email</p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <p>Tem a certeza que deseja enviar um email para o cliente?</p>
-                    <div class="field" style="width:100%">
-                        <div class="control"><input type="email" class="input" id="txtEmailCliente" value="@Model.QuemPediuEmail"></div>
-                    </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button id="btnEnviarEmailMarcacaoCliente" type="button" class="button is-info" onclick="EnviarEmailMarcacaoCliente(@Model.IdMarcacao, document.getElementById('txtEmailCliente').value)" href="javascript:;">
-                    <span class="icon">
-                        <i class="fas fa-paper-plane"></i>
-                    </span>
-                    <span>Enviar</span>
-                </button>
-            </footer>
-        </div>
-    </div>
     <input type="hidden" id="hiddenIdMarcacao" value="@Model.IdMarcacao" />
 </form>
 
+<div class="modal" id="modalValidacao">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Validar Mensagens</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
+                    <div class="field" style="width:100%">
+                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                <span>Ignorar e Guardar Marcação</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div class="modal" id="modalEnviarEmailTecnico">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Enviar Email</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Tem a certeza que deseja enviar um email aos tecnicos associados a esta marcacao?</p>
+        </section>
+        <footer class="modal-card-foot">
+            <button id="btnEnviarEmailMarcacaoTecnico" type="button" class="button is-info" onclick="EnviarEmailMarcacaoTecnico(@Model.IdMarcacao)" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-paper-plane"></i>
+                </span>
+                <span>Enviar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+
+<div class="modal" id="modalEnviarEmailCliente">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Enviar Email</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Tem a certeza que deseja enviar um email para o cliente?</p>
+            <div class="field" style="width:100%">
+                <div class="control"><input type="email" class="input" id="txtEmailCliente" value="@Model.QuemPediuEmail"></div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button id="btnEnviarEmailMarcacaoCliente" type="button" class="button is-info" onclick="EnviarEmailMarcacaoCliente(@Model.IdMarcacao, document.getElementById('txtEmailCliente').value)" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-paper-plane"></i>
+                </span>
+                <span>Enviar</span>
+            </button>
+        </footer>
+    </div>
+</div>
 
 <script>
-   function ValidarMarcacao() {
-            $.ajax({
-                type: "POST",
-                url: "/Pedidos/ValidarMarcacao",
-                data: $("#frmAdicionar").serialize(),
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8', 
-                success: function (result) {
-                    $(function () {
-                        document.getElementById("txtMensagens").value = result;
-                        if(result != "") {
+    function ValidarMarcacao() {
+        $.ajax({
+            type: "POST",
+            url: "/Pedidos/ValidarMarcacao",
+            data: $("#frmAdicionar").serialize(),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                $(function () {
+                    document.getElementById("txtMensagens").value = result;
+                    if (result != "") {
                         Bulma('#modalValidacao').modal().open();
-                        }else{
-                            document.getElementById('frmAdicionar').submit();
-                        }
-                    });
-                }
-            });
+                    } else {
+                        document.getElementById('frmAdicionar').submit();
+                    }
+                });
+            }
+        });
     }
 
     function EnviarEmailMarcacaoCliente(id, email) {
@@ -524,12 +525,12 @@
 
                     if (result == "Sucesso") {
                         bulmaToast.toast({
-                          message: 'Email enviado com sucesso',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+                            message: 'Email enviado com sucesso',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
                         })
 
                         var json = {
@@ -549,12 +550,12 @@
 
                     } else {
                         bulmaToast.toast({
-                          message: 'Ocorreu um erro!',
-                          type: 'is-danger',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+                            message: 'Ocorreu um erro!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
                         })
                     }
 
@@ -563,7 +564,7 @@
         });
     }
 
-        function CarregarDadosResponsavel() {
+    function CarregarDadosResponsavel() {
         $.ajax({
             url: '/Pedidos/ObterResponsavel/',
             data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value, "TipoEquipamento": document.getElementById("TipoEquipamento").value },
@@ -582,7 +583,7 @@
         });
     }
 
-     $(function () {
+    $(function () {
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
                 $.ajax({

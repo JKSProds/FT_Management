@@ -28,7 +28,7 @@
     </div>
     <hr />
     <div class="container">
-       <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
         <div class="steps" id="stepsDemo">
             <div class="step-item is-active is-success">
                 <div class="step-marker">1</div>
@@ -123,7 +123,7 @@
                                 <label asp-for="QuemPediuTelefone"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="tel" class="input" asp-for="QuemPediuTelefone" id="txtQuemPediuTelefone">                                        
+                                        <input type="tel" class="input" asp-for="QuemPediuTelefone" id="txtQuemPediuTelefone">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-phone"></i>
                                         </span>
@@ -171,21 +171,21 @@
                                 <span asp-validation-for="Oficina" class="has-text-danger"></span>
                             </div>
                         </div>
-                    <div class="column is-12">
-                        <div class="field" style="height: 310px;">
-                            <label asp-for="Tecnico"></label>
-                            <div class="control">
-                                <div class="select is-multiple" style="width:100%">
-                                    @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
-                                    <span class="select" style="width:100%">
-                                        <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect" asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
-                                    </span>
+                        <div class="column is-12">
+                            <div class="field" style="height: 310px;">
+                                <label asp-for="Tecnico"></label>
+                                <div class="control">
+                                    <div class="select is-multiple" style="width:100%">
+                                        @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
+                                        <span class="select" style="width:100%">
+                                            <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect" asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+                                        </span>
+                                    </div>
                                 </div>
+                                <span asp-validation-for="Tecnico" class="has-text-danger"></span>
                             </div>
-                            <span asp-validation-for="Tecnico" class="has-text-danger"></span>
                         </div>
                     </div>
-                        </div>
                 </div>
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
@@ -233,7 +233,7 @@
                             <div class="field">
                                 <label asp-for="Hora"></label>
                                 <div class="control">
-                                  <input type="time" class="input " asp-for="Hora" id="txtHora">
+                                    <input type="time" class="input " asp-for="Hora" id="txtHora">
                                 </div>
                                 <span asp-validation-for="Hora" class="has-text-danger"></span>
                             </div>
@@ -333,44 +333,47 @@
                     </div>
                 </div>
                 &nbsp;
-            <div class="steps-actions">
-                <div class="steps-action">
-                    <a href="#" data-nav="previous" class="button is-light">
-                        <span class="icon">
-                            <i class="fas fa-arrow-left"></i>
-                        </span>
-                        <span>Anterior</span>
-                    </a>
-                </div>
-                <div class="steps-action">
-                    <a href="#" data-nav="next" class="button is-light">
-                        <span class="icon">
-                            <i class="fas fa-arrow-right"></i>
-                        </span>
-                        <span>Próximo</span>
-                    </a>
+                <div class="steps-actions">
+                    <div class="steps-action">
+                        <a href="#" data-nav="previous" class="button is-light">
+                            <span class="icon">
+                                <i class="fas fa-arrow-left"></i>
+                            </span>
+                            <span>Anterior</span>
+                        </a>
+                    </div>
+                    <div class="steps-action">
+                        <a href="#" data-nav="next" class="button is-light">
+                            <span class="icon">
+                                <i class="fas fa-arrow-right"></i>
+                            </span>
+                            <span>Próximo</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
- </div>
-         <div class="modal" id="modalValidacao">
-          <div class="modal-background"></div>
-          <div class="modal-card">
-            <header class="modal-card-head">
-              <p class="modal-card-title">Validar Mensagens</p>
-              <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
-                            <div class="field" style="width:100%">
-                                <div class="control"><textarea type="text" class="textarea"  id="txtMensagens" readonly rows=8 value=""></textarea></div>
-                            </div>
-                        </div>
+
+</form>
+
+<div class="modal" id="modalValidacao">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Validar Mensagens</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
+                    <div class="field" style="width:100%">
+                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
                     </div>
-            </section>
-             <footer class="modal-card-foot">
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
             <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check-circle"></i>
@@ -378,10 +381,9 @@
                 <span>Ignorar e Criar Marcação</span>
             </button>
         </footer>
-          </div>
-        </div>
+    </div>
+</div>
 
-</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -408,25 +410,25 @@
         });
     }
 
-    
-         function ValidarMarcacao() {
-            $.ajax({
-                type: "POST",
-                url: "/Pedidos/ValidarMarcacao",
-                data: $("#frmAdicionar").serialize(),
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8', 
-                success: function (result) {
-                    $(function () {
-                        document.getElementById("txtMensagens").value = result;
-                        if(result != "") {
+
+    function ValidarMarcacao() {
+        $.ajax({
+            type: "POST",
+            url: "/Pedidos/ValidarMarcacao",
+            data: $("#frmAdicionar").serialize(),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                $(function () {
+                    document.getElementById("txtMensagens").value = result;
+                    if (result != "") {
                         Bulma('#modalValidacao').modal().open();
-                        }else{
-                            document.getElementById('frmAdicionar').submit();
-                        }
-                    });
-                }
-            });
-        }
+                    } else {
+                        document.getElementById('frmAdicionar').submit();
+                    }
+                });
+            }
+        });
+    }
 
     $(function () {
         $("#txtCustomer").autocomplete({
