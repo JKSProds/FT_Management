@@ -150,8 +150,32 @@ namespace FT_Management.Controllers
 
             return View(m);
         }
+        [HttpPost]
+        public ActionResult EmailPedidoTecnico(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
 
-            [HttpPost]
+            foreach (var item in m.LstTecnicos)
+            {
+               if (!MailContext.EnviarEmailMarcacaoTecnico(item.EmailUtilizador, m, item.NomeCompleto)) return Content("Erro");
+            }
+            
+            return Content("Sucesso");
+        }
+
+        [HttpPost]
+        public ActionResult EmailPedidoCliente(int id, string email)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            if (!MailContext.EnviarEmailMarcacaoCliente(email, m)) return Content("Erro");
+
+            return Content("Sucesso");
+        }
+
+        [HttpPost]
         public JsonResult ObterClientes(string prefix)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
