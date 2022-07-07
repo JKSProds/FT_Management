@@ -100,13 +100,6 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                string Tecnicos = "";
-                foreach (var item in m.LstTecnicos)
-                {
-                    if (Tecnicos.Length > 0) Tecnicos += ";";
-                    Tecnicos += item.IdPHC;
-                }
-
                 SqlCommand command = new SqlCommand("Gera_Marcacao", conn)
                 {
                     CommandTimeout = TIMEOUT,
@@ -115,8 +108,8 @@ namespace FT_Management.Models
 
                 command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
                 command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
-                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
-                command.Parameters.Add(new SqlParameter("@TECNICOS", Tecnicos));
+                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC)); 
+                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
                 command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
                 command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
                 command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
@@ -142,7 +135,7 @@ namespace FT_Management.Models
 
                 conn.Close();
 
-                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Criada marcação com sucesso!", 5);
+                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + res + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
 
             }
 
@@ -162,13 +155,6 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                string Tecnicos = "";
-                foreach (var item in m.LstTecnicos)
-                {
-                    if (Tecnicos.Length > 0) Tecnicos += ";";
-                    Tecnicos += item.IdPHC;
-                }
-
                 SqlCommand command = new SqlCommand("Altera_Marcacao", conn)
                 {
                     CommandTimeout = TIMEOUT,
@@ -179,7 +165,7 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
                 command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
                 command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
-                command.Parameters.Add(new SqlParameter("@TECNICOS", Tecnicos));
+                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
                 command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
                 command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
                 command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
@@ -203,11 +189,10 @@ namespace FT_Management.Models
 
                 string resp = result[0].ToString();
 
-                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Atualizada marcação com sucesso!", 5);
+                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 conn.Close();
 
                 if (resp != "-1") return true;
-
             }
 
             catch

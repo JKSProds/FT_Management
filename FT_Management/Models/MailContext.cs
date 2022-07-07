@@ -58,7 +58,7 @@ namespace FT_Management.Models
             string Assunto = "Nova Marcação - Cliente - " + m.Cliente.NomeCliente;
             string Mensagem = "Foi criada uma marcação para o cliente: " + m.Cliente.NomeCliente + "<br><br><b>Dados adicionais:</b><br>Técnico: " + Tecnico + "<br>Data: " + m.DataMarcacao.ToShortDateString() + "<br>Cliente: " + m.Cliente.NomeCliente + "<br>Morada: " + m.Cliente.MoradaCliente + "<br>Prioridade: " + m.PrioridadeMarcacao + "<br>Equipamento: " + m.TipoEquipamento;
             EnviarMail(EmailDestino, Assunto, Mensagem);
-           
+
             return true;
         }
 
