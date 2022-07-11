@@ -24,6 +24,7 @@ namespace FT_Management.Models
         public int Id { get; set; }
         [Display(Name = "Num. do Utilizador")]
         public int IdUtilizador { get; set; }
+        public Utilizador Utilizador { get; set; }
         [Display(Name = "Validado por")]
         public int ValidadoPor { get; set; }
         [Display(Name = "Validado por")]

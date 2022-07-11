@@ -888,6 +888,7 @@ namespace FT_Management.Models
         public List<Ferias> ObterListaFeriasValidar()
         {
             List<Ferias> LstFerias = new List<Ferias>();
+            List<Utilizador> LstUtilizadores = this.ObterListaUtilizadores(false);
             using (Database db = ConnectionString)
             {
 
@@ -898,6 +899,7 @@ namespace FT_Management.Models
                     {
                         Id = result["Id"],
                         IdUtilizador = result["IdUtilizador"],
+                        Utilizador = LstUtilizadores.Where(u=> u.Id == result["IdUtilizador"]).FirstOrDefault(),
                         DataInicio = result["DataInicio"],
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
