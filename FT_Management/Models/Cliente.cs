@@ -34,6 +34,10 @@ namespace FT_Management.Models
         public int IdVendedor { get; set; }
         [Display(Name = "Tipo de Cliente")]
         public string TipoCliente { get; set; }
+        public List<Marcacao> Marcacoes { get; set; }
+        public List<FolhaObra> FolhasObra { get; set; }
+        public List<Visita> Visitas { get; set; }
+        public List<Equipamento> Equipamentos { get; set; }
         public bool IsValidContrib()
         {
             string Contrib = NumeroContribuinteCliente;
@@ -75,16 +79,24 @@ namespace FT_Management.Models
             }
             return functionReturnValue;
         }
-        public List<Marcacao> Marcacoes { get; set; }
-        public List<FolhaObra> FolhasObra { get; set; }
-        public List<Visita> Visitas { get; set; }
-        public List<Equipamento> Equipamentos { get; set; }
-
         public Cliente()
         {
             this.IdCliente = 0;
             this.IdLoja = 0;
             this.NomeCliente = "N/D";
+        }
+        public string ObterMoradaDirecoes()
+        {
+            if (IdCliente == 878) return "Pingo Doce " + NomeCliente.Replace("PD", "");
+            if (IdCliente == 561) {
+                if (NomeCliente.Contains("CNT")) return NomeCliente.Replace("CNT", "Continente");
+                if (NomeCliente.Contains("MDL")) return NomeCliente.Replace("MDL", "Modelo");
+                if (NomeCliente.Contains("BD")) return NomeCliente.Replace("BD", "Continete Bom Dia");
+                if (NomeCliente.Contains("CBD")) return NomeCliente.Replace("CBD", "Continete Bom Dia");
+                if (NomeCliente.Contains("BNJ")) return NomeCliente.Replace("BNJ", "Continete Bom Dia");
+            };
+
+            return MoradaCliente;
         }
     }
 }

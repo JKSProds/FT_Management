@@ -102,7 +102,7 @@
                                     <div class="control" style="width:100%">
                                         <input class="input is-fullwidth" type="text"  readonly asp-for="MoradaCliente">
                                     </div>
-                                    <a href="@Utilizador.ObterLinkMapa(Model.MoradaCliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)" target="_blank" class="button is-primary" @(Model.MoradaCliente.Length < 2 ? "disabled" : "")><i class="fas fa-location-arrow"></i></a>
+                                    <a href="@Utilizador.ObterLinkMapa(Model.ObterMoradaDirecoes(), User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)" target="_blank" class="button is-primary" @(Model.MoradaCliente.Length < 2 ? "disabled" : "")><i class="fas fa-location-arrow"></i></a>
                                 </div>
                             </div>
                             <div class="column is-3">
