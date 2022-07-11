@@ -747,6 +747,22 @@ namespace FT_Management.Models
 
         }
 
+        public List<String> ObterEmailsCC(int TipoEmail)
+        {
+            List<String> LstEmails = new List<String>();
+            using (Database db = ConnectionString)
+            {
+                string sql = "SELECT Email FROM sys_emails where Tipo=" + TipoEmail + ";";
+                using var result = db.Query(sql);
+                while (result.Read())
+                {
+                    LstEmails.Add(result[0]);
+                }
+            }
+
+            return LstEmails;
+
+        }
 
         public Ferias ObterFerias(int Id)
         {

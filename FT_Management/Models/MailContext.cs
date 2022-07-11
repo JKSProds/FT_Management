@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using Custom;
@@ -7,7 +8,7 @@ namespace FT_Management.Models
 {
     public static class MailContext
     {
-        public static void EnviarMail(string EmailDestino, string Assunto, string Mensagem)
+        public static void EnviarMail(string EmailDestino, string Assunto, string Mensagem, List<String> EmailCC)
         {
             try
             {
@@ -23,7 +24,12 @@ namespace FT_Management.Models
                 MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
                 MailAddress to = new MailAddress(EmailDestino);
                 MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
-                myMail.CC.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailCC2"]));
+                myMail.Bcc.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailBCC"]));
+
+                foreach (var item in EmailCC)
+                {
+                    myMail.CC.Add(new MailAddress(item));
+                }
 
                 myMail.Subject = Assunto;
                 myMail.SubjectEncoding = System.Text.Encoding.UTF8;
@@ -52,12 +58,19 @@ namespace FT_Management.Models
                   ("SmtpException has occured: " + ex.Message);
             }
         }
+        public static List<String> ObterEmailCC(int tipo)
+        {
+            //TIPO 1 == TECNICOS | TIPO 2 == COMERCIAIS | TIPO 3 == Férias
+            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+
+            return context.ObterEmailsCC(tipo);
+        }
 
         public static bool EnviarEmailMarcacaoTecnico(string EmailDestino, Marcacao m, string Tecnico)
         {
             string Assunto = "Nova Marcação - Cliente - " + m.Cliente.NomeCliente;
             string Mensagem = "Foi criada uma marcação para o cliente: " + m.Cliente.NomeCliente + "<br><br><b>Dados adicionais:</b><br>Técnico: " + Tecnico + "<br>Data: " + m.DataMarcacao.ToShortDateString() + "<br>Cliente: " + m.Cliente.NomeCliente + "<br>Morada: " + m.Cliente.MoradaCliente + "<br>Prioridade: " + m.PrioridadeMarcacao + "<br>Equipamento: " + m.TipoEquipamento;
-            EnviarMail(EmailDestino, Assunto, Mensagem);
+            EnviarMail(EmailDestino, Assunto, Mensagem, ObterEmailCC(1));
 
             return true;
         }
@@ -67,7 +80,7 @@ namespace FT_Management.Models
         {
             string Assunto = "Nova Marcação - Cliente - " + m.Cliente.NomeCliente;
             string Mensagem = "Foi agendada uma marcação para o dia: " + m.DataMarcacao.ToShortDateString() + "<br><br><b>Dados adicionais:</b><br>Técnico: " + string.Join(" | ", m.LstTecnicos.Select(x => x.NomeCompleto)) + "<br>Data: " + m.DataMarcacao.ToShortDateString() + "<br>Cliente: " + m.Cliente.NomeCliente + "<br>Morada: " + m.Cliente.MoradaCliente + "<br>Prioridade: " + m.PrioridadeMarcacao + "<br>Equipamento: " + m.TipoEquipamento;
-            EnviarMail(EmailDestino, Assunto, Mensagem);
+            EnviarMail(EmailDestino, Assunto, Mensagem, ObterEmailCC(1));
 
             return true;
         }
