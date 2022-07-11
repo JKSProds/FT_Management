@@ -120,11 +120,15 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult Logs(int id)
+        public IActionResult Logs(int id, string Data)
         {
+            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
+            ViewData["Data"] = Data;
+
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             ViewData["NomeUtilizador"] = context.ObterUtilizador(id).NomeUtilizador;
-            return View(context.ObterListaLogs(id));
+
+            return View(context.ObterListaLogs(id).Where(l => l.Data > DateTime.Parse(Data) && l.Data < DateTime.Parse(Data).AddDays(1)));
         }
 
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
