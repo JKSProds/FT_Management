@@ -44,7 +44,8 @@ namespace FT_Management.Controllers
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
-                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
+                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
+                        new Claim(ClaimTypes.Role, user.TipoMapa == 1 ? "Google Maps" : "Waze")
 
                     };
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -91,7 +92,8 @@ namespace FT_Management.Controllers
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
-                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio")
+                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
+                        new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : "Waze")
 
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -130,19 +132,21 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
+            if (!User.IsInRole("Admin") && id != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("Editar", new { id = int.Parse(this.User.Claims.First().Value) });
             return View(context.ObterUtilizador(id));
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
-        public IActionResult AtualizarUtilizador(int id, string name, string email, string pin, string iniciais, string cor)
+        public IActionResult AtualizarUtilizador(int id, Utilizador utilizador)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(id);
 
-            u.NomeCompleto = name;
-            u.EmailUtilizador = email;
-            u.Pin = pin;
-            u.Iniciais = iniciais;
-            u.CorCalendario = cor;
+            u.NomeCompleto = utilizador.NomeCompleto;
+            u.EmailUtilizador = utilizador.EmailUtilizador;
+            u.Pin = utilizador.Pin;
+            u.Iniciais = utilizador.Iniciais;
+            u.CorCalendario = utilizador.CorCalendario;
+            u.TipoMapa = utilizador.TipoMapa;
 
             context.NovoUtilizador(u);
 

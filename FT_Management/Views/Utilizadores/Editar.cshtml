@@ -179,7 +179,7 @@
 
                 <div class="card-content">
                     <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="AtualizarUtilizador">
-                        <input type="hidden" class="input"   asp-for="Id" name="id">
+                        <input type="hidden" class="input" asp-for="Id" name="id">
                         <div class="field is-horizontal">
                             <div class="field-label is-normal">
                                 <label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label>
@@ -187,7 +187,7 @@
                             <div class="field-body">
                                 <div class="field">
                                     <div class="control">
-                                        <input type="text" autocomplete="on" name="name" required="required" class="input" asp-for="NomeCompleto">
+                                        <input type="text" required="required" class="input" asp-for="NomeCompleto">
                                     </div>
                                     <p class="help"> Required. Your name</p>
                                 </div>
@@ -200,33 +200,45 @@
                             <div class="field-body">
                                 <div class="field">
                                     <div class="control">
-                                        <input type="email" autocomplete="on" name="email" required="required" class="input" asp-for="EmailUtilizador">
+                                        <input type="email" required="required" class="input" asp-for="EmailUtilizador">
                                     </div>
                                     <p class="help"> Required. Your e-mail</p>
                                 </div>
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
-                            <div class="field">
-                                <div class="control"><input type="text" name="pin" maxlength=4 class="input" asp-for="Pin"></div>
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
+                                <div class="field">
+                                    <div class="control"><input type="text" maxlength=4 class="input" asp-for="Pin"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
-                            <div class="field">
-                                <div class="control"><input type="text" name="iniciais" maxlength=2 class="input" asp-for="Iniciais"></div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
+                                <div class="field">
+                                    <div class="control"><input type="text" maxlength=2 class="input" asp-for="Iniciais"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.CorCalendario)</label></div><div class="field-body">
-                            <div class="field">
-                                <div class="control"><input type="color" name="cor" class="input" asp-for="CorCalendario"></div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.TipoMapa)</label></div><div class="field-body">
+                                <div class="field">
+                                    <div class="select" style="width:100%">
+                                        <select class="select" style="width:100%" asp-for="TipoMapa">
+                                            <option value="1">Google Maps</option>
+                                            <option value="2">Waze</option>
+                                        </select>
+                                        </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.CorCalendario)</label></div><div class="field-body">
+                                <div class="field">
+                                    <div class="control"><input type="color" name="cor" class="input" asp-for="CorCalendario"></div>
+                                </div>
+                            </div>
+                        </div>
                         <hr>
                         <div class="field is-horizontal">
                             <div class="field-label is-normal">

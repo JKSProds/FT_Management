@@ -89,7 +89,8 @@ namespace FT_Management.Models
                         IdCartaoTrello = result["IdCartaoTrello"],
                         IdPHC = result["IdPHC"],
                         Admin = result["admin"],
-                        Enable = result["enable"]
+                        Enable = result["enable"],
+                        TipoMapa = result["TipoMapa"]
                     });
                 }
             }
@@ -139,6 +140,7 @@ namespace FT_Management.Models
                         EmailUtilizador = result["EmailUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
                         CorCalendario = result["CorCalendario"],
+                        TipoMapa = result["TipoMapa"],
                         IdPHC = result["IdPHC"]
                     });
                 }
@@ -1838,8 +1840,9 @@ namespace FT_Management.Models
                         Enable = result["enable"] == 1,
                         CorCalendario = result["CorCalendario"],
                         IdPHC = result["IdPHC"],
-                        Iniciais = result["IniciaisUtilizador"],
-                        Pin = result["PinUtilizador"]
+                        TipoMapa = result["TipoMapa"],
+                        Pin = result["PinUtilizador"],
+                        Iniciais = result["IniciaisUtilizador"]
                     };
                     if (!string.IsNullOrEmpty(result["ID"]))
                     {

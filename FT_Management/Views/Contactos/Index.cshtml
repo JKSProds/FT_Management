@@ -130,7 +130,7 @@
                                 <a class="button is-info" @(item.TelefoneContacto.Length < 9 ? "disabled" : "") href="tel:@item.TelefoneContacto"><i class="fas fa-phone"></i></a>
                                 <a class="button is-warning " href="@item.URL" target="_blank"><i class="fas fa-paperclip"></i></a>
                                 <a class="button is-primary" @(item.EmailContacto.Length < 1 ? "disabled" : "") href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left" style="margin-top:5px"></i></a>
-                                <a class="button is-primary is-outlined" @(item.MoradaContacto.Length < 1 ? "disabled" : "") href="https://maps.google.com/?daddr=@item.MoradaContacto"><i class="fas fa-location-arrow"></i></a>
+                                <a class="button is-primary is-outlined" @(item.MoradaContacto.Length < 1 ? "disabled" : "") href="@Utilizador.ObterLinkMapa(item.MoradaContacto, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow"></i></a>
                                 @if (this.User.IsInRole("Admin"))
                                 {
                                     <a class="button is-danger" onclick="ConfirmApagarContacto(@item.IdContacto)" href="javascript:;"><i class="fas fa-trash"></i></a>

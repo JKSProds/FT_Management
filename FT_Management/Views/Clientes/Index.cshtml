@@ -98,7 +98,7 @@
                         <td class="is-actions-cell">
                             <div class="btn-group float-right">
                                 <a class="button is-info is-outlined @(item.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.TelefoneCliente"><i class="fas fa-phone float-left" style="margin-top:5px"></i></a>
-                                <a class="button is-primary is-outlined" href="https://maps.google.com/?daddr=@item.MoradaCliente"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                                <a class="button is-primary is-outlined" href="@Utilizador.ObterLinkMapa(item.MoradaCliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
                             </div>
 
                         </td>
