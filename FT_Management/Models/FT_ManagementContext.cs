@@ -1957,7 +1957,7 @@ namespace FT_Management.Models
                             category = "time",
                             dueDateClass = "",
                             bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
-                            body = item.ResumoMarcacao,
+                            body = "Num. da Marcação: " + item.IdMarcacao + "<br>" + "Incidente: " + item.Referencia + "<br><br>" + item.ResumoMarcacao,
                             state = item.EstadoMarcacaoDesc,
                             attendees = item.Tecnico.NomeCompleto
                         });
