@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using Custom;
+using Microsoft.AspNetCore.Http;
 
 namespace FT_Management.Models
 {
@@ -97,8 +98,10 @@ namespace FT_Management.Models
                 Mensagem += "<tr><td>" + v.Cliente.NomeCliente + "</td><td>" + v.ResumoVisita + "</td></tr>";
             }
 
+            
+
             Mensagem += "</table><br><br>";
-            Mensagem += "<a href=\"http://62.28.200.46:8082/Visitas/ListaVisitas?IdComercial=" + u.Id + "\" class=\"button\">Ver</a>";
+            Mensagem += "<a href=\"http://"+ "62.28.200.46:8082" + "/Visitas/ListaVisitas?IdComercial=" + u.Id + "\" class=\"button\">Ver</a>";
 
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(2));
 

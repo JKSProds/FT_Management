@@ -13,6 +13,7 @@ using System.Net;
 using Newtonsoft.Json;
 using PdfSharpCore.Drawing;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
 
 namespace FT_Management.Models
 {
@@ -1957,7 +1958,7 @@ namespace FT_Management.Models
                             category = "time",
                             dueDateClass = "",
                             bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
-                            body = "Num. da Marcação: " + item.IdMarcacao + "<br>" + "Incidente: " + item.Referencia + "<br><br>" + item.ResumoMarcacao,
+                            body = "<h1>Num. da Marcação: " + item.IdMarcacao + "<br>" + "Incidente: " + item.Referencia + "</h1><br><br>" + item.ResumoMarcacao,
                             state = item.EstadoMarcacaoDesc,
                             attendees = item.Tecnico.NomeCompleto
                         });
