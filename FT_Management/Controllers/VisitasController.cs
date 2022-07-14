@@ -152,7 +152,7 @@ namespace FT_Management.Controllers
             else
             {
                 ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
-                if (v.IdComercial != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("ListaVisitas", new { IdComercial = int.Parse(this.User.Claims.First().Value) });
+                if (v.IdComercial != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("AcessoNegado", "Home");
             }
 
             return View(v);
@@ -209,7 +209,7 @@ namespace FT_Management.Controllers
         {
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (context.ObterVisita(idVisita).IdComercial != int.Parse(this.User.Claims.First().Value) && !(User.IsInRole("Admin") || User.IsInRole("Escritorio"))) return RedirectToAction("ListaVisitas", new { IdComercial = int.Parse(this.User.Claims.First().Value) });
+            if (context.ObterVisita(idVisita).IdComercial != int.Parse(this.User.Claims.First().Value) && !(User.IsInRole("Admin") || User.IsInRole("Escritorio"))) return RedirectToAction("AcessoNegado", "Home");
 
             context.ApagarVisita(idVisita);
 
