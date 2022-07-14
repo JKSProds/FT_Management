@@ -88,7 +88,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailMarcacaoDiariaComercial(Utilizador u, List<Visita> LstVisitas)
         {
-            string Assunto = "Agendamento Comercial - " + DateTime.Now.ToShortDateString();
+            string Assunto = "Agendamento Comercial - " + DateTime.Now.ToShortDateString() + " - " + u.NomeCompleto;
             string Mensagem = "Segue abaixo o agendamento para o dia de hoje:";
 
             Mensagem += "<table><th>Cliente</th><th>Detalhes</th>";
