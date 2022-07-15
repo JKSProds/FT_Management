@@ -98,7 +98,7 @@
     function obterEventos() {
          $.ajax({
         type: "POST",
-        url: "/Pedidos/ObterVisitasComercial",
+        url: "/Visitas/ObterVisitasComercial",
         data: {start: calendar.getDateRangeStart().toUTCString(), end: calendar.getDateRangeEnd().toUTCString()},
         traditional: true,
         success: function (result) {

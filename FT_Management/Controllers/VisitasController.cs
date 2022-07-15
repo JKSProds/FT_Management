@@ -69,11 +69,11 @@ namespace FT_Management.Controllers
         [HttpPost]
         public JsonResult ObterClientes(string prefix)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             if (prefix is null) prefix = "";
 
-            return Json(context.ObterListaClientes(prefix, false));
+            return Json(phccontext.ObterClientes(prefix, false));
         }
 
         public ActionResult ListaVisitas(int IdComercial, string DataVisitas)

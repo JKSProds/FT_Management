@@ -127,8 +127,8 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             var LstArmazens = context.ObterListaArmazens().ToList();
 
-            ViewData["LstGuiasPecas"] = context.ObterListaMovimentosProduto(id);
-            ViewData["LstProdutosArmazem"] = context.ObterListaProdutoArmazem(id);
+            ViewData["LstGuiasPecas"] = phccontext.ObterListaMovimentos(id);
+            ViewData["LstProdutosArmazem"] = phccontext.ObterProdutosArmazem(id);
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
             
             return View(phccontext.ObterProduto(id,armazemid));

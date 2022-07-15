@@ -109,6 +109,8 @@ namespace FT_Management.Controllers
         public string AdicionarObservacao(int idcontacto, string obs, int lembrete, string datalembrete)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
             Contacto c = context.ObterContacto(idcontacto);
 
@@ -118,7 +120,7 @@ namespace FT_Management.Controllers
                 IdComercial = u,
                 Obs = obs
             };
-            Cliente cl = c.NIFContacto.Length > 0 ? context.ObterClienteContribuinte(c.NIFContacto) : new Cliente() { IdCliente = 0, IdLoja = 0};
+            Cliente cl = c.NIFContacto.Length > 0 ? phccontext.ObterClienteNIF(c.NIFContacto) : new Cliente() { IdCliente = 0, IdLoja = 0};
 
             if (lembrete == 1)
             {
@@ -147,7 +149,7 @@ namespace FT_Management.Controllers
             if (context.ExisteNIFDuplicadoContacto(c.NIFContacto)) ModelState.AddModelError("NIFContacto", "NIF Duplicado");
             if (ModelState.IsValid)
             {
-                c.IdContacto = context.ObterUltimoID("dat_contactos", "Id") + 1;
+                c.IdContacto = 0;
                 c.CheckNull();
                 c.DataContacto = DateTime.Now;
                 c.IdUtilizador = int.Parse(this.User.Claims.First().Value.ToString());
@@ -204,8 +206,10 @@ namespace FT_Management.Controllers
 
         public string MostrarCliente(int Id)
         {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Cliente c = context.ObterClienteContribuinte(context.ObterContacto(Id).NIFContacto);
+
+            Cliente c = phccontext.ObterClienteNIF(context.ObterContacto(Id).NIFContacto);
 
             if (c.IdCliente == 0) throw new Exception();
 

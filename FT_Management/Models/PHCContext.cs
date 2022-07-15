@@ -290,6 +290,45 @@ namespace FT_Management.Models
         {
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
         }
+        public List<Produto> ObterProdutosArmazem(string Referencia)
+        {
+            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.ref;");
+        }
+
+        //NAO FUNCIONA
+        public List<Movimentos> ObterListaMovimentos(string Referencia)
+        {
+            List<Movimentos> LstGuias = new List<Movimentos>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and bi.ref='" + Referencia + "' order by ref;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+
+                    while (result.Read())
+                    {
+                        LstGuias.Add(new Movimentos()
+                        {
+                       
+                        });
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+            return LstGuias;
+        }
 
         public Produto ObterProduto(string Referencia, int IdArmazem)
         {
@@ -395,6 +434,10 @@ namespace FT_Management.Models
         public Cliente ObterClienteSimples(int IdCliente, int IdLoja)
         {
             return ObterCliente("SELECT TOP 1 no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and estab=" + IdLoja + " and no is not null;", false);
+        }
+        public Cliente ObterClienteNIF(string NIF)
+        {
+            return ObterCliente("SELECT no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.ncont=" + NIF + " and no is not null;", true);
         }
         #endregion
 
