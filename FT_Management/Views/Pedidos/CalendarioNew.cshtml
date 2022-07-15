@@ -88,14 +88,17 @@
 
     calendar.on({
     'beforeUpdateSchedule': function(e) {
-        if(e.changes != null){
-         calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.changes);
+            if (e.changes != null) {
+                console.log(e.schedule);
+                console.log(e.changes);
+                calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.changes);
          $.ajax({
             type: "POST",
             url: "/Pedidos/AlteracaoCalendario/" + e.schedule.id,
-            data: {date: new Date(e.changes.start).toLocaleDateString("pt-PT")},
+             data: { date: new Date(e.changes.start).toLocaleDateString("pt-PT"), dateOriginal: e.schedule.dueDateClass},
             traditional: true,
-            success: function (result) {
+             success: function (result) {
+                 e.schedule.dueDateClass = new Date(e.changes.start).toLocaleDateString("pt-PT");
                  bulmaToast.toast({
                           message: 'Agendamento atualizado com sucesso!',
                           type: 'is-success',

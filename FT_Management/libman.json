@@ -49,9 +49,13 @@
       "destination": "wwwroot/lib/moment.js/"
     },
     {
-      "provider": "cdnjs",
       "library": "tui-code-snippet@1.5.2",
       "destination": "wwwroot/tui-code-snippet/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-list@1.2.0",
+      "destination": "wwwroot/lib/bulma-list/"
     }
   ]
 }

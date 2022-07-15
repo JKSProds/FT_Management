@@ -134,6 +134,8 @@ namespace FT_Management.Controllers
                 ModelState.Remove("Tecnico.Password");
             }
 
+            if (m.DatasAdicionais == null) ModelState.AddModelError("", "Tem de adicionar pelo menos uma data!");
+
 
             if (ModelState.IsValid)
             {
@@ -331,13 +333,13 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
-        public JsonResult AlteracaoCalendario(int id, DateTime date)
+        public JsonResult AlteracaoCalendario(int id, DateTime date, DateTime dateOriginal)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Marcacao m = phccontext.ObterMarcacao(id);
-            m.DataMarcacao = date;
+            m.DatasAdicionais.Replace(dateOriginal.ToShortDateString(), date.ToShortDateString());
 
-            phccontext.AtualizaMarcacao(m);
+            //phccontext.AtualizaMarcacao(m);
 
             return Json("Ok");
         }

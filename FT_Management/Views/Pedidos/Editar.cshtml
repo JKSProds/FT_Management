@@ -99,8 +99,8 @@
             <div class="column is-3">
                 <div class="field">
                     <label asp-for="DataMarcacao" class="label"></label>
-                    <div class="control has-icons-left">
-                        <p class="control " style="width:100%">
+                    <div class="field has-addons">
+                        <p class="control " style="width:80%">
                             <input type="date" class="input " value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData">
                             <script>
                                 bulmaCalendar.attach('#txtData', {
@@ -114,6 +114,12 @@
                                 });
                             </script>
                         </p>
+                        <div class="control">
+                            <button class="button is-info" onclick="AdicionarData(document.getElementById('txtData').value)" type="button">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -127,7 +133,7 @@
                 </div>
             </div>
 
-            <div class="column is-12">
+            <div class="column is-8">
                 <div class="field" style="height: 310px;">
                     <label asp-for="Tecnico" class="label"></label>
                     <div class="control">
@@ -139,6 +145,12 @@
                         </div>
                     </div>
                     <span asp-validation-for="Tecnico" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-4">
+                <label asp-for="DatasAdicionais" class="label"></label>
+                <input type="hidden" class="input" asp-for="DatasAdicionais" id="DatasAdicionais">
+                <div class="list has-visible-pointer-controls" id="divDatasAdicionais">
                 </div>
             </div>
             <div class="column is-3">
@@ -403,6 +415,24 @@
 </div>
 
 <script>
+    function AdicionarData(data) {
+        document.getElementById('divDatasAdicionais').innerHTML += '<div class="list-item" id="lst-datas-' + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD') + '"><div class="list-item-title" style="width:80%">' + data + '</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverData(' + moment(data, "DD/MM/YYYY").format('YYYYMMDD') + ')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>';
+        document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD' + ";");  
+    }
+    function RemoverData(data) {
+        data = moment(data, "YYYYMMDD").format('YYYY-MM-DD')
+        document.getElementById('lst-datas-' + data).remove();
+        document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value.replace(data + ';', '');  
+    }
+    if (document.getElementById('DatasAdicionais').value.slice(-1) != ";" && document.getElementById('DatasAdicionais').value != "") document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value + ";";
+
+    document.getElementById('DatasAdicionais').value.split(";").forEach(function (item) {
+        if (item != "") {
+            data = moment(item, "YYYY-MM-DD").format('DD/MM/YYYY');
+            document.getElementById('divDatasAdicionais').innerHTML += '<div class="list-item" id="lst-datas-' + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD') + '"><div class="list-item-title" style="width:80%">' + data + '</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverData(' + moment(data, "DD/MM/YYYY").format('YYYYMMDD') + ')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>';
+        }
+        });
+
     function ValidarMarcacao() {
         $.ajax({
             type: "POST",
