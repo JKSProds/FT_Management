@@ -169,15 +169,16 @@ namespace FT_Management.Controllers
                 DataComentario = DateTime.Now
             };
 
-            //phccontext.CriarComentarioMarcacao(c);
+            phccontext.CriarComentarioMarcacao(c);
 
             if (fechar == 1) {
                 m.JustificacaoFecho = comentario;
                 m.EstadoMarcacaoDesc = "Finalizado";
-                //phccontext.AtualizaMarcacao(m);
+                m.Utilizador = c.Utilizador;
+                phccontext.AtualizaMarcacao(m);
             }
 
-            return Content("");
+            return Content("Sucesso");
         }
 
         [Authorize(Roles = "Admin, Escritorio")]

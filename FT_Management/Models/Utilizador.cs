@@ -62,6 +62,7 @@ namespace FT_Management.Models
             this.Id = 0;
             this.NomeUtilizador = "---";
             this.NomeCompleto = "N/D";
+            this.Iniciais = "??";
             this.Pin = "1111";
             this.IdPHC = 0;
             this.IdArmazem = 0;

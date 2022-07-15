@@ -52,6 +52,8 @@ namespace FT_Management.Models
         public string ResumoMarcacao { get; set; }
         [Display(Name = "Justificação Fecho")]
         public string JustificacaoFecho { get; set; }
+        [Display(Name = "Fechado por")]
+        public string FechadoPor { get; set; }
         [Display(Name = "Em Oficina?")]
         public bool Oficina { get; set; }
         [Display(Name = "Serviço de Piquete?")]

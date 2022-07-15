@@ -71,13 +71,14 @@
 
     var calendar = new Calendar('#calendar', {
       defaultView: isMobile ? 'day' : 'week',
-     template: templates,
+      template: templates,
      useDetailPopup: true,
      disableClick: true,
      disableDblClick: true,
      scheduleView: true,
      taskView: false,
-     week: {
+        week: {
+            startDayOfWeek: 1,
         daynames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
      },
      month: {
@@ -167,11 +168,11 @@
                 calendar.today();
                 break;
             case 'change-view':
-               if (calendar.getViewName() == "day") {
+                if (calendar.getViewName() == "day") {
                     calendar.changeView("week", true)
-                }else if (calendar.getViewName() == "week"){
+                } else if (calendar.getViewName() == "week") {
                     calendar.changeView("month", true)
-                }else{
+                } else {
                     calendar.changeView("day", true)
                 }
                 calendar.today();

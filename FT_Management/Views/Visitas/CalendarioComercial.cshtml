@@ -72,11 +72,12 @@
       defaultView: isMobile ? 'day' : 'month',
      template: templates,
      useDetailPopup: true,
-     disableClick: true,
+        disableClick: true,
      disableDblClick: true,
      scheduleView: true,
      taskView: false,
-     week: {
+        week: {
+            startDayOfWeek: 1,
         daynames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
      },
      month: {

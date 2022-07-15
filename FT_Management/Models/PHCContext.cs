@@ -749,8 +749,9 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
                 command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto)); 
-                command.Parameters.Add(new SqlParameter("@JFECHO", m.JustificacaoFecho));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
+                command.Parameters.Add(new SqlParameter("@JUSTFECHO", m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho)); 
+                command.Parameters.Add(new SqlParameter("@TECFECHO", m.Utilizador.NomeCompleto));
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
@@ -832,7 +833,7 @@ namespace FT_Management.Models
 
         private List<Marcacao> ObterMarcacoes(string SQL_Query, bool LoadComentarios, bool LoadCliente, bool LoadTecnico, bool LoadFolhasObra)
         {
-            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaTecnicos(false);
+            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaUtilizadores(false);
             List<EstadoMarcacao> LstEstadoMarcacao = this.ObterMarcacaoEstados();
             List<Marcacao> LstMarcacao = new List<Marcacao>();
             List<Cliente> LstClientes = this.ObterClientes();
@@ -1162,9 +1163,9 @@ namespace FT_Management.Models
                 };
 
                 command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", c.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@ESTAB", c.Descricao));
-                command.Parameters.Add(new SqlParameter("@TECNICO", c.Utilizador.NomeCompleto));
-                command.Parameters.Add(new SqlParameter("@TECNICO", c.DataComentario.ToString()));
+                command.Parameters.Add(new SqlParameter("@COMENTARIO", c.Descricao.Length > 4000 ? c.Descricao.Remove(4000) : c.Descricao));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", c.Utilizador.NomeCompleto));
+                //command.Parameters.Add(new SqlParameter("@TECNICO", c.DataComentario.ToString()));
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
@@ -1173,7 +1174,7 @@ namespace FT_Management.Models
 
                 conn.Close();
 
-                FT_ManagementContext.AdicionarLog(c.Utilizador.Id, "Comentário adicionado com sucesso pelo utilizador " + c.Utilizador.NomeCompleto + " à marcação Nº " + c.Marcacao.IdMarcacao, 5);
+                FT_ManagementContext.AdicionarLog(c.Utilizador.Id, "Comentário adicionado com sucesso pelo utilizador " + c.Utilizador.NomeCompleto + " à marcação Nº " + c.Marcacao.IdMarcacao + " do cliente " + c.Marcacao.Cliente.NomeCliente, 5);
 
             }
 
