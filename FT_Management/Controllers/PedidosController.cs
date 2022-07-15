@@ -339,7 +339,7 @@ namespace FT_Management.Controllers
             Marcacao m = phccontext.ObterMarcacao(id);
             m.DatasAdicionais.Replace(dateOriginal.ToShortDateString(), date.ToShortDateString());
 
-            //phccontext.AtualizaMarcacao(m);
+            phccontext.AtualizaMarcacao(m);
 
             return Json("Ok");
         }
