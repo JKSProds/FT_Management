@@ -152,6 +152,34 @@ namespace FT_Management.Controllers
             return View(m);
         }
 
+        [HttpPost]
+        public ActionResult AdicionarComentario(int id, string comentario, int fechar)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+
+            Comentario c = new Comentario()
+            {
+                Descricao = comentario,
+                Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)),
+                Marcacao = m,
+                DataComentario = DateTime.Now
+            };
+
+            //phccontext.CriarComentarioMarcacao(c);
+
+            if (fechar == 1) {
+                m.JustificacaoFecho = comentario;
+                m.EstadoMarcacaoDesc = "Finalizado";
+                //phccontext.AtualizaMarcacao(m);
+            }
+
+            return Content("");
+        }
+
         [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult EmailPedidoTecnico(int id)
@@ -214,7 +242,7 @@ namespace FT_Management.Controllers
 
                 foreach (var item in m.LstComentarios)
                 {
-                    res += "<tr><td><span>" + item.NomeUtilizador + "</span></td><td><span>" + item.Descricao + "</span></td>";
+                    res += "<tr><td><span>" + item.Utilizador.NomeCompleto + "</span></td><td><span>" + item.Descricao + "</span></td>";
                 }
 
                 res += "</tbody></table>";

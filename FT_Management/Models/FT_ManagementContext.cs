@@ -66,7 +66,10 @@ namespace FT_Management.Models
                         IdPHC = result["IdPHC"],
                         Admin = result["admin"],
                         Enable = result["enable"],
-                        TipoMapa = result["TipoMapa"]
+                        TipoMapa = result["TipoMapa"],
+                        CorCalendario = result["CorCalendario"],
+                        Pin = result["PinUtilizador"],
+                        Iniciais = result["IniciaisUtilizador"]
                     });
                 }
             }

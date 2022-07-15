@@ -328,7 +328,7 @@
                 </li>
                 <li>
                     <p class="control">
-                        <button class="button is-primary is-pulled-right is-fullwidth" disabled id="adicionarComentario">
+                        <button class="button is-primary is-pulled-right is-fullwidth" onclick="Bulma('#modalAdicionarComentario').modal().open();">
                             <span class="icon is-small">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -346,13 +346,13 @@
                          <div class="b-table">
                         <div class="table-wrapper has-mobile-cards"> 
                         <table class="table is-hoverable is-fullwidth">
-                            <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.First().NomeUtilizador)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)</th>
+                            <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.First().Utilizador.NomeCompleto)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)</th>
                             <tbody>
 
                                 @foreach (var c in Model.LstComentarios)
                                 {
                                     <tr>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().NomeUtilizador)"><span>@c.NomeUtilizador</span></td>
+                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().Utilizador.NomeCompleto)"><span>@c.Utilizador.NomeCompleto</span></td>
                                         <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)"><span>@c.Descricao</span></td>
                                         <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)"><span>@c.DataComentario</span></td>
                                     </tr>
@@ -384,6 +384,14 @@
             <div class="form-group">
                 <textarea id="txtComentario" class="textarea is-info" rows="5" placeholder="Comentário" required></textarea>
             </div>
+            &nbsp;
+                <div class="form-check form-group col">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" id="chkFechar">
+                        <span class="check is-info"></span>
+                        <span class="control-label">Fechar Pedido?</span>
+                    </label>
+                </div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info" onclick="AdicionarComentario()" id="btnConfirmAddComentario" href="javascript:;">Adicionar</button>
@@ -410,26 +418,19 @@
 </div>
 
 <script>
-    document.querySelector('#adicionarComentario').addEventListener('click', function (e) {
-        var modal = Bulma('#modalAdicionarComentario').modal();
-        modal.open();
-    });
-
     function AdicionarComentario() {
-
-        var idMarcacao = document.getElementById("hiddenIdMarcacao").value;
-        var txtcomentario = document.getElementById("txtComentario").value;
 
         document.getElementById("btnConfirmAddComentario").classList.add("is-loading");
 
         var json = {
-            id: idMarcacao,
-            comentario: txtcomentario
+            id: document.getElementById("hiddenIdMarcacao").value,
+            comentario: document.getElementById("txtComentario").value,
+            fechar: document.getElementById('chkFechar').checked ? 1 : 0,
         };
 
         $.ajax({
             type: "POST",
-            url: "/FolhasObra/AdicionarComentario",
+            url: "/Pedidos/AdicionarComentario",
             data: json,
             traditional: true,
             success: function (result) {

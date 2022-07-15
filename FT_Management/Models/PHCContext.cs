@@ -33,9 +33,6 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel conectar á BD PHC!");
             }
         }
-
-
-        //EM DESENVOLVIMENTO
         public string ExecutarQuery(string SQL_Query)
         {
             string res = "";
@@ -66,177 +63,6 @@ namespace FT_Management.Models
             }
 
             return res;
-        }
-        public string ValidarMarcacao(Marcacao m)
-        {
-            string res = "";
-            //Tem de retornar 1 para poder proceder
-            if (ExecutarQuery("SELECT 'valor' = COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '"+m.Cliente.IdCliente+"' AND bo.estab = '"+m.Cliente.IdLoja+"' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');") == "0") res += "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.\r\n";
-
-            //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
-           if (m.Cliente.IdCliente == 878 && String.IsNullOrEmpty(m.QuemPediuNome)) res += "Tem que indicar Quem Pediu!\r\n";
-
-            //O cliente não pode ter as marcacoes canceladas
-            if (ExecutarQuery("SELECT U_MARCCANC FROM cl (NOLOCK) WHERE no = '"+m.Cliente.IdCliente+"' AND estab = '"+m.Cliente.IdLoja+"'") == "True") res += "O Cliente escolhido na Marcação tem as marcações canceladas. Não pode gravar.\r\n";
-
-            //Caso esteja a 0 faz a validação da conta corrente
-            if (ExecutarQuery("SELECT u_navdivma FROM CL(Nolock) WHERE cl.no='" + m.Cliente.IdCliente + "' AND cl.estab = 0") == "False")
-            {
-                //Verificar documentos vencidos
-                if (ExecutarQuery("select 'valor' = COUNT(*) from cc (nolock) left join re (nolock) on cc.restamp = re.restamp where cc.no = "+m.Cliente.IdCliente+" and (case when cc.moeda ='EURO' or cc.moeda=space(11) then abs((cc.edeb-cc.edebf)-(cc.ecred-cc.ecredf)) else abs((cc.debm-cc.debfm)-(cc.credm-cc.credfm)) end) > (case when cc.moeda='EURO' or cc.moeda=space(11) then 0.010000 else 0 end) AND cc.dataven < GETDATE();") != "0") res += "O Cliente escolhido na Marcação tem documentos não regularizados vencidos!!! Verifique por favor!\r\n";
-            }
-            foreach (var item in m.LstTecnicosSelect)
-            {
-                if (FT_ManagementContext.VerificarFeriasUtilizador(item, m.DataMarcacao)) res += "O utilizador, " + FT_ManagementContext.ObterUtilizador(item).NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.\r\n";
-            }
-            return res;
-        }
-        public int CriarMarcacao(Marcacao m)
-        {
-            int res = 0;
-            try
-            {
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("Gera_Marcacao", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
-                command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
-                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC)); 
-                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
-                command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
-                command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
-                command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@DATA", m.DataMarcacao.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "")));
-                command.Parameters.Add(new SqlParameter("@PRIORIDADE", m.PrioridadeMarcacao));
-                command.Parameters.Add(new SqlParameter("@TIPOS", m.TipoServico));
-                command.Parameters.Add(new SqlParameter("@TIPOE", m.TipoEquipamento));
-                command.Parameters.Add(new SqlParameter("@TIPOPEDIDO", m.TipoPedido));
-                command.Parameters.Add(new SqlParameter("@NINCIDENTE", m.Referencia));
-                command.Parameters.Add(new SqlParameter("@QPEDIU", m.QuemPediuNome));
-                command.Parameters.Add(new SqlParameter("@RESPTLM", m.QuemPediuTelefone));
-                command.Parameters.Add(new SqlParameter("@RESPEMAIL", m.QuemPediuEmail));
-                command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
-                command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                if (result[0].ToString() != "-1") res = int.Parse(result[3].ToString());
-
-                conn.Close();
-
-                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + res + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
-
-            }
-
-            catch
-            {
-                Console.WriteLine("Erro ao enviar marcacao para o PHC");
-            }
-
-            return res;
-        }
-
-        public bool AtualizaMarcacao(Marcacao m)
-        {
-            try
-            {
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("Altera_Marcacao", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", m.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
-                command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
-                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
-                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
-                command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
-                command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
-                command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@DATA", m.DataMarcacao.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "")));
-                command.Parameters.Add(new SqlParameter("@PRIORIDADE", m.PrioridadeMarcacao));
-                command.Parameters.Add(new SqlParameter("@TIPOS", m.TipoServico));
-                command.Parameters.Add(new SqlParameter("@TIPOE", m.TipoEquipamento));
-                command.Parameters.Add(new SqlParameter("@TIPOPEDIDO", m.TipoPedido));
-                command.Parameters.Add(new SqlParameter("@NINCIDENTE", m.Referencia));
-                command.Parameters.Add(new SqlParameter("@QPEDIU", m.QuemPediuNome));
-                command.Parameters.Add(new SqlParameter("@RESPTLM", m.QuemPediuTelefone));
-                command.Parameters.Add(new SqlParameter("@RESPEMAIL", m.QuemPediuEmail));
-                command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
-                command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                string resp = result[0].ToString();
-
-                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
-                conn.Close();
-
-                if (resp != "-1") return true;
-            }
-
-            catch
-            {
-                Console.WriteLine("Erro ao enviar marcacao para o PHC");
-                return false;
-            }
-
-            return false;
-        }
-
-        public Marcacao ObterResponsavelCliente(int IdCliente, int IdLoja, string TipoEquipamento)
-        {
-            Marcacao m = new Marcacao();
-
-            try
-            {
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("select u_clresp.nome, u_clresp.email, u_clresp.tlmvl from u_clresp inner join cl on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and cl.estab=" + IdLoja + " and u_clresp.tipoe='" + TipoEquipamento + "'", conn)
-                {
-                    CommandTimeout = TIMEOUT
-                };
-                using SqlDataReader result = command.ExecuteReader();
-                while (result.Read())
-                {
-                    m = new Marcacao()
-                    {
-                        QuemPediuNome = result["nome"].ToString(),
-                        QuemPediuEmail = result["email"].ToString(),
-                        QuemPediuTelefone = result["tlmvl"].ToString(),
-
-                    };
-                }
-                conn.Close();
-            }
-            catch
-            {
-                Console.WriteLine("Não foi possivel ler os reponsaveis do PHC!");
-            }
-
-            return m;
         }
 
         //Obter Referências
@@ -833,6 +659,177 @@ namespace FT_Management.Models
 
         //Obter Marcacoes
         #region MARCACOES
+        public int CriarMarcacao(Marcacao m)
+        {
+            int res = 0;
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Gera_Marcacao", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
+                command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
+                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
+                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
+                command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
+                command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
+                command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
+                command.Parameters.Add(new SqlParameter("@DATA", m.DataMarcacao.ToString("yyyyMMdd")));
+                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "")));
+                command.Parameters.Add(new SqlParameter("@PRIORIDADE", m.PrioridadeMarcacao));
+                command.Parameters.Add(new SqlParameter("@TIPOS", m.TipoServico));
+                command.Parameters.Add(new SqlParameter("@TIPOE", m.TipoEquipamento));
+                command.Parameters.Add(new SqlParameter("@TIPOPEDIDO", m.TipoPedido));
+                command.Parameters.Add(new SqlParameter("@NINCIDENTE", m.Referencia));
+                command.Parameters.Add(new SqlParameter("@QPEDIU", m.QuemPediuNome));
+                command.Parameters.Add(new SqlParameter("@RESPTLM", m.QuemPediuTelefone));
+                command.Parameters.Add(new SqlParameter("@RESPEMAIL", m.QuemPediuEmail));
+                command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
+                command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                if (result[0].ToString() != "-1") res = int.Parse(result[3].ToString());
+
+                conn.Close();
+
+                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + res + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
+
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao enviar marcacao para o PHC");
+            }
+
+            return res;
+        }
+        public bool AtualizaMarcacao(Marcacao m)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Altera_Marcacao", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", m.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
+                command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
+                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
+                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
+                command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
+                command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
+                command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
+                command.Parameters.Add(new SqlParameter("@DATA", m.DataMarcacao.ToString("yyyyMMdd")));
+                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "")));
+                command.Parameters.Add(new SqlParameter("@PRIORIDADE", m.PrioridadeMarcacao));
+                command.Parameters.Add(new SqlParameter("@TIPOS", m.TipoServico));
+                command.Parameters.Add(new SqlParameter("@TIPOE", m.TipoEquipamento));
+                command.Parameters.Add(new SqlParameter("@TIPOPEDIDO", m.TipoPedido));
+                command.Parameters.Add(new SqlParameter("@NINCIDENTE", m.Referencia));
+                command.Parameters.Add(new SqlParameter("@QPEDIU", m.QuemPediuNome));
+                command.Parameters.Add(new SqlParameter("@RESPTLM", m.QuemPediuTelefone));
+                command.Parameters.Add(new SqlParameter("@RESPEMAIL", m.QuemPediuEmail));
+                command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
+                command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto)); 
+                command.Parameters.Add(new SqlParameter("@JFECHO", m.JustificacaoFecho));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                string resp = result[0].ToString();
+
+                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
+                conn.Close();
+
+                if (resp != "-1") return true;
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao enviar marcacao para o PHC");
+                return false;
+            }
+
+            return false;
+        }
+        public string ValidarMarcacao(Marcacao m)
+        {
+            string res = "";
+            //Tem de retornar 1 para poder proceder
+            if (ExecutarQuery("SELECT 'valor' = COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '" + m.Cliente.IdCliente + "' AND bo.estab = '" + m.Cliente.IdLoja + "' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');") == "0") res += "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.\r\n";
+
+            //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
+            if (m.Cliente.IdCliente == 878 && String.IsNullOrEmpty(m.QuemPediuNome)) res += "Tem que indicar Quem Pediu!\r\n";
+
+            //O cliente não pode ter as marcacoes canceladas
+            if (ExecutarQuery("SELECT U_MARCCANC FROM cl (NOLOCK) WHERE no = '" + m.Cliente.IdCliente + "' AND estab = '" + m.Cliente.IdLoja + "'") == "True") res += "O Cliente escolhido na Marcação tem as marcações canceladas. Não pode gravar.\r\n";
+
+            //Caso esteja a 0 faz a validação da conta corrente
+            if (ExecutarQuery("SELECT u_navdivma FROM CL(Nolock) WHERE cl.no='" + m.Cliente.IdCliente + "' AND cl.estab = 0") == "False")
+            {
+                //Verificar documentos vencidos
+                if (ExecutarQuery("select 'valor' = COUNT(*) from cc (nolock) left join re (nolock) on cc.restamp = re.restamp where cc.no = " + m.Cliente.IdCliente + " and (case when cc.moeda ='EURO' or cc.moeda=space(11) then abs((cc.edeb-cc.edebf)-(cc.ecred-cc.ecredf)) else abs((cc.debm-cc.debfm)-(cc.credm-cc.credfm)) end) > (case when cc.moeda='EURO' or cc.moeda=space(11) then 0.010000 else 0 end) AND cc.dataven < GETDATE();") != "0") res += "O Cliente escolhido na Marcação tem documentos não regularizados vencidos!!! Verifique por favor!\r\n";
+            }
+            foreach (var item in m.LstTecnicosSelect)
+            {
+                if (FT_ManagementContext.VerificarFeriasUtilizador(item, m.DataMarcacao)) res += "O utilizador, " + FT_ManagementContext.ObterUtilizador(item).NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.\r\n";
+            }
+            return res;
+        }
+        public Marcacao ObterResponsavelCliente(int IdCliente, int IdLoja, string TipoEquipamento)
+        {
+            Marcacao m = new Marcacao();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select u_clresp.nome, u_clresp.email, u_clresp.tlmvl from u_clresp inner join cl on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and cl.estab=" + IdLoja + " and u_clresp.tipoe='" + TipoEquipamento + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using SqlDataReader result = command.ExecuteReader();
+                while (result.Read())
+                {
+                    m = new Marcacao()
+                    {
+                        QuemPediuNome = result["nome"].ToString(),
+                        QuemPediuEmail = result["email"].ToString(),
+                        QuemPediuTelefone = result["tlmvl"].ToString(),
+
+                    };
+                }
+                conn.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os reponsaveis do PHC!");
+            }
+
+            return m;
+        }
+
         private List<Marcacao> ObterMarcacoes(string SQL_Query, bool LoadComentarios, bool LoadCliente, bool LoadTecnico, bool LoadFolhasObra)
         {
             List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaTecnicos(false);
@@ -1148,6 +1145,45 @@ namespace FT_Management.Models
             return res;
         }
 
+        public bool CriarComentarioMarcacao(Comentario c)
+        {
+            bool res = false;
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Gera_Comentario", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", c.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@ESTAB", c.Descricao));
+                command.Parameters.Add(new SqlParameter("@TECNICO", c.Utilizador.NomeCompleto));
+                command.Parameters.Add(new SqlParameter("@TECNICO", c.DataComentario.ToString()));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res = (result[0].ToString() != "-1");
+
+                conn.Close();
+
+                FT_ManagementContext.AdicionarLog(c.Utilizador.Id, "Comentário adicionado com sucesso pelo utilizador " + c.Utilizador.NomeCompleto + " à marcação Nº " + c.Marcacao.IdMarcacao, 5);
+
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao enviar comentário para o PHC");
+            }
+
+            return res;
+        }
         private List<Comentario> ObterComentariosMarcacao(string SQL_Query)
         {
 
@@ -1172,7 +1208,7 @@ namespace FT_Management.Models
                                 IdComentario = result["u_comentstamp"].ToString(),
                                 Descricao = result["comentario"].ToString().Trim(),
                                 IdMarcacao = result["marcacaostamp"].ToString().Trim(),
-                                NomeUtilizador = result["ousrinis"].ToString().Trim(),
+                                Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString().Trim() },
                                 DataComentario = DateTime.Parse(result["ousrdata"].ToString()[..10] + " " + result["ousrhora"].ToString())
                             });
                         }

@@ -50,6 +50,8 @@ namespace FT_Management.Models
         [Required]
         [Display(Name = "Resumo")]
         public string ResumoMarcacao { get; set; }
+        [Display(Name = "Justificação Fecho")]
+        public string JustificacaoFecho { get; set; }
         [Display(Name = "Em Oficina?")]
         public bool Oficina { get; set; }
         [Display(Name = "Serviço de Piquete?")]
@@ -96,8 +98,10 @@ namespace FT_Management.Models
         public string Descricao { get; set; }
         [Display(Name = "Num. da Marcação")]
         public string IdMarcacao { get; set; }
+        [Display(Name = "Marcação")]
+        public Marcacao Marcacao { get; set; }
         [Display(Name = "Utilizador")]
-        public string NomeUtilizador { get; set; }
+        public Utilizador Utilizador { get; set; }
         [Display(Name = "Data")]
         public DateTime DataComentario { get; set; }
     }
