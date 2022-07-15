@@ -431,7 +431,7 @@
             data = moment(item, "YYYY-MM-DD").format('DD/MM/YYYY');
             document.getElementById('divDatasAdicionais').innerHTML += '<div class="list-item" id="lst-datas-' + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD') + '"><div class="list-item-title" style="width:80%">' + data + '</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverData(' + moment(data, "DD/MM/YYYY").format('YYYYMMDD') + ')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>';
         }
-        });
+    });
 
     function ValidarMarcacao() {
         $.ajax({
