@@ -72,7 +72,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailMarcacaoTecnico(string EmailDestino, Marcacao m, string Tecnico)
         {
             string Assunto = "Nova Marcação - Cliente - " + m.Cliente.NomeCliente;
-            string Mensagem = "Foi criada uma marcação para o cliente: " + m.Cliente.NomeCliente + "<br><br><b>Dados adicionais:</b><br>Técnico: " + Tecnico + "<br>Data: " + m.DataMarcacao.ToShortDateString() + "<br>Cliente: " + m.Cliente.NomeCliente + "<br>Morada: " + m.Cliente.MoradaCliente + "<br>Prioridade: " + m.PrioridadeMarcacao + "<br>Equipamento: " + m.TipoEquipamento;
+            string Mensagem = "Foi criada uma marcação para o cliente: " + m.Cliente.NomeCliente + "<br><br><b>Dados adicionais:</b><br>Técnico: " + Tecnico + "<br>Data: " + m.DataMarcacao.ToShortDateString() + "<br>Cliente: " + m.Cliente.NomeCliente + "<br>Morada: " + m.Cliente.MoradaCliente + "<br>Prioridade: " + m.PrioridadeMarcacao + "<br>Equipamento: " + m.TipoEquipamento + "<br><br>Resumo: " + m.ResumoMarcacao;
             EnviarMail(EmailDestino, Assunto, Mensagem, null, ObterEmailCC(1));
 
             return true;
