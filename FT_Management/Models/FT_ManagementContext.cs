@@ -1534,7 +1534,7 @@ namespace FT_Management.Models
 
                         LstEventos.Add(new CalendarioEvent
                         {
-                            id = item.IdMarcacao.ToString() + dataMarcacao.ToString("ddMMyyyy"),
+                            id = item.IdMarcacao.ToString() + "_" + dataMarcacao.ToString("yyyyMMdd"),
                             calendarId = "1",
                             title = (item.EstadoMarcacao == 4 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 5 ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
                             location = item.Cliente.MoradaCliente,

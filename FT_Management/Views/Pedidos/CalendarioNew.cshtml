@@ -94,7 +94,7 @@
                 calendar.updateSchedule(e.schedule.id, e.schedule.calendarId, e.changes);
          $.ajax({
             type: "POST",
-            url: "/Pedidos/AlteracaoCalendario/" + e.schedule.id,
+            url: "/Pedidos/AlteracaoCalendario/" + e.schedule.id.split('_')[0],
              data: { date: new Date(e.changes.start).toLocaleDateString("pt-PT"), dateOriginal: e.schedule.dueDateClass},
             traditional: true,
              success: function (result) {

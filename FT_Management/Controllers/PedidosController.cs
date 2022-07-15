@@ -337,7 +337,7 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Marcacao m = phccontext.ObterMarcacao(id);
-            m.DatasAdicionais.Replace(dateOriginal.ToShortDateString(), date.ToShortDateString());
+            m.DatasAdicionais = m.DatasAdicionais.Replace(dateOriginal.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
 
             phccontext.AtualizaMarcacao(m);
 

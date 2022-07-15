@@ -28,7 +28,7 @@ namespace FT_Management.Models
         public DateTime DataMarcacao { get { return DatasAdicionaisDistintas == null || DatasAdicionaisDistintas.Count == 0 ? DateTime.Now : DatasAdicionaisDistintas.First(); } }
         [Display(Name = "Datas")]
         public string DatasAdicionais { get; set; }
-        public List<DateTime> DatasAdicionaisDistintas { get { return DatasAdicionais != null ? DatasAdicionais.Split(";").ToList().Where(d => d != "").Select(d => DateTime.Parse(d)).Distinct().OrderBy(d => d).ToList() : null; } }
+        public List<DateTime> DatasAdicionaisDistintas { get { return DatasAdicionais != null ? DatasAdicionais.Split(";").ToList().Where(d => d != "").Select(d => DateTime.Parse(d)).Distinct().ToList() : null; } }
         [Required]
         [Display(Name = "Prioridade")]
         public string PrioridadeMarcacao { get; set; }
