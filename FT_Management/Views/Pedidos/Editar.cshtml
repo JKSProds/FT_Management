@@ -132,8 +132,14 @@
                     <span asp-validation-for="Hora" class="has-text-danger"></span>
                 </div>
             </div>
-
+            <div class="column is-4">
+                <label asp-for="DatasAdicionais" class="label"></label>
+                <input type="hidden" class="input" asp-for="DatasAdicionais" id="DatasAdicionais">
+                <div class="list has-visible-pointer-controls" id="divDatasAdicionais">
+                </div>
+            </div>
             <div class="column is-8">
+
                 <div class="field" style="height: 310px;">
                     <label asp-for="Tecnico" class="label"></label>
                     <div class="control">
@@ -147,12 +153,7 @@
                     <span asp-validation-for="Tecnico" class="has-text-danger"></span>
                 </div>
             </div>
-            <div class="column is-4">
-                <label asp-for="DatasAdicionais" class="label"></label>
-                <input type="hidden" class="input" asp-for="DatasAdicionais" id="DatasAdicionais">
-                <div class="list has-visible-pointer-controls" id="divDatasAdicionais">
-                </div>
-            </div>
+            
             <div class="column is-3">
                 <div class="field">
                     <label asp-for="Periodo" class="label"></label>
