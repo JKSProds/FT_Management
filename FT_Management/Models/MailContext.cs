@@ -91,11 +91,11 @@ namespace FT_Management.Models
             string Assunto = "Agendamento Comercial - " + DateTime.Now.ToShortDateString() + " - " + u.NomeCompleto;
             string Mensagem = "Segue abaixo o agendamento para o dia de hoje:";
 
-            Mensagem += "<table><th>Cliente</th><th>Detalhes</th>";
+            Mensagem += "<table><th>Cliente</th><th>Detalhes</th><th></th>";
 
             foreach (var v in LstVisitas)
             {
-                Mensagem += "<tr><td>" + v.Cliente.NomeCliente + "</td><td>" + v.ResumoVisita + "</td></tr>";
+                Mensagem += "<tr><td>" + v.Cliente.NomeCliente + "</td><td>" + v.ResumoVisita + "</td><td><a href=\"" + v.GetUrl + "\" class=\"button\">Ver</a></td></tr>";
             }
 
             
@@ -137,7 +137,7 @@ namespace FT_Management.Models
 
             foreach (var f in LstFerias)
             {
-                Mensagem += "<tr><td>" + f.Utilizador.NomeCompleto + "</td><td>" + f.DataInicio.ToShortDateString() + "</td><td>" + f.DataFim.ToShortDateString() + "</td><td><a href=\"http://62.28.200.46:8082/Ferias/Detalhes?IdUtilizador=" + f.IdUtilizador + "\" class=\"button\">Ver</a></td></tr>";
+                Mensagem += "<tr><td>" + f.Utilizador.NomeCompleto + "</td><td>" + f.DataInicio.ToShortDateString() + "</td><td>" + f.DataFim.ToShortDateString() + "</td><td><a href=\""+ f.GetUrl + "\" class=\"button\">Ver</a></td></tr>";
             }
 
             Mensagem += "</table>";

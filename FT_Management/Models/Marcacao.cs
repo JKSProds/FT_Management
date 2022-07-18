@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -72,6 +73,7 @@ namespace FT_Management.Models
         public List<int> LstTecnicosSelect { get; set; }
         public List<FolhaObra> LstFolhasObra { get; set; }
         public List<Comentario> LstComentarios { get; set; }
+        public string GetUrl { get { return "http://62.28.200.46:8082/Pedidos/Pedido/" + IdMarcacao; } }
 
         public Marcacao()
         {

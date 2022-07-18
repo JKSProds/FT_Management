@@ -40,7 +40,7 @@ namespace FT_Management.Models
         public bool AssistenciaRemota { get; set; }
         [Display(Name = "Rúbrica")]
         public string RubricaCliente { get; set; }
-
+        public string GetUrl { get { return "http://62.28.200.46:8082/FolhasObra/Detalhes/" + IdFolhaObra; } }
         public FolhaObra()
         {
             this.IntervencaosServico = new List<Intervencao>()
