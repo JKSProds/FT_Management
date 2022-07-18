@@ -19,6 +19,7 @@ using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using System.Net.Http;
 using System.Net;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FT_Management.Controllers
 {
@@ -365,9 +366,10 @@ namespace FT_Management.Controllers
             return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
 
-        public ActionResult Index()
+        public ActionResult Index(int? page, int numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico)
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
@@ -375,7 +377,28 @@ namespace FT_Management.Controllers
                 return RedirectToAction("ListaPedidos", new { IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
             }
 
-            return View(context.ObterListaTecnicos(true));
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(false).ToList();
+            LstUtilizadores.Insert(0, new Utilizador() { Id = 0, NomeCompleto = "Todos" });
+            ViewBag.ListaTecnicos = LstUtilizadores;
+
+            List<String> LstTipoEquipamento = phccontext.ObterTipoEquipamento().ToList();
+            LstTipoEquipamento.Insert(0, "Todos");
+
+            ViewBag.TipoEquipamento = LstTipoEquipamento.Select(l => new SelectListItem() { Value = l, Text = l });
+
+            if (nomeCliente == null) { nomeCliente = ""; }
+            if (referencia == null) { referencia = ""; }
+            if (tipoe == null) { tipoe = ""; }
+
+            ViewData["numMarcacao"] = numMarcacao;
+            ViewData["nomeCliente"] = nomeCliente;
+            ViewData["referencia"] = referencia;
+            ViewData["tipoe"] = tipoe;
+            ViewData["idtecnico"] = idtecnico;
+
+            if (numMarcacao == 0 && nomeCliente == "" && referencia == "" && tipoe == "" && idtecnico == 0) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
+
+            return View(phccontext.ObterMarcacoes(numMarcacao, nomeCliente, referencia, tipoe, idtecnico));
         }
 
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)

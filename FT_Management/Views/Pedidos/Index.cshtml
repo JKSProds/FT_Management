@@ -1,85 +1,172 @@
-﻿@model IEnumerable<FT_Management.Models.Utilizador>
+﻿@model IEnumerable<FT_Management.Models.Marcacao>
+
 
 @{
     ViewData["Title"] = "Pedidos - Lista de Técnicos";
 }
 
-<div class="container">
-    <div class="columns">
-        <div class="column">
-            <div class="tile">
-                <div class="tile is-parent is-vertical">
-                    <article class="tile is-child notification is-info">
-                        <p class="title">
-                            <span class="icon mr-3">
-                                <i class="fas fa-calendar-days"></i>
+<form asp-action="Index" method="get">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fas fa-user-tie"></i>
+                                </span>
+                                <span>Marcações</span>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
+                    <p class="control has-icons-left">
+                        <input type="number" class="input" placeholder="Num. da Marcação" id="txtNumMarcacao" name="numMarcacao" value="@ViewData["numMarcacao"]" aria-describedby="basic-addon2">
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-arrow-down-1-9"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <input type="text" class="input" placeholder="Cliente" id="txtNomeCliente" name="nomeCliente" value="@ViewData["nomeCliente"]" aria-describedby="basic-addon2">
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-arrow-down-a-z"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <input type="text" class="input" placeholder="Referência" id="txtReferencia" name="referencia" value="@ViewData["referencia"]" aria-describedby="basic-addon2">
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-arrow-down-a-z"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <span class="select">
+                            <select class="select" id="lsttipoe" name="tipoe" style="height: auto" onchange="filtrar()"
+                                    asp-items="@(new SelectList(@ViewBag.TipoEquipamento, "Value", "Text", @ViewData["tipoe"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-filter"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left has-addons">
+                        <span class="select" style="max-width:150px">
+                            <select class="select" id="idtecnico" name="idtecnico" style="height: auto" onchange="filtrar()"
+                                    asp-items="@(new SelectList(@ViewBag.ListaTecnicos, "IdPHC", "NomeCompleto", @ViewData["idtecnico"]))">
+                            </select>
+                        </span>
+                         <div class="control">
+                                    <a class="button is-info" href="~/Pedidos/ListaPedidos?IdTecnico=@ViewData["idtecnico"]">
+                                         <i class="fas fa-eye"></i>
+                                    </a>
+                        </div>
+                    </p>
+                </div>
+                <div class="buttons is-right">
+                    <p class="control">
+                        <button type="submit" class="button is-info is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-search fa-lg"></i>
                             </span>
-                            <span>Agendamento Técnico</span>
-                        </p>
-                    </article>
+                            <span>Pesquisar</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button type="button" onclick="window.location.href = '/Pedidos'" class="button is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-backspace fa-lg"></i>
+                            </span>
+                            <span>Limpar</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button class="button is-primary is-info" type="button" onclick="window.location.href = '/Pedidos/Adicionar'">
+                            <span class="icon">
+                                <i class="fas fa-plus fa-lg"></i>
+                            </span>
+                            <span>Adicionar</span>
+                        </button>
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="column my-auto">
-            <div class="buttons is-right">
-                <p class="control">
-                    <a class="button is-info is-outlined" asp-action="CalendarioView">
-                        <span class="icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </span>
-                        <span>Calendário</span>
-                    </a>
-                </p>
-                @if (this.User.IsInRole("Admin"))
-                {
-                    <p class="control">
-                        <a asp-action="Adicionar" class="button is-primary is-outlined">
-                            <span class="icon">
-                                <i class="fas fa-plus"></i>
-                            </span>
-                            <span>Novo Agendamento</span>
-                        </a>
-                    </p>
-                }
-            </div>
-        </div>
     </div>
-</div>
+</form>
 <hr />
-
-@if (Model.Count() == 0)
-{
-    <div class="container">
+<div class="container">
+    @if (Model.Count() == 0)
+    {
         <br />
-        <button class="button is-danger is-outlined is-fullwidth">Não foram encontrados Técnicos!</button>
-    </div>
-        }
-        else
-        {
-        <div class="container">
-            <div class="columns is-multiline">
+        <button class="button is-danger is-fullwidth is-disabled">Não foram encontradas marcações!</button>
+    }
+    else
+    {
+         
+    <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">
+        <table class="table is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)
+                    </th>
+                    <th class="is-hidden-touch">
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)
+                    </th>
+                    <th class="is-hidden-touch">
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)
+                    </th>
+                    <th class="is-hidden-touch"></th>
+                </tr>
+            </thead>
+            <tbody>
                 @foreach (var item in Model)
                 {
-                    <div class="column is-4">
-                        <div class="card">
-                            <header class="card-header">
-                                <p class="card-header-title">
-                                    <span class="icon  mr-2">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                    <span>@item.NomeCompleto</span>
-                                </p>
-                                <a class="button is-primary is-rounded mx-2 my-2" onclick="location.href = '@(Url.Action("ListaPedidos", "Pedidos", new { IdTecnico = item.IdPHC }))'">
-                                    <span class="icon">
-                                        <i class="fas fa-info"></i>
-                                    </span>
-                                    <span>Visualizar</span>
-                                </a>
-                            </header>
-                        </div>
-                    </div>
+                    <tr>
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">
+                            <span>@item.IdMarcacao</span>
+                        </td>
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">
+                            <span>@item.Cliente.NomeCliente</span>
+                        </td>
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
+                            <span>@item.DataMarcacao.ToShortDateString()</span>
+                        </td>
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">                        
+                            <span>@item.Tecnico.NomeCompleto</span>
+                        </td>
+                        <td class="is-actions-cell">
+                            <div class="buttons is-pulled-right is-flex-wrap-nowrap">
+                                
+                            </div>
+                        </td>
+                    </tr>
                 }
-            </div>
+            </tbody>
+        </table>
         </div>
-        }
+        </div>
+        
+    }
+</div>
 
+<script>
+    function filtrar() {
+        var num = document.getElementById("txtNumMarcacao").value;
+        var nome = document.getElementById("txtNomeCliente").value;
+        var referencia = document.getElementById("txtReferencia").value;
+        var tipoe = document.getElementById("lsttipoe").value;
+        var tecnico = document.getElementById("idtecnico").value;
+
+        if (document.getElementById("lsttipoe").selectedIndex == "0") tipoe = "";
+        if (document.getElementById("idtecnico").selectedIndex == "0") tecnico = 0;
+
+        window.location.href = "/Pedidos?numMarcacao=" + num + "&nomeCliente=" + nome + "&referencia=" + referencia + "&tipoe=" + tipoe + "&idtecnico=" + tecnico;
+    }
+</script>

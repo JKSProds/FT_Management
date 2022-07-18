@@ -920,6 +920,15 @@ namespace FT_Management.Models
             LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false).AsEnumerable());
             return LstMarcacoes;
         }
+
+        public List<Marcacao> ObterMarcacoes(int numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico)
+        {
+            string SQL_Query = "SELECT TOP 200 num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 where " + (numMarcacao > 0 ? "num=" + numMarcacao + " and " : "") + (!string.IsNullOrEmpty(nomeCliente) ? "nome like '%" + nomeCliente + "%' and " : "") + (!string.IsNullOrEmpty(referencia) ? "nincidente like '%" + referencia + "%' and " : "") + (!string.IsNullOrEmpty(tipoe) && tipoe != "Todos" ? "tipoe like '%" + tipoe + "%' and " : "") + (idtecnico > 0 ? "u_mtecnicos.tecnno=" + idtecnico + " and " : "");
+            SQL_Query = SQL_Query.Remove(SQL_Query.Length - 4);
+            List<Marcacao> LstMarcacoes = ObterMarcacoes(SQL_Query + "order by num desc;", false, true, true, false);
+            return LstMarcacoes;
+        }
+
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
             
