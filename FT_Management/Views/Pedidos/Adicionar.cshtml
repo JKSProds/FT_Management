@@ -226,7 +226,7 @@
                                             cancelLabel: 'Cancelar'
                                         });
                                         document.getElementById('txtData').bulmaCalendar.on('select', function (datepicker) {
-                                            document.getElementById('txtDatasAdicionais').value = document.getElementById('txtData').value;
+                                            document.getElementById('txtDatasAdicionais').value = datepicker.data.value();
                                         });
                                         
                                     </script>
