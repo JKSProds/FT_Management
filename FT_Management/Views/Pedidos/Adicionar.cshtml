@@ -209,11 +209,12 @@
                                 <span asp-validation-for="DataPedido" class="has-text-danger"></span>
                             </div>
                         </div>
+                        <input type="hidden" class="input" value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DatasAdicionais" id="txtDatasAdicionais">
                         <div class="column is-6">
                             <div class="field">
                                 <label asp-for="DataMarcacao"></label>
                                 <div class="control">
-                                    <input type="date" class="input " value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData">
+                                    <input type="date" class="input " value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData"  onchange="document.getElementById('txtDatasAdicionais').value = document.getElementById('txtData').value">
                                     <script>
                                         bulmaCalendar.attach('#txtData', {
                                             color: 'info',
@@ -224,6 +225,10 @@
                                             showClearButton: false,
                                             cancelLabel: 'Cancelar'
                                         });
+                                        document.getElementById('txtData').bulmaCalendar.on('select', function (datepicker) {
+                                            document.getElementById('txtDatasAdicionais').value = document.getElementById('txtData').value;
+                                        });
+                                        
                                     </script>
                                 </div>
                                 <span asp-validation-for="DataMarcacao" class="has-text-danger"></span>
