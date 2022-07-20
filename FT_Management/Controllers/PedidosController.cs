@@ -82,7 +82,8 @@ namespace FT_Management.Controllers
             if (ModelState.IsValid)
             {
                 IdMarcacao = phccontext.CriarMarcacao(m);
-                return RedirectToAction("Editar", "Pedidos", new { id=IdMarcacao});
+                
+                if (IdMarcacao>0) return RedirectToAction("Editar", "Pedidos", new { id=IdMarcacao});
             }
 
             ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
@@ -92,6 +93,8 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+
+            ModelState.AddModelError("", "Ocorreu um erro ao adicionar a marcação! Por favor tente novamente.");
 
             return View(m);
         }

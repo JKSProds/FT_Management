@@ -28,7 +28,6 @@
     </div>
     <hr />
     <div class="container">
-        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
         <div class="steps" id="stepsDemo">
             <div class="step-item is-active is-success">
                 <div class="step-marker">1</div>
@@ -54,6 +53,7 @@
                     <p class="step-title">Dados</p>
                 </div>
             </div>
+            <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
             <div class="steps-content">
                 <div class="step-content is-active">
                     <div class="columns is-multiline mx-1">
