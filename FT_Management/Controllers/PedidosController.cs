@@ -366,7 +366,7 @@ namespace FT_Management.Controllers
             return File(context.BitMapToMemoryStream(filePath), "application/pdf");
         }
 
-        public ActionResult Index(int? page, int numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico)
+        public ActionResult Index(string numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico)
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -386,9 +386,10 @@ namespace FT_Management.Controllers
 
             ViewBag.TipoEquipamento = LstTipoEquipamento.Select(l => new SelectListItem() { Value = l, Text = l });
 
-            if (nomeCliente == null) { nomeCliente = ""; }
-            if (referencia == null) { referencia = ""; }
-            if (tipoe == null) { tipoe = ""; }
+            if (string.IsNullOrEmpty(nomeCliente)) { nomeCliente = ""; }
+            if (string.IsNullOrEmpty(referencia)) { referencia = ""; }
+            if (string.IsNullOrEmpty(tipoe)) { tipoe = ""; }
+            if (string.IsNullOrEmpty(numMarcacao)) { numMarcacao = ""; }
 
             ViewData["numMarcacao"] = numMarcacao;
             ViewData["nomeCliente"] = nomeCliente;
@@ -396,9 +397,9 @@ namespace FT_Management.Controllers
             ViewData["tipoe"] = tipoe;
             ViewData["idtecnico"] = idtecnico;
 
-            if (numMarcacao == 0 && nomeCliente == "" && referencia == "" && tipoe == "" && idtecnico == 0) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
+            if (string.IsNullOrEmpty(numMarcacao) && string.IsNullOrEmpty(nomeCliente) && string.IsNullOrEmpty(referencia) && idtecnico == 0) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
 
-            return View(phccontext.ObterMarcacoes(numMarcacao, nomeCliente, referencia, tipoe, idtecnico));
+            return View(phccontext.ObterMarcacoes(int.Parse(numMarcacao), nomeCliente, referencia, tipoe, idtecnico));
         }
 
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
