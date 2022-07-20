@@ -52,7 +52,7 @@
                             <i class="fa-solid fa-filter"></i>
                         </span>
                     </p>
-                    <p class="control has-icons-left has-addons">
+                    <p class="control has-addons">
                         <span class="select" style="max-width:150px">
                             <select class="select" id="idtecnico" name="idtecnico" style="height: auto" onchange="filtrar()"
                                     asp-items="@(new SelectList(@ViewBag.ListaTecnicos, "IdPHC", "NomeCompleto", @ViewData["idtecnico"]))">

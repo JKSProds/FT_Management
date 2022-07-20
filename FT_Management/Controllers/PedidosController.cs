@@ -402,7 +402,7 @@ namespace FT_Management.Controllers
 
             if (string.IsNullOrEmpty(numMarcacao) && string.IsNullOrEmpty(nomeCliente) && string.IsNullOrEmpty(referencia) && idtecnico == 0) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
 
-            return View(phccontext.ObterMarcacoes(int.Parse(numMarcacao), nomeCliente, referencia, tipoe, idtecnico));
+            return View(phccontext.ObterMarcacoes(int.Parse(numMarcacao != "" ? numMarcacao : "0"), nomeCliente, referencia, tipoe, idtecnico));
         }
 
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
