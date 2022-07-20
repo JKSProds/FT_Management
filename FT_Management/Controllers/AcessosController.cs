@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using FT_Management.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,27 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             phccontext.AtualizarAcessos();
+            context.AdicionarLog(int.Parse(this.User.Claims.First().Value), "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
 
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
         }
+
+        [AllowAnonymous]
+        public ActionResult Sync(string ApiKey)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (IdUtilizador != 0) phccontext.AtualizarAcessos();
+
+            context.AdicionarLog(IdUtilizador, "Acessos atualizados com sucesso!", 6);
+
+            return Content("");
+        }
+
 
         public virtual ActionResult ExportarListagemAcessos(string data)
         {
