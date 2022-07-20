@@ -149,8 +149,8 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailFolhaObra(string EmailDestino, FolhaObra fo, Attachment anexo)
         {
-            string Assunto = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH: mm");
-            string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <b>" + fo.DataServico.ToShortDateString() + "</b>, no seguinte equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento+" ("+fo.EquipamentoServico.NumeroSerieEquipamento+ ")</b>, pelo(s) técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico))+"</b>.";
+            string Assunto = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <br><b>" + fo.DataServico.ToShortDateString() + "</b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento+" ("+fo.EquipamentoServico.NumeroSerieEquipamento+ ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico))+"</b>.";
             EnviarMail(EmailDestino, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;

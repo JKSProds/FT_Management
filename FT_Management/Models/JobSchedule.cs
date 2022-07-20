@@ -30,7 +30,7 @@ public class CronJobFerias : IJob
 
             if (LstFerias.Count > 0)
             {
-                MailContext.EnviarEmailFeriasPendentes("lfernandes@food-tech.pt", LstFerias);
+                MailContext.EnviarEmailFeriasPendentes("geral@food-tech.pt", LstFerias);
             }
             dbContext.ValidarEmailEnviado();
         }
