@@ -38,7 +38,7 @@ namespace FT_Management.Models
         [Display(Name = "Comentários")]
         public string Obs { get; set; }
 
-        public string GetUrl { get { return "http://62.28.200.46:8082/Ferias/Detalhes/" + IdUtilizador; } }
+        public string GetUrl { get { return "http://62.28.200.46:8082/Ferias/Detalhes/?IdUtilizador=" + IdUtilizador; } }
     }
 
     public class Feriado

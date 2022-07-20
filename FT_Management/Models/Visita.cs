@@ -29,7 +29,7 @@ namespace FT_Management.Models
         public List<Proposta> Propostas { get; set; }
         [Display(Name = "Contacto")]
         public Contacto Contacto { get; set; }
-        public string GetUrl { get { return "http://62.28.200.46:8082/Visitas/Visita/" + IdVisita; } }
+        public string GetUrl { get { return "http://62.28.200.46:8082/Visitas/Visita/?idVisita=" + IdVisita; } }
     }
 
 }
