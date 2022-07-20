@@ -31,13 +31,13 @@
                         </span>
                     </p>
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Cliente" id="txtNomeCliente" name="nomeCliente" value="@ViewData["nomeCliente"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Nome do Cliente" id="txtNomeCliente" name="nomeCliente" value="@ViewData["nomeCliente"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Referência" id="txtReferencia" name="referencia" value="@ViewData["referencia"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Num. de Incidente" id="txtReferencia" name="referencia" value="@ViewData["referencia"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
@@ -116,13 +116,19 @@
                     <th>
                         @Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)
                     </th>
-                    <th class="is-hidden-touch">
+                    <th>
                         @Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)
+                    </th>                    
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)
+                    </th>                    
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)
                     </th>
-                    <th class="is-hidden-touch">
+                    <th>
                         @Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)
                     </th>
-                    <th class="is-hidden-touch"></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -137,6 +143,12 @@
                         </td>
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
                             <span>@item.DataMarcacao.ToShortDateString()</span>
+                        </td>
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
+                            <span>@item.Referencia</span>
+                        </td>
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
+                            <span>@item.EstadoMarcacaoDesc</span>
                         </td>
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">                        
                             <span>@item.Tecnico.NomeCompleto</span>
