@@ -144,10 +144,10 @@
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
                             <span>@item.DataMarcacao.ToShortDateString()</span>
                         </td>
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)">
                             <span>@item.Referencia</span>
                         </td>
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
+                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">
                             <span>@item.EstadoMarcacaoDesc</span>
                         </td>
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">                        
