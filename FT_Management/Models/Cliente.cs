@@ -7,6 +7,7 @@ namespace FT_Management.Models
 {
     public class Cliente
     {
+        public string ClienteStamp { get; set; }
         [Display(Name = "Num. do Cliente")]
         public int IdCliente { get; set; }
         [Display(Name = "Num. do Estabelecimento")]
@@ -79,6 +80,8 @@ namespace FT_Management.Models
             }
             return functionReturnValue;
         }
+        public string Senha { get; set; }
+        public string GetUrl { get { return "http://62.28.200.46:8082/Utilizadores/Login";  } }
         public Cliente()
         {
             this.IdCliente = 0;

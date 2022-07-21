@@ -153,27 +153,6 @@ namespace FT_Management.Models
         }
         public string NovaApiKey(Utilizador utilizador)
         {
-            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-
-            static string GetRandomString(int length)
-            {
-                string s = "";
-                using (RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider())
-                {
-                    while (s.Length != length)
-                    {
-                        byte[] oneByte = new byte[1];
-                        provider.GetBytes(oneByte);
-                        char character = (char)oneByte[0];
-                        if (valid.Contains(character))
-                        {
-                            s += character;
-                        }
-                    }
-                }
-                return s;
-            }
-
             string RandomApiKey = GetRandomString(40);
             string sql = "INSERT INTO sys_api_keys (ID, Descricao, IdUtilizador, ApiKey) VALUES ";
 
@@ -1517,6 +1496,27 @@ namespace FT_Management.Models
         #endregion
 
         //OUTROS
+        static string GetRandomString(int length)
+        {
+            string s = "";
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+            using (RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider())
+            {
+                while (s.Length != length)
+                {
+                    byte[] oneByte = new byte[1];
+                    provider.GetBytes(oneByte);
+                    char character = (char)oneByte[0];
+                    if (valid.Contains(character))
+                    {
+                        s += character;
+                    }
+                }
+            }
+            return s;
+        }
+
         public List<CalendarioEvent> ConverterMarcacoesEventos(List<Marcacao> Marcacoes)
         {
             List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
@@ -2060,6 +2060,33 @@ namespace FT_Management.Models
 
             return ms;
         }
+        public Cliente ObterSenhaCliente(Cliente c)
+        {
+            string sqlQuery = "SELECT Senha FROM dat_clientes where Cliente_Stamp='" + c.ClienteStamp + "';";
 
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    c.Senha = result[0];
+                }
+            }
+            return c;
+
+        }
+        public string CriarSenhaCliente(string Cliente_Stamp)
+        {
+            string res = "";
+            res = GetRandomString(12);
+            string sql = "INSERT INTO dat_clientes (Cliente_Stamp, Senha) VALUES ('" + Cliente_Stamp + "', '" + res + "')  ON DUPLICATE KEY UPDATE Senha = VALUES(Senha);";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+
+            return res;
+        }
     }
 }

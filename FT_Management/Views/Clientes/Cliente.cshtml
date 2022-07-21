@@ -80,7 +80,7 @@
                 <ul>
                     <li class="is-active">
                         <div class="columns is-multiline">
-                            <div class="column is-1">
+                            <div class="column is-2">
                                 <div class="field">
                                     <label asp-for="IdCliente" class="label"></label>
                                     <div class="control">
@@ -88,7 +88,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="column is-4">
+                            <div class="column is-2">
                                 <div class="field">
                                     <label asp-for="NomeCliente" class="label"></label>
                                     <div class="control">
@@ -96,13 +96,28 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="column is-7">
+                            <div class="column is-5">
                                 <label asp-for="MoradaCliente" class="label"></label>
                                 <div class="field has-addons">
                                     <div class="control" style="width:100%">
                                         <input class="input is-fullwidth" type="text"  readonly asp-for="MoradaCliente">
                                     </div>
                                     <a href="@Utilizador.ObterLinkMapa(Model.ObterMoradaDirecoes(), User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)" target="_blank" class="button is-primary" @(Model.MoradaCliente.Length < 2 ? "disabled" : "")><i class="fas fa-location-arrow"></i></a>
+                                </div>
+                            </div>
+                            <div class="column is-3">
+                                <label asp-for="Senha" class="label"></label>
+                                <div class="field has-addons">
+                                    <div class="control" style="width:100%">
+                                        <input class="input is-fullwidth" type="text"  readonly asp-for="Senha" id="txtSenha">
+                                    </div>
+                                    <button type="button" onclick="GerarSenha('@Model.ClienteStamp')" class="button is-primary"><i class="fas fa-rotate"></i></button>
+                                    <div class="control">
+                                        <a class="button is-info" onclick="Bulma('#modalEnviarEmailCliente').modal().open()">
+                                            <i class="fa-solid fa-share"></i>
+                                        </a>
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="column is-3">
@@ -417,3 +432,102 @@
         </div>
     </div>
 </form>
+
+<div class="modal" id="modalEnviarEmailCliente">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Enviar Email</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Tem a certeza que deseja enviar um email para o cliente com os dados de login da plataforma?</p>
+            <div class="field" style="width:100%">
+                <div class="control"><input type="email" class="input" id="txtEmailCliente" value="@Model.EmailCliente"></div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button id="btnEnviarEmailCliente" type="button" class="button is-info" onclick="EnviarEmailCliente(@Model.IdCliente, @Model.IdLoja, document.getElementById('txtEmailCliente').value)" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-paper-plane"></i>
+                </span>
+                <span>Enviar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    function EnviarEmailCliente(id, loja, email) {
+
+        document.getElementById("btnEnviarEmailCliente").classList.add("is-loading");
+
+        $.ajax({
+            type: "POST",
+            url: "/Clientes/EmailSenhaCliente/" + id + "?loja="+loja+"&email=" + email,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    document.getElementById("btnEnviarEmailCliente").classList.remove("is-loading");
+                    if (result == "Sucesso") {
+                        bulmaToast.toast({
+                            message: 'Email enviado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+
+                    } else {
+                        bulmaToast.toast({
+                            message: 'Ocorreu um erro!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+                    }
+
+                });
+            }
+        });
+        Bulma('#modalEnviarEmailCliente').modal().close();
+    }
+
+    function GerarSenha(stamp) {
+            $.ajax({
+                type: "POST",
+                url: "/Clientes/GerarSenha/" + stamp,
+                traditional: true,
+                success: function (result) {
+                    if (result != "") {
+                    $(function () {
+                        document.getElementById("txtSenha").value = result;
+                        bulmaToast.toast({
+                          message: 'Senha gerada com sucesso!',
+                          type: 'is-success',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        });
+                        window.location.reload();
+                    });
+                    }else{
+                    $(function () {
+                        bulmaToast.toast({
+                          message: 'Não foi possivel gerar a Senha!',
+                          type: 'is-danger',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
+                    });
+                    }
+                }
+            });
+        }
+</script>

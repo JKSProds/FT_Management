@@ -108,6 +108,15 @@ namespace FT_Management.Models
             return true;
         }
 
+        public static bool EnviarEmailSenhaCliente(string EmailDestino, Cliente c)
+        {
+            string Assunto = "Acesso Plataforma - Cliente - " + c.NomeCliente;
+            string Mensagem = "Abaixo seguem os dados de acesso à sua conta: <br><br>Nome de Utilizador: <b>" + c.NumeroContribuinteCliente + "</b><br>Senha: " + c.Senha + "</b><br>Link: <a href=\"" + c.GetUrl + "\" class=\"button\">Aceder</a><br><br>Segue em anexo um manual para mais informações!";
+            EnviarMail(EmailDestino, Assunto, Mensagem, null, ObterEmailCC(4));
+
+            return true;
+        }
+
         public static bool EnviarEmailFeriasAprovadas(Utilizador u, Ferias f)
         {
             string Assunto = "Aprovação de Férias - " + u.NomeCompleto;

@@ -183,11 +183,15 @@
                     <div class="navbar-item">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <a class="button is-primary is-light" href="~/Utilizadores/Editar">
-                                <span class="icon">
-                                    <i class="fas fa-user"></i>
-                                </span>
-                            </a>
+                            if (!User.IsInRole("Cliente")) {
+                                <a class="button is-primary is-light" href="~/Utilizadores/Editar">
+                                    <span class="icon">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </a>
+                            }else{
+                                <p class="mx-6">@this.User.ObterNomeCompleto()</p>    
+                            }
                             @if (this.User.IsInRole("Admin"))
                             {
                                 <a class="button is-light" href="~/Utilizadores">

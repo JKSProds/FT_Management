@@ -77,9 +77,37 @@ namespace FT_Management.Controllers
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
-            if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
+            if (LstUtilizadores.Count == 0) {
+                Cliente c = phccontext.ObterClienteNIF(utilizador.NomeUtilizador);
+                if (c.IdCliente != 0)
+                {
+                    if(c.Senha == utilizador.Password)
+                    {
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, c.NumeroContribuinteCliente),
+                            new Claim(ClaimTypes.GivenName, c.NomeCliente),
+                            new Claim(ClaimTypes.Role, "Cliente")
+                        };
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                        context.AdicionarLog(c.IdCliente, "Cliente login com sucesso!", 4);
+                        return RedirectToAction("Adicionar", "RMA");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Password errada!");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
+                }
+            }
 
             foreach (var user in LstUtilizadores)
             {
@@ -99,7 +127,7 @@ namespace FT_Management.Controllers
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     await  HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                    context.AdicionarLog(user.Id, "LOGIN SUCESSO", 4);
+                    context.AdicionarLog(user.Id, "Utilizador realizou um login com sucesso!", 4);
 
                     if (ReturnUrl != "" && ReturnUrl != null)
                     {
@@ -113,7 +141,7 @@ namespace FT_Management.Controllers
                 else
                 {
                     ModelState.AddModelError("", "Password errada!");
-                    context.AdicionarLog(user.Id, "LOGIN SEM SUCESSO", 4);
+                    context.AdicionarLog(user.Id, "Utilizador tentou um login sem sucesso!", 4);
                 }
             }
             return View();

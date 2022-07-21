@@ -27,5 +27,19 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterCliente(IdCliente, IdLoja));
         }
+
+        public IActionResult GerarSenha(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return Content(context.CriarSenhaCliente(id).ToString());
+        }
+        public IActionResult EmailSenhaCliente(int id, int loja, string email)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Content(MailContext.EnviarEmailSenhaCliente(email, phccontext.ObterCliente(id, loja)) ? "Sucesso" : "");
+        }
     }
 }
