@@ -42,99 +42,101 @@
             </div>
 
             <div id="navbarBasicExample" class="navbar-menu">
-                <div class="navbar-start">
-                    <div class="navbar-item">
-                        <p class="control">
-                            <a class="button is-info is-rounded" href="~/Dashboard">
-                                <span class="icon">
-                                    <i class="fas fa-toggle-on"></i>
-                                </span>
-                                <span>Dashboard</span>
-                            </a>
-                        </p>
-                    </div>
-
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">
-                            Tabelas
-                        </a>
-
-                        <div class="navbar-dropdown buttons">
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded  is-fullwidth" href="~/Produtos">
+                @if (User.Identity.IsAuthenticated && !User.IsInRole("Cliente"))
+                {
+                    <div class="navbar-start">
+                        <div class="navbar-item">
+                            <p class="control">
+                                <a class="button is-info is-rounded" href="~/Dashboard">
                                     <span class="icon">
-                                        <i class="fas  fa-dolly-flatbed"></i>
+                                        <i class="fas fa-toggle-on"></i>
                                     </span>
-                                    <span>Referências</span>
-                                </a>
-                            </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
-                                    <span class="icon">
-                                        <i class="fas  fa-umbrella-beach"></i>
-                                    </span>
-                                    <span>Mapa de Férias</span>
-                                </a>
-                            </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Acessos">
-                                    <span class="icon">
-                                        <i class="fas fa-clock"></i>
-                                    </span>
-                                    <span>Acessos</span>
+                                    <span>Dashboard</span>
                                 </a>
                             </p>
                         </div>
-                    </div>
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">
-                            Técnicos
-                        </a>
 
-                        <div class="navbar-dropdown buttons">
-                            @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
-                            {
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">
+                                Tabelas
+                            </a>
+
+                            <div class="navbar-dropdown buttons">
                                 <p class="control mx-1">
-                                    <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Adicionar">
+                                    <a class="button is-info is-rounded  is-fullwidth" href="~/Produtos">
                                         <span class="icon">
-                                            <i class="fas fa-plus"></i>
+                                            <i class="fas  fa-dolly-flatbed"></i>
                                         </span>
-                                        <span>Nova Marcação</span>
+                                        <span>Referências</span>
                                     </a>
                                 </p>
-                            }
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/CalendarioView">
-                                    <span class="icon">
-                                        <i class="fas fa-calendar-day"></i>
-                                    </span>
-                                    <span>Calendário</span>
-                                </a>
-                            </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos">
-                                    <span class="icon">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </span>
-                                    <span>Marcações</span>
-                                </a>
-                            </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/FolhasObra">
-                                    <span class="icon">
-                                        <i class="fas  fa-file-alt"></i>
-                                    </span>
-                                    <span>Folhas de Obra</span>
-                                </a>
-                            </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
+                                        <span class="icon">
+                                            <i class="fas  fa-umbrella-beach"></i>
+                                        </span>
+                                        <span>Mapa de Férias</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Acessos">
+                                        <span class="icon">
+                                            <i class="fas fa-clock"></i>
+                                        </span>
+                                        <span>Acessos</span>
+                                    </a>
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">
-                            Comerciais
-                        </a>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">
+                                Técnicos
+                            </a>
 
-                        <div class="navbar-dropdown buttons">
+                            <div class="navbar-dropdown buttons">
+                                @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
+                                {
+                                    <p class="control mx-1">
+                                        <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Adicionar">
+                                            <span class="icon">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                            <span>Nova Marcação</span>
+                                        </a>
+                                    </p>
+                                }
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/CalendarioView">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </span>
+                                        <span>Calendário</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                        <span>Marcações</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/FolhasObra">
+                                        <span class="icon">
+                                            <i class="fas  fa-file-alt"></i>
+                                        </span>
+                                        <span>Folhas de Obra</span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">
+                                Comerciais
+                            </a>
+
+                            <div class="navbar-dropdown buttons">
 
                                 <p class="control mx-1">
                                     <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/Adicionar">
@@ -144,41 +146,42 @@
                                         <span>Nova Visita</span>
                                     </a>
                                 </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/CalendarioView">
-                                    <span class="icon">
-                                        <i class="fas fa-calendar-day"></i>
-                                    </span>
-                                    <span>Calendário</span>
-                                </a>
-                            </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Visitas">
-                                    <span class="icon">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </span>
-                                    <span>Visitas</span>
-                                </a>
-                            </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Contactos">
-                                    <span class="icon">
-                                        <i class="fas fa-address-card"></i>
-                                    </span>
-                                    <span>Contactos</span>
-                                </a>
-                            </p>
-                            <p class="control mx-1">
-                                <a class="button is-info is-rounded is-fullwidth" href="~/Clientes">
-                                    <span class="icon">
-                                        <i class="fas fa-user"></i>
-                                    </span>
-                                    <span>Clientes</span>
-                                </a>
-                            </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/CalendarioView">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </span>
+                                        <span>Calendário</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Visitas">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                        <span>Visitas</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Contactos">
+                                        <span class="icon">
+                                            <i class="fas fa-address-card"></i>
+                                        </span>
+                                        <span>Contactos</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Clientes">
+                                        <span class="icon">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <span>Clientes</span>
+                                    </a>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
                 <div class="navbar-end">
                     <div class="navbar-item">
                         @if (User.Identity.IsAuthenticated)
@@ -190,7 +193,7 @@
                                     </span>
                                 </a>
                             }else{
-                                <p class="mx-6">@this.User.ObterNomeCompleto()</p>    
+                                <button class="mx-3 button is-danger">@this.User.ObterNomeCompleto()</button>    
                             }
                             @if (this.User.IsInRole("Admin"))
                             {
