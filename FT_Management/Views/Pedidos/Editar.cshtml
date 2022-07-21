@@ -435,6 +435,7 @@
     });
 
     function ValidarMarcacao() {
+        if (!document.getElementById('DatasAdicionais').value.includes(moment(document.getElementById("txtData").value, "DD/MM/YYYY").format('YYYY-MM-DD')) && document.getElementById('DatasAdicionais').value.length < 12) document.getElementById('DatasAdicionais').value = document.getElementById("txtData").value;
         $.ajax({
             type: "POST",
             url: "/Pedidos/ValidarMarcacao",
