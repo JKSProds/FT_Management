@@ -7,12 +7,11 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using Microsoft.Extensions.Hosting;
-using System.Net.Mail;
-using System.Text;
 using FT_Management.Models;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Custom;
+using System.Linq;
 
 [DisallowConcurrentExecution]
 public class CronJobFerias : IJob
@@ -31,6 +30,32 @@ public class CronJobFerias : IJob
             if (LstFerias.Count > 0)
             {
                 MailContext.EnviarEmailFeriasPendentes("geral@food-tech.pt", LstFerias);
+            }
+            dbContext.ValidarEmailEnviado();
+        }
+        catch
+        {
+        }
+        return Task.CompletedTask;
+    }
+}
+
+public class CronJobAniversario : IJob
+{
+
+
+    public Task Execute(IJobExecutionContext context)
+    {
+        //_logger.LogInformation("Hello world!");
+        try
+        {
+
+            FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            List<Utilizador> LstUtilizadores = dbContext.ObterListaUtilizadores(false).Where(u => u.DataNascimento.ToString("yyyy") != "0001").Where(u => u.DataNascimento.ToString("dd-MM") == DateTime.Now.ToString("dd-MM")).ToList();
+
+            if (LstUtilizadores.Count > 0)
+            {
+                MailContext.EnviarEmailAniversario(LstUtilizadores);
             }
             dbContext.ValidarEmailEnviado();
         }

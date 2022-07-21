@@ -69,8 +69,9 @@ namespace FT_Management.Models
                         TipoMapa = result["TipoMapa"],
                         CorCalendario = result["CorCalendario"],
                         Pin = result["PinUtilizador"],
-                        Iniciais = result["IniciaisUtilizador"]
-                    });
+                        Iniciais = result["IniciaisUtilizador"],
+                        DataNascimento = result["DataNascimento"]
+                });
                 }
             }
             return LstUtilizadores;

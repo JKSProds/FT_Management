@@ -117,6 +117,19 @@ namespace FT_Management.Models
             return true;
         }
 
+
+        public static bool EnviarEmailAniversario(List<Utilizador> LstUtilizadores)
+        {
+            foreach (var u in LstUtilizadores)
+            {
+                string Assunto = "Aniversário - " + u.NomeCompleto;
+                string Mensagem = "A Subic, Lda deseja ao seu colaborador, " + u.NomeCompleto + " um excelente dia de anos com os seus! <br><br>Obrigado!";
+                EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(5));
+            }
+            return true;
+        }
+
+
         public static bool EnviarEmailFeriasAprovadas(Utilizador u, Ferias f)
         {
             string Assunto = "Aprovação de Férias - " + u.NomeCompleto;

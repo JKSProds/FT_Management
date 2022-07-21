@@ -58,6 +58,15 @@ namespace FT_Management
                     cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAgendamentoComercial", Configuration.GetConnectionString("DefaultConnection"))));
             }
 
+
+            if (FT_ManagementContext.ObterParam("EnvioEmailAniversario", Configuration.GetConnectionString("DefaultConnection")) == "1")
+            {
+                services.AddSingleton<CronJobAniversario>();
+                services.AddSingleton(new JobSchedule(
+                    jobType: typeof(CronJobAniversario),
+                    cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAniversario", Configuration.GetConnectionString("DefaultConnection"))));
+            }
+
             services.AddHostedService<QuartzHostedService>();
 
             services.Configure<CookiePolicyOptions>(options =>

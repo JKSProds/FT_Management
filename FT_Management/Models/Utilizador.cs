@@ -57,6 +57,7 @@ namespace FT_Management.Models
         public ApiKey ApiKey { get; set; }
         [Display(Name = "Mapa")]
         public int TipoMapa { get; set; }
+        public DateTime DataNascimento { get; set; }
         public Utilizador()
         {
             this.Id = 0;
