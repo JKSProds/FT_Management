@@ -59,7 +59,7 @@ namespace FT_Management.Controllers
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(output, System.Net.Mime.MediaTypeNames.Application.Xml);
+            return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         public ActionResult Apagar(string id)

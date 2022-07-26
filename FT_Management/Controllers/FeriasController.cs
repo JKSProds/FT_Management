@@ -87,10 +87,10 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
-        public virtual ActionResult Exportar(string Ano)
+        public virtual ActionResult Exportar(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            var file = context.GerarMapaFerias(Ano);
+            var file = context.GerarMapaFerias(id);
             var output = new MemoryStream();
 
             output.Write(file, 0, file.Length);
@@ -98,7 +98,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "MapaFerias_"+Ano+".xlsx",
+                FileName = "MapaFerias_"+id+".xlsx",
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
@@ -106,7 +106,7 @@ namespace FT_Management.Controllers
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(output, System.Net.Mime.MediaTypeNames.Application.Xml);
+            return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         public ActionResult CalendarioView()
