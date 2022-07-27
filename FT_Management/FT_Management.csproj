@@ -21,6 +21,7 @@
     <PackageReference Include="Quartz" Version="3.4.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+    <PackageReference Include="Twilio" Version="5.78.0" />
     <PackageReference Include="WebDav.Client" Version="2.8.0" />
     <PackageReference Include="X.PagedList" Version="8.4.3" />
     <PackageReference Include="X.PagedList.Mvc.Bootstrap4" Version="8.1.0" />

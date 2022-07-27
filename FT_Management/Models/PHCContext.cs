@@ -702,7 +702,11 @@ namespace FT_Management.Models
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
 
-                if (result[0].ToString() != "-1") res = int.Parse(result[3].ToString());
+                if (result[0].ToString() != "-1")
+                {
+                    res = int.Parse(result[3].ToString());
+                    SMSContext.EnviarMensagemCriacaoMarcacao(m);
+                }
 
                 conn.Close();
 
@@ -765,7 +769,11 @@ namespace FT_Management.Models
                 FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 conn.Close();
 
-                if (resp != "-1") return true;
+                if (resp != "-1")
+                {
+                    SMSContext.EnviarMensagemAtualizacaoMarcacao(m);
+                    return true;
+                }
             }
 
             catch
