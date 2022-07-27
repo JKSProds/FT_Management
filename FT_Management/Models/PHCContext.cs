@@ -769,13 +769,8 @@ namespace FT_Management.Models
                 FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 conn.Close();
 
-                if (resp != "-1")
-                {
-                    SMSContext.EnviarMensagemAtualizacaoMarcacao(m);
-                    return true;
-                }
+                if (resp != "-1") return true;
             }
-
             catch
             {
                 Console.WriteLine("Erro ao enviar marcacao para o PHC");

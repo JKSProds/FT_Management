@@ -7,28 +7,37 @@ namespace FT_Management.Models
 {
     public static class SMSContext
     {
+        private static bool SendSMSEnable()
+        {
+            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            return context.ObterParam("SendSMS") == "1";
+        }
         private static bool EnviarMensagem(string Destino, string Mensagem)
         {
-            string accountSid = ConfigurationManager.AppSetting["SMS:Sid"];
-            string authToken = ConfigurationManager.AppSetting["SMS:Token"];
-
-            try
+            if (SendSMSEnable())
             {
-                TwilioClient.Init(accountSid, authToken);
+                string accountSid = ConfigurationManager.AppSetting["SMS:Sid"];
+                string authToken = ConfigurationManager.AppSetting["SMS:Token"];
 
-                var message = MessageResource.Create(
-                    body: Mensagem,
-                    from: new Twilio.Types.PhoneNumber("+15136432435"),
-                    to: new Twilio.Types.PhoneNumber(Destino)
-                );
+                try
+                {
+                    TwilioClient.Init(accountSid, authToken);
 
+                    var message = MessageResource.Create(
+                        body: Mensagem,
+                        from: new Twilio.Types.PhoneNumber("+15136432435"),
+                        to: new Twilio.Types.PhoneNumber(Destino)
+                    );
+
+                }
+                catch
+                {
+                    return false;
+                }
+
+                return true;
             }
-            catch
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
         public static void EnviarMensagemCriacaoMarcacao(Marcacao m)
