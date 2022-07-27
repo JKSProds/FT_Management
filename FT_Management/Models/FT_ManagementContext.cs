@@ -63,7 +63,6 @@ namespace FT_Management.Models
                         TipoUtilizador = result["TipoUtilizador"],
                         EmailUtilizador = result["EmailUtilizador"],
                         Telemovel = result["TelemovelUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"],
                         IdPHC = result["IdPHC"],
                         Admin = result["admin"],
                         Enable = result["enable"],
@@ -103,7 +102,6 @@ namespace FT_Management.Models
                         NomeCompleto = result["NomeCompleto"],
                         TipoUtilizador = int.Parse(result["TipoUtilizador"]),
                         EmailUtilizador = result["EmailUtilizador"],
-                        IdCartaoTrello = result["IdCartaoTrello"],
                         Admin = result["admin"] == 1,
                         Enable = result["enable"] == 1,
                         Telemovel = result["TelemovelUtilizador"],
@@ -143,11 +141,11 @@ namespace FT_Management.Models
         }
         public void NovoUtilizador(Utilizador utilizador)
         {
-            string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, IdCartaoTrello, admin, enable, IdPHC, IdArmazem, IniciaisUtilizador, CorCalendario, TipoMapa) VALUES ";
+            string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, admin, enable, IdPHC, IdArmazem, IniciaisUtilizador, CorCalendario, TipoMapa) VALUES ";
 
-            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + utilizador.IdCartaoTrello + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ") \r\n");
+            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ") \r\n");
 
-            sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), IdCartaoTrello = VALUES(IdCartaoTrello), admin = VALUES(admin), enable = VALUES(enable), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario), TipoMapa = VALUES(TipoMapa);";
+            sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), admin = VALUES(admin), enable = VALUES(enable), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario), TipoMapa = VALUES(TipoMapa);";
 
             using (Database db = ConnectionString)
             {

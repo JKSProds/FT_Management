@@ -17,9 +17,6 @@ namespace FT_Management.Models
 
       
     }
-
-
-
     public class Utilizador
     {
         public int Id { get; set; }
@@ -37,8 +34,6 @@ namespace FT_Management.Models
         public string EmailUtilizador { get; set; }
         [Display(Name = "Telemóvel")]
         public string Telemovel { get; set; }
-        [Display(Name = "IdAssociado - Fora de Uso")]
-        public string IdCartaoTrello { get; set; }
         [Display(Name = "Num. do PHC")]
         public int IdPHC { get; set; }
         [Display(Name = "Num. do Armazém")]
