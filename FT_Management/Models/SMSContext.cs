@@ -30,13 +30,16 @@ namespace FT_Management.Models
             return false;
         }
 
-        private static async Task EnviarMensagemAndroid(string Destino, string Mensagem)
+        private static bool EnviarMensagemAndroid(string Destino, string Mensagem)
         {
             string url = "http://192.168.103.195:8080/send?phone=" + Destino + "&text=" + Mensagem;
             var client = new HttpClient();
             client.BaseAddress = new Uri(url);
 
-            var responseTask = await client.GetAsync("");
+            var responseTask =  client.GetAsync("");
+            responseTask.Wait();
+
+            return true;
         }
 
         private static bool EnviarMensagemTwilio(string Destino, string Mensagem)
