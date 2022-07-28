@@ -75,7 +75,7 @@
                                 </label>
                                 <a class="button is-warning" href="~/Utilizadores/Logs/@item.Id"><i class="fas fa-eye"></i></a>
                                 <button class="button is-danger is-outlined" onclick="ConfirmResetSenha(@item.Id)"><i class="fas fa-unlock"></i></button>
-                                <button class="button is-danger" onclick="location.href='@(Url.Action("Apagar", "Utilizadores", new { id = item.Id}))'"><i class="fas fa-unlock"></i></button>
+                                <button class="button is-danger" onclick="ConfirmApagarUtilizador(@item.Id)"><i class="fas fa-trash"></i></button>
                                     </td>
                                 }
                                 else
@@ -92,6 +92,33 @@
         }
         
         <input class="input" type="hidden" id="hiddenIdUtilizador" />
+        <div id="modalApagarUtilizador" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                    <span class="icon">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    <span>Apagar Utilizador</span>
+                </p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>
+                    Tem a certeza que deseja apagar este utilizador?
+                </p>            
+            </section>
+            <footer class="modal-card-foot">
+                <button type="button" class="button is-danger" onclick="ApagarUtilizador()" href="javascript:;">
+                    <span class="icon">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    <span>Confirmar Apagar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
         <div id="modalResetSenha" class="modal">
         <div class="modal-background"></div>
         <div class="modal-card">
@@ -187,7 +214,10 @@
             document.getElementById("hiddenIdUtilizador").value = id;
             Bulma('#modalResetSenha').modal().open();
         }
-
+        function ConfirmApagarUtilizador(id) {
+            document.getElementById("hiddenIdUtilizador").value = id;
+            Bulma('#modalApagarUtilizador').modal().open();
+        }
 
          function ResetSenha() {
             $.ajax({
@@ -218,6 +248,17 @@
                             })
                         }
                     });
+                }
+            });
+        }
+
+        function ApagarUtilizador() {
+            $.ajax({
+                type: "POST",
+                url: "/Utilizadores/Apagar/" + document.getElementById("hiddenIdUtilizador").value,
+                traditional: true,
+                success: function (result) {
+                    window.location.reload();
                 }
             });
         }

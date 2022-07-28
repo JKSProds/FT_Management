@@ -156,7 +156,7 @@ namespace FT_Management.Models
 
         public void ApagarUtilizador(Utilizador u)
         {
-            string sql = "DELETE FROM WHERE IdUtilizador="+u.Id+";\r\n";
+            string sql = "DELETE FROM sys_utilizadores WHERE IdUtilizador="+u.Id+";\r\n";
 
             Database db = ConnectionString;
 
