@@ -83,14 +83,14 @@ namespace FT_Management.Models
         {
             foreach (var u in m.LstTecnicos)
             {
-                if (u.Telemovel.Length >=9) EnviarMensagemAsync(u.ObterTelemovelFormatado(), "Foi criada uma marcação nova para o cliente " + m.Cliente.NomeCliente + " para o(s) seguinte(s) dia(s) " + string.Join("|", m.DatasAdicionaisDistintas.Select(x => x.ToString("dd-MM-yyyy"))) + ".");
+                if (u.Telemovel.Length >=9) EnviarMensagemAsync(u.ObterTelemovelFormatado(false), "Foi criada uma marcação nova para o cliente " + m.Cliente.NomeCliente + " para o(s) seguinte(s) dia(s) " + string.Join("|", m.DatasAdicionaisDistintas.Select(x => x.ToString("dd-MM-yyyy"))) + ".");
             }
         }
         public static void EnviarMensagemAtualizacaoMarcacao(Marcacao m)
         {
             foreach (var u in m.LstTecnicos)
             {
-                if (!string.IsNullOrEmpty(u.Telemovel)) EnviarMensagemAsync(u.ObterTelemovelFormatado(), "Foi atualizada a marcação Nº " + m.IdMarcacao + ", para o cliente " + m.Cliente.NomeCliente + ".");
+                if (!string.IsNullOrEmpty(u.Telemovel)) EnviarMensagemAsync(u.ObterTelemovelFormatado(false), "Foi atualizada a marcação Nº " + m.IdMarcacao + ", para o cliente " + m.Cliente.NomeCliente + ".");
             }
         }
     }
