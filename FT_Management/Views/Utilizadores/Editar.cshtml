@@ -14,7 +14,7 @@
                             <span class="icon mr-3">
                                 <i class="fas fa-user"></i>
                             </span>
-                            <span>Perfil de Utilizador (@Model.NomeUtilizador)</span>
+                            <span>Perfil de Utilizador</span>
                         </p>
                     </article>
                 </div>
@@ -38,6 +38,13 @@
                 <div class="card-content">
                     <input type="hidden" asp-for="Id" id="txtHiddenIdUtilizador"/>
                     <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeUtilizador)</label></div><div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly  asp-for="NomeUtilizador"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" class="input" readonly  asp-for="NomeCompleto"></div>
@@ -55,20 +62,6 @@
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.IdPHC)</label></div><div class="field-body">
                             <div class="field">
                                 <div class="control"><input type="text" class="input" readonly  asp-for="IdPHC"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
-                            <div class="field">
-                                <div class="control"><input type="text" class="input" readonly  asp-for="Iniciais" ></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
-                            <div class="field">
-                                <div class="control"><input type="text" class="input" readonly asp-for="Pin"></div>
                             </div>
                         </div>
                     </div>
@@ -181,32 +174,6 @@
                     <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="AtualizarUtilizador">
                         <input type="hidden" class="input" asp-for="Id" name="id">
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal">
-                                <label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label>
-                            </div>
-                            <div class="field-body">
-                                <div class="field">
-                                    <div class="control">
-                                        <input type="text" required="required" class="input" asp-for="NomeCompleto">
-                                    </div>
-                                    <p class="help"> Required. Your name</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field is-horizontal">
-                            <div class="field-label is-normal">
-                                <label class="label">@Html.DisplayNameFor(model => model.EmailUtilizador)</label>
-                            </div>
-                            <div class="field-body">
-                                <div class="field">
-                                    <div class="control">
-                                        <input type="email" required="required" class="input" asp-for="EmailUtilizador">
-                                    </div>
-                                    <p class="help"> Required. Your e-mail</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field is-horizontal">
                             <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
                                 <div class="field">
                                     <div class="control"><input type="text" maxlength=4 class="input" asp-for="Pin"></div>
@@ -217,6 +184,30 @@
                             <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
                                 <div class="field">
                                     <div class="control"><input type="text" maxlength=2 class="input" asp-for="Iniciais"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.DataNascimento)</label></div><div class="field-body">
+                                <div class="field">
+                                    <div class="control"><input type="date" class="input" asp-for="DataNascimento" id="txtDataNascimento"></div>
+                                        <script>
+                                            bulmaCalendar.attach('#txtDataNascimento', {
+                                                color: 'info',
+                                                lang: 'pt',
+                                                dateFormat: 'dd/MM/yyyy',
+                                                todayLabel: 'Hoje',
+                                                showClearButton: false,
+                                                cancelLabel: 'Cancelar'
+                                            });
+                                        </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Telemovel)</label></div><div class="field-body">
+                                <div class="field">
+                                    <div class="control"><input type="tel" class="input" asp-for="Telemovel"></div>
                                 </div>
                             </div>
                         </div>

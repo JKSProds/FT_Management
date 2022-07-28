@@ -173,16 +173,16 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(id);
 
-            u.NomeCompleto = utilizador.NomeCompleto;
-            u.EmailUtilizador = utilizador.EmailUtilizador;
             u.Pin = utilizador.Pin;
             u.Iniciais = utilizador.Iniciais;
             u.CorCalendario = utilizador.CorCalendario;
             u.TipoMapa = utilizador.TipoMapa;
+            u.Telemovel = utilizador.Telemovel;
+            u.DataNascimento = utilizador.DataNascimento;
 
             context.NovoUtilizador(u);
 
-            return View("Editar", context.ObterUtilizador(id));
+            return RedirectToAction("Editar", id);
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         public IActionResult AtualizarSenha(int id, string password_current, string password, string password_confirmation)
