@@ -40,6 +40,12 @@ namespace FT_Management.Models
             return false;
         }
 
+        public static void EnviarMensagemTeste(string Destino)
+        {
+            EnviarMensagem(Destino, "Mensagem de Teste!");
+
+        }
+
         public static void EnviarMensagemCriacaoMarcacao(Marcacao m)
         {
             foreach (var u in m.LstTecnicos)

@@ -182,7 +182,7 @@ namespace FT_Management.Controllers
 
             context.NovoUtilizador(u);
 
-            return View("Editar", u);
+            return View("Editar", context.ObterUtilizador(id));
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         public IActionResult AtualizarSenha(int id, string password_current, string password, string password_confirmation)

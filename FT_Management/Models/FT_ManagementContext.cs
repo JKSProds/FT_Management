@@ -171,10 +171,6 @@ namespace FT_Management.Models
 
         //PARAMETROS
         #region PARAMETROS
-        public bool SyncPHCOnStartup()
-        {
-            return ObterParam("SyncPHCOnStartup") == "1";
-        }
         public string ObterParam(string NomeParam)
         {
             string res = "";
