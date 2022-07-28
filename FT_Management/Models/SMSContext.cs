@@ -2,6 +2,10 @@
 using Twilio.Rest.Api.V2010.Account;
 using Custom;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System;
+using System.Threading.Tasks;
 
 namespace FT_Management.Models
 {
@@ -12,7 +16,30 @@ namespace FT_Management.Models
             FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
             return context.ObterParam("SendSMS") == "1";
         }
-        private static bool EnviarMensagem(string Destino, string Mensagem)
+
+        private static bool EnviarMensagemAsync(string Destino, string Mensagem)
+        {
+            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            switch (context.ObterParam("SMS_Service")) {
+                case "Android":
+                    EnviarMensagemAndroid(Destino, Mensagem);
+                    break;
+                case "Twilio":
+                    return EnviarMensagemTwilio(Destino, Mensagem);
+            }
+            return false;
+        }
+
+        private static async Task EnviarMensagemAndroid(string Destino, string Mensagem)
+        {
+            string url = "http://192.168.103.195:8080/send?phone=" + Destino + "&text=" + Mensagem;
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(url);
+
+            var responseTask = await client.GetAsync("");
+        }
+
+        private static bool EnviarMensagemTwilio(string Destino, string Mensagem)
         {
             if (SendSMSEnable())
             {
@@ -42,7 +69,7 @@ namespace FT_Management.Models
 
         public static void EnviarMensagemTeste(string Destino)
         {
-            EnviarMensagem(Destino, "Mensagem de Teste!");
+            EnviarMensagemAsync(Destino, "Mensagem de Teste!");
 
         }
 
@@ -50,14 +77,14 @@ namespace FT_Management.Models
         {
             foreach (var u in m.LstTecnicos)
             {
-                if (u.Telemovel.Length >=9) EnviarMensagem(u.Telemovel, "Foi criada uma marcação nova para o cliente " + m.Cliente.NomeCliente + " para o(s) seguinte(s) dia(s) " + string.Join("|", m.DatasAdicionaisDistintas.Select(x => x.ToString("dd-MM-yyyy"))) + ".");
+                if (u.Telemovel.Length >=9) EnviarMensagemAsync(u.Telemovel, "Foi criada uma marcação nova para o cliente " + m.Cliente.NomeCliente + " para o(s) seguinte(s) dia(s) " + string.Join("|", m.DatasAdicionaisDistintas.Select(x => x.ToString("dd-MM-yyyy"))) + ".");
             }
         }
         public static void EnviarMensagemAtualizacaoMarcacao(Marcacao m)
         {
             foreach (var u in m.LstTecnicos)
             {
-                if (!string.IsNullOrEmpty(u.Telemovel)) EnviarMensagem(u.Telemovel, "Foi atualizada a marcação Nº " + m.IdMarcacao + ", para o cliente " + m.Cliente.NomeCliente + ".");
+                if (!string.IsNullOrEmpty(u.Telemovel)) EnviarMensagemAsync(u.Telemovel, "Foi atualizada a marcação Nº " + m.IdMarcacao + ", para o cliente " + m.Cliente.NomeCliente + ".");
             }
         }
     }
