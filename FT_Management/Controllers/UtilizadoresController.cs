@@ -232,6 +232,19 @@ namespace FT_Management.Controllers
             return Content("Ok");
         }
 
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Apagar(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+
+            if (!u.Admin || this.User.IsInRole("Master")) context.ApagarUtilizador(u);
+
+            return RedirectToAction("Index");
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult AlterarAdmin(int id, bool admin)

@@ -153,6 +153,16 @@ namespace FT_Management.Models
                 db.Execute(sql);
             }
         }
+
+        public void ApagarUtilizador(Utilizador u)
+        {
+            string sql = "DELETE FROM WHERE IdUtilizador="+u.Id+";\r\n";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
         public string NovaApiKey(Utilizador utilizador)
         {
             string RandomApiKey = GetRandomString(40);
