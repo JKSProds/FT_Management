@@ -455,20 +455,9 @@
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-               <div class="file has-name is-fullwidth" id="file-with-js">
-                    <label class="file-label">
-                        <input class="file-input" id="fileinput" type="file" name="resume">
-                        <span class="file-cta">
-                            <span class="file-icon">
-                                <i class="fa fa-upload"></i>
-                            </span>
-                            <span class="file-label">
-                                Escolha um ficheiro...
-                            </span>
-                        </span>
-                        <span class="file-name">Por favor escolha um ficheiro</span>
-                    </label>
-                </div>
+                <form action="/Pedidos/AdicionarAnexo/@Model.IdMarcacao"
+                  class="dropzone"
+                  id="my-awesome-dropzone"></form>
             </div>
         </section>
         <footer class="modal-card-foot">
@@ -497,32 +486,13 @@
 </div>
 
 <script>
-        var input = document.querySelector(
-        "#file-with-js>.file-label>.file-input"
-        );
-        input.onchange = function () {
-            if (input.files.length > 0) {
-                AdicionarAnexo();
-            }
-        }
-         function AdicionarAnexo(input) {
-        document.getElementById("btnConfirmAddAnexo").classList.add("is-loading");
-        var formData = new FormData();
-            formData.append("files", document.getElementById('fileinput').files[0]);
-        $.ajax(
-            {
-                url: "/Pedidos/AdicionarAnexo?id=" + document.getElementById('hiddenIdMarcacao').value,
-                data: formData,
-                processData: false,
-                contentType: false,
-                type: "POST",
-                success: function (data) {
-                    window.location.reload();
-                }
-            }
-        );
-    }
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
 
+    $close.addEventListener('click', () => {
+          window.location.reload();
+    });
+  });
 
     function AdicionarComentario() {
 

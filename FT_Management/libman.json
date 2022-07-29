@@ -56,6 +56,10 @@
       "provider": "unpkg",
       "library": "bulma-list@1.2.0",
       "destination": "wwwroot/lib/bulma-list/"
+    },
+    {
+      "library": "dropzone@5.9.3",
+      "destination": "wwwroot/lib/dropzone/"
     }
   ]
 }

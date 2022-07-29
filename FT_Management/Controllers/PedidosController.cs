@@ -189,12 +189,12 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult AdicionarAnexo(int id, List<IFormFile> files)
-        {
+        public JsonResult AdicionarAnexo(int id, IFormFile file)
+         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            foreach (IFormFile file in files)
-            {
+            //foreach (IFormFile file in files)
+            //{
                 if (file.Length > 0)
                 {
                     Anexo a = new Anexo()
@@ -212,7 +212,7 @@ namespace FT_Management.Controllers
                        if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file)) ApagarAnexo(res);
                     }
                 }
-            }
+            //}
 
             return Json("ok");
         }
