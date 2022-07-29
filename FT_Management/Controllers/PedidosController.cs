@@ -225,15 +225,15 @@ namespace FT_Management.Controllers
                 PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
                 Anexo a = phccontext.ObterAnexo(id);
-
-                if (!System.IO.File.Exists(FicheirosContext.FormatLinuxServer(a.NomeFicheiro))) return File("", "");
+                string CaminhoFicheiro = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
+                if (!System.IO.File.Exists(CaminhoFicheiro)) return File("", "");
 
                 //Determine the Content Type of the File.
                 string contentType = "";
-                new FileExtensionContentTypeProvider().TryGetContentType(a.NomeFicheiro, out contentType);
+                new FileExtensionContentTypeProvider().TryGetContentType(CaminhoFicheiro, out contentType);
 
                 //Read the File data into Byte Array.
-                byte[] bytes = System.IO.File.ReadAllBytes(a.NomeFicheiro);
+                byte[] bytes = System.IO.File.ReadAllBytes(CaminhoFicheiro);
 
                 Response.Headers.Add("Content-Disposition", "inline;filename=" + a.ObterNomeFicheiro());
                 //Send the File to Download.
