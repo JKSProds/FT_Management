@@ -69,19 +69,16 @@ namespace FT_Management.Models
             this.ApiKey = new ApiKey();
         }
 
-        public string ObterTelemovelFormatado(bool Extensao)
+        public string ObterTelemovelFormatado(bool Indicativo)
         {
             string res = "";
             try
             {
                 var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
-                if (Extensao)
+                if (phoneNumberUtil.IsValidNumberForRegion(phoneNumberUtil.Parse(this._Telemovel, "PT"), "PT"))
                 {
-                    if (phoneNumberUtil.IsValidNumberForRegion(phoneNumberUtil.Parse(this._Telemovel, "PT"), "PT")) res = "+" + phoneNumberUtil.Parse(this._Telemovel, "PT").CountryCode.ToString() + phoneNumberUtil.Parse(this._Telemovel, "PT").NationalNumber.ToString();
-                }
-                else
-                {
-                    if (phoneNumberUtil.IsValidNumberForRegion(phoneNumberUtil.Parse(this._Telemovel, "PT"), "PT")) res = phoneNumberUtil.Parse(this._Telemovel, "PT").NationalNumber.ToString();
+                    if (Indicativo) res = "+" + phoneNumberUtil.Parse(this._Telemovel, "PT").CountryCode.ToString() + phoneNumberUtil.Parse(this._Telemovel, "PT").NationalNumber.ToString();
+                    res += phoneNumberUtil.Parse(this._Telemovel, "PT").NationalNumber.ToString();
                 }
             }
             catch
