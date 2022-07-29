@@ -255,7 +255,7 @@ namespace FT_Management.Controllers
                 Anexo a = phccontext.ObterAnexo(id);
                 phccontext.ApagarAnexoMarcacao(a);
                 FicheirosContext.ApagarAnexoMarcacao(a);
-                return View("Pedido", phccontext.ObterMarcacao(a.IdMarcacao));
+                return RedirectToAction("Pedido", "Pedidos", new { id = phccontext.ObterMarcacao(a.IdMarcacao).IdMarcacao });
 
             }
             return RedirectToAction("Pedido");

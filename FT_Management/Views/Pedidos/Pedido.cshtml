@@ -506,6 +506,7 @@
             }
         }
          function AdicionarAnexo(input) {
+        document.getElementById("btnConfirmAddAnexo").classList.add("is-loading");
         var formData = new FormData();
             formData.append("files", document.getElementById('fileinput').files[0]);
         $.ajax(
