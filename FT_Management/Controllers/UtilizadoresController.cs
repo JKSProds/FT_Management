@@ -182,7 +182,7 @@ namespace FT_Management.Controllers
 
             context.NovoUtilizador(u);
 
-            return RedirectToAction("Editar", id);
+            return RedirectToAction("Editar", new { id = u.Id});
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         public IActionResult AtualizarSenha(int id, string password_current, string password, string password_confirmation)
