@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace FT_Management.Models
@@ -11,16 +12,22 @@ namespace FT_Management.Models
 
     public class Anexo
     {
+        [Display(Name = "Stamp do Anexo")]
         public string AnexoStamp { get; set; }
+        [Display(Name = "Num. da Marcação")]
         public int IdMarcacao { get; set; }
+        [Display(Name = "Stamp da Marcação")]
         public string MarcacaoStamp { get; set; }
+        [Display(Name = "Ficheiro")]
         public string NomeFicheiro { get; set; }
         public bool AnexoMarcacao { get; set; }
         public bool AnexoAssinatura { get; set; }
         public bool AnexoInstalacao { get; set; }
         public bool AnexoPeca { get; set; }
         public string RefPeca { get; set; }
+        [Display(Name = "Criado por")]
         public string NomeUtilizador { get; set; }
+        [Display(Name = "Criado em")]
         public DateTime DataCriacao { get; set; }
 
         public TipoFicheiro ObterTipoFicheiro()

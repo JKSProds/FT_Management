@@ -894,7 +894,7 @@ namespace FT_Management.Models
                         AnexoInstalacao = result["instalacao"].ToString() == "1",
                         AnexoPeca = result["peca"].ToString() == "1",
                         RefPeca = result["ref"].ToString(),
-                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString())
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Split(" ").First() + " " + result["ousrhora"].ToString())
 
                     });
                 }
