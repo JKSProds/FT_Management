@@ -168,8 +168,7 @@ namespace FT_Management.Models
         }
         private string ObterProdutoImagem(Produto p)
         {
-            string img = "/server/Imagens/EQUIPAMENTOS/" + p.Ref_Produto + ".jpg";
-            string res = "";
+            string res = ""; string img = FicheirosContext.ObterCaminhoProdutoImagem(p.Ref_Produto);
             if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
             using (Image image = Image.FromFile(img))
             {
@@ -537,7 +536,7 @@ namespace FT_Management.Models
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     result.Read();
-                    return result["u_vestigio"].ToString().Replace("\\", "/").Replace("S:", "/server");
+                    return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
                 }
             }
             catch { 

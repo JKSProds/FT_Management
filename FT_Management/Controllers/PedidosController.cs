@@ -209,20 +209,7 @@ namespace FT_Management.Controllers
                     string res = phccontext.CriarAnexoMarcacao(a);
                     if (res.Length > 0)
                     {
-                        a = phccontext.ObterAnexo(res);
-                        string filePath = a.ObterCaminhoFicheiro();
-                        //string filePath = "/server/Assistencias_Tecnicas/MARC9524_202207291224378.pdf";
-                        try
-                        {
-                            using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-                            {
-                                file.CopyTo(fileStream);
-                            }
-                        }
-                        catch
-                        {
-                            phccontext.ApagarAnexoMarcacao(a);
-                        }
+                        FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file);
                     }
                 }
             }

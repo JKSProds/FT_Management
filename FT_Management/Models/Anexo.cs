@@ -54,10 +54,5 @@ namespace FT_Management.Models
 
             return res;
         }
-
-        public string ObterCaminhoFicheiro()
-        {
-            return NomeFicheiro.ToString().Replace("\\", "/").Replace("S:", "/server");
-        }
     }
 }
