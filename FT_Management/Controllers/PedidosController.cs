@@ -228,21 +228,16 @@ namespace FT_Management.Controllers
 
                 if (!System.IO.File.Exists(FicheirosContext.FormatLinuxServer(a.NomeFicheiro))) return File("", "");
 
-                string contentType;
+                //Determine the Content Type of the File.
+                string contentType = "";
                 new FileExtensionContentTypeProvider().TryGetContentType(a.NomeFicheiro, out contentType);
 
-                // create a memorystream
-                var memoryStream = new MemoryStream();
+                //Read the File data into Byte Array.
+                byte[] bytes = System.IO.File.ReadAllBytes(a.NomeFicheiro);
 
-                using (var stream = new FileStream(FicheirosContext.FormatLinuxServer(a.NomeFicheiro), FileMode.Open))
-                {
-                    await stream.CopyToAsync(memoryStream);
-                }
-                // set the position to return the file from
-                memoryStream.Position = 0;
-
-
-                return File(memoryStream, contentType, a.ObterNomeFicheiro());
+                Response.Headers.Add("Content-Disposition", "inline;filename=" + a.ObterNomeFicheiro());
+                //Send the File to Download.
+                return new FileContentResult(bytes, contentType);
             }
             return File("", "");
         }

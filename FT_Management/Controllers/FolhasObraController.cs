@@ -94,14 +94,14 @@ namespace FT_Management.Controllers
             var cd = new System.Net.Mime.ContentDisposition
             {
                 FileName = "FolhaObra_"+ id +".pdf",
-                Inline = false,
+                Inline = true,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
                 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
-
-            return File(output, System.Net.Mime.MediaTypeNames.Application.Pdf);
+            //Send the File to Download.
+            return new FileContentResult(output.ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
 
         public ActionResult EmailFolhaObra(int id, string emailDestino)

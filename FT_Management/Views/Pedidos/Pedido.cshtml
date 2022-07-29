@@ -398,7 +398,7 @@
                                         <td data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().NomeFicheiro)"><span>@a.ObterNomeLegivel()</span></td>
                                         <td data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)"><span>@a.DataCriacao.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
                                         <td class="is-actions-cell">
-                                            <a class="button is-primary is-outlined" onclick="window.open('@Url.Action("DownloadAnexo", "Pedidos", new { id = @a.AnexoStamp, target="_blank" })')"><i class="fas fa-eye" style="font-size:20px"></i></a>
+                                            <a class="button is-primary is-outlined" onclick="window.open('@Url.Action("DownloadAnexo", "Pedidos", new { id = @a.AnexoStamp})')"><i class="fas fa-eye" style="font-size:20px"></i></a>
                                             <a class="button is-danger" href="@Url.Action("ApagarAnexo", "Pedidos", new { id = @a.AnexoStamp })"><i class="fas fa-trash" style="font-size:20px"></i></a>
                                         </td>
                                     </tr>
