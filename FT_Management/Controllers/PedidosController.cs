@@ -217,7 +217,7 @@ namespace FT_Management.Controllers
             return Json("ok");
         }
 
-        public async Task<ActionResult> DownloadAnexo(string id)
+        public ActionResult DownloadAnexo(string id)
         {
             if (id != null)
             {
