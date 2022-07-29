@@ -209,7 +209,7 @@ namespace FT_Management.Controllers
                     string res = phccontext.CriarAnexoMarcacao(a);
                     if (res.Length > 0)
                     {
-                        FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file);
+                       if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file)) ApagarAnexo(res);
                     }
                 }
             }
@@ -225,11 +225,28 @@ namespace FT_Management.Controllers
                 PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
                 Anexo a = phccontext.ObterAnexo(id);
+
+                if (!System.IO.File.Exists(FicheirosContext.FormatLinuxServer(a.NomeFicheiro))) return File("", "");
+
                 string contentType;
                 new FileExtensionContentTypeProvider().TryGetContentType(a.NomeFicheiro, out contentType);
-                return File(context.BitMapToMemoryStream(a.NomeFicheiro), contentType);
+                return File(FicheirosContext.FormatLinuxServer(a.NomeFicheiro), contentType);
             }
             return File("", "");
+        }
+        public ActionResult ApagarAnexo(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (id != null)
+            {
+                Anexo a = phccontext.ObterAnexo(id);
+                phccontext.ApagarAnexoMarcacao(a);
+                FicheirosContext.ApagarAnexoMarcacao(a);
+                return View("Pedido", phccontext.ObterMarcacao(a.IdMarcacao));
+
+            }
+            return RedirectToAction("Pedido");
         }
 
         [Authorize(Roles = "Admin, Escritorio")]

@@ -5,7 +5,8 @@ namespace FT_Management.Models
 {
     public static class FicheirosContext
     {
-        private static string CaminhoServerAnexos = "/server/Assistencias_Tecnicas/";
+
+        //private static string CaminhoServerAnexos = "/server/Assistencias_Tecnicas/";
         private static string CaminhoImagensProduto = "/server/Imagens/EQUIPAMENTOS/";
 
         private static bool CriarFicheiro(string Caminho, IFormFile ficheiro)
@@ -15,6 +16,21 @@ namespace FT_Management.Models
                 using (Stream fileStream = new FileStream(Caminho, FileMode.Create))
                 {
                     ficheiro.CopyTo(fileStream);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+        private static bool ApagarFicheiro(string Caminho)
+        {
+            try
+            {
+                using (Stream fileStream = new FileStream(Caminho, FileMode.Create))
+                {
+                    File.Delete(Caminho);
                 }
             }
             catch
@@ -33,7 +49,10 @@ namespace FT_Management.Models
         {
             return CriarFicheiro(FormatLinuxServer(a.NomeFicheiro), ficheiro);
         }
-
+        public static bool ApagarAnexoMarcacao(Anexo a)
+        {
+            return ApagarFicheiro(FormatLinuxServer(a.NomeFicheiro));
+        }
         public static string ObterCaminhoProdutoImagem(string Ref_Produto)
         {
             return CaminhoImagensProduto + Ref_Produto + ".jpg";

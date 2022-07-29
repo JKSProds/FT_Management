@@ -818,7 +818,7 @@ namespace FT_Management.Models
                 };
 
                 command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", a.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@NOME_FICHEIRO", a.ObterNomeUnico()));
+                command.Parameters.Add(new SqlParameter("@NOME_FICHEIRO", a.NomeFicheiro));
                 command.Parameters.Add(new SqlParameter("@MARCACAO", a.AnexoMarcacao ? "1" : "0"));
                 command.Parameters.Add(new SqlParameter("@ASSINATURA", a.AnexoAssinatura ? "1" : "0"));
                 command.Parameters.Add(new SqlParameter("@INSTALACAO", a.AnexoInstalacao ? "1" : "0"));
@@ -829,7 +829,7 @@ namespace FT_Management.Models
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
 
-                string resp = result[0].ToString();
+                string resp = result[2].ToString();
 
                 if (resp != "-1") return resp;
             }
@@ -894,7 +894,7 @@ namespace FT_Management.Models
                         AnexoInstalacao = result["instalacao"].ToString() == "1",
                         AnexoPeca = result["peca"].ToString() == "1",
                         RefPeca = result["ref"].ToString(),
-                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString() + " " + result["ousrdata"].ToString())
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString())
 
                     });
                 }
@@ -936,7 +936,7 @@ namespace FT_Management.Models
                         AnexoInstalacao = result["instalacao"].ToString() == "1",
                         AnexoPeca = result["peca"].ToString() == "1",
                         RefPeca = result["ref"].ToString(),
-                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString() + " " + result["ousrdata"].ToString())
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString())
 
                     });
                 }
