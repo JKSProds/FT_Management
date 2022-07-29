@@ -25,10 +25,10 @@ namespace FT_Management.Models
                 switch (context.ObterParam("SMS_Service"))
                 {
                     case "Android":
-                        EnviarMensagemAndroid(Destino, Mensagem);
+                         EnviarMensagemAndroid(Destino, Mensagem);
                         break;
                     case "Twilio":
-                        return EnviarMensagemTwilio(Destino, Mensagem);
+                         return EnviarMensagemTwilio(Destino, Mensagem);
                 }
             }
             return false;
@@ -75,15 +75,14 @@ namespace FT_Management.Models
 
         public static void EnviarMensagemTeste(string Destino)
         {
-            EnviarMensagemAsync(Destino, "Mensagem de Teste!");
-
+           EnviarMensagemAsync(Destino, "Mensagem de Teste!");
         }
 
         public static void EnviarMensagemCriacaoMarcacao(Marcacao m)
         {
             foreach (var u in m.LstTecnicos)
             {
-                if (u.Telemovel.Length >=9) EnviarMensagemAsync(u.ObterTelemovelFormatado(false), "Foi criada uma marcação nova para o cliente " + m.Cliente.NomeCliente + ".");
+                if (u.Telemovel.Length >=9)  EnviarMensagemAsync(u.ObterTelemovelFormatado(false), "Foi criada uma marcação nova para o cliente " + m.Cliente.NomeCliente + ".");
             }
         }
     }

@@ -27,6 +27,8 @@ namespace FT_Management.Models
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
+
+                //SMSContext.EnviarMensagemCriacaoMarcacao(this.ObterMarcacao(9693));
             }
             catch
             {
