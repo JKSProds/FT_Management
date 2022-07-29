@@ -73,6 +73,7 @@ namespace FT_Management.Models
         public List<int> LstTecnicosSelect { get; set; }
         public List<FolhaObra> LstFolhasObra { get; set; }
         public List<Comentario> LstComentarios { get; set; }
+        public List<Anexo> LstAnexos { get; set; }
         public string GetUrl { get { return "http://62.28.200.46:8082/Pedidos/Pedido/" + IdMarcacao; } }
 
         public Marcacao()

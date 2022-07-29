@@ -803,6 +803,155 @@ namespace FT_Management.Models
             }
             return res;
         }
+
+        public string CriarAnexoMarcacao(Anexo a)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Gera_Anexo", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", a.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@NOME_FICHEIRO", a.ObterNomeUnico()));
+                command.Parameters.Add(new SqlParameter("@MARCACAO", a.AnexoMarcacao ? "1" : "0"));
+                command.Parameters.Add(new SqlParameter("@ASSINATURA", a.AnexoAssinatura ? "1" : "0"));
+                command.Parameters.Add(new SqlParameter("@INSTALACAO", a.AnexoInstalacao ? "1" : "0"));
+                command.Parameters.Add(new SqlParameter("@PECA", a.AnexoPeca ? "1" : "0"));
+                command.Parameters.Add(new SqlParameter("@REF", a.RefPeca));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", a.NomeUtilizador));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                string resp = result[0].ToString();
+
+                if (resp != "-1") return resp;
+            }
+            catch { }
+            return "";
+        }
+
+        public bool ApagarAnexoMarcacao(Anexo a)
+        {
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Apaga_Anexo", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("STAMP", a.AnexoStamp));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                string resp = result[0].ToString();
+
+                if (resp != "-1") return true;
+
+            }
+            catch { }
+            return false;
+        }
+
+        public List<Anexo> ObterAnexos(Marcacao m)
+        {
+            List<Anexo> LstAnexos = new List<Anexo>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from u_anexos_mar where u_marcacaostamp='"+m.MarcacaoStamp+"'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using SqlDataReader result = command.ExecuteReader();
+                while (result.Read())
+                {
+                   LstAnexos.Add(new Anexo()
+                    {
+                        AnexoStamp = result["u_anexos_marstamp"].ToString(),
+                        MarcacaoStamp = result["u_marcacaostamp"].ToString(),
+                        IdMarcacao = int.Parse(result["num_marcacao"].ToString()),
+                        NomeFicheiro = result["nome_ficheiro"].ToString(),
+                        NomeUtilizador = result["ousrinis"].ToString(),
+                        AnexoMarcacao = result["marcacao"].ToString() == "1",
+                        AnexoAssinatura = result["assinatura"].ToString() == "1",
+                        AnexoInstalacao = result["instalacao"].ToString() == "1",
+                        AnexoPeca = result["peca"].ToString() == "1",
+                        RefPeca = result["ref"].ToString(),
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString() + " " + result["ousrdata"].ToString())
+
+                    });
+                }
+                conn.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!");
+            }
+            return LstAnexos;
+        }
+
+        public Anexo ObterAnexo(string AnexoStamp)
+        {
+            List<Anexo> LstAnexos = new List<Anexo>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from u_anexos_mar where u_anexos_marstamp='" + AnexoStamp + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using SqlDataReader result = command.ExecuteReader();
+                while (result.Read())
+                {
+                    LstAnexos.Add(new Anexo()
+                    {
+                        AnexoStamp = result["u_anexos_marstamp"].ToString(),
+                        MarcacaoStamp = result["u_marcacaostamp"].ToString(),
+                        IdMarcacao = int.Parse(result["num_marcacao"].ToString()),
+                        NomeFicheiro = result["nome_ficheiro"].ToString(),
+                        NomeUtilizador = result["ousrinis"].ToString(),
+                        AnexoMarcacao = result["marcacao"].ToString() == "1",
+                        AnexoAssinatura = result["assinatura"].ToString() == "1",
+                        AnexoInstalacao = result["instalacao"].ToString() == "1",
+                        AnexoPeca = result["peca"].ToString() == "1",
+                        RefPeca = result["ref"].ToString(),
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString() + " " + result["ousrdata"].ToString())
+
+                    });
+                }
+                conn.Close();
+                return LstAnexos.First();
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!");
+            }
+
+            return new Anexo();
+        }
+
         public Marcacao ObterResponsavelCliente(int IdCliente, int IdLoja, string TipoEquipamento)
         {
             Marcacao m = new Marcacao();
@@ -838,7 +987,7 @@ namespace FT_Management.Models
             return m;
         }
 
-        private List<Marcacao> ObterMarcacoes(string SQL_Query, bool LoadComentarios, bool LoadCliente, bool LoadTecnico, bool LoadFolhasObra)
+        private List<Marcacao> ObterMarcacoes(string SQL_Query, bool LoadComentarios, bool LoadCliente, bool LoadTecnico, bool LoadFolhasObra, bool LoadAnexos)
         {
             List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaUtilizadores(false);
             List<EstadoMarcacao> LstEstadoMarcacao = this.ObterMarcacaoEstados();
@@ -885,6 +1034,7 @@ namespace FT_Management.Models
                     });
                     if (LoadCliente) LstMarcacao.Last().Cliente = LstClientes.Where(c => c.IdCliente == int.Parse(result["no"].ToString().Trim())).Where(c => c.IdLoja == int.Parse(result["estab"].ToString().Trim())).DefaultIfEmpty(new Cliente()).First();
                     if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
+                    if (LoadAnexos) LstMarcacao.Last().LstAnexos = ObterAnexos(LstMarcacao.Last());
                     if (LoadTecnico)
                     {
                         LstMarcacao.Last().Tecnico = LstUtilizadores.Where(u => u.IdPHC == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador();
@@ -916,13 +1066,13 @@ namespace FT_Management.Models
         }
         private Marcacao ObterMarcacao(string SQL_Query, bool LoadAll)
         {
-            return ObterMarcacoes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Marcacao()).First();
+            return ObterMarcacoes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Marcacao()).First();
         }
 
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataMarcacoes)
         {
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and u_mdatas.data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false);
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false).AsEnumerable());
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and u_mdatas.data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false, false);
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false, false).AsEnumerable());
             return LstMarcacoes;
         }
 
@@ -930,40 +1080,40 @@ namespace FT_Management.Models
         {
             string SQL_Query = "SELECT TOP 200 num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 where " + (numMarcacao > 0 ? "num=" + numMarcacao + " and " : "") + (!string.IsNullOrEmpty(nomeCliente) ? "nome like '%" + nomeCliente + "%' and " : "") + (!string.IsNullOrEmpty(referencia) ? "nincidente like '%" + referencia + "%' and " : "") + (!string.IsNullOrEmpty(tipoe) && tipoe != "Todos" ? "tipoe like '%" + tipoe + "%' and " : "") + (idtecnico > 0 ? "u_mtecnicos.tecnno=" + idtecnico + " and " : "");
             SQL_Query = SQL_Query.Remove(SQL_Query.Length - 4);
-            List<Marcacao> LstMarcacoes = ObterMarcacoes(SQL_Query + "order by num desc;", false, true, true, false);
+            List<Marcacao> LstMarcacoes = ObterMarcacoes(SQL_Query + "order by num desc;", false, true, true, false, false);
             return LstMarcacoes;
         }
 
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
             
-            List <Marcacao> LstMarcacoes = (ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, u_mtecnicos.tecnno, no, estab, tipos, tipoe, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis , resumo FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 WHERE data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "';", false, true, true, false));
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, u_mtecnicos.tecnno,  u_marcacao.u_marcacaostamp, no, estab, tipos, tipoe, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, u_mdatas.periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo, u_marcacao.ousrinis   FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' ;", false, true, true, false).AsEnumerable());
+            List <Marcacao> LstMarcacoes = (ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, u_mtecnicos.tecnno, no, estab, tipos, tipoe, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis , resumo FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 WHERE data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "';", false, true, true, false, false));
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, u_mtecnicos.tecnno,  u_marcacao.u_marcacaostamp, no, estab, tipos, tipoe, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, u_mdatas.periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo, u_marcacao.ousrinis   FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' ;", false, true, true, false, false).AsEnumerable());
             return LstMarcacoes;
         }
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataInicio, DateTime DataFim)
         {
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and  u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by u_mdatas.data;", false, true, true, false);
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and  data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by data;", false, true, true, false).AsEnumerable());
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and  u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by u_mdatas.data;", false, true, true, false, false);
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and  data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by data;", false, true, true, false, false).AsEnumerable());
             return LstMarcacoes;
         }
         public List<Marcacao> ObterMarcacoes(Cliente c)
         {
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE no='" + c.IdCliente+"' and estab='"+c.IdLoja+"' order by u_mdatas.data;", true, true, true, true);
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE no='" + c.IdCliente + "' and estab='" + c.IdLoja + "' order by data;", true, true, true, true).AsEnumerable());
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE no='" + c.IdCliente+"' and estab='"+c.IdLoja+"' order by u_mdatas.data;", true, true, true, true, false);
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE no='" + c.IdCliente + "' and estab='" + c.IdLoja + "' order by data;", true, true, true, true, false).AsEnumerable());
             return LstMarcacoes;
         }
         public List<Marcacao> ObterMarcacoesPendentes(int IdTecnico)
         {
             List<EstadoMarcacao> LstEstados = ObterMarcacaoEstados();
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE u_mtecnicos.tecnno='" + IdTecnico + "' AND estado!='" + LstEstados[3].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[14].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[19].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[2].EstadoMarcacaoDesc + "' order by u_mdatas.data;", true, true, true, false);
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' AND estado!='" + LstEstados[3].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[14].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[19].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[2].EstadoMarcacaoDesc + "' order by data;", true, true, true, false).AsEnumerable());
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE u_mtecnicos.tecnno='" + IdTecnico + "' AND estado!='" + LstEstados[3].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[14].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[19].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[2].EstadoMarcacaoDesc + "' order by u_mdatas.data;", true, true, true, false, false);
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' AND estado!='" + LstEstados[3].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[14].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[19].EstadoMarcacaoDesc + "' AND estado!='" + LstEstados[2].EstadoMarcacaoDesc + "' order by data;", true, true, true, false, false).AsEnumerable());
             return LstMarcacoes;
         }
         public List<Marcacao> ObterMarcacoes()
         {
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.dat, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatasa, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp order by u_mdatas.data;", false, true, true, false);
-            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 order by data;", false, true, true, false).AsEnumerable());
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.dat, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatasa, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp order by u_mdatas.data;", false, true, true, false, false);
+            LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 order by data;", false, true, true, false, false).AsEnumerable());
             return LstMarcacoes;
         }
         public Marcacao ObterMarcacao(int IdMarcacao)

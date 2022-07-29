@@ -20,6 +20,7 @@ using PdfSharpCore.Pdf;
 using System.Net.Http;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace FT_Management.Controllers
 {
@@ -185,6 +186,63 @@ namespace FT_Management.Controllers
             }
 
             return Content("Sucesso");
+        }
+
+        [HttpPost]
+        public JsonResult AdicionarAnexo(int id, List<IFormFile> files)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            foreach (IFormFile file in files)
+            {
+                if (file.Length > 0)
+                {
+                    Anexo a = new Anexo()
+                    {
+                        MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
+                        IdMarcacao = id,
+                        AnexoMarcacao = true,
+                        NomeUtilizador = this.User.ObterNomeCompleto()
+                    };
+                    a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
+
+                    string res = phccontext.CriarAnexoMarcacao(a);
+                    if (res.Length > 0)
+                    {
+                        a = phccontext.ObterAnexo(res);
+                        string filePath = a.ObterCaminhoFicheiro();
+                        //string filePath = "/server/Assistencias_Tecnicas/MARC9524_202207291224378.pdf";
+                        try
+                        {
+                            using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                            {
+                                file.CopyTo(fileStream);
+                            }
+                        }
+                        catch
+                        {
+                            phccontext.ApagarAnexoMarcacao(a);
+                        }
+                    }
+                }
+            }
+
+            return Json("ok");
+        }
+
+        public ActionResult DownloadAnexo(string id)
+        {
+            if (id != null)
+            {
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+                Anexo a = phccontext.ObterAnexo(id);
+                string contentType;
+                new FileExtensionContentTypeProvider().TryGetContentType(a.NomeFicheiro, out contentType);
+                return File(context.BitMapToMemoryStream(a.NomeFicheiro), contentType);
+            }
+            return File("", "");
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
