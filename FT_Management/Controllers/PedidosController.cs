@@ -226,7 +226,7 @@ namespace FT_Management.Controllers
 
                 Anexo a = phccontext.ObterAnexo(id);
 
-                if (!System.IO.File.Exists(FicheirosContext.FormatLinuxServer(a.NomeFicheiro))) return File("", "");
+                //if (!System.IO.File.Exists(FicheirosContext.FormatLinuxServer(a.NomeFicheiro))) return File("", "");
 
                 string contentType;
                 new FileExtensionContentTypeProvider().TryGetContentType(a.NomeFicheiro, out contentType);
