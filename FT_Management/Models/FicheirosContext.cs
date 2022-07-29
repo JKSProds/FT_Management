@@ -42,6 +42,9 @@ namespace FT_Management.Models
 
         public static string FormatLinuxServer(string res)
         {
+#if DEBUG 
+    return res;
+#endif
             return res.Replace("\\", "/").Replace("S:", "/server");
         }
 

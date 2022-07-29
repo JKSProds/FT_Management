@@ -217,7 +217,7 @@ namespace FT_Management.Controllers
             return Json("ok");
         }
 
-        public ActionResult DownloadAnexo(string id)
+        public async Task<ActionResult> DownloadAnexo(string id)
         {
             if (id != null)
             {
@@ -226,11 +226,23 @@ namespace FT_Management.Controllers
 
                 Anexo a = phccontext.ObterAnexo(id);
 
-                //if (!System.IO.File.Exists(FicheirosContext.FormatLinuxServer(a.NomeFicheiro))) return File("", "");
+                if (!System.IO.File.Exists(FicheirosContext.FormatLinuxServer(a.NomeFicheiro))) return File("", "");
 
                 string contentType;
                 new FileExtensionContentTypeProvider().TryGetContentType(a.NomeFicheiro, out contentType);
-                return File(FicheirosContext.FormatLinuxServer(a.NomeFicheiro), contentType);
+
+                // create a memorystream
+                var memoryStream = new MemoryStream();
+
+                using (var stream = new FileStream(FicheirosContext.FormatLinuxServer(a.NomeFicheiro), FileMode.Open))
+                {
+                    await stream.CopyToAsync(memoryStream);
+                }
+                // set the position to return the file from
+                memoryStream.Position = 0;
+
+
+                return File(memoryStream, contentType, a.ObterNomeFicheiro());
             }
             return File("", "");
         }

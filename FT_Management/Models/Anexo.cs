@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace FT_Management.Models
 {
@@ -42,7 +43,10 @@ namespace FT_Management.Models
 
             return res;
         }
-
+        public string ObterNomeFicheiro()
+        {
+            return (NomeFicheiro.Contains("/") ? NomeFicheiro.Split("/").Last().ToString() : (NomeFicheiro.Contains("\\") ? NomeFicheiro.Split("\\").Last() : NomeFicheiro));
+        }
         public string ObterNomeUnico()
         {
             string res = "MARC" + IdMarcacao + "_";
