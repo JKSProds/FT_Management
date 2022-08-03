@@ -70,7 +70,8 @@ namespace FT_Management.Models
                         CorCalendario = result["CorCalendario"],
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
-                        DataNascimento = result["DataNascimento"]
+                        DataNascimento = result["DataNascimento"],
+                        IdArmazem = result["IdArmazem"]
                 });
                 }
             }
