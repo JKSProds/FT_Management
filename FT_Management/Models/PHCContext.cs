@@ -638,7 +638,7 @@ namespace FT_Management.Models
 
                     conn.Close();
                 }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine("Não foi possivel ler as peças usadas pelos PAT's do PHC!");
             }
