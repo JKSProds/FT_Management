@@ -517,13 +517,13 @@ namespace FT_Management.Controllers
             return View(m);
         }
 
-        public ActionResult<string> ObterPecasUso()
+        public ActionResult<string> ObterPecasUso(int IdTecnico)
         {
             string res = "";
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdArmazem = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdArmazem;
+            int IdArmazem = context.ObterUtilizador(IdTecnico).IdArmazem;
             string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
 
                 foreach (var item in phccontext.ObterPecasGuiaTransporte(ultimaGT, IdArmazem))
