@@ -34,7 +34,7 @@ namespace FT_Management.Controllers
             {
                 return View(phccontext.ObterProdutos(Ref, Desig, Armazem).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
-
+            phccontext.ObterGuiasTransporte(32);
             return View(phccontext.ObterProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
         }
 

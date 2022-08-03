@@ -226,7 +226,7 @@ namespace FT_Management.Controllers
 
                 Anexo a = phccontext.ObterAnexo(id);
                 string CaminhoFicheiro = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
-                if (!System.IO.File.Exists(CaminhoFicheiro)) return File("", "");
+                if (!System.IO.File.Exists(CaminhoFicheiro)) return Forbid();
 
                 //Determine the Content Type of the File.
                 string contentType = "";
@@ -239,7 +239,7 @@ namespace FT_Management.Controllers
                 //Send the File to Download.
                 return new FileContentResult(bytes, contentType);
             }
-            return File("", "");
+            return Forbid();
         }
         public ActionResult ApagarAnexo(string id)
         {
@@ -348,7 +348,7 @@ namespace FT_Management.Controllers
 
             int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
             if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
-            if (IdUtilizador == 0) return File("", "");
+            if (IdUtilizador == 0) return Forbid();
 
             var calendar = new Calendar();
             List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(IdUtilizador).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
@@ -515,6 +515,23 @@ namespace FT_Management.Controllers
             ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador != 3).ToList();
 
             return View(m);
+        }
+
+        public ActionResult<string> ObterPecasUso()
+        {
+            string res = "";
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            int IdArmazem = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdArmazem;
+            string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
+
+                foreach (var item in phccontext.ObterPecasGuiaTransporte(ultimaGT, IdArmazem))
+            {
+                res += "Ref: " + item.Ref_Produto + " | Designacao: " + item.Designacao_Produto + " | Qtd: " + item.Stock_Fisico + " " + item.TipoUn + "\r\n";
+            }
+
+            return res;
         }
     }
 }

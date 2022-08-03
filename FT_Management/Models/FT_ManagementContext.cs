@@ -110,7 +110,8 @@ namespace FT_Management.Models
                         TipoMapa = result["TipoMapa"],
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
-                        DataNascimento = result["DataNascimento"]
+                        DataNascimento = result["DataNascimento"],
+                        IdArmazem = result["IdArmazem"]
                     };
                     if (!string.IsNullOrEmpty(result["ID"]))
                     {
