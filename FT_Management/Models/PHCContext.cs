@@ -655,7 +655,7 @@ namespace FT_Management.Models
         }
         public List<String> ObterGuiasTransporte(int IdArmazem)
         {
-            return ExecutarQuery("SELECT obrano from V_DOCS_GLOBAL where ar2mazem = 32 order by dataobra desc");
+            return ExecutarQuery("SELECT obrano from V_DOCS_GLOBAL where ar2mazem = "+IdArmazem+" order by dataobra desc");
         }
         #endregion
 
