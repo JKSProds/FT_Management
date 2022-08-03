@@ -523,7 +523,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdArmazem = context.ObterUtilizador(IdTecnico).IdArmazem;
+            int IdArmazem = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == IdTecnico).First().IdArmazem;
             string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
 
                 foreach (var item in phccontext.ObterPecasGuiaTransporte(ultimaGT, IdArmazem))
