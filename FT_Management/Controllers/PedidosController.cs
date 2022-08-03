@@ -525,6 +525,7 @@ namespace FT_Management.Controllers
 
             int IdArmazem = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).First().IdArmazem;
             string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
+            res += "### " + ultimaGT + " ###\r\n";
 
                 foreach (var item in phccontext.ObterPecasGuiaTransporte(ultimaGT, IdArmazem))
             {
