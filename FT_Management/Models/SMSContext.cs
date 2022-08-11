@@ -26,7 +26,7 @@ namespace FT_Management.Models
                 switch (context.ObterParam("SMS_Service"))
                 {
                     case "Android":
-                         EnviarMensagemAndroid(Destino, Mensagem);
+                         _ = EnviarMensagemAndroid(Destino, Mensagem);
                         break;
                     case "Twilio":
                          return EnviarMensagemTwilio(Destino, Mensagem);
@@ -35,7 +35,7 @@ namespace FT_Management.Models
             return false;
         }
 
-        private static bool EnviarMensagemAndroid(string Destino, string Mensagem)
+        private async static Task EnviarMensagemAndroid(string Destino, string Mensagem)
         {
             //string url = "http://192.168.103.195:1688/services/api/messaging/?To=" + Destino + "&Message=" + Mensagem;
             string url = "http://192.168.103.195:1688/services/api/messaging/";
@@ -49,15 +49,7 @@ namespace FT_Management.Models
 
             var content = new FormUrlEncodedContent(pairs);
             
-            var response = client.PostAsync(url, content).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-
-                return true;
-            }
-            return false;
-
+            var response = await client.PostAsync(url, content);
         }
 
         private static bool EnviarMensagemTwilio(string Destino, string Mensagem)
@@ -90,7 +82,7 @@ namespace FT_Management.Models
            EnviarMensagemAndroid(Destino, "Mensagem de Teste!");
         }
 
-        public static void EnviarMensagemCriacaoMarcacao(Marcacao m)
+        public static void EnviarMensagemCriacaoMarcacaoAsync(Marcacao m)
         {
             foreach (var u in m.LstTecnicos)
             {
