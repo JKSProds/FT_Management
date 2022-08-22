@@ -79,7 +79,7 @@ namespace FT_Management.Models
 
         public static void EnviarMensagemTeste(string Destino)
         {
-           EnviarMensagemAndroid(Destino, "Mensagem de Teste!");
+           _ = EnviarMensagemAndroid(Destino, "Mensagem de Teste!");
         }
 
         public static void EnviarMensagemCriacaoMarcacaoAsync(Marcacao m)
