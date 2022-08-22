@@ -13,7 +13,7 @@ namespace FT_Management.Models
     public class PHCContext
     {
         private string ConnectionString { get; set; }
-        private readonly int TIMEOUT = 2;
+        private readonly int TIMEOUT = 5;
         private FT_ManagementContext FT_ManagementContext { get; set; }
 
         public PHCContext(string connectionString, string mySqlConnectionString)
@@ -28,7 +28,7 @@ namespace FT_Management.Models
                 cnn.Open();
                 Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
 
-                //SMSContext.EnviarMensagemCriacaoMarcacao(this.ObterMarcacao(9693));
+                SMSContext.EnviarMensagemCriacaoMarcacao(this.ObterMarcacao(9693));
             }
             catch
             {
