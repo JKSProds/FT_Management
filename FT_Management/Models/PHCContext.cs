@@ -705,7 +705,7 @@ namespace FT_Management.Models
                 if (result[0].ToString() != "-1")
                 {
                     res = int.Parse(result[3].ToString());
-                    SMSContext.EnviarMensagemCriacaoMarcacao(m);
+                    SMSContext.EnviarMensagemCriacaoMarcacaoAsync(m);
                 }
 
                 conn.Close();
