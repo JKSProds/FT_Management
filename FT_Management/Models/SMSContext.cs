@@ -50,6 +50,7 @@ namespace FT_Management.Models
             var content = new FormUrlEncodedContent(pairs);
             
             var response = await client.PostAsync(url, content);
+            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
         }
 
         private static bool EnviarMensagemTwilio(string Destino, string Mensagem)

@@ -26,9 +26,6 @@ namespace FT_Management.Models
             {
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
-                Console.WriteLine("Connectado á Base de Dados PHC com sucesso!");
-
-                SMSContext.EnviarMensagemCriacaoMarcacaoAsync(this.ObterMarcacao(9693));
             }
             catch
             {
@@ -706,11 +703,12 @@ namespace FT_Management.Models
                 {
                     res = int.Parse(result[3].ToString());
                     SMSContext.EnviarMensagemCriacaoMarcacaoAsync(m);
+                    FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + res + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
+                    FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "SMS enviado com sucesso para o cliente " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 }
 
                 conn.Close();
 
-                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + res + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
 
             }
 

@@ -32,7 +32,6 @@ namespace FT_Management.Models
             try
             {
                 Database db = ConnectionString;
-                Console.WriteLine("Connectado á Base de Dados MySQL com sucesso!");
             }
             catch
             {
