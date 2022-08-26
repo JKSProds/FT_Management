@@ -81,7 +81,7 @@ namespace FT_Management.Models
             return functionReturnValue;
         }
         public string Senha { get; set; }
-        public string GetUrl { get { return "http://62.28.200.46:8082/Utilizadores/Login";  } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Utilizadores/Login";  } }
         public Cliente()
         {
             this.IdCliente = 0;
