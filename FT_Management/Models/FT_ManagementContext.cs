@@ -1262,6 +1262,46 @@ namespace FT_Management.Models
 
         #endregion
 
+        //Notificacoes
+        #region Notificacoes
+        public List<Notificacao> ObterNotificacoesPendentes()
+        {
+            List<Notificacao> LstNotificacoes = new List<Notificacao>();
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT * FROM dat_notificacoes where Pendente=0;");
+            while (result.Read())
+            {
+                LstNotificacoes.Add(new Notificacao()
+                {
+                    ID = result["Id"],
+                    Mensagem = result["Mensagem"],
+                    Destino = result["Destino"],
+                    Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                    Tipo = result["Tipo"],
+                    Pendente = result["Pendente"] == 1
+                });
+            }
+
+            return LstNotificacoes;
+        }
+        public void CriarNotificacao(Notificacao notificacao)
+        {
+
+                string sql = "INSERT INTO dat_notificacoes (Mensagem,Destino,IdUtilizador, Tipo, Pendente) VALUES ('" + notificacao.Mensagem + "', '" + notificacao.Destino + "', '" + notificacao.Utilizador.Id + "', '" + notificacao.Tipo + "', '" + notificacao.Pendente + "', )";
+
+                try
+                {
+                    Database db = ConnectionString;
+
+                    db.Execute(sql);
+                    db.Connection.Close();
+                }
+                catch
+                {
+                }
+        }
+        #endregion
+
         //CONTACTOS
         #region Contactos
         public Contacto ObterContacto(int id)

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using FT_Management.Models;
+using System.Text.Json;
+using System.Dynamic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FT_Management.Controllers
 {
@@ -32,6 +35,26 @@ namespace FT_Management.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [AllowAnonymous]
+        public string Notificacoes(string Api_Key)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            string res = "";
+
+            foreach (var item in context.ObterNotificacoesPendentes())
+            {
+                dynamic obj = new ExpandoObject();
+                obj.message = item.Mensagem;
+                obj.number = item.Destino;
+                obj.messageId = item.ID;
+
+                res += Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+            }
+
+            return res;
         }
     }
 }
