@@ -38,9 +38,11 @@ namespace FT_Management.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost]
         public string Notificacoes(string Api_Key)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            context.AdicionarLog(1, "Leitura de Notificacoes da BD com Sucesso", 5);
 
             string res = "";
 
