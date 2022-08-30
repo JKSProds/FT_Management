@@ -179,6 +179,7 @@ namespace FT_Management.Controllers
             u.TipoMapa = utilizador.TipoMapa;
             u.Telemovel = utilizador.Telemovel;
             u.DataNascimento = utilizador.DataNascimento;
+            u.Viatura.Matricula = utilizador.Viatura.Matricula;
 
             context.NovoUtilizador(u);
 
