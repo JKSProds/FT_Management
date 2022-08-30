@@ -79,7 +79,7 @@ namespace FT_Management.Models
                 var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
                 if (phoneNumberUtil.IsValidNumberForRegion(phoneNumberUtil.Parse(this._Telemovel, "PT"), "PT"))
                 {
-                    if (Indicativo) res = "+" + phoneNumberUtil.Parse(this._Telemovel, "PT").CountryCode.ToString() + phoneNumberUtil.Parse(this._Telemovel, "PT").NationalNumber.ToString();
+                    if (Indicativo) res = "+" + phoneNumberUtil.Parse(this._Telemovel, "PT").CountryCode.ToString();
                     res += phoneNumberUtil.Parse(this._Telemovel, "PT").NationalNumber.ToString();
                 }
             }
