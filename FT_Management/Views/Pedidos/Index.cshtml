@@ -90,6 +90,14 @@
                             <span>Adicionar</span>
                         </button>
                     </p>
+                    <p class="control">
+                        <button class="button is-danger" type="button" onclick="ObterViaturas()">
+                            <span class="icon">
+                                <i class="fas fa-car-side fa-lg"></i>
+                            </span>
+                            <span>Viaturas</span>
+                        </button>
+                    </p>
                 </div>
             </div>
         </div>
@@ -168,6 +176,21 @@
     }
 </div>
 
+<div id="modalObterViaturas" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Lista de Viaturas</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p> </p>
+            </div>
+        </section>
+    </div>
+</div>
+
 <script>
     function filtrar() {
         var num = document.getElementById("txtNumMarcacao").value;
@@ -180,5 +203,41 @@
         if (document.getElementById("idtecnico").selectedIndex == "0") tecnico = 0;
 
         window.location.href = "/Pedidos?numMarcacao=" + num + "&nomeCliente=" + nome + "&referencia=" + referencia + "&tipoe=" + tipoe + "&idtecnico=" + tecnico;
+    }
+
+    function ObterViaturas() {
+         $.ajax({
+            url: '/Utilizadores/ObterViaturas/',
+            type: "GET",
+            success: function (response) {
+                console.log(response);
+                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Técnico</th><th>Matricula</th><th>Localizacao</th><th></th></tr></thead><tbody>";
+                for (var i = 0; i < response.length; i++) {
+                    var obj = response[i];
+                    var tecnico = 'N/D';
+                    if (obj.utilizador != null) tecnico = obj.utilizador.nomeCompleto;
+                    var matricula = obj.matricula;
+                    var localizacao = obj.localizacaoMorada;
+                    var latitude = obj.latitude;
+                    var longitude = obj.longitude;
+
+                        html += "<tr><td>"+ tecnico +"</td><td>" + matricula + "</td><td>" + localizacao + "</td><td><a class=\"button is-outlined is-primary is-large card-footer-item\" href=\"https://www.google.com/maps/search/?api=1&query="+latitude+","+longitude+"\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></td></tr>";
+
+
+                }
+                html += "</tbody></table>"
+                $('#modalObterViaturas').find('.modal-body').html(html);
+
+                var modal = Bulma('#modalObterViaturas').modal();
+                modal.open();
+                
+            },
+            error: function (response) {
+                alert(response.responseText);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            }
+        });
     }
 </script>

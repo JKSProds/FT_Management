@@ -57,6 +57,7 @@ namespace FT_Management.Models
         public int TipoMapa { get; set; }
         [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
+        public Viatura Viatura { get; set; }
         public Utilizador()
         {
             this.Id = 0;
@@ -68,6 +69,7 @@ namespace FT_Management.Models
             this.IdArmazem = 0;
             this.ApiKey = new ApiKey();
         }
+        
 
         public string ObterTelemovelFormatado(bool Indicativo)
         {

@@ -70,8 +70,9 @@ namespace FT_Management.Models
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
-                        IdArmazem = result["IdArmazem"]
-                });
+                        IdArmazem = result["IdArmazem"],
+                        Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
+                    });
                 }
             }
             return LstUtilizadores;
@@ -111,7 +112,8 @@ namespace FT_Management.Models
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
-                        IdArmazem = result["IdArmazem"]
+                        IdArmazem = result["IdArmazem"],
+                        Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
                     };
                     if (!string.IsNullOrEmpty(result["ID"]))
                     {
@@ -123,6 +125,11 @@ namespace FT_Management.Models
                             Key = result["ApiKey"]
                         };
                     }
+                    if (!string.IsNullOrEmpty(utilizador.Viatura.Matricula))
+                    {
+                        utilizador.Viatura = ObterViatura(utilizador);
+                    }
+
                 }
             }
             return utilizador;
@@ -178,6 +185,60 @@ namespace FT_Management.Models
                 db.Execute(sql);
             }
             return RandomApiKey;
+        }
+
+        public Viatura ObterViatura(Utilizador utilizador)
+        {
+            Viatura res = new Viatura();
+
+            string sqlQuery = "SELECT * FROM dat_viaturas where matricula_viatura='" + utilizador.Viatura.Matricula + "';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    res = new Viatura()
+                    {
+                        Matricula = result["matricula_viatura"],
+                        LocalizacaoMorada = result["localizacao"],
+                        Latitude = result["latitude"],
+                        Longitude = result["longitude"],
+                        KmsAtuais = result["ultimoKms"],
+                        Utilizador = utilizador
+                    };
+                }
+            }
+
+
+            return res;
+        }
+
+        public List<Viatura> ObterViaturas()
+        {
+            List<Viatura> res = new List<Viatura>();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true).Where(u => u.Viatura.Matricula != "").ToList();
+            string sqlQuery = "SELECT * FROM dat_viaturas;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    res.Add(new Viatura()
+                    {
+                        Matricula = result["matricula_viatura"],
+                        LocalizacaoMorada = result["localizacao"],
+                        Latitude = result["latitude"],
+                        Longitude = result["longitude"],
+                        KmsAtuais = result["ultimoKms"],
+                        Utilizador = LstUtilizadores.Where(u => u.Viatura.Matricula == result["matricula_viatura"]).FirstOrDefault()
+                    });
+                }
+            }
+
+
+            return res;
         }
         #endregion
 
