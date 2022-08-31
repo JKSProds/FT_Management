@@ -77,11 +77,11 @@ namespace FT_Management.Models
 
             return true;
         }
-        public static bool EnviarEmailMarcacaoCliente(string EmailDestino, Marcacao m)
+        public static bool EnviarEmailMarcacaoCliente(string EmailDestino, Marcacao m, Attachment anexo)
         {
             string Assunto = "Nova Marcação - Cliente - " + m.Cliente.NomeCliente;
-            string Mensagem = "Foi agendada uma marcação para o dia: " + m.DataMarcacao.ToShortDateString() + "<br><br><b>Dados adicionais:</b><br>Técnico: " + string.Join(" | ", m.LstTecnicos.Select(x => x.NomeCompleto)) + "<br>Data: " + m.DataMarcacao.ToShortDateString() + "<br>Cliente: " + m.Cliente.NomeCliente + "<br>Morada: " + m.Cliente.MoradaCliente + "<br>Prioridade: " + m.PrioridadeMarcacao + "<br>Equipamento: " + m.TipoEquipamento;
-            EnviarMail(EmailDestino, Assunto, Mensagem, null, ObterEmailCC(1));
+            string Mensagem = "Foi agendada uma marcação para o dia: " + m.DataMarcacao.ToShortDateString() + "<br><br><b>Dados adicionais:</b><br>Técnico: <b>" + string.Join(" | ", m.LstTecnicos.Select(x => x.NomeCompleto)) + "</b><br>Data: <b>" + m.DataMarcacao.ToShortDateString() + " " + (m.Hora!="00:00" ? m.Hora : (!string.IsNullOrEmpty(m.Periodo) ? m.Periodo : "")) + "</b><br>Cliente: <b>" + m.Cliente.NomeCliente + "</b><br>Morada: <b>" + m.Cliente.MoradaCliente + "</b><br>Prioridade: <b>" + m.PrioridadeMarcacao + "</b><br>Equipamento: <b>" + m.TipoEquipamento + "</b>";
+            EnviarMail(EmailDestino, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;
         }
@@ -101,7 +101,7 @@ namespace FT_Management.Models
             
 
             Mensagem += "</table><br><br>";
-            Mensagem += "<a href=\"http://"+ "62.28.200.46:8082" + "/Visitas/ListaVisitas?IdComercial=" + u.Id + "\" class=\"button\">Ver</a>";
+            Mensagem += "<a href=\"http://"+ "webapp.food-tech.pt" + "/Visitas/ListaVisitas?IdComercial=" + u.Id + "\" class=\"button\">Ver</a>";
 
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(2));
 

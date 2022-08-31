@@ -278,7 +278,28 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Marcacao m = phccontext.ObterMarcacao(id);
 
-            if (!MailContext.EnviarEmailMarcacaoCliente(email, m)) return Content("Erro");
+            var calendar = new Calendar();
+
+            var e = new CalendarEvent
+            {
+                Start = new CalDateTime(m.DataMarcacao),
+                End = new CalDateTime(m.DataMarcacao),
+                IsAllDay = true,
+                LastModified = new CalDateTime(DateTime.Now),
+                Uid = m.IdMarcacao.ToString() + "_Cliente",
+                Description = "Foi agendada uma assistência técnica. Para mais informações contacte: +351 229 479 670 (" + m.Utilizador.NomeCompleto + ")",
+                Location = m.Cliente.MoradaCliente,
+                Contacts = new List<string>() { "+351229479670"},
+                //Name = "Assistência Técnica | Food-Tech",
+                Summary = "Food-Tech | Marc. Nº" + m.IdMarcacao + " - Assistência Técnica",
+            };
+
+            calendar.Events.Add(e);
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
+
+            if (!MailContext.EnviarEmailMarcacaoCliente(email, m, new System.Net.Mail.Attachment((new MemoryStream(bytesCalendar)), m.IdMarcacao + ".ics"))) return Content("Erro");
 
             return Content("Sucesso");
         }
@@ -364,7 +385,8 @@ namespace FT_Management.Controllers
                     Uid =  m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
                     Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?id=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC)
+                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?id=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC),
+                    Location = m.Cliente.MoradaCliente
                 };
                 calendar.Events.Add(e);
                 d = d.AddMinutes(30);
