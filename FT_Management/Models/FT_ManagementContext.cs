@@ -205,7 +205,8 @@ namespace FT_Management.Models
                         Latitude = result["latitude"],
                         Longitude = result["longitude"],
                         KmsAtuais = result["ultimoKms"],
-                        Utilizador = utilizador
+                        Utilizador = utilizador,
+                        Ignicao = result["ignicao"] == 1
                     };
                 }
             }
@@ -232,7 +233,8 @@ namespace FT_Management.Models
                         Latitude = result["latitude"],
                         Longitude = result["longitude"],
                         KmsAtuais = result["ultimoKms"],
-                        Utilizador = LstUtilizadores.Where(u => u.Viatura.Matricula == result["matricula_viatura"]).FirstOrDefault()
+                        Utilizador = LstUtilizadores.Where(u => u.Viatura.Matricula == result["matricula_viatura"]).FirstOrDefault(),
+                        Ignicao = result["ignicao"] == 1
                     });
                 }
             }
