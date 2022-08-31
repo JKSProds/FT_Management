@@ -308,15 +308,16 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(IdTecnico, DataPedidos);
-
-            string url = "https://www.google.com/maps/search/";
-            url += "?daddr=" + ListaMarcacoes.First().Cliente.ObterMoradaDirecoes();
+            //string url = "https://www.google.com/maps/dir/33.93729,-106.85761/33.91629,-106.866761/33.98729,-106.85861//@34.0593359,-106.7131944,11z"
+            string url = "https://www.google.com/maps/dir/";
+            url += ListaMarcacoes.First().Cliente.ObterMoradaDirecoes().Replace("/", " ");
             ListaMarcacoes.RemoveAt(0);
 
             foreach (var item in ListaMarcacoes)
             {
-                url += "+to:"+item.Cliente.ObterMoradaDirecoes();
+                url += "/"+item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
             }
+            url += "//@";
             return Redirect(url);
         }
 
