@@ -236,11 +236,12 @@ namespace FT_Management.Models
                         Utilizador = LstUtilizadores.Where(u => u.Viatura.Matricula == result["matricula_viatura"]).FirstOrDefault(),
                         Ignicao = result["ignicao"] == 1
                     });
+                    if (res.Last().Utilizador == null) res.Last().Utilizador = new Utilizador();
                 }
             }
 
 
-            return res;
+            return res.OrderBy(v => v.Utilizador.NomeCompleto).ToList();
         }
         #endregion
 
