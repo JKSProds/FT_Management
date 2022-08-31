@@ -318,7 +318,7 @@ namespace FT_Management.Controllers
                 url += "/"+item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
             }
             url += "//@";
-            return Redirect(url);
+            return Redirect(new Uri(url).AbsoluteUri);
         }
 
         [HttpPost]
