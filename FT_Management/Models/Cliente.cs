@@ -94,9 +94,9 @@ namespace FT_Management.Models
             if (IdCliente == 561) {
                 if (NomeCliente.Contains("CNT")) return NomeCliente.Replace("CNT", "Continente");
                 if (NomeCliente.Contains("MDL")) return NomeCliente.Replace("MDL", "Modelo");
-                if (NomeCliente.Contains("BD")) return NomeCliente.Replace("BD", "Continete Bom Dia");
-                if (NomeCliente.Contains("CBD")) return NomeCliente.Replace("CBD", "Continete Bom Dia");
-                if (NomeCliente.Contains("BNJ")) return NomeCliente.Replace("BNJ", "Continete Bom Dia");
+                if (NomeCliente.Contains("BD")) return NomeCliente.Replace("BD", "Continente Bom Dia");
+                if (NomeCliente.Contains("CBD")) return NomeCliente.Replace("CBD", "Continente Bom Dia");
+                if (NomeCliente.Contains("BNJ")) return NomeCliente.Replace("BNJ", "Continente Bom Dia");
             };
 
             return MoradaCliente;

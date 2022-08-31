@@ -304,6 +304,22 @@ namespace FT_Management.Controllers
             return Content("Sucesso");
         }
 
+        public IActionResult ObterDirecaosDia(int IdTecnico, DateTime DataPedidos)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(IdTecnico, DataPedidos);
+
+            string url = "https://www.google.com/maps/search/";
+            url += "?daddr=" + ListaMarcacoes.First().Cliente.ObterMoradaDirecoes();
+            ListaMarcacoes.RemoveAt(0);
+
+            foreach (var item in ListaMarcacoes)
+            {
+                url += "+to:"+item.Cliente.ObterMoradaDirecoes();
+            }
+            return Redirect(url);
+        }
+
         [HttpPost]
         public JsonResult ObterClientes(string prefix)
         {

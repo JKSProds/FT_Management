@@ -75,7 +75,15 @@
                         <span>Peças</span>
                     </a>
                 </p>
-            </div>
+                <p class="control">
+                    <a class="button is-primary is-outlined" href="@Url.Action("ObterDirecaosDia", "Pedidos", new {IdTecnico = @ViewData["IdTecnico"], DataPedidos = DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd")})">
+                        <span class="icon">
+                            <i class="fa-solid fa-map-location"></i>
+                        </span>
+                        <span>Direções</span>
+                    </a>
+                </p>
+                </div>
 
         </div>
     </div>
