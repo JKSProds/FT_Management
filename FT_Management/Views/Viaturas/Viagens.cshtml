@@ -97,7 +97,7 @@
                                 <span>@item.Inicio_Viagem.ToShortTimeString()</span>
                             </td>
                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Viagem)">
-                                <span>@item.Fim_Viagem.ToShortTimeString()</span>
+                                <span>@(item.Fim_Viagem.ToShortTimeString() == "00:00" ? "--:--" : item.Fim_Viagem.ToShortTimeString())</span>
                             </td>
                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Local)">
                                 <span>@item.Inicio_Local</span>
@@ -106,16 +106,16 @@
                                 <span>@item.Fim_Local</span>
                             </td>
                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Kms)">
-                                <span>@item.Inicio_Kms</span>
+                                <span>@(item.Inicio_Kms.Count() > 3 ? (item.Inicio_Kms.Remove(item.Inicio_Kms.Count() - 3)) + " KM" : "---")</span>
                             </td>
                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Kms)">
-                                <span>@item.Fim_Kms</span>
+                                <span>@(item.Fim_Kms.Count() > 3 ? (item.Fim_Kms.Remove(item.Fim_Kms.Count() - 3)) + " KM" : "---")</span>
                             </td>
                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tempo_Viagem)">
-                                <span>@item.Tempo_Viagem</span>
+                                <span>@(item.Tempo_Viagem == "" ? "--:--" : item.Tempo_Viagem)</span>
                             </td>
                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Distancia_Viagem)">
-                                <span>@item.Distancia_Viagem</span>
+                                <span>@(item.Distancia_Viagem.Count() > 3 ? (item.Distancia_Viagem.Remove(item.Distancia_Viagem.Count() - 3)) + " KM" : "---")</span>
                             </td>
                         </tr>
                     }
