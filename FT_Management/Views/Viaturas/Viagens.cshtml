@@ -1,0 +1,127 @@
+﻿@model IEnumerable<FT_Management.Models.Viagem>
+
+@{
+    ViewData["Title"] = "Viagens";
+}
+
+
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fa-solid fa-car-side"></i>
+                            </span>
+                            <span>Viagens - @ViewData["Matricula"]</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-right my-auto mx-0">
+            <form method="get" style="width:100%" action="@ViewData["Matricula"]">
+                <div class="field">
+                    <p class="control" style="width:100%">
+                        <input class="input" type="date" value="@(DateTime.Parse(ViewData["Data"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="Data"/>
+                        <script>
+                            bulmaCalendar.attach('#txtData', {
+                                color: 'info',
+                                lang: 'pt',
+                                dateFormat: 'dd/MM/yyyy',
+                                todayLabel: 'Hoje',
+                                showClearButton: false,
+                                cancelLabel: 'Cancelar'
+                            });
+                            document.getElementById('txtData').bulmaCalendar.on('select', function(datepicker) {
+                                  document.getElementById('txtData').value = datepicker.data.value();
+                                  $('form').submit();
+                            });
+                        </script>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<hr />
+
+@if (Model.Count() == 0)
+{
+    <div class="container">
+        <br />
+        <button class="button is-danger is-fullwidth" disabled>Não foram encontradas viagens!</button>
+        </div>
+        }
+        else
+        {
+        <div class="container">
+            <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+            <table class="table is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Viagem)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Viagem)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Local)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Local)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Kms)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Kms)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Tempo_Viagem)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().Distancia_Viagem)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Viagem)">
+                                <span>@item.Inicio_Viagem.ToShortTimeString()</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Viagem)">
+                                <span>@item.Fim_Viagem.ToShortTimeString()</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Local)">
+                                <span>@item.Inicio_Local</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Local)">
+                                <span>@item.Fim_Local</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Inicio_Kms)">
+                                <span>@item.Inicio_Kms</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Fim_Kms)">
+                                <span>@item.Fim_Kms</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tempo_Viagem)">
+                                <span>@item.Tempo_Viagem</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Distancia_Viagem)">
+                                <span>@item.Distancia_Viagem</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        </div>
+        </div>
+        }

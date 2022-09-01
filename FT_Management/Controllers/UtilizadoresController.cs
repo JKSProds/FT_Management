@@ -283,14 +283,7 @@ namespace FT_Management.Controllers
 
             return Content("Ok");
         }
-        [HttpGet]
-        [Authorize(Roles = "Admin, Escritorio")]
-        public List<Viatura> ObterViaturas()
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return context.ObterViaturas();
-        }
 
         public async Task<IActionResult> Logout()
         {

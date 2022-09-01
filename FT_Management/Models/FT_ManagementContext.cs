@@ -243,6 +243,33 @@ namespace FT_Management.Models
 
             return res.OrderBy(v => v.Utilizador.NomeCompleto).ToList();
         }
+        public List<Viagem> ObterViagens(string Matricula, string DataViagens)
+        {
+            List<Viagem> res = new List<Viagem>();
+            string sqlQuery = "SELECT * FROM dat_viaturas_viagens where matricula_viatura='"+Matricula+ "' and inicio_viagem>='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd")+ " 00:00:00' and fim_viagem<='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 23:59:59';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    res.Add(new Viagem()
+                    {
+                        Matricula = result["matricula_viatura"],
+                        Inicio_Viagem = result["inicio_viagem"],
+                        Fim_Viagem = result["fim_viagem"],
+                        Inicio_Local = result["inicio_localizacao"],
+                        Fim_Local = result["fim_localizacao"],
+                        Inicio_Kms = result["inicio_kms"],
+                        Fim_Kms = result["fim_kms"],
+                        Distancia_Viagem = result["distancia_viagem"],
+                        Tempo_Viagem = result["tempo_viagem"]
+                    });
+                }
+            }
+
+            return res.OrderBy(v => v.Inicio_Viagem).ToList();
+        }
         #endregion
 
         //PARAMETROS
