@@ -229,16 +229,15 @@ namespace FT_Management.Controllers
                 string CaminhoFicheiro = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
                 if (!System.IO.File.Exists(CaminhoFicheiro)) return Forbid();
 
-                //Determine the Content Type of the File.
-                string contentType = "";
-                new FileExtensionContentTypeProvider().TryGetContentType(CaminhoFicheiro, out contentType);
+                if (MimeTypes.TryGetMimeType(CaminhoFicheiro, out var mimeType))
+                {
+                    byte[] bytes = System.IO.File.ReadAllBytes(CaminhoFicheiro);
 
-                //Read the File data into Byte Array.
-                byte[] bytes = System.IO.File.ReadAllBytes(CaminhoFicheiro);
+                    Response.Headers.Add("Content-Disposition", "inline;filename=" + a.ObterNomeFicheiro());
+                    //Send the File to Download.
+                    return new FileContentResult(bytes, mimeType);
 
-                Response.Headers.Add("Content-Disposition", "inline;filename=" + a.ObterNomeFicheiro());
-                //Send the File to Download.
-                return new FileContentResult(bytes, contentType);
+                }
             }
             return Forbid();
         }

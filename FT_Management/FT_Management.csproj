@@ -16,6 +16,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.WindowsServices" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGenerators.Mvc" Version="3.1.3" />
+    <PackageReference Include="MimeTypes" Version="2.4.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MySql.Simple" Version="5.3.5" />
     <PackageReference Include="PdfSharpCore" Version="1.3.27" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
