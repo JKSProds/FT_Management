@@ -461,7 +461,7 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="AdicionarAnexo()" id="btnConfirmAddAnexo" href="javascript:;">Adicionar</button>
+            <button type="button" class="button is-info" onclick="close" id="btnConfirmAddAnexo" href="javascript:;">Fechar</button>
         </footer>
     </div>
 </div>
@@ -486,8 +486,8 @@
 </div>
 
 <script>
-    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
-    const $target = $close.closest('.modal');
+    (document.querySelectorAll('#modalAdicionarAnexo') || []).forEach(($close) => {
+    const $target = $close.closest('#modalAdicionarAnexo');
 
     $close.addEventListener('click', () => {
           window.location.reload();

@@ -160,13 +160,14 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public ActionResult AdicionarComentario(int id, string comentario, int fechar)
+        public JsonResult AdicionarComentario(int id, string comentario, int fechar)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Marcacao m = phccontext.ObterMarcacao(id);
 
+            Console.WriteLine("A adicionar comentário!");
 
             Comentario c = new Comentario()
             {
@@ -176,7 +177,7 @@ namespace FT_Management.Controllers
                 DataComentario = DateTime.Now
             };
 
-            phccontext.CriarComentarioMarcacao(c);
+            bool res = phccontext.CriarComentarioMarcacao(c);
 
             if (fechar == 1) {
                 m.JustificacaoFecho = comentario;
@@ -185,7 +186,7 @@ namespace FT_Management.Controllers
                 phccontext.AtualizaMarcacao(m);
             }
 
-            return Content("Sucesso");
+            return Json(new { json = res });
         }
 
         [HttpPost]
