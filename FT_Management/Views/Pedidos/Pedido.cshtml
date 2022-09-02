@@ -213,6 +213,61 @@
                                 </p>
                             </div>
                         </div>
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label asp-for="QuemPediuNome" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="QuemPediuNome" class="input" readonly />
+                                    <span class="icon is-small is-left">
+<i class="fa-solid fa-user"></i>
+</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-4 my-auto">
+                            <div class="field">
+                                <label asp-for="QuemPediuEmail" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="QuemPediuEmail" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2 my-auto">
+                            <div class="field">
+                                <label asp-for="QuemPediuTelefone" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="QuemPediuTelefone" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-phone"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label class="label">Criado por</label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="Utilizador.NomeCompleto" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-asterisk"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label class="label">Técnico(s)</label>
+                                <p class="control has-icons-left">
+                                    <input value="@string.Join(" | ", Model.LstTecnicos.Select(x => x.NomeCompleto))" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-users"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
                         <div class="column is-4">
                             <div class="field">
                                 <label asp-for="Referencia" class="label"></label>
@@ -224,7 +279,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-4 my-auto">
+                        <div class="column is-2 my-auto">
                             <div class="field">
                                 <label disabled class="switch is-rounded">
                                     <input type="checkbox" disabled checked="@Model.Piquete">
@@ -233,7 +288,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="column is-4 my-auto">
+                        <div class="column is-2 my-auto">
                         <div class="field">
                             <label disabled class="switch is-rounded">
                                 <input type="checkbox" disabled checked="@Model.Oficina">
@@ -242,6 +297,7 @@
                             </label>
                         </div>
                         </div>
+                        
                         <div class="column">
                             <div  class="field">
                                 <label asp-for="ResumoMarcacao" class="label"></label>
