@@ -36,30 +36,5 @@ namespace FT_Management.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        [AllowAnonymous]
-        [HttpPost]
-        public string Notificacoes(string deviceId, string action)
-        {
-            string res = "";
-            Console.WriteLine("POST NOTIFICACOES");
-
-            if (deviceId == "1" && action=="SEND")
-            {
-                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                Console.WriteLine("Leitura de Notificacoes da BD com Sucesso");
-
-                foreach (var item in context.ObterNotificacoesPendentes())
-                {
-                    dynamic obj = new ExpandoObject();
-                    obj.message = item.Mensagem;
-                    obj.number = item.Destino;
-                    obj.messageId = item.ID;
-
-                    res += Newtonsoft.Json.JsonConvert.SerializeObject(obj);
-                }
-            }
-            return res;
-        }
     }
 }
