@@ -1996,6 +1996,190 @@ namespace FT_Management.Models
 
             return bm;
         }
+        public Bitmap DesenharFolhaObraSimples(FolhaObra fo)
+        {
+
+            int x = 0;
+            int y = 0;
+            int width = 1024;
+            int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count()*140)*2;
+
+            Bitmap bm = new Bitmap(width, height);
+
+            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
+            Font fontBody = new Font("Rubik", 22, FontStyle.Bold);
+            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
+
+            string HeaderPagina = "Original";
+
+            StringFormat format = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
+            StringFormat formatRight = new StringFormat
+            {
+                LineAlignment = StringAlignment.Far,
+                Alignment = StringAlignment.Far
+            };
+            StringFormat formatLeft = new StringFormat
+            {
+                LineAlignment = StringAlignment.Near,
+                Alignment = StringAlignment.Near
+            };
+
+            Pen penB = new Pen(Color.Black, 5);
+            Pen pen = new Pen(Color.Transparent, 5);
+
+            using (Graphics gr = Graphics.FromImage(bm))
+            {
+                gr.Clear(Color.White);
+                Rectangle rect = new Rectangle();
+
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                for (int i = 0; i <= 1; i++)
+                {
+                    if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
+                    QRCode qrCode = new QRCode(qrCodeData);
+                    Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+                    gr.DrawImage(qrCodeImage, width-200, y + 20, 200, 200);
+
+                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                    gr.DrawString(HeaderPagina, fontBody, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                    gr.DrawString("Nº PAT: " + fo.IdFolhaObra, fontFooter, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                    gr.DrawString("Nº Assis. Técnica: " + fo.IdAT, fontFooter, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                    gr.DrawString("Nº Marcação: " + fo.IdMarcacao, fontFooter, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                    gr.DrawString("Data: " + fo.DataServico.ToShortDateString(), fontFooter, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 60;
+                    rect = new Rectangle(x + 10, y + 20, 400, 240);
+                    gr.DrawRectangle(penB, rect);
+
+                    rect = new Rectangle(x + 410, y + 20, width - 420, 240);
+                    gr.DrawRectangle(penB, rect);
+
+                    rect = new Rectangle(x + 10, y + 20, 400, 40);
+                    gr.DrawString("Subic, Lda", fontFooter, Brushes.Black, rect, format);
+                    gr.DrawRectangle(pen, rect);
+
+                    rect = new Rectangle(x + 410, y + 20, width - 420, 40);
+                    gr.DrawString("Dados do Cliente:", fontFooter, Brushes.Black, rect, formatLeft);
+                    gr.DrawString("Estab: " + fo.ClienteServico.IdCliente + " Loja: " + fo.ClienteServico.IdLoja, fontFooter, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+                    rect = new Rectangle(x + 10, y + 20, 400, 40);
+                    gr.DrawString("NIF: 515 609 013", fontFooter, Brushes.Black, rect, format);
+                    gr.DrawRectangle(pen, rect);
+
+                    rect = new Rectangle(x + 410, y + 20, width - 420, 80);
+                    gr.DrawString("Nome: " + fo.ClienteServico.NomeCliente, fontFooter, Brushes.Black, rect, formatLeft);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+
+                    rect = new Rectangle(x + 10, y + 20, 400, 160);
+                    gr.DrawString("Morada: Rua Engenheiro Sabino Marques, 144, 4470-605 Maia", fontFooter, Brushes.Black, rect, format);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+                    rect = new Rectangle(x + 410, y + 20, width - 420, 80);
+                    gr.DrawString("Morada: " + fo.ClienteServico.MoradaCliente, fontFooter, Brushes.Black, rect, formatLeft);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 80;
+                    rect = new Rectangle(x + 410, y + 20, width - 420, 40);
+                    gr.DrawString("NIF: " + fo.ClienteServico.NumeroContribuinteCliente, fontFooter, Brushes.Black, rect, formatLeft);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 60;
+
+                    rect = new Rectangle(x + 10, y + 20, width - 20, 80);
+                    gr.DrawRectangle(penB, rect);
+
+                    rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                    gr.DrawString("Equipamento", fontFooter, Brushes.Black, rect, format);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 40;
+                    rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                    gr.DrawString("Marca: " + fo.EquipamentoServico.MarcaEquipamento, fontFooter, Brushes.Black, rect, formatLeft);
+                    gr.DrawString("Modelo: " + fo.EquipamentoServico.ModeloEquipamento, fontFooter, Brushes.Black, rect, format);
+                    gr.DrawString("N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, fontFooter, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(pen, rect);
+
+                    y += 60;
+                    rect = new Rectangle(x + 10, y + 20, width - 20, 60);
+                    if (fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() > 0) { 
+                        gr.DrawString("Peças retiradas da: " + fo.GuiaTransporteAtual, fontBody, Brushes.Black, rect, format); 
+                    } else {
+                        gr.DrawString("Não foram retiradas nenhumas peças nesta assistência!", fontBody, Brushes.Black, rect, format);
+                    }
+
+                    y += 20;
+                    gr.DrawRectangle(penB, rect);
+
+                    foreach (var peca in fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")))
+                    {
+                        y += 60;
+                        rect = new Rectangle(x + 10, y + 20, width - 20, 120);
+                        gr.DrawRectangle(penB, rect);
+
+                        rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                        gr.DrawString("Referência: " + peca.Ref_Produto, fontFooter, Brushes.Black, rect, formatLeft);
+                        gr.DrawRectangle(pen, rect);
+                        y += 40;
+                        rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                        gr.DrawString("Designação: " + peca.Designacao_Produto, fontFooter, Brushes.Black, rect, formatLeft);
+                        gr.DrawRectangle(pen, rect);
+                        y += 40;
+                        rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                        gr.DrawString("Qtd: " + peca.Stock_Fisico + " " + peca.TipoUn, fontFooter, Brushes.Black, rect, formatLeft);
+                        gr.DrawRectangle(pen, rect);
+                    }
+
+                    y += 60;
+                    rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                    gr.DrawString("Cliente: " + fo.ConferidoPor, fontFooter, Brushes.Black, rect, formatLeft);
+                    gr.DrawString("Técnico: " + fo.IntervencaosServico.First().NomeTecnico, fontFooter, Brushes.Black, rect, formatRight);
+                    gr.DrawRectangle(penB, rect);
+
+                    y += 150;
+                    penB.DashStyle = DashStyle.Dash;
+                    gr.DrawLine(penB, new Point(0, y), new Point (width, y));
+                    penB.DashStyle = DashStyle.Solid;
+
+                    y += 80;
+                    HeaderPagina = "Duplicado";
+                }
+
+            }
+            return bm;
+        }
         public Bitmap DesenharEtiquetaFolhaObra(FolhaObra fo)
         {
 
@@ -2174,15 +2358,15 @@ namespace FT_Management.Models
             return outputPdfStream;
 
         }
-        public MemoryStream BitMapToMemoryStream(string filePath)
+        public MemoryStream BitMapToMemoryStream(string filePath, int w, int h)
         {
             var ms = new MemoryStream();
 
             PdfSharpCore.Pdf.PdfDocument doc = new PdfSharpCore.Pdf.PdfDocument();
             PdfSharpCore.Pdf.PdfPage page = new PdfSharpCore.Pdf.PdfPage
             {
-                Width = 810,
-                Height = 504
+                Width = w,
+                Height = h
             };
 
             XImage img = XImage.FromFile(filePath);
@@ -2191,7 +2375,7 @@ namespace FT_Management.Models
             doc.Pages.Add(page);
 
             XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
-            XRect box = new XRect(0, 0, 810, 504);
+            XRect box = new XRect(0, 0, w, h);
             xgr.DrawImage(img, box);
 
             doc.Save(ms, false);

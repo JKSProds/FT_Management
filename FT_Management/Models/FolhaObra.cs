@@ -10,6 +10,10 @@ namespace FT_Management.Models
     {
         [Display(Name = "Num. da Folha de Obra")]
         public int IdFolhaObra { get; set; }
+        [Display(Name = "Num. da Assistência Técnica")]
+        public string IdAT { get; set; }
+        [Display(Name = "Num. da Marcação")]
+        public string IdMarcacao { get; set; }
         [Display(Name = "Data")]
         public DateTime DataServico { get; set; }
         private string _ReferenciaServico;

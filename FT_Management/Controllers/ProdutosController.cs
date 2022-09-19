@@ -51,7 +51,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta80x50(phccontext.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
             
-            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
         public ActionResult PrintQr(string id, int armazemid)
@@ -67,7 +67,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta80x50QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
         public ActionResult PrintPeq(string id, int armazemid)
@@ -83,7 +83,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta80x25QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
         public ActionResult PrintPeqMulti(string id, int armazemid)
@@ -99,7 +99,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiqueta40x25QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
         //Analisar

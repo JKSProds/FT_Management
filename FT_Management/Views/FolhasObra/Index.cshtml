@@ -93,6 +93,13 @@ else
                 <td class="is-actions-cell">
                     <div class="field has-addons">
                         <p class="control">
+                            <button class="button" onclick="window.open('@Url.Action("PrintFolhaObraSimples", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
+                                <span class="icon is-small">
+                                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                                </span>
+                            </button>
+                        </p>
+                        <p class="control">
                             <button class="button" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
                                 <span class="icon is-small">
                                     <i class="fas fa-sticky-note"></i>

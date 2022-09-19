@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Custom;
 using Microsoft.AspNetCore.Authorization;
+using System.Drawing;
 
 namespace FT_Management.Controllers
 {
@@ -43,7 +44,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiquetaFolhaObra(fo).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
         [Authorize(Roles = "Admin, Escritorio, Tech")]
@@ -103,6 +104,30 @@ namespace FT_Management.Controllers
             //Send the File to Download.
             return new FileContentResult(output.ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
+
+        public virtual ActionResult PrintFolhaObraSimples(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FolhaObra fo = phccontext.ObterFolhaObra(id);
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
+            var filePath = Path.GetTempFileName();
+            Bitmap bm = context.DesenharFolhaObraSimples(fo);
+            bm.Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "FolhaObra_" + id + ".pdf",
+                Inline = true,
+                CreationDate = DateTime.Now
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());            
+            return new FileContentResult(context.BitMapToMemoryStream(filePath, bm.Width, bm.Height).ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
+        }
+
 
         public ActionResult EmailFolhaObra(int id, string emailDestino)
         {

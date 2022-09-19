@@ -474,7 +474,7 @@ namespace FT_Management.Controllers
             var filePath = Path.GetTempFileName();
             context.DesenharEtiquetaMarcacao(phccontext.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 
-            return File(context.BitMapToMemoryStream(filePath), "application/pdf");
+            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
         public ActionResult Index(string numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico)
