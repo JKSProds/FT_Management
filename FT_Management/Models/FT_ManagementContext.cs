@@ -2019,12 +2019,12 @@ namespace FT_Management.Models
             };
             StringFormat formatRight = new StringFormat
             {
-                LineAlignment = StringAlignment.Far,
+                LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Far
             };
             StringFormat formatLeft = new StringFormat
             {
-                LineAlignment = StringAlignment.Near,
+                LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Near
             };
 
