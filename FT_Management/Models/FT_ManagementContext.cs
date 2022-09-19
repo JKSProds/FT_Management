@@ -1681,7 +1681,7 @@ namespace FT_Management.Models
                             start = dataMarcacao,
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
-                            raw = "Editar/" + item.IdMarcacao + "?IdTecnico=" + (item.Tecnico.IdPHC),
+                            raw = "Pedido/" + item.IdMarcacao + "?IdTecnico=" + (item.Tecnico.IdPHC),
                             category = "time",
                             dueDateClass = dataMarcacao.ToShortDateString(),
                             bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
