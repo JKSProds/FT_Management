@@ -594,7 +594,7 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel ler as intervenções do PHC!");
             }
 
-            return LstIntervencao;
+            return LstIntervencao.OrderBy(i => i.DataServiço).ToList();
         }
         public List<Intervencao> ObterIntervencoes(int IdFolhaObra)
         {

@@ -46,7 +46,7 @@ namespace FT_Management
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1") {
+          if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1") {
                 // Add our job
                 services.AddSingleton<CronJobFerias>();
                 services.AddSingleton(new JobSchedule(
