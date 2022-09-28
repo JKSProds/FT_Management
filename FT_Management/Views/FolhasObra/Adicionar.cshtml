@@ -9,23 +9,23 @@
 
 <style>
     .wrapper {
-  position: relative;
-  width: 400px;
-  height: 200px;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+        position: relative;
+        width: 400px;
+        height: 200px;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 
-.signature-pad {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width:400px;
-  height:200px;
-  background-color: white;
-}
+    .signature-pad {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 400px;
+        height: 200px;
+        background-color: white;
+    }
 </style>
 
 <form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
@@ -51,6 +51,7 @@
     <input type="hidden" class="input" asp-for="ReferenciaServico">
     <input type="hidden" class="input" asp-for="IdMarcacao">
     <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
+
     <div class="container">
         <div class="steps is-small" id="stepsDemo">
             <div class="step-item is-active is-success">
@@ -74,13 +75,25 @@
             <div class="step-item">
                 <div class="step-marker">3</div>
                 <div class="step-details">
-                    <p class="step-title">Peças</p>
+                    <p class="step-title">Relatório</p>
                 </div>
             </div>
             <div class="step-item">
                 <div class="step-marker">4</div>
                 <div class="step-details">
+                    <p class="step-title">Peças</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-marker">5</div>
+                <div class="step-details">
                     <p class="step-title">Outros</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-marker">6</div>
+                <div class="step-details">
+                    <p class="step-title">Rúbrica</p>
                 </div>
             </div>
             <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
@@ -94,7 +107,7 @@
                                     <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
                                     <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
                                     <p class="control has-icons-left">
-                                        <input type="text" class="input" value="@Model.ClienteServico.NomeCliente" @(!User.IsInRole("Admin") ? "readonly" : "") asp-for="ClienteServico.NomeCliente" id="txtCustomer">
+                                        <input type="text" class="input" value="@Model.ClienteServico.NomeCliente" asp-for="ClienteServico.NomeCliente" id="txtCustomer">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-user-check"></i>
                                         </span>
@@ -112,7 +125,7 @@
                                 <label asp-for="EquipamentoServico.DesignacaoEquipamento"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
-                                        <select id="selectEquipamentos" style="width:100%"  value="@Model.EquipamentoServico.IdEquipamento" asp-for="EquipamentoServico.IdEquipamento"></select>
+                                        <select id="selectEquipamentos" style="width:100%" value="@Model.EquipamentoServico.IdEquipamento" asp-for="EquipamentoServico.IdEquipamento"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-check"></i>
@@ -128,7 +141,7 @@
                         <div class="column is-4">
                             <div class="field">
                                 <div class="control">
-                                    <input type="date" class="input " value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataServico" id="txtData" >
+                                    <input type="date" class="input " value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataServico" id="txtData">
                                     <script>
                                         bulmaCalendar.attach('#txtData', {
                                             color: 'info',
@@ -157,70 +170,74 @@
                                     <input type="time" class="input" id="txtHoraFim" value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
                                 </div>
                             </div>
-                           <button type="button" onclick="AdicionarIntervencao()" class="button is-info is-outlined is-fullwidth">
-                            <span class="icon">
-                                <i class="fas fa-plus"></i>
-                            </span>
-                            <span>Adicionar Intervenção</span>
+                            <button type="button" onclick="AdicionarIntervencao()" class="button is-info is-outlined is-fullwidth">
+                                <span class="icon">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Adicionar Intervenção</span>
                             </button>
 
                         </div>
-                <div class="column is-4">
-                    <label asp-for="ListaIntervencoes" class="label"></label>
-                    <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
-                    <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
-                </div>
-                </div>
-                <div class="column is-12">
-                <div class="field">
-                    <label asp-for="RelatorioServico" class="label"></label>
-                    <div class="control">
-                        <textarea class="textarea is-primary" rows="15" asp-for="RelatorioServico"></textarea>
+                        <div class="column is-4">
+                            <label asp-for="ListaIntervencoes"></label>
+                            <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
+                            <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
+                            </div>
+                        </div>
                     </div>
-                    <span asp-validation-for="RelatorioServico" class="has-text-danger"></span>
                 </div>
-            </div>
-            <div class="column is-12">
-                <div class="field">
-                    <label asp-for="SituacoesPendentes" class="label"></label>
-                    <div class="control">
-                        <textarea class="textarea is-primary" rows="5" asp-for="SituacoesPendentes"></textarea>
+                <div class="step-content">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-6">
+                            <div class="field">
+                                <label asp-for="RelatorioServico"></label>
+                                <div class="control">
+                                    <textarea class="textarea is-primary" rows="15" asp-for="RelatorioServico"></textarea>
+                                </div>
+                                <span asp-validation-for="RelatorioServico" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-6">
+                            <div class="field">
+                                <label asp-for="SituacoesPendentes"></label>
+                                <div class="control">
+                                    <textarea class="textarea is-primary" rows="5" asp-for="SituacoesPendentes"></textarea>
+                                </div>
+                                <span asp-validation-for="SituacoesPendentes" class="has-text-danger"></span>
+                            </div>
+                        </div>
                     </div>
-                    <span asp-validation-for="SituacoesPendentes" class="has-text-danger"></span>
-                </div>
-            </div>
-        </div>
                 </div>
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
                                 <div class="field has-addons">
-                                <p class="control has-icons-left" style="width:100%">
-                                    <span class="select" style="width:100%">
-                                        <select id="selectPecas" style="width:100%"></select>
-                                    </span>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                </p>
-                                <div class="control">
-                            <a class="button is-info" onclick="ObterPeca(document.getElementById('selectPecas').value)">
-                                <i class="fa-solid fa-plus"></i>
-                            </a>
-                            </div>
-                        </div>
+                                    <p class="control has-icons-left" style="width:100%">
+                                        <span class="select" style="width:100%">
+                                            <select id="selectPecas" style="width:100%"></select>
+                                        </span>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </p>
+                                    <div class="control">
+                                        <a class="button is-info" onclick="ObterPeca(document.getElementById('selectPecas').value)">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <span asp-validation-for="PecasServico" class="has-text-danger"></span>
                         </div>
-                    
+
                         <div class="column is-12">
-                            <label asp-for="ListaPecas" class="label"></label>
+                            <label asp-for="ListaPecas"></label>
                             <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
                             <div class="list has-visible-pointer-controls" id="divListaPecas">
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
@@ -228,8 +245,10 @@
                             <div class="field">
                                 <label asp-for="EstadoFolhaObra"></label>
                                 <p class="control has-icons-left">
-                                    <span class="select" style="width: 100%">
-                                        @{ var LstEstadoFolhaObra = ViewData["EstadoFolhaObra"] as IList<String>;}
+                                    <span class="select" style="width:100%">
+                                        @{
+                                            var LstEstadoFolhaObra = ViewData["EstadoFolhaObra"] as IList<String>;
+                                        }
                                         <select class="select" style="width:100%" asp-for="EstadoFolhaObra" asp-items="@(new SelectList(LstEstadoFolhaObra))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
@@ -243,8 +262,10 @@
                             <div class="field">
                                 <label asp-for="TipoFolhaObra"></label>
                                 <p class="control has-icons-left">
-                                    <span class="select" style="width: 100%">
-                                        @{ var LstTipoFolhaObra = ViewData["TipoFolhaObra"] as IList<String>;}
+                                    <span class="select" style="width:100%">
+                                        @{
+                                            var LstTipoFolhaObra = ViewData["TipoFolhaObra"] as IList<String>;
+                                        }
                                         <select class="select" style="width:100%" asp-for="TipoFolhaObra" asp-items="@(new SelectList(LstTipoFolhaObra))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
@@ -286,17 +307,24 @@
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <label asp-for="ConferidoPor" class="label"></label>
+                                <label asp-for="ConferidoPor"></label>
                                 <div class="control">
-                                    <input class="input is-primary" type="text" asp-for="ConferidoPor"/>
+                                    <input class="input is-primary" type="text" asp-for="ConferidoPor" />
                                 </div>
                                 <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
                             </div>
                         </div>
-                          <div class="wrapper">
-                              <label asp-for="RubricaCliente" class="label"></label>
-                              <canvas id="signature-pad" class="signature-pad" width=2000 height=1000></canvas>
-                            </div>  
+                    </div>
+                </div>
+                <div class="step-content">
+                    <div class="columns is-multiline mx-1">
+                     <div class="column is-12">
+                        <div class="wrapper" style="width:100%">
+                            <canvas id="signature-pad" class="signature-pad" width=2000 height=1000 style="border:2px solid #000000;"></canvas>
+                        </div>
+                        <br />
+                        <button class="button is-danger" type="button" onclick="signaturePad.clear();">Limpar</button>
+                        </div>
                         &nbsp;
                         <button type="button" onclick="ValidarFolhaObra()" class="button is-info is-outlined is-fullwidth">
                             <span class="icon">
@@ -306,218 +334,189 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            &nbsp;
+            <div class="steps-actions">
+                <div class="steps-action">
+                    <a href="#" data-nav="previous" id="stepsPrevious" class="button is-light">
+                        <span class="icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </span>
+                        <span>Anterior</span>
+                    </a>
                 </div>
-                &nbsp;
-                <div class="steps-actions">
-                    <div class="steps-action">
-                        <a href="#" data-nav="previous" id="stepsPrevious" class="button is-light">
-                            <span class="icon">
-                                <i class="fas fa-arrow-left"></i>
-                            </span>
-                            <span>Anterior</span>
-                        </a>
-                    </div>
-                    <div class="steps-action">
-                        <a href="#" data-nav="next" id="stepsNext" class="button is-light">
-                            <span class="icon">
-                                <i class="fas fa-arrow-right"></i>
-                            </span>
-                            <span>Próximo</span>
-                        </a>
-                    </div>
+                <div class="steps-action">
+                    <a href="#" data-nav="next" id="stepsNext" class="button is-light">
+                        <span class="icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span>Próximo</span>
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
 </form>
 
-<div class="modal" id="modalValidacao">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Validar Mensagens</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <div class="field is-horizontal">
-                <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
-                    <div class="field" style="width:100%">
-                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
-                <span class="icon">
-                    <i class="fas fa-check-circle"></i>
-                </span>
-                <span>Ignorar e Criar Folha de Obra</span>
-            </button>
-        </footer>
-    </div>
-</div>
-
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-
-<script>
-    bulmaSteps.attach();
-
-    var canvas = document.getElementById('signature-pad');
-
-    // Adjust canvas coordinate space taking into account pixel ratio,
-    // to make it look crisp on mobile devices.
-    // This also causes canvas to be cleared.
-    function resizeCanvas() {
-        // When zoomed out to less than 100%, for some very strange reason,
-        // some browsers report devicePixelRatio as less than 1
-        // and only part of the canvas is cleared then.
-    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
-    canvas.width = canvas.offsetWidth * ratio;
-    canvas.height = canvas.offsetHeight * ratio;
-    canvas.getContext("2d").scale(ratio, ratio);
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     }
 
-    var signaturePad = new SignaturePad(canvas, {
-      backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
-    });
+    <script>
+        bulmaSteps.attach();
 
-    window.onresize = function(event) {
+        var canvas = document.getElementById('signature-pad');
+
+        function resizeCanvas() {
+            var data = signaturePad.toDataURL();
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+
+            signaturePad.clear();
+            signaturePad.fromDataURL(data);
+        }
+
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255)'
+        });
+
+        window.onresize = function(event) {
+            resizeCanvas();
+        };
+
         resizeCanvas();
-    };
+        CarregarPecas();
+        if (document.getElementById("txtIdCliente").value > 0) {
+            CarregarEquipamentos();
+        }
 
-    resizeCanvas();
+        function ValidarFolhaObra() {
+            document.getElementById('txtRubricaCliente').value = canvas.toDataURL();
+            document.getElementById('frmAdicionar').submit();
+        }
 
-    if (document.getElementById("txtIdCliente").value > 0) {
-        CarregarEquipamentos();
-    }
-    CarregarPecas();
+        function AdicionarIntervencao() {
+            if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid()) {
+                document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:80%">${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+                document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
+            }
+        }
 
-    function ValidarFolhaObra() {
-        document.getElementById('txtRubricaCliente').value = canvas.toDataURL();
-        document.getElementById('frmAdicionar').submit();
-    }
+        function RemoverIntervencao(data) {
+            document.getElementById('lst-datas-' + data).remove();
+            document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value.replace(data + ';', '');
+            if (document.getElementById('ListaIntervencoes').value.slice(-1) != ";" && document.getElementById('ListaIntervencoes').value != "") document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value + ";";
+        }
 
-function AdicionarIntervencao() {
-    if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid()) {
-      document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:80%">${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
-    document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
-    }  
-  }
-
-    function RemoverIntervencao(data) {
-        document.getElementById('lst-datas-' + data).remove();
-        document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value.replace(data + ';', '');  
-    if (document.getElementById('ListaIntervencoes').value.slice(-1) != ";" && document.getElementById('ListaIntervencoes').value != "") document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value + ";";
-    }
-
-    function AdicionarPeca(ref, desig) {
-      document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:80%">${ref +' - '+ desig + ' (1 UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
-      document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + ref};`;  
-    }
+        function AdicionarPeca(ref, desig) {
+            document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (1 UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+            document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + ref};`;
+        }
 
         function RemoverPeca(ref) {
-        document.getElementById(ref).remove();
-        document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(ref + ';', '');  
-    if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
-    }
+            document.getElementById(ref).remove();
+            document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(ref + ';', '');
+            if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
+        }
 
-    function CarregarEquipamentos() {
-        $.ajax({
-            url: '/FolhasObra/ObterEquipamentos/',
-            data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value },
-            type: "POST",
-            success: function (response) {
-                 var equipamentos = "";
-                    $(response).each(function () {
+        function CarregarEquipamentos() {
+            $.ajax({
+                url: '/FolhasObra/ObterEquipamentos/',
+                data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value },
+                type: "POST",
+                success: function(response) {
+                    var equipamentos = "";
+                    $(response).each(function() {
                         equipamentos = equipamentos + '<option value="' + this.idEquipamento + '">' + this.descricaoEquipamento + '</option>'
                     });
 
                     var equipamentosList = $("#selectEquipamentos");
                     equipamentosList.empty();
                     equipamentosList.append(equipamentos);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            }
-        });
-    }
+                },
+                error: function(response) {
+                    alert(response.responseText);
+                },
+                failure: function(response) {
+                    alert(response.responseText);
+                }
+            });
+        }
 
         function CarregarPecas() {
-        $.ajax({
-            url: '/Produtos/ObterPecasUtilizador/',
-            type: "POST",
-            success: function (response) {
-                 var pecas = "";
-                    $(response).each(function () {
-                        pecas = pecas + '<option value="' + this.ref_Produto + '">' + this.ref_Produto + ' - ' + this.designacao_Produto + ' ('+(this.stock_PHC - this.stock_Res + this.stock_Rec)+' UN)</option>'
+            $.ajax({
+                url: '/Produtos/ObterPecasUtilizador/',
+                type: "POST",
+                success: function(response) {
+                    var pecas = "";
+                    $(response).each(function() {
+                        pecas = pecas + '<option value="' + this.ref_Produto + '">' + this.ref_Produto + ' - ' + this.designacao_Produto + ' (' + (this.stock_PHC - this.stock_Res + this.stock_Rec) + ' UN)</option>'
                     });
 
                     var pecasList = $("#selectPecas");
                     pecasList.empty();
                     pecasList.append(pecas);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            }
-        });
-    }
+                },
+                error: function(response) {
+                    alert(response.responseText);
+                },
+                failure: function(response) {
+                    alert(response.responseText);
+                }
+            });
+        }
 
         function ObterPeca(ref) {
             $.ajax({
-            url: '/Produtos/ObterPeca?ref_produto=' + ref,
-            type: "POST",
-            success: function (response) {
+                url: '/Produtos/ObterPeca?ref_produto=' + ref,
+                type: "POST",
+                success: function(response) {
                     AdicionarPeca(response.ref_Produto, response.designacao_Produto)
-            },
-            error: function (response) {
-                alert(response.responseText);
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            }
-        });
+                },
+                error: function(response) {
+                    alert(response.responseText);
+                },
+                failure: function(response) {
+                    alert(response.responseText);
+                }
+            });
 
-}
+        }
 
-    $(function () {
-        $("#txtCustomer").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '/Pedidos/ObterClientes/',
-                    data: { "prefix": request.term },
-                    type: "POST",
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return {
-                                label: item.nomeCliente + " (" + item.idCliente + " - " + item.idLoja + ")",
-                                val: item.idCliente,
-                                val2: item.idLoja
-                            };
-                        }))
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    }
-                });
-            },
-            select: function (e, i) {
-                $("#txtIdCliente").val(i.item.val);
-                $("#txtIdLoja").val(i.item.val2);
-                CarregarEquipamentos();
-            },
-            minLength: 1
+        $(function() {
+            $("#txtCustomer").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: '/Pedidos/ObterClientes/',
+                        data: { "prefix": request.term },
+                        type: "POST",
+                        success: function(data) {
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.nomeCliente + " (" + item.idCliente + " - " + item.idLoja + ")",
+                                    val: item.idCliente,
+                                    val2: item.idLoja
+                                };
+                            }))
+                        },
+                        error: function(response) {
+                            alert(response.responseText);
+                        },
+                        failure: function(response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function(e, i) {
+                    $("#txtIdCliente").val(i.item.val);
+                    $("#txtIdLoja").val(i.item.val2);
+                    CarregarEquipamentos();
+                },
+                minLength: 1
+            });
         });
-    });
-</script>
+    </script>

@@ -87,5 +87,45 @@ namespace FT_Management.Models
                 }
             };
         }
+
+        public FolhaObra PreencherDadosMarcacao(Marcacao m)
+        {
+            this.ClienteServico = m.Cliente;
+            this.DataServico = m.DataMarcacao;
+            this.ReferenciaServico = m.Referencia;
+            this.IdMarcacao = m.IdMarcacao;
+
+            return this;
+        }
+        public void ValidarIntervencoes()
+        {
+            this.IntervencaosServico.Clear();
+            foreach (var item in this.ListaIntervencoes.Split(";"))
+            {
+                if (item != "")
+                {
+                    this.IntervencaosServico.Add(new Intervencao
+                    {
+                        HoraInicio = DateTime.Parse(item.Split("|").First()),
+                        HoraFim = DateTime.Parse(item.Split("|").Last()),
+                        DataServiço = this.DataServico
+                    });
+                }
+            }
+        }
+        public void ValidarPecas()
+        {
+            this.PecasServico.Clear();
+            foreach (var item in this.ListaPecas.Split(";"))
+            {
+                if (item != "")
+                {
+                    this.PecasServico.Add(new Produto
+                    {
+                        Ref_Produto = item
+                    });
+                }
+            }
+        }
     }
 }

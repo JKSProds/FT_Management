@@ -26,59 +26,33 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
         }
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Adicionar(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Marcacao m = phccontext.ObterMarcacao(id);
-
-            FolhaObra fo = new FolhaObra() { ClienteServico = m.Cliente };
-            fo.DataServico = m.DataMarcacao;
-            fo.ReferenciaServico = m.Referencia;
-            fo.IdMarcacao = m.IdMarcacao;
+            FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(phccontext.ObterMarcacao(id));
 
             ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
             return View(fo);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Adicionar(FolhaObra fo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
+
             if (ModelState.IsValid)
             {
-            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.EquipamentoServico = phccontext.ObterEquipamento(fo.EquipamentoServico.IdEquipamento);
-            fo.IntervencaosServico.Clear();
-                foreach (var item in fo.ListaIntervencoes.Split(";"))
-                {
-                    if (item != "")
-                    {
-                        fo.IntervencaosServico.Add(new Intervencao
-                        {
-                            HoraInicio = DateTime.Parse(item.Split("|").First()),
-                            HoraFim = DateTime.Parse(item.Split("|").Last()),
-                            DataServiço = fo.DataServico
-                        });
-                    }
-                }
-
-            fo.PecasServico.Clear();
-            foreach (var item in fo.ListaPecas.Split(";"))
-            {
-                    if (item != "")
-                    {
-                        fo.PecasServico.Add(new Produto
-                        {
-                            Ref_Produto = item
-                        });
-                    }
-            }
-
+                fo.ValidarIntervencoes();
+                fo.ValidarPecas();
 
                 int idFolhaObra = phccontext.CriarFolhaObra(fo);
                 if (idFolhaObra > 0) return RedirectToAction("Detalhes", "FolhasObra", new { id = idFolhaObra });
@@ -86,6 +60,7 @@ namespace FT_Management.Controllers
 
             ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
+
             return View(fo);
         }
 
