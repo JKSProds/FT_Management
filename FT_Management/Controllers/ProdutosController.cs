@@ -133,5 +133,23 @@ namespace FT_Management.Controllers
             
             return View(phccontext.ObterProduto(id,armazemid));
         }
+
+        [HttpPost]
+        public JsonResult ObterPecasUtilizador()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            int idArmazem = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdArmazem;
+
+            return Json(phccontext.ObterProdutosArmazem(idArmazem).ToList());
+        }
+        [HttpPost]
+        public JsonResult ObterPeca(string ref_produto)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().First());
+        }
     }
 }

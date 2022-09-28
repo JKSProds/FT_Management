@@ -2265,7 +2265,7 @@ namespace FT_Management.Models
             //}
 
             pdfFormFields.SetField("IdFolhaObra", folhaobra.IdAT);
-            pdfFormFields.SetField("Marcação", folhaobra.IdMarcacao);
+            pdfFormFields.SetField("Marcação", folhaobra.IdMarcacao.ToString());
             pdfFormFields.SetField("Registado", folhaobra.IntervencaosServico.Last().NomeTecnico);
             if (folhaobra.AssistenciaRemota)
             {

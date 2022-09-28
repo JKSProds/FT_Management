@@ -7,7 +7,9 @@ namespace FT_Management.Models
 {
     public class Equipamento
     {
+        [Required]
         public string IdEquipamento { get; set; }
+        public string DescricaoEquipamento { get { return this.NumeroSerieEquipamento + " - (" + MarcaEquipamento + " " + this.ModeloEquipamento + ")"; } }
         private string _DesignacaoEquipamento;
         [Display(Name = "Designação do Equipamento")]
         public string DesignacaoEquipamento { get { return _DesignacaoEquipamento ?? ""; } set { _DesignacaoEquipamento = value; } }
@@ -18,7 +20,6 @@ namespace FT_Management.Models
         [Display(Name = "Modelo")]
         public string ModeloEquipamento { get { return _ModeloEquipamento ?? ""; } set { _ModeloEquipamento = value; } }
         private string _NumeroSerieEquipamento;
-        [Required(ErrorMessage = "Número de Série é Obrigatório")]
         [Display(Name = "Numero de Série")]
         public string NumeroSerieEquipamento { get { return _NumeroSerieEquipamento ?? ""; } set { _NumeroSerieEquipamento = value; } }
         [Display(Name = "Num. do Cliente")]

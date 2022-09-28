@@ -310,12 +310,10 @@
                 </li>
                 <li>
                     <p class="control is-right">
-                        <button class="button is-primary is-pulled-right is-fullwidth" disabled asp-action="Adicionar" asp-controller="FolhasObra">
-                            <span class="icon is-small">
-                                <i class="fas fa-plus"></i>
-                            </span>
+                            <a class="button is-info is-fullwidth" href="~/FolhasObra/Adicionar/@Model.IdMarcacao">
+                                <i class="fa-solid fa-plus"></i>
                             <span>Nova Folha de Obra</span>
-                        </button>
+                        </a>
                     </p>
                     &nbsp;
                     @if (Model.LstFolhasObra.Count() == 0)

@@ -119,6 +119,10 @@ namespace FT_Management.Models
         {
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.ref;");
         }
+        public List<Produto> ObterProdutosArmazem(int Armazem)
+        {
+            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
+        }
 
         //NAO FUNCIONA
         public List<Movimentos> ObterListaMovimentos(string Referencia)
@@ -418,6 +422,47 @@ namespace FT_Management.Models
 
         //Obter Folhas de Obra
         #region FOLHASOBRA
+
+        //EM DESENVOLVIMENTO
+        public int CriarFolhaObra(FolhaObra fo)
+        {
+            int res = 0;
+            try
+            {
+                return 0;
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Gera_FolhaObra", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@NO", fo.ClienteServico.IdCliente));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                if (result[0].ToString() != "-1")
+                {
+                    res = int.Parse(result[3].ToString());
+                    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + res + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
+                }
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao enviar folha de obra para o PHC");
+            }
+
+            return res;
+        }
+
         private List<FolhaObra> ObterFolhasObra(string SQL_Query, bool LoadEquipamento, bool LoadCliente, bool LoadIntervencoes, bool LoadPecas, bool LoadRubrica)
         {
 
@@ -446,7 +491,7 @@ namespace FT_Management.Models
                                 EstadoEquipamento = result["situacao"].ToString().Trim(),
                                 ConferidoPor = result["qassinou"].ToString().Trim(),
                                 IdCartao = result["u_marcacaostamp"].ToString().Trim(),
-                                IdMarcacao = result["num"].ToString()
+                                IdMarcacao = int.Parse(result["num"].ToString())
                             });
 
                         if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim());
@@ -1249,6 +1294,7 @@ namespace FT_Management.Models
 
             return res;
         }
+
         public List<String> ObterPrioridade()
         {
 
@@ -1309,6 +1355,31 @@ namespace FT_Management.Models
             {
                 Console.WriteLine("Erro ao obter prioridades!");
             }
+
+            return res;
+        }
+        public List<String> ObterEstadoFolhaObra()
+        {
+
+            List<String> res = new List<String>
+            {
+                "Concluído",
+                "Pedido de Peças",
+                "Pedido de Orçamento"
+            };
+
+            return res;
+        }
+        public List<String> ObterTipoFolhaObra()
+        {
+
+            List<String> res = new List<String>
+            {
+                "Externo",
+                "Interno",
+                "Remoto",
+                "Instalação"
+            };
 
             return res;
         }

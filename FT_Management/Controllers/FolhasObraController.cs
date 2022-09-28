@@ -27,6 +27,68 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
         }
 
+        public ActionResult Adicionar(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            FolhaObra fo = new FolhaObra() { ClienteServico = m.Cliente };
+            fo.DataServico = m.DataMarcacao;
+            fo.ReferenciaServico = m.Referencia;
+            fo.IdMarcacao = m.IdMarcacao;
+
+            ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
+            ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
+            return View(fo);
+        }
+        [HttpPost]
+        public ActionResult Adicionar(FolhaObra fo)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            if (ModelState.IsValid)
+            {
+            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
+                fo.EquipamentoServico = phccontext.ObterEquipamento(fo.EquipamentoServico.IdEquipamento);
+            fo.IntervencaosServico.Clear();
+                foreach (var item in fo.ListaIntervencoes.Split(";"))
+                {
+                    if (item != "")
+                    {
+                        fo.IntervencaosServico.Add(new Intervencao
+                        {
+                            HoraInicio = DateTime.Parse(item.Split("|").First()),
+                            HoraFim = DateTime.Parse(item.Split("|").Last()),
+                            DataServiço = fo.DataServico
+                        });
+                    }
+                }
+
+            fo.PecasServico.Clear();
+            foreach (var item in fo.ListaPecas.Split(";"))
+            {
+                    if (item != "")
+                    {
+                        fo.PecasServico.Add(new Produto
+                        {
+                            Ref_Produto = item
+                        });
+                    }
+            }
+
+
+                int idFolhaObra = phccontext.CriarFolhaObra(fo);
+                if (idFolhaObra > 0) return RedirectToAction("Detalhes", "FolhasObra", new { id = idFolhaObra });
+            }
+
+            ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
+            ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
+            return View(fo);
+        }
+
         public ActionResult Print(string id)
         {
             if (id == null)
@@ -79,6 +141,15 @@ namespace FT_Management.Controllers
             return Json(phccontext.ObterFolhaObra(id).ClienteServico.EmailCliente);
         }
 
+        [HttpPost]
+        public JsonResult ObterEquipamentos(string IdCliente, string IdLoja)
+        {
+            if (string.IsNullOrEmpty(IdCliente)) return Json("");
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = int.Parse(IdCliente), IdLoja = int.Parse(IdLoja) }).OrderBy(e => e.NumeroSerieEquipamento).ToList());
+        }
+
         public virtual ActionResult PrintFolhaObra(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -120,9 +191,8 @@ namespace FT_Management.Controllers
             var cd = new System.Net.Mime.ContentDisposition
             {
                 FileName = "FolhaObra_" + id + ".pdf",
-                Inline = true,
+                Inline = false,
                 CreationDate = DateTime.Now
-
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());            
             return new FileContentResult(context.BitMapToMemoryStream(filePath, bm.Width, bm.Height).ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
