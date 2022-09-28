@@ -305,7 +305,11 @@
                                 <span asp-validation-for="RecolhaOficina" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-3">
+                    </div>
+                </div>
+                <div class="step-content">
+                    <div class="columns is-multiline mx-1">
+                        <div class="column is-6">
                             <div class="field">
                                 <label asp-for="ConferidoPor"></label>
                                 <div class="control">
@@ -314,13 +318,10 @@
                                 <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="step-content">
-                    <div class="columns is-multiline mx-1">
-                     <div class="column is-12">
+
+                     <div class="column is-6">
                         <div class="wrapper" style="width:100%">
-                            <canvas id="signature-pad" class="signature-pad" width=2000 height=1000 style="border:2px solid #000000;"></canvas>
+                            <canvas id="signature-pad" class="signature-pad" width=400 height=200 style="border:2px solid #000000;"></canvas>
                         </div>
                         <br />
                         <button class="button is-danger" type="button" onclick="signaturePad.clear();">Limpar</button>
@@ -369,26 +370,23 @@
 
         var canvas = document.getElementById('signature-pad');
 
+        signaturePad = new SignaturePad(canvas);
+
         function resizeCanvas() {
-            var data = signaturePad.toDataURL();
+            const data = signaturePad.toData();
             var ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
 
             signaturePad.clear();
-            signaturePad.fromDataURL(data);
+            if (data.length > 0) { signaturePad.fromData(data) };
         }
-
-        var signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255, 255, 255)'
-        });
 
         window.onresize = function(event) {
             resizeCanvas();
         };
 
-        resizeCanvas();
         CarregarPecas();
         if (document.getElementById("txtIdCliente").value > 0) {
             CarregarEquipamentos();
