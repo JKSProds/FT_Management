@@ -320,8 +320,8 @@
                         </div>
 
                      <div class="column is-6">
-                        <div class="wrapper" style="width:100%">
-                            <canvas id="signature-pad" class="signature-pad" width=400 height=200 style="border:2px solid #000000;"></canvas>
+                        <div class="wrapper" style="width:100%" id="divCanvasRubrica">
+                            <canvas id="signature-pad" class="signature-pad" style="width:100%;border:2px solid #000000;"></canvas>
                         </div>
                         <br />
                         <button class="button is-danger" type="button" onclick="signaturePad.clear();">Limpar</button>
@@ -374,10 +374,12 @@
 
         function resizeCanvas() {
             const data = signaturePad.toData();
+            const width = canvas.offsetWidth;
             var ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
+            if (canvas.width == 0) { canvas.width = window.innerWidth / 2; canvas.offsetWidth = window.innerWith / 2; canvas.height = 200; }
 
             signaturePad.clear();
             if (data.length > 0) { signaturePad.fromData(data) };
@@ -387,6 +389,7 @@
             resizeCanvas();
         };
 
+        resizeCanvas();
         CarregarPecas();
         if (document.getElementById("txtIdCliente").value > 0) {
             CarregarEquipamentos();
