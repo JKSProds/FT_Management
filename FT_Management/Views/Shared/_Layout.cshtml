@@ -48,17 +48,25 @@
                 @if (User.Identity.IsAuthenticated && !User.IsInRole("Cliente"))
                 {
                     <div class="navbar-start">
-                        <div class="navbar-item">
-                            <p class="control">
-                                <a class="button is-info is-rounded" href="~/Dashboard">
+                        <div class="navbar-item has-dropdown is-hoverable">
+                                <a class="navbar-link">
                                     <span class="icon">
                                         <i class="fas fa-toggle-on"></i>
                                     </span>
                                     <span>Dashboard</span>
                                 </a>
-                            </p>
-                        </div>
 
+                            <div class="navbar-dropdown buttons">
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded  is-fullwidth" href="~/Dashboard/Encomendas">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-boxes-stacked"></i>
+                                        </span>
+                                        <span>Encomendas</span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Tabelas

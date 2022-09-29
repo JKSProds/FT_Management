@@ -62,11 +62,17 @@ namespace FT_Management.Controllers
     public class DashboardController : Controller
     {
 
-        public IActionResult Index()
+        [AllowAnonymous]
+        public IActionResult Encomendas(string ApiKey)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(phccontext.ObterMarcacoes());
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Forbid();
+
+            return View(phccontext.ObterEncomendas());
         }
 
         public JsonResult ObterMarcacoesConcluidas30Dias()

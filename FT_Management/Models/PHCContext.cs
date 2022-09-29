@@ -1518,6 +1518,73 @@ namespace FT_Management.Models
         }
         #endregion
 
+        //Encomendas
+        #region ENCOMENDAS
+        private List<Encomenda> ObterEncomendas(string SQL_Query)
+        {
 
+            List<Encomenda> LstEncomenda = new List<Encomenda>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).Count() == 0)
+                        {
+                            LstEncomenda.Add(new Encomenda()
+                            {
+                                Id = int.Parse(result["obrano"].ToString()),
+                                NomeDossier = result["nmdos"].ToString(),
+                                NomeCliente = result["Nome"].ToString(),
+                                DataEnvio = DateTime.Parse(result["Data_Envio"].ToString()),
+                                DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            });
+                            LstEncomenda.Last().LinhasEncomenda = new List<Linha_Encomenda>();
+                        }
+                        LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).First().LinhasEncomenda.Add(new Linha_Encomenda()
+                        {
+                            IdEncomenda = int.Parse(result["obrano"].ToString()),
+                            NomeCliente = result["Nome"].ToString(),
+                            DataEnvio = DateTime.Parse(result["Data_Envio_Linha"].ToString()),
+                            Total = result["Envio_Total"].ToString() == "True",
+                            Produto = new Produto()
+                            {
+                                Ref_Produto = result["ref"].ToString().Trim(),
+                                Designacao_Produto = result["design"].ToString(),
+                                Stock_Fisico = double.Parse(result["Qtt_Envio"].ToString())
+                            }
+                        });
+                        Console.WriteLine(result["Nome"] + " - " + result["Envio_Total"]);
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as encomendas do PHC!");
+            }
+
+            return LstEncomenda;
+        }
+
+        public List<Encomenda> ObterEncomendas()
+        {
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.DataDossier).ToList();
+        }
+
+        #endregion
     }
 }
