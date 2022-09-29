@@ -320,10 +320,11 @@
                         </div>
 
                      <div class="column is-6">
-                        <div class="wrapper" style="width:100%" id="divCanvasRubrica">
+                        <div class="wrapper" style="width: 100%;" id="divRubrica">
                             <canvas id="signature-pad" class="signature-pad" style="width:100%;border:2px solid #000000;"></canvas>
                         </div>
                         <br />
+                        <button class="button is-info" type="button" id="btnDesfazerRubrica">Desfazer</button>
                         <button class="button is-danger" type="button" onclick="signaturePad.clear();">Limpar</button>
                         </div>
                         &nbsp;
@@ -347,7 +348,7 @@
                     </a>
                 </div>
                 <div class="steps-action">
-                    <a href="#" data-nav="next" id="stepsNext" class="button is-light">
+                    <a href="#" data-nav="next" id="stepsNext" onclick="resizeCanvas();" class="button is-light">
                         <span class="icon">
                             <i class="fas fa-arrow-right"></i>
                         </span>
@@ -366,20 +367,34 @@
     }
 
     <script>
-        bulmaSteps.attach();
+        bulmaSteps.attach('.steps', {
+            onShow: id => {
+                if (id == 6) resizeCanvas();
+            },
+            onError: error => {
+                console.log(error);
+            }
+        });
 
         var canvas = document.getElementById('signature-pad');
-
         signaturePad = new SignaturePad(canvas);
+
+        document.getElementById('btnDesfazerRubrica').addEventListener('click', function () {
+	        var data = signaturePad.toData();
+          if (data) {
+            data.pop(); // remove the last dot or line
+            signaturePad.fromData(data);
+          }
+        });
 
         function resizeCanvas() {
             const data = signaturePad.toData();
-            const width = canvas.offsetWidth;
+
             var ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            if (canvas.width == 0) { canvas.width = window.innerWidth / 2; canvas.offsetWidth = window.innerWith / 2; canvas.height = 200; }
+            if (canvas.width == 0) { canvas.width = canvas.offsetWidth; canvas.height = 200; }
 
             signaturePad.clear();
             if (data.length > 0) { signaturePad.fromData(data) };
@@ -390,6 +405,8 @@
         };
 
         resizeCanvas();
+
+
         CarregarPecas();
         if (document.getElementById("txtIdCliente").value > 0) {
             CarregarEquipamentos();
