@@ -48,8 +48,7 @@
         </div>
     </div>
     <hr />
-    <input type="hidden" class="input" asp-for="ReferenciaServico">
-    <input type="hidden" class="input" asp-for="IdMarcacao">
+
     <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
 
     <div class="container">
@@ -114,6 +113,56 @@
                                     </p>
                                 </div>
                                 <span asp-validation-for="ClienteServico.IdCliente" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <input type="text" class="input" asp-for="ReferenciaServico">
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <input type="number" class="input" asp-for="IdMarcacao">
+                            </div>
+                        </div>
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="CobrarDeslocacao" id="chkCobrarDeslocacao">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.CobrarDeslocacao)</span>
+                                </label>
+                                <span asp-validation-for="CobrarDeslocacao" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="EnviarEmail" id="chkEnviarEmail">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.EnviarEmail)</span>
+                                </label>
+                                <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="GuardarLocalizacao" id="chkGuardarLocalizacao">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.GuardarLocalizacao)</span>
+                                </label>
+                                <span asp-validation-for="GuardarLocalizacao" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.FecharMarcacao)</span>
+                                </label>
+                                <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -201,7 +250,7 @@
                             <div class="field">
                                 <label asp-for="SituacoesPendentes"></label>
                                 <div class="control">
-                                    <textarea class="textarea is-primary" rows="5" asp-for="SituacoesPendentes"></textarea>
+                                    <textarea class="textarea is-primary" rows="15" asp-for="SituacoesPendentes"></textarea>
                                 </div>
                                 <span asp-validation-for="SituacoesPendentes" class="has-text-danger"></span>
                             </div>
@@ -360,6 +409,72 @@
     </div>
 </form>
 
+<div class="modal" id="modalDeslocacao">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Deslocação</p>
+    </header>
+    <section class="modal-card-body">
+      <p>Deseja cobrar a deslocação a este cliente?</p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" onclick="CobrarDeslocacao(true)">Sim</button>
+      <button class="button" onclick="CobrarDeslocacao(false)">Não</button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal" id="modalEnviarEmail">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Email</p>
+    </header>
+    <section class="modal-card-body">
+      <p>Deseja enviar um email com a folha de obra para o cliente?</p>
+      <input type="email" class="input" asp-for="EmailCliente" id="txtEmailCliente" />
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" onclick="EnviarEmail(true)">Sim</button>
+      <button class="button" onclick="EnviarEmail(false)">Não</button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal" id="modalGuardarLocalizacao">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Localização</p>
+    </header>
+    <section class="modal-card-body">
+      <p>Deseja guardar a localização atual do cliente?</p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" onclick="GuardarLocalizacao(true)">Sim</button>
+      <button class="button" onclick="GuardarLocalizacao(false)">Não</button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal" id="modalFecharMarcacao">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Marcação</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <p>Deseja fechar a marcação?</p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" onclick="FecharMarcacao(true)">Sim</button>
+      <button class="button" onclick="FecharMarcacao(false)">Não</button>
+    </footer>
+  </div>
+</div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -414,6 +529,30 @@
 
         function ValidarFolhaObra() {
             document.getElementById('txtRubricaCliente').value = canvas.toDataURL();
+            Bulma('#modalDeslocacao').modal().open();
+        }
+        function CobrarDeslocacao(valor) {
+            document.getElementById('chkCobrarDeslocacao').checked = valor;
+            Bulma('#modalDeslocacao').modal().close();
+
+            Bulma('#modalEnviarEmail').modal().open();
+        }
+        function EnviarEmail(valor) {
+            document.getElementById('chkEnviarEmail').checked = valor;
+            Bulma('#modalEnviarEmail').modal().close();
+
+            Bulma('#modalGuardarLocalizacao').modal().open();
+        }
+        function GuardarLocalizacao(valor) {
+            document.getElementById('chkGuardarLocalizacao').checked = valor;
+            Bulma('#modalGuardarLocalizacao').modal().close();
+
+            Bulma('#modalFecharMarcacao').modal().open();
+        }
+        function FecharMarcacao(valor) {
+            document.getElementById('chkFecharMarcacao').checked = valor;
+            Bulma('#modalFecharMarcacao').modal().close();
+
             document.getElementById('frmAdicionar').submit();
         }
 

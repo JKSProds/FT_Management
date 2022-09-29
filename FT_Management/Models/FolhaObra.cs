@@ -30,7 +30,7 @@ namespace FT_Management.Models
         public string RelatorioServico { get {return _RelatorioServico ?? ""; } set {_RelatorioServico = value ;}  }
         private string _SituacoesPendentes;
         [DataType(DataType.MultilineText)]
-        [Display(Name = "Situações Pendentes")]
+        [Display(Name = "Observações Internas")]
         public string SituacoesPendentes { get {return _SituacoesPendentes ?? ""; } set {_SituacoesPendentes = value ;} }
         [Display(Name = "Lista de Peças")]
         public string ListaPecas { get; set; }
@@ -69,6 +69,9 @@ namespace FT_Management.Models
         public bool RecolhaOficina { get; set; }
         public bool CobrarDeslocacao { get; set; }
         public bool EnviarEmail { get; set; }
+        public string EmailCliente { get; set; }
+        public bool GuardarLocalizacao { get; set; }
+        public bool FecharMarcacao { get; set; }
 
 
         public FolhaObra()
@@ -94,6 +97,7 @@ namespace FT_Management.Models
             this.DataServico = m.DataMarcacao;
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
+            this.EmailCliente = m.Cliente.EmailCliente;
 
             return this;
         }
