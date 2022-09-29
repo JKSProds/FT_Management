@@ -117,14 +117,26 @@
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <input type="text" class="input" asp-for="ReferenciaServico">
+                                <label asp-for="ReferenciaServico"></label>
+                                <div class="control">
+                                    <p class="control">
+                                        <input type="text" class="input" asp-for="ReferenciaServico">
+                                    </p>
+                                </div>
+                                <span asp-validation-for="ReferenciaServico" class="has-text-danger"></span>
                             </div>
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <input type="number" class="input" asp-for="IdMarcacao">
+                                <label asp-for="IdMarcacao"></label>
+                                <div class="control">
+                                    <p class="control">
+                                        <input type="text" class="input" asp-for="IdMarcacao">
+                                    </p>
+                                </div>
+                                <span asp-validation-for="IdMarcacao" class="has-text-danger"></span>
+                            </div>                       
                             </div>
-                        </div>
                         <div class="column is-3 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded">
