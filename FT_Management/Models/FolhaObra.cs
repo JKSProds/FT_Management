@@ -97,7 +97,7 @@ namespace FT_Management.Models
             this.DataServico = m.DataMarcacao;
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
-            this.EmailCliente = m.Cliente.EmailCliente;
+            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) ? m.QuemPediuEmail : m.Cliente.EmailCliente ;
 
             return this;
         }
