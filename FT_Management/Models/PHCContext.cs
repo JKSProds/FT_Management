@@ -1582,7 +1582,7 @@ namespace FT_Management.Models
 
         public List<Encomenda> ObterEncomendas()
         {
-            return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.DataDossier).ToList();
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.DataEnvio).ToList();
         }
 
         #endregion

@@ -6,7 +6,7 @@
 
 <div class="columns">
     <div class="column">
-        <div class="card has-table has-mobile-sort-spaced">
+        <div class="card has-table has-mobile-sort-spaced has-background-danger">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
@@ -19,20 +19,20 @@
             <div class="card-content">
                 <div class="b-table">
                     <div class="table-wrapper has-mobile-cards">
-                        @if (Model.Where(e => e.DataEnvio < DateTime.Now.AddDays(-1) && e.DataEnvio.Year > 1900 || !e.Total).Count() == 0)
+                        @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.ATRASO)).Count() == 0)
                         {
                             <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
                         }
                         else
                         {
-                            <table class="table is-fullwidth is-striped is-hoverable">
+                            <table class="table is-fullwidth has-background-danger">
                                 <thead>
                                     <tr>
-                                        <th>Encomenda</th>
-                                        <th>Cliente</th>
-                                        <th>Dias</th>
-                                        <th>Tipo</th>
-                                        <th>Items</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -40,16 +40,16 @@
                                     {
                                         if (@item.Total && item.DataEnvio <= DateTime.Now.AddDays(-1) && item.DataEnvio.Year > 1900)
                                         {
-                                            <tr class="has-background-danger">
-                                                <td data-label="Nº da Encomenda">@item.Id</td>
-                                                <td data-label="Cliente">@item.NomeCliente</td>
-                                                <td data-label="Dias">@(DateTime.Now.Subtract(item.DataEnvio).Days)</td>
-                                                <td class="is-image-cell">
-                                                    <div class="image">
+                                            <tr>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(DateTime.Now.Subtract(item.DataEnvio).Days)</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                    </div>
-                                                </td>                                                
-                                                <td data-label="Nº Items">@item.NItems</td>
+                                                    </span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
                                             </tr>
 
                                         }
@@ -57,16 +57,17 @@
                                         {
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio <= DateTime.Now.AddDays(-1) && e.DataEnvio.Year > 1900 && !e.Total).ToList())
                                             {
-                                                <tr class="has-background-danger">
-                                                    <td data-label="Nº da Encomenda">@linha.IdEncomenda</td>
-                                                    <td data-label="Cliente">@linha.NomeCliente</td>
-                                                    <td data-label="Dias">@(DateTime.Now.Subtract(linha.DataEnvio).Days)</td>
-                                                    <td class="is-image-cell">
-                                                        <div class="image">
+
+                                                <tr>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
+                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(DateTime.Now.Subtract(linha.DataEnvio).Days)</td>
+                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                        <span class="icon  mr-2">
                                                             <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                        </div>
-                                                    </td> 
-                                                    <td data-label="Nº Items">@linha.Produto.Stock_Fisico</td>
+                                                        </span>
+                                                    </td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
                                             }
                                         }
@@ -80,7 +81,7 @@
         </div>
     </div>
     <div class="column">
-        <div class="card has-table has-mobile-sort-spaced">
+        <div class="card has-table has-mobile-sort-spaced has-background-success-light">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
@@ -93,19 +94,19 @@
             <div class="card-content">
                 <div class="b-table">
                     <div class="table-wrapper has-mobile-cards">
-                        @if (Model.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() || !e.Total).Count() == 0)
+                         @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.HOJE)).Count() == 0)
                         {
                             <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
                         }
                         else
                         {
-                            <table class="table is-fullwidth is-striped is-hoverable is-narrow">
+                            <table class="table is-fullwidth has-background-success-light">
                                 <thead>
                                     <tr>
-                                        <th>Encomenda</th>
-                                        <th>Cliente</th>
-                                        <th>Tipo</th>
-                                        <th>Items</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -114,14 +115,14 @@
                                         if (@item.Total && item.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString())
                                         {
                                             <tr>
-                                                <td data-label="Nº da Encomenda">@item.Id</td>
-                                                <td data-label="Cliente">@item.NomeCliente</td>
-                                                    <td class="is-image-cell">
-                                                        <div class="image">
-                                                            <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                        </div>
-                                                    </td>
-                                                <td data-label="Nº Items">@item.NItems</td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
+                                                    </span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
                                             </tr>
 
                                         }
@@ -130,14 +131,14 @@
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && !e.Total).ToList())
                                             {
                                                 <tr>
-                                                    <td data-label="Nº da Encomenda">@linha.IdEncomenda</td>
-                                                    <td data-label="Cliente">@linha.NomeCliente</td>
-                                                    <td class="is-image-cell">
-                                                        <div class="image">
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
+                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                        <span class="icon  mr-2">
                                                             <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                        </div>
+                                                        </span>
                                                     </td>
-                                                    <td data-label="Nº Items">@linha.Produto.Stock_Fisico</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
                                             }
                                         }
@@ -151,7 +152,7 @@
         </div>
     </div>
     <div class="column">
-        <div class="card has-table has-mobile-sort-spaced">
+        <div class="card has-table has-mobile-sort-spaced has-background-warning-light">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
@@ -164,19 +165,19 @@
             <div class="card-content">
                 <div class="b-table">
                     <div class="table-wrapper has-mobile-cards">
-                        @if (Model.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() || !e.Total).Count() == 0)
+                        @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.AMANHA)).Count() == 0)
                         {
                             <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
                         }
                         else
                         {
-                            <table class="table is-fullwidth is-striped is-hoverable">
+                            <table class="table is-fullwidth has-background-warning-light">
                                 <thead>
                                     <tr>
-                                        <th>Encomenda</th>
-                                        <th>Cliente</th>
-                                        <th>Tipo</th>
-                                        <th>Items</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -185,14 +186,14 @@
                                         if (@item.Total && item.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString())
                                         {
                                             <tr>
-                                                <td data-label="Nº da Encomenda">@item.Id</td>
-                                                <td data-label="Cliente">@item.NomeCliente</td>
-                                                    <td class="is-image-cell">
-                                                        <div class="image">
-                                                            <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                        </div>
-                                                    </td>
-                                                    <td data-label="Nº Items">@item.NItems</td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
+                                                    </span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
                                             </tr>
 
                                         }
@@ -201,14 +202,14 @@
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() && !e.Total).ToList())
                                             {
                                                 <tr>
-                                                    <td data-label="Nº da Encomenda">@linha.IdEncomenda</td>
-                                                    <td data-label="Cliente">@linha.NomeCliente</td>
-                                                    <td class="is-image-cell">
-                                                        <div class="image">
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
+                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                        <span class="icon  mr-2">
                                                             <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                        </div>
+                                                        </span>
                                                     </td>
-                                                    <td data-label="Nº Items">@linha.Produto.Stock_Fisico</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
                                             }
                                         }
@@ -235,20 +236,20 @@
             <div class="card-content">
                 <div class="b-table">
                     <div class="table-wrapper has-mobile-cards">
-                        @if (Model.Where(e => e.DataEnvio >= DateTime.Now.AddDays(2) || !e.Total).Count() == 0)
+                        @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.FUTURO)).Count() == 0)
                         {
                             <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
                         }
                         else
                         {
-                            <table class="table is-fullwidth is-striped is-hoverable">
+                            <table class="table is-fullwidth">
                                 <thead>
                                     <tr>
-                                        <th>Encomenda</th>
-                                        <th>Cliente</th>
-                                        <th>Data</th>
-                                        <th>Tipo</th>
-                                        <th>Items</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -257,15 +258,15 @@
                                         if (@item.Total && item.DataEnvio >= DateTime.Now.AddDays(2))
                                         {
                                             <tr>
-                                                <td data-label="Nº da Encomenda">@item.Id</td>
-                                                <td data-label="Cliente">@item.NomeCliente</td>
-                                                <td data-label="Data">@item.DataEnvio.ToShortDateString()</td>
-                                                    <td class="is-image-cell">
-                                                        <div class="image">
-                                                            <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                        </div>
-                                                    </td>
-                                                    <td data-label="Nº Items">@item.NItems</td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(item.DataEnvio.Subtract(DateTime.Now).Days + 1)</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
+                                                    </span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
                                             </tr>
 
                                         }
@@ -274,15 +275,15 @@
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(2).ToShortDateString() && !e.Total).ToList())
                                             {
                                                 <tr>
-                                                    <td data-label="Nº da Encomenda">@linha.IdEncomenda</td>
-                                                    <td data-label="Cliente">@linha.NomeCliente</td>
-                                                    <td data-label="Data">@linha.DataEnvio.ToShortDateString()</td>
-                                                    <td class="is-image-cell">
-                                                        <div class="image">
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
+                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(linha.DataEnvio.Subtract(DateTime.Now).Days + 1)</td>
+                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                        <span class="icon  mr-2">
                                                             <i class="fa-solid @(item.Total ? "fa-boxes-stacked" : "fa-box")"></i>
-                                                        </div>
+                                                        </span>
                                                     </td>
-                                                    <td data-label="Nº Items">@linha.Produto.Stock_Fisico</td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
                                             }
                                         }
