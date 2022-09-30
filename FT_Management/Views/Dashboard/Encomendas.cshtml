@@ -4,9 +4,9 @@
     ViewData["Title"] = "Encomendas";
 }
 
-<div class="columns">
-    <div class="column">
-        <div class="card has-table has-mobile-sort-spaced has-background-danger">
+<div class="columns is-gapless">
+    <div class="column mx-1">
+        <div class="card has-table has-mobile-sort-spaced has-background-danger-light">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
@@ -25,7 +25,7 @@
                         }
                         else
                         {
-                            <table class="table is-fullwidth has-background-danger">
+                            <table class="table is-fullwidth has-background-danger-light">
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
@@ -80,7 +80,7 @@
             </div>
         </div>
     </div>
-    <div class="column">
+    <div class="column mx-1">
         <div class="card has-table has-mobile-sort-spaced has-background-success-light">
             <header class="card-header">
                 <p class="card-header-title">
@@ -151,7 +151,7 @@
             </div>
         </div>
     </div>
-    <div class="column">
+    <div class="column mx-1">
         <div class="card has-table has-mobile-sort-spaced has-background-warning-light">
             <header class="card-header">
                 <p class="card-header-title">
@@ -222,7 +222,7 @@
             </div>
         </div>
     </div>
-    <div class="column">
+    <div class="column mx-1">
         <div class="card has-table has-mobile-sort-spaced">
             <header class="card-header">
                 <p class="card-header-title">
