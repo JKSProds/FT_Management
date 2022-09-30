@@ -35,12 +35,11 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
-                                <tbody>
                                     @foreach (var item in Model)
                                     {
                                         if (@item.Total && item.DataEnvio <= DateTime.Now.AddDays(-1) && item.DataEnvio.Year > 1900)
                                         {
-                                            <tr>
+                                            <tr class="lista-toggle">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(DateTime.Now.Subtract(item.DataEnvio).Days)</td>
@@ -51,7 +50,16 @@
                                                 </td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
                                             </tr>
-
+                                            <tbody class="detail is-hidden">
+                                                    @foreach (var linha in item.LinhasEncomenda)
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                            <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
+                                                            <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                        </tr>
+                                                    }
+                                            </tbody>
                                         }
                                         else
                                         {
@@ -72,7 +80,6 @@
                                             }
                                         }
                                     }
-                                </tbody>
                             </table>
                         }
                     </div>
@@ -109,12 +116,11 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
-                                <tbody>
                                     @foreach (var item in Model)
                                     {
                                         if (@item.Total && item.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString())
                                         {
-                                            <tr>
+                                            <tr class="lista-toggle">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
@@ -123,8 +129,17 @@
                                                     </span>
                                                 </td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
-                                            </tr>
-
+                                             </tr>
+                                             <tbody class="detail is-hidden">
+                                                    @foreach (var linha in item.LinhasEncomenda)
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                            <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
+                                                            <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                        </tr>
+                                                    }
+                                            </tbody>
                                         }
                                         else
                                         {
@@ -143,7 +158,6 @@
                                             }
                                         }
                                     }
-                                </tbody>
                             </table>
                         }
                     </div>
@@ -180,12 +194,11 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
-                                <tbody>
                                     @foreach (var item in Model)
                                     {
                                         if (@item.Total && item.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString())
                                         {
-                                            <tr>
+                                            <tr class="lista-toggle">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
@@ -195,7 +208,16 @@
                                                 </td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
                                             </tr>
-
+                                            <tbody class="detail is-hidden">
+                                                    @foreach (var linha in item.LinhasEncomenda)
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                            <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
+                                                            <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                        </tr>
+                                                    }
+                                            </tbody>
                                         }
                                         else
                                         {
@@ -214,7 +236,6 @@
                                             }
                                         }
                                     }
-                                </tbody>
                             </table>
                         }
                         </div>
@@ -252,12 +273,11 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
                                     </tr>
                                 </thead>
-                                <tbody>
                                     @foreach (var item in Model)
                                     {
                                         if (@item.Total && item.DataEnvio >= DateTime.Now.AddDays(2))
                                         {
-                                            <tr>
+                                            <tr class="lista-toggle">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(item.DataEnvio.Subtract(DateTime.Now).Days + 1)</td>
@@ -268,7 +288,16 @@
                                                 </td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
                                             </tr>
-
+                                            <tbody class="detail is-hidden">
+                                                @foreach (var linha in item.LinhasEncomenda)
+                                                {
+                                                    <tr>
+                                                        <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                        <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
+                                                        <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
                                         }
                                         else
                                         {
@@ -288,7 +317,6 @@
                                             }
                                         }
                                     }
-                                </tbody>
                             </table>
                         }                    </div>
                 </div>
@@ -303,4 +331,13 @@
     setTimeout(() => {
       window.location.reload(1);
     }, 60 * 1000);
+
+    document.addEventListener('DOMContentLoaded', function () {
+    let cardToggles = document.getElementsByClassName('lista-toggle');
+    for (let i = 0; i < cardToggles.length; i++) {
+        cardToggles[i].addEventListener('click', e => {
+            e.currentTarget.parentElement.nextElementSibling.classList.toggle('is-hidden');
+        });
+    }
+    });
 </script>
