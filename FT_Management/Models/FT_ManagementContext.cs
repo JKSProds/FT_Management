@@ -976,7 +976,11 @@ namespace FT_Management.Models
                     id = item.Id.ToString(),
                     title = item.DescFeriado,
                     start = item.DataFeriado,
+                    end = item.DataFeriado,
+                    category = "time",
+                    dueDateClass = "",
                     isAllDay = true,
+                    calendarId = "1",
                     bgColor = "#FF5733"
                 });
             }
