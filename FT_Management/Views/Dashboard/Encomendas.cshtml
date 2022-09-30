@@ -21,7 +21,7 @@
                     <div class="table-wrapper has-mobile-cards">
                         @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.ATRASO)).Count() == 0)
                         {
-                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
+                            <button class="button is-rounded is-fullwidth" disabled>Não foram encontradas encomendas!</button>
                         }
                         else
                         {
