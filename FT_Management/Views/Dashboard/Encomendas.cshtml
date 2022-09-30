@@ -39,7 +39,7 @@
                                     {
                                         if (@item.Total && item.DataEnvio <= DateTime.Now.AddDays(-1) && item.DataEnvio.Year > 1900)
                                         {
-                                            <tr class="lista-toggle">
+                                            <tr class="lista-toggle" style="font-weight:bold">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(DateTime.Now.Subtract(item.DataEnvio).Days)</td>
@@ -66,7 +66,7 @@
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio <= DateTime.Now.AddDays(-1) && e.DataEnvio.Year > 1900 && !e.Total).ToList())
                                             {
 
-                                                <tr>
+                                                <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                      <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(DateTime.Now.Subtract(linha.DataEnvio).Days)</td>
@@ -77,6 +77,14 @@
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
+                                                <tbody class="detail is-hidden">
+                                                    <tr>
+                                                        <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                        <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
+                                                        <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                    </tr>
+                                            </tbody>
+
                                             }
                                         }
                                     }
@@ -120,7 +128,7 @@
                                     {
                                         if (@item.Total && item.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString())
                                         {
-                                            <tr class="lista-toggle">
+                                            <tr class="lista-toggle" style="font-weight:bold">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
@@ -145,7 +153,7 @@
                                         {
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && !e.Total).ToList())
                                             {
-                                                <tr>
+                                                <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                      <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
@@ -155,6 +163,13 @@
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
+                                                <tbody class="detail is-hidden">
+                                                    <tr>
+                                                        <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                        <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
+                                                        <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                    </tr>
+                                            </tbody>
                                             }
                                         }
                                     }
@@ -198,7 +213,7 @@
                                     {
                                         if (@item.Total && item.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString())
                                         {
-                                            <tr class="lista-toggle">
+                                            <tr class="lista-toggle" style="font-weight:bold">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
@@ -223,7 +238,7 @@
                                         {
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() && !e.Total).ToList())
                                             {
-                                                <tr>
+                                                <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                      <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
@@ -233,6 +248,13 @@
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
+                                                <tbody class="detail is-hidden">
+                                                    <tr>
+                                                        <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                        <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
+                                                        <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                    </tr>
+                                            </tbody>
                                             }
                                         }
                                     }
@@ -277,7 +299,7 @@
                                     {
                                         if (@item.Total && item.DataEnvio >= DateTime.Now.AddDays(2))
                                         {
-                                            <tr class="lista-toggle">
+                                            <tr class="lista-toggle" style="font-weight:bold">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(item.DataEnvio.Subtract(DateTime.Now).Days + 1)</td>
@@ -303,7 +325,7 @@
                                         {
                                             foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(2).ToShortDateString() && !e.Total).ToList())
                                             {
-                                                <tr>
+                                                <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                      <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(linha.DataEnvio.Subtract(DateTime.Now).Days + 1)</td>
@@ -314,11 +336,19 @@
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
                                                 </tr>
+                                                <tbody class="detail is-hidden">
+                                                    <tr>
+                                                        <td data-label="Referência">@linha.Produto.Ref_Produto</td>
+                                                        <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
+                                                        <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                    </tr>
+                                            </tbody>
                                             }
                                         }
                                     }
                             </table>
-                        }                    </div>
+                        }                    
+                        </div>
                 </div>
             </div>
         </div>
