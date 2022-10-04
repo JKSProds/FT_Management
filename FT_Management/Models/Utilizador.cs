@@ -109,7 +109,7 @@ namespace FT_Management.Models
         public static string ObterLinkMapa(string morada, string valor)
         {
            if (valor == "Waze") return "https://waze.com/ul?q=" + morada + "&navigate=yes";
-
+            if (valor == "Apple") return "https://maps.apple.com/?q=" + morada;
            return "https://maps.google.com/?daddr=" + morada;
         }
     }

@@ -45,7 +45,7 @@ namespace FT_Management.Controllers
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
-                        new Claim(ClaimTypes.Role, user.TipoMapa == 1 ? "Google Maps" : "Waze")
+                        new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
 
                     };
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -121,7 +121,7 @@ namespace FT_Management.Controllers
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
-                        new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : "Waze")
+                        new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
 
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
