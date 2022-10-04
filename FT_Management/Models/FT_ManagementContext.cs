@@ -2388,19 +2388,37 @@ namespace FT_Management.Models
 
             return ms;
         }
-        public Cliente ObterSenhaCliente(Cliente c)
+        public Cliente ObterCliente(Cliente c)
         {
-            string sqlQuery = "SELECT Senha FROM dat_clientes where Cliente_Stamp='" + c.ClienteStamp + "';";
+            string sqlQuery = "SELECT * FROM dat_clientes where Cliente_Stamp='" + c.ClienteStamp + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
             {
                 while (result.Read())
                 {
-                    c.Senha = result[0];
+                    c.Senha = result[1];
+                    c.Latitude = result[2];
+                    c.Longitude = result[3];
                 }
             }
             return c;
+
+        }
+        public List<Cliente> ObterClientes()
+        {
+            string sqlQuery = "SELECT * FROM dat_clientes;";
+            List<Cliente> LstClientes = new List<Cliente>();
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstClientes.Add(new Cliente { ClienteStamp = result[0], Senha = result[1], Latitude = result[2], Longitude = result[3] });
+                }
+            }
+            return LstClientes;
 
         }
         public string CriarSenhaCliente(string Cliente_Stamp)
@@ -2416,5 +2434,15 @@ namespace FT_Management.Models
 
             return res;
         }
+        public void GuardarLocalizacaoCliente(Cliente c)
+        {
+            string sql = "INSERT INTO dat_clientes (Cliente_Stamp, Latitude, Longitude) VALUES ('" + c.ClienteStamp + "', '"+c.Latitude+"', '"+c.Longitude+ "')  ON DUPLICATE KEY UPDATE Latitude = VALUES(Latitude), Longitude = VALUES(Longitude);";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+
     }
 }

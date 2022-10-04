@@ -106,11 +106,22 @@ namespace FT_Management.Models
 
         }
 
-        public static string ObterLinkMapa(string morada, string valor)
+        public static string ObterLinkMapa(Cliente c, string valor)
         {
-           if (valor == "Waze") return "https://waze.com/ul?q=" + morada + "&navigate=yes";
-            if (valor == "Apple") return "https://maps.apple.com/?q=" + morada;
-           return "https://maps.google.com/?daddr=" + morada;
+            if (string.IsNullOrEmpty(c.Latitude) || string.IsNullOrEmpty(c.Longitude))
+            {
+                if (valor == "Waze") return "https://waze.com/ul?q=" + c.ObterMoradaDirecoes() + "&navigate=yes";
+                if (valor == "Apple") return "https://maps.apple.com/?q=" + c.ObterMoradaDirecoes();
+                return "https://maps.google.com/?daddr=" + c.ObterMoradaDirecoes();
+
+            }
+            else
+            {
+                if (valor == "Waze") return "https://waze.com/ul?ll=" +c.Latitude + "," + c.Longitude + "&navigate=yes";
+                if (valor == "Apple") return "https://maps.apple.com/?q=" + c.NomeCliente + "&ll=" + c.Latitude + "," + c.Longitude ;
+                return "https://maps.google.com/?q=" + c.Latitude + "," + c.Longitude;
+
+            }
         }
     }
 

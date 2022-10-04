@@ -193,6 +193,7 @@ namespace FT_Management.Models
         {
 
             List<Cliente> LstClientes = new List<Cliente>();
+            List<Cliente> LstClientesMySQL = FT_ManagementContext.ObterClientes();
 
             try
             {
@@ -226,6 +227,13 @@ namespace FT_Management.Models
                         if (LoadFolhasObra) LstClientes.Last().FolhasObra = ObterFolhasObra(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
                         if (LoadVisitas) LstClientes.Last().Visitas = FT_ManagementContext.ObterListaVisitasCliente(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString()));
                         if (LoadEquipamentos) LstClientes.Last().Equipamentos = ObterEquipamentos(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
+                        if (LstClientesMySQL.Where(c => c.ClienteStamp == LstClientes.Last().ClienteStamp).Count() > 0)
+                        {
+                            Cliente c = LstClientesMySQL.Where(c => c.ClienteStamp == LstClientes.Last().ClienteStamp).First();
+                            LstClientes.Last().Latitude = c.Latitude;
+                            LstClientes.Last().Longitude = c.Longitude;
+                            LstClientes.Last().Senha = c.Senha;
+                        }
                     }
                 }
 
@@ -240,8 +248,8 @@ namespace FT_Management.Models
         }
         private Cliente ObterCliente(string SQL_Query, bool LoadAll)
         {
-            Cliente c = ObterClientes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Cliente()).First();
-            return FT_ManagementContext.ObterSenhaCliente(c);
+           return ObterClientes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Cliente()).First();
+           // return FT_ManagementContext.ObterCliente(c);
         }
 
         public List<Cliente> ObterClientes()

@@ -35,6 +35,8 @@ namespace FT_Management.Models
         public int IdVendedor { get; set; }
         [Display(Name = "Tipo de Cliente")]
         public string TipoCliente { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
         public List<Marcacao> Marcacoes { get; set; }
         public List<FolhaObra> FolhasObra { get; set; }
         public List<Visita> Visitas { get; set; }
@@ -90,14 +92,22 @@ namespace FT_Management.Models
         }
         public string ObterMoradaDirecoes()
         {
-            if (IdCliente == 878) return "Pingo Doce " + NomeCliente.Replace("PD", "");
-            if (IdCliente == 561) {
-                if (NomeCliente.Contains("CNT")) return NomeCliente.Replace("CNT", "Continente");
-                if (NomeCliente.Contains("MDL")) return NomeCliente.Replace("MDL", "Modelo");
-                if (NomeCliente.Contains("BD")) return NomeCliente.Replace("BD", "Continente Bom Dia");
-                if (NomeCliente.Contains("CBD")) return NomeCliente.Replace("CBD", "Continente Bom Dia");
-                if (NomeCliente.Contains("BNJ")) return NomeCliente.Replace("BNJ", "Continente Bom Dia");
-            };
+            if (string.IsNullOrEmpty(this.Latitude) || string.IsNullOrEmpty(this.Longitude))
+            {
+                if (IdCliente == 878) return "Pingo Doce " + NomeCliente.Replace("PD", "");
+                if (IdCliente == 561)
+                {
+                    if (NomeCliente.Contains("CNT")) return NomeCliente.Replace("CNT", "Continente");
+                    if (NomeCliente.Contains("MDL")) return NomeCliente.Replace("MDL", "Modelo");
+                    if (NomeCliente.Contains("BD")) return NomeCliente.Replace("BD", "Continente Bom Dia");
+                    if (NomeCliente.Contains("CBD")) return NomeCliente.Replace("CBD", "Continente Bom Dia");
+                    if (NomeCliente.Contains("BNJ")) return NomeCliente.Replace("BNJ", "Continente Bom Dia");
+                };
+            }
+            else
+            {
+
+            }
 
             return MoradaCliente;
         }

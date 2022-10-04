@@ -470,6 +470,22 @@
   </div>
 </div>
 
+<div class="modal" id="modalGuardarLocalizacao2">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Localização</p>
+    </header>
+    <section class="modal-card-body">
+      <p>Deseja guardar a localização atual do cliente?</p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" onclick="GuardarLocalizacao2()">Sim</button>
+      <button class="button" onclick="Bulma('#modalGuardarLocalizacao2').modal().close();">Não</button>
+    </footer>
+  </div>
+</div>
+
 <div class="modal" id="modalFecharMarcacao">
   <div class="modal-background"></div>
   <div class="modal-card">
@@ -532,7 +548,7 @@
         };
 
         resizeCanvas();
-
+        Bulma('#modalGuardarLocalizacao2').modal().open();
 
         CarregarPecas();
         if (document.getElementById("txtIdCliente").value > 0) {
@@ -566,6 +582,32 @@
             Bulma('#modalFecharMarcacao').modal().close();
 
             document.getElementById('frmAdicionar').submit();
+        }
+        function GuardarLocalizacao2() {
+            $.ajax({
+                url: '/FolhasObra/GuardarLocalizacao/',
+                data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value },
+                type: "POST",
+                success: function(response) {
+                    var equipamentos = "";
+                    $(response).each(function() {
+                        equipamentos = equipamentos + '<option value="' + this.idEquipamento + '">' + this.descricaoEquipamento + '</option>'
+                    });
+
+                    var equipamentosList = $("#selectEquipamentos");
+                    equipamentosList.empty();
+                    equipamentosList.append(equipamentos);
+                },
+                error: function(response) {
+                    alert(response.responseText);
+                },
+                failure: function(response) {
+                    alert(response.responseText);
+                }
+            });
+
+            Bulma('#modalGuardarLocalizacao2').modal().close();
+
         }
 
         function AdicionarIntervencao() {

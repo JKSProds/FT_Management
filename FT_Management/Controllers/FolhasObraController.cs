@@ -64,6 +64,23 @@ namespace FT_Management.Controllers
             return View(fo);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public JsonResult GuardarLocalizacao(int IdCliente, int IdLoja)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Cliente c = phccontext.ObterClienteSimples(IdCliente, IdLoja);
+            Viatura v = context.ObterViatura(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)));
+            c.Latitude = v.Latitude;
+            c.Longitude = v.Longitude;
+
+            context.GuardarLocalizacaoCliente(c);
+            return new JsonResult("OK");
+        }
+
+
         public ActionResult Print(string id)
         {
             if (id == null)
