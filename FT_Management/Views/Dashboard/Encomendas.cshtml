@@ -297,7 +297,7 @@
                                 </thead>
                                     @foreach (var item in Model)
                                     {
-                                        if (@item.Total && item.DataEnvio >= DateTime.Now.AddDays(2))
+                                        if (@item.Total && item.DataEnvio >= DateTime.Now.AddDays(1))
                                         {
                                             <tr class="lista-toggle" style="font-weight:bold">
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
@@ -323,7 +323,7 @@
                                         }
                                         else
                                         {
-                                            foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(2).ToShortDateString() && !e.Total).ToList())
+                                            foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio >= DateTime.Now.AddDays(1) && !e.Total).ToList())
                                             {
                                                 <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
