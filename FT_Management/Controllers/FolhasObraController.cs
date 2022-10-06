@@ -26,12 +26,14 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Tech")]
         public ActionResult Adicionar(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(phccontext.ObterMarcacao(id));
+            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();

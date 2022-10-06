@@ -52,8 +52,8 @@
     <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
 
     <div class="container">
-        <div class="steps is-small" id="stepsDemo">
-            <div class="step-item is-active is-success">
+        <div class="steps is-small" id="stepsDemo")>
+            <div class="step-item is-success">
                 <div class="step-marker">0</div>
                 <div class="step-details">
                     <p class="step-title">Cliente</p>
@@ -97,7 +97,7 @@
             </div>
             <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
             <div class="steps-content">
-                <div class="step-content is-active">
+                <div class="step-content">
                     <div class="columns is-multiline mx-1 ">
                         <div class="column is-12">
                             <div class="field">
@@ -462,6 +462,11 @@
     </header>
     <section class="modal-card-body">
       <p>Deseja guardar a localização atual do cliente?</p>
+              <div class="field">
+            <div class="control">
+                <input class="input is-primary"  type="text" disabled asp-for="Utilizador.Viatura.LocalizacaoMorada" />
+            </div>
+        </div>
     </section>
     <footer class="modal-card-foot">
       <button class="button is-success" onclick="GuardarLocalizacao(true)">Sim</button>
@@ -478,6 +483,12 @@
     </header>
     <section class="modal-card-body">
       <p>Deseja guardar a localização atual do cliente?</p>
+        <div class="field">
+            <div class="control">
+                <input class="input is-primary"  type="text" disabled asp-for="Utilizador.Viatura.LocalizacaoMorada" />
+            </div>
+        </div>
+
     </section>
     <footer class="modal-card-foot">
       <button class="button is-success" onclick="GuardarLocalizacao2()">Sim</button>
