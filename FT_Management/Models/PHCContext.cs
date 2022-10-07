@@ -1558,7 +1558,7 @@ namespace FT_Management.Models
                                 NomeCliente = result["Nome"].ToString(),
                                 DataEnvio = DateTime.Parse(result["Data_Envio"].ToString()),
                                 DataDossier = DateTime.Parse(result["dataobra"].ToString()),
-                                DespacharEncomenda = result["Transportadora"].ToString() == "True"
+                                DespacharEncomenda = result["Transportador"].ToString() == "True"
                             });
                             LstEncomenda.Last().LinhasEncomenda = new List<Linha_Encomenda>();
                         }
@@ -1593,6 +1593,20 @@ namespace FT_Management.Models
         public List<Encomenda> ObterEncomendas()
         {
             return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.DataEnvio).ToList();
+        }
+        public Encomenda ObterEncomenda(int IdEncomenda)
+        {
+            List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE OBRANO=" + IdEncomenda);
+            return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
+        }
+
+        public Picking ObterPicking(int IdEncomenda)
+        {
+            Picking p = new Picking();
+
+            p.Encomenda = ObterEncomenda(IdEncomenda);
+
+            return p;
         }
 
         #endregion
