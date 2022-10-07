@@ -1554,9 +1554,11 @@ namespace FT_Management.Models
                             {
                                 Id = int.Parse(result["obrano"].ToString()),
                                 NomeDossier = result["nmdos"].ToString(),
+                                NumDossier = int.Parse(result["ndos"].ToString()),
                                 NomeCliente = result["Nome"].ToString(),
                                 DataEnvio = DateTime.Parse(result["Data_Envio"].ToString()),
                                 DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                                DespacharEncomenda = result["Transportadora"].ToString() == "True"
                             });
                             LstEncomenda.Last().LinhasEncomenda = new List<Linha_Encomenda>();
                         }

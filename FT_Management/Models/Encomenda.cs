@@ -12,6 +12,8 @@ namespace FT_Management.Models
         public int Id { get; set; }
         [Display(Name = "Dossier")]
         public string NomeDossier { get; set; }
+        [Display(Name = "Num. Dossier")]
+        public int NumDossier { get; set; }
         [Display(Name = "Cliente")]
         public string NomeCliente { get; set; }
         [Display(Name = "Dias")]
@@ -24,6 +26,7 @@ namespace FT_Management.Models
         public bool Total { get { return this.LinhasEncomenda.Where(l => l.Total == false).Count() == 0; } }
         [Display(Name = "Items")]
         public double NItems { get { return this.LinhasEncomenda.Sum(l => l.Produto.Stock_Fisico); } }
+        public bool DespacharEncomenda { get; set; }
         public bool ExisteEncomenda(Tipo tipo)
         {
             if (Total)
