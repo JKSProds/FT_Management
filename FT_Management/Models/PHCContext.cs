@@ -1570,10 +1570,10 @@ namespace FT_Management.Models
                             {
                                 Ref_Produto = result["ref"].ToString().Trim(),
                                 Designacao_Produto = result["design"].ToString(),
-                                Stock_Fisico = double.Parse(result["Qtt_Envio"].ToString())
+                                Stock_Fisico = result["Qtt_Separar"].ToString() == "0" ? double.Parse(result["Qtt_Envio"].ToString()) : double.Parse(result["Qtt_Separar"].ToString())
                             }
                         });
-                        Console.WriteLine(result["Nome"] + " - " + result["Envio_Total"]);
+                        //Console.WriteLine(result["Nome"] + " - " + result["Envio_Total"]);
                     }
                 }
 
