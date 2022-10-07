@@ -8,6 +8,7 @@ namespace FT_Management.Models
 {
     public class Encomenda
     {
+        public string BO_STAMP { get; set; }
         [Display(Name = "Encomenda")]
         public int Id { get; set; }
         [Display(Name = "Dossier")]

@@ -1552,6 +1552,7 @@ namespace FT_Management.Models
                         {
                             LstEncomenda.Add(new Encomenda()
                             {
+                                BO_STAMP = result["bostamp"].ToString(),
                                 Id = int.Parse(result["obrano"].ToString()),
                                 NomeDossier = result["nmdos"].ToString(),
                                 NumDossier = int.Parse(result["ndos"].ToString()),
