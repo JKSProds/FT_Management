@@ -1600,14 +1600,53 @@ namespace FT_Management.Models
             List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE OBRANO=" + IdEncomenda);
             return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
         }
+        public Encomenda ObterEncomenda(string Stamp_Encomenda)
+        {
+            List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE bostamp=" + Stamp_Encomenda);
+            return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
+        }
 
-        public Picking ObterPicking(int IdEncomenda)
+        public Picking ObterPicking(string PI_STAMP)
         {
             Picking p = new Picking();
 
-            p.Encomenda = ObterEncomenda(IdEncomenda);
-
             return p;
+        }
+
+        public string CriarPicking(string BO_STAMP)
+        {
+            string res = "0";
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Gera_Picking", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP", BO_STAMP));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                if (result[0].ToString() != "-1")
+                {
+                    res = result[2].ToString();
+                }
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao enviar picking para o PHC");
+            }
+
+            return res;
         }
 
         #endregion

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin, Escritorio")]
+    [Authorize(Roles = "Admin")]
     public class PickingController : Controller
     {
         public IActionResult Index(int IdEncomenda, int Tipo, string NomeCliente)
@@ -23,6 +23,17 @@ namespace FT_Management.Controllers
             if (IdEncomenda > 0) LstEncomendas = LstEncomendas.Where(e => e.Id.ToString().Contains(IdEncomenda.ToString())).ToList();
 
             return View(LstEncomendas);
+        }
+
+        public IActionResult Adicionar(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            //string pi_stamp = phccontext.ObterEncomenda(id).PI_STAMP;
+            //string pi_stamp = phccontext.ObterEncomenda("CF22092060792,169000001").PI_STAMP;
+
+            //if (pi_stamp == null) pi_stamp = phccontext.CriarPicking(id);
+
+            return View(phccontext.ObterPicking(pi_stamp));
         }
     }
 }
