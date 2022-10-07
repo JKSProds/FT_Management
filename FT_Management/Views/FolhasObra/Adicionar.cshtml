@@ -483,11 +483,16 @@
     </header>
     <section class="modal-card-body">
       <p>Deseja guardar a localização atual do cliente?</p>
-        <div class="field">
-            <div class="control">
+        <div class="field has-addons">
+            <div class="control" style="width:100%">
                 <input class="input is-primary"  type="text" disabled asp-for="Utilizador.Viatura.LocalizacaoMorada" />
             </div>
-        </div>
+              <p class="control">
+                <a class="button is-static">
+                  @Model.Utilizador.Viatura.Matricula
+                </a>
+                </p>
+            </div>
 
     </section>
     <footer class="modal-card-foot">
