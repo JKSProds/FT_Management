@@ -104,10 +104,6 @@ namespace FT_Management.Models
                     if (NomeCliente.Contains("BNJ")) return NomeCliente.Replace("BNJ", "Continente Bom Dia");
                 };
             }
-            else
-            {
-
-            }
 
             return MoradaCliente;
         }
