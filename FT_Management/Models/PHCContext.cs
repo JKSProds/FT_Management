@@ -1559,7 +1559,8 @@ namespace FT_Management.Models
                                 NomeCliente = result["Nome"].ToString(),
                                 DataEnvio = DateTime.Parse(result["Data_Envio"].ToString()),
                                 DataDossier = DateTime.Parse(result["dataobra"].ToString()),
-                                DespacharEncomenda = result["Transportador"].ToString() == "True"
+                                DespacharEncomenda = result["Transportador"].ToString() == "True",
+                                PI_STAMP = !string.IsNullOrEmpty(result["NUM_PICKING"].ToString().Trim()) ? result["STAMP_PICKING"].ToString() : ""
                             });
                             LstEncomenda.Last().LinhasEncomenda = new List<Linha_Encomenda>();
                         }
@@ -1593,7 +1594,7 @@ namespace FT_Management.Models
 
         public List<Encomenda> ObterEncomendas()
         {
-            return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.DataEnvio).ToList();
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.Data).ToList();
         }
         public Encomenda ObterEncomenda(int IdEncomenda)
         {
@@ -1602,15 +1603,8 @@ namespace FT_Management.Models
         }
         public Encomenda ObterEncomenda(string Stamp_Encomenda)
         {
-            List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE bostamp=" + Stamp_Encomenda);
+            List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE bostamp='" + Stamp_Encomenda + "';");
             return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
-        }
-
-        public Picking ObterPicking(string PI_STAMP)
-        {
-            Picking p = new Picking();
-
-            return p;
         }
 
         public string CriarPicking(string BO_STAMP)
@@ -1648,6 +1642,178 @@ namespace FT_Management.Models
 
             return res;
         }
+        public List<string> AtualizarLinhaPicking(Linha_Picking linha)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Atualiza_Linha_Picking", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP", linha.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@QTT", linha.Qtd_Linha));
+                if (linha.Serie)
+                {
+                    command.Parameters.Add(new SqlParameter("@SERIE", linha.Linha_Serie.First().NumSerie));
+                    command.Parameters.Add(new SqlParameter("@BOMASTAMP", linha.Linha_Serie.First().BOMA_STAMP));
+                }
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = res[0] == "1" ? "" : result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao atualizar o picking para o PHC");
+            }
+
+            return res;
+        }
+
+        public Picking ObterPicking(string PI_STAMP)
+        {
+            Picking p = new Picking();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_PICKING_CAB WHERE PISTAMP='"+PI_STAMP+"'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        p = new Picking()
+                        {
+                            Picking_Stamp = result["PISTAMP"].ToString(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdPicking = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["DATA"].ToString()),
+                            NomeCliente = result["nome"].ToString(),
+                            DespacharEncomenda = result["u_envio"].ToString() == "Transportadora",
+                            Encomenda = this.ObterEncomenda(result["STAMP_ORIGEM"].ToString()),
+                            Linhas = this.ObterLinhasPicking(PI_STAMP)
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler o picking do PHC!");
+            }
+
+            return p;
+        }
+
+        public List<Linha_Picking> ObterLinhasPicking(string PI_STAMP)
+        {
+            List<Linha_Picking> LstPickingLinhas = new List<Linha_Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_PICKING_LIN WHERE PISTAMP='" + PI_STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstPickingLinhas.Add(new Linha_Picking()
+                        {
+                            Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                            Ref_linha = result["ref"].ToString(),
+                            Nome_Linha = result["design"].ToString(),
+                            Qtd_Linha = Double.Parse(result["qtt"].ToString()),
+                            Qtd_Separar = Double.Parse(result["QTT_SEPARAR"].ToString()),
+                            Serie = result["USA_NSERIE"].ToString() == "True",
+                            Linha_Serie = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString()))
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do picking do PHC!");
+            }
+
+            return LstPickingLinhas;
+        }
+
+        public List<Linha_Serie_Picking> ObterSerieLinhaPicking(string BI_STAMP, int Qtt)
+        {
+            List<Linha_Serie_Picking> Linha_Serie = new List<Linha_Serie_Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT bomastamp, serie from V_PICKING_SERIE WHERE BISTAMP='" + BI_STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        Linha_Serie.Add(new Linha_Serie_Picking()
+                        {
+                            BOMA_STAMP = result[0].ToString().Trim(),
+                            NumSerie = result[1].ToString().Trim()
+                        });
+                    }
+                }
+
+                conn.Close();
+
+                do
+                {
+                    Linha_Serie.Add(new Linha_Serie_Picking());
+                } while (Linha_Serie.Count() < Qtt);
+            }
+
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do picking do PHC!");
+            }
+            return Linha_Serie;
+
+        }
+
+
 
         #endregion
     }

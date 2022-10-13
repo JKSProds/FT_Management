@@ -20,6 +20,7 @@ namespace FT_Management.Models
         public string NomeCliente { get; set; }
         [Display(Name = "Dias")]
         public DateTime DataEnvio { get; set; }
+        public DateTime Data { get { return (Total ? this.DataEnvio : ((this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900).Count() > 0) ? this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900).First().DataEnvio : this.DataEnvio) ); } }
         [Display(Name = "Data")]
         public DateTime DataDossier { get; set; }
         [Display(Name = "Linhas")]
@@ -37,12 +38,14 @@ namespace FT_Management.Models
                 if (DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && tipo == Tipo.HOJE) return true;
                 if (DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() && tipo == Tipo.AMANHA) return true;
                 if (DataEnvio >= DateTime.Now.AddDays(2) && tipo == Tipo.FUTURO) return true;
+                if (DataEnvio.Year > 1900 && tipo == Tipo.TODAS) return true; 
             } else
             {
                 if (LinhasEncomenda.Where(l => l.DataEnvio <= DateTime.Now.AddDays(-1) && DataEnvio.Year > 1900 && tipo == Tipo.ATRASO).Count() > 0) return true;
                 if (LinhasEncomenda.Where(l => l.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && tipo == Tipo.HOJE).Count() > 0) return true;
                 if (LinhasEncomenda.Where(l => l.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() && tipo == Tipo.AMANHA).Count() > 0) return true;
                 if (LinhasEncomenda.Where(l => l.DataEnvio <= DateTime.Now.AddDays(2) && tipo == Tipo.FUTURO).Count() > 0) return true;
+                if (LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && tipo == Tipo.TODAS).Count() > 0) return true;
             }
             return false;
         }
@@ -52,7 +55,8 @@ namespace FT_Management.Models
             ATRASO,
             HOJE,
             AMANHA,
-            FUTURO
+            FUTURO,
+            TODAS
         }
     }
     public class Linha_Encomenda

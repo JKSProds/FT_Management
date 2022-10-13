@@ -16,7 +16,7 @@ namespace FT_Management.Controllers
             ViewData["Tipo"] = Tipo;
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.DataEnvio.Year > 1900).ToList();
+            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Encomenda.Tipo.TODAS)).ToList();
 
             if (Tipo > 0) LstEncomendas = LstEncomendas.Where(e => e.NumDossier == Tipo).ToList();
             if (!string.IsNullOrEmpty(NomeCliente)) LstEncomendas = LstEncomendas.Where(e => e.NomeCliente.ToUpper().Contains(NomeCliente.ToUpper())).ToList();
@@ -28,12 +28,42 @@ namespace FT_Management.Controllers
         public IActionResult Adicionar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            //string pi_stamp = phccontext.ObterEncomenda(id).PI_STAMP;
+            string pi_stamp = phccontext.ObterEncomenda(id).PI_STAMP;
             //string pi_stamp = phccontext.ObterEncomenda("CF22092060792,169000001").PI_STAMP;
 
-            //if (pi_stamp == null) pi_stamp = phccontext.CriarPicking(id);
+            if (string.IsNullOrEmpty(pi_stamp)) pi_stamp = phccontext.CriarPicking(id);
+            Picking p = phccontext.ObterPicking(pi_stamp);
 
-            return View(phccontext.ObterPicking(pi_stamp));
+            if (p.IdPicking == 0) 
+            {
+                pi_stamp = phccontext.CriarPicking(id);
+                p = phccontext.ObterPicking(pi_stamp);
+            }
+
+            return View(p);
+        }
+
+        public JsonResult Validar(string stamp, int qtd, string serie, string bomastamp)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Linha_Picking linha_picking = new Linha_Picking()
+            {
+                Picking_Linha_Stamp = stamp,
+                Qtd_Linha = qtd,
+                Linha_Serie = new List<Linha_Serie_Picking>()
+            };
+            if (serie != null && bomastamp != null)
+            {
+                linha_picking.Serie = true;
+                linha_picking.Linha_Serie.Add(new Linha_Serie_Picking()
+                {
+                    BOMA_STAMP = bomastamp == null ? "" : bomastamp,
+                    NumSerie = serie == null ? "" : serie
+                });
+            }
+
+            return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking)[1]);
         }
     }
 }
