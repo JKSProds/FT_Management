@@ -5,6 +5,7 @@
 }
 
 <input type="hidden" id="txtIdEncomenda" />
+<input type="hidden" id="txtIdPicking" />
 
 <form asp-action="Index" method="get">
     <div class="container">
@@ -123,11 +124,16 @@
                                                 }
                                                 else
                                                 {
-                                                 <a class="button is-large is-warning is-rounded is-fullwidth" onclick="NovoPicking('@item.BO_STAMP')">
+                                                 <a class="button is-large is-warning is-rounded" style="width:49%" onclick="NovoPicking('@item.BO_STAMP')">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-pause"></i>
                                                     </span>
-                                                    </a>                                               
+                                                    </a>     
+                                                    <a class="button is-large is-success is-rounded" style="width:49%" onclick="ConfirmFecharPicking('@item.PI_STAMP')">
+                                                    <span class="icon is-small">
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </span>
+                                                    </a> 
                                                 }
                                             </td>
                                         </tr>
@@ -182,11 +188,27 @@
                                                 </span>
                                             </td>
                                              <td class="is-actions-cell">
+                                                @if (item.PI_STAMP == "")
+                                                {
                                                 <a class="button is-large is-success is-rounded is-fullwidth" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-circle-play"></i>
                                                     </span>
-                                                </a>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                 <a class="button is-large is-warning is-rounded" style="width:49%" onclick="NovoPicking('@item.BO_STAMP')">
+                                                    <span class="icon is-small">
+                                                        <i class="fa-solid fa-pause"></i>
+                                                    </span>
+                                                    </a>     
+                                                    <a class="button is-large is-success is-rounded" style="width:49%" onclick="ConfirmFecharPicking('@item.PI_STAMP')">
+                                                    <span class="icon is-small">
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </span>
+                                                    </a> 
+                                                }
                                             </td>
                                         </tr>
                                     }
@@ -196,8 +218,7 @@
                 </div>
             </div>
         </div>
-    </div>
-}
+    </div>}
 </div>
 
 <div class="modal" id="modalNovoPicking">
@@ -216,6 +237,22 @@
   </div>
 </div>
 
+<div class="modal" id="modalFecharPicking">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Picking</p>
+    </header>
+    <section class="modal-card-body">
+      <p>Tem a certeza que deseja fechar o documento de Picking?</p>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" onclick="FecharPicking(document.getElementById('txtIdPicking').value)">Sim</button>
+      <button class="button" onclick="Bulma('#modalFecharPicking').modal().close();">Não</button>
+    </footer>
+  </div>
+</div>
+
 <script>
     document.getElementById("ddlTipo").value = @ViewData["Tipo"];
 
@@ -226,5 +263,20 @@
     function NovoPicking(id) {
             Bulma('#modalNovoPicking').modal().close();
              window.open('Picking/Adicionar/' + id, '_blank');
+    }
+
+    function ConfirmFecharPicking(id) {
+            document.getElementById('txtIdPicking').value = id;
+            Bulma('#modalFecharPicking').modal().open();
+    }
+    function FecharPicking(id) {
+            Bulma('#modalFecharPicking').modal().close();
+        $.ajax({
+            url: '/Picking/Fechar/' + id,
+            type: "POST",
+            success: function (data) {
+                window.location.reload();
+            }
+        });
     }
 </script>

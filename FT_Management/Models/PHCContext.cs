@@ -1642,6 +1642,43 @@ namespace FT_Management.Models
 
             return res;
         }
+
+        public string FecharPicking(string PI_STAMP)
+        {
+            string res = "0";
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("Fecha_Picking", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP", PI_STAMP));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                if (result[0].ToString() != "-1")
+                {
+                    res = result[2].ToString();
+                }
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao fechar o picking no PHC");
+            }
+
+            return res;
+        }
+
         public List<string> AtualizarLinhaPicking(Linha_Picking linha)
         {
             List<string> res = new List<string>() { "-1", "Erro" };

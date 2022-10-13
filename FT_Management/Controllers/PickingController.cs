@@ -42,6 +42,14 @@ namespace FT_Management.Controllers
 
             return View(p);
         }
+        public IActionResult Fechar(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            phccontext.FecharPicking(id);
+
+            return View();
+        }
 
         public JsonResult Validar(string stamp, int qtd, string serie, string bomastamp)
         {
@@ -53,7 +61,7 @@ namespace FT_Management.Controllers
                 Qtd_Linha = qtd,
                 Linha_Serie = new List<Linha_Serie_Picking>()
             };
-            if (serie != null && bomastamp != null)
+            if (serie != null || bomastamp != null)
             {
                 linha_picking.Serie = true;
                 linha_picking.Linha_Serie.Add(new Linha_Serie_Picking()

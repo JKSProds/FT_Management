@@ -34,7 +34,7 @@ namespace FT_Management.Models
         [Display(Name = "Núm. de Série")]
         public List<Linha_Serie_Picking> Linha_Serie { get; set; }
         public bool Serie { get; set; }
-        public bool Validado { get { return Qtd_Linha == Qtd_Separar; } }
+        public bool Validado { get { return Qtd_Linha >= Qtd_Separar; } }
     }
     public class Linha_Serie_Picking
     {
