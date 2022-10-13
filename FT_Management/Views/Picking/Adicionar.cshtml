@@ -224,8 +224,8 @@
         audio.play();
     }
     function ModalMensagem(mensagem, cor) {
-        Bulma('#modalMensagem').modal().header.className = '';
-        Bulma('#modalMensagem').modal().header.classList.add('modal-card-head');
+        Bulma('#modalMensagem').modal().header.classList.remove('has-background-warning');
+        Bulma('#modalMensagem').modal().header.classList.remove('has-background-danger');
         Bulma('#modalMensagem').modal().header.classList.add('has-background-' + cor);
         document.getElementById('txtMensagem').innerHTML = mensagem;
         Bulma('#modalMensagem').modal().open();
