@@ -43,7 +43,7 @@
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
                                                 <td class="is-actions-cell">
-                                                    <a class="button is-success is-rounded" onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                                    <a class="button is-success is-rounded is-fullwidth" onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
                                                         <span class="icon is-small">
                                                             <i class="fa-solid fa-eye"></i>
                                                         </span>
@@ -52,13 +52,13 @@
                                             </tr>
 
                                             <tbody class="detail is-hidden">
-                                                @foreach (var linha in item.LstFolhasObra)
+                                                @foreach (var linha in item.LstDossiers.OrderBy(d => d.DataDossier).Where(d => d.TipoDossier != 49))
                                                 {
                                                     <tr>
-                                                        <td data-label="Dossier" colspan="2">@linha.ReferenciaServico</td>
-                                                        <td data-label="Num. Dossier">@linha.IdFolhaObra</td>
-                                                        <td data-label="Criado por">@linha.ConferidoPor</td>
-                                                        <td data-label="Data" colspan="2">@linha.DataServico.ToShortDateString()</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().NomeDossier)" colspan="2">@linha.NomeDossier</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().IdDossier)">@linha.IdDossier</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().CriadoPor)">@linha.CriadoPor</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().DataDossier)" colspan="2">@linha.DataDossier</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -109,7 +109,7 @@
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
                                                 <td class="is-actions-cell">
-                                                    <a class="button is-success is-rounded" onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                                    <a class="button is-success is-rounded is-fullwidth" onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
                                                         <span class="icon is-small">
                                                             <i class="fa-solid fa-eye"></i>
                                                         </span>
@@ -118,13 +118,13 @@
                                             </tr>
                                             
                                             <tbody class="detail is-hidden">
-                                                @foreach (var linha in item.LstFolhasObra)
+                                                @foreach (var linha in item.LstDossiers.OrderBy(d => d.DataDossier).Where(d => d.TipoDossier != 49))
                                                 {
                                                     <tr>
-                                                        <td data-label="Dossier" colspan="2">@linha.ReferenciaServico</td>
-                                                        <td data-label="Num. Dossier">@linha.IdFolhaObra</td>
-                                                        <td data-label="Criado por">@linha.ConferidoPor</td>
-                                                        <td data-label="Data" colspan="2">@linha.DataServico.ToShortDateString()</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().NomeDossier)" colspan="2">@linha.NomeDossier</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().IdDossier)">@linha.IdDossier</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().CriadoPor)">@linha.CriadoPor</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().DataDossier)" colspan="2">@linha.DataDossier</td>
                                                     </tr>
                                                 }
                                             </tbody>

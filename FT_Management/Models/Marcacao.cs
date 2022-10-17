@@ -76,6 +76,7 @@ namespace FT_Management.Models
         public List<FolhaObra> LstFolhasObra { get; set; }
         public List<Comentario> LstComentarios { get; set; }
         public List<Anexo> LstAnexos { get; set; }
+        public List<Dossier> LstDossiers { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Pedidos/Pedido/" + IdMarcacao; } }
 
         public Marcacao()
