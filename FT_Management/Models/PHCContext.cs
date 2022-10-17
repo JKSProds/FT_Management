@@ -158,7 +158,6 @@ namespace FT_Management.Models
 
             return LstGuias;
         }
-
         public Produto ObterProduto(string Referencia, int IdArmazem)
         {
             List<Produto> p = ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
@@ -251,7 +250,6 @@ namespace FT_Management.Models
            return ObterClientes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Cliente()).First();
            // return FT_ManagementContext.ObterCliente(c);
         }
-
         public List<Cliente> ObterClientes()
         {
             return ObterClientes("SELECT cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where no is not null order by no, estab ;", false, false, false, false);
@@ -411,7 +409,6 @@ namespace FT_Management.Models
 
             return LstEquipamento;
         }
-
         public List<Equipamento> ObterEquipamentos()
         {
             return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma;");
@@ -470,7 +467,12 @@ namespace FT_Management.Models
 
             return res;
         }
-
+        public string ValidarFolhaObra(FolhaObra fo)
+        {
+            string res = "";
+           
+            return res;
+        }
         private List<FolhaObra> ObterFolhasObra(string SQL_Query, bool LoadEquipamento, bool LoadCliente, bool LoadIntervencoes, bool LoadPecas, bool LoadRubrica)
         {
 
@@ -889,7 +891,6 @@ namespace FT_Management.Models
             catch { }
             return "";
         }
-
         public bool ApagarAnexoMarcacao(Anexo a)
         {
             try
@@ -917,7 +918,6 @@ namespace FT_Management.Models
             catch { }
             return false;
         }
-
         public List<Anexo> ObterAnexos(Marcacao m)
         {
             List<Anexo> LstAnexos = new List<Anexo>();
@@ -959,7 +959,6 @@ namespace FT_Management.Models
             }
             return LstAnexos;
         }
-
         public Anexo ObterAnexo(string AnexoStamp)
         {
             List<Anexo> LstAnexos = new List<Anexo>();
@@ -1120,14 +1119,12 @@ namespace FT_Management.Models
         {
             return ObterMarcacoes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Marcacao()).First();
         }
-
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataMarcacoes)
         {
             List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and u_mdatas.data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false, false);
             LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false, false).AsEnumerable());
             return LstMarcacoes;
         }
-
         public List<Marcacao> ObterMarcacoes(int numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico)
         {
             string SQL_Query = "SELECT TOP 200 num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 where " + (numMarcacao > 0 ? "num=" + numMarcacao + " and " : "") + (!string.IsNullOrEmpty(nomeCliente) ? "nome like '%" + nomeCliente + "%' and " : "") + (!string.IsNullOrEmpty(referencia) ? "nincidente like '%" + referencia + "%' and " : "") + (!string.IsNullOrEmpty(tipoe) && tipoe != "Todos" ? "tipoe like '%" + tipoe + "%' and " : "") + (idtecnico > 0 ? "u_mtecnicos.tecnno=" + idtecnico + " and " : "");
@@ -1135,7 +1132,6 @@ namespace FT_Management.Models
             List<Marcacao> LstMarcacoes = ObterMarcacoes(SQL_Query + "order by num desc;", false, true, true, false, false);
             return LstMarcacoes;
         }
-
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
             
@@ -1173,6 +1169,7 @@ namespace FT_Management.Models
            return ObterMarcacao("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora, u_marcacao.ousrinis  FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
         }
 
+
         private List<EstadoMarcacao> ObterMarcacaoEstados(string SQL_Query)
         {
 
@@ -1209,7 +1206,6 @@ namespace FT_Management.Models
 
             return LstEstadoMarcacao;
         }
-
         public List<EstadoMarcacao> ObterMarcacaoEstados()
         {
             return ObterMarcacaoEstados("select ROW_NUMBER()  OVER (ORDER BY (Select 0)) as Id, * from u_estados;");
@@ -1302,7 +1298,6 @@ namespace FT_Management.Models
 
             return res;
         }
-
         public List<String> ObterPrioridade()
         {
 
@@ -1519,7 +1514,6 @@ namespace FT_Management.Models
 
             return LstAcessos;
         }
-
         public void AtualizarAcessos()
         {
             FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
@@ -1591,7 +1585,6 @@ namespace FT_Management.Models
 
             return LstEncomenda;
         }
-
         public List<Encomenda> ObterEncomendas()
         {
             return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.Data).ToList();
@@ -1606,7 +1599,10 @@ namespace FT_Management.Models
             List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE bostamp='" + Stamp_Encomenda + "';");
             return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
         }
+        #endregion
 
+        //PICKING
+        #region Picking
         public string CriarPicking(string BO_STAMP)
         {
             string res = "0";
@@ -1642,7 +1638,6 @@ namespace FT_Management.Models
 
             return res;
         }
-
         public string FecharPicking(string PI_STAMP)
         {
             string res = "0";
@@ -1678,48 +1673,6 @@ namespace FT_Management.Models
 
             return res;
         }
-
-        public List<string> AtualizarLinhaPicking(Linha_Picking linha)
-        {
-            List<string> res = new List<string>() { "-1", "Erro" };
-
-            try
-            {
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("Atualiza_Linha_Picking", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@STAMP", linha.Picking_Linha_Stamp));
-                command.Parameters.Add(new SqlParameter("@QTT", linha.Qtd_Linha));
-                if (linha.Serie)
-                {
-                    command.Parameters.Add(new SqlParameter("@SERIE", linha.Linha_Serie.First().NumSerie));
-                    command.Parameters.Add(new SqlParameter("@BOMASTAMP", linha.Linha_Serie.First().BOMA_STAMP));
-                }
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = res[0] == "1" ? "" : result[1].ToString();
-
-                conn.Close();
-            }
-
-            catch
-            {
-                Console.WriteLine("Erro ao atualizar o picking para o PHC");
-            }
-
-            return res;
-        }
-
         public Picking ObterPicking(string PI_STAMP)
         {
             Picking p = new Picking();
@@ -1731,7 +1684,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT * from V_PICKING_CAB WHERE PISTAMP='"+PI_STAMP+"'", conn)
+                SqlCommand command = new SqlCommand("SELECT * from V_PICKING_CAB WHERE PISTAMP='" + PI_STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -1763,7 +1716,6 @@ namespace FT_Management.Models
 
             return p;
         }
-
         public List<Linha_Picking> ObterLinhasPicking(string PI_STAMP)
         {
             List<Linha_Picking> LstPickingLinhas = new List<Linha_Picking>();
@@ -1806,7 +1758,6 @@ namespace FT_Management.Models
 
             return LstPickingLinhas;
         }
-
         public List<Linha_Serie_Picking> ObterSerieLinhaPicking(string BI_STAMP, int Qtt)
         {
             List<Linha_Serie_Picking> Linha_Serie = new List<Linha_Serie_Picking>();
@@ -1849,9 +1800,46 @@ namespace FT_Management.Models
             return Linha_Serie;
 
         }
+        public List<string> AtualizarLinhaPicking(Linha_Picking linha)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
 
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
+                conn.Open();
 
+                SqlCommand command = new SqlCommand("Atualiza_Linha_Picking", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP", linha.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@QTT", linha.Qtd_Linha));
+                if (linha.Serie)
+                {
+                    command.Parameters.Add(new SqlParameter("@SERIE", linha.Linha_Serie.First().NumSerie));
+                    command.Parameters.Add(new SqlParameter("@BOMASTAMP", linha.Linha_Serie.First().BOMA_STAMP));
+                }
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = res[0] == "1" ? "" : result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Erro ao atualizar o picking para o PHC");
+            }
+
+            return res;
+        }
         #endregion
     }
 }
