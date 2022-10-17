@@ -30,6 +30,8 @@ namespace FT_Management.Models
         [Display(Name = "Datas")]
         public string DatasAdicionais { get; set; }
         public List<DateTime> DatasAdicionaisDistintas { get { return DatasAdicionais != null ? DatasAdicionais.Split(";").ToList().Where(d => d != "").Select(d => DateTime.Parse(d)).Distinct().ToList() : null; } }
+        [Display(Name = "Num. de Dias")]
+        public int DiffDias { get { return DateTime.Now.Subtract(this.DataMarcacao).Days; } }
         [Required]
         [Display(Name = "Prioridade")]
         public string PrioridadeMarcacao { get; set; }
