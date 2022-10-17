@@ -1155,8 +1155,48 @@ namespace FT_Management.Models
         {
             List<EstadoMarcacao> LstEstados = ObterMarcacaoEstados();
             List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado in ('Pedido Orçamento', 'Pedido Peças', 'Pedido Cotação', 'Pedido Fornecedor', 'Pedido Garantia', 'Stock Maia') order by data;", true, true, true, false, false);
+            foreach (var item in LstMarcacoes)
+            {
+                item.LstFolhasObra = ObterDossiers(item);
+            }
             return LstMarcacoes;
 
+        }
+
+        public List<FolhaObra> ObterDossiers(Marcacao m)
+        {
+            List<FolhaObra> LstDossiers = new List<FolhaObra>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bo3 inner join bo on bo.bostamp=bo3.bo3stamp where bo3.u_stampmar='"+m.MarcacaoStamp+"';", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using SqlDataReader result = command.ExecuteReader();
+                while (result.Read())
+                {
+
+                    LstDossiers.Add(new FolhaObra()
+                    {
+                        ReferenciaServico = result["nmdos"].ToString(),
+                        ConferidoPor = result["tabela1"].ToString(),
+                        IdFolhaObra = int.Parse(result["obrano"].ToString()),
+                        DataServico = DateTime.Parse(result["dataobra"].ToString())
+                    });
+                }
+                conn.Close();
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os dossiers do PHC!");
+            }
+
+            return LstDossiers;
         }
         public List<Marcacao> ObterMarcacoesPendentes(int IdTecnico)
         {

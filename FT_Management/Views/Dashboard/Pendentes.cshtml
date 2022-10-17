@@ -31,17 +31,38 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc != "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold;border:0px" class="@(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) " onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                            <tr style="font-weight:bold;border:0px" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) ">
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
+                                                <td class="is-actions-cell">
+                                                    <a class="button is-success is-rounded" onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-eye"></i>
+                                                        </span>
+                                                    </a>     
+                                                </td>
                                             </tr>
+
+                                            <tbody class="detail is-hidden">
+                                                @foreach (var linha in item.LstFolhasObra)
+                                                {
+                                                    <tr>
+                                                        <td data-label="Dossier" colspan="2">@linha.ReferenciaServico</td>
+                                                        <td data-label="Num. Dossier">@linha.IdFolhaObra</td>
+                                                        <td data-label="Criado por">@linha.ConferidoPor</td>
+                                                        <td data-label="Data" colspan="2">@linha.DataServico.ToShortDateString()</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+
                                     }
                             </table>
                         }
@@ -76,17 +97,37 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc == "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold;" class="@(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) " onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                            <tr style="font-weight:bold;" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) ">
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
+                                                <td class="is-actions-cell">
+                                                    <a class="button is-success is-rounded" onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-eye"></i>
+                                                        </span>
+                                                    </a>     
+                                                </td>
                                             </tr>
+                                            
+                                            <tbody class="detail is-hidden">
+                                                @foreach (var linha in item.LstFolhasObra)
+                                                {
+                                                    <tr>
+                                                        <td data-label="Dossier" colspan="2">@linha.ReferenciaServico</td>
+                                                        <td data-label="Num. Dossier">@linha.IdFolhaObra</td>
+                                                        <td data-label="Criado por">@linha.ConferidoPor</td>
+                                                        <td data-label="Data" colspan="2">@linha.DataServico.ToShortDateString()</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
                                     }
                             </table>
                         }
@@ -96,3 +137,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    let cardToggles = document.getElementsByClassName('lista-toggle');
+    for (let i = 0; i < cardToggles.length; i++) {
+        cardToggles[i].addEventListener('click', e => {
+            e.currentTarget.parentElement.nextElementSibling.classList.toggle('is-hidden');
+        });
+    }
+    });
+</script>
