@@ -35,12 +35,12 @@
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc != "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold" class="@(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) " onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
+                                            <tr style="font-weight:bold;border:0px" class="@(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) " onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
                                             </tr>
                                     }
                             </table>
@@ -80,13 +80,12 @@
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc == "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold" class="@(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) " onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
+                                            <tr style="font-weight:bold;" class="@(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) " onclick="window.open('@(Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))')">
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Tecnico.NomeCompleto)">@item.Tecnico.NomeCompleto</td>
+                                                <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">@item.EstadoMarcacaoDesc</td>
                                             </tr>
                                     }
                             </table>
