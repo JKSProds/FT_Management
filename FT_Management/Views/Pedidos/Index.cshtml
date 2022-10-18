@@ -8,7 +8,7 @@
 <form asp-action="Index" method="get">
     <div class="container">
         <div class="columns">
-            <div class="column">
+            <div class="column is-5">
                 <div class="tile">
                     <div class="tile is-parent is-vertical">
                         <article class="tile is-child notification is-info">
@@ -44,6 +44,16 @@
                     </p>
                     <p class="control has-icons-left">
                         <span class="select">
+                            <select class="select" id="lstestados" name="estado" style="height: auto; max-width:250px" onchange="filtrar()"
+                                    asp-items="@(new SelectList(@ViewBag.Estados, "Value", "Text", @ViewData["estado"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <span class="select">
                             <select class="select" id="lsttipoe" name="tipoe" style="height: auto" onchange="filtrar()"
                                     asp-items="@(new SelectList(@ViewBag.TipoEquipamento, "Value", "Text", @ViewData["tipoe"]))">
                             </select>
@@ -52,12 +62,16 @@
                             <i class="fa-solid fa-filter"></i>
                         </span>
                     </p>
-                    <p class="control has-addons">
+                    <p class="control has-addons has-icons-left">
                         <span class="select" style="max-width:150px">
                             <select class="select" id="idtecnico" name="idtecnico" style="height: auto" onchange="filtrar()"
                                     asp-items="@(new SelectList(@ViewBag.ListaTecnicos, "IdPHC", "NomeCompleto", @ViewData["idtecnico"]))">
                             </select>
                         </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-person"></i>
+                        </span>
+
                          <div class="control">
                                     <a class="button is-info" href="~/Pedidos/ListaPedidos?IdTecnico=@ViewData["idtecnico"]">
                                          <i class="fas fa-eye"></i>
@@ -197,12 +211,14 @@
         var nome = document.getElementById("txtNomeCliente").value;
         var referencia = document.getElementById("txtReferencia").value;
         var tipoe = document.getElementById("lsttipoe").value;
+        var estado = document.getElementById("lstestados").value;
         var tecnico = document.getElementById("idtecnico").value;
 
         if (document.getElementById("lsttipoe").selectedIndex == "0") tipoe = "";
+        if (document.getElementById("lstestados").selectedIndex == "0") estado = "";
         if (document.getElementById("idtecnico").selectedIndex == "0") tecnico = 0;
 
-        window.location.href = "/Pedidos?numMarcacao=" + num + "&nomeCliente=" + nome + "&referencia=" + referencia + "&tipoe=" + tipoe + "&idtecnico=" + tecnico;
+        window.location.href = "/Pedidos?numMarcacao=" + num + "&nomeCliente=" + nome + "&referencia=" + referencia + "&tipoe=" + tipoe + "&idtecnico=" + tecnico + "&estado=" + estado;
     }
 
     function ObterViaturas() {

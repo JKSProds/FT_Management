@@ -477,7 +477,7 @@ namespace FT_Management.Controllers
             return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
-        public ActionResult Index(string numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico)
+        public ActionResult Index(string numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico, string estado)
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -497,20 +497,27 @@ namespace FT_Management.Controllers
 
             ViewBag.TipoEquipamento = LstTipoEquipamento.Select(l => new SelectListItem() { Value = l, Text = l });
 
+            List<String> LstEstados = phccontext.ObterMarcacaoEstados().Select(e => e.EstadoMarcacaoDesc).ToList();
+            LstEstados.Insert(0, "Todos");
+
+            ViewBag.Estados = LstEstados.Select(l => new SelectListItem() { Value = l, Text = l });
+
             if (string.IsNullOrEmpty(nomeCliente)) { nomeCliente = ""; }
             if (string.IsNullOrEmpty(referencia)) { referencia = ""; }
             if (string.IsNullOrEmpty(tipoe)) { tipoe = ""; }
             if (string.IsNullOrEmpty(numMarcacao)) { numMarcacao = ""; }
+            if (string.IsNullOrEmpty(estado)) { estado = ""; }
 
             ViewData["numMarcacao"] = numMarcacao;
             ViewData["nomeCliente"] = nomeCliente;
             ViewData["referencia"] = referencia;
             ViewData["tipoe"] = tipoe;
             ViewData["idtecnico"] = idtecnico;
+            ViewData["estado"] = estado;
 
-            if (string.IsNullOrEmpty(numMarcacao) && string.IsNullOrEmpty(nomeCliente) && string.IsNullOrEmpty(referencia) && string.IsNullOrEmpty(tipoe) && idtecnico == 0) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
+            if (string.IsNullOrEmpty(numMarcacao) && string.IsNullOrEmpty(nomeCliente) && string.IsNullOrEmpty(referencia) && string.IsNullOrEmpty(tipoe) && idtecnico == 0 && string.IsNullOrEmpty(estado)) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
 
-            return View(phccontext.ObterMarcacoes(int.Parse(numMarcacao != "" ? numMarcacao : "0"), nomeCliente, referencia, tipoe, idtecnico));
+            return View(phccontext.ObterMarcacoes(int.Parse(numMarcacao != "" ? numMarcacao : "0"), nomeCliente, referencia, tipoe, idtecnico, estado));
         }
 
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
