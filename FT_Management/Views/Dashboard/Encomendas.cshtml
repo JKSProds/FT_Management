@@ -9,12 +9,10 @@
         <div class="card has-table has-mobile-sort-spaced has-background-danger-light">
             <header class="card-header">
                 <p class="card-header-title">
-                    <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
+                    <span class="icon"><i class="fa-solid fa-calendar-xmark"></i></span>
                     Em Atraso
                 </p>
-                <a href="#" class="card-header-icon">
-                    <span class="icon"><i class="mdi mdi-reload"></i></span>
-                </a>
+            <a class="card-header-icon button is-info m-1 is-disabled">@Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.ATRASO)).Count()</a>
             </header>
             <div class="card-content">
                 <div class="b-table">
@@ -105,12 +103,10 @@
         <div class="card has-table has-mobile-sort-spaced has-background-success-light">
             <header class="card-header">
                 <p class="card-header-title">
-                    <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
+                    <span class="icon"><i class="fa-solid fa-calendar-day"></i></span>
                     Hoje
                 </p>
-                <a href="#" class="card-header-icon">
-                    <span class="icon"><i class="mdi mdi-reload"></i></span>
-                </a>
+            <a class="card-header-icon button is-info m-1 is-disabled">@Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.HOJE)).Count()</a>
             </header>
             <div class="card-content">
                 <div class="b-table">
@@ -196,12 +192,10 @@
         <div class="card has-table has-mobile-sort-spaced has-background-warning-light">
             <header class="card-header">
                 <p class="card-header-title">
-                    <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
+                    <span class="icon"><i class="fa-solid fa-calendar-week"></i></span>
                     Amanhã
                 </p>
-                <a href="#" class="card-header-icon">
-                    <span class="icon"><i class="mdi mdi-reload"></i></span>
-                </a>
+            <a class="card-header-icon button is-info m-1 is-disabled">@Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.AMANHA)).Count()</a>
             </header>
             <div class="card-content">
                 <div class="b-table">
@@ -287,12 +281,10 @@
         <div class="card has-table has-mobile-sort-spaced">
             <header class="card-header">
                 <p class="card-header-title">
-                    <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
+                    <span class="icon"><i class="fa-regular fa-calendar-days"></i></span>
                     Próximos
                 </p>
-                <a href="#" class="card-header-icon">
-                    <span class="icon"><i class="mdi mdi-reload"></i></span>
-                </a>
+            <a class="card-header-icon button is-info m-1 is-disabled">@Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.FUTURO)).Count()</a>
             </header>
             <div class="card-content">
                 <div class="b-table">
