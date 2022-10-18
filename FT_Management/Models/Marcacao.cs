@@ -76,7 +76,7 @@ namespace FT_Management.Models
         public List<FolhaObra> LstFolhasObra { get; set; }
         public List<Comentario> LstComentarios { get; set; }
         public List<Anexo> LstAnexos { get; set; }
-        public List<Dossier> LstDossiers { get; set; }
+        public List<Atividade> LstAtividade { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Pedidos/Pedido/" + IdMarcacao; } }
 
         public Marcacao()
@@ -117,6 +117,20 @@ namespace FT_Management.Models
         public Utilizador Utilizador { get; set; }
         [Display(Name = "Data")]
         public DateTime DataComentario { get; set; }
+    }
+
+    public class Atividade
+    {
+        [Display(Name = "Id")]
+        public string Id { get; set; }
+        [Display(Name = "Tipo")]
+        public int Tipo { get; set; }
+        [Display(Name = "Nome")]
+        public string Nome { get; set; }
+        [Display(Name = "Criado por")]
+        public string CriadoPor { get; set; }
+        [Display(Name = "Data")]
+        public DateTime Data { get; set; }
     }
 
 }

@@ -1105,7 +1105,7 @@ namespace FT_Management.Models
                         catch { }
                     }
                     if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
-                    if (LoadDossiers) LstMarcacao.Last().LstDossiers = ObterDossiers(LstMarcacao.Last());
+                    if (LoadDossiers) { LstMarcacao.Last().LstAtividade = ObterAtivivade(LstMarcacao.Last());}
                 }
                 conn.Close();
             }
@@ -1160,9 +1160,9 @@ namespace FT_Management.Models
 
         }
 
-        public List<Dossier> ObterDossiers(Marcacao m)
+        public List<Atividade> ObterAtivivade(Marcacao m)
         {
-            List<Dossier> LstDossiers = new List<Dossier>();
+            List<Atividade> LstAtividade = new List<Atividade>();
 
             try
             {
@@ -1177,23 +1177,25 @@ namespace FT_Management.Models
                 using SqlDataReader result = command.ExecuteReader();
                 while (result.Read())
                 {
-                    LstDossiers.Add(new Dossier()
+                    LstAtividade.Add(new Atividade()
                     {
-                        NomeDossier = result["nmdos"].ToString(),
+                        Nome = result["nmdos"].ToString(),
                         CriadoPor = result["tabela1"].ToString(),
-                        IdDossier = int.Parse(result["obrano"].ToString()),
-                        DataDossier = DateTime.Parse(DateTime.Parse(result["dataobra"].ToString()).ToShortDateString() + " " + result["hora"].ToString()),
-                        TipoDossier = int.Parse(result["ndos"].ToString())
+                        Id = result["obrano"].ToString(),
+                        Data = DateTime.Parse(DateTime.Parse(result["dataobra"].ToString()).ToShortDateString() + " " + result["hora"].ToString()),
+                        Tipo = int.Parse(result["ndos"].ToString())
                     });
                 }
                 conn.Close();
+
+                LstAtividade.AddRange(FT_ManagementContext.ObterAtividade(m).AsEnumerable());
             }
             catch
             {
                 Console.WriteLine("Não foi possivel ler os dossiers do PHC!");
             }
 
-            return LstDossiers.OrderBy(d => d.DataDossier).ToList();
+            return LstAtividade.OrderBy(d => d.Data).ToList();
         }
         public List<Marcacao> ObterMarcacoesPendentes(int IdTecnico)
         {

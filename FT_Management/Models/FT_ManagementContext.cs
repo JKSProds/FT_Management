@@ -2444,5 +2444,28 @@ namespace FT_Management.Models
             db.Connection.Close();
         }
 
+        public List<Atividade> ObterAtividade(Marcacao m)
+        {
+            string sqlQuery = "SELECT * FROM dat_marcacoes_atividade where IdMarcacao="+m.IdMarcacao+";";
+            List<Atividade> LstAtividades = new List<Atividade>();
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstAtividades.Add(new Atividade
+                    { 
+                        Id = result["Id"],
+                        Tipo = result["TipoAtividade"],
+                        Nome = result["NomeAtividade"],
+                        CriadoPor = result["CriadoPor"],
+                        Data = result["DataAtividade"]
+                    });
+                }
+            }
+            return LstAtividades;
+
+        }
     }
 }

@@ -52,13 +52,13 @@
                                             </tr>
 
                                             <tbody class="detail is-hidden">
-                                                @foreach (var linha in item.LstDossiers.OrderBy(d => d.DataDossier).Where(d => d.TipoDossier != 49))
+                                                @foreach (var linha in item.LstAtividade.OrderBy(d => d.Data).Where(d => d.Tipo != 49))
                                                 {
                                                     <tr>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().NomeDossier)" colspan="2">@linha.NomeDossier</td>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().IdDossier)">@linha.IdDossier</td>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().CriadoPor)">@linha.CriadoPor</td>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().DataDossier)" colspan="2">@linha.DataDossier</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().Nome)" colspan="2">@linha.Nome</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().Id)">@(linha.Tipo == 0 ? "Email" : @linha.Id)</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().CriadoPor)">@linha.CriadoPor</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().Data)" colspan="2">@linha.Data</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -118,13 +118,13 @@
                                             </tr>
                                             
                                             <tbody class="detail is-hidden">
-                                                @foreach (var linha in item.LstDossiers.OrderBy(d => d.DataDossier).Where(d => d.TipoDossier != 49))
+                                                @foreach (var linha in item.LstAtividade.OrderBy(d => d.Data).Where(d => d.Tipo != 49))
                                                 {
                                                     <tr>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().NomeDossier)" colspan="2">@linha.NomeDossier</td>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().IdDossier)">@linha.IdDossier</td>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().CriadoPor)">@linha.CriadoPor</td>
-                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstDossiers.FirstOrDefault().DataDossier)" colspan="2">@linha.DataDossier</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().Nome)" colspan="2">@linha.Nome</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().Id)">@(linha.Tipo == 0 ? "Email" : @linha.Id)</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().CriadoPor)">@linha.CriadoPor</td>
+                                                        <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstAtividade.FirstOrDefault().Data)" colspan="2">@linha.Data</td>
                                                     </tr>
                                                 }
                                             </tbody>
