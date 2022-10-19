@@ -1154,8 +1154,13 @@ namespace FT_Management.Models
         }
         public List<Marcacao> ObterMarcacoesPendentes()
         {
-            List<EstadoMarcacao> LstEstados = ObterMarcacaoEstados();
             List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado in ('Pedido Orçamento', 'Pedido Peças', 'Pedido Cotação', 'Pedido Fornecedor', 'Pedido Garantia', 'Stock Maia', 'Enc. a Fornecedor', 'Enc. de Cliente', 'Peças na Maia') order by data;", false, true, true, false, false, true);
+            return LstMarcacoes;
+
+        }
+        public List<Marcacao> ObterMarcacoesSimples()
+        {
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao full outer join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado not in ('AT Validada', 'Aguarda Ped. Compra') order by estado;", false, false, false, false, false, false);
             return LstMarcacoes;
 
         }

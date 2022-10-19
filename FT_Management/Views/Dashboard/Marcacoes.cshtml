@@ -4,20 +4,31 @@
     ViewData["Title"] = "Marcações";
 }
 
+<input type="hidden" id="txtCriado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Criado").Count()" />
+<input type="hidden" id="txtEncFornecedor" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Enc. a Fornecedor").Count()" />
+<input type="hidden" id="txtPedidoCotacao" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Cotação").Count()" />
+<input type="hidden" id="txtPedidoFornecedor" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Fornecedor").Count()" />
+<input type="hidden" id="txtPecasMaia" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Peças na Maia").Count()" />
+<input type="hidden" id="txtOrcamentado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Orçamentado").Count()" />
+<input type="hidden" id="txtPedidoPecas" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Peças").Count()" />
+<input type="hidden" id="txtPedidoOrcamento" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Orçamento").Count()" />
+<input type="hidden" id="txtAgendado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Agendado").Count()" />
+<input type="hidden" id="txtAbertasHoje" value="@Model.Where(m => m.EstadoMarcacaoDesc != "Finalizado").Where(m => m.DataMarcacao.ToShortDateString() == DateTime.Now.ToShortDateString()).Count()" />
+<input type="hidden" id="txtFechadasHoje" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Finalizado").Where(m => m.DataMarcacao.ToShortDateString() == DateTime.Now.ToShortDateString()).Count()" />
+
 <div class="columns is-gapless">
     <div class="column mx-1">
         <div class="card has-table has-mobile-sort-spaced has-background-info-light">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
-                    Marcações Fechadas
+                    Marcações Abertas
                 </p>
-            <a class="card-header-icon button is-info m-1 is-disabled">93%</a>
             </header>
             <div class="card-content">
                 <div class="b-table">
                     <div class="table-wrapper has-mobile-cards">
-                            <canvas id="chartMarcacoesFechadas" max-width="400" max-height="400"></canvas>
+                            <canvas id="chartMarcacoesAbertas" max-width="400" max-height="400"></canvas>
                     </div>
                 </div>
             </div>
@@ -30,7 +41,6 @@
                     <span class="icon"><i class="fa-solid fa-file-invoice"></i></span>
                     Marcações Concluidas (Hoje)
                 </p>
-            <a class="card-header-icon button is-info m-1 is-disabled">20%</a>
             </header>
             <div class="card-content">
                 <div class="b-table">
@@ -44,27 +54,17 @@
 </div>
 
 <script>
-    const ctx1 = document.getElementById('chartMarcacoesFechadas').getContext('2d');
-    const chartMarcacoesFechadas = new Chart(ctx1, {
-    type: 'doughnut',
+    const ctx1 = document.getElementById('chartMarcacoesAbertas').getContext('2d');
+    const chartMarcacoesAbertas = new Chart(ctx1, {
+    type: 'pie',
         data: {
-            labels: ['Completo', 'Aberto'],
+            labels: ['Criado', 'Enc. a Fornecedor', 'Pedido Cotação', 'Pedido Fornecedor', 'Peças na Maia', 'Orçamentado', 'Pedido Peças', 'Pedido Orçamento', 'Agendado'],
             datasets: [{
-                label: 'Marcações Fechadas',
-                data: [93, 7],
-                backgroundColor: [
-                    'rgba(45, 85, 255, 1)',
-                    'rgba(0, 0, 0, 0)'
-                ],
-                borderColor: [
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 0)'
-                ],
-                borderWidth: 5
+                data: [document.getElementById("txtCriado").value, document.getElementById("txtEncFornecedor").value, document.getElementById("txtPedidoCotacao").value, document.getElementById("txtPedidoFornecedor").value, document.getElementById("txtPecasMaia").value, document.getElementById("txtOrcamentado").value, document.getElementById("txtPedidoPecas").value, document.getElementById("txtPedidoOrcamento").value, document.getElementById("txtAgendado").value],
+                backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#885f2d","#ff7256","#5aecd2","#3c3d45"],
             }]
         },
         options: {
-
         }
     });
 
@@ -74,17 +74,11 @@
         data: {
             labels: ['Completo', 'Aberto'],
             datasets: [{
-                label: 'Marcações Fechadas',
-                data: [20, 80],
+                data: [document.getElementById("txtFechadasHoje").value, document.getElementById("txtAbertasHoje").value],
                 backgroundColor: [
                     'rgba(45, 85, 255, 1)',
                     'rgba(0, 0, 0, 0)'
-                ],
-                borderColor: [
-                    'rgba(0, 0, 0, 1)',
-                    'rgba(0, 0, 0, 0)'
-                ],
-                borderWidth: 5
+                ]
             }]
         },
         options: {

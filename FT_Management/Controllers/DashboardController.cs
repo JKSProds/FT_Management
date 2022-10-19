@@ -45,7 +45,11 @@ namespace FT_Management.Controllers
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Forbid();
 
-            return View();
+            List<Marcacao> LstMarcacaos = phccontext.ObterMarcacoesSimples();
+
+            return View(LstMarcacaos);
         }
+
+
     }
 }
