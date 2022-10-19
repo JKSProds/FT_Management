@@ -1,0 +1,94 @@
+﻿@model IEnumerable<FT_Management.Models.Marcacao>
+
+@{
+    ViewData["Title"] = "Marcações";
+}
+
+<div class="columns is-gapless">
+    <div class="column mx-1">
+        <div class="card has-table has-mobile-sort-spaced has-background-info-light">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <span class="icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                    Marcações Fechadas
+                </p>
+            <a class="card-header-icon button is-info m-1 is-disabled">93%</a>
+            </header>
+            <div class="card-content">
+                <div class="b-table">
+                    <div class="table-wrapper has-mobile-cards">
+                            <canvas id="chartMarcacoesFechadas" max-width="400" max-height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column mx-1">
+        <div class="card has-table has-mobile-sort-spaced has-background-success-light">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <span class="icon"><i class="fa-solid fa-file-invoice"></i></span>
+                    Marcações Concluidas (Hoje)
+                </p>
+            <a class="card-header-icon button is-info m-1 is-disabled">20%</a>
+            </header>
+            <div class="card-content">
+                <div class="b-table">
+                    <div class="table-wrapper has-mobile-cards">
+                            <canvas id="chartMarcacoesHoje" max-width="400" max-height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx1 = document.getElementById('chartMarcacoesFechadas').getContext('2d');
+    const chartMarcacoesFechadas = new Chart(ctx1, {
+    type: 'doughnut',
+        data: {
+            labels: ['Completo', 'Aberto'],
+            datasets: [{
+                label: 'Marcações Fechadas',
+                data: [93, 7],
+                backgroundColor: [
+                    'rgba(45, 85, 255, 1)',
+                    'rgba(0, 0, 0, 0)'
+                ],
+                borderColor: [
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 0)'
+                ],
+                borderWidth: 5
+            }]
+        },
+        options: {
+
+        }
+    });
+
+    const ctx2 = document.getElementById('chartMarcacoesHoje').getContext('2d');
+    const chartMarcacoesHoje = new Chart(ctx2, {
+    type: 'doughnut',
+        data: {
+            labels: ['Completo', 'Aberto'],
+            datasets: [{
+                label: 'Marcações Fechadas',
+                data: [20, 80],
+                backgroundColor: [
+                    'rgba(45, 85, 255, 1)',
+                    'rgba(0, 0, 0, 0)'
+                ],
+                borderColor: [
+                    'rgba(0, 0, 0, 1)',
+                    'rgba(0, 0, 0, 0)'
+                ],
+                borderWidth: 5
+            }]
+        },
+        options: {
+
+        }
+    });
+</script>
