@@ -1185,7 +1185,7 @@ namespace FT_Management.Models
                     LstAtividade.Add(new Atividade()
                     {
                         Nome = result["nmdos"].ToString(),
-                        CriadoPor = result["tabela1"].ToString(),
+                        CriadoPor = result["ousrinis"].ToString(),
                         Id = result["obrano"].ToString(),
                         Data = DateTime.Parse(DateTime.Parse(result["dataobra"].ToString()).ToShortDateString() + " " + result["hora"].ToString()),
                         Tipo = int.Parse(result["ndos"].ToString())
