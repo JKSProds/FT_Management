@@ -244,12 +244,12 @@
       <p class="modal-card-title">Picking</p>
     </header>
     <section class="modal-card-body">
-      <p>Tem a certeza que deseja fechar o documento de Picking?</p>
-      <hr />
-      <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
-    </section>
+    <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
+    <hr />
+      <p>Tem a certeza que deseja fechar o documento de Picking?</p> 
+  </section>
     <footer class="modal-card-foot">
-      <button class="button is-success" onclick="FecharPicking(document.getElementById('txtIdPicking'))">Sim</button>
+      <button class="button is-success" onclick="FecharPicking(document.getElementById('txtIdPicking').value)">Sim</button>
       <button class="button" onclick="Bulma('#modalFecharPicking').modal().close();">Não</button>
     </footer>
   </div>
@@ -268,6 +268,7 @@
     }
 
         function ConfirmFecharPicking(id) {
+            document.getElementById('txtIdPicking').value = id;
             $.ajax({
             type: "POST",
             url: "/Picking/ValidarPicking/" + id,
@@ -283,7 +284,6 @@
             }
         });
 
-            Bulma('#').modal().open();
     }
 
     function FecharPicking(id) {

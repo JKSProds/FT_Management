@@ -1720,7 +1720,7 @@ namespace FT_Management.Models
 
                 if (result[0].ToString() != "-1")
                 {
-                    res = result[2].ToString();
+                    res = result[0].ToString();
                 }
 
                 conn.Close();
@@ -1915,7 +1915,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("", conn)
+                SqlCommand command = new SqlCommand("select completo from V_PICKING_CAB where PISTAMP = '" + PI_STAMP+"'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -1923,7 +1923,7 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        res = result[0].ToString();
+                        res = result[0].ToString() == "0" ? "Ainda falta validar referências!" : "";
                     }
                 }
 

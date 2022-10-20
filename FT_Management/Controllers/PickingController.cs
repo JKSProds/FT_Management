@@ -42,13 +42,13 @@ namespace FT_Management.Controllers
 
             return View(p);
         }
-        public IActionResult Fechar(string id)
+        public ActionResult Fechar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             phccontext.FecharPicking(id, this.User.ObterNomeCompleto());
 
-            return View();
+            return Content("Ok");
         }
 
         [HttpPost]
