@@ -1695,7 +1695,7 @@ namespace FT_Management.Models
 
             return res;
         }
-        public string FecharPicking(string PI_STAMP)
+        public string FecharPicking(string PI_STAMP, string NomeUtilizador)
         {
             string res = "0";
             try
@@ -1711,6 +1711,7 @@ namespace FT_Management.Models
                 };
 
                 command.Parameters.Add(new SqlParameter("@STAMP", PI_STAMP));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", NomeUtilizador));
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
