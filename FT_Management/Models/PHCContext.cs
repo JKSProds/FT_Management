@@ -878,8 +878,12 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@ASSINATURA", a.AnexoAssinatura ? "1" : "0"));
                 command.Parameters.Add(new SqlParameter("@INSTALACAO", a.AnexoInstalacao ? "1" : "0"));
                 command.Parameters.Add(new SqlParameter("@PECA", a.AnexoPeca ? "1" : "0"));
+                command.Parameters.Add(new SqlParameter("@EMAIL", a.AnexoEmail ? "1" : "0"));
                 command.Parameters.Add(new SqlParameter("@REF", a.RefPeca));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", a.NomeUtilizador));
+                command.Parameters.Add(new SqlParameter("@TITULO", a.ObterNomeLegivel()));
+                command.Parameters.Add(new SqlParameter("@OUSRDATA", DateTime.Now.ToString("yyyyMMdd")));
+                command.Parameters.Add(new SqlParameter("@OUSRHORA", DateTime.Now.ToShortTimeString()));
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();

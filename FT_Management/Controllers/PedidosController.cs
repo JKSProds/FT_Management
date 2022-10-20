@@ -190,7 +190,8 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult AdicionarAnexo(int id, IFormFile file)
+        [AllowAnonymous]
+        public JsonResult AdicionarAnexo(int id, IFormFile file, string Descricao, bool Email)
          {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
@@ -203,7 +204,9 @@ namespace FT_Management.Controllers
                         MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
                         IdMarcacao = id,
                         AnexoMarcacao = true,
-                        NomeUtilizador = this.User.ObterNomeCompleto()
+                        NomeUtilizador = this.User.ObterNomeCompleto(),
+                        DescricaoFicheiro = Descricao,
+                        AnexoEmail = Email
                     };
                     a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
 

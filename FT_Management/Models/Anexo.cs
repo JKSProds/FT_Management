@@ -6,7 +6,7 @@ namespace FT_Management.Models
 {
     public enum TipoFicheiro
     {
-        Marcacao, Instalacao, Peca, Assinatura
+        Marcacao, Instalacao, Peca, Assinatura, Email
 
     }
 
@@ -20,11 +20,15 @@ namespace FT_Management.Models
         public string MarcacaoStamp { get; set; }
         [Display(Name = "Ficheiro")]
         public string NomeFicheiro { get; set; }
+        [Display(Name = "Descrição")]
+        public string DescricaoFicheiro { get; set; }
         public bool AnexoMarcacao { get; set; }
         public bool AnexoAssinatura { get; set; }
         public bool AnexoInstalacao { get; set; }
         public bool AnexoPeca { get; set; }
         public string RefPeca { get; set; }
+        public bool AnexoEmail { get; set; }
+        
         [Display(Name = "Criado por")]
         public string NomeUtilizador { get; set; }
         [Display(Name = "Criado em")]
@@ -36,6 +40,7 @@ namespace FT_Management.Models
             if (AnexoAssinatura) return TipoFicheiro.Assinatura;
             if (AnexoInstalacao) return TipoFicheiro.Instalacao;
             if (AnexoPeca) return TipoFicheiro.Peca;
+            if (AnexoEmail) return TipoFicheiro.Email;
 
             return TipoFicheiro.Marcacao;
         }
@@ -43,6 +48,8 @@ namespace FT_Management.Models
         public string ObterNomeLegivel()
         {
             string res = "MARC" + IdMarcacao;
+
+            if (ObterTipoFicheiro() == TipoFicheiro.Email) res = this.DescricaoFicheiro;
             if (ObterTipoFicheiro() == TipoFicheiro.Instalacao) res += " - Anexo de Instalação";
             if (ObterTipoFicheiro() == TipoFicheiro.Assinatura) res += " - Anexo de Assinatura";
             if (ObterTipoFicheiro() == TipoFicheiro.Peca) res += " - Anexo de Peça";
