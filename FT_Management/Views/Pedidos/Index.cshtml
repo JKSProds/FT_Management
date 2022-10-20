@@ -5,6 +5,7 @@
     ViewData["Title"] = "Pedidos - Lista de Técnicos";
 }
 
+<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
 <form asp-action="Index" method="get">
     <div class="container">
         <div class="columns">
@@ -125,8 +126,7 @@
         <button class="button is-danger is-fullwidth is-disabled">Não foram encontradas marcações!</button>
     }
     else
-    {
-         
+    {   
     <div class="b-table">
         <div class="table-wrapper has-mobile-cards">
         <table class="table is-hoverable is-fullwidth">
@@ -153,10 +153,9 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
+                    <tr id="marcacao_@item.IdMarcacao" class="@(item.EstadoMarcacaoDesc=="Finalizado" ? "has-background-success" : "")" >
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">
                             <span>@item.IdMarcacao</span>
                         </td>
@@ -164,28 +163,29 @@
                             <span>@item.Cliente.NomeCliente</span>
                         </td>
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
-                            <span>@item.DataMarcacao.ToShortDateString()</span>
+                            <span class="data">@item.DataMarcacao.ToShortDateString()</span>
                         </td>
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)">
                             <span>@item.Referencia</span>
                         </td>
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">
-                            <span>@item.EstadoMarcacaoDesc</span>
+                            <span class="estado">@item.EstadoMarcacaoDesc</span>
                         </td>
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">                        
-                            <span>@item.Tecnico.NomeCompleto</span>
+                            <span class="tecnico">@item.Tecnico.NomeCompleto</span>
                         </td>
                         <td class="is-actions-cell">
-                            <div class="buttons is-pulled-right is-flex-wrap-nowrap">
-                                
-                            </div>
+                            <a class="button is-info is-rounded is-fullwidth" onclick="ObterMarcacao(@item.IdMarcacao);">
+                                <span class="icon is-small">
+                                    <i class="fas fa-list"></i>
+                                </span>
+                            </a>
                         </td>
                     </tr>
                 }
-            </tbody>
         </table>
-        </div>
-        </div>
+    </div>
+</div>
         
     }
 </div>
@@ -205,7 +205,81 @@
     </div>
 </div>
 
+
+<div id="modalQuickActionMarcacao" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Alteração Rápida</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <fieldset disabled>
+                    <div class="field has-addons">
+                      <div class="control">
+                        <input type="text" class="input"  id="txtIdMarcacao">
+                      </div>
+                      <div class="control" style="width:100%">
+                        <input type="text" class="input"  id="txtNomeCliente2">
+                      </div>
+                    </div>
+                </fieldset>
+                <hr />
+                <div class="field">
+                    <label class="label">Estado</label>
+                    <p class="control has-icons-left">
+                        <span class="select" style="width:100%">
+                            @Html.DropDownList("LstEstados", new SelectList(ViewBag.Estados, "Value", "Text"), new { style = "width: 100%;" })
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <label class="label">Data da Marcação</label>
+                    <div class="field">
+                        <p class="control ">
+                            <input type="date" class="input" value="@(DateTime.Parse(DateTime.Now.ToString()).ToString("yyyy-MM-dd"))" id="txtData">
+                            <script>
+                                bulmaCalendar.attach('#txtData', {
+                                    color: 'info',
+                                    lang: 'pt',
+                                    displayMode: 'dialog',
+                                    dateFormat: 'dd/MM/yyyy',
+                                    todayLabel: 'Hoje',
+                                    showClearButton: false,
+                                    cancelLabel: 'Cancelar'
+                                });
+                            </script>
+                        </p>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Técnico</label>
+                    <div class="control">
+                        <div class="select" style="width:100%">
+                            <span class="select" style="width:100%">
+                            @Html.DropDownList("LstTecnicos", new SelectList(ViewBag.ListaTecnicos, "Id", "NomeCompleto"), new { style = "width: 100%;" })
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+             <button class="button is-info" onclick="AtualizarMarcacao(document.getElementById('txtIdMarcacao').value);">Atualizar Marcação</button>
+            <button class="button is-secondary is-outlined" onclick="Bulma('#modalQuickActionMarcacao').modal().close();">Cancelar</button>
+        </footer>
+    </div>
+</div>
+
 <script>
+    document.getElementById('LstEstados').remove(0);
+    document.getElementById('LstTecnicos').remove(0);
+
     function filtrar() {
         var num = document.getElementById("txtNumMarcacao").value;
         var nome = document.getElementById("txtNomeCliente").value;
@@ -253,5 +327,84 @@
                 alert(response.responseText);
             }
         });
+    }
+
+    function ObterMarcacao(id) {
+         document.getElementById('pageloader').classList.add('is-active');
+         $.ajax({
+            url: '/Pedidos/ObterMarcacao/' + id,
+            type: "GET",
+            success: function (response) {
+
+                document.getElementById('txtData').bulmaCalendar.value(new Date(response.dataMarcacao).toLocaleDateString());
+                document.getElementById('txtIdMarcacao').value = response.idMarcacao;
+                document.getElementById('txtNomeCliente2').value = response.cliente.nomeCliente;
+                document.getElementById('LstEstados').value = response.estadoMarcacaoDesc;
+                document.getElementById('LstTecnicos').value = response.tecnico.id;
+
+                document.getElementById('pageloader').classList.remove('is-active');
+                var modal = Bulma('#modalQuickActionMarcacao').modal();
+                modal.open();
+                
+            },
+            error: function (response) {
+                alert(response.responseText);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+
+    function AtualizarMarcacao(id) {
+        if (document.getElementById('LstTecnicos').selectedIndex <= 0) {
+            bulmaToast.toast({
+                          message: 'Tem de definir um técnico!',
+                          type: 'is-danger',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+            })
+        } else {
+                
+            document.getElementById('pageloader').classList.add('is-active');
+            var m = {
+                    DataMarcacao : document.getElementById('txtData').value,
+                    EstadoMarcacaoDesc: document.getElementById('LstEstados').value,
+                    Tecnico: document.getElementById('LstTecnicos').value
+                }
+            $.ajax({
+                url: '/Pedidos/AlteracaoRapida/' + id,
+                type: "POST",
+                data: m,
+                success: function(response) {
+                    document.getElementById('marcacao_' + id).querySelector('.data').childNodes[0].data = m.DataMarcacao;
+                    document.getElementById('marcacao_' + id).querySelector('.estado').childNodes[0].data = m.EstadoMarcacaoDesc;
+                    document.getElementById('marcacao_' + id).querySelector('.tecnico').childNodes[0].data = document.getElementById('LstTecnicos').selectedIndex > 0 ? document.getElementById('LstTecnicos')[document.getElementById('LstTecnicos').selectedIndex].text : "N/D";
+
+                    
+                    document.getElementById('pageloader').classList.remove('is-active');
+                    var modal = Bulma('#modalQuickActionMarcacao').modal();
+                    modal.close();
+
+                    bulmaToast.toast({
+                          message: 'Agendamento atualizado com sucesso!',
+                          type: 'is-success',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
+                },
+                error: function(response) {
+                    alert(response.responseText);
+                },
+                failure: function(response) {
+                    alert(response.responseText);
+                }
+            });
+        }
     }
 </script>

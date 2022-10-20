@@ -376,6 +376,16 @@ namespace FT_Management.Controllers
             return res;
         }
 
+        [HttpGet]
+        public Marcacao ObterMarcacao(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            if (m.EstadoMarcacaoDesc == "Criado") m.EstadoMarcacaoDesc = "Agendado";
+            return m;
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public virtual ActionResult Calendario(string ApiKey)
@@ -455,6 +465,22 @@ namespace FT_Management.Controllers
 
             return Json("Ok");
         }
+        [Authorize(Roles = "Admin, Escritorio")]
+        public JsonResult AlteracaoRapida(int id, string EstadoMarcacaoDesc, int Tecnico, string DataMarcacao)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            m.EstadoMarcacaoDesc = EstadoMarcacaoDesc;
+            m.Tecnico = context.ObterUtilizador(Tecnico);
+            m.LstTecnicos = new List<Utilizador>() { m.Tecnico };
+            m.DatasAdicionais = DataMarcacao;
+            
+            phccontext.AtualizaMarcacao(m);
+
+            return Json("Ok");
+        }
 
         public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
         {
@@ -501,6 +527,7 @@ namespace FT_Management.Controllers
             LstEstados.Insert(0, "Todos");
 
             ViewBag.Estados = LstEstados.Select(l => new SelectListItem() { Value = l, Text = l });
+
 
             if (string.IsNullOrEmpty(nomeCliente)) { nomeCliente = ""; }
             if (string.IsNullOrEmpty(referencia)) { referencia = ""; }
