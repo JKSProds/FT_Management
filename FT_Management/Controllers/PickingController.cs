@@ -28,15 +28,17 @@ namespace FT_Management.Controllers
         public IActionResult Adicionar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            string pi_stamp = phccontext.ObterEncomenda(id).PI_STAMP;
-            //string pi_stamp = phccontext.ObterEncomenda("CF22092060792,169000001").PI_STAMP;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (string.IsNullOrEmpty(pi_stamp)) pi_stamp = phccontext.CriarPicking(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            string pi_stamp = phccontext.ObterEncomenda(id).PI_STAMP;
+
+            if (string.IsNullOrEmpty(pi_stamp)) pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
             Picking p = phccontext.ObterPicking(pi_stamp);
 
             if (p.IdPicking == 0) 
             {
-                pi_stamp = phccontext.CriarPicking(id);
+                pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
                 p = phccontext.ObterPicking(pi_stamp);
             }
 
@@ -59,7 +61,8 @@ namespace FT_Management.Controllers
             {
                 Picking_Linha_Stamp = stamp,
                 Qtd_Linha = qtd,
-                Linha_Serie = new List<Linha_Serie_Picking>()
+                Linha_Serie = new List<Linha_Serie_Picking>(),
+                EditadoPor = this.User.ObterNomeCompleto()
             };
             if (serie != null || bomastamp != null)
             {

@@ -992,8 +992,9 @@ namespace FT_Management.Models
                         AnexoInstalacao = result["instalacao"].ToString() == "1",
                         AnexoPeca = result["peca"].ToString() == "1",
                         RefPeca = result["ref"].ToString(),
-                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString())
-
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString() + " " + result["ousrhora"].ToString()),
+                        DescricaoFicheiro = result["Titulo"].ToString(),
+                        AnexoEmail = result["email"].ToString() == "1"
                     });
                 }
                 conn.Close();
@@ -1658,7 +1659,7 @@ namespace FT_Management.Models
 
         //PICKING
         #region Picking
-        public string CriarPicking(string BO_STAMP)
+        public string CriarPicking(string BO_STAMP, string NomeUtilizador)
         {
             string res = "0";
             try
@@ -1674,6 +1675,7 @@ namespace FT_Management.Models
                 };
 
                 command.Parameters.Add(new SqlParameter("@STAMP", BO_STAMP));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", NomeUtilizador));
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
@@ -1756,7 +1758,8 @@ namespace FT_Management.Models
                             NomeCliente = result["nome"].ToString(),
                             DespacharEncomenda = result["u_envio"].ToString() == "Transportadora",
                             Encomenda = this.ObterEncomenda(result["STAMP_ORIGEM"].ToString()),
-                            Linhas = this.ObterLinhasPicking(PI_STAMP)
+                            Linhas = this.ObterLinhasPicking(PI_STAMP),
+                            EditadoPor = result["usrinis"].ToString()
                         };
                     }
                 }
@@ -1798,7 +1801,8 @@ namespace FT_Management.Models
                             Qtd_Linha = Double.Parse(result["qtt"].ToString()),
                             Qtd_Separar = Double.Parse(result["QTT_SEPARAR"].ToString()),
                             Serie = result["USA_NSERIE"].ToString() == "True",
-                            Linha_Serie = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString()))
+                            Linha_Serie = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString())),
+                            EditadoPor = result["usrinis"].ToString()
                         });
                     }
                 }
@@ -1878,6 +1882,8 @@ namespace FT_Management.Models
                     command.Parameters.Add(new SqlParameter("@SERIE", linha.Linha_Serie.First().NumSerie));
                     command.Parameters.Add(new SqlParameter("@BOMASTAMP", linha.Linha_Serie.First().BOMA_STAMP));
                 }
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", linha.EditadoPor));
+
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();

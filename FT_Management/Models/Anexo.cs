@@ -36,11 +36,12 @@ namespace FT_Management.Models
 
         public TipoFicheiro ObterTipoFicheiro()
         {
+            if (AnexoEmail) return TipoFicheiro.Email;
             if (AnexoMarcacao) return TipoFicheiro.Marcacao;
             if (AnexoAssinatura) return TipoFicheiro.Assinatura;
             if (AnexoInstalacao) return TipoFicheiro.Instalacao;
             if (AnexoPeca) return TipoFicheiro.Peca;
-            if (AnexoEmail) return TipoFicheiro.Email;
+
 
             return TipoFicheiro.Marcacao;
         }

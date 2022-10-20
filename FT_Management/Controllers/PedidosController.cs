@@ -208,7 +208,7 @@ namespace FT_Management.Controllers
                     {
                         MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
                         IdMarcacao = id,
-                        AnexoMarcacao = true,
+                        AnexoMarcacao = !Email,
                         NomeUtilizador = context.ObterUtilizador(IdUtilizador).NomeCompleto,
                         DescricaoFicheiro = Descricao,
                         AnexoEmail = Email

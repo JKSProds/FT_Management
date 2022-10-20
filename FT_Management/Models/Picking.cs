@@ -19,6 +19,7 @@ namespace FT_Management.Models
         [Display(Name = "Tipo de Envio")]
         public bool DespacharEncomenda { get; set; }
         public List<Linha_Picking> Linhas { get; set; }
+        public string EditadoPor { get; set; }
     }
     public class Linha_Picking
     {
@@ -35,6 +36,7 @@ namespace FT_Management.Models
         public List<Linha_Serie_Picking> Linha_Serie { get; set; }
         public bool Serie { get; set; }
         public bool Validado { get { return Qtd_Linha >= Qtd_Separar; } }
+        public string EditadoPor { get; set; }
     }
     public class Linha_Serie_Picking
     {
