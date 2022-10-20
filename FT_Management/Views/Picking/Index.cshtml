@@ -245,9 +245,11 @@
     </header>
     <section class="modal-card-body">
       <p>Tem a certeza que deseja fechar o documento de Picking?</p>
+      <hr />
+      <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
     </section>
     <footer class="modal-card-foot">
-      <button class="button is-success" onclick="FecharPicking(document.getElementById('txtIdPicking').value)">Sim</button>
+      <button class="button is-success" onclick="FecharPicking(document.getElementById('txtIdPicking'))">Sim</button>
       <button class="button" onclick="Bulma('#modalFecharPicking').modal().close();">Não</button>
     </footer>
   </div>
@@ -265,18 +267,33 @@
              window.open('Picking/Adicionar/' + id, '_blank');
     }
 
-    function ConfirmFecharPicking(id) {
-            document.getElementById('txtIdPicking').value = id;
-            Bulma('#modalFecharPicking').modal().open();
-    }
-    function FecharPicking(id) {
-            Bulma('#modalFecharPicking').modal().close();
-        $.ajax({
-            url: '/Picking/Fechar/' + id,
+        function ConfirmFecharPicking(id) {
+            $.ajax({
             type: "POST",
-            success: function (data) {
-                window.location.reload();
+            url: "/Picking/ValidarPicking/" + id,
+            success: function (result) {
+                $(function () {
+                    if (result != "") {
+                        document.getElementById("txtMensagens").value = result;
+                    } else {
+                        document.getElementById("txtMensagens").value = "Não foram encontrados problemas!";
+                    }
+                     Bulma('#modalFecharPicking').modal().open();
+                });
             }
         });
+
+            Bulma('#').modal().open();
+    }
+
+    function FecharPicking(id) {
+            Bulma('#modalFecharPicking').modal().close();
+            $.ajax({
+                url: '/Picking/Fechar/' + id,
+                type: "POST",
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
     }
 </script>

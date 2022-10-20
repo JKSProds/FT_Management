@@ -1762,7 +1762,7 @@ namespace FT_Management.Models
                             DespacharEncomenda = result["u_envio"].ToString() == "Transportadora",
                             Encomenda = this.ObterEncomenda(result["STAMP_ORIGEM"].ToString()),
                             Linhas = this.ObterLinhasPicking(PI_STAMP),
-                            EditadoPor = result["usrinis"].ToString()
+                            EditadoPor = result["usrinis"].ToString().ToUpper()
                         };
                     }
                 }
@@ -1904,6 +1904,40 @@ namespace FT_Management.Models
 
             return res;
         }
+
+        public string ValidarPicking(string PI_STAMP)
+        {
+            string res = "";
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res = result[0].ToString();
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch
+            {
+                Console.WriteLine("Não foi possivel validar o picking do PHC!");
+            }
+
+            return res;
+        }
+
         #endregion
     }
 }
