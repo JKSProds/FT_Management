@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Picking - " + Model.NomeCliente;
 }
+<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
     <div class="container">
         <div class="columns">
             <div class="column">
@@ -263,6 +264,7 @@
 
         function FecharPicking(id) {
             Bulma('#modalFecharPicking').modal().close();
+            document.getElementById('pageloader').classList.add('is-active');
             $.ajax({
                 url: '/Picking/Fechar/' + id,
                 type: "POST",
