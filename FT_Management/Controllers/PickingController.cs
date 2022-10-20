@@ -28,17 +28,15 @@ namespace FT_Management.Controllers
         public IActionResult Adicionar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             string pi_stamp = phccontext.ObterEncomenda(id).PI_STAMP;
 
-            if (string.IsNullOrEmpty(pi_stamp)) pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
+            if (string.IsNullOrEmpty(pi_stamp)) pi_stamp = phccontext.CriarPicking(id, this.User.ObterNomeCompleto());
             Picking p = phccontext.ObterPicking(pi_stamp);
 
             if (p.IdPicking == 0) 
             {
-                pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
+                pi_stamp = phccontext.CriarPicking(id, this.User.ObterNomeCompleto());
                 p = phccontext.ObterPicking(pi_stamp);
             }
 
@@ -48,7 +46,7 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            phccontext.FecharPicking(id);
+            phccontext.FecharPicking(id, this.User.ObterNomeCompleto());
 
             return View();
         }

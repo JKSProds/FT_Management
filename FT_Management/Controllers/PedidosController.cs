@@ -191,7 +191,7 @@ namespace FT_Management.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult AdicionarAnexo(int id, IFormFile file, string Api, string Descricao, bool Email)
+        public JsonResult AdicionarAnexo(int id, IFormFile file, string Api, string Descricao, bool Email, string Utilizador)
          {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -209,7 +209,7 @@ namespace FT_Management.Controllers
                         MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
                         IdMarcacao = id,
                         AnexoMarcacao = !Email,
-                        NomeUtilizador = context.ObterUtilizador(IdUtilizador).NomeCompleto,
+                        NomeUtilizador = Utilizador,
                         DescricaoFicheiro = Descricao,
                         AnexoEmail = Email
                     };
