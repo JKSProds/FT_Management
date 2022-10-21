@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Escritorio")]
     public class PickingController : Controller
     {
         public IActionResult Index(int IdEncomenda, int Tipo, string NomeCliente)
