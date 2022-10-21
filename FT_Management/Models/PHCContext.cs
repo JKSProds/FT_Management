@@ -1198,9 +1198,10 @@ namespace FT_Management.Models
                         Tipo = int.Parse(result["ndos"].ToString())
                     });
                 }
+
                 conn.Close();
 
-                LstAtividade.AddRange(FT_ManagementContext.ObterAtividade(m).AsEnumerable());
+                LstAtividade.AddRange(ObterAtividadeEmail(m).AsEnumerable());
             }
             catch
             {
@@ -1208,6 +1209,42 @@ namespace FT_Management.Models
             }
 
             return LstAtividade.OrderBy(d => d.Data).ToList();
+        }
+
+        public List<Atividade> ObterAtividadeEmail(Marcacao m)
+        {
+            List<Atividade> LstAtividade = new List<Atividade>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from u_anexos_mar where u_marcacaostamp='" + m.MarcacaoStamp + "' and email=1;", conn)
+            {
+                CommandTimeout = TIMEOUT
+            };
+            using SqlDataReader result = command.ExecuteReader();
+            while (result.Read())
+            {
+                LstAtividade.Add(new Atividade()
+                {
+                    Nome = result["TITULO"].ToString(),
+                    CriadoPor = result["ousrinis"].ToString(),
+                    Id = "Email",
+                    Data = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + result["ousrhora"].ToString()),
+                    Tipo = 0
+                });
+            }
+            }
+            catch
+            {
+                Console.WriteLine("Não foi possivel ler os dossiers do PHC!");
+            }
+
+            return LstAtividade.OrderBy(d => d.Data).ToList();
+
         }
         public List<Marcacao> ObterMarcacoesPendentes(int IdTecnico)
         {
