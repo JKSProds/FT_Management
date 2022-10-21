@@ -36,7 +36,7 @@
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc != "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold;border:0px" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) ">
+                                            <tr style="font-weight:bold;border:0px" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger-light" : (item.DiffDias > 15 ? "has-background-warning-light" : "")) ">
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
@@ -102,7 +102,7 @@
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc == "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold;" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger" : (item.DiffDias > 15 ? "has-background-warning" : "")) ">
+                                            <tr style="font-weight:bold;" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger-light" : (item.DiffDias > 15 ? "has-background-warning-light" : "")) ">
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                

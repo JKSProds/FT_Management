@@ -1097,19 +1097,19 @@ namespace FT_Management.Models
                     {
                         LstMarcacao.Last().Tecnico = string.IsNullOrEmpty(result["tecnno"].ToString()) ? new Utilizador() : (LstUtilizadores.Where(u => u.IdPHC == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador());
 
-                        try
-                        {
-                            foreach (var item in result["LstTecnicos"].ToString().Split(";"))
+                            try
                             {
-                                LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
-                            }
-                            foreach (var item in LstMarcacao.Last().LstTecnicos)
-                            {
-                                LstMarcacao.Last().LstTecnicosSelect.Add(item.Id);
-                            }
+                                foreach (var item in result["LstTecnicos"].ToString().Split(";"))
+                                {
+                                    LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
+                                }
+                                foreach (var item in LstMarcacao.Last().LstTecnicos)
+                                {
+                                    LstMarcacao.Last().LstTecnicosSelect.Add(item.Id);
+                                }
 
-                        }
-                        catch { }
+                            }
+                            catch { }
                     }
                     if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
                     if (LoadDossiers) { LstMarcacao.Last().LstAtividade = ObterAtivivade(LstMarcacao.Last());}
