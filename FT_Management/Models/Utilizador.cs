@@ -85,6 +85,7 @@ namespace FT_Management.Models
             }
             catch
             {
+                throw new Exception("Erro ao ObterTelemovelFormato");
             }
 
             return res;
@@ -94,12 +95,16 @@ namespace FT_Management.Models
         {
             try
             {
-                var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
-                var phone = Enumerable.Range(0, phoneNumberUtil.Parse(res, "PT").NationalNumber.ToString().Length / 3).Select(i => phoneNumberUtil.Parse(res, "PT").NationalNumber.ToString().Substring(i * 3, 3));
-                res = "+" + phoneNumberUtil.Parse(res, "PT").CountryCode.ToString() + " " + String.Join(" ", phone.ToList());
+                if (res != null)
+                {
+                    var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
+                    var phone = Enumerable.Range(0, phoneNumberUtil.Parse(res, "PT").NationalNumber.ToString().Length / 3).Select(i => phoneNumberUtil.Parse(res, "PT").NationalNumber.ToString().Substring(i * 3, 3));
+                    res = "+" + phoneNumberUtil.Parse(res, "PT").CountryCode.ToString() + " " + String.Join(" ", phone.ToList());
+                }
             }
             catch
             {
+                throw new Exception("Erro ao ObterTelemovelLegivel");
             }
 
             return res;
