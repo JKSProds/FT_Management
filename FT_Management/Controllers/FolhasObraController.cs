@@ -184,7 +184,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "FolhaObra_" + id + ".pdf",
+                FileName = "TicketFO_" + id + ".pdf",
                 Inline = false,
                 CreationDate = DateTime.Now
             };
