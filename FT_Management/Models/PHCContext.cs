@@ -1099,7 +1099,6 @@ namespace FT_Management.Models
                         
                             try
                             {
-                            Console.WriteLine(result["LstTecnicos"].ToString());
                                 foreach (var item in result["LstTecnicos"].ToString().Split(";"))
                                 {
                                     LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
