@@ -27,9 +27,9 @@ namespace FT_Management.Models
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel conectar á BD PHC!");
+                Console.WriteLine("Não foi possivel conectar á BD PHC!\r\n(Exception: "+ex.Message+")");
             }
         }
         public List<string> ExecutarQuery(string SQL_Query)
@@ -56,9 +56,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel executar query");
+                Console.WriteLine("Não foi possivel executar query.\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -104,9 +104,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler as referencias do PHC!");
+                Console.WriteLine("Não foi possivel ler as referencias do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstProdutos;
@@ -151,9 +151,9 @@ namespace FT_Management.Models
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine("Não foi possivel obter a lista de movimentos do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstGuias;
@@ -238,9 +238,9 @@ namespace FT_Management.Models
 
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os clientes do PHC!");
+                Console.WriteLine("Não foi possivel ler os clientes do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstClientes;
@@ -308,9 +308,9 @@ namespace FT_Management.Models
 
                     conn.Close();
                 }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os vendedores do PHC!");
+                Console.WriteLine("Não foi possivel ler os vendedores do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstVendedor;
@@ -354,9 +354,9 @@ namespace FT_Management.Models
 
                     conn.Close();
                 }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os Fornecedores do PHC!");
+                Console.WriteLine("Não foi possivel ler os Fornecedores do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstFornecedor;
@@ -402,9 +402,9 @@ namespace FT_Management.Models
 
                     conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os Equipamentos do PHC!");
+                Console.WriteLine("Não foi possivel ler os Equipamentos do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstEquipamento;
@@ -460,9 +460,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao enviar folha de obra para o PHC");
+                Console.WriteLine("Não foi possivel enviar folha de obra para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -545,8 +545,7 @@ namespace FT_Management.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os PAT's do PHC!");
-                throw new Exception(ex.Message);
+                Console.WriteLine("Não foi possivel ler os PAT's do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstFolhaObra;
@@ -596,8 +595,8 @@ namespace FT_Management.Models
                     return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
                 }
             }
-            catch { 
-
+            catch (Exception ex) {
+                Console.WriteLine("Não foi possivel obter a rubrica!\r\n(Exception: " + ex.Message + ")");
             }
             return "wwwroot/img/no_photo.png";
         }
@@ -644,9 +643,9 @@ namespace FT_Management.Models
 
                     conn.Close();
                 }
-            catch 
+            catch (Exception ex) 
             {
-                Console.WriteLine("Não foi possivel ler as intervenções do PHC!");
+                Console.WriteLine("Não foi possivel ler as intervenções do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstIntervencao.OrderBy(i => i.DataServiço).ToList();
@@ -693,9 +692,9 @@ namespace FT_Management.Models
 
                     conn.Close();
                 }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler as peças usadas pelos PAT's do PHC!");
+                Console.WriteLine("Não foi possivel ler as peças usadas pelos PAT's do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstProduto;
@@ -768,9 +767,9 @@ namespace FT_Management.Models
 
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao enviar marcacao para o PHC");
+                Console.WriteLine("Não foi possivel enviar marcacao para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -825,9 +824,9 @@ namespace FT_Management.Models
 
                 if (resp != "-1") return true;
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao enviar marcacao para o PHC");
+                Console.WriteLine("Não foi possivel atualizar a marcacao para o PHC!\r\n(Exception: " + ex.Message + ")");
                 return false;
             }
 
@@ -892,7 +891,9 @@ namespace FT_Management.Models
 
                 if (resp != "-1") return resp;
             }
-            catch { }
+            catch (Exception ex) {
+                Console.WriteLine("Não foi possivel criar o anexo da marcação do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
             return "";
         }
         public bool ApagarAnexoMarcacao(Anexo a)
@@ -919,7 +920,9 @@ namespace FT_Management.Models
                 if (resp != "-1") return true;
 
             }
-            catch { }
+            catch (Exception ex) {
+                Console.WriteLine("Não foi possivel apagar o anexo da marcação do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
             return false;
         }
         public List<Anexo> ObterAnexos(Marcacao m)
@@ -959,9 +962,9 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!");
+                Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!\r\n(Exception: " + ex.Message + ")");
             }
             return LstAnexos;
         }
@@ -1002,9 +1005,9 @@ namespace FT_Management.Models
                 conn.Close();
                 return LstAnexos.First();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!");
+                Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return new Anexo();
@@ -1037,9 +1040,9 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os reponsaveis do PHC!");
+                Console.WriteLine("Não foi possivel ler os reponsaveis do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return m;
@@ -1109,16 +1112,19 @@ namespace FT_Management.Models
                                 }
 
                             }
-                            catch { throw new Exception("Erro ao ler a lista de Técnicos"); }
+                            catch (Exception ex)
+                                {
+                                    Console.WriteLine("Não foi possivel obter a lista de técnicos do PHC!\r\n(Exception: " + ex.Message + ")");
+                                }
                     }
                     if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
                     if (LoadDossiers) { LstMarcacao.Last().LstAtividade = ObterAtivivade(LstMarcacao.Last());}
                 }
                 conn.Close();
             }
-            catch 
+            catch (Exception ex) 
             {
-                Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!");
+                Console.WriteLine("Não foi possivel ler as Marcacoes do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstMarcacao;
@@ -1203,9 +1209,9 @@ namespace FT_Management.Models
 
                 LstAtividade.AddRange(ObterAtividadeEmail(m).AsEnumerable());
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os dossiers do PHC!");
+                Console.WriteLine("Não foi possivel ler os dossiers do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstAtividade.OrderBy(d => d.Data).ToList();
@@ -1238,9 +1244,9 @@ namespace FT_Management.Models
                 });
             }
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os dossiers do PHC!");
+                Console.WriteLine("Não foi possivel ler os anexos de email do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstAtividade.OrderBy(d => d.Data).ToList();
@@ -1293,9 +1299,9 @@ namespace FT_Management.Models
 
                     conn.Close();
                 }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os Estados do PHC!");
+                Console.WriteLine("Não foi possivel ler os Estados do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstEstadoMarcacao.OrderBy(e => e.EstadoMarcacaoDesc).ToList();
@@ -1332,9 +1338,9 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao obter tipos de equipamento!");
+                Console.WriteLine("Não foi possivel ler os tipos de equipamento!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1365,9 +1371,9 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao obter tipos de serviço!");
+                Console.WriteLine("Não foi possivel ler os tipos de serviço!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1385,9 +1391,9 @@ namespace FT_Management.Models
                 res.Add("Manhã");
                 res.Add("Tarde");
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao obter periodos!");
+                Console.WriteLine("Não foi possivel obter periodos!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1415,9 +1421,9 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao obter prioridades!");
+                Console.WriteLine("Não foi possivel ler as prioridades!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1448,9 +1454,9 @@ namespace FT_Management.Models
                 }
                 conn.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao obter prioridades!");
+                Console.WriteLine("Não foi possivel obter o tipo de pedido!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1513,9 +1519,9 @@ namespace FT_Management.Models
 
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao enviar comentário para o PHC");
+                Console.WriteLine("Não foi possivel criar o comentário para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1552,9 +1558,9 @@ namespace FT_Management.Models
 
                     conn.Close();
             }
-            catch 
+            catch (Exception ex) 
             {
-                Console.WriteLine("Não foi possivel ler os comentarios das Marcacoes do PHC!");
+                Console.WriteLine("Não foi possivel ler os comentarios das Marcacoes do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstComentario;
@@ -1601,9 +1607,9 @@ namespace FT_Management.Models
 
                     FT_ManagementContext.AtualizarUltimaModificacao("u_dias", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os Acessos do PHC");
+                Console.WriteLine("Não foi possivel ler os Acessos do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstAcessos;
@@ -1672,9 +1678,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler as encomendas do PHC!");
+                Console.WriteLine("Não foi possivel ler as encomendas do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstEncomenda;
@@ -1726,9 +1732,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao enviar picking para o PHC");
+                Console.WriteLine("Não foi possivel enviar picking para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1762,9 +1768,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao fechar o picking no PHC");
+                Console.WriteLine("Não foi possivel fechar o picking no PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1806,9 +1812,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler o picking do PHC!");
+                Console.WriteLine("Não foi possivel ler o picking do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return p;
@@ -1849,9 +1855,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler as linhas do picking do PHC!");
+                Console.WriteLine("Não foi possivel ler as linhas do picking do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstPickingLinhas;
@@ -1891,9 +1897,9 @@ namespace FT_Management.Models
                 } while (Linha_Serie.Count() < Qtt);
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler as linhas do picking do PHC!");
+                Console.WriteLine("Não foi possivel ler as linhas de serie do picking do PHC!\r\n(Exception: " + ex.Message + ")");
             }
             return Linha_Serie;
 
@@ -1933,9 +1939,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro ao atualizar o picking para o PHC");
+                Console.WriteLine("Não foi possivel atualizar o picking para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
@@ -1966,9 +1972,9 @@ namespace FT_Management.Models
                 conn.Close();
             }
 
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel validar o picking do PHC!");
+                Console.WriteLine("Não foi possivel validar o picking do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;
