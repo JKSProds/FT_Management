@@ -1599,16 +1599,17 @@ namespace FT_Management.Models
                     {
                         while (result.Read())
                         {
-                            LstComentario.Add(new Comentario()
+                        DateTime.TryParse(result["ousrdata"].ToString()[..10] + " " + result["ousrhora"].ToString(), out DateTime data);
+                        LstComentario.Add(new Comentario()
                             {
                                 IdComentario = result["u_comentstamp"].ToString(),
                                 Descricao = result["comentario"].ToString().Trim(),
                                 IdMarcacao = result["marcacaostamp"].ToString().Trim(),
                                 Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString().Trim() },
-                                DataComentario = DateTime.Parse(result["ousrdata"].ToString()[..10] + " " + result["ousrhora"].ToString())
+                                DataComentario = data
                             });
                         }
-                    }
+                }
 
                     conn.Close();
             }
@@ -1630,7 +1631,7 @@ namespace FT_Management.Models
 
             foreach (var item in LstMarcacao)
             {
-                item.LstComentarios = LstComentarios.Where(c => c.IdMarcacao == item.MarcacaoStamp).OrderBy(c => c.DataComentario).ToList();
+                item.LstComentarios = LstComentarios.Where(c => c.IdMarcacao == item.IdMarcacao.ToString()).OrderBy(c => c.DataComentario).ToList();
             }
             return LstMarcacao;
 
