@@ -1295,6 +1295,8 @@ namespace FT_Management.Models
                     Tipo = 0
                 });
             }
+
+                conn.Close();
             }
             catch (Exception ex)
             {
