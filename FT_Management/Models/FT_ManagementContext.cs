@@ -134,6 +134,33 @@ namespace FT_Management.Models
             }
             return utilizador;
         }
+
+        public List<Marcacao> ObterUtilizadorMarcacao(List<Marcacao> LstMarcacao)
+        {
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false);
+
+            foreach (var item in LstMarcacao)
+            {
+                if (item.IdTecnico == 0) { item.Tecnico = new Utilizador(); } else {
+                    item.Tecnico = LstUtilizadores.Where(u => u.IdPHC == item.IdTecnico).FirstOrDefault() ?? new Utilizador();
+
+                    try
+                    {
+                        foreach (var tech in item.LstTecnicosSelect)
+                        {
+                            item.LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == tech).FirstOrDefault() ?? new Utilizador());
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Não foi possivel obter a lista de técnicos do PHC!\r\n(Exception: " + ex.Message + ")");
+                    }
+                }
+            }
+
+            return LstMarcacao;
+        }
         public int ObterIdUtilizadorApiKey(string ApiKey)
         {
             string sqlQuery = "SELECT IdUtilizador FROM sys_api_keys where ApiKey='" + ApiKey + "';";

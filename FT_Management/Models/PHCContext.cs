@@ -254,6 +254,17 @@ namespace FT_Management.Models
         {
             return ObterClientes("SELECT cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where no is not null order by no, estab ;", false, false, false, false);
         }
+
+        public List<Marcacao> ObterClientes(List<Marcacao> LstMarcacao)
+        {
+            List<Cliente> LstClientes = this.ObterClientes();
+
+            foreach (var item in LstMarcacao)
+            {
+                item.Cliente = LstClientes.Where(c => c.IdCliente == item.Cliente.IdCliente).Where(c => c.IdLoja == item.Cliente.IdLoja).DefaultIfEmpty(new Cliente()).First();
+            }
+            return LstMarcacao;
+        }
         public List<Cliente> ObterClientes(string filtro, bool filtrar)
         {
             if (filtrar)
@@ -1012,6 +1023,62 @@ namespace FT_Management.Models
 
             return new Anexo();
         }
+        public List<Anexo> ObterAnexos()
+        {
+            List<Anexo> LstAnexos = new List<Anexo>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from u_anexos_mar;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using SqlDataReader result = command.ExecuteReader();
+                while (result.Read())
+                {
+                    LstAnexos.Add(new Anexo()
+                    {
+                        AnexoStamp = result["u_anexos_marstamp"].ToString(),
+                        MarcacaoStamp = result["u_marcacaostamp"].ToString(),
+                        IdMarcacao = int.Parse(result["num_marcacao"].ToString()),
+                        NomeFicheiro = result["nome_ficheiro"].ToString(),
+                        NomeUtilizador = result["ousrinis"].ToString(),
+                        AnexoMarcacao = result["marcacao"].ToString() == "True",
+                        AnexoAssinatura = result["assinatura"].ToString() == "True",
+                        AnexoInstalacao = result["instalacao"].ToString() == "True",
+                        AnexoPeca = result["peca"].ToString() == "1",
+                        RefPeca = result["ref"].ToString(),
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Split(" ").First() + " " + result["ousrhora"].ToString()),
+                        DescricaoFicheiro = result["Titulo"].ToString(),
+                        AnexoEmail = result["email"].ToString() == "True"
+
+                    });
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return LstAnexos;
+        }
+
+        public List<Marcacao> ObterAnexos(List<Marcacao> LstMarcacao)
+        {
+            List<Anexo> LstAnexos = ObterAnexos();
+
+            foreach (var item in LstMarcacao)
+            {
+                item.LstAnexos = LstAnexos.Where(a => a.MarcacaoStamp == item.MarcacaoStamp).OrderBy(a => a.DataCriacao).ToList();
+            }
+            return LstMarcacao;
+
+        }
+
 
         public Marcacao ObterResponsavelCliente(int IdCliente, int IdLoja, string TipoEquipamento)
         {
@@ -1050,10 +1117,9 @@ namespace FT_Management.Models
 
         private List<Marcacao> ObterMarcacoes(string SQL_Query, bool LoadComentarios, bool LoadCliente, bool LoadTecnico, bool LoadFolhasObra, bool LoadAnexos, bool LoadDossiers)
         {
-            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaUtilizadores(false);
             List<EstadoMarcacao> LstEstadoMarcacao = this.ObterMarcacaoEstados();
             List<Marcacao> LstMarcacao = new List<Marcacao>();
-            List<Cliente> LstClientes = this.ObterClientes();
+
             try
             {
                     SqlConnection conn = new SqlConnection(ConnectionString);
@@ -1092,35 +1158,21 @@ namespace FT_Management.Models
                         QuemPediuTelefone = result["resptlm"].ToString(),
                         Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() },
                         Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : "",
+                        IdTecnico = result.IsDBNull("tecnno") ? 0 : int.Parse(result["tecnno"].ToString()),
+                        LstTecnicosSelect = !result.IsDBNull("tecnno") ? result["LstTecnicos"].ToString().Split(";").Select(Int32.Parse).ToList() : new List<int>(),
+                        Cliente = new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) }
                     });
-                    if (LoadCliente) LstMarcacao.Last().Cliente = LstClientes.Where(c => c.IdCliente == int.Parse(result["no"].ToString().Trim())).Where(c => c.IdLoja == int.Parse(result["estab"].ToString().Trim())).DefaultIfEmpty(new Cliente()).First();
-                    if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
-                    if (LoadAnexos) LstMarcacao.Last().LstAnexos = ObterAnexos(LstMarcacao.Last());
-                    if (LoadTecnico)
-                    {
-                        LstMarcacao.Last().Tecnico = string.IsNullOrEmpty(result["tecnno"].ToString()) ? new Utilizador() : (LstUtilizadores.Where(u => u.IdPHC == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador());
-                        
-                            try
-                            {
-                                foreach (var item in result["LstTecnicos"].ToString().Split(";"))
-                                {
-                                    LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
-                                }
-                                foreach (var item in LstMarcacao.Last().LstTecnicos)
-                                {
-                                    LstMarcacao.Last().LstTecnicosSelect.Add(item.Id);
-                                }
-
-                            }
-                            catch (Exception ex)
-                                {
-                                    Console.WriteLine("Não foi possivel obter a lista de técnicos do PHC!\r\n(Exception: " + ex.Message + ")");
-                                }
-                    }
                     if (LoadFolhasObra) LstMarcacao.Last().LstFolhasObra = ObterFolhasObra(int.Parse(result["num"].ToString().Trim()));
-                    if (LoadDossiers) { LstMarcacao.Last().LstAtividade = ObterAtivivade(LstMarcacao.Last());}
+                    if (LoadDossiers) { LstMarcacao.Last().LstAtividade = ObterAtivivade(LstMarcacao.Last()); }
                 }
                 conn.Close();
+
+                if (LoadCliente) ObterClientes(LstMarcacao);
+                if (LoadComentarios) ObterComentariosMarcacao(LstMarcacao);
+                if (LoadAnexos) ObterAnexos(LstMarcacao);
+                if (LoadTecnico){ FT_ManagementContext.ObterUtilizadorMarcacao(LstMarcacao);}
+
+
             }
             catch (Exception ex) 
             {
@@ -1173,7 +1225,7 @@ namespace FT_Management.Models
         }
         public List<Marcacao> ObterMarcacoesSimples()
         {
-            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao full outer join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado not in ('AT Validada', 'Aguarda Ped. Compra') order by estado;", false, false, false, false, false, false);
+            List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao full outer join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado not in ('AT Validada', 'Aguarda Ped. Compra') order by estado;", false, false, false, false, false, false);
             return LstMarcacoes;
 
         }
@@ -1569,6 +1621,17 @@ namespace FT_Management.Models
         {
             return ObterComentariosMarcacao("select u_comentstamp, num as marcacaostamp, comentario, u_coment.ousrinis, u_coment.ousrdata, u_coment.ousrhora from u_coment inner join u_marcacao on u_marcacao.u_marcacaostamp = u_coment.marcacaostamp WHERE num=" + IdMarcacao+";").OrderBy(c => c.DataComentario).ToList();
             
+        }
+        public List<Marcacao> ObterComentariosMarcacao(List<Marcacao> LstMarcacao)
+        {
+            List<Comentario> LstComentarios = ObterComentariosMarcacao("select u_comentstamp, num as marcacaostamp, comentario, u_coment.ousrinis, u_coment.ousrdata, u_coment.ousrhora from u_coment inner join u_marcacao on u_marcacao.u_marcacaostamp = u_coment.marcacaostamp;").OrderBy(c => c.DataComentario).ToList();
+
+            foreach (var item in LstMarcacao)
+            {
+                item.LstComentarios = LstComentarios.Where(c => c.IdMarcacao == item.MarcacaoStamp).OrderBy(c => c.DataComentario).ToList();
+            }
+            return LstMarcacao;
+
         }
         #endregion
 

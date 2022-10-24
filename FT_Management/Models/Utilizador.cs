@@ -95,7 +95,7 @@ namespace FT_Management.Models
         {
             try
             {
-                if (res != null)
+                if (!string.IsNullOrEmpty(res))
                 {
                     var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
                     var phone = Enumerable.Range(0, phoneNumberUtil.Parse(res, "PT").NationalNumber.ToString().Length / 3).Select(i => phoneNumberUtil.Parse(res, "PT").NationalNumber.ToString().Substring(i * 3, 3));
