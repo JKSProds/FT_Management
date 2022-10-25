@@ -4,203 +4,314 @@
 @{
     ViewData["Title"] = "Visita - " + Model.Cliente.NomeCliente;
 }
-<form asp-action="Visita" asp-route-returnurl="@ViewData["ReturnUrl"]">
-    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-        <a class="nav-item nav-link active" id="v-pills-dados-tab" data-toggle="pill" href="#v-pills-dados" role="tab" aria-controls="v-pills-dados" aria-selected="true">Dados</a>
-        <a class="nav-item nav-link" id="v-pills-obs-tab" data-toggle="pill" href="#v-pills-obs" role="tab" aria-controls="v-pills-obs" aria-selected="false">Observações</a>
-        <a class="nav-item nav-link" id="v-pills-proposta-tab" data-toggle="pill" href="#v-pills-proposta" role="tab" aria-controls="v-pills-proposta" aria-selected="false">Propostas</a>
-        <a class="nav-item nav-link" id="v-pills-anexos-tab" data-toggle="pill" href="#v-pills-anexos" role="tab" aria-controls="v-pills-anexos" aria-selected="false">Anexos</a>
+
+
+<style>
+    .tabs-content li {
+        display: none;
+        list-style: none;
+    }
+
+        .tabs-content li.is-active {
+            display: block;
+        }
+</style>
+
+<div class="container">
+    <div class="columns is-mobile is-centered">
+        <div class="column is-12">
+            <div class="tile is-centered">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        @if (Model.Contacto.IdContacto > 0)
+                        {
+                            <p class="title" onclick="location.href = '@(Url.Action("Editar", "Contactos", new { id = Model.Contacto.IdContacto }))'" type="button">
+                                <span class="icon mr-3">
+                                    <i class="fas fa-calendar-day"></i>
+                                </span>
+                                <span>@Model.Cliente.NomeCliente</span>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="title" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'">
+                                <span class="icon mr-3">
+                                    <i class="fas fa-calendar-day"></i>
+                                </span>
+                                <span>@Model.Cliente.NomeCliente</span>
+                            </p>
+                        }
+                    </article>
+                </div>
+            </div>
+        </div>
     </div>
-    <br />
-    <hr />
+</div>
+<hr />
+
+<form asp-action="Visita" asp-route-returnurl="@ViewData["ReturnUrl"]">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <input type="hidden" asp-for="IdVisita" />
     <input type="hidden" asp-for="EstadoVisita" />
-    <input type="hidden" asp-for="IdComercial" />
     <input type="hidden" asp-for="ResumoVisita" />
-    <input type="hidden" asp-for="DataVisita" />
     <input type="hidden" asp-for="Cliente.IdCliente" />
     <input type="hidden" asp-for="Cliente.IdLoja" />
+        <input type="hidden" asp-for="Contacto.IdContacto" />
 
-
-    <div class="input-group mb-3">
-        <h1 class="text-center col-lg-11">
-            @Html.DisplayFor(model => model.Cliente.NomeCliente)
-        </h1>
-        @if (Model.Contacto.IdContacto > 0)
-        {
-            <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Editar", "Contactos", new { id = Model.Contacto.IdContacto }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
-        }
-        else
-        {
-            <button class="btn btn-outline-secondary col-lg-1 float-right" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'" type="button" id="button-addon2"><i class="far fa-eye" style="margin-top:5px"></i></button>
-        }
-    </div>
-
-    <hr />
-    <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="v-pills-dados" role="tabpanel" aria-labelledby="v-pills-dados-tab">
-            <br />
-
-
-            <div>
-                <dl class="row">
-                    <dd class="col-sm-12">
-                        <span style="white-space: pre-line">@Model.ResumoVisita</span>
-                    </dd>
-                </dl>
+    <div class="container">
+        <div class="tabs-wrapper">
+            <div class="tabs is-centered is-boxed">
+                <ul>
+                    <li class="is-active">
+                        <a>
+                            <span>Dados</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Observações</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Propostas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Anexos</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
 
-
-        <div class="tab-pane fade show" id="v-pills-obs" role="tabpanel" aria-labelledby="v-pills-obs-tab">
-            <br />
-            <div class="form-group">
-                <label for="">Observacões</label>
-                <textarea class="form-control" rows="8" placeholder="" asp-for="ObsVisita"></textarea>
-            </div>
-        </div>
-        <div class="tab-pane fade show" id="v-pills-proposta" role="tabpanel" aria-labelledby="v-pills-proposta-tab">
-            <br />
-
-
-
-            @if (Model.Propostas.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados Propostas!</button>
-                <button type="button" class="btn btn-primary btn-block float-right" onclick="modalProposta()" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;"><i class="fas fa-plus"></i> Anexar Proposta</button>
-
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                Data da Proposta
-                            </th>
-                            <th>
-                                Estado da Proposta
-                            </th>
-                            <th>
-                                Comercial
-                            </th>
-                            <th>
-                                Valor da Proposta
-                            </th>
-                            <th>
-                                <button type="button" class="btn btn-primary float-right" onclick="modalProposta()" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;"><i class="fas fa-plus"></i> Anexar Proposta</button>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Propostas)
-                        {
-                            <tr>
-                                <td>
-                                    <span>@item.DataProposta.ToString("dd/MM/yyyy")</span>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.EstadoProposta)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Comercial.NomeCompleto)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ValorProposta)
-                                </td>
-                                <td>
-                                    <div class="btn-group float-right">
-                                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+            <div class="tabs-content mx-2">
+                <ul>
+                    <li class="is-active">
+                        <div class="columns is-multiline">
+                            <div class="column is-3">
+                            <label asp-for="IdVisita" class="label"></label>
+                            <div class="field has-addons">
+                              <div class="control" style="width:100%">
+                                  <input class="input" type="text" id="IdVisita" readonly asp-for="IdVisita">
+                              </div>
+                              @if (this.User.IsInRole("Admin"))
+                                {
+                                    <div class="control">
+                                    <a class="button is-info" href="~/Visitas/Editar?idVisita=@Model.IdVisita">
+                                        Editar
+                                    </a>
                                     </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Adicionar Proposta</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <div class="input-group mb-3">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="inputGroupFile01" name="prop" value="Escolher">
-                                        <label class="custom-file-label" for="lblProposta">Proposta</label>
-                                    </div>
-                                    <input type="hidden" id="hiddenId" name="idvisita" value="@Model.IdVisita" />
+                                }
                                 </div>
-                                <label for="data" class="col-form-label">Data da Proposta</label>
-                                @*DateTimePicker*@
-                                <input type="text" class="form-control" id="txtData">
-                                <script>
-                                    var today = new Date();
-                                    var dd = String(today.getDate()).padStart(2, '0');
-                                    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                                    var yyyy = today.getFullYear();
-
-                                    $('#txtData').datepicker({
-                                        format: 'dd-mm-yyyy',
-                                        value: dd + '-' + mm + '-' + yyyy
-                                    });
-                                </script>
-                                <label for="" class="col-form-label">Estado da Proposta</label>
-                                <select class="form-control" id="txtEstado">
-                                    <option selected>Criada</option>
-                                    <option>Enviada</option>
-                                    <option>Por Aceitar</option>
-                                    <option>Aceite</option>
-                                    <option>Finalizada</option>
-                                </select>
-                                <label for="" class=" col-form-label">Valor da Proposta</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="txtValor">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">€</span>
+                            </div>
+                            <div class="column is-9">
+                                <div class="field">
+                                    <label asp-for="Cliente.NomeCliente" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="Cliente.NomeCliente" readonly>
                                     </div>
+                                    <span asp-validation-for="Cliente.NomeCliente" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                <label asp-for="IdComercial" class="label"></label>
+                                <div class="select" style="width:100%">
+                                     @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
+                                    <select class="select" style="width:100%" disabled asp-for="IdComercial"
+                                            asp-items="@(new SelectList(@LstComerciais, "Id", "NomeCompleto", Model.IdComercial))">
+                                    </select>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="column is-6">
+                                <div class="field">
+                                    <label asp-for="DataVisita" class="label"></label>
+                                    <p class="control has-icons-left">
+                                        <input asp-for="DataVisita" class="input" type="date" readonly/>
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="column is-12">
+                                <div class="field">
+                                    <label asp-for="ResumoVisita" class="label"></label>
+                                    <div class="control">
+                                        <textarea class="textarea" type="text" asp-for="ResumoVisita" readonly></textarea>
+                                    </div>
+                                    <span asp-validation-for="ResumoVisita" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Fechar</button>
-                            <button type="button" class="btn btn-primary" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarProposta('inputGroupFile01')" href="javascript:;">Adicionar</button>
+                    </li>
+                    <li>
+                        <div class="columns is-multiline">
+                            <div class="column is-12">
+                                <div class="field">
+                                    <label asp-for="ObsVisita" class="label"></label>
+                                    <div class="control">
+                                        <textarea class="textarea" type="text" rows="10" asp-for="ObsVisita"></textarea>
+                                    </div>
+                                    <span asp-validation-for="ObsVisita" class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </li>
+                    <li>
+                        <p class="control is-right">
+                            <a class="button is-primary is-pulled-right is-fullwidth" onclick="modalProposta()">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Nova Proposta</span>
+                            </a>
+                        </p>
+                        &nbsp;
+                        @if (Model.Propostas.Count() == 0)
+                        {
+                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas propostas!</button>
+                        }
+                        else
+                        {
+                            <div class="b-table">
+                            <div class="table-wrapper has-mobile-cards">            
+                            <table class="table is-hoverable is-narrow is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().DataProposta)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().EstadoProposta)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().Comercial.NomeCompleto)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().ValorProposta)
+                                        </th>
+                                        <th>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Propostas)
+                                    {
+                                        <tr>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().DataProposta)">
+                                                <span>@item.DataProposta.ToString("dd/MM/yyyy")</span>
+                                            </td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().EstadoProposta)">
+                                                @Html.DisplayFor(modelItem => item.EstadoProposta)
+                                            </td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().Comercial.NomeCompleto)">
+                                                @Html.DisplayFor(modelItem => item.Comercial.NomeCompleto)
+                                            </td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().ValorProposta)">
+                                                @Html.DisplayFor(modelItem => item.ValorProposta)
+                                            </td>
+                                            <td data-label="">
+                                                <div class="btn-group float-right">
+                                                    <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            </div>
+                            </div>
+                        }
+                        <div id="modalAdicionaProposta" class="modal">
+                            <div class="modal-background"></div>
+                            <div class="modal-card">
+                                <header class="modal-card-head">
+                                    <p class="modal-card-title">Adicionar Proposta</p>
+                                    <button class="delete" aria-label="close"></button>
+                                </header>
+                                <section class="modal-card-body">
+                                    <div class="form-group">
+                                        <div class="file has-name is-fullwidth" id="file-with-js">
+                                            <label class="file-label">
+                                                <input class="file-input" id="fileinput" type="file" name="resume">
+                                                <span class="file-cta">
+                                                    <span class="file-icon">
+                                                        <i class="fa fa-upload"></i>
+                                                    </span>
+                                                    <span class="file-label">
+                                                        Escolha um ficheiro...
+                                                    </span>
+                                                </span>
+                                                <span class="file-name">Por favor escolha um ficheiro</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label for="data">Data da Proposta</label>
+                                        @*DateTimePicker*@
+                                        <input type="text" class="datepicker" id="txtData">
+                                        <script>
+                                            var today = new Date();
+                                            var dd = String(today.getDate()).padStart(2, '0');
+                                            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                            var yyyy = today.getFullYear();
+                                            $('#txtData').datepicker({
+                                                format: 'dd-mm-yyyy',
+                                                value: dd + '-' + mm + '-' + yyyy
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="field">
+                                        <label>Estado da Proposta</label>
+                                        <div class="select" style="width:100%">
+                                            <select class="select" style="width:100%" id="txtEstado">
+                                                <option selected>Criada</option>
+                                                <option>Enviada</option>
+                                                <option>Por Aceitar</option>
+                                                <option>Aceite</option>
+                                                <option>Finalizada</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="field is-grouped">
+                                        <label>Valor da Proposta</label>
+                                        <input class="input" type="number" id="txtValor">
+                                        <span>€</span>
+                                    </div>
+                                </section>
+                                <footer class="modal-card-foot">
+                                    <a type="button" class="button is-info" onclick="AdicionarProposta();" href="javascript:;">Adicionar</a>
+                                </footer>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="file has-name is-fullwidth" id="file-with-js2">
+                            <label class="file-label">
+                                <input class="file-input" id="fileinput2" type="file" name="resume">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fa fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Escolha um ficheiro...
+                                    </span>
+                                </span>
+                                <span class="file-name">Por favor escolha um ficheiro</span>
+                            </label>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="tab-pane fade show" id="v-pills-anexos" role="tabpanel" aria-labelledby="v-pills-anexos-tab">
-            <br />
-            <div class="form-group">
-                <label class="control-label">Anexos Generalizados</label>
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="files" value="Escolher" onchange="AdicionarAnexo('inputGroupFile02')">
-                        <label class="custom-file-label" for="inputGroupFile02">Escolha o ficheiro</label>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <br />
-
-        <div class="form-group">
-            <input onclick="guardar()" value="Guardar & Sair" class="btn btn-primary btn-block btn-lg" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" />
-        </div>
-
-        <div>
-            <br />
-            <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { IdComercial = Model.IdComercial, DataVisitas = Model.DataVisita.ToString("dd-MM-yyyy") }))'" style="font-size:80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
-        </div>
-
+    </div>
+    <br />
+    <div class="container">
+        <input type="submit" value="Guardar Alterações" class="button is-info is-outlined is-fullwidth" />
     </div>
 </form>
 
@@ -211,13 +322,8 @@
 
 <script>
     function AdicionarAnexo(inputTxt) {
-        var input = document.getElementById(inputTxt);
-        var files = input.files;
         var formData = new FormData();
-
-        for (var i = 0; i != files.length; i++) {
-            formData.append("files", files[i]);
-        }
+        formData.append("files", document.getElementById('fileinput2').files[0]);
 
         $.ajax(
             {
@@ -232,20 +338,12 @@
             }
         );
     }
-
-        function AdicionarProposta(inputTxt) {
-        var input = document.getElementById(inputTxt);
-        var files = input.files;
-        var formData = new FormData();
-
-        for (var i = 0; i != files.length; i++) {
-            formData.append("files", files[i]);
-            }
-
+        function AdicionarProposta() {
+            var formData = new FormData();
+            formData.append("files", document.getElementById('fileinput').files[0]);
             formData.append("data", document.getElementById("txtData").value);
             formData.append("estado", document.getElementById("txtEstado").value);
             formData.append("valor", document.getElementById("txtValor").value);
-
         $.ajax(
             {
                 url: "/Visitas/AdicionarProposta?IdVisita=@Model.IdVisita&ReturnUrl=Editar?IdVisita=@Model.IdVisita",
@@ -259,7 +357,6 @@
             }
         );
     }
-
     $(function () {
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
@@ -295,18 +392,12 @@
             minLength: 1
         });
     });
-
     function guardar() {
         $('form').submit();
     }
-
     function modalProposta() {
-        $('#myModal3').modal('toggle');
+        var modal = Bulma('#modalAdicionaProposta').modal();
+        modal.open();
+
     }
-
-
-    $('input[type="file"]').change(function (e) {
-        var fileName = e.target.files[0].name;
-        $('.custom-file-label').html(fileName);
-    });
 </script>

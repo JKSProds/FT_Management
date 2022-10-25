@@ -1,16 +1,16 @@
-﻿using FT_Management.Models;
+﻿using Custom;
+using FT_Management.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Custom;
 using WebDav;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace FT_Management.Controllers
 {
@@ -24,16 +24,18 @@ namespace FT_Management.Controllers
             return new JsonResult(context.ConverterVisitasEventos(context.ObterListaVisitas(start, end)).ToList());
 
         }
+
         public JsonResult ObterVisitasComercial(DateTime start, DateTime end)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             return new JsonResult(context.ConverterVisitasEventos(context.ObterListaVisitas(int.Parse(this.User.Claims.First().Value), start, end)).ToList());
 
         }
+
         [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Calendario()
+        public ActionResult CalendarioView()
         {
-            return View();
+            return View("CalendarioNew");
         }
 
         public ActionResult CalendarioComercial()
@@ -54,136 +56,161 @@ namespace FT_Management.Controllers
             context.CriarVisitas(LstVisita);
             return Json("ok");
         }
-        // GET: VisitasController
+
         public ActionResult Index()
         {
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) return RedirectToAction("ListaVisitas");
+
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
-            {
-                return RedirectToAction("ListaVisitas");
-            }
-            else
-            {
-                return View(context.ObterListaComerciais());
-            }
+            return View(context.ObterListaComerciais());
         }
 
         [HttpPost]
         public JsonResult ObterClientes(string prefix)
         {
-            if (prefix is null) prefix = "";
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return Json(context.ObterListaClientes(prefix, false));
+            if (prefix is null) prefix = "";
+
+            return Json(phccontext.ObterClientes(prefix, false));
         }
 
         public ActionResult ListaVisitas(int IdComercial, string DataVisitas)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = int.Parse(this.User.Claims.First().Value);
-
             if (DataVisitas == null || DataVisitas == string.Empty) DataVisitas = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewData["DataVisitas"] = DataVisitas;
 
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<Visita> ListaVisitas = context.ObterListaVisitas(IdComercial, DateTime.Parse(DataVisitas), DateTime.Parse(DataVisitas));
+
+            ViewData["DataVisitas"] = DataVisitas;
             ViewData["IdComercial"] = IdComercial;
+
             return View(ListaVisitas);
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
         public ActionResult Adicionar()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Comerciais"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador == 2).ToList();
+            if (User.IsInRole("Admin") || User.IsInRole("Escritorio")) { 
+                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList(); 
+            } 
+            else
+            {
+               ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
+            }
+
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+
             return View();
         }
+
         [HttpPost]
-        public ActionResult Adicionar(int IdCliente, int IdLoja, DateTime txtData, int txtComercial, string Obs)
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
+        public ActionResult Adicionar(Visita v)
         {
 
-            if (IdCliente == 0 && IdLoja == 0 && txtComercial == 0) return View();
-
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-                Visita visita = new Visita()
-                {
-                    IdVisita = 0,
-                    DataVisita = txtData,
-                    Cliente = new Cliente()
-                    {
-                        IdCliente = IdCliente,
-                        IdLoja = IdLoja
-                    },
-                    IdComercial = txtComercial,
-                    ResumoVisita = Obs,
-                    ObsVisita = "",
-                    EstadoVisita = "Agendado",
-                    Contacto = new Contacto() { IdContacto = 0}
-                };
-                List<Visita> lstVisitas = new List<Visita>();
-                lstVisitas.Add(visita);
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-                context.CriarVisitas(lstVisitas);
-                context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi adicionada uma visita nova ao cliente: " + IdCliente, 5);
+            List<Visita> lstVisitas = new List<Visita>() { v };
+            if (ModelState.IsValid) { context.CriarVisitas(lstVisitas); return RedirectToAction("Index", "Visitas"); }
 
-            return RedirectToAction("Index", "Visitas");
+            if (User.IsInRole("Admin") || User.IsInRole("Escritorio"))
+            {
+                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+            }
+            else
+            {
+                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
+            }
+
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+
+            return View(v);
 
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
         public ActionResult Editar(int idVisita)
         {
-            ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Visita v = context.ObterVisita(idVisita);
 
-            ViewData["Comerciais"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador == 2).ToList();
-            return View(context.ObterVisita(idVisita));
+            ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
+
+            if (User.IsInRole("Admin") || User.IsInRole("Escritorio"))
+            {
+                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+            }
+            else
+            {
+                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
+                if (v.IdComercial != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("AcessoNegado", "Home");
+            }
+
+            return View(v);
         }
-        [Authorize(Roles = "Admin, Escritorio")]
+
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
         [HttpPost]
         public ActionResult Editar(Visita visita, string ReturnUrl)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<Visita> lstVisitas = new List<Visita>();
-            lstVisitas.Add(visita);
+
+            Visita v = context.ObterVisita(visita.IdVisita);
+            v.ResumoVisita = visita.ResumoVisita;
+            v.DataVisita = visita.DataVisita;
+            v.IdComercial = visita.IdComercial;
+
+            lstVisitas.Add(v);
             context.CriarVisitas(lstVisitas);
-            return Redirect(ReturnUrl);
+
+            return RedirectToAction("Editar", new { idVisita = v.IdVisita });
         }
 
         public ActionResult Visita(int idVisita, int IdComercial)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Visita visita = context.ObterVisita(idVisita);
+            ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Id;
-            ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
-
-            Visita visita = context.ObterVisita(idVisita);
-
             if (visita.IdComercial == IdComercial || User.IsInRole("Admin")) return View(visita);
+
+            ViewData["ReturnUrl"] = Request.Query["ReturnUrl"];
 
             return Redirect(Request.Query["ReturnUrl"]);
         }
+
         [HttpPost]
         public ActionResult Visita(Visita visita)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
+            Visita v = context.ObterVisita(visita.IdVisita);
+            v.ObsVisita = visita.ObsVisita;
             List<Visita> LstVisitas = new List<Visita> { visita };
 
             context.CriarVisitas(LstVisitas);
 
-
-            return Redirect(Request.Query["ReturnUrl"]);
+            return RedirectToAction("Visita", new { idVisita = visita.IdVisita, IdComercial = visita.IdComercial});
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin, Escritorio, Comercial")]
         [HttpGet]
         public ActionResult Apagar(int idVisita, string ReturnUrl)
         {
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            if (context.ObterVisita(idVisita).IdComercial != int.Parse(this.User.Claims.First().Value) && !(User.IsInRole("Admin") || User.IsInRole("Escritorio"))) return RedirectToAction("AcessoNegado", "Home");
+
             context.ApagarVisita(idVisita);
 
             return Redirect(ReturnUrl);
@@ -205,9 +232,10 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(IdVisita);
+            List<Proposta> LstPropostas = new List<Proposta>();
+
             if (files.Count > 0)
             {
-                List<Proposta> LstPropostas = new List<Proposta>();
 
                 LstPropostas.Add(new Proposta()
                 {
@@ -223,12 +251,12 @@ namespace FT_Management.Controllers
                 context.CriarPropostas(LstPropostas);
                 EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "Propostas", visita.Cliente.NomeCliente);
             }
+
             return Redirect(Request.Query["ReturnUrl"]);
         }
 
         public async void EnviarNextCloud(List<IFormFile> files, string Url, string Path, string Folder)
         {
-
             foreach (var formFile in files)
             {
                 if (formFile.Length > 0)
@@ -237,14 +265,12 @@ namespace FT_Management.Controllers
                     await formFile.CopyToAsync(ms);
                     ms.Seek(0, SeekOrigin.Begin);
 
-
                     var clientParams = new WebDavClientParams
                     {
                         BaseAddress = new Uri(Url),
                         Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
                     };
                     var client = new WebDavClient(clientParams);
-
 
                     await client.Mkcol(Folder + "/");
                     await client.Mkcol(Folder + "/" + Path + "/");
@@ -265,12 +291,12 @@ namespace FT_Management.Controllers
                 BaseAddress = new Uri(Url),
                 Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
             };
+
             var client = new WebDavClient(clientParams);
 
             using (var response = await client.GetRawFile(Url))
             using (var reader = new StreamReader(response.Stream))
             {
-
                 var bytes = default(byte[]);
                 using (var memstream = new MemoryStream())
                 {
@@ -290,9 +316,6 @@ namespace FT_Management.Controllers
 
                 return File(bytes, contentType);
             }
-
-          
         }
-
     }
 }

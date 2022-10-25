@@ -1,0 +1,89 @@
+﻿@model IEnumerable<FT_Management.Models.Log>;
+
+@{
+    ViewData["Title"] = "Perfil";
+}
+
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span>Logs de Utilizador (@ViewData["NomeUtilizador"])</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-right my-auto mx-0">
+            <form method="get" style="width:100%">
+                <div class="field">
+                    <p class="control" style="width:100%">
+                        <input class="input" type="date" value="@(DateTime.Parse(ViewData["Data"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="Data" />
+                        <script>
+                            bulmaCalendar.attach('#txtData', {
+                                color: 'info',
+                                lang: 'pt',
+                                dateFormat: 'dd/MM/yyyy',
+                                todayLabel: 'Hoje',
+                                showClearButton: false,
+                                cancelLabel: 'Cancelar'
+                            });
+                            document.getElementById('txtData').bulmaCalendar.on('select', function(datepicker) {
+                                  document.getElementById('txtData').value = datepicker.data.value();
+                                  $('form').submit();
+                            });
+                        </script>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (Model.Count() == 0)
+{
+    <div class="container">
+        <br />
+        <button class="button is-danger is-fullwidth" disabled>Não foram encontrados logs para este utilizador!</button>
+        </div>
+        }
+        else
+        {
+        <div class="container">
+            <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+            <table class="table is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Data)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Descricao)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td data-label="@Html.DisplayNameFor(model => model.Data)">
+                                <span>@item.Data</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.Descricao)" >
+                                <span>@item.Descricao</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        </div>
+        </div>
+        }

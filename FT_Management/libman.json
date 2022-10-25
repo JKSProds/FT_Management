@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "font-awesome@6.1.1",
+      "destination": "wwwroot/lib/font-awesome/"
+    },
+    {
+      "library": "bulma@0.9.4",
+      "destination": "wwwroot/lib/bulma/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@vizuaalog/bulmajs@0.12.1",
+      "destination": "wwwroot/lib/vizuaalog/bulmajs/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-steps@2.2.1",
+      "destination": "wwwroot/lib/bulma-steps/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-calendar@6.1.18",
+      "destination": "wwwroot/lib/bulma-calendar/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-toast@2.4.1",
+      "destination": "wwwroot/lib/bulma-toast/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-responsive-tables@1.2.5",
+      "destination": "wwwroot/lib/bulma-responsive-tables/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-switch-control@1.2.2",
+      "destination": "wwwroot/lib/bulma-switch-control/"
+    },
+    {
+      "library": "tui-calendar@1.15.3",
+      "destination": "wwwroot/lib/tui-calendar/"
+    },
+    {
+      "library": "moment.js@2.29.3",
+      "destination": "wwwroot/lib/moment.js/"
+    },
+    {
+      "library": "tui-code-snippet@1.5.2",
+      "destination": "wwwroot/tui-code-snippet/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-list@1.2.0",
+      "destination": "wwwroot/lib/bulma-list/"
+    },
+    {
+      "library": "dropzone@5.9.3",
+      "destination": "wwwroot/lib/dropzone/"
+    },
+    {
+      "library": "Chart.js@3.9.1",
+      "destination": "wwwroot/lib/Chart.js/"
+    },
+    {
+      "library": "signature_pad@4.0.10",
+      "destination": "wwwroot/lib/signature_pad/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "bulma-pageloader@0.3.0",
+      "destination": "wwwroot/lib/bulma-pageloader/"
+    }
+  ]
+}

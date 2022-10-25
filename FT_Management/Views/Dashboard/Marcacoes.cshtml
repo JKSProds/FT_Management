@@ -1,0 +1,88 @@
+﻿@model IEnumerable<FT_Management.Models.Marcacao>
+
+@{
+    ViewData["Title"] = "Marcações";
+}
+
+<input type="hidden" id="txtCriado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Criado").Count()" />
+<input type="hidden" id="txtEncFornecedor" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Enc. a Fornecedor").Count()" />
+<input type="hidden" id="txtPedidoCotacao" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Cotação").Count()" />
+<input type="hidden" id="txtPedidoFornecedor" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Fornecedor").Count()" />
+<input type="hidden" id="txtPecasMaia" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Peças na Maia").Count()" />
+<input type="hidden" id="txtOrcamentado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Orçamentado").Count()" />
+<input type="hidden" id="txtPedidoPecas" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Peças").Count()" />
+<input type="hidden" id="txtPedidoOrcamento" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Orçamento").Count()" />
+<input type="hidden" id="txtAgendado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Agendado").Count()" />
+<input type="hidden" id="txtAbertasHoje" value="@Model.Where(m => m.EstadoMarcacaoDesc != "Finalizado").Where(m => m.DataMarcacao.ToShortDateString() == DateTime.Now.ToShortDateString()).Count()" />
+<input type="hidden" id="txtFechadasHoje" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Finalizado").Where(m => m.DataMarcacao.ToShortDateString() == DateTime.Now.ToShortDateString()).Count()" />
+
+<div class="columns is-gapless">
+    <div class="column mx-1">
+        <div class="card has-table has-mobile-sort-spaced has-background-info-light">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <span class="icon"><i class="fa-solid fa-calendar-days"></i></span>
+                    Marcações Abertas
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="b-table">
+                    <div class="table-wrapper has-mobile-cards">
+                            <canvas id="chartMarcacoesAbertas" max-width="400" max-height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column mx-1">
+        <div class="card has-table has-mobile-sort-spaced has-background-success-light">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <span class="icon"><i class="fa-solid fa-calendar-check"></i></span>
+                    Marcações Concluidas (Hoje)
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="b-table">
+                    <div class="table-wrapper has-mobile-cards">
+                            <canvas id="chartMarcacoesHoje" max-width="400" max-height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx1 = document.getElementById('chartMarcacoesAbertas').getContext('2d');
+    const chartMarcacoesAbertas = new Chart(ctx1, {
+    type: 'pie',
+        data: {
+            labels: ['Criado', 'Enc. a Fornecedor', 'Pedido Cotação', 'Pedido Fornecedor', 'Peças na Maia', 'Orçamentado', 'Pedido Peças', 'Pedido Orçamento', 'Agendado'],
+            datasets: [{
+                data: [document.getElementById("txtCriado").value, document.getElementById("txtEncFornecedor").value, document.getElementById("txtPedidoCotacao").value, document.getElementById("txtPedidoFornecedor").value, document.getElementById("txtPecasMaia").value, document.getElementById("txtOrcamentado").value, document.getElementById("txtPedidoPecas").value, document.getElementById("txtPedidoOrcamento").value, document.getElementById("txtAgendado").value],
+                backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#885f2d","#ff7256","#5aecd2","#bf323b"],
+            }]
+        },
+        options: {
+        }
+    });
+
+    const ctx2 = document.getElementById('chartMarcacoesHoje').getContext('2d');
+    const chartMarcacoesHoje = new Chart(ctx2, {
+    type: 'doughnut',
+        data: {
+            labels: ['Completo', 'Aberto'],
+            datasets: [{
+                data: [document.getElementById("txtFechadasHoje").value, document.getElementById("txtAbertasHoje").value],
+                backgroundColor: [
+                    'rgba(0, 120, 179, 1)',
+                    'rgba(191, 50, 59, 1)'
+                ]
+            }]
+        },
+        options: {
+
+        }
+    });
+</script>

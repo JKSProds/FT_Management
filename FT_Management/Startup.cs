@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 
+
 namespace FT_Management
 {
     public class Startup
@@ -36,6 +37,8 @@ namespace FT_Management
             services.AddControllersWithViews();
             services.AddMvc();
 
+            //SMSContext.EnviarMensagemTeste("912321280");
+
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
             services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(Configuration.GetConnectionString("PHCConnection"), Configuration.GetConnectionString("DefaultConnection"))));
 
@@ -43,7 +46,7 @@ namespace FT_Management
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1") {
+          if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1") {
                 // Add our job
                 services.AddSingleton<CronJobFerias>();
                 services.AddSingleton(new JobSchedule(
@@ -56,6 +59,15 @@ namespace FT_Management
                 services.AddSingleton(new JobSchedule(
                     jobType: typeof(CronJobAgendamentoCRM),
                     cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAgendamentoComercial", Configuration.GetConnectionString("DefaultConnection"))));
+            }
+
+
+            if (FT_ManagementContext.ObterParam("EnvioEmailAniversario", Configuration.GetConnectionString("DefaultConnection")) == "1")
+            {
+                services.AddSingleton<CronJobAniversario>();
+                services.AddSingleton(new JobSchedule(
+                    jobType: typeof(CronJobAniversario),
+                    cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAniversario", Configuration.GetConnectionString("DefaultConnection"))));
             }
 
             services.AddHostedService<QuartzHostedService>();
@@ -71,10 +83,6 @@ namespace FT_Management
                 cookieOptions.AccessDeniedPath = "/Home/AcessoNegado";
             });
 
-
-
-            //var passwordHasher = new PasswordHasher<string>();
-            //Console.WriteLine(passwordHasher.HashPassword(null, "Food@014.js"));
 
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }

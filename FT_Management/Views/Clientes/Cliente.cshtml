@@ -1,362 +1,533 @@
 ﻿@model FT_Management.Models.Cliente
 
 @{
-    ViewData["Title"] = "Cliente - " + Model.NomeCliente ;
+    ViewData["Title"] = "Cliente - " + Model.NomeCliente;
 }
 
-<h1>@Model.NomeCliente </h1>
-<hr />
-<form asp-action="Editar">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="nav nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-item nav-link active" id="v-pills-cliente-tab" data-toggle="pill" href="#v-pills-cliente" role="tab" aria-controls="v-pills-cliente" aria-selected="false">Dados</a>
-        <a class="nav-item nav-link" id="v-pills-marcacoes-tab" data-toggle="pill" href="#v-pills-marcacoes" role="tab" aria-controls="v-pills-marcacoes" aria-selected="false">Marcações</a>
-        <a class="nav-item nav-link" id="v-pills-folhasobra-tab" data-toggle="pill" href="#v-pills-folhasobra" role="tab" aria-controls="v-pills-folhasobra" aria-selected="false">Folhas de Obra</a>
-        <a class="nav-item nav-link" id="v-pills-visitas-tab" data-toggle="pill" href="#v-pills-visitas" role="tab" aria-controls="v-pills-visitas" aria-selected="false">Visitas</a>
-        <a class="nav-item nav-link" id="v-pills-propostas-tab" data-toggle="pill" href="#v-pills-propostas" role="tab" aria-controls="v-pills-propostas" aria-selected="false">Propostas</a>
-        <a class="nav-item nav-link" id="v-pills-equipamentos-tab" data-toggle="pill" href="#v-pills-equipamentos" role="tab" aria-controls="v-pills-equipamentos" aria-selected="false">Equipamentos</a>
-    </div>
-    <div class="tab-content" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="v-pills-cliente" role="tabpanel" aria-labelledby="v-pills-cliente-tab">
-            <br />
-            <div class="row">
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="IdCliente" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="IdCliente" class="form-control" id="IdCliente" readonly />
-                            <input asp-for="IdLoja" class="form-control" id="IdLoja" readonly />
-                        </div>
-                        <span asp-validation-for="IdCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-8">
-                    <div class="form-group">
-                        <label asp-for="NomeCliente" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="NomeCliente" class="form-control" id="NomeCliente" readonly/>
-                        </div>
-                        <span asp-validation-for="NomeCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-8">
-                    <div class="form-group">
-                        <label asp-for="MoradaCliente" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="MoradaCliente" class="form-control" id="MoradaCliente" readonly />
-                            <div class="btn-group">
-                                <a href="https://maps.google.com/?daddr=@Model.MoradaCliente" target="_blank" class="btn btn-info @(Model.MoradaCliente.Length < 2 ? "disabled" : "")"><i class="fas fa-location-arrow"></i></a>
-                            </div>
-                        </div>
+<style>
+    .tabs-content li {
+        display: none;
+        list-style: none;
+    }
 
-                        <span asp-validation-for="MoradaCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="NumeroContribuinteCliente" class="control-label"></label>
-                        <input asp-for="NumeroContribuinteCliente" class="form-control" id="NumeroContribuinteCliente" readonly />
-                        <span asp-validation-for="NumeroContribuinteCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="w-100"></div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="EmailCliente" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="EmailCliente" class="form-control" id="EmailCliente" readonly />
-                            <div class="btn-group">
-                                <a href="mailto:@Model.EmailCliente" target="_blank" class="btn btn-primary @(Model.EmailCliente.Length < 5 ? "disabled" : "")"><i class="fas fa-envelope"></i></a>
-                            </div>
-                        </div>
-                        <span asp-validation-for="EmailCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="TelefoneCliente" class="control-label"></label>
-                        <div class="input-group">
-                            <input asp-for="TelefoneCliente" class="form-control" id="TelefoneCliente" readonly onclick="tel:@Model.TelefoneCliente" />
-                            <div class="btn-group">
-                                <a href="tel:@Model.TelefoneCliente" target="_blank" class="btn btn-success @(Model.TelefoneCliente.Length < 9 ? "disabled" : "")"><i class="fas fa-phone-alt"></i></a>
-                            </div>
-                        </div>
-                        <span asp-validation-for="TelefoneCliente" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group col-lg-4">
-                    <div class="form-group">
-                        <label asp-for="PessoaContatoCliente" class="control-label"></label>
-                        <input asp-for="PessoaContatoCliente" class="form-control" id="PessoaContatoCliente" readonly />
-                        <span asp-validation-for="PessoaContatoCliente" class="text-danger"></span>
-                    </div>
+        .tabs-content li.is-active {
+            display: block;
+        }
+</style>
+
+<div class="container">
+    <div class="columns is-mobile is-centered">
+        <div class="column is-12">
+            <div class="tile is-centered">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                       
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fas fa-user-tie"></i>
+                                </span>
+                                <span>@Model.NomeCliente</span>
+                            </p>
+                    </article>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<hr />
 
-        <div class="tab-pane fade show" id="v-pills-marcacoes" role="tabpanel" aria-labelledby="v-pills-marcacoes-tab">
-            <br />
-            @if (Model.Marcacoes.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas marcações!</button>
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                #
-                            </th>
-                            <th>
-                                Data
-                            </th>
-                            <th>
-                                Técnico
-                            </th>
-                            <th>
-                                Estado
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Marcacoes)
-                        {
-                        <tr>
-                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
-                                <span>@item.IdMarcacao</span>
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
-                                <span>@item.DataMarcacao.ToShortDateString()</span>
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
-                                @Html.DisplayFor(modelItem => item.Tecnico.NomeCompleto)
+<form asp-action="Editar">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { idMarcacao = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
-                                @Html.DisplayFor(modelItem => item.EstadoMarcacaoDesc)
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+    <div class="container">
+        <div class="tabs-wrapper">
+            <div class="tabs is-centered is-boxed">
+                <ul>
+                    <li class="is-active">
+                        <a>
+                            <span>Dados</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Marcações</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Intervenções</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Visitas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Propostas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span>Equipamentos</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
-        </div>
-        <div class="tab-pane fade show" id="v-pills-folhasobra" role="tabpanel" aria-labelledby="v-pills-folhasobra-tab">
-            <br />
-            @if (Model.FolhasObra.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas folhas de obra!</button>
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                #
-                            </th>
-                            <th>
-                                Equipamento
-                            </th>
-                            <th>
-                                Nº de Série
-                            </th>
-                            <th>
-                                Data
-                            </th>
-                            <th>
-
-                            </th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.FolhasObra)
-                        {
-                        <tr>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                                <span>@item.IdFolhaObra</span>
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                                @Html.DisplayFor(modelItem => item.EquipamentoServico.MarcaEquipamento) - @Html.DisplayFor(modelItem => item.EquipamentoServico.ModeloEquipamento)
-
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                                @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Editar", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                                <span>@item.DataServico.ToShortDateString()</span>
-                            </td>
-                            <td>
-                                <div class="btn-group float-right">
-                                    <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
-                                    @*<a class="btn btn-outline-primary btn-lg" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
-                    <i class="fas fa-paper-plane" style="font-size:20px"></i><span class="spinner-border text-primary float-right" style="display:none" id="folha_@item.IdFolhaObra" role="status" aria-hidden="true"></span>
-                </a>*@
-                                </div>
-
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-        <div class="tab-pane fade show" id="v-pills-visitas" role="tabpanel" aria-labelledby="v-pills-visitas-tab">
-            <br />
-            @if (Model.Visitas.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas visitas!</button>
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                #
-                            </th>
-                            <th>
-                                Data
-                            </th>
-                            <th>
-                                Observações
-                            </th>
-                            <th>
-                                Estado
-                            </th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Visitas)
-                        {
-                        <tr>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
-                                <span>@item.IdVisita</span>
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
-                                <span>@item.DataVisita.ToShortDateString()</span>
-
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
-                                <span>@item.ObsVisita</span>
-                            </td>
-                            <td onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
-                                <span>@item.EstadoVisita</span>
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-        <div class="tab-pane fade show" id="v-pills-propostas" role="tabpanel" aria-labelledby="v-pills-propostas-tab">
-            <br />
-            @if (Model.Visitas.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas propostas!</button>
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                #
-                            </th>
-                            <th>
-                                Data
-                            </th>
-                            <th>
-                                Valor
-                            </th>
-                            <th>
-                                Estado
-                            </th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var visita in Model.Visitas)
-                        {
-                            foreach (var item in visita.Propostas)
-                            { 
-                            <tr>
-                                <td>
-                                    <span>@item.IdProposta</span>
-                                </td>
-                                <td>
-                                    <span>@item.DataProposta.ToShortDateString()</span>
-
-                                </td>
-                                <td>
-                                    <span>@item.ValorProposta €</span>
-                                </td>
-                                <td>
-                                    <span>@item.EstadoProposta</span>
-                                </td>
-                                <td>
-                                    <div class="btn-group float-right">
-                                        <a class="btn btn-outline-success btn-lg" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+            <div class="tabs-content mx-2">
+                <ul>
+                    <li class="is-active">
+                        <div class="columns is-multiline">
+                            <div class="column is-2">
+                                <div class="field">
+                                    <label asp-for="IdCliente" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" readonly asp-for="IdCliente">
                                     </div>
-                                </td>
-                            </tr>
-                         }
-                        }
-                    </tbody>
-                </table>
-            }
+                                </div>
+                            </div>
+                            <div class="column is-2">
+                                <div class="field">
+                                    <label asp-for="NomeCliente" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" asp-for="NomeCliente">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-5">
+                                <label asp-for="MoradaCliente" class="label"></label>
+                                <div class="field has-addons">
+                                    <div class="control" style="width:100%">
+                                        <input class="input is-fullwidth" type="text"  readonly asp-for="MoradaCliente">
+                                    </div>
+                                    <a href="@Utilizador.ObterLinkMapa(Model, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)" target="_blank" class="button is-primary" @(Model.MoradaCliente.Length < 2 ? "disabled" : "")><i class="fas fa-location-arrow"></i></a>
+                                </div>
+                            </div>
+                            <div class="column is-3">
+                                <label asp-for="Senha" class="label"></label>
+                                <div class="field has-addons">
+                                    <div class="control" style="width:100%">
+                                        <input class="input is-fullwidth" type="text"  readonly asp-for="Senha" id="txtSenha">
+                                    </div>
+                                    <button type="button" onclick="GerarSenha('@Model.ClienteStamp')" class="button is-primary"><i class="fas fa-rotate"></i></button>
+                                    <div class="control">
+                                        <a class="button is-info" onclick="Bulma('#modalEnviarEmailCliente').modal().open()">
+                                            <i class="fa-solid fa-share"></i>
+                                        </a>
+                                    </div>
 
-        </div>
-        <div class="tab-pane fade show" id="v-pills-equipamentos" role="tabpanel" aria-labelledby="v-pills-equipamentos-tab">
-            <br />
-            @if (Model.Equipamentos.Count() == 0)
-            {
-                <br />
-                <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados equipamentos!</button>
-            }
-            else
-            {
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>
-                                Marca
-                            </th>
-                            <th>
-                                Modelo
-                            </th>
-                            <th>
-                                Nº de Série
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Equipamentos)
-                        {
-                        <tr>
-                            <td>
-                                <span>@item.MarcaEquipamento</span>
+                                </div>
+                            </div>
+                            <div class="column is-3">
+                                <div class="field">
+                                    <label asp-for="NumeroContribuinteCliente" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" id="IdVisita" readonly asp-for="NumeroContribuinteCliente">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-3">
+                                <label asp-for="EmailCliente" class="label"></label>
+                                <div class="field has-addons">
+                                    <div class="control" style="width:100%">
+                                        <input class="input" type="text" readonly asp-for="EmailCliente">
+                                    </div>
+                                    <a href="mailto:@Model.EmailCliente" target="_blank" class="button is-info" @(Model.EmailCliente.Length < 5 ? "disabled" : "")><i class="fas fa-envelope"></i></a>
+                                </div>
+                            </div>
+                            <div class="column is-3">
+                                <label asp-for="TelefoneCliente" class="label"></label>
+                                <div class="field has-addons">
+                                    <div class="control" style="width:100%">
+                                        <input class="input" type="text" readonly asp-for="TelefoneCliente">
+                                    </div>
+                                    <a href="tel:@Model.TelefoneCliente" target="_blank" class="button is-success is-outlined" @(Model.TelefoneCliente.Length < 9 ? "disabled" : "")><i class="fas fa-phone"></i></a>
+                                </div>
+                            </div>
+                            <div class="column is-3">
+                                <div class="field">
+                                    <label asp-for="PessoaContatoCliente" class="label"></label>
+                                    <div class="control">
+                                        <input class="input" type="text" readonly asp-for="PessoaContatoCliente">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="container">
+                            @if (Model.Marcacoes.Count() == 0)
+                            {
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas marcações!</button>
+                            }
+                            else
+                            {
+                                <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards">        
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                               @Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().IdMarcacao)
+                                            </th>
+                                            <th>
+                                               @Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().DataMarcacao)
+                                            </th>
+                                            <th>
+                                               @Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().Utilizador)
+                                            </th>
+                                            <th>
+                                               @Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().EstadoMarcacaoDesc)
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Marcacoes)
+                                        {
+                                            <tr>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().IdMarcacao)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                    <span>@item.IdMarcacao</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().DataMarcacao)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                    <span>@item.DataMarcacao.ToShortDateString()</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().Utilizador)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                    @Html.DisplayFor(modelItem => item.Tecnico.NomeCompleto)
 
-                            </td>
-                            <td>
-                                <span>@item.ModeloEquipamento</span>
-                            </td>
-                            <td>
-                                <span>@item.NumeroSerieEquipamento</span>
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+                                                </td>
+                                                <td  data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().EstadoMarcacaoDesc)" onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                    @Html.DisplayFor(modelItem => item.EstadoMarcacaoDesc)
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </li>
+                    <li>
+                        <div class="container">
+                            @if (Model.FolhasObra.Count() == 0)
+                            {
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas intervenções!</button>
+                            }
+                            else
+                            {
+                                <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards">      
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().IdFolhaObra)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.MarcaEquipamento)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.NumeroSerieEquipamento)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().DataServico)
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.FolhasObra)
+                                        {
+                                            <tr>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().IdFolhaObra)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                    <span>@item.IdFolhaObra</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.MarcaEquipamento)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                    @Html.DisplayFor(modelItem => item.EquipamentoServico.MarcaEquipamento) - @Html.DisplayFor(modelItem => item.EquipamentoServico.ModeloEquipamento)
+
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.NumeroSerieEquipamento)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                    @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().DataServico)" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                    <span>@item.DataServico.ToShortDateString()</span>
+                                                </td>
+                                                <td class="is-actions-cell">
+                                                        <a class="button is-outlined is-fullwidth is-primary" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </li>
+                    <li>
+                        <div class="container">
+                            @if (Model.Visitas.Count() == 0)
+                            {
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas visitas!</button>
+                            }
+                            else
+                            {
+                                <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards">   
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().IdVisita)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().DataVisita)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().ObsVisita)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().EstadoVisita)
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Visitas)
+                                        {
+                                            <tr>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().IdVisita)" onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                    <span>@item.IdVisita</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().DataVisita)" onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                    <span>@item.DataVisita.ToShortDateString()</span>
+
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().ObsVisita)" onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                    <span>@item.ObsVisita</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().EstadoVisita)" onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                    <span>@item.EstadoVisita</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </li>
+                    <li>
+                        <div class="container">
+                            @if (Model.Visitas.Count() == 0 || !(Model.Visitas.Any(v => v.Propostas.Count > 0)))
+                            {
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas propostas!</button>
+                            }
+                            else
+                            {
+                                <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards">   
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().IdProposta)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().DataProposta)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().ValorProposta)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().EstadoProposta)
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var visita in Model.Visitas)
+                                        {
+                                            foreach (var item in visita.Propostas)
+                                            {
+                                                <tr>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().IdProposta)">
+                                                        <span>@item.IdProposta</span>
+                                                    </td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().DataProposta)">
+                                                        <span>@item.DataProposta.ToShortDateString()</span>
+
+                                                    </td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().ValorProposta)">
+                                                        <span>@item.ValorProposta €</span>
+                                                    </td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().EstadoProposta)">
+                                                        <span>@item.EstadoProposta</span>
+                                                    </td>
+                                                    <td class="is-actions-cell">
+                                                            <a class="button is-outlined is-fullwidth is-primary" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </li>
+                    <li>
+                        <div class="container">
+                            @if (Model.Equipamentos.Count() == 0)
+                            {
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados equipamentos!</button>
+                            }
+                            else
+                            {
+                                <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards"> 
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().MarcaEquipamento)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().ModeloEquipamento)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().NumeroSerieEquipamento)
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Equipamentos)
+                                        {
+                                            <tr>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().MarcaEquipamento)">
+                                                    <span>@item.MarcaEquipamento</span>
+
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().ModeloEquipamento)">
+                                                    <span>@item.ModeloEquipamento</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().NumeroSerieEquipamento)">
+                                                    <span>@item.NumeroSerieEquipamento</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
-        </div>
+    </div>
 </form>
+
+<div class="modal" id="modalEnviarEmailCliente">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Enviar Email</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Tem a certeza que deseja enviar um email para o cliente com os dados de login da plataforma?</p>
+            <div class="field" style="width:100%">
+                <div class="control"><input type="email" class="input" id="txtEmailCliente" value="@Model.EmailCliente"></div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button id="btnEnviarEmailCliente" type="button" class="button is-info" onclick="EnviarEmailCliente(@Model.IdCliente, @Model.IdLoja, document.getElementById('txtEmailCliente').value)" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-paper-plane"></i>
+                </span>
+                <span>Enviar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    function EnviarEmailCliente(id, loja, email) {
+
+        document.getElementById("btnEnviarEmailCliente").classList.add("is-loading");
+
+        $.ajax({
+            type: "POST",
+            url: "/Clientes/EmailSenhaCliente/" + id + "?loja="+loja+"&email=" + email,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    document.getElementById("btnEnviarEmailCliente").classList.remove("is-loading");
+                    if (result == "Sucesso") {
+                        bulmaToast.toast({
+                            message: 'Email enviado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+
+                    } else {
+                        bulmaToast.toast({
+                            message: 'Ocorreu um erro!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+                    }
+
+                });
+            }
+        });
+        Bulma('#modalEnviarEmailCliente').modal().close();
+    }
+
+    function GerarSenha(stamp) {
+            $.ajax({
+                type: "POST",
+                url: "/Clientes/GerarSenha/" + stamp,
+                traditional: true,
+                success: function (result) {
+                    if (result != "") {
+                    $(function () {
+                        document.getElementById("txtSenha").value = result;
+                        bulmaToast.toast({
+                          message: 'Senha gerada com sucesso!',
+                          type: 'is-success',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        });
+                        window.location.reload();
+                    });
+                    }else{
+                    $(function () {
+                        bulmaToast.toast({
+                          message: 'Não foi possivel gerar a Senha!',
+                          type: 'is-danger',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
+                    });
+                    }
+                }
+            });
+        }
+</script>

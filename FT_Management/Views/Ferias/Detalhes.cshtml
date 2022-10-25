@@ -6,39 +6,77 @@
 
 <script src="https://momentjs.com/downloads/moment.min.js"></script>
 
-<div class="row">
-    <div class="col-lg-4">
-        <h1>Férias - @Model.utilizador.NomeCompleto</h1>
-    </div>
-    <div class="btn-group col-lg-4" role="group" aria-label="Basic outlined example">
-        <button type="button" disabled class="btn btn-outline-primary btn-lg">
-            Dias Marcados: @Model.DiasTotais
-        </button>
-        @if (this.User.IsInRole("Admin"))
-        {
-            <button type="button" data-toggle="modal" data-target="#myModal4" class="btn btn-outline-danger btn-lg">
-                Dias Disponiveis: @(Model.DiasDisponiveis - Model.DiasTotais)
-            </button>
 
-        }
-        else
-        {
-            <button type="button" disabled class="btn btn-outline-danger btn-lg">
-                Dias Disponiveis: @(Model.DiasDisponiveis - Model.DiasTotais)
-            </button>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-umbrella-beach"></i>
+                            </span>
+                            <span>Férias - @Model.utilizador.NomeCompleto</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-8 my-auto">
+            <div class="buttons is-right is-grouped">
+                <p class="control">
+                    <button class="button is-info disabled">
+                        <span class="icon"><i class="fa fa-calendar-days"></i></span>
+                        <span>@Html.DisplayNameFor(model => model.DiasTotais): @Model.DiasTotais</span>
+                    </button>
+                </p>
+                <p class="control">
+                    @if (this.User.IsInRole("Admin"))
+                    {
+                    <button class="button is-danger" id="alterarDiasFerias">
+                        <span class="icon"><i class="fa fa-calendar-xmark"></i></span>
+                        <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis - Model.DiasTotais)</span>
+                    </button>
+                    }
+                    else
+                    {
+                <button class="button is-danger disabled">
+                    <span class="icon"><i class="fa fa-calendar-plus"></i></span>
+                    <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis - Model.DiasTotais)</span>
+                </button>
+                    }
+                </p>
+                <p class="control">
+                    <button class="button is-primary disabled">
+                        <span class="icon"><i class="fa fa-calendar-check"></i></span>
+                        <span>@Html.DisplayNameFor(model => model.DiasMarcados): @Model.DiasMarcados</span>
+                    </button>
+                </p>
+            </div>
+            <div class="buttons is-right is-grouped">
+                <p class="control">
+                    <a class="button is-info is-outlined" onclick="location.href = '@(Url.Action("CalendarioView", "Ferias"))'">
+                        <span class="icon">
+                            <i class="far fa-calendar-alt"></i>
+                        </span>
+                        <span>Calendário</span>
+                    </a>
+                </p>
+                <p class="control">
+                    <a class="button is-primary is-outlined" id="addFerias">
+                        <span class="icon">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Adicionar</span>
+                    </a>
+                </p>
+            </div>
+        </div>
 
-        }
-        <button type="button" disabled class="btn btn-outline-success btn-lg">
-            Dias Aprovados: @Model.DiasMarcados
-        </button>
-
-    </div>
-    <div class="btn-group btn-group-lg col-lg-4" role="group" aria-label="Basic example">
-        <a class="btn btn-outline-primary float-right" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
-        <a class="btn btn-primary text-white float-right" data-toggle="modal" data-target="#myModal2"><i class="fas fa-plus" style="margin-top:5px"></i> Adicionar</a>
     </div>
 </div>
-<br />
+<hr />
 <input type="hidden" id="hiddenIdUtilizador" value="@ViewData["IdUtilizador"]" name="IdUtilizador">
 <input type="hidden" id="hiddenAno" name="Ano" value="@ViewData["Ano"]" />
 <input type="hidden" id="hiddenIdFerias" name="IdFerias" />
@@ -46,233 +84,279 @@
 @if (Model.Ferias.Count() == 0)
 {
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontradas férias associadas!</button>
+    <button class="button is-fullwidth is-danger is-outlined">Não foram encontradas férias associadas!</button>
 }
 else
 {
-    <table class=" table table-hover">
-        <thead>
-            <tr>
-                <th>
-                    Data Inicio
-                </th>
-                <th>
-                    Data Fim
-                </th>
-                <th>
-                    Aprovado Por
-                </th>
-                <th>
-                    Observações
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Ferias)
-            {
-            <tr class="@(item.Validado ? "table-success" : "table-danger")">
-                <td>
-                    <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
-                </td>
-                <td>
-                    <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ValidadoPorNome)
-                </td>
-
-                <td style="width: 60%;">
-                    @Html.DisplayFor(modelItem => item.Obs)
-                </td>
-                @if (this.User.IsInRole("Admin"))
+    <div class="container">
+        <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">        
+        <table class="table is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Ferias)
                 {
-                    <td>
-                        <div class="btn-group float-right">
-                            <a class="btn btn-outline-danger" onclick="ConfirmApagarFerias(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                            <a class="btn btn-outline-success" onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
+                <tr class="@(item.Validado ? "has-background-success-light" : "has-background-danger-light")">
+                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)">
+                        <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
+                    </td>
+                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)">
+                        <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
+                    </td>
+                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)">
+                        @Html.DisplayFor(modelItem => item.ValidadoPorNome)
+                    </td>
+
+                    <td  data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)" style="width: 60%;">
+                        @Html.DisplayFor(modelItem => item.Obs)
+                    </td>
+                    <td class="is-actions-cell">
+                        <div class="field has-addons is-pulled-right">
+
+                            @if (this.User.IsInRole("Admin"))
+                            {
+                                @if (!item.Validado)
+                                {<a class="button mr-2 is-outlined is-primary" onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>}
+                                <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias2(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                            }
+
+                            else
+                            {
+                                <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias1(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+
+                            }
                         </div>
                     </td>
+                    </tr>
                 }
-                else
-                {
-                    <td>
-                        <a class="btn btn-outline-danger float-right" onclick="ConfirmApagarFerias2(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                    </td>
-                }
-            </tr>
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+        </div>
+        </div>
+    </div>
 }
 
-<div class="modal fade" id="myModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Alterar Dias de Férias</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div id="modalAlterarDiasFerias" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-circle-plus"></i>
+                </span>
+                <span>Alterar Dias de Férias</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <p class="control has-icons-left">
+                    <input type="text" class="input is-success" id="txtDiasFerias" placeholder="Nº de Dias de Férias">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-arrow-down-1-9"></i>
+                    </span>
+                </p>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Dias de Férias</label>
-                    <input type="text" class="form-control" id="txtDiasFerias">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AlterarDiasFerias()" href="javascript:;">Validar</button>
-            </div>
-        </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" id="btnAlterarDiasFerias" onclick="AlterarDiasFerias()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                <span>Validar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
-<div class="modal fade" id="myModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Apagar Férias</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div id="modalApagarFerias2" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-circle-minus"></i>
+                </span>
+                <span>Apagar Férias</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <p>Tem a certeza que deseja apagar estas datas? <b>Esta ação é irreversivel!</b></p>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Observações</label>
-                    <textarea class="form-control" rows="8" placeholder="" id="txtObsApagar" name="Obs" required></textarea>
-
-                </div>
+            <div class="form-group">
+                <p class="control has-icons-left">
+                    <textarea class="textarea" rows="8" placeholder="Observações" id="txtObsApagar" name="Obs" required></textarea>
+                </p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ApagarFerias()" href="javascript:;">Apagar</button>
-            </div>
-        </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-danger" id="btnApagarFerias" onclick="ApagarFerias()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span>Apagar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
-<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Validar Férias</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Observações</label>
-                    <textarea class="form-control" rows="8" placeholder="" id="txtObsValidar" name="Obs" required></textarea>
 
-                </div>
+<div id="modalValidarFerias" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-circle-check"></i>
+                </span>
+                <span>Validar Férias</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="control">
+                <p class="control has-icons-left">
+                    <textarea class="textarea" rows="8" placeholder="Observações" id="txtObsValidar" name="Obs" required></textarea>
+                </p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="ValidarFerias()" href="javascript:;">Validar</button>
-            </div>
-        </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" id="btnValidarFerias" onclick="ValidarFerias()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>Validar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
-<div class="modal fade" id="myModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Apagar Férias</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div id="modalApagarFerias" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-circle-minus"></i>
+                </span>
+                <span>Apagar Férias</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="control">
+                <p>Tem a certeza que deseja apagar estas datas? <b>Esta ação é irreversivel!</b></p>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <p>Tem a certeza que deseja apagar estas datas? <b>Esta ação é irreversivel!</b></p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" onclick="ApagarFerias2()" href="javascript:;">Apagar</button>
-                </div>
-            </div>
-        </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-danger" id="btnApagarFerias2" onclick="ApagarFerias2()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span>Apagar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
-<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Adicionar Férias</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div id="modalAddFerias" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-circle-plus"></i>
+                </span>
+                <span>Adicionar Férias</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="control">
+                <input type="date" class="input" id="txtDataInicio" disabled>
+                <script>
+                     bulmaCalendar.attach('#txtDataInicio', {
+                        color: 'info',
+                        isRange:   true,
+                        lang: 'pt',
+                        labelFrom: 'Inicio',
+                        labelTo:   'Fim',
+                        displayMode: 'inline',
+                        dateFormat: 'dd/MM/yyyy',
+                        todayLabel: 'Hoje',
+                        clearLabel: 'Limpar',
+                        cancelLabel: 'Cancelar',
+                        minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
+                        maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
+                    });
+                </script>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Data Inicio:</label>
-                    <input type="text" class="form-control" id="txtDataInicio" disabled>
-                    <script>
-                        $('#txtDataInicio').datepicker({
-                            format: 'dd-mm-yyyy',
-                            size: 'large',
-                            minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
-                            maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
-                        });
-                    </script>
-                </div>
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Data Fim:</label>
-                    <input type="text" class="form-control" id="txtDataFim" disabled>
-                    <script>
-                        $('#txtDataFim').datepicker({
-                            format: 'dd-mm-yyyy',
-                            size: 'large',
-                            minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
-                            maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
-                        });
-                    </script>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" style=" border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="AdicionarFerias()" href="javascript:;">Adicionar</button>
-            </div>
-        </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" id="btnAdicionarFerias" onclick="AdicionarFerias()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span>Adicionar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
-<div>
-    <br />
-    <a class="btn btn-lg btn-secondary" onclick="location.href = '@(Url.Action("Index", "Ferias"))'" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">< Voltar</a>
 
-</div>
 <script>
+    document.querySelector('#addFerias').addEventListener('click', function (e) {
+        var modal = Bulma('#modalAddFerias').modal();
+        modal.open();
+    });
+
+    document.querySelector('#alterarDiasFerias').addEventListener('click', function (e) {
+        var modal = Bulma('#modalAlterarDiasFerias').modal();
+        modal.open();
+    });
+
     function AdicionarFerias() {
+        document.getElementById("btnAdicionarFerias").classList.add("is-loading");
         var json = {
-            datainicio: document.getElementById('txtDataInicio').value,
-            datafim: document.getElementById('txtDataFim').value,
+            datainicio: document.getElementById('txtDataInicio').value.split('-')[0],
+            datafim: document.getElementById('txtDataInicio').value.split('-')[1],
             idutilizador: document.getElementById('hiddenIdUtilizador').value,
         };
 
-        var dF = moment(document.getElementById('txtDataFim').value, "DD/MM/YYYY").toDate();
-        var dI = moment(document.getElementById('txtDataInicio').value, "DD/MM/YYYY").toDate();
+        var dF = moment(document.getElementById('txtDataInicio').value.split('-')[1], "DD/MM/YYYY").toDate();
+        var dI = moment(document.getElementById('txtDataInicio').value.split('-')[0], "DD/MM/YYYY").toDate();
         var Diff = (dF - dI) / (1000 * 3600 * 24);
         var DiasMarcados = (@Model.DiasDisponiveis - @Model.DiasTotais);
 
         if (Diff > DiasMarcados) {
+            document.getElementById("btnAdicionarFerias").classList.remove("is-loading");
             $(function () {
-                $.notify({
-                    message: "Dias escolhidos excedem dias disponiveis!"
-                }, {
-                    // settings
-                    type: 'danger',
-                    onShow: function () {
-                        this.css({ 'width': 'auto', 'height': 'auto' });
-                    }
-                });
+                bulmaToast.toast({
+                  message: 'Dias escolhidos excedem dias disponiveis!',
+                  type: 'is-danger',
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  opacity: 0.8,
+                  duration: 5000
+                })
             });
         }else {
             $.ajax({
@@ -287,17 +371,17 @@ else
                 }
             });
         }
-        $("#myModal2").modal('hide');
     }
 
     function AlterarDiasFerias() {
+        document.getElementById("btnAlterarDiasFerias").classList.add("is-loading");
         var json = {
             dias: document.getElementById('txtDiasFerias').value,
             ano: document.getElementById('hiddenAno').value,
             idutilizador: document.getElementById('hiddenIdUtilizador').value,
         };
 
-        
+
             $.ajax({
                 type: "POST",
                 url: "/Ferias/AlterarDiasFerias",
@@ -309,25 +393,28 @@ else
                     });
                 }
             });
-        $("#myModal4").modal('hide');
     }
 
     function ConfirmValidarFerias(Id) {
         document.getElementById("hiddenIdFerias").value = Id;
-        $("#myModal3").modal('show');
+        var modal = Bulma('#modalValidarFerias').modal();
+        modal.open();
     }
 
-    function ConfirmApagarFerias(Id) {
+    function ConfirmApagarFerias1(Id) {
         document.getElementById("hiddenIdFerias").value = Id;
-        $("#myModal5").modal('show');
+        var modal = Bulma('#modalApagarFerias').modal();
+        modal.open();
     }
 
     function ConfirmApagarFerias2(Id) {
         document.getElementById("hiddenIdFerias").value = Id;
-        $("#myModal6").modal('show');
+        var modal = Bulma('#modalApagarFerias2').modal();
+        modal.open();
     }
 
     function ApagarFerias2() {
+        document.getElementById("btnApagarFerias2").classList.add("is-loading");
         var json = {
             id: document.getElementById('hiddenIdFerias').value
         };
@@ -344,10 +431,10 @@ else
             }
         });
 
-        $("#myModal6").modal('hide');
     }
 
     function ApagarFerias() {
+        document.getElementById("btnApagarFerias").classList.add("is-loading");
         var json = {
             id: document.getElementById('hiddenIdFerias').value,
             obs: document.getElementById('txtObsApagar').value
@@ -365,10 +452,10 @@ else
             }
         });
 
-        $("#myModal5").modal('hide');
     }
 
     function ValidarFerias() {
+        document.getElementById("btnValidarFerias").classList.add("is-loading");
         var json = {
             id: document.getElementById('hiddenIdFerias').value,
             obs: document.getElementById('txtObsValidar').value
@@ -385,7 +472,5 @@ else
                 });
             }
         });
-
-        $("#myModal3").modal('hide');
     }
 </script>

@@ -4,45 +4,77 @@
     ViewData["Title"] = "Férias";
 }
 
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-umbrella-beach"></i>
+                            </span>
+                            <span>Mapa de Férias</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column my-auto">
+                <div class="buttons is-right">
+                    <p class="control">
+                        <a class="button is-info is-outlined"  onclick="location.href = '@(Url.Action("CalendarioView", "Ferias"))'">
+                            <span class="icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </span>
+                            <span>Calendário</span>
+                        </a>
+                    </p>
 
-<div class="row">
-    <div class="col-lg-8">
-        <h1>Mapa de Férias</h1>
-    </div>
-
-    <div class="btn-group btn-group-lg col-lg-4" role="group" aria-label="Basic example">
-        <a class="btn btn-outline-primary float-right" onclick="location.href = '@(Url.Action("Calendario", "Ferias"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>
-        <a class="btn btn-primary text-white float-right" onclick="location.href = '@(Url.Action("Exportar", "Ferias", new { Ano = DateTime.Now.Year }))'"><i class="fas fa-cloud-download-alt" style="margin-top:5px"></i> Exportar</a>
+                    <p class="control">
+                        <a class="button is-primary is-outlined"  onclick="location.href = '@(Url.Action("Exportar", "Ferias", new { id = DateTime.Now.Year }))'">
+                            <span class="icon">
+                                <i class="fas fa-cloud-download-alt"></i>
+                            </span>
+                            <span>Exportar Mapa</span>
+                        </a>
+                    </p>
+                </div>
+        </div>
     </div>
 </div>
 <hr />
-<br />
 
 @if (Model.Count() == 0)
 {
     <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados Técnicos!</button>
+    <button class="button is-danger is-outlined is-fullwidth">Não foram encontrados Utilizadores!</button>
 }
 else
 {
-    <div class="row">
+<div class="container">
+    <div class="columns is-multiline">
         @foreach (var item in Model)
         {
-            <div class="col-sm-6 " style="margin-bottom: 10px">
-                <div class="card border-success mb-3">
-                    <div class="card-header"> <h3>@item.NomeCompleto </h3></div>
-                    <div class="card-body text-primary">
-                        <p class="card-text">
-                            <a class="btn btn-info btn-lg btn-block text-black-50" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;" onclick="location.href = '@(Url.Action("Detalhes", "Ferias", new { IdUtilizador = item.Id }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i> Informação</a>
+            <div class="column is-4">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            <span class="icon  mr-2">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span>@item.NomeCompleto</span>
                         </p>
-                        <div class="card-footer">
-                            <small>
-                                Nome Utilizador: @item.NomeUtilizador | Email: <a href="mailto:@item.EmailUtilizador">@item.EmailUtilizador</a>
-                            </small>
-                        </div>
-                    </div>
+                        <a class="button is-primary is-rounded mx-2 my-2" onclick="location.href = '@(Url.Action("Detalhes", "Ferias", new { IdUtilizador = item.Id }))'">
+                            <span class="icon">
+                                <i class="fas fa-info"></i>
+                            </span>
+                            <span>Visualizar</span>
+                        </a>
+                    </header>
                 </div>
             </div>
         }
     </div>
+</div>
 }

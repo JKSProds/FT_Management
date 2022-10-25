@@ -4,14 +4,25 @@
     ViewData["Title"] = "Calendário";
 }
 
-
-<h1>Agendamento</h1>
-
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">Agendamento de Visitas Comerciais</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <hr />
+
 <link href='~/js/fullcalendar/main.css' rel='stylesheet' />
 <script src='~/js/fullcalendar/main.js'></script>
 
-<div id='calendar-container'>
+<div id='calendar-container' class="mx-2">
     <div id='calendar'></div>
 </div>
 
@@ -49,7 +60,7 @@
             eventClick: function (info) {
                 info.jsEvent.preventDefault(); // don't let the browser navigate
                 if (info.event.url) {
-                    window.open(info.event.url);
+                    window.open(info.event.raw);
                 }
             },
             eventDrop: function (info) {
@@ -61,17 +72,16 @@
                     data: { data: info.event.start.toISOString(), id: info.event.id },
                     traditional: false,
                     success: function (result) {
-                        $(function () {
-                            $.notify({
-                                message: "Agendamento atualizado com sucesso!"
-                            }, {
-                                // settings
-                                type: 'success',
-                                onShow: function () {
-                                    this.css({ 'width': 'auto', 'height': 'auto' });
-                                }
-                            });
-                        });
+                    $(function () {
+                        bulmaToast.toast({
+                          message: 'Agendamento atualizado com sucesso!',
+                          type: 'is-success',
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          opacity: 0.8,
+                          duration: 5000
+                        })
+                    });
                     }
                 });
             }

@@ -1,0 +1,44 @@
+{
+  "name": "bulma-list",
+  "version": "1.2.0",
+  "author": {
+    "name": "Matt Fannin",
+    "email": "hello@mattfannin.nz",
+    "url": "https://mattfannin.nz"
+  },
+  "description": "A very simple list component extension for Bulma",
+  "repository": {
+    "url": "https://github.com/bluefantail/bulma-list",
+    "type": "git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "Bulma",
+    "bulma",
+    "bulma.io",
+    "extensions",
+    "extension",
+    "list"
+  ],
+  "bugs": {
+    "url": "https://github.com/bluefantail/bulma-list/issues"
+  },
+  "homepage": "https://bluefantail.github.io/bulma-list",
+  "files": [
+    "css",
+    "sass",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.0.0-rc.0",
+    "bulma": "^0.9.3",
+    "parcel": "^2.0.0-rc.0",
+    "sass": "^1.41.1"
+  },
+  "scripts": {
+    "build": "parcel build build/bulma-list.sass --dist-dir css",
+    "build-docs": "parcel build build/bulma-list.sass --dist-dir docs/css",
+    "start-docs": "parcel watch build/bulma-list.sass --dist-dir docs/css"
+  }
+}

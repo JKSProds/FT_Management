@@ -1,68 +1,76 @@
 ﻿@model IEnumerable<FT_Management.Models.Utilizador>
 
 @{
-    ViewData["Title"] = "Agendamento";
+    ViewData["Title"] = "Visitas - Lista de Comerciais";
 }
 
-<style>
-    .circle {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        font-size: 50px;
-        font-family: roboto, arial;
-        color: black;
-        line-height: 100px;
-        text-align: center;
-        background: grey;
-        margin: auto;
-        margin-bottom: 10px;
-    }
-</style>
-
-<div class="row">
-
-    @if (this.User.IsInRole("Admin"))
-    {
-        <div class="col-lg-4">
-            <h1>Agendamento</h1>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">Agendamento Comercial</p>
+                    </article>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-4">
-            <a class="btn btn-outline-primary btn-lg btn-block " onclick="location.href = '@(Url.Action("Adicionar", "Visitas"))'"><i class="fas fa-plus" style="margin-top:5px"></i> Novo Agendamento</a>
+        <div class="column my-auto">
+            <div class="buttons is-right">
+                <p class="control">
+                    <a class="button is-info is-outlined" asp-action="CalendarioView">
+                        <span class="icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </span>
+                        <span>Calendário</span>
+                    </a>
+                </p>
+                @if (this.User.IsInRole("Admin"))
+                {
+                    <p class="control">
+                        <a asp-action="Adicionar" class="button is-primary is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Novo Agendamento</span>
+                        </a>
+                    </p>
+                }
+            </div>
         </div>
-    }
-    else
-    {
-        <div class="col-lg-8">
-            <h1>Agendamento</h1>
-        </div>
-    }
-    <div class="col-lg-4">
-        <a class="btn btn-outline-primary btn-lg btn-block" onclick="location.href = '@(Url.Action("Calendario", "Visitas"))'"><i class="far fa-calendar-alt" style="margin-top:5px"></i> Calendário</a>    </div>
-
-
+    </div>
 </div>
 <hr />
-<br />
 
 @if (Model.Count() == 0)
 {
-    <br />
-    <button class="btn btn-lg btn-danger btn-block disabled" style=" font-size: 80%; border-radius: 5rem; letter-spacing: .1rem; font-weight: bold; padding: 1rem; transition: all 0.2s;">Não foram encontrados Comerciais!</button>
+    <div class="container">
+        <br />
+        <button class="button is-danger is-outlined is-fullwidth">Não foram encontrados Comerciais!</button>
+    </div>
 }
 else
 {
-<div class="row">
-    @foreach (var item in Model)
-    {
-        <div class="col-xl-3 col-sm-6 mb-5 text-center" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { IdComercial = item.Id }))'">
-            <div class="bg-white rounded shadow-sm py-5 px-4">
-                <div class="circle">
-                    <p>@item.Iniciais</p>
+    <div class="container">
+        <div class="columns is-multiline">
+            @foreach (var item in Model)
+            {
+                <div class="column is-4">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                @item.NomeCompleto
+                            </p>
+                            <a class="button is-primary is-rounded mx-2 my-2" onclick="location.href = '@(Url.Action("ListaVisitas", "Visitas", new { IdComercial = item.Id }))'">
+                                <span class="icon">
+                                    <i class="fas fa-info"></i>
+                                </span>
+                                <span>Visualizar</span>
+                            </a>
+                        </header>
+                    </div>
                 </div>
-                <h5 class="mb-0">@item.NomeCompleto</h5>
-            </div>
+            }
         </div>
-    }
     </div>
-    }
+}

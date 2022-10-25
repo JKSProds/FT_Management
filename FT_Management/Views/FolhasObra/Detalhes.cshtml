@@ -1,0 +1,441 @@
+﻿@model FT_Management.Models.FolhaObra
+
+@{
+    ViewData["Title"] = "Folha de Obra - " + Model.IdFolhaObra;
+}
+
+<style>
+    .tabs-content li {
+        display: none;
+        list-style: none;
+    }
+
+        .tabs-content li.is-active {
+            display: block;
+        }
+</style>
+
+<div class="container">
+    <div class="columns is-mobile is-centered">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title has-text-centered is-hoverable is-clickable" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.ClienteServico.IdCliente, IdLoja = @Model.ClienteServico.IdLoja }))'">
+                            <span class="icon mr-3">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                            <span><b>@Model.IdFolhaObra</b> - @Model.ClienteServico.NomeCliente</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<hr />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="container">
+    <div class="tabs-wrapper">
+        <div class="tabs is-centered is-boxed">
+            <ul>
+                <li class="is-active">
+                    <a>
+                        <span>Dados</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span>Cliente</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span>Equipamento</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span>Peças</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tabs-content mx-2">
+            <ul>
+                <li class="is-active">
+                    <div class="columns is-multiline">
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="IdFolhaObra" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" id="txtIdFolhaObra" readonly asp-for="IdFolhaObra">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="DataServico" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="date" readonly asp-for="DataServico">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="ReferenciaServico" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" readonly asp-for="ReferenciaServico">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2 my-auto">
+                                <div class="field">
+                                <label class="switch is-rounded">
+                                    <input id="AssistenciaRemota" type="checkbox" name="AssistenciaRemota" disabled checked="@(Model.AssistenciaRemota)">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.AssistenciaRemota)</span>
+                                </label>
+                                </div>
+                        </div>
+                        <div class="column is-12">
+                            @if (Model.IntervencaosServico.Count == 0)
+                            {
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas intervenções!</button>
+                            }
+                            else
+                            {
+                                <label class="label">Intervenções</label>
+                                <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards"> 
+                                <table class="table is-hoverable is-fullwidth" id="tblIntervencao">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().DataServiço)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraInicio)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraFim)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.IntervencaosServico)
+                                        {
+                                            <tr id="row_@item.IdIntervencao">
+                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().DataServiço)">
+                                                    <span>@item.DataServiço.ToString("dd-MM-yyyy")</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraInicio)">
+                                                    <span>@item.HoraInicio.ToString("HH:mm")</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraFim)">
+                                                    <span>@item.HoraFim.ToString("HH:mm")</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)">
+                                                    <span>@item.NomeTecnico</span>
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="column is-12">
+                            <div class="field">
+                                <label asp-for="RelatorioServico" class="label"></label>
+                                <div class="control">
+                                    <textarea class="textarea" readonly rows="10" asp-for="RelatorioServico"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-12">
+                            <div class="field">
+                                <label asp-for="SituacoesPendentes" class="label"></label>
+                                <div class="control">
+                                    <textarea class="textarea" readonly rows="5" asp-for="SituacoesPendentes"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="columns is-multiline">
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="ClienteServico.IdCliente" class="label"></label>
+                                <div class="field has-addons">
+                                    <p class="control">
+                                        <input class="input" type="text" readonly asp-for="ClienteServico.IdCliente">
+                                    </p>
+                                    <p class="control">
+                                        <input class="input" type="text" readonly asp-for="ClienteServico.IdLoja">
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-9">
+                            <div class="field">
+                                <label asp-for="ClienteServico.NomeCliente" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="ClienteServico.NomeCliente" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-6">
+                            <div class="field">
+                                <label asp-for="ClienteServico.MoradaCliente" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="ClienteServico.MoradaCliente" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="ClienteServico.TelefoneCliente" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="ClienteServico.TelefoneCliente" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="ConferidoPor" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="ConferidoPor" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-12">
+                            <div class="field">
+                                <label asp-for="RubricaCliente" class="label"></label>
+                                <figure class="image">
+                                    <img src="data:image/jpeg;base64,@Model.RubricaCliente" />
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="columns is-multiline">
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="EquipamentoServico.MarcaEquipamento" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="EquipamentoServico.MarcaEquipamento" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="EquipamentoServico.ModeloEquipamento" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="EquipamentoServico.ModeloEquipamento" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="EquipamentoServico.NumeroSerieEquipamento" class="label"></label>
+                                <div class="control">
+                                    <div class="field has-addons">
+                                        <div class="control" style="width:100%">
+                                            <input asp-for="EquipamentoServico.NumeroSerieEquipamento" id="NumeroSerieEquipamento" class="input" readonly />
+                                        </div>
+                                        <div class="control">
+                                            <button type="button" class="button is-info" onclick="ObterHistoricoEquipamento()">
+                                                <span class="icon">
+                                                    <i class="fas fa-history"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-8">
+                            <div class="field">
+                                <label asp-for="EquipamentoServico.DesignacaoEquipamento" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="EquipamentoServico.DesignacaoEquipamento" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="EstadoEquipamento" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="EstadoEquipamento" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="columns is-multiline">
+                        <div class="column is-12">
+                            <div class="field">
+                                <label asp-for="GuiaTransporteAtual" class="label"></label>
+                                <div class="control">
+                                    <input asp-for="GuiaTransporteAtual" class="input" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-12">
+                            @if (Model.PecasServico.Count == 0)
+                            {
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas peças aplicadas!</button>
+                            }
+                            else
+                            {
+                                <label class="label">Peças Aplicadas</label>
+                                <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards"> 
+                                <table class="table is-hoverable is-fullwidth" id="tblPecas">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Ref_Produto)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Designacao_Produto)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Stock_Fisico)
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.PecasServico)
+                                        {
+                                            <tr id="linha_@item.Ref_Produto">
+                                                <td data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Ref_Produto)">
+                                                    <span>@item.Ref_Produto</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Designacao_Produto)">
+                                                    <span>@item.Designacao_Produto</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Stock_Fisico)">
+                                                    <span>@item.Stock_Fisico</span>
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="modalObterHistorico" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Histórico de Intervenções</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p> </p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div id="modalObterHistoricoVazio" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Histórico de Intervenções</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <button class="button is-danger is-outlined is-rounded is-fullwidth">Não existem intervenções!</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+<script>
+
+    function ObterHistoricoEquipamento() {
+        var NumeroSerie = document.getElementById("NumeroSerieEquipamento").value;
+
+        $.ajax({
+            url: "/FolhasObra/ObterHistorico",
+            type: "GET",
+            data: "NumeroSerieEquipamento=" + NumeroSerie,
+            dataType: "json", // type of data you're expecting from response
+            success: function (json) {
+                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
+                console.log(json);
+                var existeFolhasObra = false;
+                for (var i = 0; i < json.json.length; i++) {
+                    var obj = json.json[i];
+                    var tecnico = obj.nomeTecnico;
+
+
+                    var date = new Date(obj.dataServiço);
+
+                    var year = date.getFullYear();
+                    var month = date.getMonth() + 1;
+                    var day = date.getDate();
+
+                    if (day < 10) {
+                        day = '0' + day;
+                    }
+                    if (month < 10) {
+                        month = '0' + month;
+                    }
+                    if (obj.idFolhaObra != document.getElementById("txtIdFolhaObra").value) {
+                        html += "<tr onclick=\"location.href = '/FolhasObra/Detalhes/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
+                        existeFolhasObra = true;
+                    }
+                }
+                html += "</tbody></table>"
+                $('#modalObterHistorico').find('.modal-body').html(html);
+                if (existeFolhasObra) {
+                    var modal = Bulma('#modalObterHistorico').modal();
+                    modal.open();
+                } else {
+                    var modal = Bulma('#modalObterHistoricoVazio').modal();
+                    modal.open();
+                };
+                
+            },
+            error: function (error) { }
+        });
+    }
+
+</script>

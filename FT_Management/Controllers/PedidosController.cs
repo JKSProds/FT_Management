@@ -19,6 +19,8 @@ using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 using System.Net.Http;
 using System.Net;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace FT_Management.Controllers
 {
@@ -26,78 +28,383 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Tech, Escritorio")]
     public class PedidosController : Controller
     {
-        public JsonResult ObterMarcacoes(DateTime start, DateTime end)
+        [Authorize(Roles = "Admin, Escritorio")]
+        public ActionResult Adicionar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            return new JsonResult(context.ConverterMarcacoesEventos(context.ObterListaMarcacoes(start, end)).ToList());
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
+            ViewData["TipoServico"] = phccontext.ObterTipoServico();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+            ViewData["Periodo"] = phccontext.ObterPeriodo();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+
+            if (id != 0) return View(phccontext.ObterMarcacao(id));
+
+            return View(new Marcacao());
+        }
+
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpPost]
+        public ActionResult ValidarMarcacao(Marcacao m)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            return Content(phccontext.ValidarMarcacao(m));
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpPost]
+        public ActionResult Adicionar(Marcacao m)
+        {
+            int IdMarcacao = 0;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (m.LstTecnicosSelect.Count() == 0)
+            {
+                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
+            }
+            else
+            {
+                foreach (var item in m.LstTecnicosSelect)
+                {
+                    m.LstTecnicos.Add(context.ObterUtilizador(item));
+                }
+                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                m.Tecnico = m.LstTecnicos.First();
+                ModelState.Remove("Tecnico.Password");
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                IdMarcacao = phccontext.CriarMarcacao(m);
+                
+                if (IdMarcacao>0) return RedirectToAction("Editar", "Pedidos", new { id=IdMarcacao});
+            }
+
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
+            ViewData["TipoServico"] = phccontext.ObterTipoServico();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+            ViewData["Periodo"] = phccontext.ObterPeriodo();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+
+            ModelState.AddModelError("", "Ocorreu um erro ao adicionar a marcação! Por favor tente novamente.");
+
+            return View(m);
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        public ActionResult Editar(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
+            ViewData["TipoServico"] = phccontext.ObterTipoServico();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+            ViewData["Periodo"] = phccontext.ObterPeriodo();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            Marcacao m = phccontext.ObterMarcacao(id);
+            return View(m);
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpPost]
+        public ActionResult Editar(int id, Marcacao m)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (m.LstTecnicosSelect.Count() == 0)
+            {
+                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
+            }
+            else
+            {
+                foreach (var item in m.LstTecnicosSelect)
+                {
+                    m.LstTecnicos.Add(context.ObterUtilizador(item));
+                }
+                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                m.Tecnico = m.LstTecnicos.First();
+                ModelState.Remove("Tecnico.Password");
+            }
+
+            if (m.DatasAdicionais == null) ModelState.AddModelError("", "Tem de adicionar pelo menos uma data!");
+
+
+            if (ModelState.IsValid)
+            {
+                phccontext.AtualizaMarcacao(m);
+                return RedirectToAction("Editar", "Pedidos", new { id = id });
+            }
+
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
+            ViewData["TipoServico"] = phccontext.ObterTipoServico();
+            ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
+            ViewData["Periodo"] = phccontext.ObterPeriodo();
+            ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+
+            return View(m);
+        }
+
+        [HttpPost]
+        public JsonResult AdicionarComentario(int id, string comentario, int fechar)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            Console.WriteLine("A adicionar comentário!");
+
+            Comentario c = new Comentario()
+            {
+                Descricao = comentario,
+                Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)),
+                Marcacao = m,
+                DataComentario = DateTime.Now
+            };
+
+            bool res = phccontext.CriarComentarioMarcacao(c);
+
+            if (fechar == 1) {
+                m.JustificacaoFecho = comentario;
+                m.EstadoMarcacaoDesc = "Finalizado";
+                m.Utilizador = c.Utilizador;
+                phccontext.AtualizaMarcacao(m);
+            }
+
+            return Json(new { json = res });
+        }
+
+        [HttpPost]
+        public JsonResult AdicionarAnexo(int id, IFormFile file)
+         {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            //foreach (IFormFile file in files)
+            //{
+            if (file.Length > 0)
+                {
+                    Anexo a = new Anexo()
+                    {
+                        MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
+                        IdMarcacao = id,
+                        AnexoMarcacao = true,
+                        NomeUtilizador = this.User.ObterNomeCompleto()
+                    };
+                    a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
+
+                    string res = phccontext.CriarAnexoMarcacao(a);
+                    if (res.Length > 0)
+                    {
+                       if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file)) ApagarAnexo(res);
+                    }
+                }
+            //}
+
+            return Json("ok");
+        }
+
+        public ActionResult DownloadAnexo(string id)
+        {
+            if (id != null)
+            {
+                FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+                PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+                Anexo a = phccontext.ObterAnexo(id);
+                string CaminhoFicheiro = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
+                if (!System.IO.File.Exists(CaminhoFicheiro)) return Forbid();
+
+                if (MimeTypes.TryGetMimeType(CaminhoFicheiro, out var mimeType))
+                {
+                    byte[] bytes = System.IO.File.ReadAllBytes(CaminhoFicheiro);
+
+                    Response.Headers.Add("Content-Disposition", "inline;filename=" + a.ObterNomeFicheiro());
+                    //Send the File to Download.
+                    return new FileContentResult(bytes, mimeType);
+
+                }
+            }
+            return Forbid();
+        }
+        public ActionResult ApagarAnexo(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (id != null)
+            {
+                Anexo a = phccontext.ObterAnexo(id);
+                phccontext.ApagarAnexoMarcacao(a);
+                FicheirosContext.ApagarAnexoMarcacao(a);
+                return RedirectToAction("Pedido", "Pedidos", new { id = phccontext.ObterMarcacao(a.IdMarcacao).IdMarcacao });
+
+            }
+            return RedirectToAction("Pedido");
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpPost]
+        public ActionResult EmailPedidoTecnico(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            foreach (var item in m.LstTecnicos)
+            {
+               if (!MailContext.EnviarEmailMarcacaoTecnico(item.EmailUtilizador, m, item.NomeCompleto)) return Content("Erro");
+            }
+            
+            return Content("Sucesso");
+        }
+
+        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpPost]
+        public ActionResult EmailPedidoCliente(int id, string email)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            var calendar = new Calendar();
+
+            var e = new CalendarEvent
+            {
+                Start = new CalDateTime(m.DataMarcacao),
+                End = new CalDateTime(m.DataMarcacao),
+                IsAllDay = true,
+                LastModified = new CalDateTime(DateTime.Now),
+                Uid = m.IdMarcacao.ToString() + "_Cliente",
+                Description = "Foi agendada uma assistência técnica. Para mais informações contacte: +351 229 479 670 (" + m.Utilizador.NomeCompleto + ")",
+                Location = m.Cliente.MoradaCliente,
+                Contacts = new List<string>() { "+351229479670"},
+                //Name = "Assistência Técnica | Food-Tech",
+                Summary = "Food-Tech | Marc. Nº" + m.IdMarcacao + " - Assistência Técnica",
+            };
+
+            calendar.Events.Add(e);
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
+
+            if (!MailContext.EnviarEmailMarcacaoCliente(email, m, new System.Net.Mail.Attachment((new MemoryStream(bytesCalendar)), m.IdMarcacao + ".ics"))) return Content("Erro");
+
+            return Content("Sucesso");
+        }
+
+        public IActionResult ObterDirecaosDia(int IdTecnico, DateTime DataPedidos)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(IdTecnico, DataPedidos);
+            //string url = "https://www.google.com/maps/dir/33.93729,-106.85761/33.91629,-106.866761/33.98729,-106.85861//@34.0593359,-106.7131944,11z"
+            string url = "https://www.google.com/maps/dir/";
+            url += ListaMarcacoes.First().Cliente.ObterMoradaDirecoes().Replace("/", " ");
+            ListaMarcacoes.RemoveAt(0);
+
+            foreach (var item in ListaMarcacoes)
+            {
+                url += "/"+item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
+            }
+            //url += "//@";
+            return Redirect(new Uri(url).AbsoluteUri);
+        }
+
+        [HttpPost]
+        public JsonResult ObterClientes(string prefix)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (prefix is null) prefix = "";
+
+            return Json(phccontext.ObterClientes(prefix, true));
+        }
+
+        [HttpPost]
+        public JsonResult ObterResponsavel(string IdCliente, string IdLoja, string TipoEquipamento)
+        {
+            if (string.IsNullOrEmpty(IdCliente)) return Json("");
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.ObterResponsavelCliente(int.Parse(IdCliente), int.Parse(IdLoja), TipoEquipamento));
         }
 
         [HttpPost]
         public string ObterPedido(int id)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
 
-            Marcacao marcacao = context.ObterMarcacao(id);
             string res = "";
-            res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + marcacao.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + marcacao.Cliente.IdCliente+"&IdLoja="+marcacao.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + marcacao.ResumoMarcacao + "</textarea></div>";
+            res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + m.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + m.Cliente.IdCliente+"&IdLoja="+m.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + m.ResumoMarcacao + "</textarea></div>";
 
-
-            if (marcacao.LstComentarios.Count() > 0)
+            if (m.LstComentarios.Count() > 0)
             {
                 res += "<table class=\"table table-hover\"><thead><tr><th>Utilizador</th><th>Comentário</th><tbody>";
 
-                foreach (var item in marcacao.LstComentarios)
+                foreach (var item in m.LstComentarios)
                 {
-                    res += "<tr><td><span>" + item.NomeUtilizador + "</span></td><td><span>" + item.Descricao + "</span></td>";
+                    res += "<tr><td><span>" + item.Utilizador.NomeCompleto + "</span></td><td><span>" + item.Descricao + "</span></td>";
                 }
 
                 res += "</tbody></table>";
             }
 
-            if (marcacao.LstFolhasObra.Count() > 0)
+            if (m.LstFolhasObra.Count() > 0)
             {
                 res += "<table class=\"table table-hover\"><thead><tr><th>Data</th><th>Cliente</th><th>Nº Série</th><tbody>";
 
-                foreach (var item in marcacao.LstFolhasObra)
+                foreach (var item in m.LstFolhasObra)
                 {
-                    res += "<tr><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/Editar/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
+                    res += "<tr><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
                 }
 
                 res += "</tbody></table>";
             }
-
-            //res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"form-control\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Email</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.EmailContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.EmailContacto.Length == 0 ? "disabled" : "") + " \" href=\"mailto:" + contacto.EmailContacto + "\" type=\"button\"><i class=\"fas fa-envelope float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            //res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone-alt float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            //res += "<div class=\"mb-3\"><label>Morada</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.MoradaContacto + "' readonly><a class=\"btn btn-outline-secondary " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"https://maps.google.com/?daddr=" + contacto.MoradaContacto + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-            //res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"form-control\" value='" + contacto.NIFContacto + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"form-control\" value='" + contacto.TipoContacto + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Área de Negócio</label><input type=\"text\" class=\"form-control\" value='" + contacto.AreaNegocio + "' readonly></div>";
-            //res += "<div class=\"mb-3\"><label>Criado por</label><input type=\"text\" class=\"form-control\" value='" + contacto.Utilizador.NomeCompleto + "' readonly></div>";
-            //if (this.User.IsInRole("Admin")) res += "<div class=\"mb-3\"><label>Comercial Associado</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + contacto.Comercial.NomeCompleto + "' readonly><a class=\"btn btn-outline-primary\" onclick=AssociarComercial() type=\"button\"><i class=\"fas fa-list float-left\" style=\"margin-top:5px\"></i></a></div></div>";
-
             return res;
         }
 
-
-
         [HttpGet]
-        public virtual ActionResult ObterIcs ()
+        public Marcacao ObterMarcacao(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            if (m.EstadoMarcacaoDesc == "Criado") m.EstadoMarcacaoDesc = "Agendado";
+            return m;
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public virtual ActionResult Calendario(string ApiKey)
         {
             DateTime d = DateTime.Now;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Forbid();
 
             var calendar = new Calendar();
-            List<Marcacao> LstMarcacoes = context.ObterListaMarcacoes(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(m => m.DataMarcacao).ToList();
+            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(IdUtilizador).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
+
             foreach (Marcacao m in LstMarcacoes)
             {
                 if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d= m.DataMarcacao.Add(TimeSpan.FromHours(8));
-
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(d),
@@ -105,15 +412,15 @@ namespace FT_Management.Controllers
                     LastModified = new CalDateTime(DateTime.Now),
                     Uid =  m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
-                    Summary = (m.EstadoMarcacao == 4 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 5 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?idMarcacao=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC)
+                    Summary = (m.EstadoMarcacao == 4 || m.EstadoMarcacao == 9 || m.EstadoMarcacao == 10 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 26 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
+                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?id=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC),
+                    Location = m.Cliente.MoradaCliente
                 };
                 calendar.Events.Add(e);
                 d = d.AddMinutes(30);
             }
 
             var serializer = new CalendarSerializer();
-
             var serializedCalendar = serializer.SerializeToString(calendar);
             var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
 
@@ -124,7 +431,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "basic.ics",
+                FileName = "Servicos.ics",
                 Inline = false,
                 Size = bytesCalendar.Length,
                 CreationDate = DateTime.Now
@@ -132,153 +439,173 @@ namespace FT_Management.Controllers
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-
             return File(ms, "text/calendar");
         }
 
+        public ActionResult CalendarioView(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            if (id != 0) id = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
+            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
+            {
+                if (id == 0) id = int.Parse(this.User.Claims.First().Value);
+                Utilizador u = context.ObterUtilizador(id);
+                return View("CalendarioTecnico", u);
+            }
+            return View("CalendarioNew");
+        }
+
         [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Calendario()
+        public JsonResult AlteracaoCalendario(int id, DateTime date, DateTime dateOriginal)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
+            Marcacao m = phccontext.ObterMarcacao(id);
+            m.DatasAdicionais = m.DatasAdicionais.Replace(dateOriginal.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
 
-            return View();
+            phccontext.AtualizaMarcacao(m);
+
+            return Json("Ok");
         }
-        public ActionResult CalendarioView()
+        [Authorize(Roles = "Admin, Escritorio")]
+        public JsonResult AlteracaoRapida(int id, string EstadoMarcacaoDesc, int Tecnico, string DataMarcacao)
         {
-            return View();
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+
+            m.EstadoMarcacaoDesc = EstadoMarcacaoDesc;
+            m.Tecnico = context.ObterUtilizador(Tecnico);
+            m.LstTecnicos = new List<Utilizador>() { m.Tecnico };
+            m.DatasAdicionais = DataMarcacao;
+            
+            phccontext.AtualizaMarcacao(m);
+
+            return Json("Ok");
         }
 
-
-        public MemoryStream BitMapToMemoryStream(string filePath)
+        public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
         {
-            var ms = new MemoryStream();
-
-            PdfDocument doc = new PdfDocument();
-            PdfPage page = new PdfPage
-            {
-                Width = 810,
-                Height = 504
-            };
-
-            XImage img = XImage.FromFile(filePath);
-            img.Interpolate = false;
-
-            doc.Pages.Add(page);
-
-            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
-            XRect box = new XRect(0, 0, 810, 504);
-            xgr.DrawImage(img, box);
-
-            doc.Save(ms, false);
-
-            System.IO.File.Delete(filePath);
-
-            return ms;
-
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
+            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end).OrderBy(m => m.Tecnico.Id).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
         }
-
 
         public ActionResult Print(string id)
         {
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
+            if (id == null) return RedirectToAction("Index");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiquetaMarcacao(context.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Impressa etiqueta normal da marcação: " + id, 2);
-            //return File(outputStream, "image/bmp");
-            return File(BitMapToMemoryStream(filePath), "application/pdf");
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiquetaMarcacao(phccontext.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
-        // GET: Pedidos
-        public ActionResult Index(int IdTecnico)
+        public ActionResult Index(string numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico, string estado)
         {
            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-                IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
-                return RedirectToAction("ListaPedidos", new { IdTecnico = IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
+                int IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC;
+                return RedirectToAction("ListaPedidos", new { IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
             }
 
-            return View(context.ObterListaTecnicos());
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(false).ToList();
+            LstUtilizadores.Insert(0, new Utilizador() { Id = 0, NomeCompleto = "Todos" });
+            ViewBag.ListaTecnicos = LstUtilizadores;
+
+            List<String> LstTipoEquipamento = phccontext.ObterTipoEquipamento().ToList();
+            LstTipoEquipamento.Insert(0, "Todos");
+
+            ViewBag.TipoEquipamento = LstTipoEquipamento.Select(l => new SelectListItem() { Value = l, Text = l });
+
+            List<String> LstEstados = phccontext.ObterMarcacaoEstados().Select(e => e.EstadoMarcacaoDesc).ToList();
+            LstEstados.Insert(0, "Todos");
+
+            ViewBag.Estados = LstEstados.Select(l => new SelectListItem() { Value = l, Text = l });
+
+
+            if (string.IsNullOrEmpty(nomeCliente)) { nomeCliente = ""; }
+            if (string.IsNullOrEmpty(referencia)) { referencia = ""; }
+            if (string.IsNullOrEmpty(tipoe)) { tipoe = ""; }
+            if (string.IsNullOrEmpty(numMarcacao)) { numMarcacao = ""; }
+            if (string.IsNullOrEmpty(estado)) { estado = ""; }
+
+            ViewData["numMarcacao"] = numMarcacao;
+            ViewData["nomeCliente"] = nomeCliente;
+            ViewData["referencia"] = referencia;
+            ViewData["tipoe"] = tipoe;
+            ViewData["idtecnico"] = idtecnico;
+            ViewData["estado"] = estado;
+
+            if (string.IsNullOrEmpty(numMarcacao) && string.IsNullOrEmpty(nomeCliente) && string.IsNullOrEmpty(referencia) && string.IsNullOrEmpty(tipoe) && idtecnico == 0 && string.IsNullOrEmpty(estado)) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
+
+            return View(phccontext.ObterMarcacoes(int.Parse(numMarcacao != "" ? numMarcacao : "0"), nomeCliente, referencia, tipoe, idtecnico, estado));
         }
+
         public ActionResult ListaPedidos(string IdTecnico, string DataPedidos)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
-
             if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewData["DataPedidos"] = DataPedidos;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos), DateTime.Parse(DataPedidos));
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
+           
+            ViewData["DataPedidos"] = DataPedidos;
             ViewData["IdTecnico"] = IdTecnico;
+
             return View(ListaMarcacoes);
         }
+
         public ActionResult ListaPedidosPendentes(string IdTecnico)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
 
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoesPendentes(int.Parse(IdTecnico)).OrderBy(m => m.DataMarcacao).ToList();
+ 
             ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
-
-            List<Marcacao> ListaMarcacoes = context.ObterListaMarcacoesPendentes(int.Parse(IdTecnico));
             ViewData["IdTecnico"] = IdTecnico;
+   
             return View("ListaPedidos", ListaMarcacoes);
         }
-        public ActionResult Pedido(string idMarcacao, string IdTecnico)
+
+        public ActionResult Pedido(int id)
         {
-            if (idMarcacao == null) return RedirectToAction("Index");
+            if (id == 0) return RedirectToAction("Index");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            phccontext.AtualizarMarcacoes();
-            phccontext.AtualizarFolhasObra();
 
-            Marcacao marcacao = context.ObterMarcacao(int.Parse(idMarcacao));
-            marcacao.IdTecnico = int.Parse(IdTecnico);
-
-            ViewData["PessoaContacto"] = marcacao.Cliente.PessoaContatoCliente;
-
+            Marcacao m = phccontext.ObterMarcacao(id);
             Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;
             ViewData["SelectedTecnico"] = user.NomeCompleto;
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores().Where(u => u.TipoUtilizador != 3).ToList();
+            ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador != 3).ToList();
 
-            return View(marcacao);
+            return View(m);
         }
-        public ActionResult ValidarPedido(string idcartao, string estado)
+
+        public ActionResult<string> ObterPecasUso(int id)
         {
-
-            TrelloConector trello = HttpContext.RequestServices.GetService(typeof(TrelloConector)) as TrelloConector;
+            string res = "";
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            TrelloCartoes cartao = trello.ObterCartao(idcartao);
+            int IdArmazem = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).First().IdArmazem;
+            string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
+            res += "### " + ultimaGT + " ###\r\n";
 
-            foreach (var folhaObra in context.ObterListaFolhasObraCartao(idcartao))
+                foreach (var item in phccontext.ObterPecasGuiaTransporte(ultimaGT, IdArmazem))
             {
-                //if (folhaObra.RelatorioServico != String.Empty && folhaObra.RelatorioServico != null) { trello.NovoComentario(folhaObra.IdCartao, folhaObra.RelatorioServico); }
-                TrelloAnexos Anexo = new TrelloAnexos
-                {
-                    Id = folhaObra.IdCartao,
-                    Name = "FolhaObra_" + folhaObra.IdFolhaObra + ".pdf",
-                    File = context.PreencherFormularioFolhaObra(folhaObra).ToArray(),
-                };
-                Anexo.dict.TryGetValue(Anexo.Name.Split('.').Last(), out string mimeType);
-                Anexo.MimeType = mimeType;
-
-                trello.NovoAnexo(Anexo);
+                res += "Ref: " + item.Ref_Produto + " | Designacao: " + item.Designacao_Produto + " | Qtd: " + item.Stock_Fisico + " " + item.TipoUn + "\r\n";
             }
 
-            trello.NovaLabel(idcartao, estado == "1" ? "green" : estado == "2" ? "yellow" : "red");
-            return RedirectToAction("ListaPedidos", new { idQuadro = cartao.IdQuadro, idlista = cartao.IdLista});
+            return res;
         }
-
     }
 }
