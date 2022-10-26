@@ -54,7 +54,7 @@
                                             <tbody class="detail is-hidden">
                                                     @foreach (var linha in item.LinhasEncomenda)
                                                     {
-                                                        <tr>
+                                                        <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                             <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
@@ -82,7 +82,7 @@
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
-                                                    <tr>
+                                                    <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
@@ -146,7 +146,7 @@
                                              <tbody class="detail is-hidden">
                                                     @foreach (var linha in item.LinhasEncomenda)
                                                     {
-                                                        <tr>
+                                                        <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                             <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
@@ -172,7 +172,7 @@
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
-                                                    <tr>
+                                                    <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
@@ -235,7 +235,7 @@
                                             <tbody class="detail is-hidden">
                                                     @foreach (var linha in item.LinhasEncomenda)
                                                     {
-                                                        <tr>
+                                                        <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                             <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
@@ -261,7 +261,7 @@
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
-                                                    <tr>
+                                                    <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
@@ -326,7 +326,7 @@
                                             <tbody class="detail is-hidden">
                                                 @foreach (var linha in item.LinhasEncomenda)
                                                 {
-                                                    <tr>
+                                                    <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
@@ -353,7 +353,7 @@
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
-                                                    <tr>
+                                                    <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
