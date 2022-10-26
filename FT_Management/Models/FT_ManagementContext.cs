@@ -37,8 +37,7 @@ namespace FT_Management.Models
             {
                 Console.WriteLine("Não foi possivel conectar á BD MySQL!");
             }
-
-            ObterFeriadosAPI("2022");
+            if (this.ObterListaFeriados(DateTime.Now.Year.ToString()).Count() == 0) ObterFeriadosAPI(DateTime.Now.Year.ToString());
         }
 
         //UTILIZADOR

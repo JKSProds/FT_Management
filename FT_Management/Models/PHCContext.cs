@@ -854,6 +854,11 @@ namespace FT_Management.Models
             {
                 if (FT_ManagementContext.VerificarFeriasUtilizador(item, m.DataMarcacao)) res += "O utilizador, " + FT_ManagementContext.ObterUtilizador(item).NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.\r\n";
             }
+            List<DateTime> LstFeriados = FT_ManagementContext.ObterListaFeriados(m.DataMarcacao.Year.ToString()).Select(f => f.DataFeriado).ToList();
+            foreach (var item in m.DatasAdicionaisDistintas)
+            {
+                if (LstFeriados.Where(f => f.ToShortDateString() == item.ToShortDateString()).Count() > 0) res += "O seguinte dia: " + item.ToShortDateString() + " é feriado! Por favor verifique.\r\n";
+            }
             return res;
         }
         public string CriarAnexoMarcacao(Anexo a)
