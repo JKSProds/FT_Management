@@ -1999,7 +1999,6 @@ namespace FT_Management.Models
                 res[0] = result[0].ToString();
                 res[1] = res[0] == "1" ? "" : result[1].ToString();
                 res[2] = result[2].ToString();
-                Console.WriteLine(res[2]);
 
                 conn.Close();
             }
