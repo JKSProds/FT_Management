@@ -2009,7 +2009,7 @@ namespace FT_Management.Models
                 gr.DrawString(marcacao.Cliente.NomeCliente + "\r\n(" + marcacao.EstadoMarcacaoDesc + ")", fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
 
                 y += 250;
-                gr.DrawString("Marc. Nº " + marcacao.IdMarcacao.ToString(), fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 200, 80), format);
+                gr.DrawString(marcacao.IdMarcacao.ToString(), fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 200, 80), format);
 
                 y += 95;
 
