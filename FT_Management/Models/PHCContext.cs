@@ -1195,7 +1195,15 @@ namespace FT_Management.Models
             //List<Marcacao> LstMarcacoes = ObterMarcacoes(SQL_Query + " order by num desc;", false, true, true, false, false, false);
             //return LstMarcacoes;
 
-            return ObterMarcacoes("select TOP 200 * from v_marcacoes where num = "+numMarcacao+" and nome like '%"+nomeCliente+"%' or tipoe = '"+tipoe+"' or tecnno = "+idtecnico+" or estado = '"+estado+"'", false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            string SQL_Query = "select TOP 200 * from v_marcacoes where ";
+            SQL_Query += (numMarcacao > 0 ? "num like '%" + numMarcacao + "%' and " : "");
+            SQL_Query += (idtecnico > 0 ? "tecnno like '%" + idtecnico + "%' and " : "");
+            SQL_Query += (nomeCliente != "" ? "nome like '%"+nomeCliente+"%' and " : "");
+            SQL_Query += (tipoe != "" ? "tipoe like '%" + tipoe + "%' and " : "");
+            SQL_Query += (estado != "" ? "estado like '%" + estado + "%' and " : "");
+            SQL_Query = SQL_Query.Remove(SQL_Query.Length - 4, 4);
+
+            return ObterMarcacoes(SQL_Query, false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
