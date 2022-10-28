@@ -1886,17 +1886,28 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        LstPickingLinhas.Add(new Linha_Picking()
+                        if (LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString()).Count() == 0)
                         {
-                            Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
-                            Ref_linha = result["ref"].ToString(),
-                            Nome_Linha = result["design"].ToString(),
-                            Qtd_Linha = Double.Parse(result["qtt"].ToString()),
-                            Qtd_Separar = Double.Parse(result["QTT_SEPARAR"].ToString()),
-                            Serie = result["USA_NSERIE"].ToString() == "True",
-                            Linha_Serie = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString())),
-                            EditadoPor = result["usrinis"].ToString()
-                        });
+                            LstPickingLinhas.Add(new Linha_Picking()
+                            {
+                                Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                                Ref_linha = result["ref"].ToString(),
+                                Nome_Linha = result["design"].ToString(),
+                                Qtd_Linha = Double.Parse(result["qtt"].ToString()),
+                                Qtd_Separar = Double.Parse(result["QTT_SEPARAR"].ToString()),
+                                Serie = result["USA_NSERIE"].ToString() == "True",
+                                Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString())),
+                                EditadoPor = result["usrinis"].ToString()
+                            });
+                        }
+                        else
+                        {
+                            Linha_Picking Linha = LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString()).First();
+                            Linha.Qtd_Separar += Double.Parse(result["QTT_SEPARAR"].ToString());
+                            Linha.Qtd_Linha += Double.Parse(result["qtt"].ToString());
+
+                            Linha.Lista_Ref.AddRange(ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString())));
+                        }
                     }
                 }
 
@@ -1910,9 +1921,9 @@ namespace FT_Management.Models
 
             return LstPickingLinhas;
         }
-        public List<Linha_Serie_Picking> ObterSerieLinhaPicking(string BI_STAMP, int Qtt)
+        public List<Ref_Linha_Picking> ObterSerieLinhaPicking(string BI_STAMP, int Qtt)
         {
-            List<Linha_Serie_Picking> Linha_Serie = new List<Linha_Serie_Picking>();
+            List<Ref_Linha_Picking> Linha_Serie = new List<Ref_Linha_Picking>();
 
             try
             {
@@ -1921,7 +1932,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT bomastamp, serie from V_PICKING_SERIE WHERE BISTAMP='" + BI_STAMP + "'", conn)
+                SqlCommand command = new SqlCommand("SELECT V_PICKING_LIN.BISTAMP, V_PICKING_LIN.ref, V_PICKING_LIN.design, V_PICKING_SERIE.BOMASTAMP, V_PICKING_SERIE.serie from V_PICKING_LIN full outer join V_PICKING_SERIE on V_PICKING_LIN.BISTAMP = V_PICKING_SERIE.BISTAMP WHERE V_PICKING_LIN.BISTAMP='" + BI_STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -1929,20 +1940,24 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        Linha_Serie.Add(new Linha_Serie_Picking()
+                        Linha_Serie.Add(new Ref_Linha_Picking()
                         {
-                            BOMA_STAMP = result[0].ToString().Trim(),
-                            NumSerie = result[1].ToString().Trim()
+                            Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                            Ref_linha = result["ref"].ToString(),
+                            Nome_Linha = result["design"].ToString(),
+                            Qtd_Separar = 1,
+                            BOMA_STAMP = result.IsDBNull("BOMASTAMP") ? "" : result["BOMASTAMP"].ToString().Trim(),
+                            NumSerie = result.IsDBNull("serie") ? "" : result["serie"].ToString().Trim(),
                         });
                     }
                 }
 
                 conn.Close();
 
-                do
+                for (int i = Linha_Serie.Count; i < Qtt; i++)
                 {
-                    Linha_Serie.Add(new Linha_Serie_Picking());
-                } while (Linha_Serie.Count() < Qtt);
+                    Linha_Serie.Add(new Ref_Linha_Picking() { Picking_Linha_Stamp = Linha_Serie.First().Picking_Linha_Stamp });
+                }
             }
 
             catch (Exception ex)
@@ -1954,7 +1969,7 @@ namespace FT_Management.Models
         }
         public List<string> AtualizarLinhaPicking(Linha_Picking linha)
         {
-            List<string> res = new List<string>() { "-1", "Erro" };
+            List<string> res = new List<string>() { "-1", "Erro", "" };
 
             try
             {
@@ -1972,8 +1987,8 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@QTT", linha.Qtd_Linha));
                 if (linha.Serie)
                 {
-                    command.Parameters.Add(new SqlParameter("@SERIE", linha.Linha_Serie.First().NumSerie));
-                    command.Parameters.Add(new SqlParameter("@BOMASTAMP", linha.Linha_Serie.First().BOMA_STAMP));
+                    command.Parameters.Add(new SqlParameter("@SERIE", linha.Lista_Ref.First().NumSerie));
+                    command.Parameters.Add(new SqlParameter("@BOMASTAMP", linha.Lista_Ref.First().BOMA_STAMP));
                 }
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", linha.EditadoPor));
 
@@ -1983,6 +1998,8 @@ namespace FT_Management.Models
 
                 res[0] = result[0].ToString();
                 res[1] = res[0] == "1" ? "" : result[1].ToString();
+                res[2] = result[2].ToString();
+                Console.WriteLine(res[2]);
 
                 conn.Close();
             }
