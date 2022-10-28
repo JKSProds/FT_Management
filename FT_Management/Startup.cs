@@ -18,7 +18,7 @@ using System.Net.Sockets;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
-
+using Microsoft.AspNetCore.DataProtection;
 
 namespace FT_Management
 {
@@ -83,6 +83,7 @@ namespace FT_Management
                 cookieOptions.AccessDeniedPath = "/Home/AcessoNegado";
             });
 
+            services.AddDataProtection().SetApplicationName("FT_Management");
 
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
