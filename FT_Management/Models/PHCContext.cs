@@ -2028,7 +2028,20 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        res = result[0].ToString() == "0" ? "Ainda falta validar referências!" : "";
+                        res = result[0].ToString() == "0" ? "Ainda falta validar referências!\r\n\r\n" : "";
+                    }
+                }
+
+                command = new SqlCommand("select a.ref, a.serie, a.armazem, b.noarm  from boma a(nolock) join ma b(nolock) on a.mastamp = b.mastamp where a.bostamp = '"+PI_STAMP+"' and a.armazem <> b.noarm", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    if (result.HasRows) res += "Os seguintes equipamentos encontram-se associados a outro armazem. Deseja proseguir com a transferência entre armazens destes equipamentos?\r\n";
+                    while (result.Read())
+                    {
+                        res += "S/N: " + result["serie"].ToString().Trim() + " (" + result["noarm"].ToString() + " -> " + result["armazem"].ToString() + ")\r\n";
                     }
                 }
 
