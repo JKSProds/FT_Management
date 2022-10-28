@@ -28,6 +28,8 @@ namespace FT_Management.Models
         [Display(Name = "Telefone")]
         public string TelefoneCliente { get { return string.IsNullOrEmpty(_TelefoneCliente) ? "" : new string(_TelefoneCliente.Replace(" ", "").Take(9).ToArray()); } set { _TelefoneCliente = value; } }
         private string _TelefoneCliente;
+        public bool ContactoValido { get { return this.TelefoneCliente.Length >= 9; } }
+        public bool MoradaValida { get { return this.MoradaCliente.Length >= 9; } }
         private string _NumeroContribuinteCliente;
         [Display(Name = "Numero de Contribuinte")]
         public string NumeroContribuinteCliente { get { return _NumeroContribuinteCliente ?? ""; } set { _NumeroContribuinteCliente = value; } }
