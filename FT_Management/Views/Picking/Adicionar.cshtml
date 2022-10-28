@@ -56,7 +56,7 @@
                                                 <tr>
                                                     <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Ref_linha)">@item.Ref_linha                                                    </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Nome_Linha)">@item.Nome_Linha</td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Lista_Ref)"><input class="input" style="width:50%" type="text" @(item.Lista_Ref[i].Validado ? "disabled" : "") value="@item.Lista_Ref[i].NumSerie" id="txtSerie_@item.Lista_Ref[i].Picking_Linha_Stamp@i"/></td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Lista_Ref)"><input class="input" type="text" @(item.Lista_Ref[i].Validado ? "disabled" : "") value="@item.Lista_Ref[i].NumSerie" id="txtSerie_@item.Lista_Ref[i].Picking_Linha_Stamp@i"/></td>
                                                     <td class="is-actions-cell">
                                                         <a class="button is-success is-rounded is-fullwidth" style="display: @(!item.Lista_Ref[i].Validado ? "block" : "none");" id="btnValidar_@item.Lista_Ref[i].Picking_Linha_Stamp@i" onclick="ValidarSerie('@item.Lista_Ref[i].Picking_Linha_Stamp', @i)">
                                                             <span class="icon is-small">
@@ -116,7 +116,7 @@
                                                 <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Nome_Linha)">@item.Nome_Linha</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Qtd_Separar)"><input class="input" type="number" value="@item.Qtd_Separar" id="txtQtd_@item.Picking_Linha_Stamp"/></td>
                                                 <td class="is-actions-cell">
-                                                    <a class="button is-success is-rounded" onclick="ValidarQuantidade('@item.Picking_Linha_Stamp')">
+                                                    <a class="button is-success is-rounded is-fullwidth" onclick="ValidarQuantidade('@item.Picking_Linha_Stamp')">
                                                         <span class="icon is-small">
                                                             <i class="fa-solid fa-check"></i>
                                                         </span>
