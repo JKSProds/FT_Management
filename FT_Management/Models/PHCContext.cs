@@ -1234,7 +1234,7 @@ namespace FT_Management.Models
             //List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado in ('Pedido Orçamento', 'Pedido Peças', 'Pedido Cotação', 'Pedido Fornecedor', 'Pedido Garantia', 'Stock Maia', 'Enc. a Fornecedor', 'Enc. de Cliente', 'Peças na Maia') order by data;", false, true, true, false, false, true);
             //return LstMarcacoes;
 
-            return ObterMarcacoes("select * from v_marcacoes where estado in ('Pedido Orçamento', 'Pedido Peças', 'Pedido Cotação', 'Pedido Fornecedor', 'Pedido Garantia', 'Stock Maia', 'Enc. a Fornecedor', 'Enc. de Cliente', 'Peças na Maia')", false, true, true, false, false, true);
+            return ObterMarcacoes("select * from v_marcacoes where estado in ('Pedido Orçamento', 'Pedido Peças', 'Pedido Cotação', 'Pedido Fornecedor', 'Pedido Garantia', 'Stock Maia', 'Enc. a Fornecedor', 'Enc. de Cliente', 'Peças na Maia');", false, true, true, false, false, true);
 
         }
         public List<Marcacao> ObterMarcacoesSimples()
@@ -1251,7 +1251,7 @@ namespace FT_Management.Models
             //LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' AND estado not in ('Finalizado', 'Cancelado', 'AT Validada', 'Aguarda Ped. Compra') order by data;", true, true, true, false, false, false).AsEnumerable());
             //return LstMarcacoes;
 
-            return ObterMarcacoes("select * from v_marcacoes WHERE tecnno='" + IdTecnico + "' AND estado not in ('Finalizado', 'Cancelado', 'AT Validada', 'Aguarda Ped. Compra')", true, true, true, false, false, false);
+            return ObterMarcacoes("select * from v_marcacoes WHERE tecnno='" + IdTecnico + "' AND estado not in ('Finalizado', 'Cancelado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '"+DateTime.Now.ToString("yyyy-MM-dd")+"';", true, true, true, false, false, false);
         }
         public List<Marcacao> ObterMarcacoes()
         {
