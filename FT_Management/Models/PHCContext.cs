@@ -1198,7 +1198,8 @@ namespace FT_Management.Models
             string SQL_Query = "select TOP 200 * from v_marcacoes where ";
             SQL_Query += (numMarcacao > 0 ? "num like '%" + numMarcacao + "%' and " : "");
             SQL_Query += (idtecnico > 0 ? "tecnno like '%" + idtecnico + "%' and " : "");
-            SQL_Query += (nomeCliente != "" ? "nome like '%"+nomeCliente+"%' and " : "");
+            SQL_Query += (nomeCliente != "" ? "nome like '%" + nomeCliente + "%' and " : "");
+            SQL_Query += (referencia != "" ? "nincidente like '%" + referencia + "%' and " : "");
             SQL_Query += (tipoe != "" ? "tipoe like '%" + tipoe + "%' and " : "");
             SQL_Query += (estado != "" ? "estado like '%" + estado + "%' and " : "");
             SQL_Query = SQL_Query.Remove(SQL_Query.Length - 4, 4);
