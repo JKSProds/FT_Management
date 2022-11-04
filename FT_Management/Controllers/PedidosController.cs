@@ -209,14 +209,17 @@ namespace FT_Management.Controllers
                     a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
 
                     string res = phccontext.CriarAnexoMarcacao(a);
-                    if (res.Length > 0)
+                    if (res.Length == 0) return Json("-1");
+                    if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file))
                     {
-                       if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file)) ApagarAnexo(res);
+                        ApagarAnexo(res);
+                        return Json("-1");
                     }
+
                 }
             //}
 
-            return Json("ok");
+            return Json("0");
         }
 
         public ActionResult DownloadAnexo(string id)
