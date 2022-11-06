@@ -458,7 +458,7 @@ namespace FT_Management.Models
                     {
                         IdVisita = result["IdVisita"],
                         DataVisita = DateTime.Parse(result["DataVisita"]),
-                        Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : phccontext.ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : phccontext.ObterClienteSimples(result["IdCliente"], result["IdLoja"]),
                         ResumoVisita = result["ResumoVisita"],
                         EstadoVisita = result["EstadoVisita"],
                         ObsVisita = result["ObsVisita"],
@@ -514,18 +514,47 @@ namespace FT_Management.Models
                 {
                     IdVisita = result["IdVisita"],
                     DataVisita = DateTime.Parse(result["DataVisita"]),
-                    Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : phccontext.ObterCliente(result["IdCliente"], result["IdLoja"]),
+                    Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : phccontext.ObterClienteSimples(result["IdCliente"], result["IdLoja"]),
                     ResumoVisita = result["ResumoVisita"],
                     EstadoVisita = result["EstadoVisita"],
                     ObsVisita = result["ObsVisita"],
                     VisitaStamp = result["VisitaStamp"],
                     IdComercial = result["idcomercial"],
-                    Contacto = new Contacto() { IdContacto = result["IdContacto"] }
+                    Contacto = new Contacto() { IdContacto = result["IdContacto"] },
+                    UrlAnexos = result["UrlAnexos"]
                 };
             }
 
             visita.Propostas = ObterListaPropostasVisita(IdVisita);
             return visita;
+        }
+
+        public Proposta ObterProposta(int IdProposta)
+        {
+            List<Proposta> LstPropostas = new List<Proposta>();
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_propostas where dat_propostas.IdProposta=" + IdProposta + ";");
+                while (result.Read())
+                {
+                    LstPropostas.Add(new Proposta()
+                    {
+                        IdProposta = result["IdProposta"],
+                        Comercial = new Utilizador() { Id = result["IdComercial"] },
+                        //Visita = ObterVisita(result["IdVisita"]),
+                        IdVisita = result["IdVisita"],
+                        DataProposta = result["DataProposta"],
+                        EstadoProposta = result["EstadoProposta"],
+                        ValorProposta = result["ValorProposta"],
+                        UrlProposta = result["UrlAnexo"],
+                        ObsProposta = result["ObsProposta"]
+                    });
+                }
+            }
+            return LstPropostas.First();
+
         }
         public List<Proposta> ObterListaPropostasVisita(int IdVisita)
         {
@@ -539,14 +568,14 @@ namespace FT_Management.Models
                 {
                     LstPropostas.Add(new Proposta()
                     {
-                        IdProposta = result["IdVisita"],
+                        IdProposta = result["IdProposta"],
                         Comercial = ObterUtilizador(result["IdComercial"]),
                         //Visita = ObterVisita(result["IdVisita"]),
                         DataProposta = result["DataProposta"],
                         EstadoProposta = result["EstadoProposta"],
                         ValorProposta = result["ValorProposta"],
-                        UrlAnexo = result["UrlAnexo"]
-
+                        UrlProposta = result["UrlAnexo"],
+                        ObsProposta = result["ObsProposta"]
                     });
                 }
             }
@@ -593,17 +622,17 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstVisita.Count) max = (LstVisita.Count - j);
 
-                string sql = "INSERT INTO dat_visitas (IdVisita,DataVisita,IdCliente,IdLoja,ResumoVisita,EstadoVisita,ObsVisita,IdComercial, IdContacto) VALUES ";
+                string sql = "INSERT INTO dat_visitas (IdVisita,DataVisita,IdCliente,IdLoja,ResumoVisita,EstadoVisita,ObsVisita,IdComercial, IdContacto, UrlAnexos) VALUES ";
 
                 foreach (var visita in LstVisita.GetRange(j, max))
                 {
                     if (visita.ObsVisita is null) visita.ObsVisita = String.Empty;
-                    sql += ("('" + visita.IdVisita + "', '" + visita.DataVisita.ToString("yy-MM-dd") + "', '" + visita.Cliente.IdCliente + "', '" + visita.Cliente.IdLoja + "', '" + visita.ResumoVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.EstadoVisita + "', '" + visita.ObsVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.IdComercial + "', '" + visita.Contacto.IdContacto + "'), \r\n");
+                    sql += ("('" + visita.IdVisita + "', '" + visita.DataVisita.ToString("yy-MM-dd") + "', '" + visita.Cliente.IdCliente + "', '" + visita.Cliente.IdLoja + "', '" + visita.ResumoVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.EstadoVisita + "', '" + visita.ObsVisita.Replace("'", "''").Replace("\\", "").ToString() + "', '" + visita.IdComercial + "', '" + visita.Contacto.IdContacto + "', '" + visita.UrlAnexos + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE DataVisita=VALUES(DataVisita), IdCliente = VALUES(IdCliente), ResumoVisita = VALUES(ResumoVisita), EstadoVisita = VALUES(EstadoVisita), ObsVisita = VALUES(ObsVisita), IdComercial = VALUES(IdComercial), IdContacto = VALUES(IdContacto);";
+                sql += " ON DUPLICATE KEY UPDATE DataVisita=VALUES(DataVisita), IdCliente = VALUES(IdCliente), ResumoVisita = VALUES(ResumoVisita), EstadoVisita = VALUES(EstadoVisita), ObsVisita = VALUES(ObsVisita), IdComercial = VALUES(IdComercial), IdContacto = VALUES(IdContacto), UrlAnexos = VALUES(UrlAnexos);";
 
                 Database db = ConnectionString;
 
@@ -621,16 +650,16 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstPropostas.Count) max = (LstPropostas.Count - j);
 
-                string sql = "INSERT INTO dat_propostas (IdProposta,DataProposta,IdComercial,IdVisita,EstadoProposta,ValorProposta,UrlAnexo) VALUES ";
+                string sql = "INSERT INTO dat_propostas (IdProposta,DataProposta,IdComercial,IdVisita,EstadoProposta,ValorProposta,UrlAnexo, ObsProposta) VALUES ";
 
                 foreach (var proposta in LstPropostas.GetRange(j, max))
                 {
-                    sql += ("('" + proposta.IdProposta + "', '" + proposta.DataProposta.ToString("yy-MM-dd") + "', '" + proposta.Comercial.Id + "', '" + proposta.Visita.IdVisita + "', '" + proposta.EstadoProposta.Replace("'", "''").Replace("\\", "").ToString() + "', '" + proposta.ValorProposta + "', '" + proposta.UrlAnexo + "'), \r\n");
+                    sql += ("('" + proposta.IdProposta + "', '" + proposta.DataProposta.ToString("yy-MM-dd") + "', '" + proposta.Comercial.Id + "', '" + proposta.Visita.IdVisita + "', '" + proposta.EstadoProposta.Replace("'", "''").Replace("\\", "").ToString() + "', '" + proposta.ValorProposta + "', '" + proposta.UrlProposta + "', '" + proposta.ObsProposta + "'), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
 
-                sql += " ON DUPLICATE KEY UPDATE DataProposta=VALUES(DataProposta), IdComercial = VALUES(IdComercial), EstadoProposta = VALUES(EstadoProposta), ValorProposta = VALUES(ValorProposta), UrlAnexo = VALUES(UrlAnexo);";
+                sql += " ON DUPLICATE KEY UPDATE DataProposta=VALUES(DataProposta), IdComercial = VALUES(IdComercial), EstadoProposta = VALUES(EstadoProposta), ValorProposta = VALUES(ValorProposta), UrlAnexo = VALUES(UrlAnexo), ObsProposta = VALUES(ObsProposta);";
 
                 Database db = ConnectionString;
 
@@ -644,6 +673,13 @@ namespace FT_Management.Models
         {
             Database db = ConnectionString;
             String sql = "delete from dat_visitas Where IdVisita='" + id + "';";
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+        public void ApagarProposta(int id)
+        {
+            Database db = ConnectionString;
+            String sql = "delete from dat_propostas Where IdProposta='" + id + "';";
             db.Execute(sql);
             db.Connection.Close();
         }

@@ -718,7 +718,7 @@
             $("#txtCustomer").autocomplete({
                 source: function(request, response) {
                     $.ajax({
-                        url: '/Pedidos/ObterClientes/',
+                        url: '/Clientes/ObterClientes/',
                         data: { "prefix": request.term },
                         type: "POST",
                         success: function(data) {

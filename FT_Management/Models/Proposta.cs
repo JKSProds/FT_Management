@@ -11,6 +11,8 @@ namespace FT_Management.Models
         public int IdProposta { get; set; }
         [Display(Name = "Visita")]
         public Visita Visita { get; set; }
+        [Display(Name = "Num. da Visita")]
+        public int IdVisita { get; set; }
         [Display(Name = "Data")]
         public DateTime DataProposta { get; set; }
         [Display(Name = "Estado")]
@@ -20,6 +22,8 @@ namespace FT_Management.Models
         [Display(Name = "Valor")]
         public string ValorProposta { get; set; }
         [Display(Name = "Url/Anexo")]
-        public string UrlAnexo { get; set; }
+        public string UrlProposta { get; set; }
+        [Display(Name = "Observações")]
+        public string ObsProposta { get; set; }
     }
 }

@@ -326,16 +326,6 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult ObterClientes(string prefix)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            if (prefix is null) prefix = "";
-
-            return Json(phccontext.ObterClientes(prefix, true));
-        }
-
-        [HttpPost]
         public JsonResult ObterResponsavel(string IdCliente, string IdLoja, string TipoEquipamento)
         {
             if (string.IsNullOrEmpty(IdCliente)) return Json("");

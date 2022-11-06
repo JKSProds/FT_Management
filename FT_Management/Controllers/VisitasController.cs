@@ -66,15 +66,6 @@ namespace FT_Management.Controllers
             return View(context.ObterListaComerciais());
         }
 
-        [HttpPost]
-        public JsonResult ObterClientes(string prefix)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            if (prefix is null) prefix = "";
-
-            return Json(phccontext.ObterClientes(prefix, false));
-        }
 
         public ActionResult ListaVisitas(int IdComercial, string DataVisitas)
         {
@@ -216,53 +207,94 @@ namespace FT_Management.Controllers
             return Redirect(ReturnUrl);
         }
 
-        [HttpPost]
-        public ActionResult AdicionarAnexo(List<IFormFile> files, int IdVisita, string ReturnUrl)
+        [HttpGet]
+        public ActionResult ApagarProposta(int id)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Proposta p = context.ObterProposta(id);
+            if (p.Comercial.Id != int.Parse(this.User.Claims.First().Value) && !(User.IsInRole("Admin") || User.IsInRole("Escritorio"))) return RedirectToAction("AcessoNegado", "Home");
+
+            context.ApagarProposta(id);
+
+            return RedirectToAction("Visita", p.Visita);
+        }
+
+        [HttpGet]
+        public Proposta ObterProposta(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Visita visita = context.ObterVisita(IdVisita);
+            Proposta p = context.ObterProposta(id);
 
-            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "Anexos", visita.Cliente.NomeCliente);
-
-            return Redirect(Request.Query["ReturnUrl"]);
+            return p;
         }
 
         [HttpPost]
-        public ActionResult AdicionarProposta(List<IFormFile> files, int IdVisita, string ReturnUrl, string data, string estado, string valor)
+        public ActionResult AdicionarAnexo(IFormFile file, int IdVisita)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(IdVisita);
+            visita.UrlAnexos = ConfigurationManager.AppSetting["NextCloud:URL"] + "Anexos/" + visita.Cliente.NomeCliente + "/";
+            context.CriarVisitas(new List<Visita> { visita });
+
+            EnviarNextCloud(file, visita.Cliente.NomeCliente, "Anexos");
+
+            return RedirectToAction("Visita", visita);
+        }
+
+        [HttpPost]
+        public ActionResult AdicionarProposta(int IdVisita, string ReturnUrl, string data, string estado, string valor, string obs)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Visita visita = context.ObterVisita(IdVisita);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             List<Proposta> LstPropostas = new List<Proposta>();
 
-            if (files.Count > 0)
+            LstPropostas.Add(new Proposta()
             {
+                Comercial = u,
+                Visita = visita,
+                DataProposta = DateTime.Parse(data),
+                EstadoProposta = estado,
+                ValorProposta = valor,
+                ObsProposta = obs,
+                UrlProposta = ConfigurationManager.AppSetting["NextCloud:URL"] + "Propostas/" + visita.Cliente.NomeCliente + "/"
+            });
 
-                LstPropostas.Add(new Proposta()
-                {
-                    Comercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)),
-                    Visita = context.ObterVisita(IdVisita),
-                    DataProposta = DateTime.Parse(data),
-                    EstadoProposta = estado,
-                    ValorProposta = valor,
-                    UrlAnexo = ConfigurationManager.AppSetting["NextCloud:URL"] + visita.Cliente.NomeCliente + "/Propostas/" + files[0].FileName
-
-                });
-
-                context.CriarPropostas(LstPropostas);
-                EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "Propostas", visita.Cliente.NomeCliente);
-            }
+            context.CriarPropostas(LstPropostas);
+            if (estado.Contains("email")) MailContext.EnviarEmailPropostaComercial(u, visita, LstPropostas.First());
 
             return Redirect(Request.Query["ReturnUrl"]);
         }
 
-        public async void EnviarNextCloud(List<IFormFile> files, string Url, string Path, string Folder)
+        [HttpPost]
+        public ActionResult EditarProposta(int id, string estado, string valor, string obs)
         {
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0)
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Proposta p = context.ObterProposta(id);
+            p.Visita = context.ObterVisita(p.IdVisita);
+            p.Comercial = context.ObterUtilizador(p.Comercial.Id);
+            p.EstadoProposta = estado;
+            p.ValorProposta = valor;
+            p.ObsProposta = obs;
+
+            context.CriarPropostas(new List<Proposta>() { p });
+
+            if (estado.Contains("email")) MailContext.EnviarEmailPropostaComercial(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), p.Visita, p);
+
+            return RedirectToAction("Visita", p.Visita);
+        }
+
+
+        public async void EnviarNextCloud(IFormFile file, string Path, string Folder)
+        {
+            string Url = ConfigurationManager.AppSetting["NextCloud:WebDav"];
+            //foreach (var formFile in files)
+            //{
+                if (file.Length > 0)
                 {
                     using var ms = new MemoryStream();
-                    await formFile.CopyToAsync(ms);
+                    await file.CopyToAsync(ms);
                     ms.Seek(0, SeekOrigin.Begin);
 
                     var clientParams = new WebDavClientParams
@@ -278,9 +310,9 @@ namespace FT_Management.Controllers
                     clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
                     client = new WebDavClient(clientParams);
 
-                    await client.PutFile(formFile.FileName, ms); // upload a resource
+                    await client.PutFile(file.FileName, ms); // upload a resource
 
-                }
+               // }
             }
         }
 

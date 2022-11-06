@@ -343,7 +343,7 @@
             url: '/Pedidos/ObterMarcacao/' + id,
             type: "GET",
             success: function (response) {
-
+                console.log(response);
                 document.getElementById('txtData').bulmaCalendar.value(new Date(response.dataMarcacao).toLocaleDateString());
                 document.getElementById('txtIdMarcacao').value = response.idMarcacao;
                 document.getElementById('txtNomeCliente2').value = response.cliente.nomeCliente;

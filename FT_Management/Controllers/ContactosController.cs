@@ -156,7 +156,7 @@ namespace FT_Management.Controllers
                 c.IdComercial = 24; //Id do Artur Carneiro
                 c.NIFContacto.Replace(" ", "");
                 c.ValidadoPorAdmin = false;
-                c.URL = "https://food-tech.cloud/index.php/apps/files/?dir=/Dep.%20Comercial/Contactos/[" + c.NomeContacto + "] " + c.PessoaContacto;
+                c.URL = ConfigurationManager.AppSetting["NextCloud:URL"] + "Contactos/[" + c.NomeContacto + "] " + c.PessoaContacto;
 
                 c.NIFContacto = c.NIFContacto is null ? "" : c.NIFContacto;
                 c.EmailContacto = c.EmailContacto is null ? "" : c.EmailContacto;
@@ -220,7 +220,7 @@ namespace FT_Management.Controllers
         public JsonResult AdicionarAnexo(List<IFormFile> files, string NomeEmpresa, string NomeCliente)
         {
             if (String.IsNullOrEmpty(NomeEmpresa) || String.IsNullOrEmpty(NomeCliente)) return Json("nok");
-            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "[" + NomeEmpresa + "] " + NomeCliente, "Contactos");
+            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:WebDav"], "[" + NomeEmpresa + "] " + NomeCliente, "Contactos");
 
             return Json("ok");
         }
