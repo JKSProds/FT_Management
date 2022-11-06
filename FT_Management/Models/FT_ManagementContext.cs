@@ -1494,7 +1494,8 @@ namespace FT_Management.Models
                     Comercial = ObterUtilizador(result["IdComercial"]),
                     IdUtilizador = result["IdUtilizador"],
                     Utilizador = ObterUtilizador(result["IdUtilizador"]),
-                    Historico = ObterHistoricoContactos(id)
+                    Historico = ObterHistoricoContactos(id),
+                    ContactosAdicionais = ObterContactosAdicionais(id)
                 };
             }
 
@@ -1598,6 +1599,56 @@ namespace FT_Management.Models
             }
             return LstHistorico;
         }
+        public List<ContactosAdicionais> ObterContactosAdicionais(int IdContacto)
+        {
+
+            List<ContactosAdicionais> LstContactosAdicionais = new List<ContactosAdicionais>();
+            string sqlQuery = "SELECT * FROM dat_contactos_adicionais WHERE IdContacto=" + IdContacto + ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstContactosAdicionais.Add(new ContactosAdicionais()
+                    {
+                        Id = result["IdContactoAdicional"],
+                        IdContacto = result["IdContacto"],
+                        PessoaContacto = result["PessoaContacto"],
+                        CargoPessoaContacto = result["Cargo"],
+                        TelefoneContacto = result["Telemovel"],
+                        EmailContacto = result["Email"]
+                    });
+
+                }
+            }
+            return LstContactosAdicionais;
+        }
+        public ContactosAdicionais ObterContactoAdicional(int Id)
+        {
+
+            List<ContactosAdicionais> LstContactosAdicionais = new List<ContactosAdicionais>();
+            string sqlQuery = "SELECT * FROM dat_contactos_adicionais WHERE IdContactoAdicional=" + Id + ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstContactosAdicionais.Add(new ContactosAdicionais()
+                    {
+                        Id = result["IdContactoAdicional"],
+                        IdContacto = result["IdContacto"],
+                        PessoaContacto = result["PessoaContacto"],
+                        CargoPessoaContacto = result["Cargo"],
+                        TelefoneContacto = result["Telemovel"],
+                        EmailContacto = result["Email"]
+                    });
+
+                }
+            }
+            return LstContactosAdicionais.First();
+        }
         public List<Contacto> ObterListaContactos(string Filtro)
         {
             DateTime dt = new DateTime();
@@ -1662,6 +1713,14 @@ namespace FT_Management.Models
             using Database db = ConnectionString;
             db.Execute(sql);
         }
+
+        public void CriarContactoAdicional(ContactosAdicionais c)
+        {
+            string sql = "INSERT INTO dat_contactos_adicionais (IdContacto, PessoaContacto, Cargo, Telemovel, Email, CriadoPor) VALUES (" + c.IdContacto + ", '" + c.PessoaContacto + "', '" + c.CargoPessoaContacto + "', '" + c.TelefoneContacto + "', '" + c.EmailContacto + "', '" + c.CriadoPor + "');";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
         public void CriarContactos(List<Contacto> LstContacto)
         {
             if (LstContacto.Count() > 0)
@@ -1691,10 +1750,26 @@ namespace FT_Management.Models
             db.Execute(sql);
 
             ApagarHistoricoContacto(Id);
+            ApagarContactosAdicionais(Id);
+
         }
         public void ApagarHistoricoContacto(int Id)
         {
             string sql = "DELETE FROM dat_contactos_historico where IdContacto=" + Id + ";";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+        public void ApagarContactosAdicionais(int IdContacto)
+        {
+            string sql = "DELETE FROM dat_contactos_adicionais where IdContacto=" + IdContacto + ";";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+        public void ApagarContactoAdicional(int Id)
+        {
+            string sql = "DELETE FROM dat_contactos_adicionais where IdContactoAdicional="+Id+";";
 
             using Database db = ConnectionString;
             db.Execute(sql);

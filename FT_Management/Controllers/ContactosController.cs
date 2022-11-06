@@ -90,6 +90,25 @@ namespace FT_Management.Controllers
             return View(contacto);
         }
 
+        [HttpPost]
+        public JsonResult AdicionarContacto(int id, string pessoa, string cargo, string telefone, string email)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            if (string.IsNullOrEmpty(pessoa) || string.IsNullOrEmpty(telefone) || string.IsNullOrEmpty(email)) return Json("nok");
+
+            context.CriarContactoAdicional(new ContactosAdicionais()
+            {
+                IdContacto = id,
+                PessoaContacto = pessoa,
+                CargoPessoaContacto = cargo,
+                TelefoneContacto = telefone,
+                EmailContacto = email,
+                CriadoPor = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).NomeCompleto
+            });
+
+            return Json("Ok");
+        }
+
         [Authorize(Roles = "Admin, Escritorio, Comercial")]
         [HttpPost]
         public IActionResult Editar(Contacto contacto)
@@ -203,7 +222,15 @@ namespace FT_Management.Controllers
 
             return RedirectToAction("Index");
         }
+              
+        public IActionResult ApagarContactoAdicional(int Id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ContactosAdicionais cA = context.ObterContactoAdicional(Id);
+            context.ApagarContactoAdicional(Id);
 
+            return RedirectToAction("Editar", new { Id = cA.IdContacto });
+        }
         public string MostrarCliente(int Id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;

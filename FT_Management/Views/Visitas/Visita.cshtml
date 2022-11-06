@@ -220,7 +220,7 @@
                                             <td data-label="@Html.DisplayNameFor(model => model.Propostas.FirstOrDefault().ValorProposta)">
                                                 @Html.DisplayFor(modelItem => item.ValorProposta)
                                             </td>
-                                            <td data-label="">
+                                            <td class="is-actions-cell">
                                                 <div class="btn-group float-right">
                                                     <a class="button is-info " onclick="Bulma('#modalAdicionarAnexoProposta').modal().open();"><i class="fas fa-plus"></i></a>
                                                     <a class="button is-warning " onclick="EditarProposta(@item.IdProposta);"><i class="fas fa-pencil"></i></a>

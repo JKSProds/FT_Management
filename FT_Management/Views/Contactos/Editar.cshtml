@@ -56,6 +56,11 @@
                     </li>
                     <li>
                         <a>
+                            <span>Contactos Adicionais</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
                             <span>Dados</span>
                         </a>
                     </li>
@@ -76,7 +81,7 @@
                 <ul>
                     <li class="is-active">
                         <div class="columns is-multiline">
-                            <div class="column is-1">
+                            <div class="column is-2">
                                 <div class="field">
                                     <label asp-for="IdContacto" class="label"></label>
                                     <div class="control">
@@ -84,7 +89,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="column is-7">
+                            <div class="column is-6">
                                 <div class="field">
                                     <label asp-for="NomeContacto" class="label"></label>
                                     <div class="control">
@@ -159,6 +164,74 @@
                         </div>
                     </li>
                     <li>
+                         <p class="control is-right">
+                            <a class="button is-primary is-pulled-right is-fullwidth" onclick="Bulma('#modalAdicionarContacto').modal().open();">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Novo Contacto</span>
+                            </a>
+                        </p>
+                        &nbsp;
+
+                        @if (Model.ContactosAdicionais.Count() == 0)
+                        {
+                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados contactos adicionais!</button>
+                        }
+                        else
+                        {
+                            <div class="b-table">
+                            <div class="table-wrapper has-mobile-cards">                
+                            <table class="table is-hoverable is-fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().PessoaContacto)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().CargoPessoaContacto)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().TelefoneContacto)
+                                        </th>                                        
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().EmailContacto)
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ContactosAdicionais)
+                                    {
+                                        <tr>
+                                            <td data-label="@Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().PessoaContacto)">
+                                                <span>@item.PessoaContacto</span>
+                                            </td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().CargoPessoaContacto)">
+                                                <span>@item.CargoPessoaContacto</span>
+                                            </td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().TelefoneContacto)">
+                                                <span>@item.TelefoneContacto</span>
+                                            </td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.ContactosAdicionais.FirstOrDefault().EmailContacto)">
+                                                <span>@item.EmailContacto</span>
+                                            </td>
+                                            <td class="is-actions-cell">
+                                                <div class="buttons is-pulled-right is-flex-wrap-nowrap">
+                                                    <a class="button is-info" @(item.TelefoneContacto.Length < 9 ? "disabled" : "") href="tel:@item.TelefoneContacto"><i class="fas fa-phone"></i></a>
+                                                    <a class="button is-primary" @(item.EmailContacto.Length < 1 ? "disabled" : "") href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left"></i></a>
+                                                    <a class="button is-danger" href="~/Contactos/ApagarContactoAdicional/@item.Id"><i class="fas fa-trash float-left"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            </div>
+                            </div>
+                        }
+                    </li>
+                    <li>
                         <div class="columns is-multiline">
                             <div class="column is-3">
                                 <div class="field">
@@ -191,7 +264,7 @@
                     </li>
                     <li>
                         <p class="control is-right">
-                            <button class="button is-primary is-pulled-right is-fullwidth" onclick="ConfirmAddHistorico()">
+                            <button class="button is-primary is-pulled-right is-fullwidth" onclick="Bulma('#modalAdicionarComentario').modal().open();">
                                 <span class="icon is-small">
                                     <i class="fas fa-plus"></i>
                                 </span>
@@ -309,6 +382,48 @@
 </form>
 
 
+ <div id="modalAdicionarContacto" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Adicionar Contacto</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+               <div class="field">
+                  <label class="label">Nome da Pessoa</label>
+                  <div class="control">
+                    <input class="input" id="txtPessoaContacto" type="text" placeholder="Nome">
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Cargo</label>
+                  <div class="control">
+                    <input class="input" id="txtCargo" type="text" placeholder="Cargo">
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Telefone/Telemóvel</label>
+                  <div class="control">
+                    <input class="input" id="txtTelefone" type="tel" maxlength="20" placeholder="Telemóvel">
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Email</label>
+                  <div class="control">
+                    <input class="input" id="txtEmail" type="email" placeholder="Email">
+                  </div>
+                </div>
+
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-fullwidth" onclick="AddContacto();" href="javascript:;">Adicionar</button>
+        </footer>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
@@ -371,9 +486,39 @@
 
     }
 
-    function ConfirmAddHistorico() {
-        var modal = Bulma('#modalAdicionarComentario').modal();
-        modal.open();
+    function AddContacto() {
+        var json = {
+            id: document.getElementById('IdContacto').value,
+            pessoa: document.getElementById('txtPessoaContacto').value,
+            cargo: document.getElementById('txtCargo').value,
+            telefone: document.getElementById('txtTelefone').value,
+            email: document.getElementById('txtEmail').value,
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Contactos/AdicionarContacto",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                if (result == "nok") {
+                     bulmaToast.toast({
+                        message: 'Não foi possivel adicionar o contacto! Por favor verifique se preencheu todos os dados.',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000
+                    })
+                }else{
+                window.location.reload();
+                }
+            }
+        });
+
     }
+
+
+
 
 </script>

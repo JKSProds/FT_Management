@@ -56,6 +56,8 @@ namespace FT_Management.Models
         public Utilizador Utilizador { get; set; }
         [Display(Name = "Histórico")]
         public List<HistoricoContacto> Historico { get; set; }
+        [Display(Name = "Contactos Adicionais")]
+        public List<ContactosAdicionais> ContactosAdicionais { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
@@ -90,5 +92,25 @@ namespace FT_Management.Models
         [Display(Name = "Comentário")]
         public string Obs { get; set; }
 
+    }
+
+    public class ContactosAdicionais
+    {
+        [Display(Name = "Num. do Contacto Adicional")]
+        public int Id { get; set; }
+        [Display(Name = "Num. do Contacto")]
+        public int IdContacto { get; set; }
+        [Display(Name = "Pessoa de Contacto")]
+        [Required]
+        public string PessoaContacto { get; set; }
+        [Display(Name = "Cargo")]
+        public string CargoPessoaContacto { get; set; }
+        [Display(Name = "Email")]
+        [Required]
+        public string EmailContacto { get; set; }
+        [Display(Name = "Telemóvel")]
+        [Required]
+        public string TelefoneContacto { get; set; }
+        public string CriadoPor { get; set; }
     }
 }
