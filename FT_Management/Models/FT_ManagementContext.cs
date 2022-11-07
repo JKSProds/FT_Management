@@ -427,7 +427,7 @@ namespace FT_Management.Models
                     {
                         IdVisita = result["IdVisita"],
                         DataVisita = DateTime.Parse(result["DataVisita"]),
-                        Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : phccontext.ObterCliente(result["IdCliente"], result["IdLoja"]),
+                        Cliente = result["IdContacto"] > 0 ? ObterClienteContacto(result["IdContacto"]) : phccontext.ObterClienteSimples(result["IdCliente"], result["IdLoja"]),
                         ResumoVisita = result["ResumoVisita"],
                         EstadoVisita = result["EstadoVisita"],
                         ObsVisita = result["ObsVisita"],
