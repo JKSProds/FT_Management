@@ -77,7 +77,7 @@ namespace FT_Management.Models
             try
             {
                 var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
-                if (phoneNumberUtil.IsValidNumberForRegion(phoneNumberUtil.Parse(this._Telemovel, "PT"), "PT"))
+                if (!string.IsNullOrEmpty(this._Telemovel) && phoneNumberUtil.IsValidNumberForRegion(phoneNumberUtil.Parse(this._Telemovel, "PT"), "PT"))
                 {
                     if (Indicativo) res = "+" + phoneNumberUtil.Parse(this._Telemovel, "PT").CountryCode.ToString();
                     res += phoneNumberUtil.Parse(this._Telemovel, "PT").NationalNumber.ToString();
