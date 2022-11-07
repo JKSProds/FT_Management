@@ -1193,21 +1193,21 @@ namespace FT_Management.Models
         }
         public List<Marcacao> ObterMarcacoes(int numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico, string estado)
         {
-            string SQL_Query = "SELECT TOP 200 num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao full outer join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 where " + (numMarcacao > 0 ? "num like '%" + numMarcacao + "%' and " : "") + (!string.IsNullOrEmpty(nomeCliente) ? "nome like '%" + nomeCliente + "%' and " : "") + (!string.IsNullOrEmpty(estado) && estado != "Todos" ? "estado = '" + estado + "' and " : "") + (!string.IsNullOrEmpty(referencia) ? "nincidente like '%" + referencia + "%' and " : "") + (!string.IsNullOrEmpty(tipoe) && tipoe != "Todos" ? "tipoe like '%" + tipoe + "%' and " : "") + (idtecnico > 0 ? "u_mtecnicos.tecnno=" + idtecnico + " and " : "") + " num is not null";
+            //string SQL_Query = "SELECT TOP 200 num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao full outer join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 where " + (numMarcacao > 0 ? "num like '%" + numMarcacao + "%' and " : "") + (!string.IsNullOrEmpty(nomeCliente) ? "nome like '%" + nomeCliente + "%' and " : "") + (!string.IsNullOrEmpty(estado) && estado != "Todos" ? "estado = '" + estado + "' and " : "") + (!string.IsNullOrEmpty(referencia) ? "nincidente like '%" + referencia + "%' and " : "") + (!string.IsNullOrEmpty(tipoe) && tipoe != "Todos" ? "tipoe like '%" + tipoe + "%' and " : "") + (idtecnico > 0 ? "u_mtecnicos.tecnno=" + idtecnico + " and " : "") + " num is not null";
 
-                List<Marcacao> LstMarcacoes = ObterMarcacoes(SQL_Query + " order by num desc;", false, true, true, false, false, false);
-                return LstMarcacoes;
+            //List<Marcacao> LstMarcacoes = ObterMarcacoes(SQL_Query + " order by num desc;", false, true, true, false, false, false);
+            //return LstMarcacoes;
 
-            //string SQL_Query = "select TOP 200 * from v_marcacoes where ";
-            //SQL_Query += (numMarcacao > 0 ? "num like '%" + numMarcacao + "%' and " : "");
-            //SQL_Query += (idtecnico > 0 ? "tecnno like '%" + idtecnico + "%' and " : "");
-            //SQL_Query += (nomeCliente != "" ? "nome like '%" + nomeCliente + "%' and " : "");
-            //SQL_Query += (referencia != "" ? "nincidente like '%" + referencia + "%' and " : "");
-            //SQL_Query += (tipoe != "" ? "tipoe like '%" + tipoe + "%' and " : "");
-            //SQL_Query += (estado != "" ? "estado like '%" + estado + "%' and " : "");
-            //SQL_Query = SQL_Query.Remove(SQL_Query.Length - 4, 4);
+            string SQL_Query = "select TOP 200 * from v_marcacoes where ";
+            SQL_Query += (numMarcacao > 0 ? "num like '%" + numMarcacao + "%' and " : "");
+            SQL_Query += (idtecnico > 0 ? "tecnno like '%" + idtecnico + "%' and " : "");
+            SQL_Query += (nomeCliente != "" ? "nome like '%" + nomeCliente + "%' and " : "");
+            SQL_Query += (referencia != "" ? "nincidente like '%" + referencia + "%' and " : "");
+            SQL_Query += (tipoe != "" ? "tipoe like '%" + tipoe + "%' and " : "");
+            SQL_Query += (estado != "" ? "estado like '%" + estado + "%' and " : "");
+            SQL_Query = SQL_Query.Remove(SQL_Query.Length - 4, 4);
 
-            //return ObterMarcacoes(SQL_Query, false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            return ObterMarcacoes(SQL_Query, false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
