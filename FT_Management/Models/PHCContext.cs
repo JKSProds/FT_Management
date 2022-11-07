@@ -729,6 +729,7 @@ namespace FT_Management.Models
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
                 };
+                m.DataMarcacao = m.DatasAdicionaisDistintas.First();
 
                 command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
                 command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
@@ -787,6 +788,7 @@ namespace FT_Management.Models
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
                 };
+                m.DataMarcacao = m.DatasAdicionaisDistintas.First();
 
                 command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", m.MarcacaoStamp));
                 command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
