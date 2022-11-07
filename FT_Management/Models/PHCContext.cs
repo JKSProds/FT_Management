@@ -1122,6 +1122,7 @@ namespace FT_Management.Models
                         DatasAdicionais = result["u_mdatas"].ToString().Replace("|", ";"),
                         ResumoMarcacao = result["resumo"].ToString().Trim(),
                         EstadoMarcacaoDesc = result["estado"].ToString().Trim(),
+                        DataMarcacao = DateTime.Parse(result["data"].ToString()),
                         EstadoMarcacao = LstEstadoMarcacao.Where(e => e.EstadoMarcacaoDesc == result["estado"].ToString().Trim()).DefaultIfEmpty(new EstadoMarcacao()).First().IdEstado,
                         PrioridadeMarcacao = result["prioridade"].ToString().Trim(),
                         MarcacaoStamp = result["u_marcacaostamp"].ToString().Trim(),
