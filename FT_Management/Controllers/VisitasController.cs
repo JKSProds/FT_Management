@@ -187,11 +187,11 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita v = context.ObterVisita(visita.IdVisita);
             v.ObsVisita = visita.ObsVisita;
-            List<Visita> LstVisitas = new List<Visita> { visita };
+            List<Visita> LstVisitas = new List<Visita> { v };
 
             context.CriarVisitas(LstVisitas);
 
-            return RedirectToAction("Visita", new { idVisita = visita.IdVisita, IdComercial = visita.IdComercial});
+            return RedirectToAction("Visita", new { idVisita = v.IdVisita, IdComercial = v.IdComercial});
         }
 
         [Authorize(Roles = "Admin, Escritorio, Comercial")]
