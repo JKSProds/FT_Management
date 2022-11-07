@@ -244,23 +244,21 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult AdicionarAnexo(List<IFormFile> files, string NomeEmpresa, string NomeCliente)
+        public JsonResult AdicionarAnexo(IFormFile file, string NomeEmpresa, string NomeCliente)
         {
             if (String.IsNullOrEmpty(NomeEmpresa) || String.IsNullOrEmpty(NomeCliente)) return Json("nok");
-            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:WebDav"], "[" + NomeEmpresa + "] " + NomeCliente, "Contactos");
+            EnviarNextCloud(file, ConfigurationManager.AppSetting["NextCloud:WebDav"], "[" + NomeEmpresa + "] " + NomeCliente, "Contactos");
 
             return Json("ok");
         }
 
-        public async void EnviarNextCloud(List<IFormFile> files, string Url, string Path, string Folder)
+        public async void EnviarNextCloud(IFormFile file, string Url, string Path, string Folder)
         {
 
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0)
+                if (file.Length > 0)
                 {
                     using var ms = new MemoryStream();
-                    await formFile.CopyToAsync(ms);
+                    await file.CopyToAsync(ms);
                     ms.Seek(0, SeekOrigin.Begin);
 
 
@@ -278,10 +276,9 @@ namespace FT_Management.Controllers
                     clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
                     client = new WebDavClient(clientParams);
 
-                    await client.PutFile(formFile.FileName, ms); // upload a resource
+                    await client.PutFile(file.FileName, ms); // upload a resource
 
                 }
-            }
         }
 
     }
