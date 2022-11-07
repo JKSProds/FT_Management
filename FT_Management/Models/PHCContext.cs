@@ -499,9 +499,9 @@ namespace FT_Management.Models
                                 DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
                                 ReferenciaServico = result["u_nincide"].ToString().Trim(),
                                 EstadoEquipamento = result["situacao"].ToString().Trim(),
-                                ConferidoPor = result["qassinou"].ToString().Trim(),
-                                IdCartao = result["u_marcacaostamp"].ToString().Trim(),
-                                IdMarcacao = int.Parse(result["num"].ToString())
+                                ConferidoPor = result.IsDBNull("qassinou") ? "" : result["qassinou"].ToString().Trim(),
+                                IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
+                                IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString())
                             });
 
                         if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim());
@@ -562,17 +562,17 @@ namespace FT_Management.Models
         }
         public List<FolhaObra> ObterFolhasObra(Cliente c)
         {
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.no='"+c.IdCliente+"' and pa.estab='"+c.IdLoja+"' order by nopat;", true, true, false, false, false);
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.no='" + c.IdCliente+"' and pa.estab='"+c.IdLoja+"' order by nopat;", true, true, false, false, false);
 
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
-            return ObterFolhasObra("select * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_intervencao.data='"+Data.ToString("yyyy-MM-dd")+"' order by nopat;", true, true, true, false, false);
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd")+"' order by nopat;", true, true, true, false, false);
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
         {
-            return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=" + IdFolhaObra + " and ndos=49) as id_at, * from u_intervencao, pa, u_marcacao where u_intervencao.STAMP_DEST=pa.pastamp and u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and pa.nopat=" + IdFolhaObra + " order by nopat;", true);
+            return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=" + IdFolhaObra + " and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.nopat=" + IdFolhaObra + " order by nopat;", true);
 
         }
 
