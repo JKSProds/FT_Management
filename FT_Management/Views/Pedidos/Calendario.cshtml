@@ -40,7 +40,7 @@
                     <div class="media">
                       <div class="media-left">
                         <figure class="image is-48x48">
-                          <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="user">
+                          <img src="@(u.ImgUtilizador == "" ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : @u.ImgUtilizador)" alt="user">
                         </figure>
                       </div>
                       <div class="media-content">
@@ -48,9 +48,9 @@
                         <p class="subtitle is-6">@u.EmailUtilizador</p>
                       </div>
                     </div>
-                                          <a class="button is-info is-fullwidth" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                    <a class="button is-info is-fullwidth" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
+                         <i class="fas fa-eye"></i>
+                    </a>
                   </div>
                 </div>
         </div>

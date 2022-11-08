@@ -70,6 +70,7 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
                         IdArmazem = result["IdArmazem"],
+                        ImgUtilizador = result["ImgUtilizador"],
                         Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
                     });
                 }
