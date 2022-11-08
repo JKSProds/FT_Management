@@ -67,20 +67,20 @@ namespace FT_Management.Controllers
             {
                 Picking_Linha_Stamp = stamp,
                 Qtd_Linha = qtd,
-                Linha_Serie = new List<Linha_Serie_Picking>(),
+                Lista_Ref = new List<Ref_Linha_Picking>(),
                 EditadoPor = this.User.ObterNomeCompleto()
             };
             if (serie != null || bomastamp != null)
             {
                 linha_picking.Serie = true;
-                linha_picking.Linha_Serie.Add(new Linha_Serie_Picking()
+                linha_picking.Lista_Ref.Add(new Ref_Linha_Picking()
                 {
                     BOMA_STAMP = bomastamp == null ? "" : bomastamp,
                     NumSerie = serie == null ? "" : serie
                 });
             }
 
-            return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking)[1]);
+            return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking));
         }
     }
 }

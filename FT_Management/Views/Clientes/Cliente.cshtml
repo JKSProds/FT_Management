@@ -368,7 +368,7 @@
                                                         <span>@item.EstadoProposta</span>
                                                     </td>
                                                     <td class="is-actions-cell">
-                                                            <a class="button is-outlined is-fullwidth is-primary" onclick="window.open('@Url.Action("ObterFicheiroNextCloud", "Visitas", new { Url = item.UrlAnexo})')"><i class="fas fa-print" style="font-size:20px"></i></a>
+                                                            <a class="button is-outlined is-fullwidth is-primary" onclick="@item.UrlProposta"><i class="fas fa-print" style="font-size:20px"></i></a>
                                                     </td>
                                                 </tr>
                                             }

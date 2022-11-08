@@ -90,6 +90,25 @@ namespace FT_Management.Controllers
             return View(contacto);
         }
 
+        [HttpPost]
+        public JsonResult AdicionarContacto(int id, string pessoa, string cargo, string telefone, string email)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            if (string.IsNullOrEmpty(pessoa) || string.IsNullOrEmpty(telefone) || string.IsNullOrEmpty(email)) return Json("nok");
+
+            context.CriarContactoAdicional(new ContactosAdicionais()
+            {
+                IdContacto = id,
+                PessoaContacto = pessoa,
+                CargoPessoaContacto = cargo,
+                TelefoneContacto = telefone,
+                EmailContacto = email,
+                CriadoPor = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).NomeCompleto
+            });
+
+            return Json("Ok");
+        }
+
         [Authorize(Roles = "Admin, Escritorio, Comercial")]
         [HttpPost]
         public IActionResult Editar(Contacto contacto)
@@ -156,7 +175,7 @@ namespace FT_Management.Controllers
                 c.IdComercial = 24; //Id do Artur Carneiro
                 c.NIFContacto.Replace(" ", "");
                 c.ValidadoPorAdmin = false;
-                c.URL = "https://food-tech.cloud/index.php/apps/files/?dir=/Dep.%20Comercial/Contactos/[" + c.NomeContacto + "] " + c.PessoaContacto;
+                c.URL = ConfigurationManager.AppSetting["NextCloud:URL"] + "Contactos/[" + c.NomeContacto + "] " + c.PessoaContacto;
 
                 c.NIFContacto = c.NIFContacto is null ? "" : c.NIFContacto;
                 c.EmailContacto = c.EmailContacto is null ? "" : c.EmailContacto;
@@ -203,7 +222,15 @@ namespace FT_Management.Controllers
 
             return RedirectToAction("Index");
         }
+              
+        public IActionResult ApagarContactoAdicional(int Id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ContactosAdicionais cA = context.ObterContactoAdicional(Id);
+            context.ApagarContactoAdicional(Id);
 
+            return RedirectToAction("Editar", new { Id = cA.IdContacto });
+        }
         public string MostrarCliente(int Id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -217,23 +244,21 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult AdicionarAnexo(List<IFormFile> files, string NomeEmpresa, string NomeCliente)
+        public JsonResult AdicionarAnexo(IFormFile file, string NomeEmpresa, string NomeCliente)
         {
             if (String.IsNullOrEmpty(NomeEmpresa) || String.IsNullOrEmpty(NomeCliente)) return Json("nok");
-            EnviarNextCloud(files, ConfigurationManager.AppSetting["NextCloud:URL"], "[" + NomeEmpresa + "] " + NomeCliente, "Contactos");
+            EnviarNextCloud(file, ConfigurationManager.AppSetting["NextCloud:WebDav"], "[" + NomeEmpresa + "] " + NomeCliente, "Contactos");
 
             return Json("ok");
         }
 
-        public async void EnviarNextCloud(List<IFormFile> files, string Url, string Path, string Folder)
+        public async void EnviarNextCloud(IFormFile file, string Url, string Path, string Folder)
         {
 
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0)
+                if (file.Length > 0)
                 {
                     using var ms = new MemoryStream();
-                    await formFile.CopyToAsync(ms);
+                    await file.CopyToAsync(ms);
                     ms.Seek(0, SeekOrigin.Begin);
 
 
@@ -251,10 +276,9 @@ namespace FT_Management.Controllers
                     clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
                     client = new WebDavClient(clientParams);
 
-                    await client.PutFile(formFile.FileName, ms); // upload a resource
+                    await client.PutFile(file.FileName, ms); // upload a resource
 
                 }
-            }
         }
 
     }

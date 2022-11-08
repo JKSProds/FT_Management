@@ -145,7 +145,7 @@
             </div>
             <div class="column is-8">
 
-                <div class="field" style="height: 310px;">
+                <div class="field" style="height: 325px;">
                     <label asp-for="Tecnico" class="label"></label>
                     <div class="control">
                         <div class="select is-multiple" style="width:100%">
@@ -624,7 +624,7 @@
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Pedidos/ObterClientes/',
+                    url: '/Clientes/ObterClientes/',
                     data: { "prefix": request.term },
                     type: "POST",
                     success: function (data) {

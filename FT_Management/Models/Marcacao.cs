@@ -26,7 +26,7 @@ namespace FT_Management.Models
         public DateTime DataPedido { get; set; }
         [Required]
         [Display(Name = "Data da Marcação")]
-        public DateTime DataMarcacao { get { return DatasAdicionaisDistintas == null || DatasAdicionaisDistintas.Count == 0 ? DateTime.Now : DatasAdicionaisDistintas.First(); } }
+        public DateTime DataMarcacao { get; set; }
         [Display(Name = "Datas")]
         public string DatasAdicionais { get; set; }
         public List<DateTime> DatasAdicionaisDistintas { get { return DatasAdicionais != null ? DatasAdicionais.Split(";").ToList().Where(d => d != "").Select(d => DateTime.Parse(d)).Distinct().ToList() : null; } }
@@ -83,6 +83,7 @@ namespace FT_Management.Models
         {
             this.LstTecnicos = new List<Utilizador>();
             this.DataPedido = DateTime.Now;
+            this.DataMarcacao = DateTime.Now;
             this.DatasAdicionais = DateTime.Now.ToShortDateString();
             this.LstTecnicosSelect = new List<int> { };
             this.JustificacaoFecho = "";

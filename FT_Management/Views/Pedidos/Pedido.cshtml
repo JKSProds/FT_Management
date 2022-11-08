@@ -514,7 +514,6 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Adicionar Anexo</p>
-            <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             <div class="form-group">
@@ -524,7 +523,7 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="close" id="btnConfirmAddAnexo" href="javascript:;">Fechar</button>
+            <button type="button" class="button is-info" onclick="window.location.reload();" id="btnConfirmAddAnexo" href="javascript:;">Fechar</button>
         </footer>
     </div>
 </div>
@@ -553,7 +552,7 @@
     const $target = $close.closest('#modalAdicionarAnexo');
 
     $close.addEventListener('click', () => {
-          window.location.reload();
+    if (!($target.classList.contains('is-active'))) window.location.reload();
     });
   });
 

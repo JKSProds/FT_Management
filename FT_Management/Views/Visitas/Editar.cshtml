@@ -132,15 +132,20 @@
                         </div>
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="DataVisita" class="label"></label>
-                                <p class="control has-icons-left">
-                                    <input asp-for="DataVisita" class="input" type="date" />
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-calendar-day"></i>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
+                                <label asp-for="DataVisita"></label>
+                                <div class="control">
+                                <input class="input" type="date" id="txtData" asp-for="DataVisita"/>
+                                <script>
+                                    bulmaCalendar.attach('#txtData', {
+                                        color: 'info',
+                                        lang: 'pt',
+                                        dateFormat: 'dd/MM/yyyy',
+                                        todayLabel: 'Hoje',
+                                        showClearButton: false,
+                                        cancelLabel: 'Cancelar'
+                                    });
+                                </script>
+                                </div>
                     </div>
                 </li>
             </ul>

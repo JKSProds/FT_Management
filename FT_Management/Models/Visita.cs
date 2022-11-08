@@ -30,6 +30,7 @@ namespace FT_Management.Models
         [Display(Name = "Contacto")]
         public Contacto Contacto { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Visitas/Visita/?idVisita=" + IdVisita; } }
+        public string UrlAnexos { get; set; }
     }
 
 }

@@ -41,5 +41,14 @@ namespace FT_Management.Controllers
 
             return Content(MailContext.EnviarEmailSenhaCliente(email, phccontext.ObterCliente(id, loja)) ? "Sucesso" : "");
         }
+        [HttpPost]
+        public JsonResult ObterClientes(string prefix)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (prefix is null) prefix = "";
+
+            return Json(phccontext.ObterClientes(prefix, true));
+        }
     }
 }

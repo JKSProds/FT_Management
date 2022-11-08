@@ -209,14 +209,17 @@ namespace FT_Management.Controllers
                     a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
 
                     string res = phccontext.CriarAnexoMarcacao(a);
-                    if (res.Length > 0)
+                    if (res.Length == 0) return Json("-1");
+                    if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file))
                     {
-                       if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file)) ApagarAnexo(res);
+                        ApagarAnexo(res);
+                        return Json("-1");
                     }
+
                 }
             //}
 
-            return Json("ok");
+            return Json("0");
         }
 
         public ActionResult DownloadAnexo(string id)
@@ -320,16 +323,6 @@ namespace FT_Management.Controllers
             }
             //url += "//@";
             return Redirect(new Uri(url).AbsoluteUri);
-        }
-
-        [HttpPost]
-        public JsonResult ObterClientes(string prefix)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            if (prefix is null) prefix = "";
-
-            return Json(phccontext.ObterClientes(prefix, true));
         }
 
         [HttpPost]

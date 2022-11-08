@@ -175,11 +175,17 @@
                             <span class="tecnico">@item.Tecnico.NomeCompleto</span>
                         </td>
                         <td class="is-actions-cell">
-                            <a class="button is-info is-rounded is-fullwidth" onclick="ObterMarcacao(@item.IdMarcacao);">
+                            <a class="button is-info is-rounded" onclick="ObterMarcacao(@item.IdMarcacao);">
                                 <span class="icon is-small">
                                     <i class="fas fa-list"></i>
                                 </span>
                             </a>
+                            <a class="button is-primary is-rounded" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'">
+                                <span class="icon is-small">
+                                    <i class="fas fa-sticky-note"></i>
+                                </span>
+                            </a>
+                                    
                         </td>
                     </tr>
                 }
@@ -337,7 +343,7 @@
             url: '/Pedidos/ObterMarcacao/' + id,
             type: "GET",
             success: function (response) {
-
+                console.log(response);
                 document.getElementById('txtData').bulmaCalendar.value(new Date(response.dataMarcacao).toLocaleDateString());
                 document.getElementById('txtIdMarcacao').value = response.idMarcacao;
                 document.getElementById('txtNomeCliente2').value = response.cliente.nomeCliente;

@@ -177,5 +177,14 @@ namespace FT_Management.Models
 
             return true;
         }
+
+        public static bool EnviarEmailPropostaComercial(Utilizador u, Visita v, Proposta p)
+        {
+            string Assunto = "Nova Proposta - Cliente - " + v.Cliente.NomeCliente;
+            string Mensagem = "Foi criada uma nova proposta para o cliente: " + v.Cliente.NomeCliente + "<br><br><b>Dados adicionais:</b><br>Utilizador: " + p.Comercial.NomeCompleto + "<br>Data: " + p.DataProposta.ToShortDateString() + "<br>Valor: " + p.ValorProposta + "€" + "<br>Estado: " + p.EstadoProposta + "<br>Ver: <a href=\"" + p.UrlProposta + "\" class=\"button\">Link</a>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(2));
+
+            return true;
+        }
     }
 }
