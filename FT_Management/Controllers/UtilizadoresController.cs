@@ -42,6 +42,7 @@ namespace FT_Management.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
@@ -118,6 +119,7 @@ namespace FT_Management.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
