@@ -456,7 +456,7 @@ namespace FT_Management.Controllers
             {
                 if (id == 0) id = int.Parse(this.User.Claims.First().Value);
                 Utilizador u = context.ObterUtilizador(id);
-                return View("CalendarioTecnico", u);
+                return View("Calendario", new List<Utilizador>() { u });
             }
             List<Utilizador> LstTecnicos = context.ObterListaTecnicos(true);
             return View("Calendario", LstTecnicos);

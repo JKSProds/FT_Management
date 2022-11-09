@@ -139,7 +139,7 @@
                                 <label asp-for="DataMarcacao" class="label"></label>
                                 <div class="control has-icons-left">
                                     <p class="control " style="width:100%">
-                                        <input class="input" type="text" readonly value="@Model.DataMarcacao.ToShortDateString() @Model.Hora">
+                                        <input class="input" type="text" readonly value="@string.Join(" | ", Model.DatasAdicionaisDistintas.Select(d => d.ToShortDateString())) @Model.Hora">
                                     </p>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-calendar-day"></i>
