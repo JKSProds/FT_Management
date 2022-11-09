@@ -217,7 +217,7 @@ namespace FT_Management.Controllers
 
             context.ApagarProposta(id);
 
-            return RedirectToAction("Visita", p.Visita);
+            return RedirectToAction("Visita", context.ObterVisita(p.IdVisita));
         }
 
         [HttpGet]
@@ -311,7 +311,7 @@ namespace FT_Management.Controllers
                     client = new WebDavClient(clientParams);
 
                     await client.PutFile(file.FileName, ms); // upload a resource
-
+                
                // }
             }
         }
