@@ -458,8 +458,8 @@ namespace FT_Management.Controllers
                 Utilizador u = context.ObterUtilizador(id);
                 return View("CalendarioTecnico", u);
             }
-            
-            return View("Calendario", context.ObterListaTecnicos(true));
+            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(true);
+            return View("Calendario", LstTecnicos);
         }
 
         [Authorize(Roles = "Admin, Escritorio")]

@@ -73,6 +73,16 @@ namespace FT_Management.Models
                         ImgUtilizador = result["ImgUtilizador"],
                         Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
                     });
+                    if (LstUtilizadores.Last().ImgUtilizador == "")
+                    {
+                        using Image image = Image.FromFile("wwwroot/img/user.png");
+                        using MemoryStream m = new MemoryStream();
+                        image.Save(m, image.RawFormat);
+                        byte[] imageBytes = m.ToArray();
+
+                        // Convert byte[] to Base64 String
+                        LstUtilizadores.Last().ImgUtilizador = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+                    }
                 }
             }
             return LstUtilizadores;
