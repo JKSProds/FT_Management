@@ -63,6 +63,9 @@ namespace FT_Management.Models
         [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
         public Viatura Viatura { get; set; }
+        [Display(Name = "Ultimo Acesso")]
+        public DateTime UltimoAcesso { get; set; }
+        public bool AcessoAtivo { get; set; }
         public Utilizador()
         {
             this.Id = 0;
@@ -73,6 +76,9 @@ namespace FT_Management.Models
             this.IdPHC = 0;
             this.IdArmazem = 0;
             this.ApiKey = new ApiKey();
+            this.UltimoAcesso = new DateTime();
+            this.ImgUtilizador = "/img/user.png";
+            this.AcessoAtivo = false;
         }
         
 

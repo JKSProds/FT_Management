@@ -74,10 +74,13 @@ namespace FT_Management.Models
 
         public static void ObterImagensUtilizador()
         {
+#if !DEBUG 
             if (Directory.Exists(FormatLinuxServer(CaminhoImagensUtilizador)))
             {
                 CloneDirectory(FormatLinuxServer(CaminhoImagensUtilizador), FormatLinuxServer(Directory.GetCurrentDirectory() + "\\wwwroot\\img\\"));
             }
+              
+#endif
         }
 
         private static void CloneDirectory(string root, string dest)

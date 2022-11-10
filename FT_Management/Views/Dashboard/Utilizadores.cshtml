@@ -1,0 +1,31 @@
+﻿@model IEnumerable<FT_Management.Models.Utilizador>
+
+@{
+    ViewData["Title"] = "Utilizadores";
+}
+
+
+ <div class='has-text-centered'>
+    <div class='columns is-mobile is-centered is-multiline'>
+    @foreach (var item in Model)
+    {
+      <div class='column is-2'>
+        <div class='box @(item.AcessoAtivo ? "has-background-success" : "has-background-danger")'>
+                    <div>
+          <h1 class='title is-5 has-text-centered'>
+            @item.NomeCompleto
+          </h1>
+        </div>
+          <div>
+        <figure class="my-2 image is-inline-block is-48x48">
+             <img class="is-rounded" src="@item.ImgUtilizador" alt="user_image">
+        </figure>
+        </div>
+        <div>
+            <p><b>@(item.AcessoAtivo ? (@item.UltimoAcesso.ToShortTimeString()) : "--:--")</b></p>
+          </div>
+        </div>
+      </div>
+    }
+    </div>
+  </div>

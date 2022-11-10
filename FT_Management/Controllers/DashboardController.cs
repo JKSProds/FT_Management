@@ -21,7 +21,20 @@ namespace FT_Management.Controllers
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Forbid();
 
-            return View(phccontext.ObterEncomendas().Where(d => d.NumDossier != 2));
+            return View(phccontext.ObterEncomendas().Where(d => d.NumDossier != 2).Where(e => !e.Fornecido));
+        }
+            
+
+        [AllowAnonymous]
+        public IActionResult Utilizadores(string Api)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
+            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Forbid();
+
+            return View(context.ObterListaUtilizadores(true));
         }
         [AllowAnonymous]
         public IActionResult Pendentes(string Api)

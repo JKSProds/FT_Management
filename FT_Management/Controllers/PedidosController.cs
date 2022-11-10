@@ -393,7 +393,7 @@ namespace FT_Management.Controllers
             if (IdUtilizador == 0) return Forbid();
 
             var calendar = new Calendar();
-            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(IdUtilizador).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
+            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(IdUtilizador).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(d => d.DataMarcacao).ToList();
 
             foreach (Marcacao m in LstMarcacoes)
             {
@@ -468,6 +468,22 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Marcacao m = phccontext.ObterMarcacao(id);
             m.DatasAdicionais = m.DatasAdicionais.Replace(dateOriginal.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
+
+            phccontext.AtualizaMarcacao(m);
+
+            return Json("Ok");
+        }
+        [Authorize(Roles = "Admin, Escritorio")]
+        public JsonResult AlteracaoCalendarioTecnico(int id, string dateOriginal, string date, int idTecnicoOriginal, int idTecnico)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+            m.DatasAdicionais = m.DatasAdicionais.Replace(DateTime.Parse(dateOriginal).ToString("yyyy-MM-dd"), DateTime.Parse(date).ToString("yyyy-MM-dd"));
+
+            Utilizador u = context.ObterUtilizador(idTecnico);
+            if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
+            if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
 
             phccontext.AtualizaMarcacao(m);
 

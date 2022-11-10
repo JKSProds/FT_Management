@@ -45,7 +45,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaUtilizadores(bool Enable)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores " + (Enable ? "WHERE enable=1" : "") + " order by NomeCompleto;";
+            string sqlQuery = "SELECT * FROM sys_utilizadores inner join dat_acessos_utilizador on sys_utilizadores.IdUtilizador = dat_acessos_utilizador.IdUtilizador " + (Enable ? "WHERE enable=1" : "") + " order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -70,7 +70,11 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
                         IdArmazem = result["IdArmazem"],
+#if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
+#endif                        
+                        UltimoAcesso = result["DataUltimoAcesso"],
+                        AcessoAtivo = result["TipoUltimoAcesso"] == 1,
                         Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
                     });
                 }
@@ -113,7 +117,9 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
                         IdArmazem = result["IdArmazem"],
+#if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
+#endif
                         Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
                     };
                     if (!string.IsNullOrEmpty(result["ID"]))
@@ -298,10 +304,10 @@ namespace FT_Management.Models
 
             return res.OrderBy(v => v.Inicio_Viagem).ToList();
         }
-        #endregion
+#endregion
 
         //PARAMETROS
-        #region PARAMETROS
+#region PARAMETROS
         public string ObterParam(string NomeParam)
         {
             string res = "";
@@ -372,10 +378,10 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        #endregion
+#endregion
 
         //LOGS
-        #region LOGS
+#region LOGS
         public List<Log> ObterListaLogs(int IdUtilizador)
         {
             List<Log> LstLogs = new List<Log>();
@@ -408,10 +414,10 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        #endregion
+#endregion
 
         //VISITAS
-        #region Visitas
+#region Visitas
         public List<Visita> ObterListaVisitas(int IdComercial, DateTime DataInicial, DateTime DataFinal)
         {
             PHCContext phccontext = new PHCContext(ConfigurationManager.AppSetting["ConnectionStrings:PHCConnection"], ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
@@ -685,10 +691,10 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        #endregion
+#endregion
 
         //ARMAZENS
-        #region Armazens
+#region Armazens
         public List<Armazem> ObterListaArmazens()
         {
             List<Armazem> LstArmazens = new List<Armazem>();
@@ -737,10 +743,10 @@ namespace FT_Management.Models
             db.Connection.Close();
             return LstProdutos;
         }
-        #endregion
+#endregion
 
         //FERIAS
-        #region Ferias
+#region Ferias
         public bool VerificarFeriasUtilizador(int IdUtilizador, DateTime Data)
         {
             bool res = false;
@@ -1247,10 +1253,10 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-        #endregion
+#endregion
 
         //ACESSOS
-        #region Acessos
+#region Acessos
         public List<Acesso> ObterListaAcessos(DateTime Data)
         {
             List<Acesso> LstAcessos = new List<Acesso>();
@@ -1419,10 +1425,10 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-        #endregion
+#endregion
 
         //Notificacoes
-        #region Notificacoes
+#region Notificacoes
         public List<Notificacao> ObterNotificacoesPendentes()
         {
             List<Notificacao> LstNotificacoes = new List<Notificacao>();
@@ -1459,10 +1465,10 @@ namespace FT_Management.Models
                 {
                 }
         }
-        #endregion
+#endregion
 
         //CONTACTOS
-        #region Contactos
+#region Contactos
         public Contacto ObterContacto(int id)
         {
             PHCContext phccontext = new PHCContext(ConfigurationManager.AppSetting["ConnectionStrings:PHCConnection"], ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
@@ -1776,7 +1782,7 @@ namespace FT_Management.Models
             using Database db = ConnectionString;
             db.Execute(sql);
         }
-        #endregion
+#endregion
 
         //OUTROS
         static string GetRandomString(int length)
@@ -1818,6 +1824,7 @@ namespace FT_Management.Models
                         LstEventos.Add(new CalendarioEvent
                         {
                             id = item.IdMarcacao.ToString() + "_" + dataMarcacao.ToString("yyyyMMdd"),
+                            IdMarcacao = item.IdMarcacao,
                             calendarId = "1",
                             title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
                             location = item.Cliente.MoradaCliente,
@@ -1830,7 +1837,8 @@ namespace FT_Management.Models
                             bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
                             body = "<h1>Num. da Marcação: " + item.IdMarcacao + "<br>" + "Incidente: " + item.Referencia + "</h1><br><br>" + item.ResumoMarcacao,
                             state = item.EstadoMarcacaoDesc,
-                            attendees = item.Tecnico.NomeCompleto
+                            attendees = item.Tecnico.NomeCompleto,
+                            url = "Pedido/" + item.IdMarcacao
                         });
                         dataMarcacao = dataMarcacao.AddMinutes(30);
                     }

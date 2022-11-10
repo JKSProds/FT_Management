@@ -54,7 +54,7 @@
                   </div>
                 </div>
         </div>
-        <div class="is-10 mx-1" id='cl_@u.Id'></div>
+        <div class="is-10 mx-1" id='cl_@u.Id' data-id="@u.Id"></div>
     </div>
     <script>
         var isMobile = false; //initiate as false
@@ -79,11 +79,63 @@
                 eventColor: '@u.CorCalendario',
                 events: 'ObterMarcacoes/@u.Id',
                 eventClick: function (info) {
-                    info.jsEvent.preventDefault(); // don't let the browser navigate
-                    if (info.event.url) {
-                        window.open(info.event.raw);
-                    }
-                }
+                        info.jsEvent.preventDefault();
+                        window.open(info.event.url);
+                },
+                 eventDrop: function(info) {
+                    //console.log(info);
+                    id = info.event.extendedProps.idMarcacao;
+                    tecOriginal = info.event.extendedProps.idTecnico;
+                    dataOriginal = info.event.extendedProps.dueDateClass;
+
+                    tecDestino = info.event._calendar.el.attributes['data-id'].value;
+                     dataDestino = new Date(info.event.start).toLocaleDateString("pt-PT");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Pedidos/AlteracaoCalendarioTecnico/" + id + "?date="+dataDestino+"&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal ,
+                        traditional: true,
+                         success: function (result) {
+                             info.event.setExtendedProp("dueDateClass", dataDestino);
+                             bulmaToast.toast({
+                                      message: 'Agendamento atualizado com sucesso!',
+                                      type: 'is-success',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000
+                                    })
+                        }
+                     });
+                  },
+                  eventReceive: function(info) {
+                    //console.log(info);
+
+                    id = info.event.extendedProps.idMarcacao;
+                    tecOriginal = info.event.extendedProps.idTecnico;
+                    dataOriginal = info.event.extendedProps.dueDateClass;
+
+                    tecDestino = info.event._calendar.el.attributes['data-id'].value;
+                     dataDestino = new Date(info.event.start).toLocaleDateString("pt-PT");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Pedidos/AlteracaoCalendarioTecnico/" + id + "?date="+dataDestino+"&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal ,
+                        traditional: true,
+                         success: function (result) {
+                             info.event.setExtendedProp("dueDateClass", dataDestino);
+                             info.event.setExtendedProp("idTecnico", tecDestino);
+                             bulmaToast.toast({
+                                      message: 'Agendamento atualizado com sucesso!',
+                                      type: 'is-success',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000
+                                    })
+                        }
+                     });
+                  }
           });
           
           srcCalendar.render();

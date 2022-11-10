@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FT_Management.Models;
@@ -21,7 +22,6 @@ namespace FT_Management.Controllers
             context.AdicionarLog(int.Parse(this.User.Claims.First().Value), "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
-
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
         }
 

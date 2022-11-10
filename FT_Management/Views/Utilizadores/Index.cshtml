@@ -49,13 +49,16 @@
                             @Html.DisplayNameFor(model => model.EmailUtilizador)
                         </th>
                         <th>
+                            @Html.DisplayNameFor(model => model.UltimoAcesso)
+                        </th>
+                        <th>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr class="@(item.AcessoAtivo ? "has-background-success-light" : "has-background-danger-light")">
                             <td class="is-image-cell">
                               <div class="image">
                                 <img src="@item.ImgUtilizador" class="is-rounded">
@@ -66,6 +69,9 @@
                             </td>
                             <td data-label="@Html.DisplayNameFor(model => model.EmailUtilizador)"  onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
                                 <span>@item.EmailUtilizador</span>
+                            </td>
+                            <td data-label="@Html.DisplayNameFor(model => model.UltimoAcesso)"  onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                <span>@item.UltimoAcesso</span>
                             </td>
                             @if (this.User.IsInRole("Master") || !item.Admin) {
                             <td class="is-actions-cell" style="@(!this.User.IsInRole("Master") && @item.Admin ? "opacity:0.2;" : "")">
