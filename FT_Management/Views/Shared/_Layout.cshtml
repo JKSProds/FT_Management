@@ -30,6 +30,12 @@
     <script src="~/lib/Chart.js/chart.min.js"></script>
     <script src="~/lib/signature_pad/signature_pad.umd.min.js"></script>
 
+    <style>
+        .navbar-item img {
+            max-height: 100%;
+        }
+    </style>
+
 </head>
 <body>
     <header>
@@ -232,7 +238,7 @@
                     {
                         <div class="navbar-item has-dropdown">
                             <a class="navbar-link">
-                            <figure class="mx-1 image is-inline-block">
+                            <figure class="mr-3 image is-inline-block is-48x48">
                                 <img class="is-rounded" src="@this.User.ObterImgUtilizador()" alt="user_image">
                             </figure>
                             <span>@this.User.ObterNomeCompleto()</span>
