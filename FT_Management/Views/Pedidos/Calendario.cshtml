@@ -79,6 +79,7 @@
                 eventColor: '@u.CorCalendario',
                 events: 'ObterMarcacoes/@u.Id',
                 eventClick: function (info) {
+                        info.jsEvent.preventDefault();
                         window.open(info.event.url);
                 },
                  eventDrop: function(info) {
