@@ -41,6 +41,7 @@
             <table class="table is-hoverable is-fullwidth">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>
                             @Html.DisplayNameFor(model => model.NomeCompleto)
                         </th>
@@ -55,6 +56,11 @@
                     @foreach (var item in Model)
                     {
                         <tr>
+                            <td class="is-image-cell">
+                              <div class="image">
+                                <img src="@item.ImgUtilizador" class="is-rounded">
+                              </div>
+                            </td>
                             <td data-label="@Html.DisplayNameFor(model => model.NomeCompleto)" onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
                                 <span>@item.NomeCompleto</span>
                             </td>
