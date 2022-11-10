@@ -81,7 +81,7 @@ namespace FT_Management.Models
                         byte[] imageBytes = m.ToArray();
 
                         // Convert byte[] to Base64 String
-                        LstUtilizadores.Last().ImgUtilizador = "data:image/png;base64," + Convert.ToBase64String(imageBytes);
+                        LstUtilizadores.Last().ImgUtilizador = "data:@file/png;base64," + Convert.ToBase64String(imageBytes);
                     }
                 }
             }
