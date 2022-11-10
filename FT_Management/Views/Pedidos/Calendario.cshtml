@@ -30,6 +30,29 @@
 <script type="module" src='~/lib/fullcalendar/interaction/main.js'></script>
 <script type="module" src='~/lib/fullcalendar/daygrid/main.js'></script>
 
+<div class="field is-grouped is-grouped-centered">
+  <p class="control">
+    <a class="button is-info is-outlined is-pulled-left" id="month">
+      Modo Mensal
+    </a>
+  </p>
+    <p class="control">
+    <a class="button is-info is-outlined is-pulled-left" id="week">
+      Modo Semanal
+    </a>
+  </p>
+  <p class="control">
+    <a class="button is-primary is-pulled-right" id="prev">
+      Anterior
+    </a>
+  </p>
+  <p class="control" >
+    <a class="button is-info is-pulled-right" id="next">
+        Próximo
+    </a>
+  </p>
+</div>
+<br />
 <div id='calendar-container' class="mx-2">
     @foreach (var u in Model)
     {
@@ -139,6 +162,20 @@
           });
           
           srcCalendar.render();
+
+            document.getElementById('prev').addEventListener('click', function() {
+            srcCalendar.prev(); // call method
+          });
+
+          document.getElementById('next').addEventListener('click', function() {
+            srcCalendar.next(); // call method
+          });
+          document.getElementById('month').addEventListener('click', function() {
+            srcCalendar.changeView("dayGridMonth"); // call method
+          });
+          document.getElementById('week').addEventListener('click', function() {
+            srcCalendar.changeView("dayGridWeek"); // call method
+          });
         });
     </script>
     }
