@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace FT_Management.Controllers
 {
@@ -42,6 +44,7 @@ namespace FT_Management.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
@@ -118,6 +121,7 @@ namespace FT_Management.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                        new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
                         new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
                         new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                         new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
@@ -184,6 +188,24 @@ namespace FT_Management.Controllers
             context.NovoUtilizador(u);
 
             return RedirectToAction("Editar", new { id = u.Id});
+        }
+        [HttpPost]
+        public IActionResult AtualizarImagem(int id, IFormFile file)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+
+            if (file.Length > 0)
+            {
+                FicheirosContext.CriarImagemUtilizador(file, u.NomeUtilizador);
+            }
+
+            u.ImgUtilizador = "/img/" + u.NomeUtilizador + "/" + file.FileName;
+
+            context.NovoUtilizador(u);
+            FicheirosContext.ObterImagensUtilizador();
+
+            return RedirectToAction("Logout");
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         public IActionResult AtualizarSenha(int id, string password_current, string password, string password_confirmation)

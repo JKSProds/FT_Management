@@ -14,8 +14,13 @@ namespace FT_Management.Models
             var firstName = principal.Claims.Where(c=> c.Type.Contains("givenname")).First();
             return firstName?.Value;
         }
+        public static string ObterImgUtilizador(this ClaimsPrincipal principal)
+        {
+            if (principal.Claims.Where(c => c.Type.Contains("thumbprint")).Count() == 0) return "";
+            var img = principal.Claims.Where(c => c.Type.Contains("thumbprint")).First();
+            return img?.Value;
+        }
 
-      
     }
     public class Utilizador
     {

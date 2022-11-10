@@ -73,6 +73,11 @@
       "provider": "unpkg",
       "library": "bulma-pageloader@0.3.0",
       "destination": "wwwroot/lib/bulma-pageloader/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "fullcalendar@4.2.0",
+      "destination": "wwwroot/lib/fullcalendar/"
     }
   ]
 }

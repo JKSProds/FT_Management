@@ -30,6 +30,21 @@
     <script src="~/lib/Chart.js/chart.min.js"></script>
     <script src="~/lib/signature_pad/signature_pad.umd.min.js"></script>
 
+    <style>
+        .navbar-item img {
+            max-height: 100%;
+        }
+        .dropzone {
+            background: white;
+            border-radius: 20px;
+            border: 2px dashed rgb(0, 135, 247);
+            border-image: none;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+
 </head>
 <body>
     <header>
@@ -87,7 +102,7 @@
                         </div>
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
-                                Tabelas
+                                Stocks
                             </a>
 
                             <div class="navbar-dropdown buttons">
@@ -105,22 +120,6 @@
                                             <i class="fa-solid fa-barcode"></i>
                                         </span>
                                         <span>Picking</span>
-                                    </a>
-                                </p>
-                                <p class="control mx-1">
-                                    <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
-                                        <span class="icon">
-                                            <i class="fas  fa-umbrella-beach"></i>
-                                        </span>
-                                        <span>Mapa de Férias</span>
-                                    </a>
-                                </p>
-                                <p class="control mx-1">
-                                    <a class="button is-info is-rounded is-fullwidth" href="~/Acessos">
-                                        <span class="icon">
-                                            <i class="fas fa-clock"></i>
-                                        </span>
-                                        <span>Acessos</span>
                                     </a>
                                 </p>
                             </div>
@@ -217,46 +216,88 @@
                                 </p>
                             </div>
                         </div>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">
+                                Recursos Humanos
+                            </a>
+
+                            <div class="navbar-dropdown buttons">
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
+                                        <span class="icon">
+                                            <i class="fas  fa-umbrella-beach"></i>
+                                        </span>
+                                        <span>Mapa de Férias</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Acessos">
+                                        <span class="icon">
+                                            <i class="fas fa-clock"></i>
+                                        </span>
+                                        <span>Acessos</span>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 }
                 <div class="navbar-end">
-                    <div class="navbar-item">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            if (!User.IsInRole("Cliente")) {
-                                <a class="button is-primary is-light" href="~/Utilizadores/Editar">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="navbar-item has-dropdown">
+                            <a class="navbar-link">
+                            <figure class="mr-3 image is-inline-block is-48x48">
+                                <img class="is-rounded" src="@this.User.ObterImgUtilizador()" alt="user_image">
+                            </figure>
+                            <span>@this.User.ObterNomeCompleto()</span>
+                            </a>
+
+                            <div class="navbar-dropdown">
+                            @if (!User.IsInRole("Cliente")) {
+                                <div class="navbar-item">
+                                <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Editar">
                                     <span class="icon">
                                         <i class="fas fa-user"></i>
                                     </span>
+                                    <span>Meu Perfil</span>
                                 </a>
+                                </div>
                             }else{
                                 <button class="mx-3 button is-danger">@this.User.ObterNomeCompleto()</button>    
                             }
                             @if (this.User.IsInRole("Admin"))
                             {
-                                <a class="button is-light" href="~/Utilizadores">
+                            <div class="navbar-item">
+                                <a class="button is-light is-fullwidth" href="~/Utilizadores">
                                     <span class="icon">
                                         <i class="fas fa-gear"></i>
                                     </span>
+                                    <span>Utilizadores</span>
                                 </a>
+                            </div>
                             }
-                            <a class="button is-danger is-light" href="~/Utilizadores/Logout">
+                            <div class="navbar-item">
+                            <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
                                 <span class="icon">
                                     <i class="fas fa-sign-out-alt"></i>
                                 </span>
                                 <span>Terminar Sessão</span>
                             </a>
-                        }
-                        else
+                            </div>
+                            </div>
+                        </div>
+                        }else
                         {
-                            <a class="button is-info is-light" href="~/Utilizadores/Login">
-                                <span class="icon">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                </span>
-                                <span>Iniciar Sessão</span>
-                            </a>
+                           <div class="navbar-item">
+                                <a class="button is-info is-light" href="~/Utilizadores/Login">
+                                    <span class="icon">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </span>
+                                    <span>Iniciar Sessão</span>
+                                </a>
+                            </div>
                         }
-                    </div>
                 </div>
             </div>
         </nav>

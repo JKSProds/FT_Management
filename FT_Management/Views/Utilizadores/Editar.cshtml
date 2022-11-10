@@ -4,6 +4,7 @@
     ViewData["Title"] = "Perfil";
 }
 
+
 <div class="container">
     <div class="columns">
         <div class="column">
@@ -37,6 +38,23 @@
                 </header>
                 <div class="card-content">
                     <input type="hidden" asp-for="Id" id="txtHiddenIdUtilizador"/>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.ImgUtilizador)</label></div><div class="field-body">
+                            <div class="field has-addons">
+                                <figure class="mr-3 image is-inline-block is-128x128">
+                                    <img class="is-rounded" src="@Model.ImgUtilizador" alt="user_image">
+                                </figure>
+                                <div class="form-group">
+                                    <form action="/Utilizadores/AtualizarImagem/@Model.Id"
+                                      class="dropzone" id="dropImage">
+                                  <div class="dz-message needsclick">    
+                                    Largue uma imagem aqui para fazer o upload
+                                    </div>
+                                  </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeUtilizador)</label></div><div class="field-body">
                             <div class="field">
