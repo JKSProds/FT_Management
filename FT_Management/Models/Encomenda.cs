@@ -29,6 +29,7 @@ namespace FT_Management.Models
         public bool Total { get { return this.LinhasEncomenda.Where(l => l.Total == false).Count() == 0; } }
         [Display(Name = "Items")]
         public double NItems { get { return this.LinhasEncomenda.Sum(l => l.Produto.Stock_Fisico); } }
+        public bool Fornecido { get { return LinhasEncomenda.Where(l => l.Fornecido).Count() == LinhasEncomenda.Count(); } }
         public bool DespacharEncomenda { get; set; }
         public bool ExisteEncomenda(Tipo tipo)
         {
@@ -67,5 +68,6 @@ namespace FT_Management.Models
         public DateTime DataEnvio { get; set; }
         public bool Total { get; set; }
         public Produto Produto { get; set; }
+        public bool Fornecido { get; set; }
     }
 }

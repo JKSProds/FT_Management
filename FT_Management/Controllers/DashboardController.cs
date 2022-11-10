@@ -21,7 +21,7 @@ namespace FT_Management.Controllers
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Forbid();
 
-            return View(phccontext.ObterEncomendas().Where(d => d.NumDossier != 2));
+            return View(phccontext.ObterEncomendas().Where(d => d.NumDossier != 2).Where(e => !e.Fornecido));
         }
             
 
