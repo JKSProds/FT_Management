@@ -8,6 +8,7 @@ namespace FT_Management.Models
     public class CalendarioEvent
     {
         public string id { get; set; }
+        public int IdMarcacao { get; set; }
         public string title { get; set; }
         public string calendarId { get; set; }
         public DateTime start { get; set; }

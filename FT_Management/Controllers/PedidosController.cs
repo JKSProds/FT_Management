@@ -474,6 +474,22 @@ namespace FT_Management.Controllers
             return Json("Ok");
         }
         [Authorize(Roles = "Admin, Escritorio")]
+        public JsonResult AlteracaoCalendarioTecnico(int id, string dateOriginal, string date, int idTecnicoOriginal, int idTecnico)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+            m.DatasAdicionais = m.DatasAdicionais.Replace(DateTime.Parse(dateOriginal).ToString("yyyy-MM-dd"), DateTime.Parse(date).ToString("yyyy-MM-dd"));
+
+            Utilizador u = context.ObterUtilizador(idTecnico);
+            if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
+            if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+
+            phccontext.AtualizaMarcacao(m);
+
+            return Json("Ok");
+        }
+        [Authorize(Roles = "Admin, Escritorio")]
         public JsonResult AlteracaoRapida(int id, string EstadoMarcacaoDesc, int Tecnico, string DataMarcacao)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;

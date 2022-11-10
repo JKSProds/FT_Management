@@ -1824,6 +1824,7 @@ namespace FT_Management.Models
                         LstEventos.Add(new CalendarioEvent
                         {
                             id = item.IdMarcacao.ToString() + "_" + dataMarcacao.ToString("yyyyMMdd"),
+                            IdMarcacao = item.IdMarcacao,
                             calendarId = "1",
                             title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
                             location = item.Cliente.MoradaCliente,
@@ -1836,7 +1837,8 @@ namespace FT_Management.Models
                             bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
                             body = "<h1>Num. da Marcação: " + item.IdMarcacao + "<br>" + "Incidente: " + item.Referencia + "</h1><br><br>" + item.ResumoMarcacao,
                             state = item.EstadoMarcacaoDesc,
-                            attendees = item.Tecnico.NomeCompleto
+                            attendees = item.Tecnico.NomeCompleto,
+                            url = "Pedido/" + item.IdMarcacao
                         });
                         dataMarcacao = dataMarcacao.AddMinutes(30);
                     }
