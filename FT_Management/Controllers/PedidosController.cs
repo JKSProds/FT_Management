@@ -393,7 +393,7 @@ namespace FT_Management.Controllers
             if (IdUtilizador == 0) return Forbid();
 
             var calendar = new Calendar();
-            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(IdUtilizador).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30));
+            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoes(context.ObterUtilizador(IdUtilizador).IdPHC, DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).OrderBy(d => d.DataMarcacao).ToList();
 
             foreach (Marcacao m in LstMarcacoes)
             {
