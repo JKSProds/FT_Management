@@ -1208,7 +1208,7 @@ namespace FT_Management.Models
             SQL_Query += (estado != "" ? "estado like '%" + estado + "%' and " : "");
             SQL_Query = SQL_Query.Remove(SQL_Query.Length - 4, 4);
 
-            return ObterMarcacoes(SQL_Query, false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            return ObterMarcacoes(SQL_Query, false, true, true, false, false, false).OrderByDescending(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
