@@ -4,7 +4,7 @@
 
 
 @{
-    ViewData["Title"] = "Marcacoes";
+    ViewData["Title"] = "Agendamento";
 }
 
 
@@ -13,9 +13,14 @@
         <div class="column">
             <div class="tile">
                 <div class="tile is-parent is-vertical">
-                    <article class="tile is-child notification is-info">
-                        <p class="title">Agendamento de Marcações Técnicas</p>
-                    </article>
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fa-solid fa-calendar-alt"></i>
+                                </span>
+                                <span>Agendamento de Marcações Técnicas</span>
+                            </p>
+                        </article>
                 </div>
             </div>
         </div>
@@ -30,27 +35,45 @@
 <script type="module" src='~/lib/fullcalendar/interaction/main.js'></script>
 <script type="module" src='~/lib/fullcalendar/daygrid/main.js'></script>
 
-<div class="field is-grouped is-grouped-centered">
-  <p class="control">
-    <a class="button is-info is-outlined is-pulled-left" id="month">
-      Modo Mensal
-    </a>
-  </p>
+<div class="columns">
+    <div class="column is-6">
+        <div class="field is-grouped is-grouped-left">
+          <p class="control">
+            <a class="button is-warning is-large" id="txtHeader">
+              ----
+            </a>
+          </p>
+
+        </div>
+        </div>
+    <div class="column is-6">
+    <div class="field is-grouped is-grouped-right">
     <p class="control">
-    <a class="button is-info is-outlined is-pulled-left" id="week">
-      Modo Semanal
+    <a class="button is-primary is-outlined" id="mode">
+      <span class="icon">
+        <i class="fa-solid fa-eye"></i>
+    </span>
+    <span>Modo de Visualização</span>
     </a>
   </p>
   <p class="control">
-    <a class="button is-primary is-pulled-right" id="prev">
-      Anterior
+    <a class="button is-info" id="prev">
+    <span class="icon">
+        <i class="fa-solid fa-circle-left"></i>
+    </span>
+    <span>Anterior</span>
     </a>
   </p>
   <p class="control" >
-    <a class="button is-info is-pulled-right" id="next">
-        Próximo
+    <a class="button is-info" id="next">
+            <span>Próximo</span>
+    <span class="icon">
+        <i class="fa-solid fa-circle-right"></i>
+    </span>
     </a>
   </p>
+</div>
+</div>
 </div>
 <br />
 <div id='calendar-container' class="mx-2">
@@ -162,19 +185,24 @@
           });
           
           srcCalendar.render();
+          document.getElementById('txtHeader').text = srcCalendar.view.title;
 
             document.getElementById('prev').addEventListener('click', function() {
-            srcCalendar.prev(); // call method
+            srcCalendar.prev();
+            document.getElementById('txtHeader').text = srcCalendar.view.title;
           });
 
           document.getElementById('next').addEventListener('click', function() {
-            srcCalendar.next(); // call method
+            srcCalendar.next(); 
+            document.getElementById('txtHeader').text = srcCalendar.view.title;
           });
-          document.getElementById('month').addEventListener('click', function() {
-            srcCalendar.changeView("dayGridMonth"); // call method
-          });
-          document.getElementById('week').addEventListener('click', function() {
-            srcCalendar.changeView("dayGridWeek"); // call method
+          document.getElementById('mode').addEventListener('click', function() {
+              console.log(srcCalendar);
+              view = srcCalendar.view.type;
+              if (view == "dayGridWeek") srcCalendar.changeView("dayGridMonth");
+              if (view == "dayGridMonth") srcCalendar.changeView("dayGridDay");
+              if (view == "dayGridDay") srcCalendar.changeView("dayGridWeek");
+              document.getElementById('txtHeader').text = srcCalendar.view.title;
           });
         });
     </script>
