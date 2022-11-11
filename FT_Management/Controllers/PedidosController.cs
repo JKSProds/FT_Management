@@ -34,7 +34,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -87,7 +87,7 @@ namespace FT_Management.Controllers
                 if (IdMarcacao>0) return RedirectToAction("Editar", "Pedidos", new { id=IdMarcacao});
             }
 
-            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -106,7 +106,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -148,7 +148,7 @@ namespace FT_Management.Controllers
                 return RedirectToAction("Editar", "Pedidos", new { id = id });
             }
 
-            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -458,7 +458,7 @@ namespace FT_Management.Controllers
                 Utilizador u = context.ObterUtilizador(id);
                 return View("Calendario", new List<Utilizador>() { u });
             }
-            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(true);
+            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(true, true);
             return View("Calendario", LstTecnicos);
         }
 
@@ -510,6 +510,7 @@ namespace FT_Management.Controllers
 
         public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
         {
+            
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
@@ -540,7 +541,7 @@ namespace FT_Management.Controllers
                 return RedirectToAction("ListaPedidos", new { IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
             }
 
-            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(false).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(false, false).ToList();
             LstUtilizadores.Insert(0, new Utilizador() { Id = 0, NomeCompleto = "Todos" });
             ViewBag.ListaTecnicos = LstUtilizadores;
 
@@ -610,7 +611,7 @@ namespace FT_Management.Controllers
 
             ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;
             ViewData["SelectedTecnico"] = user.NomeCompleto;
-            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
 
             return View(m);
         }

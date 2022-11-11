@@ -81,7 +81,7 @@
     {
     <div class="columns">
         <div class="column is-2">
-            <div class="card" style="background:@u.CorCalendario;height:100%">
+            <div class="card" style="background:@u.CorCalendario;">
                   <div class="card-content">
                     <div class="media">
                       <div class="media-left">
@@ -92,9 +92,17 @@
                       <div class="media-content">
                         <p class="title is-4">@u.NomeCompleto</p>
                         <p class="subtitle is-6">@u.EmailUtilizador</p>
+                        @if (u.Viatura.Matricula.Count() > 0) {
+                        <p class="subtitle is-6">            
+                            <span class="icon">
+                                <i class="fa-solid @(u.Viatura.Ignicao ? "fa-car-on" : "fa-car")"></i>
+                            </span>
+                            <span><b>@u.Viatura.LocalizacaoMorada</b></span>
+                         </p>
+                        }
                       </div>
                     </div>
-                    <a class="button is-info is-fullwidth" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
+                    <a class="button is-link is-fullwidth is-large" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
                          <i class="fas fa-eye"></i>
                     </a>
                   </div>
