@@ -42,7 +42,7 @@ namespace FT_Management.Models
 
         //UTILIZADOR
         #region UTILIZADORES
-        public List<Utilizador> ObterListaUtilizadores(bool Enable)
+        public List<Utilizador> ObterListaUtilizadores(bool Enable, bool Viatura)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
             string sqlQuery = "SELECT * FROM sys_utilizadores inner join dat_acessos_utilizador on sys_utilizadores.IdUtilizador = dat_acessos_utilizador.IdUtilizador " + (Enable ? "WHERE enable=1" : "") + " order by NomeCompleto;";
@@ -77,17 +77,21 @@ namespace FT_Management.Models
                         AcessoAtivo = result["TipoUltimoAcesso"] == 1,
                         Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
                     });
+                    if (!string.IsNullOrEmpty(LstUtilizadores.Last().Viatura.Matricula) && Viatura)
+                    {
+                        LstUtilizadores.Last().Viatura = ObterViatura(LstUtilizadores.Last());
+                    }
                 }
             }
             return LstUtilizadores;
         }
         public List<Utilizador> ObterListaTecnicos(bool Enable)
         {
-            return ObterListaUtilizadores(Enable).Where(u => u.TipoUtilizador == 1).ToList();
+            return ObterListaUtilizadores(Enable, false).Where(u => u.TipoUtilizador == 1).ToList();
         }
-        public List<Utilizador> ObterListaComerciais()
+        public List<Utilizador> ObterListaComerciais(bool Enable)
         {
-            return ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+            return ObterListaUtilizadores(Enable,false).Where(u => u.TipoUtilizador == 2).ToList();
         }
         public Utilizador ObterUtilizador(int Id)
         {
@@ -144,7 +148,7 @@ namespace FT_Management.Models
 
         public List<Marcacao> ObterUtilizadorMarcacao(List<Marcacao> LstMarcacao)
         {
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false, false);
 
             foreach (var item in LstMarcacao)
             {
@@ -252,7 +256,7 @@ namespace FT_Management.Models
         public List<Viatura> ObterViaturas()
         {
             List<Viatura> res = new List<Viatura>();
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true).Where(u => u.Viatura.Matricula != "").ToList();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u => u.Viatura.Matricula != "").ToList();
             string sqlQuery = "SELECT * FROM dat_viaturas;";
 
             using Database db = ConnectionString;
@@ -946,7 +950,7 @@ namespace FT_Management.Models
         public List<Ferias> ObterListaFeriasValidar()
         {
             List<Ferias> LstFerias = new List<Ferias>();
-            List<Utilizador> LstUtilizadores = this.ObterListaUtilizadores(false);
+            List<Utilizador> LstUtilizadores = this.ObterListaUtilizadores(false, false);
             using (Database db = ConnectionString)
             {
 
@@ -1063,7 +1067,7 @@ namespace FT_Management.Models
             //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             //int totalRows = workSheet.Dimension.Rows;
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false);
             List<Ferias> LstFerias = ObterListaFerias(DateTime.Parse(Ano + "-01-01"), DateTime.Parse(Ano + "-12-31"));
             List<Feriado> LstFeriados = ObterListaFeriados(Ano);
             int count = 0;
@@ -1311,7 +1315,7 @@ namespace FT_Management.Models
             //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             int totalRows = workSheet.Dimension.Rows;
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false);
             List<Acesso> LstAcessos = ObterListaAcessosMes(Data);
 
             int y = 5;
@@ -1662,7 +1666,7 @@ namespace FT_Management.Models
             DateTime dt = new DateTime();
             DateTime.TryParse(Filtro, out dt);
 
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false, false);
 
             List<Contacto> LstContacto = new List<Contacto>();
             string sqlQuery = "SELECT * FROM dat_contactos where Nome like '%" + Filtro + "%' or Morada like '%" + Filtro + "%' or PessoaContacto like '%" + Filtro + "%' or Email like '%" + Filtro + "%' or TipoContacto like '%" + Filtro + "%' or DataContacto like '%" + dt.ToString("yyyy-MM-dd") + "%';";

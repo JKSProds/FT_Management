@@ -1100,7 +1100,7 @@ namespace FT_Management.Models
 
         private List<Marcacao> ObterMarcacoes(string SQL_Query, bool LoadComentarios, bool LoadCliente, bool LoadTecnico, bool LoadFolhasObra, bool LoadAnexos, bool LoadDossiers)
         {
-            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaUtilizadores(false);
+            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaUtilizadores(false, false);
             List<EstadoMarcacao> LstEstadoMarcacao = this.ObterMarcacaoEstados();
             List<Marcacao> LstMarcacao = new List<Marcacao>();
             List<Cliente> LstClientes = this.ObterClientes();

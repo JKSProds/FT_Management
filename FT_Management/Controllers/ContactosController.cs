@@ -21,7 +21,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             
-            List<Utilizador> LstUtilizadores = context.ObterListaComerciais().ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaComerciais(true).ToList();
             ViewBag.Comerciais = LstUtilizadores;
                 LstUtilizadores.Insert(0, new Utilizador() { Id= 0, NomeCompleto="Todos"});
             ViewBag.ListaComerciais = LstUtilizadores;

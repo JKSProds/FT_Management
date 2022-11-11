@@ -27,7 +27,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterListaUtilizadores(true));
+            return View(context.ObterListaUtilizadores(true, false));
         }
 
         [AllowAnonymous]

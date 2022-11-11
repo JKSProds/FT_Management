@@ -34,7 +34,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -87,7 +87,7 @@ namespace FT_Management.Controllers
                 if (IdMarcacao>0) return RedirectToAction("Editar", "Pedidos", new { id=IdMarcacao});
             }
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -106,7 +106,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -148,7 +148,7 @@ namespace FT_Management.Controllers
                 return RedirectToAction("Editar", "Pedidos", new { id = id });
             }
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -438,7 +438,7 @@ namespace FT_Management.Controllers
         public ActionResult CalendarioView(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (id != 0) id = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
+            if (id != 0) id = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
             {
                 if (id == 0) id = int.Parse(this.User.Claims.First().Value);
@@ -451,7 +451,7 @@ namespace FT_Management.Controllers
         public ActionResult Agendamento(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (id != 0) id = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
+            if (id != 0) id = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
             {
                 if (id == 0) id = int.Parse(this.User.Claims.First().Value);
@@ -484,6 +484,8 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(idTecnico);
             if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
             if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             phccontext.AtualizaMarcacao(m);
 
@@ -608,7 +610,7 @@ namespace FT_Management.Controllers
 
             ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;
             ViewData["SelectedTecnico"] = user.NomeCompleto;
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador != 3).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false);
 
             return View(m);
         }
@@ -619,7 +621,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdArmazem = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).First().IdArmazem;
+            int IdArmazem = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First().IdArmazem;
             string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
             res += "### " + ultimaGT + " ###\r\n";
 

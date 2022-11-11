@@ -21,7 +21,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterListaUtilizadores(false));
+            return View(context.ObterListaUtilizadores(false, false));
         }
             public IActionResult Login(string nome, string password, string ReturnUrl)
         {
@@ -31,7 +31,7 @@ namespace FT_Management.Controllers
             if (nome != null && password != null)
             {
 
-                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
                 if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
 
@@ -81,7 +81,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
             if (LstUtilizadores.Count == 0) {
                 Cliente c = phccontext.ObterClienteNIF(utilizador.NomeUtilizador);
