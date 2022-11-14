@@ -502,7 +502,9 @@ namespace FT_Management.Models
                                 EstadoEquipamento = result["situacao"].ToString().Trim(),
                                 ConferidoPor = result.IsDBNull("qassinou") ? "" : result["qassinou"].ToString().Trim(),
                                 IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
-                                IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString())
+                                IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
+                                AssistenciaRemota = result["tipo_int"].ToString() == "3",
+                                Piquete = result["piquete"].ToString().Trim() == "True"
                             });
 
                         if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim());
