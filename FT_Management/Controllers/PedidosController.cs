@@ -458,7 +458,7 @@ namespace FT_Management.Controllers
                 Utilizador u = context.ObterUtilizador(id);
                 return View("Calendario", new List<Utilizador>() { u });
             }
-            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(true, true);
+            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(false, true);
             return View("Calendario", LstTecnicos);
         }
 
