@@ -435,19 +435,6 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
-        public ActionResult CalendarioView(int id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (id != 0) id = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
-            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
-            {
-                if (id == 0) id = int.Parse(this.User.Claims.First().Value);
-                Utilizador u = context.ObterUtilizador(id);
-                return View("CalendarioTecnico", u);
-            }
-            return View("CalendarioNew");
-        }
-
         public ActionResult Agendamento(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FT_Management.Controllers
 {
@@ -169,6 +170,11 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
             if (!User.IsInRole("Admin") && id != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("Editar", new { id = int.Parse(this.User.Claims.First().Value) });
+
+            List<Viatura> LstViaturas = context.ObterViaturas();
+            LstViaturas.Insert(0, new Viatura() { Matricula = "N/D" });
+            ViewBag.Viaturas = LstViaturas.Select(l => new SelectListItem() { Value = l.Matricula, Text = l.Matricula });
+
             return View(context.ObterUtilizador(id));
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
