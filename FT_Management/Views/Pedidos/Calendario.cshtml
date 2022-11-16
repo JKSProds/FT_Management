@@ -7,7 +7,7 @@
     ViewData["Title"] = "Agendamento";
 }
 
-
+<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
 <div class="container">
     <div class="columns">
         <div class="column">
@@ -61,12 +61,10 @@
     <span class="icon">
         <i class="fa-solid fa-circle-left"></i>
     </span>
-    <span>Anterior</span>
     </a>
   </p>
   <p class="control" >
     <a class="button is-info" id="next">
-            <span>Próximo</span>
     <span class="icon">
         <i class="fa-solid fa-circle-right"></i>
     </span>
@@ -134,7 +132,7 @@
                 events: 'ObterMarcacoes/@u.Id',
                 eventClick: function (info) {
                         info.jsEvent.preventDefault();
-                        window.open(info.event.url);
+                    ObterMarcacao(info.event.extendedProps.idMarcacao);
                 },
                  eventDrop: function(info) {
                     //console.log(info);
@@ -215,10 +213,108 @@
               document.getElementById('txtHeader').text = srcCalendar.view.title;
           });
         });
+
+     function ObterMarcacao(id) {
+         document.getElementById('pageloader').classList.add('is-active');
+         $.ajax({
+             url: '/Pedidos/ObterMarcacao/' + id,
+             type: "GET",
+             success: function(response) {
+                //console.log(response);
+                document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function(elem){
+                                                                                    return new Date(elem).toLocaleDateString();
+                                                                                }).join(" | ");
+                document.getElementById('txtHeaderMarcacao').innerHTML = '#' + response.idMarcacao + ' - ' + response.cliente.nomeCliente;
+                document.getElementById('txtRef').value = response.referencia;
+                document.getElementById('txtTec').value = response.lstTecnicos.map(function(elem){
+                                                                                    return elem.nomeCompleto;
+                                                                                }).join(" | ");
+                document.getElementById('txtResumo').value = response.resumoMarcacao;
+                document.getElementById('txtEstado').value = response.estadoMarcacaoDesc;
+
+                document.getElementById('btnVer').href = '/Pedidos/Pedido/' + response.idMarcacao;
+                document.getElementById('btnEditar').href = '/Pedidos/Editar/' + response.idMarcacao;
+
+                document.getElementById('pageloader').classList.remove('is-active');
+                var modal = Bulma('#modalQuickViewMarcacao').modal().open();
+                
+            },
+            error: function (response) {
+                alert(response.responseText);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
     </script>
     }
 </div>
 
-<script>
-    
-</script>
+<div id="modalQuickViewMarcacao" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title" id="txtHeaderMarcacao">#-----</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <fieldset disabled>
+                    <div class="field">
+                      <div class="control">
+                        <label class="label">Nº de Incidente</label>
+                        <input type="text" class="input"  id="txtRef">
+                      </div>
+                    </div>
+                    <div class="field">
+                    <div class="control">
+                        <label class="label">Estado</label>
+                        <input type="text" class="input"  id="txtEstado">
+                      </div>
+                    </div>
+                    <div class="field">
+                    <div class="control">
+                        <label class="label">Técnico</label>
+                        <input type="text" class="input"  id="txtTec">
+                      </div>
+                    </div>
+                   <div class="field">
+                    <div class="control">
+                        <label class="label">Data</label>
+                        <input type="text" class="input"  id="txtDatas">
+                      </div>
+                    </div>
+                   <div class="field">
+                    <div class="control">
+                        <label class="label">Resumo</label>
+                        <textarea type="text" class="textarea" rows=12 id="txtResumo"></textarea>
+                      </div>
+                    </div>
+                </fieldset>
+                </div>
+        </section>
+        <footer class="modal-card-foot">
+                <div class="field is-grouped is-grouped-right">
+            <p class="control">
+                <a class="button is-primary is-outlined" href="" target="_blank" id="btnVer">
+                  <span class="icon">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
+                <span>Ver</span>
+                </a>
+              </p>
+            <p class="control">
+                <a class="button is-info is-outlined" href="" target="_blank" id="btnEditar">
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>Editar</span>
+                </a>
+              </p>
+            <button class="button is-secondary is-outlined" onclick="Bulma('#modalQuickViewMarcacao').modal().close();">Cancelar</button>
+       </div>
+        </footer>
+    </div>
+</div>
+
