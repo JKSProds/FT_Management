@@ -1071,11 +1071,13 @@ namespace FT_Management.Models
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     isAllDay = true,
                     IdTecnico = item.IdUtilizador,
-                    //color = ("#33FF77"),
+                    color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
                     raw = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
+                    url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
                     category = "time",
                     dueDateClass = "",
-                    bgColor = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario)
+                    bgColor = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
+                    
                 });
             }
 

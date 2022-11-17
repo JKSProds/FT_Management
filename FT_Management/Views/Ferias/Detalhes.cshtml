@@ -333,43 +333,55 @@ else
         modal.open();
     });
 
-    function AdicionarFerias() {
-        document.getElementById("btnAdicionarFerias").classList.add("is-loading");
-        var json = {
-            datainicio: document.getElementById('txtDataInicio').value.split('-')[0],
-            datafim: document.getElementById('txtDataInicio').value.split('-')[1],
-            idutilizador: document.getElementById('hiddenIdUtilizador').value,
-        };
-
-        var dF = moment(document.getElementById('txtDataInicio').value.split('-')[1], "DD/MM/YYYY").toDate();
-        var dI = moment(document.getElementById('txtDataInicio').value.split('-')[0], "DD/MM/YYYY").toDate();
-        var Diff = (dF - dI) / (1000 * 3600 * 24);
-        var DiasMarcados = (@Model.DiasDisponiveis - @Model.DiasTotais);
-
-        if (Diff > DiasMarcados) {
-            document.getElementById("btnAdicionarFerias").classList.remove("is-loading");
-            $(function () {
+function AdicionarFerias() {
+            if (document.getElementById('txtDataInicio').value.split('-')[0] == '') {
                 bulmaToast.toast({
-                  message: 'Dias escolhidos excedem dias disponiveis!',
-                  type: 'is-danger',
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  opacity: 0.8,
-                  duration: 5000
-                })
-            });
-        }else {
-            $.ajax({
-                type: "POST",
-                url: "/Ferias/AdicionarFerias",
-                data: json,
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        window.location.reload();
-                    });
-                }
-            });
+                        message: 'Tem de escolher a data de inicio e fim!',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000,
+                        position: 'top-center'
+                    })
+            } else {
+            document.getElementById("btnAdicionarFerias").classList.add("is-loading");
+            var json = {
+                datainicio: document.getElementById('txtDataInicio').value.split('-')[0],
+                datafim: document.getElementById('txtDataInicio').value.split('-')[1],
+                idutilizador: document.getElementById('hiddenIdUtilizador').value,
+            };
+
+            var dF = moment(document.getElementById('txtDataInicio').value.split('-')[1], "DD/MM/YYYY").toDate();
+            var dI = moment(document.getElementById('txtDataInicio').value.split('-')[0], "DD/MM/YYYY").toDate();
+            var Diff = (dF - dI) / (1000 * 3600 * 24);
+            var DiasMarcados = (@Model.DiasDisponiveis - @Model.DiasTotais);
+
+            if (Diff >= DiasMarcados) {
+                document.getElementById("btnAdicionarFerias").classList.remove("is-loading");
+                $(function() {
+                    bulmaToast.toast({
+                        message: 'Dias escolhidos excedem dias disponiveis!',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000
+                    })
+                });
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/Ferias/AdicionarFerias",
+                    data: json,
+                    traditional: true,
+                    success: function(result) {
+                        $(function() {
+                            window.location.reload();
+                        });
+                    }
+                });
+            }
         }
     }
 

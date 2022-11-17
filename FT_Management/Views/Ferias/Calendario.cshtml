@@ -40,6 +40,7 @@
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: [ 'dayGrid', 'interaction' ],
             timeZone: 'UTC',
             initialView: 'dayGridMonth',
             headerToolbar: {
