@@ -209,6 +209,28 @@ else
                                       duration: 5000,
                                       position: 'top-center'
                                     })
+                        },
+                        error: function (response) {
+                             bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        failure: function (response) {
+                                bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
                         }
                      });
                   },
@@ -232,6 +254,28 @@ else
                              bulmaToast.toast({
                                       message: 'Agendamento atualizado com sucesso!',
                                       type: 'is-success',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        error: function (response) {
+                             bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        failure: function (response) {
+                                bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
                                       closeOnClick: true,
                                       pauseOnHover: true,
                                       opacity: 0.8,
