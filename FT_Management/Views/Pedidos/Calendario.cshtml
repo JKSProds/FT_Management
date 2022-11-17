@@ -8,9 +8,8 @@
 }
 
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
-<div class="container">
-    <div class="columns">
-        <div class="column is-6">
+    <div class="columns mx-2">
+        <div class="column is-8">
             <div class="tile">
                 <div class="tile is-parent is-vertical">
                         <article class="tile is-child notification is-info">
@@ -24,7 +23,7 @@
                 </div>
             </div>
         </div>
-        <div class="column">
+        <div class="column is-4">
             <form asp-action="Agendamento" name="frmFiltrar" id="frmFiltrar">
                 <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                     <p class="control has-icons-left">
@@ -47,17 +46,7 @@
                             <i class="fa-solid fa-user-gear"></i>
                         </span>
                     </p>
-                </div>
-                <div class="buttons is-right">
-                    <p class="control">
-                        <button type="submit" class="button is-info is-outlined">
-                            <span class="icon">
-                                <i class="fas fa-search fa-lg"></i>
-                            </span>
-                            <span>Pesquisar</span>
-                        </button>
-                    </p>
-                    <p class="control">
+                     <p class="control">
                         <button type="button" onclick="window.location.href = '/Pedidos/Agendamento'" class="button is-outlined">
                             <span class="icon">
                                 <i class="fas fa-backspace fa-lg"></i>
@@ -69,8 +58,6 @@
                 </form>
             </div>
     </div>
-                
-</div>
 <hr />
 
 @if(Model.Count() == 0)
@@ -86,7 +73,7 @@ else
 <script type="module" src='~/lib/fullcalendar/interaction/main.js'></script>
 <script type="module" src='~/lib/fullcalendar/daygrid/main.js'></script>
 
-<div class="columns">
+<div class="columns mx-2">
     <div class="column is-6">
         <div class="field is-grouped is-grouped-left">
           <p class="control">
@@ -104,7 +91,7 @@ else
       <span class="icon">
         <i class="fa-solid fa-eye"></i>
     </span>
-    <span>Modo de Visualização</span>
+    <span>Modo</span>
     </a>
   </p>
   <p class="control">
@@ -129,7 +116,7 @@ else
     @foreach (var u in Model)
     {
     <div class="columns">
-        <div class="column is-2">
+        <div class="column is-3">
             <div class="card" style="background:@u.CorCalendario;">
                   <div class="card-content">
                     <div class="media">
@@ -141,7 +128,9 @@ else
                       <div class="media-content">
                         <p class="title is-4">@u.NomeCompleto</p>
                         <p class="subtitle is-6">@u.EmailUtilizador</p>
-                        @if (u.Viatura.Matricula.Count() > 0) {
+                      </div>
+                    </div>
+                    @if (u.Viatura.Matricula.Count() > 0) {
                         <p class="subtitle is-6">            
                             <span class="icon">
                                 <i class="fa-solid @(u.Viatura.Ignicao ? "fa-car-on" : "fa-car")"></i>
@@ -149,15 +138,15 @@ else
                             <span><b>@u.Viatura.LocalizacaoMorada</b></span>
                          </p>
                         }
-                      </div>
-                    </div>
+                    <div class="progress-container" id='pbval_@u.Id' data-text="---"><progress class="progress is-info is-large" id="pb_@u.Id" max="100"></progress></div>
+                    &nbsp;
                     <a class="button is-link is-fullwidth is-large" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
                          <i class="fas fa-eye"></i>
                     </a>
                   </div>
                 </div>
         </div>
-        <div class="is-10 mx-1" id='cl_@u.Id' data-id="@u.Id"></div>
+        <div class="is-9 mx-1" id='cl_@u.Id' data-id="@u.Id"></div>
     </div>
     <script>
         var isMobile = false; //initiate as false
@@ -342,6 +331,23 @@ else
             }
         });
     }
+
+        $.ajax({
+             url: '/Pedidos/ObterPercentagemTecnico/' + @u.IdPHC,
+             type: "GET",
+             success: function(response) {
+                //console.log(response);
+                 document.getElementById('pb_@u.Id').max = response[0];
+                 document.getElementById('pb_@u.Id').value = response[1];
+                 document.getElementById('pbval_@u.Id').setAttribute('data-text', response[1] + '/' + response[0])
+            },
+            error: function (response) {
+                alert(response.responseText);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            }
+        });
     </script>
     }
 </div>

@@ -56,6 +56,12 @@ namespace FT_Management.Controllers
             return Content(phccontext.ValidarMarcacao(m));
         }
 
+        public List<int> ObterPercentagemTecnico(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            return phccontext.ObterPercentagemMarcacoes(id);
+        }
+
         [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
         public ActionResult Adicionar(Marcacao m)

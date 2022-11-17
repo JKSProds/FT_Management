@@ -34,6 +34,7 @@
         .navbar-item img {
             max-height: 100%;
         }
+
         .dropzone {
             background: white;
             border-radius: 20px;
@@ -42,6 +43,21 @@
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .progress-container:before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 3px;
+            line-height: 1em;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            text-align: center;
+            position: relative;
         }
     </style>
 

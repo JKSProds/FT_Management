@@ -1274,7 +1274,36 @@ namespace FT_Management.Models
             //return ObterMarcacao("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora, u_marcacao.ousrinis  FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
             return ObterMarcacao("select * from v_marcacoes where num=" + IdMarcacao + "", true);
         }
+        public List<int> ObterPercentagemMarcacoes(int IdTecnico)
+        {
+            List<int> res = new List<int>();
 
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select Count(*) as Total from V_Marcacoes where tecnno = '" + IdTecnico + "' union all select Count(*) as Completas  from V_Marcacoes where tecnno = '" + IdTecnico+"' and estado not like 'Agendado'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(int.Parse(result[0].ToString()));
+                    }
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as quantidades de marcações por técnico!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+
+        }
         public List<Atividade> ObterAtivivade(Marcacao m)
         {
             List<Atividade> LstAtividade = new List<Atividade>();
