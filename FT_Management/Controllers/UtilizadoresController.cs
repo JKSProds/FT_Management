@@ -197,7 +197,7 @@ namespace FT_Management.Controllers
             u.TipoMapa = utilizador.TipoMapa;
             u.Telemovel = utilizador.Telemovel;
             u.DataNascimento = utilizador.DataNascimento;
-            u.Viatura.Matricula = utilizador.Viatura.Matricula;
+            u.Viatura.Matricula = utilizador.Viatura.Matricula == "N/D" ? "" : utilizador.Viatura.Matricula;
             u.TipoTecnico = utilizador.TipoTecnico;
             u.Zona = utilizador.Zona;
 
