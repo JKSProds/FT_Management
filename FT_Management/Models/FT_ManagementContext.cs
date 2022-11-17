@@ -1070,14 +1070,9 @@ namespace FT_Management.Models
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     isAllDay = true,
-                    IdTecnico = item.IdUtilizador,
-                    color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
-                    raw = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
                     url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
                     category = "time",
                     dueDateClass = "",
-                    bgColor = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
-                    
                 });
             }
 
@@ -1870,17 +1865,12 @@ namespace FT_Management.Models
                             IdMarcacao = item.IdMarcacao,
                             calendarId = "1",
                             title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Cliente.NomeCliente,
-                            location = item.Cliente.MoradaCliente,
                             start = dataMarcacao,
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
-                            raw = "Pedido/" + item.IdMarcacao + "?IdTecnico=" + (item.Tecnico.IdPHC),
                             category = "time",
                             dueDateClass = dataMarcacao.ToShortDateString(),
-                            bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
-                            body = "<h1>Num. da Marcação: " + item.IdMarcacao + "<br>" + "Incidente: " + item.Referencia + "</h1><br><br>" + item.ResumoMarcacao,
-                            state = item.EstadoMarcacaoDesc,
-                            attendees = item.Tecnico.NomeCompleto,
+                            color = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
                             url = "Pedido/" + item.IdMarcacao
                         });
                         dataMarcacao = dataMarcacao.AddMinutes(30);

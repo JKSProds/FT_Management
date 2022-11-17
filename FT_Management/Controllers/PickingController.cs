@@ -48,7 +48,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Picking p = phccontext.ObterPicking(id);
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().ToString()));
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             phccontext.FecharPicking(id, u.NomeCompleto);
 
             MailContext.EnviarEmailFechoPicking(u, p);
