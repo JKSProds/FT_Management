@@ -45,8 +45,13 @@ namespace FT_Management.Controllers
         public ActionResult Fechar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            phccontext.FecharPicking(id, this.User.ObterNomeCompleto());
+            Picking p = phccontext.ObterPicking(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().ToString()));
+            phccontext.FecharPicking(id, u.NomeCompleto);
+
+            MailContext.EnviarEmailFechoPicking(u, p);
 
             return Content("Ok");
         }
