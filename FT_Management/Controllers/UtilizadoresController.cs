@@ -175,6 +175,14 @@ namespace FT_Management.Controllers
             LstViaturas.Insert(0, new Viatura() { Matricula = "N/D" });
             ViewBag.Viaturas = LstViaturas.Select(l => new SelectListItem() { Value = l.Matricula, Text = l.Matricula });
 
+            List<Zona> LstZonas = context.ObterZonas();
+            LstZonas.Insert(0, new Zona() { Id = 0, Valor = "N/D" });
+            ViewBag.Zonas = LstZonas.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
+            List<TipoTecnico> LstTipoTecnicos = context.ObterTipoTecnicos();
+            LstTipoTecnicos.Insert(0, new TipoTecnico() { Id = 0, Valor = "N/D" });
+            ViewBag.TipoTecnico = LstTipoTecnicos.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
             return View(context.ObterUtilizador(id));
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
@@ -190,6 +198,8 @@ namespace FT_Management.Controllers
             u.Telemovel = utilizador.Telemovel;
             u.DataNascimento = utilizador.DataNascimento;
             u.Viatura.Matricula = utilizador.Viatura.Matricula;
+            u.TipoTecnico = utilizador.TipoTecnico;
+            u.Zona = utilizador.Zona;
 
             context.NovoUtilizador(u);
 

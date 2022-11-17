@@ -10,7 +10,7 @@
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
 <div class="container">
     <div class="columns">
-        <div class="column">
+        <div class="column is-6">
             <div class="tile">
                 <div class="tile is-parent is-vertical">
                         <article class="tile is-child notification is-info">
@@ -24,7 +24,52 @@
                 </div>
             </div>
         </div>
+        <div class="column">
+            <form asp-action="Agendamento" name="frmFiltrar" id="frmFiltrar">
+                <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
+                    <p class="control has-icons-left">
+                        <span class="select">
+                            <select class="select" id="zona" name="zona" onchange="document.getElementById('frmFiltrar').submit();" style="height: auto;"
+                                    asp-items="@(new SelectList(@ViewBag.Zonas, "Value", "Text", ViewData["zona"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <span class="select">
+                            <select class="select" id="tipo" name="tipo" onchange="document.getElementById('frmFiltrar').submit();" style="height: auto" 
+                                    asp-items="@(new SelectList(@ViewBag.TipoTecnico, "Value", "Text", ViewData["tipo"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="buttons is-right">
+                    <p class="control">
+                        <button type="submit" class="button is-info is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-search fa-lg"></i>
+                            </span>
+                            <span>Pesquisar</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button type="button" onclick="window.location.href = '/Pedidos/Agendamento'" class="button is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-backspace fa-lg"></i>
+                            </span>
+                            <span>Limpar</span>
+                        </button>
+                    </p>
+                </div>
+                </form>
+            </div>
     </div>
+                
 </div>
 <hr />
 

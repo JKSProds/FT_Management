@@ -435,17 +435,34 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
-        public ActionResult Agendamento(int id)
+        public ActionResult Agendamento(int id, int zona, int tipo)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (id != 0) id = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
+
+            ViewData["zona"] =  zona;
+            ViewData["tipo"] =  tipo;
+
+            List<Zona> LstZonas = context.ObterZonas();
+            LstZonas.Insert(0, new Zona() { Id = 0, Valor = "Todos" });
+            ViewBag.Zonas = LstZonas.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
+            List<TipoTecnico> LstTipoTecnicos = context.ObterTipoTecnicos();
+            LstTipoTecnicos.Insert(0, new TipoTecnico() { Id = 0, Valor = "Todos" });
+            ViewBag.TipoTecnico = LstTipoTecnicos.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
             {
                 if (id == 0) id = int.Parse(this.User.Claims.First().Value);
                 Utilizador u = context.ObterUtilizador(id);
                 return View("Calendario", new List<Utilizador>() { u });
             }
+
             List<Utilizador> LstTecnicos = context.ObterListaTecnicos(false, true);
+
+            if (zona > 0) LstTecnicos = LstTecnicos.Where(t => t.Zona == zona).ToList();
+            if (tipo > 0) LstTecnicos = LstTecnicos.Where(t => t.TipoTecnico == tipo).ToList();
+
             return View("Calendario", LstTecnicos);
         }
 

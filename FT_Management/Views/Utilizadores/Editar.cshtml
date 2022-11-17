@@ -250,12 +250,21 @@
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Viatura.Matricula)</label></div><div class="field-body">
-                                <div class="field">
+                            <div class="field-label is-normal"><label class="label">Dados Adicionais</label></div><div class="field-body">
+                               <div class="field has-addons">
                                     <div class="select" style="width:100%">
                                         <select asp-for="Viatura.Matricula" asp-items="ViewBag.Viaturas" class="form-control" style="width:100%">
                                             </select>
                                       </div>
+
+                                   <div class="select" style="width:100%">
+                                        <select asp-for="Zona" asp-items="ViewBag.Zonas" class="form-control" style="width:100%">
+                                            </select>
+                                      </div>
+                                    <div class="select" style="width:100%">
+                                        <select asp-for="TipoTecnico" asp-items="ViewBag.TipoTecnico" class="form-control" style="width:100%">
+                                         </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
