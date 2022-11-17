@@ -189,8 +189,8 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailFechoPicking(Utilizador u, Picking p)
         {
-            string Assunto = "Novo Picking - Encomenda - "+p.Encomenda.Id+" - Cliente - " + p.NomeCliente;
-            string Mensagem = "Foi criada um novo documento de Picking para o cliente: " + p.NomeCliente + "<br><br><b>Dados adicionais:</b><br>Utilizador: " + p.EditadoPor + "<br>Data: " + p.DataDossier + "<br>Documento: " + p.NomeDossier + " - " + p.IdPicking + "<br>Encomenda: " + p.Encomenda.Id + "<br>";
+            string Assunto = "Novo Picking - "+p.IdPicking+" - Cliente - " + p.NomeCliente;
+            string Mensagem = "Foi criada um novo documento de Picking para o cliente: " + p.NomeCliente + "<br><br><b>Dados adicionais:</b><br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>Documento: " + p.NomeDossier + " - " + p.IdPicking + "<br>";
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(6));
 
             return true;
