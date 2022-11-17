@@ -73,6 +73,12 @@
 </div>
 <hr />
 
+@if(Model.Count() == 0)
+{
+    <button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontrados utilizadores!</button>
+}
+else
+{
 <link href='~/lib/fullcalendar/core/main.min.css' rel='stylesheet' />
 <link href='~/lib/fullcalendar/daygrid/main.min.css' rel='stylesheet' />
 
@@ -295,7 +301,7 @@
     </script>
     }
 </div>
-
+}
 <div id="modalQuickViewMarcacao" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
