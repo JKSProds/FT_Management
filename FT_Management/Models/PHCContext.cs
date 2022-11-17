@@ -503,13 +503,14 @@ namespace FT_Management.Models
                                 ConferidoPor = result.IsDBNull("qassinou") ? "" : result["qassinou"].ToString().Trim(),
                                 IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
                                 IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
-                                AssistenciaRemota = result["tipo_int"].ToString() == "3",
-                                Piquete = result["piquete"].ToString().Trim() == "True"
                             });
 
                         if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim());
                         if (LoadCliente) LstFolhaObra.Last().ClienteServico = ObterClienteSimples(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()));
-                        if (LoadIntervencoes) { 
+                        if (LoadIntervencoes) {
+                            LstFolhaObra.Last().AssistenciaRemota = result.IsDBNull("tipo_int") ? false : result["tipo_int"].ToString() == "3";
+                            LstFolhaObra.Last().Piquete = result.IsDBNull("piquete") ? false : result["piquete"].ToString().Trim() == "True";
+
                             LstFolhaObra.Last().IntervencaosServico = ObterIntervencoes(int.Parse(result["nopat"].ToString().Trim()));
                             if (LstFolhaObra.Last().IntervencaosServico.Count() == 1) LstFolhaObra.Last().RelatorioServico = LstFolhaObra.Last().IntervencaosServico.First().RelatorioServico;
                             if (LstFolhaObra.Last().IntervencaosServico.Count() > 1)

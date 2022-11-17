@@ -450,17 +450,6 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
-        public JsonResult AlteracaoCalendario(int id, DateTime date, DateTime dateOriginal)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            Marcacao m = phccontext.ObterMarcacao(id);
-            m.DatasAdicionais = m.DatasAdicionais.Replace(dateOriginal.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
-
-            phccontext.AtualizaMarcacao(m);
-
-            return Json("Ok");
-        }
-        [Authorize(Roles = "Admin, Escritorio")]
         public JsonResult AlteracaoCalendarioTecnico(int id, string dateOriginal, string date, int idTecnicoOriginal, int idTecnico)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -489,7 +478,8 @@ namespace FT_Management.Controllers
             m.Tecnico = context.ObterUtilizador(Tecnico);
             m.LstTecnicos = new List<Utilizador>() { m.Tecnico };
             m.DatasAdicionais = DataMarcacao;
-            
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
             phccontext.AtualizaMarcacao(m);
 
             return Json("Ok");
