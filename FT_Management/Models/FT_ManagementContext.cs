@@ -266,7 +266,7 @@ namespace FT_Management.Models
         {
             Viatura res = new Viatura();
 
-            string sqlQuery = "SELECT * FROM dat_viaturas where matricula_viatura='" + utilizador.Viatura.Matricula + "';";
+            string sqlQuery = "SELECT *, (Select  fim_localizacao from dat_viaturas_viagens where matricula_viatura='" + utilizador.Viatura.Matricula + "' order by timestamp DESC limit 1) as localizacao2 FROM dat_viaturas where matricula_viatura='" + utilizador.Viatura.Matricula + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -283,6 +283,11 @@ namespace FT_Management.Models
                         Utilizador = utilizador,
                         Ignicao = result["ignicao"] == 1
                     };
+                    if (DateTime.Parse(result["timestamp"]) < DateTime.Now.AddMinutes(-60))
+                    {
+                        res.Ignicao = result["localizacao2"] == "";
+                        res.LocalizacaoMorada = result["localizacao2"] == "" ? "Não foi possivel obter a localização desta viatura!" : result["localizacao2"];
+                    }
                 }
             }
 
