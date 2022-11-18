@@ -42,14 +42,17 @@ namespace FT_Management.Controllers
 
             return View(p);
         }
-        public ActionResult Fechar(string id)
+        public ActionResult Fechar(string id, string obs)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Picking p = phccontext.ObterPicking(id);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            phccontext.FecharPicking(id, u.NomeCompleto);
+            Picking p = phccontext.ObterPicking(id);
+            p.EditadoPor = u.NomeCompleto;
+            p.Obs = obs;
+
+            phccontext.FecharPicking(p);
 
             MailContext.EnviarEmailFechoPicking(u, p);
 

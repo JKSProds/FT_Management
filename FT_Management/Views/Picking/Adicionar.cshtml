@@ -166,9 +166,10 @@
       <p class="modal-card-title">Picking</p>
     </header>
     <section class="modal-card-body">
-      <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
+      <p class="title is-5">Tem a certeza que deseja fechar o documento de Picking?</p> 
+      <div class="control"><textarea type="text" class="textarea" disabled id="txtMensagens" readonly rows=8 value=""></textarea></div>
             <hr />
-      <p>Tem a certeza que deseja fechar o documento de Picking?</p> 
+      <div class="control"><label class="label">Observações</label><textarea type="text" class="textarea" id="txtObs" rdonly rows=4 value=""></textarea></div>
   </section>
     <footer class="modal-card-foot">
       <button class="button is-success" onclick="FecharPicking('@Model.Picking_Stamp')">Sim</button>
@@ -318,6 +319,7 @@ function ValidarSerie(id, l) {
             $.ajax({
                 url: '/Picking/Fechar/' + id,
                 type: "POST",
+                data: { "obs": document.getElementById('txtObs').value },
                 success: function (data) {
                     window.location = '/Picking';
                 }

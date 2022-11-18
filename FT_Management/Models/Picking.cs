@@ -20,6 +20,7 @@ namespace FT_Management.Models
         public bool DespacharEncomenda { get; set; }
         public List<Linha_Picking> Linhas { get; set; }
         public string EditadoPor { get; set; }
+        public string Obs { get; set; }
     }
     public class Linha_Picking
     {

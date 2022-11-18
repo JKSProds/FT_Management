@@ -1851,7 +1851,7 @@ namespace FT_Management.Models
 
             return res;
         }
-        public string FecharPicking(string PI_STAMP, string NomeUtilizador)
+        public string FecharPicking(Picking p)
         {
             string res = "0";
             try
@@ -1866,8 +1866,9 @@ namespace FT_Management.Models
                     CommandType = CommandType.StoredProcedure
                 };
 
-                command.Parameters.Add(new SqlParameter("@STAMP", PI_STAMP));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", NomeUtilizador));
+                command.Parameters.Add(new SqlParameter("@STAMP", p.IdPicking));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", p.EditadoPor));
+                //command.Parameters.Add(new SqlParameter("@OBS", p.Obs));
 
                 using SqlDataReader result = command.ExecuteReader();
                 result.Read();
