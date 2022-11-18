@@ -1078,6 +1078,7 @@ namespace FT_Management.Models
                     url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
                     category = "time",
                     dueDateClass = "",
+                    color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
                 });
             }
 
