@@ -28,15 +28,26 @@ namespace FT_Management.Controllers
         public IActionResult Adicionar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            string pi_stamp = phccontext.ObterEncomenda(id).PI_STAMP;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            if (string.IsNullOrEmpty(pi_stamp)) pi_stamp = phccontext.CriarPicking(id, this.User.ObterNomeCompleto());
+            Encomenda e = phccontext.ObterEncomenda(id);
+            string pi_stamp = e.PI_STAMP;
+
+            if (string.IsNullOrEmpty(pi_stamp))
+            {
+                pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
+                context.AdicionarLog(u.Id, "Criado um picking novo com sucesso! - Encomenda Nº " + e.Id  + ", " + e.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
+
+            }
             Picking p = phccontext.ObterPicking(pi_stamp);
 
             if (p.IdPicking == 0) 
             {
-                pi_stamp = phccontext.CriarPicking(id, this.User.ObterNomeCompleto());
+                pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
+                context.AdicionarLog(u.Id, "Criado um picking novo com sucesso! - Encomenda Nº " + e.Id + ", " + e.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
+
                 p = phccontext.ObterPicking(pi_stamp);
             }
 
@@ -53,6 +64,7 @@ namespace FT_Management.Controllers
             p.Obs = obs;
 
             phccontext.FecharPicking(p);
+            context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
 
             MailContext.EnviarEmailFechoPicking(u, p);
 
