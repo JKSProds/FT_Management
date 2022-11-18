@@ -1866,7 +1866,7 @@ namespace FT_Management.Models
                     CommandType = CommandType.StoredProcedure
                 };
 
-                command.Parameters.Add(new SqlParameter("@STAMP", p.IdPicking));
+                command.Parameters.Add(new SqlParameter("@STAMP", p.Picking_Stamp));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", p.EditadoPor));
                 //command.Parameters.Add(new SqlParameter("@OBS", p.Obs));
 
