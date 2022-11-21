@@ -106,6 +106,20 @@ namespace FT_Management.Controllers
             return View(m);
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult AdicionarMarcacaoRapida(Marcacao m)
+        {
+            int IdMarcacao = 0;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Console.WriteLine("Obtido marcacao com sucesso: " + m.IdMarcacao);
+            
+            return View(m);
+        }
+       on
+
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Editar(int id)
         {
