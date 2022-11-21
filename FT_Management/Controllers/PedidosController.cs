@@ -481,8 +481,25 @@ namespace FT_Management.Controllers
             m.DatasAdicionais = m.DatasAdicionais.Replace(DateTime.Parse(dateOriginal).ToString("yyyy-MM-dd"), DateTime.Parse(date).ToString("yyyy-MM-dd"));
 
             Utilizador u = context.ObterUtilizador(idTecnico);
-            if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
-            if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+            if (idTecnicoOriginal == 0)
+            {
+                m.Tecnico = u;
+                m.LstTecnicos = new List<Utilizador>() { u };
+                m.EstadoMarcacaoDesc = "Agendado";
+                m.DatasAdicionais = m.DatasAdicionais.Replace(m.DataMarcacao.ToString("yyyy-MM-dd"), DateTime.Parse(date).ToString("yyyy-MM-dd"));
+                m.DataMarcacao = DateTime.Parse(date);
+
+            }
+            else if(idTecnico == 0) {
+                m.EstadoMarcacaoDesc = "Criado";
+                m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
+                m.Tecnico = new Utilizador();
+            }
+            else
+            {
+                if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
+                if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+            }
 
             m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
@@ -514,7 +531,20 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
-            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end).OrderBy(m => m.Tecnico.Id).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
+
+            List<Marcacao> LstMarcacoesCriadas = phccontext.ObterMarcacoesCriadas();
+            if (LstMarcacoesCriadas.Count > 0)
+            {
+                List<Marcacao> LstMarcacoesFiltro = new List<Marcacao>();
+                int nPerDay = LstMarcacoesCriadas.Count() / 6;
+                for (int i = 0; i < 7; i++)
+                {
+                    LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i); return c; }).ToList());
+                }
+
+                return new JsonResult(context.ConverterMarcacoesEventos(LstMarcacoesFiltro).ToList());
+            }
+            return new JsonResult("");
         }
 
         public ActionResult Print(string id)

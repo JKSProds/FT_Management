@@ -59,7 +59,6 @@
             </div>
     </div>
 <hr />
-
 @if(Model.Count() == 0)
 {
     <button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontrados utilizadores!</button>
@@ -106,6 +105,100 @@ else
 </div>
 </div>
 <br />
+
+     <div class="columns">
+        <div class="column is-3">
+            <div class="card" style="background:#3371FF;">
+                  <div class="card-content">
+                    <div class="media">
+                      <div class="media-content">
+                        <p class="title is-4">Marcações Por Associar</p>
+                      </div>
+                    </div>
+                    <a class="button is-link is-fullwidth is-large" href="~/Pedidos?estado=Criado">
+                         <i class="fas fa-eye"></i>
+                    </a>
+                  </div>
+                </div>
+        </div>
+        <div class="is-9 mx-1" id='cl_criado' data-id="0"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          let criadoCalendar = document.getElementById('cl_criado');
+
+            let scr1Calendar = new FullCalendar.Calendar(criadoCalendar, {
+                plugins: ['dayGrid', 'interaction'],
+                defaultView: 'dayGridWeek',
+                editable: true,
+                droppable: false,
+                height: 'auto',
+                firstDay: 1,
+                header: false,
+                locale: 'pt',
+                displayEventTime: false,
+                eventColor: '#3371FF',
+                events: '/Pedidos/ObterMarcacoes/0',
+                columnHeader: false,
+                slotEventOverlap: true,
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault();
+                    ObterMarcacao(info.event.extendedProps.idMarcacao);
+                },
+                eventReceive: function(info) {
+                    id = info.event.extendedProps.idMarcacao;
+                    tecOriginal = info.event.extendedProps.idTecnico;
+                    dataOriginal = info.event.extendedProps.dueDateClass;
+
+                    tecDestino = info.event._calendar.el.attributes['data-id'].value;
+                     dataDestino = new Date(info.event.start).toLocaleDateString("pt-PT");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Pedidos/AlteracaoCalendarioTecnico/" + id + "?date="+dataDestino+"&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal ,
+                        traditional: true,
+                         success: function (result) {
+                             info.event.setExtendedProp("dueDateClass", dataDestino);
+                             bulmaToast.toast({
+                                      message: 'Agendamento atualizado com sucesso!',
+                                      type: 'is-success',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        error: function (response) {
+                             bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        failure: function (response) {
+                                bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        }
+                     });
+                  }
+        });
+          scr1Calendar.render();
+    });
+          </script>
+
+
 <div id='calendar-container' class="mx-2">
     @foreach (var u in Model)
     {
@@ -342,6 +435,7 @@ else
                 alert(response.responseText);
             }
         });
+
     </script>
     }
 </div>
