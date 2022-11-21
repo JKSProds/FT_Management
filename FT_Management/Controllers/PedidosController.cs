@@ -118,7 +118,6 @@ namespace FT_Management.Controllers
             
             return View(m);
         }
-       on
 
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Editar(int id)
