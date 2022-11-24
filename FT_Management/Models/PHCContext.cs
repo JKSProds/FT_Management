@@ -1819,6 +1819,11 @@ namespace FT_Management.Models
             List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE bostamp='" + Stamp_Encomenda + "';");
             return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
         }
+        public Encomenda ObterEncomendaPicking(string Stamp_Picking)
+        {
+            List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE STAMP_PICKING='" + Stamp_Picking + "';");
+            return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
+        }
         #endregion
 
         //PICKING
@@ -1923,7 +1928,7 @@ namespace FT_Management.Models
                             DataDossier = DateTime.Parse(result["DATA"].ToString()),
                             NomeCliente = result["nome"].ToString(),
                             DespacharEncomenda = result["u_envio"].ToString() == "Transportadora",
-                            Encomenda = this.ObterEncomenda(result["STAMP_ORIGEM"].ToString()),
+                            Encomenda = this.ObterEncomendaPicking(PI_STAMP),
                             Linhas = this.ObterLinhasPicking(PI_STAMP),
                             EditadoPor = result["usrinis"].ToString().ToUpper()
                         };

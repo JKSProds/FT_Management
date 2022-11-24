@@ -63,9 +63,10 @@ namespace FT_Management.Controllers
             p.EditadoPor = u.NomeCompleto;
             p.Obs = obs;
 
+#if !DEBUG
             phccontext.FecharPicking(p);
             context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
-
+#endif
             MailContext.EnviarEmailFechoPicking(u, p);
 
             return Content("Ok");
