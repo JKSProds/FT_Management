@@ -32,6 +32,7 @@ namespace FT_Management.Models
         public string TipoUn { get; set; }
         [Display(Name = "Imagem")]
         public string ImgProduto { get; set; }
+        public bool Serie { get; set; }
     }
 
     public class Movimentos

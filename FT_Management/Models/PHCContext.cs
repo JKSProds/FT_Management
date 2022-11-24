@@ -96,7 +96,8 @@ namespace FT_Management.Models
                             Stock_Rec = double.Parse(result["qttrec"].ToString()),
                             Stock_Res = double.Parse(result["rescli"].ToString()),
                             Armazem_ID = int.Parse(result["armazem"].ToString()),
-                            Pos_Stock = result["u_locpt"].ToString()
+                            Pos_Stock = result["u_locpt"].ToString(),
+                            Serie = result["noserie"].ToString() == "True"
                         });
                         //LstProdutos.Last().ImgProduto = ObterProdutoImagem(LstProdutos.Last());
                     }
@@ -114,15 +115,15 @@ namespace FT_Management.Models
         }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem)
         {
-            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
+            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
-            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.ref;");
+            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.ref;");
         }
         public List<Produto> ObterProdutosArmazem(int Armazem)
         {
-            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
+            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
         }
 
         //NAO FUNCIONA
@@ -161,7 +162,7 @@ namespace FT_Management.Models
         }
         public Produto ObterProduto(string Referencia, int IdArmazem)
         {
-            List<Produto> p = ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
+            List<Produto> p = ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
             if (p.Count > 0)
             {
                 p[0].ImgProduto = ObterProdutoImagem(p[0]);
