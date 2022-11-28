@@ -540,7 +540,7 @@ namespace FT_Management.Controllers
                 int nPerDay = LstMarcacoesCriadas.Count() / 6;
                 for (int i = 0; i < 7; i++)
                 {
-                    LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i); return c; }).ToList());
+                    LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i -  (int) DateTime.Now.DayOfWeek + 1); return c; }).ToList());
                 }
 
                 return new JsonResult(context.ConverterMarcacoesEventos(LstMarcacoesFiltro).ToList());
