@@ -212,7 +212,7 @@ namespace FT_Management.Models
                     {
                         LstClientes.Add(new Cliente()
                         {
-                            ClienteStamp = result["clstamp"].ToString(),
+                            ClienteStamp = result["clstamp"].ToString().Trim(),
                             IdCliente = int.Parse(result["no"].ToString()),
                             IdLoja = int.Parse(result["estab"].ToString()),
                             NomeCliente = result["nome"].ToString().Trim(),
