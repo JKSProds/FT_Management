@@ -190,11 +190,11 @@ namespace FT_Management.Models
         public static bool EnviarEmailFechoPicking(Utilizador u, Picking p)
         {
             string Assunto = "Novo Picking - "+p.IdPicking+" - " + p.Encomenda.NomeCliente;
-            string Mensagem = "Foi criada um novo documento de picking!<br><br><b>Dados adicionais:</b><br>Cliente: " + p.NomeCliente + "<br>Loja: " + p.Encomenda.NomeCliente + "<br>Encomenda: " + p.Encomenda.Id + "<br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>" + p.NomeDossier + ": " + p.IdPicking + "<br><br>";
+            string Mensagem = "Foi criado um novo documento de picking!<br><br><b>Dados adicionais:</b><br>Cliente: " + p.NomeCliente + "<br>" + (p.NomeCliente != p.Encomenda.NomeCliente ? "Loja: " + p.Encomenda.NomeCliente + "<br>" : "") + "Encomenda: " + p.Encomenda.Id + "<br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>" + p.NomeDossier + ": " + p.IdPicking + "<br><br>";
                 
             if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações:</b><br>" + p.Obs + "<br><br>";
 
-            if (p.Linhas.Count > 0) Mensagem += "<b>Equipamentos:</b><br><br>";
+            if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0) Mensagem += "<b>Equipamentos:</b><br><br>";
             foreach (var item in p.Linhas)
             {
                 if (item.Qtd_Linha > 0)
@@ -204,13 +204,14 @@ namespace FT_Management.Models
                         foreach (var serie in item.Lista_Ref)
                         {
                             Mensagem += serie.Ref_linha + " - " + serie.Nome_Linha + " - " + serie.NumSerie;
+                            Mensagem += "<br>";
                         }
                     }
                     else
                     {
                         Mensagem += item.Ref_linha + " - " + item.Nome_Linha + " - " + item.Qtd_Linha;
                     }
-                    Mensagem += "<br><rb>";
+                    Mensagem += "<br><br>";
                 }
             }
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(6));
