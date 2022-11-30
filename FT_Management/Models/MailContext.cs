@@ -187,7 +187,7 @@ namespace FT_Management.Models
             return true;
         }
 
-        public static bool EnviarEmailFechoPicking(Utilizador u, Picking p)
+        public static bool EnviarEmailFechoPicking(Utilizador u, Picking p, Attachment anexo)
         {
             string Assunto = "Novo Picking - "+p.IdPicking+" - " + p.Encomenda.NomeCliente;
             string Mensagem = "Foi criado um novo documento de picking!<br><br><b>Dados adicionais:</b><br>Cliente: " + p.NomeCliente + "<br>" + (p.NomeCliente != p.Encomenda.NomeCliente ? "Loja: " + p.Encomenda.NomeCliente + "<br>" : "") + "Encomenda: " + p.Encomenda.Id + "<br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>" + p.NomeDossier + ": " + p.IdPicking + "<br><br>";
@@ -214,7 +214,8 @@ namespace FT_Management.Models
                     Mensagem += "<br><br>";
                 }
             }
-            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(6));
+            Mensagem += "<b>Etiqueta:</b> <a href=\"" + p.GetUrl + "\" class=\"button\">Descarregar</a>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(6));
 
             return true;
         }

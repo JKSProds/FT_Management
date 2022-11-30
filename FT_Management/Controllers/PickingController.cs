@@ -1,8 +1,12 @@
 ﻿using FT_Management.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
 
 namespace FT_Management.Controllers
 {
@@ -67,10 +71,34 @@ namespace FT_Management.Controllers
             phccontext.FecharPicking(p);
             context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
 #endif
-            MailContext.EnviarEmailFechoPicking(u, p);
+            MailContext.EnviarEmailFechoPicking(u, p, null);
 
             return Content("Ok");
         }
+
+        public virtual ActionResult PrintPicking(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio")) return Redirect("~/Home/AcessoNegado");
+
+            var filePath = Path.GetTempFileName();
+            Bitmap bm = context.DesenharEtiquetaPicking(phccontext.ObterPicking(id));
+            bm.Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "Picking_" + id + ".pdf",
+                Inline = false,
+                CreationDate = DateTime.Now
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+            return new FileContentResult(context.BitMapToMemoryStream(filePath, bm.Width, bm.Height).ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
+        }
+
+
+
 
         [HttpPost]
         public ActionResult ValidarPicking(string id)

@@ -21,6 +21,8 @@ namespace FT_Management.Models
         public List<Linha_Picking> Linhas { get; set; }
         public string EditadoPor { get; set; }
         public string Obs { get; set; }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Picking/PrintPicking/" + Picking_Stamp; } }
+
     }
     public class Linha_Picking
     {
