@@ -765,6 +765,7 @@ namespace FT_Management.Models
                 if (result[0].ToString() != "-1")
                 {
                     res = int.Parse(result[3].ToString());
+                    ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + res + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 }
 
@@ -826,10 +827,13 @@ namespace FT_Management.Models
 
                 string resp = result[0].ToString();
 
-                FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
-                conn.Close();
-
-                if (resp != "-1") return true;
+                if (resp != "-1")
+                {
+                    ChatContext.EnviarNotificacaoAtualizacaoMarcacaoTecnico(m, m.Tecnico);
+                    FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
+                    conn.Close();
+                    return true;
+                }
             }
             catch (Exception ex)
             {

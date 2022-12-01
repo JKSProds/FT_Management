@@ -79,6 +79,7 @@ namespace FT_Management.Models
         public bool AcessoAtivo { get; set; }
         public int TipoTecnico { get; set; }
         public int Zona { get; set; }
+        public string ChatToken { get; set; }
         public Utilizador()
         {
             this.Id = 0;

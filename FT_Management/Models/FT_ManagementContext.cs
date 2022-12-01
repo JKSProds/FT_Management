@@ -72,6 +72,7 @@ namespace FT_Management.Models
                         IdArmazem = result["IdArmazem"],
                         TipoTecnico = result["TipoTecnico"],
                         Zona = result["Zona"],
+                        ChatToken = result["ChatToken"],
 #if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif                        
@@ -125,6 +126,7 @@ namespace FT_Management.Models
                         IdArmazem = result["IdArmazem"],
                         TipoTecnico = result["TipoTecnico"],
                         Zona = result["Zona"],
+                        ChatToken = result["ChatToken"],
 #if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif
