@@ -1872,7 +1872,7 @@ namespace FT_Management.Models
                             id = item.IdMarcacao.ToString() + "_" + dataMarcacao.ToString("yyyyMMdd"),
                             IdMarcacao = item.IdMarcacao,
                             calendarId = "1",
-                            title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Cliente.NomeCliente,
+                            title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.EstadoMarcacaoDesc == "Criado" && item.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : item.DataMarcacao < DateTime.Now && item.EstadoMarcacaoDesc != "Criado" ? "❌ " : "") + item.Cliente.NomeCliente,
                             start = dataMarcacao,
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
