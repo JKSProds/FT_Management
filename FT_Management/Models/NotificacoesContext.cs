@@ -263,7 +263,7 @@ namespace FT_Management.Models
                 
             if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações:</b><br>" + p.Obs + "<br><br>";
 
-            if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0) Mensagem += "<b>Equipamentos:</b><br><br>";
+            if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0) Mensagem += "<b>Referências:</b><br>";
             foreach (var item in p.Linhas)
             {
                 if (item.Qtd_Linha > 0)
@@ -279,11 +279,12 @@ namespace FT_Management.Models
                     else
                     {
                         Mensagem += item.Ref_linha + " - " + item.Nome_Linha + " - " + item.Qtd_Linha;
+                        Mensagem += "<br>";
                     }
-                    Mensagem += "<br><br>";
+                    Mensagem += "<br>";
                 }
             }
-            Mensagem += "<b>Etiqueta:</b> <a href=\"" + p.GetUrl + "\" class=\"button\">Descarregar</a>";
+
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(6));
 
             return true;

@@ -20,7 +20,7 @@ namespace FT_Management.Controllers
             ViewData["Tipo"] = Tipo;
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Encomenda.Tipo.TODAS)).ToList();
+            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Encomenda.Tipo.TODAS) && e.NItems > 0).ToList();
 
             if (Tipo > 0) LstEncomendas = LstEncomendas.Where(e => e.NumDossier == Tipo).ToList();
             if (!string.IsNullOrEmpty(NomeCliente)) LstEncomendas = LstEncomendas.Where(e => e.NomeCliente.ToUpper().Contains(NomeCliente.ToUpper())).ToList();
@@ -71,33 +71,13 @@ namespace FT_Management.Controllers
             phccontext.FecharPicking(p);
             context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
 #endif
-            MailContext.EnviarEmailFechoPicking(u, p, null);
+            var filePath = Path.GetTempFileName();
+            context.DesenharEtiquetaPicking(p).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
+            MailContext.EnviarEmailFechoPicking(u, p, new Attachment(context.BitMapToMemoryStream(filePath, 810, 504), "Picking_" + p.IdPicking + ".pdf"));
 
             return Content("Ok");
         }
-
-        public virtual ActionResult PrintPicking(string id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio")) return Redirect("~/Home/AcessoNegado");
-
-            var filePath = Path.GetTempFileName();
-            Bitmap bm = context.DesenharEtiquetaPicking(phccontext.ObterPicking(id));
-            bm.Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            var cd = new System.Net.Mime.ContentDisposition
-            {
-                FileName = "Picking_" + id + ".pdf",
-                Inline = false,
-                CreationDate = DateTime.Now
-            };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
-            return new FileContentResult(context.BitMapToMemoryStream(filePath, bm.Width, bm.Height).ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
-        }
-
-
 
 
         [HttpPost]

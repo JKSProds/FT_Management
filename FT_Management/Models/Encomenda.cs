@@ -28,7 +28,7 @@ namespace FT_Management.Models
         [Display(Name = "Tipo")]
         public bool Total { get { return this.LinhasEncomenda.Where(l => l.Total == false).Count() == 0; } }
         [Display(Name = "Items")]
-        public double NItems { get { return this.LinhasEncomenda.Sum(l => l.Produto.Stock_Fisico); } }
+        public double NItems { get { return this.LinhasEncomenda.Where(l => (l.DataEnvio.Year > 1900 || l.Total) && !l.Fornecido).Sum(l => l.Produto.Stock_Fisico); } }
         public bool Fornecido { get { return LinhasEncomenda.Where(l => l.Fornecido).Count() == LinhasEncomenda.Count(); } }
         public bool DespacharEncomenda { get; set; }
         public bool ExisteEncomenda(Tipo tipo)
