@@ -722,7 +722,6 @@ namespace FT_Management.Models
         #region MARCACOES
         public int CriarMarcacao(Marcacao m)
         {
-            int res = 0;
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -764,9 +763,10 @@ namespace FT_Management.Models
 
                 if (result[0].ToString() != "-1")
                 {
-                    res = int.Parse(result[3].ToString());
+                    m.IdMarcacao = int.Parse(result[3].ToString());
+
                     ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
-                    FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + res + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
+                    FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 }
 
                 conn.Close();
@@ -779,7 +779,7 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel enviar marcacao para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return res;
+            return m.IdMarcacao;
         }
         public bool AtualizaMarcacao(Marcacao m)
         {
