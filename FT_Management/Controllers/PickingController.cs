@@ -88,7 +88,7 @@ namespace FT_Management.Controllers
             return Content(phccontext.ValidarPicking(id));
         }
 
-        public JsonResult Validar(string stamp, int qtd, string serie, string bomastamp)
+        public JsonResult Validar(string stamp, Double qtd, string serie, string bomastamp)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 

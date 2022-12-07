@@ -1977,7 +1977,8 @@ namespace FT_Management.Models
                                 Ref_linha = result["ref"].ToString(),
                                 Nome_Linha = result["design"].ToString(),
                                 Qtd_Linha = Double.Parse(result["qtt"].ToString()),
-                                Qtd_Separar = Double.Parse(result["QTT_SEPARAR"].ToString()),
+                                Qtd_Separar = Double.Parse(result["qtt"].ToString()) == Double.Parse(result["QTT_SEPARAR"].ToString()) ? Double.Parse(result["QTT_SEPARAR"].ToString()) : Math.Round(Double.Parse(result["QTT_SEPARAR"].ToString()) - Double.Parse(result["qtt"].ToString()), 3),
+                                TipoUnidade = result["UNIDADE"].ToString(),
                                 Serie = result["USA_NSERIE"].ToString() == "True",
                                 Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())),
                                 EditadoPor = result["usrinis"].ToString()
