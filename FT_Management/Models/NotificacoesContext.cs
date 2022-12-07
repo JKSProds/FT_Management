@@ -265,7 +265,7 @@ namespace FT_Management.Models
 
             if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0)
             {
-                Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Qtd/SN</th></tr>";
+                Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade | SN</th></tr>";
                 foreach (var item in p.Linhas)
                 {
                     if (item.Qtd_Linha > 0)
