@@ -20,7 +20,7 @@ namespace FT_Management.Models
         public string NomeCliente { get; set; }
         [Display(Name = "Dias")]
         public DateTime DataEnvio { get; set; }
-        public DateTime Data { get { return (Total ? this.DataEnvio : ((this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900).Count() > 0) ? this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900).First().DataEnvio : this.DataEnvio) ); } }
+        public DateTime Data { get { return (Total ? this.DataEnvio : ((this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900 && !e.Fornecido).Count() > 0) ? this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900 && !e.Fornecido).First().DataEnvio : this.DataEnvio) ); } }
         [Display(Name = "Data")]
         public DateTime DataDossier { get; set; }
         [Display(Name = "Linhas")]

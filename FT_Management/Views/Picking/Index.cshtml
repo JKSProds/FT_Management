@@ -388,7 +388,7 @@ else
             success: function (data) {
                document.getElementById("txtIdEnc").value = data.id;
                document.getElementById("txtNome").value = data.nomeCliente;
-               document.getElementById("txtDataEnvio").value = new Date(data.dataEnvio).toLocaleDateString();
+               document.getElementById("txtDataEnvio").value = new Date(data.data).toLocaleDateString();
                document.getElementById("txtObs").value = data.obs;
 
                var html = "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade</th></tr>";
