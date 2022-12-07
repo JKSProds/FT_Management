@@ -1163,7 +1163,7 @@ namespace FT_Management.Models
                         {
                             foreach (var item in result["LstTecnicos"].ToString().Split(";"))
                             {
-                                LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
+                               if (!string.IsNullOrEmpty(item)) LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
                             }
                             foreach (var item in LstMarcacao.Last().LstTecnicos)
                             {
