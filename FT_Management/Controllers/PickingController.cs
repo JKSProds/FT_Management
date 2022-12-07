@@ -111,5 +111,12 @@ namespace FT_Management.Controllers
 
             return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking));
         }
+
+        public JsonResult ObterEncomenda(string stamp)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return new JsonResult(phccontext.ObterEncomenda(stamp));
+        }
     }
 }

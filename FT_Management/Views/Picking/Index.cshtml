@@ -122,7 +122,7 @@ else
                                              <td class="is-actions-cell">
                                                 @if (item.PI_STAMP == "")
                                                 {
-                                                <a class="button is-large is-success is-rounded is-fullwidth" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
+                                                <a class="button is-large is-success is-rounded" style="width:45%" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-circle-play"></i>
                                                     </span>
@@ -135,12 +135,12 @@ else
                                                         <i class="fa-solid fa-forward-step"></i>
                                                     </span>
                                                     </a>     
-                                                    <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="ConfirmFecharPicking('@item.PI_STAMP')">
+                                                }
+                                                <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
                                                     <span class="icon is-small">
-                                                        <i class="fa-solid fa-check"></i>
+                                                        <i class="fa-solid fa-eye"></i>
                                                     </span>
                                                     </a> 
-                                                }
                                             </td>
                                         </tr>
                                     }
@@ -196,7 +196,7 @@ else
                                              <td class="is-actions-cell">
                                                 @if (item.PI_STAMP == "")
                                                 {
-                                                <a class="button is-large is-success is-rounded is-fullwidth" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
+                                                <a class="button is-large is-success is-rounded" style="width:45%" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-circle-play"></i>
                                                     </span>
@@ -208,13 +208,13 @@ else
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-forward-step"></i>
                                                     </span>
-                                                    </a>     
-                                                    <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="ConfirmFecharPicking('@item.PI_STAMP')">
+                                                    </a>  
+                                                }
+                                                <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
                                                     <span class="icon is-small">
-                                                        <i class="fa-solid fa-check"></i>
+                                                        <i class="fa-solid fa-eye"></i>
                                                     </span>
                                                     </a> 
-                                                }
                                             </td>
                                         </tr>
                                     }
@@ -270,7 +270,7 @@ else
                                              <td class="is-actions-cell">
                                                 @if (item.PI_STAMP == "")
                                                 {
-                                                <a class="button is-large is-success is-rounded is-fullwidth" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
+                                                <a class="button is-large is-success is-rounded" style="width:45%" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-circle-play"></i>
                                                     </span>
@@ -283,12 +283,13 @@ else
                                                         <i class="fa-solid fa-forward-step"></i>
                                                     </span>
                                                     </a>     
-                                                    <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="ConfirmFecharPicking('@item.PI_STAMP')">
+
+                                                }
+                                                   <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
                                                     <span class="icon is-small">
-                                                        <i class="fa-solid fa-check"></i>
+                                                        <i class="fa-solid fa-eye"></i>
                                                     </span>
                                                     </a> 
-                                                }
                                             </td>
                                         </tr>
                                     }
@@ -318,20 +319,49 @@ else
   </div>
 </div>
 
-<div class="modal" id="modalFecharPicking">
+<div class="modal" id="modalVerPicking">
   <div class="modal-background"></div>
   <div class="modal-card">
     <header class="modal-card-head">
-      <p class="modal-card-title">Picking</p>
+      <p class="modal-card-title">Encomenda</p>
     </header>
     <section class="modal-card-body">
-    <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
-    <hr />
-      <p>Tem a certeza que deseja fechar o documento de Picking?</p> 
+        <div class="modal-body">
+                <label class="label">Nº da Encomenda</label>
+                <div class="field has-addons">
+                  <div class="control" style="width:100%">
+                        <input type="text" class="input" readonly id="txtIdEnc">
+                  </div>
+                  <div class="control">
+                    <a class="button is-info"onclick="copiarTexto('txtIdEnc');">
+                              <i class="fa-solid fa-copy"></i>
+                    </a>
+                  </div>
+                </div>
+                    <div class="field">
+                    <div class="control">
+                        <label class="label">Nome Cliente</label>
+                        <input type="text" class="input" readonly id="txtNome">
+                      </div>
+                    </div>
+                   <div class="field">
+                    <div class="control">
+                        <label class="label">Data de Envio</label>
+                        <input type="text" class="input" readonly id="txtDataEnvio">
+                      </div>
+                    </div>
+                   <div class="field">
+                    <div class="control">
+                        <label class="label">Observações</label>
+                        <textarea type="text" class="textarea" readonly rows=4 id="txtObs"></textarea>
+                      </div>
+                    </div>
+                 <div id="divEncomenda"></div>
+                </div>
   </section>
     <footer class="modal-card-foot">
-      <button class="button is-success" onclick="FecharPicking(document.getElementById('txtIdPicking').value)">Sim</button>
-      <button class="button" onclick="Bulma('#modalFecharPicking').modal().close();">Não</button>
+      <button class="button is-success" onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">Abrir Picking</button>
+      <button class="button" onclick="Bulma('#modalVerPicking').modal().close();">Fechar</button>
     </footer>
   </div>
 </div>
@@ -348,33 +378,51 @@ else
              window.location.replace('Picking/Adicionar/' + id);
     }
 
-        function ConfirmFecharPicking(id) {
-            document.getElementById('txtIdPicking').value = id;
-            $.ajax({
+    function VerEncomenda(id, enc) {
+        document.getElementById('txtIdEncomenda').value = enc;
+
+        $.ajax({
+            url: '/Picking/ObterEncomenda/',
+            data: { "stamp": enc},
             type: "POST",
-            url: "/Picking/ValidarPicking/" + id,
-            success: function (result) {
-                $(function () {
-                    if (result != "") {
-                        document.getElementById("txtMensagens").value = result;
-                    } else {
-                        document.getElementById("txtMensagens").value = "Não foram encontrados problemas!";
-                    }
-                     Bulma('#modalFecharPicking').modal().open();
+            success: function (data) {
+               document.getElementById("txtIdEnc").value = data.id;
+               document.getElementById("txtNome").value = data.nomeCliente;
+               document.getElementById("txtDataEnvio").value = new Date(data.dataEnvio).toLocaleDateString();
+               document.getElementById("txtObs").value = data.obs;
+
+               var html = "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade</th></tr>";
+               data.linhasEncomenda.forEach(obj => {
+                    //console.log(obj.produto);
+                    html += "<tr><td style='padding: 5px;'>" + obj.produto.ref_Produto + "</td><td style='padding: 5px;'>" + obj.produto.designacao_Produto + "</td><td style='padding: 5px;'>" + obj.produto.stock_Fisico + "</td></tr>";
                 });
+               html += "</table>";
+               document.getElementById("divEncomenda").innerHTML = html;
+               
+               Bulma('#modalVerPicking').modal().open();
+            },
+            error: function (response) {
+                bulmaToast.toast({
+                        message: 'Ocorreu um erro ao obter a encomenda',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000,
+                        position: 'top-center'
+                    });  
+            },
+            failure: function (response) {
+                bulmaToast.toast({
+                        message: 'Ocorreu um erro ao obter a encomenda',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000,
+                        position: 'top-center'
+                    });       
             }
         });
-
-    }
-
-    function FecharPicking(id) {
-            Bulma('#modalFecharPicking').modal().close();
-            $.ajax({
-                url: '/Picking/Fechar/' + id,
-                type: "POST",
-                success: function (data) {
-                    window.location.reload();
-                }
-            });
     }
 </script>

@@ -1779,7 +1779,7 @@ namespace FT_Management.Models
                                 DataDossier = DateTime.Parse(result["dataobra"].ToString()),
                                 DespacharEncomenda = result["Transportador"].ToString() == "True",
                                 Prioritario = false,
-                                Obs = "",
+                                Obs = result["obs"].ToString(),
                                 PI_STAMP = !string.IsNullOrEmpty(result["NUM_PICKING"].ToString().Trim()) ? result["STAMP_PICKING"].ToString() : ""
                             });
                             LstEncomenda.Last().LinhasEncomenda = new List<Linha_Encomenda>();

@@ -265,7 +265,7 @@ namespace FT_Management.Models
 
             if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0)
             {
-                Mensagem += "<table><tr><th>Referência</th><th>Designação</th><th>Qtd/SN</th></tr>";
+                Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Qtd/SN</th></tr>";
                 foreach (var item in p.Linhas)
                 {
                     if (item.Qtd_Linha > 0)
@@ -274,12 +274,12 @@ namespace FT_Management.Models
                         {
                             foreach (var serie in item.Lista_Ref)
                             {
-                                Mensagem += "<tr><td>" + serie.Ref_linha + "</td><td>" + serie.Nome_Linha + "</td><td>" + serie.NumSerie + "</td></tr>";
+                                Mensagem += "<tr><td style='padding: 5px;'>" + serie.Ref_linha + "</td><td style='padding: 5px;'>" + serie.Nome_Linha + "</td><td style='padding: 5px;'>" + serie.NumSerie + "</td></tr>";
                             }
                         }
                         else
                         {
-                            Mensagem += "<tr><td>" + item.Ref_linha + "</td><td>" + item.Nome_Linha + "</td><td>" + item.Qtd_Linha + " " + item.TipoUnidade +"</td></tr>";
+                            Mensagem += "<tr><td style='padding: 5px;'>" + item.Ref_linha + "</td><td style='padding: 5px;'>" + item.Nome_Linha + "</td><td style='padding: 5px;'>" + item.Qtd_Linha + " " + item.TipoUnidade +"</td></tr>";
                         }
                     }
                 }
