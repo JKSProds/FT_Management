@@ -49,7 +49,13 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
-                                                </td>
+                                                @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                            </td>
                                             </tr>
                                             <tbody class="detail is-hidden">
                                                     @foreach (var linha in item.LinhasEncomenda)
@@ -60,7 +66,13 @@
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                         </tr>
                                                     }
-                                            </tbody>
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
+                                                        </tr>
+                                                    }
+                                        </tbody>
                                         }
                                         else
                                         {
@@ -79,6 +91,12 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
@@ -87,6 +105,12 @@
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                     </tr>
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
+                                                        </tr>
+                                                    }
                                             </tbody>
 
                                             }
@@ -141,6 +165,12 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                              </tr>
                                              <tbody class="detail is-hidden">
@@ -150,6 +180,12 @@
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                             <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                        </tr>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
                                                         </tr>
                                                     }
                                             </tbody>
@@ -169,6 +205,12 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
@@ -177,6 +219,13 @@
                                                         <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                     </tr>
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
+                                                        </tr>
+                                                        
+                                                    }
                                             </tbody>
                                             }
                                         }
@@ -230,6 +279,12 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                             </tr>
                                             <tbody class="detail is-hidden">
@@ -239,6 +294,12 @@
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                             <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
+                                                        </tr>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
                                                         </tr>
                                                     }
                                             </tbody>
@@ -258,6 +319,12 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
@@ -266,6 +333,12 @@
                                                         <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                     </tr>
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
+                                                        </tr>
+                                                    }
                                             </tbody>
                                             }
                                         }
@@ -321,6 +394,12 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                             </tr>
                                             <tbody class="detail is-hidden">
@@ -332,6 +411,12 @@
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                     </tr>
                                                 }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
+                                                        </tr>
+                                                    }
                                             </tbody>
                                         }
                                         else
@@ -350,6 +435,12 @@
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
@@ -358,6 +449,12 @@
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                     </tr>
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><b>@item.Obs</b></td>
+                                                        </tr>
+                                                    }
                                             </tbody>
                                             }
                                         }

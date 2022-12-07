@@ -31,6 +31,8 @@ namespace FT_Management.Models
         public double NItems { get { return this.LinhasEncomenda.Where(l => (l.DataEnvio.Year > 1900 || l.Total) && !l.Fornecido).Sum(l => l.Produto.Stock_Fisico); } }
         public bool Fornecido { get { return LinhasEncomenda.Where(l => l.Fornecido).Count() == LinhasEncomenda.Count(); } }
         public bool DespacharEncomenda { get; set; }
+        public string Obs { get; set; }
+        public bool Prioritario { get; set; }
         public bool ExisteEncomenda(Tipo tipo)
         {
             if (Total)
