@@ -116,7 +116,10 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return new JsonResult(phccontext.ObterEncomenda(stamp));
+            Encomenda e = phccontext.ObterEncomenda(stamp);
+            e.LinhasEncomenda = e.LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
+
+            return new JsonResult(e);
         }
     }
 }
