@@ -537,7 +537,7 @@ namespace FT_Management.Controllers
             if (LstMarcacoesCriadas.Count > 0)
             {
                 List<Marcacao> LstMarcacoesFiltro = new List<Marcacao>();
-                int nPerDay = LstMarcacoesCriadas.Count() / 6;
+                int nPerDay = LstMarcacoesCriadas.Count() / 6 == 0 ? 1 : LstMarcacoesCriadas.Count() / 6;
                 for (int i = 0; i < 7; i++)
                 {
                     LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i -  (int) DateTime.Now.DayOfWeek + 1); return c; }).ToList());
