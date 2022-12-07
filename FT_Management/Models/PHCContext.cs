@@ -1979,7 +1979,7 @@ namespace FT_Management.Models
                                 Qtd_Linha = Double.Parse(result["qtt"].ToString()),
                                 Qtd_Separar = Double.Parse(result["QTT_SEPARAR"].ToString()),
                                 Serie = result["USA_NSERIE"].ToString() == "True",
-                                Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString())),
+                                Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())),
                                 EditadoPor = result["usrinis"].ToString()
                             });
                         }
@@ -2004,7 +2004,7 @@ namespace FT_Management.Models
 
             return LstPickingLinhas;
         }
-        public List<Ref_Linha_Picking> ObterSerieLinhaPicking(string BI_STAMP, int Qtt)
+        public List<Ref_Linha_Picking> ObterSerieLinhaPicking(string BI_STAMP, Double Qtt)
         {
             List<Ref_Linha_Picking> Linha_Serie = new List<Ref_Linha_Picking>();
 
