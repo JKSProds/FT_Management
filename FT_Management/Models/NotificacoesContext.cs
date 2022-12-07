@@ -263,26 +263,27 @@ namespace FT_Management.Models
                 
             if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações:</b><br>" + p.Obs + "<br><br>";
 
-            if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0) Mensagem += "<b>Referências:</b><br>";
-            foreach (var item in p.Linhas)
+            if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0)
             {
-                if (item.Qtd_Linha > 0)
+                Mensagem += "<table><tr><th>Referência</th><th>Designação</th><th>Qtd/SN</th></tr>";
+                foreach (var item in p.Linhas)
                 {
-                    if (item.Serie)
+                    if (item.Qtd_Linha > 0)
                     {
-                        foreach (var serie in item.Lista_Ref)
+                        if (item.Serie)
                         {
-                            Mensagem += serie.Ref_linha + " - " + serie.Nome_Linha + " - " + serie.NumSerie;
-                            Mensagem += "<br>";
+                            foreach (var serie in item.Lista_Ref)
+                            {
+                                Mensagem += "<tr><td>" + serie.Ref_linha + "</td><td>" + serie.Nome_Linha + "</td><td>" + serie.NumSerie + "</td></tr>";
+                            }
+                        }
+                        else
+                        {
+                            Mensagem += "<tr><td>" + item.Ref_linha + "</td><td>" + item.Nome_Linha + "</td><td>" + item.Qtd_Linha + " " + item.TipoUnidade +"</td></tr>";
                         }
                     }
-                    else
-                    {
-                        Mensagem += item.Ref_linha + " - " + item.Nome_Linha + " - " + item.Qtd_Linha;
-                        Mensagem += "<br>";
-                    }
-                    Mensagem += "<br>";
                 }
+                Mensagem += "</table>";
             }
 
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(6));
