@@ -1993,7 +1993,7 @@ namespace FT_Management.Models
                             Linha.Qtd_Separar += Double.Parse(result["QTT_SEPARAR"].ToString());
                             Linha.Qtd_Linha += Double.Parse(result["qtt"].ToString());
 
-                            Linha.Lista_Ref.AddRange(ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), int.Parse(result["QTT_SEPARAR"].ToString())));
+                            Linha.Lista_Ref.AddRange(ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())));
                         }
                     }
                 }
