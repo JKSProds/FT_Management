@@ -67,13 +67,12 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Picking p = phccontext.ObterPicking(id);
             p.EditadoPor = u.NomeCompleto;
-            p.Obs = obs;
+            p.Obs = obs + "\r\n\r\n" + phccontext.ValidarPicking(p.Picking_Stamp);
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 
-#if !DEBUG
             phccontext.FecharPicking(p);
             context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
-#endif
+
             var filePath = Path.GetTempFileName();
             context.DesenharEtiquetaPicking(p).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
 

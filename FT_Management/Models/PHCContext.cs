@@ -2044,7 +2044,7 @@ namespace FT_Management.Models
                                 Ref_linha = result["ref"].ToString(),
                                 Nome_Linha = result["design"].ToString(),
                                 Qtd_Linha = Double.Parse(result["qtt"].ToString()),
-                                Qtd_Separar = Double.Parse(result["qtt"].ToString()) == Double.Parse(result["QTT_SEPARAR"].ToString()) ? Double.Parse(result["QTT_SEPARAR"].ToString()) : Math.Round(Double.Parse(result["QTT_SEPARAR"].ToString()) - Double.Parse(result["qtt"].ToString()), 3),
+                                Qtd_Separar = result["USA_NSERIE"].ToString() == "True" ? Double.Parse(result["QTT_SEPARAR"].ToString()) : Double.Parse(result["qtt"].ToString()) == Double.Parse(result["QTT_SEPARAR"].ToString()) ? Double.Parse(result["QTT_SEPARAR"].ToString()) : Math.Round(Double.Parse(result["QTT_SEPARAR"].ToString()) - Double.Parse(result["qtt"].ToString()), 3),
                                 TipoUnidade = result["UNIDADE"].ToString(),
                                 Serie = result["USA_NSERIE"].ToString() == "True",
                                 Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())),
@@ -2180,6 +2180,21 @@ namespace FT_Management.Models
                     while (result.Read())
                     {
                         res = result[0].ToString() == "0" ? "Ainda falta validar referências!\r\n\r\n" : "";
+                    }
+                }
+
+                command = new SqlCommand("select SUM(o.qtt-o.qtt2) from bi o join bi b on o.bistamp = b.oobistamp	where b.bostamp = '" + PI_STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        double qtt = double.Parse(result[0].ToString());
+                        res += qtt == 0 ? "As referências reccecionadas satisfazem a encomenda na totalidade e a encomenda será fechada!\r\n\r\n" : "";
+                        res += qtt > 0 ? "As referências reccecionadas não satisfazem a encomenda na totalidade, por esse motivo a encomenda manter-se-á em aberto!\r\n\r\n" : "";
+                        res += qtt < 0 ? "As referências reccecionadas são superiores á quantidade encomendada, por esse motivo a encomenda será fechada!\r\n\r\n" : "";
                     }
                 }
 

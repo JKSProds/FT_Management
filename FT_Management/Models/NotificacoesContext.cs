@@ -319,7 +319,7 @@ namespace FT_Management.Models
             string Assunto = "Novo Picking - "+p.IdPicking+" - " + p.Encomenda.NomeCliente;
             string Mensagem = "Foi criado um novo documento de picking!<br><br><b>Dados adicionais:</b><br>Cliente: " + p.NomeCliente + "<br>" + (p.NomeCliente != p.Encomenda.NomeCliente ? "Loja: " + p.Encomenda.NomeCliente + "<br>" : "") + "Encomenda: " + p.Encomenda.Id + "<br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>" + p.NomeDossier + ": " + p.IdPicking + "<br><br>";
                 
-            if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações:</b><br>" + p.Obs + "<br><br>";
+            if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações:</b><br>" + p.Obs.Replace("\r\n", "<br>").ToString() + "<br><br>";
 
             if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0)
             {
@@ -330,7 +330,7 @@ namespace FT_Management.Models
                     {
                         if (item.Serie)
                         {
-                            foreach (var serie in item.Lista_Ref)
+                            foreach (var serie in item.Lista_Ref.Where(l => !string.IsNullOrEmpty(l.Ref_linha)))
                             {
                                 Mensagem += "<tr><td style='padding: 5px;'>" + serie.Ref_linha + "</td><td style='padding: 5px;'>" + serie.Nome_Linha + "</td><td style='padding: 5px;'>" + serie.NumSerie + "</td></tr>";
                             }
