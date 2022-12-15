@@ -60,6 +60,16 @@
                             <i class="fa-solid fa-building-user"></i>
                         </span>
                     </p>
+                    <p class="control has-icons-left" style="max-width:155px">
+                        <span class="select">
+                            <select id="lsttiposequipamento" asp-items="ViewBag.TiposEquipamento" selected onchange="submitdata()">
+                            </select>
+                        </span>
+                        <input type="hidden" id="hiddenSelectedTipoEquipamento" name="TipoEquipamento" value="@ViewData["TipoEquipamento"]" />
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-cogs"></i>
+                        </span>
+                    </p>
                     </div>
                     <div class="field has-addons has-addons-right mx-1">
                     <p class="control">
@@ -255,9 +265,10 @@ else
     function submitdata() {
         document.getElementById("hiddenSelectedArmazem").value = document.getElementById("lstarmazens").value;
         document.getElementById("hiddenSelectedFornecedor").value = document.getElementById("lstfornecedores").value;
+        document.getElementById("hiddenSelectedTipoEquipamento").value = document.getElementById("lsttiposequipamento").value;
         $('form').submit();
     }
 document.getElementById("lstfornecedores").value = document.getElementById("hiddenSelectedFornecedor").value;
 document.getElementById("lstarmazens").value = document.getElementById("hiddenSelectedArmazem").value;
-
+document.getElementById("lsttiposequipamento").value = document.getElementById("hiddenSelectedTipoEquipamento").value;
 </script>

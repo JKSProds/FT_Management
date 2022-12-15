@@ -117,9 +117,9 @@ namespace FT_Management.Models
         {
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
         }
-        public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor)
+        public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor, string TipoEquipamento)
         {
-            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " order by sa.ref;");
+            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%"+TipoEquipamento+"%' order by sa.ref;");
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
@@ -394,7 +394,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs FROM fl order by nome;", conn)
+                SqlCommand command = new SqlCommand("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -412,6 +412,7 @@ namespace FT_Management.Models
                                 EmailFornecedor = result["email"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
                                 PessoaContactoFornecedor = result["contacto"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
                                 Obs = result["obs"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                                CodigoIntermedio = result["u_numfart"].ToString(),
                                 ReferenciaFornecedor = "N/D"
                             });
                         }
@@ -425,6 +426,38 @@ namespace FT_Management.Models
             }
 
             return LstFornecedor;
+        }
+        public List<String> ObterTiposEquipamento()
+        {
+
+            List<String> LstTiposEquipamento = new List<string>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select CAMPO from dytable where entityname LIKE 'a_matipo'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstTiposEquipamento.Add(result[0].ToString());
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os Tipos de Equipamento do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstTiposEquipamento;
         }
         #endregion
 

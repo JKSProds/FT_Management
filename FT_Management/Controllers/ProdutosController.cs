@@ -12,12 +12,13 @@ namespace FT_Management.Controllers
     [Authorize]
     public class ProdutosController : Controller
     {
-        public ActionResult Index(int? page, string Ref, string Desig, int Armazem, int Fornecedor)
+        public ActionResult Index(int? page, string Ref, string Desig, int Armazem, int Fornecedor, string TipoEquipamento)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             var LstArmazens = phccontext.ObterArmazens();
-            var LstFornecedores = phccontext.ObterFornecedores();
+            var LstFornecedores = phccontext.ObterFornecedores().Where(p => !string.IsNullOrEmpty(p.CodigoIntermedio));
+            var LstTiposEquipamento = phccontext.ObterTiposEquipamento();
 
             int pageSize = 100;
             var pageNumber = page ?? 1;
@@ -25,20 +26,23 @@ namespace FT_Management.Controllers
             if (Ref == null) { Ref = ""; }
             if (Desig == null) { Desig = ""; }
             if (Armazem == 0) { Armazem = 3; }
+            if (TipoEquipamento == null) { TipoEquipamento = ""; }
 
             ViewData["Ref"] = Ref;
             ViewData["Desig"] = Desig;
             ViewData["Armazem"] = Armazem;
             ViewData["Fornecedor"] = Fornecedor;
+            ViewData["TipoEquipamento"] = TipoEquipamento;
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", Armazem);
             ViewData["Fornecedores"] = new SelectList(LstFornecedores, "IdFornecedor", "NomeFornecedor", Armazem);
+            ViewData["TiposEquipamento"] = new SelectList(LstTiposEquipamento);
 
             if (Armazem>9)
             {
-                return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
+                return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
             phccontext.ObterGuiasTransporte(32);
-            return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor).ToPagedList(pageNumber, pageSize));
+            return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).ToPagedList(pageNumber, pageSize));
         }
 
         public ActionResult Print(string id, int armazemid)

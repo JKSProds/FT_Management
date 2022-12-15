@@ -24,6 +24,7 @@ namespace FT_Management.Models
         public string PessoaContactoFornecedor { get; set; }
         [Display(Name = "Comentários")]
         public string Obs { get; set; }
+        public string CodigoIntermedio  { get; set; }
 
     }
 }
