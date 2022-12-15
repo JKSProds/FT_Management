@@ -54,6 +54,10 @@ namespace FT_Management.Models
             return false;
         }
 
+        public static bool EnviarNotificacao(string Mensagem, Utilizador u)
+        {
+           return EnviarMensagem(u.ChatToken, Mensagem);
+        }
         public static bool EnviarNotificacaoMarcacaoTecnico(Marcacao m, Utilizador u)
         {
             string Mensagem = "Foi criada uma nova marcação para o cliente: " + m.Cliente.NomeCliente + "\r\nData: " + string.Join(" | ", m.DatasAdicionaisDistintas.Select(x => x.ToShortDateString())) + "\r\n\r\n" + m.GetUrl;

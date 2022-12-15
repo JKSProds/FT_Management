@@ -207,6 +207,7 @@ namespace FT_Management.Controllers
             u.Zona = utilizador.Zona;
             u.ChatToken = utilizador.ChatToken;
 
+            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
             context.NovoUtilizador(u);
 
             return RedirectToAction("Editar", new { id = u.Id});
