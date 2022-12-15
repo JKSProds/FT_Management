@@ -12,6 +12,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net.Http;
 
 namespace FT_Management.Controllers
 {
@@ -329,6 +330,13 @@ namespace FT_Management.Controllers
             return Content("Ok");
         }
 
+        public JsonResult NovaSugestao(string Obs, string file)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            MailContext.EnviarEmailSugestao(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), Obs, new System.Net.Mail.Attachment(new MemoryStream(Convert.FromBase64String(file.Split(',').Last())), "PrintScreen_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".png"));
+            return Json("Ok");
+        }
 
         public async Task<IActionResult> Logout()
         {

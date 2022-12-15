@@ -187,6 +187,15 @@ namespace FT_Management.Models
             return context.ObterEmailsCC(tipo);
         }
 
+        public static bool EnviarEmailSugestao(Utilizador u, string Obs, Attachment anexo)
+        {
+            string Assunto = "Nova Sugestão - Utilizador - " + u.NomeCompleto;
+            string Mensagem = "Foi enviada uma nova sugestão pelo utilizador: " + u.NomeCompleto + "<br><br>Data: " + DateTime.Now + "<br><br><b>Observações:</b><br>" + Obs;
+            EnviarMail(ObterEmailCC(7).First(), Assunto, Mensagem, anexo, ObterEmailCC(7));
+
+            return true;
+        }
+
         public static bool EnviarEmailMarcacaoTecnico(string EmailDestino, Marcacao m, string Tecnico)
         {
             string Assunto = "Nova Marcação - Cliente - " + m.Cliente.NomeCliente;

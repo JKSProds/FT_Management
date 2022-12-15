@@ -1943,6 +1943,7 @@ namespace FT_Management.Models
 
                 command.Parameters.Add(new SqlParameter("@STAMP", p.Picking_Stamp));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", p.EditadoPor));
+                //command.Parameters.Add(new SqlParameter("@ARMAZEMSTAMP", p.ArmazemDestino.ArmazemStamp));
                 //command.Parameters.Add(new SqlParameter("@OBS", p.Obs));
 
                 using SqlDataReader result = command.ExecuteReader();

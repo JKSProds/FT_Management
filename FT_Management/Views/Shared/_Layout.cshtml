@@ -32,6 +32,7 @@
     <script src="~/lib/Chart.js/chart.min.js"></script>
     <script src="~/lib/signature_pad/signature_pad.umd.min.js"></script>
     <script src='~/lib/fullcalendar/core/main.js'></script>
+    <script src='~/lib/html2canvas/html2canvas.min.js'></script>
     <script type="module" src='~/lib/fullcalendar/interaction/main.js'></script>
     <script type="module" src='~/lib/fullcalendar/daygrid/main.js'></script>
 
@@ -308,6 +309,14 @@
                             </div>
                             }
                             <div class="navbar-item">
+                            <a class="button is-info is-light is-fullwidth" onclick="Bulma('#modalSugestoes').modal().open();">
+                                <span class="icon">
+                                    <i class="fa-solid fa-lightbulb"></i>
+                                </span>
+                                <span>Sugestões</span>
+                            </a>
+                            </div>
+                            <div class="navbar-item">
                             <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
                                 <span class="icon">
                                     <i class="fas fa-sign-out-alt"></i>
@@ -339,7 +348,21 @@
 
         </main>
     </div>
-
+<div class="modal" id="modalSugestoes">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Sugestões</p>
+    </header>
+    <section class="modal-card-body">
+      <div class="control"><label class="label">Sugestões</label><textarea type="text" class="textarea" id="txtObs" rows=4 value=""></textarea></div>
+  </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success" onclick="captura();">Enviar</button>
+      <button class="button" onclick="Bulma('#modalSugestoes').modal().close();">Cancelar</button>
+    </footer>
+  </div>
+</div>
     <br />
     <br />
     <br />
@@ -354,3 +377,54 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
+      <script>
+            var printscreenData = "";
+            function captura() {
+                Bulma('#modalSugestoes').modal().close();
+                html2canvas(document.body).then((canvas) => {
+                    EnviarSugestao(canvas.toDataURL("image/png"));
+                });
+            }
+
+        function EnviarSugestao(base64) {
+
+             $.ajax({
+                url: '/Utilizadores/NovaSugestao',
+                type: "POST",
+                data: { "obs": document.getElementById('txtObs').value, "file": base64},
+                success: function (data) {
+                    if (data == "Ok") {
+                        bulmaToast.toast({
+                            message: 'Sugestão enviada com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        });
+                    }
+                },
+                error: function (data) {
+                    bulmaToast.toast({
+                        message: 'Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000
+                    });
+                },
+                failure: function (data) {
+                    bulmaToast.toast({
+                        message: 'Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000
+                    });
+                }
+            });
+        }
+      </script>
