@@ -40,7 +40,7 @@ namespace FT_Management.Controllers
             int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
             if (IdUtilizador == 0) return Forbid();
 
-            List<Ferias> LstFerias = context.ObterListaFeriasValidadas(DateTime.Parse(DateTime.Now.Year + "-01-01"), DateTime.Parse(DateTime.Now.Year + "-12-31"));
+            List<Ferias> LstFerias = context.ObterListaFeriasValidadas();
 
             foreach (var f in LstFerias)
             {
@@ -83,7 +83,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end), context.ObterListaFeriados(start.Year.ToString())).ToList());
+            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(), context.ObterListaFeriados(start.Year.ToString())).ToList());
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
@@ -129,7 +129,7 @@ namespace FT_Management.Controllers
             ViewData["Ano"] = context.ObterAnoAtivo();
             ViewData["IdUtilizador"] = IdUtilizador;
 
-            return View(context.ObterListaFeriasUtilizador(IdUtilizador, ViewData["Ano"].ToString()));
+            return View(context.ObterListaFeriasUtilizador(IdUtilizador));
         }
 
         [Authorize(Roles = "Admin")]
@@ -190,7 +190,7 @@ namespace FT_Management.Controllers
             DateTime dataAtual = DateTime.Parse(datainicio);
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<Ferias> LstFerias = new List<Ferias>();
-            List<Ferias> LstFeriasExistentes = context.ObterListaFerias(idutilizador, dataInicio.Year.ToString());
+            List<Ferias> LstFeriasExistentes = context.ObterListaFerias(idutilizador);
             List<Feriado> LstFeriados = context.ObterListaFeriados(DateTime.Parse(datainicio).Year.ToString());
 
             bool weekend = false;

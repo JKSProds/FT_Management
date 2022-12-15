@@ -807,20 +807,20 @@ namespace FT_Management.Models
 
             return res;
         }
-        public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador, string Ano)
+        public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador)
         {
             FeriasUtilizador feriasUtilizador = new FeriasUtilizador();
 
             using (Database db = ConnectionString)
             {
-                using var resultQuery = db.QueryValue("SELECT Count(*) from dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + Ano + "';");
-                if (resultQuery == 0) CriarFeriasUtilizador(IdUtilizador, Ano, 23);
+                using var resultQuery = db.QueryValue("SELECT Count(*) from dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "';");
+                if (resultQuery == 0) CriarFeriasUtilizador(IdUtilizador, this.ObterAnoAtivo(), 23);
             }
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + Ano + "';");
+                using var result = db.Query("SELECT * FROM dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "';");
                 while (result.Read())
                 {
 
@@ -828,19 +828,45 @@ namespace FT_Management.Models
                     feriasUtilizador.DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador));
                     feriasUtilizador.DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador));
                     feriasUtilizador.DiasDisponiveis = int.Parse(result["DiasDireito"]);
-                    feriasUtilizador.Ferias = ObterListaFerias(IdUtilizador, Ano);
+                    feriasUtilizador.Ferias = ObterListaFerias(IdUtilizador);
                 }
             }
 
             return feriasUtilizador;
 
         }
-        public List<Ferias> ObterListaFerias(int IdUtilizador, string Ano)
+        public List<Ferias> ObterListaFerias(int IdUtilizador)
         {
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND DataInicio>='" + Ano + "-01-01' AND DataFim<='" + Ano + "-12-31' order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "' order by DataInicio;";
+                using var result = db.Query(sql);
+                while (result.Read())
+                {
+                    LstFerias.Add(new Ferias()
+                    {
+                        Id = result["Id"],
+                        IdUtilizador = result["IdUtilizador"],
+                        DataInicio = result["DataInicio"],
+                        DataFim = result["DataFim"],
+                        Validado = result["Validado"],
+                        Obs = result["Obs"],
+                        ValidadoPor = result["ValidadoPor"],
+                        ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
+                    });
+                }
+            }
+
+            return LstFerias;
+
+        }
+        public List<Ferias> ObterListaFerias()
+        {
+            List<Ferias> LstFerias = new List<Ferias>();
+            using (Database db = ConnectionString)
+            {
+                string sql = "SELECT * FROM dat_ferias where Ano='" + this.ObterAnoAtivo() + "' order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
@@ -866,7 +892,7 @@ namespace FT_Management.Models
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where DataInicio between '" + dataInicio.ToString("yyyy-MM-dd") + "' AND '" + dataFim.ToString("yyyy-MM-dd")  + "' or '" + dataInicio.ToString("yyyy-MM-dd") + "' between DataInicio and DataFim  order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias where DataInicio between '" + dataInicio.ToString("yyyy-MM-dd") + "' AND '" + dataFim.ToString("yyyy-MM-dd") + "' or '" + dataInicio.ToString("yyyy-MM-dd") + "' between DataInicio and DataFim  order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
@@ -887,12 +913,12 @@ namespace FT_Management.Models
             return LstFerias;
 
         }
-        public List<Ferias> ObterListaFeriasValidadas(DateTime dataInicio, DateTime dataFim)
+        public List<Ferias> ObterListaFeriasValidadas()
         {
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where DataInicio>='" + dataInicio.ToString("yyyy-MM-dd") + "' AND DataFim<='" + dataFim.ToString("yyyy-MM-dd") + "' AND Validado=1 order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias where Ano='" + this.ObterAnoAtivo() + "' AND Validado=1 order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
@@ -998,7 +1024,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_ferias where mail_validacao=0 and Validado=0 order by DataInicio;");
+                using var result = db.Query("SELECT * FROM dat_ferias where mail_validacao=0 and Validado=0 AND Ano='" + this.ObterAnoAtivo() + "' order by DataInicio;");
                 while (result.Read())
                 {
                     LstFerias.Add(new Ferias()
@@ -1034,7 +1060,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "' AND Ano='"+this.ObterAnoAtivo()+"';");
                 return result;
             }
 
@@ -1045,7 +1071,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where IdUtilizador ='" + IdUtilizador + "';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where IdUtilizador ='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "';");
                 return result;
             }
 
@@ -1110,7 +1136,7 @@ namespace FT_Management.Models
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             //int totalRows = workSheet.Dimension.Rows;
             List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false);
-            List<Ferias> LstFerias = ObterListaFerias(DateTime.Parse(Ano + "-01-01"), DateTime.Parse(Ano + "-12-31"));
+            List<Ferias> LstFerias = ObterListaFerias();
             List<Feriado> LstFeriados = ObterListaFeriados(Ano);
             int count = 0;
 
@@ -1202,7 +1228,7 @@ namespace FT_Management.Models
 
             foreach (var item in LstUtilizadores)
             {
-                FeriasUtilizador feriasUtilizador = ObterListaFeriasUtilizador(item.Id, Ano);
+                FeriasUtilizador feriasUtilizador = ObterListaFeriasUtilizador(item.Id);
 
                 y += 1;
                 workSheet.Cells[y, x].Value = item.NomeCompleto;
@@ -1227,15 +1253,16 @@ namespace FT_Management.Models
         {
             int max = 1000;
             int j = 0;
+            string Ano = this.ObterAnoAtivo();
             for (int i = 0; j < LstFerias.Count; i++)
             {
                 if ((j + max) > LstFerias.Count) max = (LstFerias.Count - j);
 
-                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs, ValidadoPor) VALUES ";
+                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs, ValidadoPor, Ano) VALUES ";
 
                 foreach (var ferias in LstFerias.GetRange(j, max))
                 {
-                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', " + ferias.ValidadoPor + "), \r\n");
+                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', " + ferias.ValidadoPor + ", " + Ano + "), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);

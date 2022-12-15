@@ -305,7 +305,7 @@ else
                         clearLabel: 'Limpar',
                         cancelLabel: 'Cancelar',
                         minDate: new Date(document.getElementById('hiddenAno').value, 0, 1),
-                        maxDate: new Date(document.getElementById('hiddenAno').value, 11, 31)
+                        maxDate: new Date(parseInt(document.getElementById('hiddenAno').value) + 1, 2, 31)
                     });
                 </script>
             </div>
