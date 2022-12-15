@@ -102,23 +102,6 @@ namespace FT_Management.Controllers
             return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
-        //Analisar
-        //[HttpPost]
-        //[Authorize(Roles = "Admin, Escritorio")]
-        //public JsonResult EditarStockFisico(string refproduto, string stockfisico, int armazemid)
-        //{
-        //    FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-        //    Produto produtoFinal = context.ObterProduto(refproduto, armazemid);
-
-        //    context.AdicionarLog(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeUtilizador, "Foi alterado o stock fisico do produto " + refproduto + " de " + produtoFinal.Stock_Fisico+ " para " + stockfisico, 1);
-
-        //    Double.TryParse(stockfisico, out double stock_fisico);
-        //    produtoFinal.Stock_Fisico = stock_fisico;
-
-        //    context.EditarArtigo(produtoFinal);
-        //    return Json("ok");
-        //}
-
 
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Detalhes(string id, int armazemid)
