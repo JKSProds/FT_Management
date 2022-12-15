@@ -183,6 +183,11 @@ namespace FT_Management.Controllers
             LstTipoTecnicos.Insert(0, new TipoTecnico() { Id = 0, Valor = "N/D" });
             ViewBag.TipoTecnico = LstTipoTecnicos.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
 
+            List<KeyValuePair<string, string>> LstChats = ChatContext.ObterChatsAtivos();
+            LstChats.Insert(0, new KeyValuePair<string, string>("", "N/D"));
+            ViewBag.Chats = LstChats.Select(l  => new SelectListItem() { Value = l.Key, Text = l.Value});
+
+
             return View(context.ObterUtilizador(id));
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
@@ -200,6 +205,7 @@ namespace FT_Management.Controllers
             u.Viatura.Matricula = utilizador.Viatura.Matricula == "N/D" ? "" : utilizador.Viatura.Matricula;
             u.TipoTecnico = utilizador.TipoTecnico;
             u.Zona = utilizador.Zona;
+            u.ChatToken = utilizador.ChatToken;
 
             context.NovoUtilizador(u);
 

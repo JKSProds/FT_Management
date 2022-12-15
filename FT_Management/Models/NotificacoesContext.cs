@@ -4,8 +4,9 @@ using System.Linq;
 using System.Net.Mail;
 using System.Net.Http;
 using Custom;
-using Microsoft.AspNetCore.Http;
 using System.Text;
+using System.IO;
+using System.Xml;
 
 namespace FT_Management.Models
 {
@@ -22,42 +23,41 @@ namespace FT_Management.Models
 
         private static bool EnviarMensagem(string token, string mensagem)
         {
-            if (!string.IsNullOrEmpty(token) && EnableSend()) { 
-            try
-            {
-                SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"]);
-                var values = new Dictionary<string, string>
+            if (!string.IsNullOrEmpty(token) && EnableSend()) {
+                try
+                {
+                    var values = new Dictionary<string, string>
                   {
                       { "message", mensagem }
                   };
 
-                var content = new FormUrlEncodedContent(values);
+                    var content = new FormUrlEncodedContent(values);
 
-                string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
-               .GetBytes(ConfigurationManager.AppSetting["NextCloudChat:User"] + ":" + ConfigurationManager.AppSetting["NextCloudChat:Password"]));
-                content.Headers.Add("OCS-APIRequest", "true");
+                    string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
+                   .GetBytes(ConfigurationManager.AppSetting["NextCloudChat:User"] + ":" + ConfigurationManager.AppSetting["NextCloudChat:Password"]));
+                    if (!client.DefaultRequestHeaders.Contains("OCS-APIRequest")) content.Headers.Add("OCS-APIRequest", "true");
 
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
 
-                var response = client.PostAsync(ConfigurationManager.AppSetting["NextCloudChat:URL"] + "/chat/" + token, content);
+                    var response = client.PostAsync(ConfigurationManager.AppSetting["NextCloudChat:URL"] + "/v1/chat/" + token, content);
 
-                var responseString = response.Result.ToString();
+                    var responseString = response.Result.ToString();
 
-                return response.Result.IsSuccessStatusCode;
+                    return response.Result.IsSuccessStatusCode;
 
-            }
-            catch
-            {
-                return false;
-            }
+                }
+                catch
+                {
+                    return false;
+                }
             }
             return false;
         }
 
         public static bool EnviarNotificacaoMarcacaoTecnico(Marcacao m, Utilizador u)
         {
-            string Mensagem = "Foi criada uma nova marcação para o cliente: " + m.Cliente.NomeCliente + "\r\nData: "+ string.Join(" | ", m.DatasAdicionaisDistintas.Select(x => x.ToShortDateString()))  + "\r\n\r\n" + m.GetUrl;
-            
+            string Mensagem = "Foi criada uma nova marcação para o cliente: " + m.Cliente.NomeCliente + "\r\nData: " + string.Join(" | ", m.DatasAdicionaisDistintas.Select(x => x.ToShortDateString())) + "\r\n\r\n" + m.GetUrl;
+
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
         public static bool EnviarNotificacaoAtualizacaoMarcacaoTecnico(Marcacao m, Utilizador u)
@@ -66,6 +66,51 @@ namespace FT_Management.Models
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
+
+        public static List<KeyValuePair<String, String>> ObterChatsAtivos() {
+            List<KeyValuePair<string, string>> LstChats = new List<KeyValuePair<string, string>>();
+
+            try
+            {
+                string encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1")
+               .GetBytes(ConfigurationManager.AppSetting["NextCloudChat:User"] + ":" + ConfigurationManager.AppSetting["NextCloudChat:Password"]));
+                if (!client.DefaultRequestHeaders.Contains("OCS-APIRequest")) client.DefaultRequestHeaders.Add("OCS-APIRequest", "true");
+
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", encoded);
+
+                var response = client.GetAsync(ConfigurationManager.AppSetting["NextCloudChat:URL"] + "/v4/room").Result.Content.ReadAsStringAsync();
+
+                using (var sr = new StringReader(response.Result))
+                using (var reader = XmlReader.Create(sr))
+                {
+                    string token = "";
+                    string nome = "";
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element && reader.Name == "token")
+                        {
+                            token = reader.ReadElementString();
+                        }
+                        if (reader.NodeType == XmlNodeType.Element && reader.Name == "name")
+                        {
+                            nome = reader.ReadElementString();
+                        }
+
+                        if (!string.IsNullOrEmpty(token) && ! string.IsNullOrEmpty(nome))
+                        {
+                            LstChats.Add(new KeyValuePair<string, string>(token, nome));
+                            token = "";
+                            nome = "";
+                        }
+                    }
+                }
+            }
+            catch
+            {}
+
+            return LstChats;
+        }
+
     }
     public static class MailContext
     {
