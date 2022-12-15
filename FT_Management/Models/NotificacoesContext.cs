@@ -260,7 +260,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailFeriasAprovadas(Utilizador u, Ferias f)
         {
             string Assunto = "Aprovação de Férias - " + u.NomeCompleto;
-            string Mensagem = "Serve o presente para informar que os seguintes dias foram aprovados: <b>" + f.DataInicio.ToString("dd-MM-yyyy") + " a " + f.DataFim.ToString("dd-MM-yyyy") + "</b>" + ((f.Obs.Count() > 0) ? "<br><br>Observações: " + f.Obs : "");
+            string Mensagem = "Serve o presente para informar que os seguintes dias foram aprovados: <b>" + f.DataInicio.ToString("dd-MM-yyyy") + " a " + f.DataFim.ToString("dd-MM-yyyy") + "</b> pelo utilizador <b>" + f.ValidadoPorNome + "</b>" + ((f.Obs.Count() > 0) ? "<br><br>Observações: " + f.Obs : "");
             string EmailDestino = u.EmailUtilizador;
 
             EnviarMail(EmailDestino, Assunto, Mensagem, null, ObterEmailCC(3));
@@ -270,7 +270,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailFeriasNaoAprovadas(Utilizador u, Ferias f)
         {
             string Assunto = "Férias Não Aprovadas - " + u.NomeCompleto;
-            string Mensagem = "Serve o presente para informar que os seguintes dias <b>NÃO</b> foram aprovados: <b>" + f.DataInicio.ToString("dd-MM-yyyy") + " a " + f.DataFim.ToString("dd-MM-yyyy") + "</b>" + ((f.Obs.Count() > 0) ? "<br><br>Observações: " + f.Obs : "");
+            string Mensagem = "Serve o presente para informar que os seguintes dias <b>NÃO</b> foram aprovados: <b>" + f.DataInicio.ToString("dd-MM-yyyy") + " a " + f.DataFim.ToString("dd-MM-yyyy") + "</b> pelo utilizador <b>" + f.ValidadoPorNome + "</b>" + ((f.Obs.Count() > 0) ? "<br><br>Observações: " + f.Obs : "");
             string EmailDestino = u.EmailUtilizador;
 
             EnviarMail(EmailDestino, Assunto, Mensagem, null, ObterEmailCC(3));
@@ -282,11 +282,11 @@ namespace FT_Management.Models
             string Assunto = "Férias Pendentes - " + DateTime.Now.ToShortDateString();
             string Mensagem = "Segue abaixo listagem de férias por validar:<br>";
 
-            Mensagem += "<table><th>Utilizador</th><th>Inicio</th><th>Fim</th>";
+            Mensagem += "<table style='width:100%;border-width:3px;' border='1'><th>Utilizador</th><th>Inicio</th><th>Fim</th>";
 
             foreach (var f in LstFerias)
             {
-                Mensagem += "<tr><td>" + f.Utilizador.NomeCompleto + "</td><td>" + f.DataInicio.ToShortDateString() + "</td><td>" + f.DataFim.ToShortDateString() + "</td><td><a href=\""+ f.GetUrl + "\" class=\"button\">Ver</a></td></tr>";
+                Mensagem += "<tr><td style='padding: 5px;'>" + f.Utilizador.NomeCompleto + "</td><td style='padding: 5px;'>" + f.DataInicio.ToShortDateString() + "</td><td style='padding: 5px;'>" + f.DataFim.ToShortDateString() + "</td><td style='padding: 5px;'><a href=\"" + f.GetUrl + "\" class=\"button\">Ver</a></td></tr>";
             }
 
             Mensagem += "</table>";
