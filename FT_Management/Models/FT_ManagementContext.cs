@@ -741,58 +741,6 @@ namespace FT_Management.Models
         }
 #endregion
 
-        //ARMAZENS
-#region Armazens
-        public List<Armazem> ObterListaArmazens()
-        {
-            List<Armazem> LstArmazens = new List<Armazem>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM sys_armazem;"))
-            {
-                while (result.Read())
-                {
-                    LstArmazens.Add(new Armazem()
-                    {
-                        ArmazemId = result["armazem_id"],
-                        ArmazemNome = result["armazem_nome"]
-                    });
-                }
-            }
-            db.Connection.Close();
-
-            return LstArmazens;
-        }
-        public List<Produto> ObterListaProdutoArmazem(string referencia)
-        {
-            List<Produto> LstProdutos = new List<Produto>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto='" + referencia + "';"))
-            {
-                while (result.Read())
-                {
-                    LstProdutos.Add(new Produto()
-                    {
-                        Ref_Produto = result["ref_produto"],
-                        Designacao_Produto = result["designacao_produto"],
-                        Stock_Fisico = result["stock_fisico"],
-                        Stock_PHC = result["stock_phc"],
-                        Stock_Rec = result["stock_rec"],
-                        Stock_Res = result["stock_res"],
-                        Armazem_ID = result["armazem_id"],
-                        Pos_Stock = result["pos_stock"],
-                        Obs_Produto = result["obs"]
-                    });
-                }
-            }
-            db.Connection.Close();
-            return LstProdutos;
-        }
-#endregion
-
         //FERIAS
 #region Ferias
         public bool VerificarFeriasUtilizador(int IdUtilizador, DateTime Data)

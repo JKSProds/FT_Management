@@ -16,7 +16,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            var LstArmazens = context.ObterListaArmazens().ToList();
+            var LstArmazens = phccontext.ObterArmazens();
 
             int pageSize = 100;
             var pageNumber = page ?? 1;
@@ -125,11 +125,10 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            var LstArmazens = context.ObterListaArmazens().ToList();
+            var LstArmazens = phccontext.ObterArmazens();
 
             if (armazemid == 0) { armazemid = 3; }
 
-            ViewData["LstGuiasPecas"] = phccontext.ObterListaMovimentos(id);
             ViewData["LstProdutosArmazem"] = phccontext.ObterProdutosArmazem(id);
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
             
