@@ -36,7 +36,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            ViewBag.Armazens = phccontext.ObterArmazens().Select(l => new SelectListItem() { Value = l.ArmazemStamp, Text = l.ArmazemNome, Selected = l.ArmazemId == 3 });
+            ViewBag.Armazens = phccontext.ObterArmazensFixos().Select(l => new SelectListItem() { Value = l.ArmazemStamp, Text = l.ArmazemNome, Selected = l.ArmazemId == 3 });
 
             Encomenda e = phccontext.ObterEncomenda(id);
             string pi_stamp = e.PI_STAMP;

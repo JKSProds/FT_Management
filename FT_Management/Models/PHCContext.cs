@@ -171,6 +171,10 @@ namespace FT_Management.Models
         {
             return ObterArmazens("select * from sz order by no;");
         }
+        public List<Armazem> ObterArmazensFixos()
+        {
+            return ObterArmazens("select * from sz where nome not like '%Técnico%' and nome not like '%Comercial%' order by no;");
+        }
         public Armazem ObterArmazem(string stamp)
         {
             return ObterArmazens("select * from sz where szstamp='"+stamp+"' order by no;").FirstOrDefault() ?? new Armazem();
@@ -1943,7 +1947,7 @@ namespace FT_Management.Models
 
                 command.Parameters.Add(new SqlParameter("@STAMP", p.Picking_Stamp));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", p.EditadoPor));
-                //command.Parameters.Add(new SqlParameter("@ARMAZEMSTAMP", p.ArmazemDestino.ArmazemStamp));
+                command.Parameters.Add(new SqlParameter("@ARMAZEMSTAMP", p.ArmazemDestino.ArmazemStamp));
                 //command.Parameters.Add(new SqlParameter("@OBS", p.Obs));
 
                 using SqlDataReader result = command.ExecuteReader();
