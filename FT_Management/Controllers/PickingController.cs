@@ -67,7 +67,7 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Picking p = phccontext.ObterPicking(id);
             p.EditadoPor = u.NomeCompleto;
-            p.Obs = obs + "\r\n\r\n" + phccontext.ValidarPicking(p.Picking_Stamp);
+            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p.Picking_Stamp) + "</b>";
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 
             phccontext.FecharPicking(p);
