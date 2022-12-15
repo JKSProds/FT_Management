@@ -117,6 +117,10 @@ namespace FT_Management.Models
         {
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
         }
+        public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor)
+        {
+            return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " order by sa.ref;");
+        }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.armazem;");
@@ -379,7 +383,7 @@ namespace FT_Management.Models
 
         //Obter Fornecedores
         #region FORNECEDORES
-        public List<Fornecedor> ObterFornecedores(DateTime dataUltimaLeitura)
+        public List<Fornecedor> ObterFornecedores()
         {
 
             List<Fornecedor> LstFornecedor = new List<Fornecedor>();
@@ -390,7 +394,7 @@ namespace FT_Management.Models
 
                     conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs FROM fl where usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "';", conn)
+                SqlCommand command = new SqlCommand("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs FROM fl order by nome;", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -400,6 +404,7 @@ namespace FT_Management.Models
                         {
                             LstFornecedor.Add(new Fornecedor()
                             {
+                                StampFornecedor = result["flstamp"].ToString(),
                                 IdFornecedor = int.Parse(result["no"].ToString()),
                                 NomeFornecedor = result["nome"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
                                 MoradaFornecedor = result["MoradaFornecedor"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),

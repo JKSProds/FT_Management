@@ -7,6 +7,7 @@ namespace FT_Management.Models
 {
     public class Fornecedor
     {
+        public string StampFornecedor { get; set; }
         [Display(Name = "Num. do Fornecedor")]
         public int IdFornecedor { get; set; }
         [Display(Name = "Nome do Fornecedor")]

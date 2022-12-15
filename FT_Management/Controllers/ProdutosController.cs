@@ -12,11 +12,12 @@ namespace FT_Management.Controllers
     [Authorize]
     public class ProdutosController : Controller
     {
-        public ActionResult Index(int? page, string Ref, string Desig, int Armazem)
+        public ActionResult Index(int? page, string Ref, string Desig, int Armazem, int Fornecedor)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             var LstArmazens = phccontext.ObterArmazens();
+            var LstFornecedores = phccontext.ObterFornecedores();
 
             int pageSize = 100;
             var pageNumber = page ?? 1;
@@ -28,14 +29,16 @@ namespace FT_Management.Controllers
             ViewData["Ref"] = Ref;
             ViewData["Desig"] = Desig;
             ViewData["Armazem"] = Armazem;
+            ViewData["Fornecedor"] = Fornecedor;
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", Armazem);
+            ViewData["Fornecedores"] = new SelectList(LstFornecedores, "IdFornecedor", "NomeFornecedor", Armazem);
 
             if (Armazem>9)
             {
-                return View(phccontext.ObterProdutos(Ref, Desig, Armazem).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
+                return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
             phccontext.ObterGuiasTransporte(32);
-            return View(phccontext.ObterProdutos(Ref, Desig, Armazem).ToPagedList(pageNumber, pageSize));
+            return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor).ToPagedList(pageNumber, pageSize));
         }
 
         public ActionResult Print(string id, int armazemid)

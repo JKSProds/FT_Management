@@ -50,7 +50,16 @@
                             <i class="fa-solid fa-warehouse"></i>
                         </span>
                     </p>
-
+                    <p class="control has-icons-left" style="max-width:155px">
+                        <span class="select">
+                            <select id="lstfornecedores" asp-items="ViewBag.Fornecedores" selected onchange="submitdata()">
+                            </select>
+                        </span>
+                        <input type="hidden" id="hiddenSelectedFornecedor" name="Fornecedor" value="@ViewData["Fornecedor"]" />
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-building-user"></i>
+                        </span>
+                    </p>
                     <p class="control">
                         <button type="submit" class="button is-info is-outlined">
                             <span class="icon">
@@ -243,8 +252,10 @@ else
     }
     function submitdata() {
         document.getElementById("hiddenSelectedArmazem").value = document.getElementById("lstarmazens").value;
-
+        document.getElementById("hiddenSelectedFornecedor").value = document.getElementById("lstfornecedores").value;
         $('form').submit();
     }
+document.getElementById("lstfornecedores").value = document.getElementById("hiddenSelectedFornecedor").value;
+document.getElementById("lstarmazens").value = document.getElementById("hiddenSelectedArmazem").value;
 
 </script>
