@@ -1,6 +1,7 @@
 ﻿using FT_Management.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -35,6 +36,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            ViewBag.Armazens = phccontext.ObterArmazens().Select(l => new SelectListItem() { Value = l.ArmazemStamp, Text = l.ArmazemNome, Selected = l.ArmazemId == 3 });
 
             Encomenda e = phccontext.ObterEncomenda(id);
             string pi_stamp = e.PI_STAMP;
@@ -57,7 +59,7 @@ namespace FT_Management.Controllers
 
             return View(p);
         }
-        public ActionResult Fechar(string id, string obs)
+        public ActionResult Fechar(string id, string obs, string armazem)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -66,6 +68,7 @@ namespace FT_Management.Controllers
             Picking p = phccontext.ObterPicking(id);
             p.EditadoPor = u.NomeCompleto;
             p.Obs = obs;
+            p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 
 #if !DEBUG
             phccontext.FecharPicking(p);

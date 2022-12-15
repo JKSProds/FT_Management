@@ -179,8 +179,16 @@
     <section class="modal-card-body">
       <p class="title is-5">Tem a certeza que deseja fechar o documento de Picking?</p> 
       <div class="control"><textarea type="text" class="textarea" disabled id="txtMensagens" readonly rows=8 value=""></textarea></div>
-            <hr />
+            <hr />  
+   
       <div class="control"><label class="label">Observações</label><textarea type="text" class="textarea" id="txtObs" rdonly rows=4 value=""></textarea></div>
+        &nbsp;
+      <div class="control" id="divArmazem">
+        <label class="label">Armazém</label>
+            <div class="select" style="width:100%">
+                <select id="lstArmazensModal" class="form-control" asp-items="ViewBag.Armazens" style="width:100%"></select>
+        </div>
+    </div>
   </section>
     <footer class="modal-card-foot">
       <button class="button is-success" onclick="FecharPicking('@Model.Picking_Stamp')">Sim</button>
@@ -317,6 +325,7 @@ function ValidarSerie(id, l) {
                     } else {
                         document.getElementById("txtMensagens").value = "Não foram encontrados problemas!";
                     }
+                     document.getElementById("divArmazem").hidden = (@Model.Encomenda.NumDossier != 2);
                      Bulma('#modalFecharPicking').modal().open();
                 });
             }
@@ -330,7 +339,7 @@ function ValidarSerie(id, l) {
             $.ajax({
                 url: '/Picking/Fechar/' + id,
                 type: "POST",
-                data: { "obs": document.getElementById('txtObs').value },
+                data: { "obs": document.getElementById('txtObs').value, "armazem":  document.getElementById('lstArmazensModal').value},
                 success: function (data) {
                     window.location = '/Picking';
                 }

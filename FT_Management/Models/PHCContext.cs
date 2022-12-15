@@ -126,6 +126,60 @@ namespace FT_Management.Models
             return ObterProdutos("SELECT sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
         }
 
+        private List<Armazem> ObterArmazens(string SQL_Query)
+        {
+
+            List<Armazem> LstArmazens = new List<Armazem>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstArmazens.Add(new Armazem()
+                        {
+                            ArmazemStamp = result["szstamp"].ToString().Trim(),
+                            ArmazemId = int.Parse(result["no"].ToString()),
+                            ArmazemNome = result["nome"].ToString().Trim(),
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os armazens do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstArmazens;
+        }
+
+
+        public List<Armazem> ObterArmazens()
+        {
+            return ObterArmazens("select * from sz order by no;");
+        }
+        public Armazem ObterArmazem(string stamp)
+        {
+            return ObterArmazens("select * from sz where szstamp='"+stamp+"' order by no;").FirstOrDefault() ?? new Armazem();
+        }
+        public Armazem ObterArmazem(int num)
+        {
+            return ObterArmazens("select * from sz where no='" + num + "' order by no;").FirstOrDefault() ?? new Armazem();
+        }
+
         //NAO FUNCIONA
         public List<Movimentos> ObterListaMovimentos(string Referencia)
         {
