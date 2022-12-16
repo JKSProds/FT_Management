@@ -105,33 +105,34 @@ else
 </div>
 </div>
 <br />
-
-     <div class="columns">
-        <div class="column is-3">
-            <div class="card" style="background:#3371FF;">
-                  <div class="card-content">
-                    <div class="media">
-                      <div class="media-content">
-                        <p class="title is-4">Marcações Por Associar</p>
-                      </div>
+    @if (Model.Count() > 1)
+    {
+        <div class="columns">
+            <div class="column is-3">
+                <div class="card" style="background:#3371FF;">
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">Marcações Por Associar</p>
+                            </div>
+                        </div>
+                        <a class="button is-link is-fullwidth is-large" href="~/Pedidos?estado=Criado">
+                            <i class="fas fa-eye"></i>
+                        </a>
                     </div>
-                    <a class="button is-link is-fullwidth is-large" href="~/Pedidos?estado=Criado">
-                         <i class="fas fa-eye"></i>
-                    </a>
-                  </div>
                 </div>
+            </div>
+            <div class="is-9 mx-1" id='cl_criado' data-id="0"></div>
         </div>
-        <div class="is-9 mx-1" id='cl_criado' data-id="0"></div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
           let criadoCalendar = document.getElementById('cl_criado');
 
             let scr1Calendar = new FullCalendar.Calendar(criadoCalendar, {
                 plugins: ['dayGrid', 'interaction'],
                 defaultView: 'dayGridWeek',
                 editable: true,
-                droppable: false,
+                droppable: true,
                 height: 'auto',
                 firstDay: 1,
                 header: false,
@@ -198,7 +199,7 @@ else
     });
           </script>
 
-
+}
 <div id='calendar-container' class="mx-2">
     @foreach (var u in Model)
     {
