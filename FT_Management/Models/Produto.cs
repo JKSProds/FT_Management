@@ -8,6 +8,7 @@ namespace FT_Management.Models
 {
     public class Produto
     {
+        public string StampProduto { get; set; }
         [Display(Name = "Referência")]
         public string Ref_Produto { get; set; }
         [Display(Name = "Designação")]
