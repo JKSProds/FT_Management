@@ -119,17 +119,9 @@ else
                         @Html.DisplayNameFor(model => model.Stock_Fisico)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Stock_PHC)
+                        @Html.DisplayNameFor(model => model.Stock_Atual)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Stock_Rec)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Stock_Res)
-                    </th>
-                    <th>
-                        <a id="btnEdit" class="button is-info is-fullwidth" disabled onclick="Edit()" href="javascript:;"><i class="fas fa-pencil-alt"></i></a>
-                        <a id="btnCloseEdit" class="button is-info is-fullwidth" disabled onclick="Edit()" href="javascript:;" style="display:none;"><i class="fas fa-times-circle"></i></a>
                     </th>
                 </tr>
             </thead>
@@ -137,32 +129,31 @@ else
                 @foreach (var item in Model)
                 {
                     <tr style="width:auto">
-                        <td data-label="@Html.DisplayNameFor(model => model.Ref_Produto)" class="Ref_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.Ref_Produto)">
                             <span>@item.Ref_Produto</span>
                         </td>
-                        <td data-label="@Html.DisplayNameFor(model => model.Designacao_Produto)" class="Designacao_Produto" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.Designacao_Produto)">
                             <span>@item.Designacao_Produto</span>
                         </td>
-                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Fisico)" class="Stock_Fisico">
-                            <span onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">@item.Stock_Fisico</span>
-                            <input type="text" value="@item.Stock_Fisico" style="display:none" class="input-group-text txtstockfis" />
+                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Fisico)">
+                            <span >@item.Stock_Fisico</span>
                         </td>
-                        <td data-label="@Html.DisplayNameFor(model => model.Stock_PHC)" class="Stock_PHC" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
-                            <span>@item.Stock_PHC</span>
-                        </td>
-                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Rec)" class="Stock_Rec" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
-                            <span>@item.Stock_Rec</span>
-                        </td>
-                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Res)" class="Stock_Res" onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" }))')">
-                            <span>@item.Stock_Res</span>
+                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Atual)">
+                            <span>@item.Stock_Atual</span>
                         </td>
                         <td style="min-width: 240px" class="is-actions-cell">
                             <div class="buttons">
-                                <a class="update btn btn-outline-primary btn-lg" href="javascript:;" style="display:none;"><i class="fas fa-save"></i></a>
                                 <a class="button is-outlined is-primary is-small printpeq" onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fa-solid fa-qrcode"></i></a>
                                 <a class="button is-outlined is-normal is-primary printqr" onclick="window.open('@Url.Action("PrintQr", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fa-solid fa-qrcode"></i></a>
                                 <a class="button is-outlined is-primary" onclick="window.open('@Url.Action("PrintPeqMulti", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-notes-medical"> x8</i></a>
-                            </div>
+                                <a class="button is-warning" onclick="window.open('@Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i class="fas fa-eye"></i></a>
+                                        @if (item.Serie)
+                                        {
+                                            <a class="button is-info" onclick="abrirModalSerie('@item.StampProduto')"><i class="fas fa-pencil"></i></a>
+                                        }else{
+                                             <a class="button is-info" onclick="abrirModalQtd('@item.StampProduto')"><i class="fas fa-pencil"></i></a>
+                                        }
+                                    </div>
                         </td>
                     </tr>
                 }
@@ -175,92 +166,232 @@ else
     <div class="container">
         @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Produtos", new { page, Ref = @ViewData["Ref"], Desig = @ViewData["Desig"], Armazem = @ViewData["Armazem"] }))
     </div>
-
 }
-
-<input type="hidden" id="hiddenRef" />
-
+<form action="#" onsubmit="AtualizarQtd(document.getElementById('txtStampRef').value)">
+<div id="modalEditarQtd" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title" id="txtRef1"></p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <label class="label">Quantidade Atual</label>
+                <div class="field has-addons">
+                  <div class="control" style="width:100%">
+                        <input type="text" class="input" id="txtQtdAtual">
+                  </div>
+                 </div>
+                </div>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="field is-grouped is-grouped-right">
+            <p class="control">
+                <a class="button is-info" onclick="AtualizarQtd(document.getElementById('txtStampRef').value)">
+                  <span class="icon">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                </span>
+                <span>Guardar</span>
+                </a>
+              </p>
+            <a class="button is-secondary is-outlined" onclick="Bulma('#modalEditarQtd').modal().close();">Cancelar</a>
+       </div>
+        </footer>
+    </div>
+</div>
+</form>
+<form action="#" onsubmit="AtualizarSerie(document.getElementById('txtStampRef').value)">
+<div id="modalEditarSerie" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title" id="txtRef2"></p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <label class="label">Número de Série</label>
+                <div class="field has-addons">
+                  <div class="control" style="width:100%">
+                        <input type="text" class="input" id="txtNumeroSerie" >
+                  </div>
+                 </div>
+                </div>
+        </section>
+        <footer class="modal-card-foot">
+          <div class="field is-grouped is-grouped-right">
+            <p class="control">
+                <button class="button is-info" type="submit">
+                  <span class="icon">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                </span>
+                <span>Guardar</span>
+                </button>
+              </p>
+            <a class="button is-secondary is-outlined" onclick="Bulma('#modalEditarSerie').modal().close();">Cancelar</a>
+       </div>
+        </footer>
+    </div>
+</div>
+</form>
+<input hidden id="txtStampRef" />
 <script>
-
-    //Edit event handler.
-    function Edit() {
-        //alert("Clicou");
-
-        var btns = document.querySelectorAll('.update');
-
-        Array.prototype.forEach.call(btns, function addClickListener(btn) {
-            btn.addEventListener('click', function (event) {
-                var row = $(this).closest("tr");
-                $("td", row).each(function () {
-                    if ($(this).find("input").length > 0) {
-
-                        var span = $(this).find("span");
-                        var input = $(this).find("input");
-                        span.html(input.val());
-                    }
-                });
-
-                var produto = {
-                    refproduto: row.find(".Ref_Produto").find("span").html(),
-                    stockfisico: row.find(".Stock_Fisico").find("span").html(),
-                    armazemid: document.getElementById("hiddenSelectedArmazem").value
-                };
-
-
-                $.ajax({
-                    type: "POST",
-                    url: "/Produtos/EditarStockFisico",
-                    data: produto,
-                    traditional: false,
-                    success: function (result) {
-                    $(function () {
-                        bulmaToast.toast({
-                          message: 'Stock atualizado com sucesso!',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+    function abrirModalQtd(stamp) {
+        $.ajax({
+            type: "GET",
+            url: "/Produtos/ObterDetalhes/" + stamp,
+            traditional: true,
+                success: function (result) {
+                    document.getElementById('txtRef1').innerHTML = result.ref_Produto + " - " + result.designacao_Produto;
+                    document.getElementById('txtQtdAtual').value = result.stock_Fisico;
+                    document.getElementById('txtStampRef').value = stamp;
+                    Bulma('#modalEditarQtd').modal().open();
+            },
+            error: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
                         })
-                    });
-                    }
-                });
-            });
-        });
-
-        var btn1 = document.getElementById("btnEdit");
-        var btn2 = document.getElementById("btnCloseEdit");
-        $("td").each(function () {
-            var row = $(this).closest("tr");
-            if ($(this).find("input").length > 0) {
-
-                if (btn1.style.display === "none") {
-                    row.find(".update").hide();
-                    row.find(".delete").hide();
-                    row.find(".printqr").show();
-                    row.find(".printpeq").show();
-                    row.find(".txtstockfis").hide();
-                    $(this).find("span").show();
-
-                } else {
-                    row.find(".update").show();
-                    row.find(".delete").show();
-                    row.find(".printqr").hide();
-                    row.find(".printpeq").hide();
-                    row.find(".txtstockfis").show();
-                    $(this).find("span").hide();
-
-                }
+            },
+            failure: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
             }
-        });
-        if (btn1.style.display === "none") {
-            btn1.style.display = "block";
-            btn2.style.display = "none";
-        } else {
-            btn1.style.display = "none";
-            btn2.style.display = "block";
-        }
-        $(this).hide();
+            });
+    }
+    function abrirModalSerie(stamp) {
+        $.ajax({
+            type: "GET",
+            url: "/Produtos/ObterDetalhes/" + stamp,
+            traditional: true,
+                success: function (result) {
+                    document.getElementById('txtRef2').innerHTML = result.ref_Produto + " - " + result.designacao_Produto;
+                    document.getElementById('txtStampRef').value = stamp;
+                    Bulma('#modalEditarSerie').modal().open();
+            },
+            error: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+            },
+            failure: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+            }
+            });
+    }
+  
+    function AtualizarQtd(stamp) {
+        var qtd = document.getElementById('txtQtdAtual').value;
+        $.ajax({
+            type: "POST",
+            url: "/Produtos/AtualizarStock/" + stamp + "?qtd=" + qtd + "&armazem=" + document.getElementById("lstarmazens").value,
+            traditional: true,
+                success: function (result) {
+                    bulmaToast.toast({
+                            message: 'Stock atualizado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+                    abrirModalQtd(stamp);
+            },
+            error: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+            },
+            failure: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+            }
+            });
+    }
+        function AtualizarSerie(stamp) {
+        var qtd = 1;
+        var serie = document.getElementById('txtNumeroSerie').value;
+        $.ajax({
+            type: "POST",
+            url: "/Produtos/AtualizarStock/" + stamp + "?qtd=" + qtd + "&serie=" + serie + "&armazem=" + document.getElementById("lstarmazens").value,
+            traditional: true,
+                success: function (result) {
+
+                        bulmaToast.toast({
+                            message: 'Stock atualizado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+                    abrirModalSerie(stamp);
+            },
+            error: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+            },
+            failure: function (response) {
+                    bulmaToast.toast({
+                            message: 'Ocorreu um erro ao obter detalhes da referência! Por favor tente novamente mais tarde.',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        })
+            }
+            });
     }
     function submitdata() {
         document.getElementById("hiddenSelectedArmazem").value = document.getElementById("lstarmazens").value;
@@ -268,7 +399,7 @@ else
         document.getElementById("hiddenSelectedTipoEquipamento").value = document.getElementById("lsttiposequipamento").value;
         $('form').submit();
     }
-document.getElementById("lstfornecedores").value = document.getElementById("hiddenSelectedFornecedor").value;
-document.getElementById("lstarmazens").value = document.getElementById("hiddenSelectedArmazem").value;
-document.getElementById("lsttiposequipamento").value = document.getElementById("hiddenSelectedTipoEquipamento").value;
+    document.getElementById("lstfornecedores").value = document.getElementById("hiddenSelectedFornecedor").value;
+    document.getElementById("lstarmazens").value = document.getElementById("hiddenSelectedArmazem").value;
+    document.getElementById("lsttiposequipamento").value = document.getElementById("hiddenSelectedTipoEquipamento").value;
 </script>

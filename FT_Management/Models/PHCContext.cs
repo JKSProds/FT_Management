@@ -120,11 +120,31 @@ namespace FT_Management.Models
         }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor, string TipoEquipamento)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%"+TipoEquipamento+ "%' AND st.inactivo=0 order by sa.ref;");
+            return ObterInfoInventario(ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%"+TipoEquipamento+ "%' AND st.inactivo=0 order by sa.ref;"));
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
             return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.armazem;");
+        }
+        public Produto ObterProdutoStamp(string Stamp)
+        {
+            return ObterInfoInventario(ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where ststamp like '%" + Stamp + "%' order by sa.armazem;")).DefaultIfEmpty(new Produto()).First();
+        }
+        public List<Produto> ObterInfoInventario(List<Produto> LstProdutos)
+        {
+            List<Produto> LstProdutoDB = FT_ManagementContext.ObterProdutos();
+            for (int i = 0; i < LstProdutoDB.Count(); i++)
+            {
+                int index = LstProdutos.IndexOf(LstProdutos.Where(p => p.StampProduto == LstProdutoDB[i].StampProduto).DefaultIfEmpty().First());
+                if (index >= 0)
+                {
+                    LstProdutos[index].Stock_Fisico = LstProdutoDB[i].Stock_Fisico;
+                    LstProdutos[index].Equipamentos = LstProdutoDB[i].Equipamentos;
+                }
+
+            }
+
+            return LstProdutos;
         }
         public List<Produto> ObterProdutosArmazem(int Armazem)
         {

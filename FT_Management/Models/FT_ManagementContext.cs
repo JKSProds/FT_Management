@@ -755,14 +755,29 @@ namespace FT_Management.Models
 
             return res;
         }
+        public int ObterDiasDireitoUtilizador(int IdUtilizador, string Ano)
+        {
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + Ano + "';");
+                while (result.Read())
+                {
+
+                    return int.Parse(result["DiasDireito"]);
+                }
+            }
+            return 0;
+        }
         public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador)
         {
             FeriasUtilizador feriasUtilizador = new FeriasUtilizador();
 
             using (Database db = ConnectionString)
             {
+                string lastYear = (int.Parse(this.ObterAnoAtivo()) - 1).ToString();
                 using var resultQuery = db.QueryValue("SELECT Count(*) from dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "';");
-                if (resultQuery == 0) CriarFeriasUtilizador(IdUtilizador, this.ObterAnoAtivo(), 23);
+                if (resultQuery == 0) CriarFeriasUtilizador(IdUtilizador, this.ObterAnoAtivo(), 23 + (ObterDiasDireitoUtilizador(IdUtilizador, lastYear) - int.Parse(ObterFeriasDias(IdUtilizador, lastYear))));
             }
 
             using (Database db = ConnectionString)
@@ -773,8 +788,8 @@ namespace FT_Management.Models
                 {
 
                     feriasUtilizador.utilizador = ObterUtilizador(int.Parse(result["IdUtilizador"]));
-                    feriasUtilizador.DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador));
-                    feriasUtilizador.DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador));
+                    feriasUtilizador.DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador, this.ObterAnoAtivo()));
+                    feriasUtilizador.DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador, this.ObterAnoAtivo()));
                     feriasUtilizador.DiasDisponiveis = int.Parse(result["DiasDireito"]);
                     feriasUtilizador.Ferias = ObterListaFerias(IdUtilizador);
                 }
@@ -1002,24 +1017,24 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        public string ObterFeriasMarcadas(int IdUtilizador)
+        public string ObterFeriasMarcadas(int IdUtilizador, string Ano)
         {
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "' AND Ano='"+this.ObterAnoAtivo()+"';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "' AND Ano='"+Ano+"';");
                 return result;
             }
 
         }
-        public string ObterFeriasDias(int IdUtilizador)
+        public string ObterFeriasDias(int IdUtilizador, string Ano)
         {
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where IdUtilizador ='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where IdUtilizador ='" + IdUtilizador + "' AND Ano='" + Ano + "';");
                 return result;
             }
 
@@ -1255,10 +1270,21 @@ namespace FT_Management.Models
         }
         public void CriarFeriasUtilizador(int IdUtilizador, string Ano, int DiasDireito)
         {
+            Utilizador u = this.ObterUtilizador(IdUtilizador);
+
             string sqlDelete = "Delete from dat_ferias_utilizador where IdUtilizador = '" + IdUtilizador + "' AND Ano='" + Ano + "';";
 
             string sqlInsert = "INSERT INTO dat_ferias_utilizador (IdUtilizador,Ano,DiasDireito) VALUES ";
             sqlInsert += ("('" + IdUtilizador + "', '" + Ano + "', '" + DiasDireito + "');");
+
+            DateTime dataAniversario = DateTime.Parse(u.DataNascimento.ToString(Ano + "/MM/dd"));
+
+            while (dataAniversario.DayOfWeek == DayOfWeek.Saturday || dataAniversario.DayOfWeek == DayOfWeek.Sunday)
+            {
+                dataAniversario = dataAniversario.AddDays(1);
+            } 
+
+            if (!VerificarFeriasUtilizador(IdUtilizador, dataAniversario)) CriarFerias(new List<Ferias>() { new Ferias() { IdUtilizador = IdUtilizador, DataInicio = dataAniversario, DataFim = dataAniversario, Obs = "Dia de Aniversário", Validado = true, ValidadoPorNome = "FT", ValidadoPor = 0} });
 
             Database db = ConnectionString;
 
@@ -2675,6 +2701,81 @@ namespace FT_Management.Models
             }
             return LstAtividades;
 
+        }
+        public void CriarProduto(List<Produto> LstProdutos)
+        {
+            int max = 1000;
+            int j = 0;
+            for (int i = 0; j < LstProdutos.Count; i++)
+            {
+                if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
+
+                string sql = "INSERT INTO dat_produtos (Stamp, Designacao, Quantidade, NumeroSerie, Armazem) VALUES ";
+
+                foreach (var produto in LstProdutos.GetRange(j, max))
+                {
+                    foreach (var equipamento in produto.Equipamentos)
+                    {
+                        sql += ("('" + produto.StampProduto + "', '" + produto.Designacao_Produto + "', '" + produto.Stock_Fisico + "', '" + equipamento.NumeroSerieEquipamento + "', '" + produto.Armazem_ID + "'), \r\n");
+                    }
+                    i++;
+                }
+                sql = sql.Remove(sql.Count() - 4);
+
+                sql += " ON DUPLICATE KEY UPDATE Quantidade=VALUES(Quantidade), Armazem = VALUES(Armazem);";
+
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+
+                j += max;
+                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+            }
+        }
+        public Produto ObterProduto(Produto p)
+        {
+            string sqlQuery = "SELECT * FROM dat_produtos where Stamp='" + p.StampProduto + "';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    p.Stock_Fisico += Double.Parse(result["Quantidade"]);
+                    p.Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
+                }
+            }
+            return p;
+        }
+
+        public List<Produto> ObterProdutos()
+        {
+            string sqlQuery = "SELECT * FROM dat_produtos;";
+            List<Produto> LstProdutos = new List<Produto>();
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    int i = LstProdutos.IndexOf(LstProdutos.Where(p => p.StampProduto == result["Stamp"]).DefaultIfEmpty().First());
+                    if (i >= 0)
+                    {
+                        LstProdutos[i].Stock_Fisico += Double.Parse(result["Quantidade"]);
+                        LstProdutos[i].Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
+                    }
+                    else
+                    {
+                        Produto p = new Produto();
+                        p.StampProduto = result["Stamp"];
+                        p.Stock_Fisico += Double.Parse(result["Quantidade"]);
+                        p.Equipamentos = new List<Equipamento>() { new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] } };
+                        LstProdutos.Add(p);
+                    }
+                }
+            }
+            return LstProdutos;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace FT_Management.Models
         public string Ref_Produto { get; set; }
         [Display(Name = "Designação")]
         public string Designacao_Produto { get; set; }
-        [Display(Name = "Stock Fisico")]
+        [Display(Name = "Fisico")]
         public double Stock_Fisico { get; set; }
         [Display(Name = "Stock")]
         public double Stock_PHC { get; set; }
@@ -21,6 +21,8 @@ namespace FT_Management.Models
         public double Stock_Res { get; set; }
         [Display(Name = "Receção")]
         public double Stock_Rec { get; set; }
+        [Display(Name = "PHC")]
+        public double Stock_Atual { get { return Stock_PHC + Stock_Rec - Stock_Res; } }
         [Display(Name = "Armazém")]
         public int Armazem_ID { get; set; }
         [Display(Name = "Localização")]
@@ -34,6 +36,12 @@ namespace FT_Management.Models
         [Display(Name = "Imagem")]
         public string ImgProduto { get; set; }
         public bool Serie { get; set; }
+        public List<Equipamento> Equipamentos { get; set; }
+
+        public Produto()
+        {
+            Equipamentos = new List<Equipamento>();
+        }
     }
 
     public class Movimentos
