@@ -114,11 +114,11 @@ namespace FT_Management.Controllers
             return View("Calendario");
         }
 
-        public ActionResult Detalhes(int IdUtilizador)
+        public ActionResult Detalhes(int id)
         {
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-                if (int.Parse(this.User.Claims.First().Value) != IdUtilizador)
+                if (int.Parse(this.User.Claims.First().Value) != id)
                 {
                     return RedirectToAction("Detalhes", new { IdUtilizador = int.Parse(this.User.Claims.First().Value) });
                 }
@@ -127,9 +127,9 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             ViewData["Ano"] = context.ObterAnoAtivo();
-            ViewData["IdUtilizador"] = IdUtilizador;
+            ViewData["IdUtilizador"] = id;
 
-            return View(context.ObterListaFeriasUtilizador(IdUtilizador));
+            return View(context.ObterListaFeriasUtilizador(id));
         }
 
         [Authorize(Roles = "Admin")]
