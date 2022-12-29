@@ -55,6 +55,9 @@
     <None Update="FT_Presencas.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="https\aspnetapp.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 
