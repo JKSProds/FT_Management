@@ -143,7 +143,9 @@ namespace FT_Management.Controllers
             Ferias ferias = context.ObterFerias(int.Parse(id));
             ferias.Validado = true;
             ferias.Obs = obs;
-            ferias.ValidadoPor = int.Parse(this.User.Claims.First().Value);
+            ferias.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            ferias.ValidadoPor = ferias.Utilizador.Id;
+            ferias.ValidadoPorNome = ferias.Utilizador.NomeCompleto;
             LstFerias.Add(ferias);
             context.CriarFerias(LstFerias);
 
