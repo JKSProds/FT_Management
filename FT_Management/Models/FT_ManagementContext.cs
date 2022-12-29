@@ -1066,7 +1066,7 @@ namespace FT_Management.Models
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     isAllDay = true,
-                    url = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
+                    url = "Detalhes/" + item.IdUtilizador,
                     category = "time",
                     dueDateClass = "",
                     color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
