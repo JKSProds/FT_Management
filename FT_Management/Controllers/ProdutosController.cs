@@ -148,25 +148,5 @@ namespace FT_Management.Controllers
 
             return Json(phccontext.ObterProdutoStamp(id));
         }
-        [HttpPost]
-        public ContentResult AtualizarStock(string id, double qtd, string serie, int armazem)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            Produto p = phccontext.ObterProdutoStamp(id);
-            serie = string.IsNullOrEmpty(serie) ? "" : serie;
-            p.Stock_Fisico = qtd;
-            p.Armazem_ID = armazem;
-
-            if (p.Equipamentos.Where(e => e.NumeroSerieEquipamento == serie).Count() == 0) { p.Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = serie }); }
-            else if (p.Serie)
-            {
-                return Content("Número de Serie já foi registado!");
-            }
-            context.CriarProduto(new System.Collections.Generic.List<Produto> { p });
-
-            return Content("");
-        }
     }
 }

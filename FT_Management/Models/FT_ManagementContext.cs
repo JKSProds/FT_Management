@@ -2702,80 +2702,81 @@ namespace FT_Management.Models
             return LstAtividades;
 
         }
-        public void CriarProduto(List<Produto> LstProdutos)
-        {
-            int max = 1000;
-            int j = 0;
-            for (int i = 0; j < LstProdutos.Count; i++)
-            {
-                if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
 
-                string sql = "INSERT INTO dat_produtos (Stamp, Designacao, Quantidade, NumeroSerie, Armazem) VALUES ";
+        //Produtos (INATIVO)
+        //public void CriarProduto(List<Produto> LstProdutos)
+        //{
+        //    int max = 1000;
+        //    int j = 0;
+        //    for (int i = 0; j < LstProdutos.Count; i++)
+        //    {
+        //        if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
 
-                foreach (var produto in LstProdutos.GetRange(j, max))
-                {
-                    foreach (var equipamento in produto.Equipamentos)
-                    {
-                        sql += ("('" + produto.StampProduto + "', '" + produto.Designacao_Produto + "', '" + produto.Stock_Fisico + "', '" + equipamento.NumeroSerieEquipamento + "', '" + produto.Armazem_ID + "'), \r\n");
-                    }
-                    i++;
-                }
-                sql = sql.Remove(sql.Count() - 4);
+        //        string sql = "INSERT INTO dat_produtos (Stamp, Designacao, Quantidade, NumeroSerie, Armazem) VALUES ";
 
-                sql += " ON DUPLICATE KEY UPDATE Quantidade=VALUES(Quantidade), Armazem = VALUES(Armazem);";
+        //        foreach (var produto in LstProdutos.GetRange(j, max))
+        //        {
+        //            foreach (var equipamento in produto.Equipamentos)
+        //            {
+        //                sql += ("('" + produto.StampProduto + "', '" + produto.Designacao_Produto + "', '" + produto.Stock_Fisico + "', '" + equipamento.NumeroSerieEquipamento + "', '" + produto.Armazem_ID + "'), \r\n");
+        //            }
+        //            i++;
+        //        }
+        //        sql = sql.Remove(sql.Count() - 4);
 
-                Database db = ConnectionString;
+        //        sql += " ON DUPLICATE KEY UPDATE Quantidade=VALUES(Quantidade), Armazem = VALUES(Armazem);";
 
-                db.Execute(sql);
-                db.Connection.Close();
+        //        Database db = ConnectionString;
 
-                j += max;
-                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
-            }
-        }
-        public Produto ObterProduto(Produto p)
-        {
-            string sqlQuery = "SELECT * FROM dat_produtos where Stamp='" + p.StampProduto + "';";
+        //        db.Execute(sql);
+        //        db.Connection.Close();
 
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    p.Stock_Fisico += Double.Parse(result["Quantidade"]);
-                    p.Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
-                }
-            }
-            return p;
-        }
+        //        j += max;
+        //        //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+        //    }
+        //}
+        //public Produto ObterProduto(Produto p)
+        //{
+        //    string sqlQuery = "SELECT * FROM dat_produtos where Stamp='" + p.StampProduto + "';";
 
-        public List<Produto> ObterProdutos()
-        {
-            string sqlQuery = "SELECT * FROM dat_produtos;";
-            List<Produto> LstProdutos = new List<Produto>();
+        //    using Database db = ConnectionString;
+        //    using (var result = db.Query(sqlQuery))
+        //    {
+        //        while (result.Read())
+        //        {
+        //            p.Stock_Fisico += Double.Parse(result["Quantidade"]);
+        //            p.Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
+        //        }
+        //    }
+        //    return p;
+        //}
+        //public List<Produto> ObterProdutos()
+        //{
+        //    string sqlQuery = "SELECT * FROM dat_produtos;";
+        //    List<Produto> LstProdutos = new List<Produto>();
 
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    int i = LstProdutos.IndexOf(LstProdutos.Where(p => p.StampProduto == result["Stamp"]).DefaultIfEmpty().First());
-                    if (i >= 0)
-                    {
-                        LstProdutos[i].Stock_Fisico += Double.Parse(result["Quantidade"]);
-                        LstProdutos[i].Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
-                    }
-                    else
-                    {
-                        Produto p = new Produto();
-                        p.StampProduto = result["Stamp"];
-                        p.Stock_Fisico += Double.Parse(result["Quantidade"]);
-                        p.Equipamentos = new List<Equipamento>() { new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] } };
-                        LstProdutos.Add(p);
-                    }
-                }
-            }
-            return LstProdutos;
-        }
+        //    using Database db = ConnectionString;
+        //    using (var result = db.Query(sqlQuery))
+        //    {
+        //        while (result.Read())
+        //        {
+        //            int i = LstProdutos.IndexOf(LstProdutos.Where(p => p.StampProduto == result["Stamp"]).DefaultIfEmpty().First());
+        //            if (i >= 0)
+        //            {
+        //                LstProdutos[i].Stock_Fisico += Double.Parse(result["Quantidade"]);
+        //                LstProdutos[i].Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
+        //            }
+        //            else
+        //            {
+        //                Produto p = new Produto();
+        //                p.StampProduto = result["Stamp"];
+        //                p.Stock_Fisico += Double.Parse(result["Quantidade"]);
+        //                p.Equipamentos = new List<Equipamento>() { new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] } };
+        //                LstProdutos.Add(p);
+        //            }
+        //        }
+        //    }
+        //    return LstProdutos;
+        //}
     }
 }

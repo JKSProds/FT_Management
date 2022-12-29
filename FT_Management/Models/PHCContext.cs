@@ -120,7 +120,7 @@ namespace FT_Management.Models
         }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor, string TipoEquipamento)
         {
-            return ObterInfoInventario(ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%"+TipoEquipamento+ "%' AND st.inactivo=0 order by sa.ref;"));
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%"+TipoEquipamento+ "%' AND st.inactivo=0 order by sa.ref;");
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
@@ -128,23 +128,7 @@ namespace FT_Management.Models
         }
         public Produto ObterProdutoStamp(string Stamp)
         {
-            return ObterInfoInventario(ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where ststamp like '%" + Stamp + "%' order by sa.armazem;")).DefaultIfEmpty(new Produto()).First();
-        }
-        public List<Produto> ObterInfoInventario(List<Produto> LstProdutos)
-        {
-            List<Produto> LstProdutoDB = FT_ManagementContext.ObterProdutos();
-            for (int i = 0; i < LstProdutoDB.Count(); i++)
-            {
-                int index = LstProdutos.IndexOf(LstProdutos.Where(p => p.StampProduto == LstProdutoDB[i].StampProduto).DefaultIfEmpty().First());
-                if (index >= 0)
-                {
-                    LstProdutos[index].Stock_Fisico = LstProdutoDB[i].Stock_Fisico;
-                    LstProdutos[index].Equipamentos = LstProdutoDB[i].Equipamentos;
-                }
-
-            }
-
-            return LstProdutos;
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where ststamp like '%" + Stamp + "%' order by sa.armazem;").DefaultIfEmpty(new Produto()).First();
         }
         public List<Produto> ObterProdutosArmazem(int Armazem)
         {
@@ -553,30 +537,28 @@ namespace FT_Management.Models
             int res = 0;
             try
             {
-                return 0;
+                //SqlConnection conn = new SqlConnection(ConnectionString);
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                //conn.Open();
 
-                conn.Open();
+                //SqlCommand command = new SqlCommand("Gera_FolhaObra", conn)
+                //{
+                //    CommandTimeout = TIMEOUT,
+                //    CommandType = CommandType.StoredProcedure
+                //};
 
-                SqlCommand command = new SqlCommand("Gera_FolhaObra", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
+                //command.Parameters.Add(new SqlParameter("@NO", fo.ClienteServico.IdCliente));
 
-                command.Parameters.Add(new SqlParameter("@NO", fo.ClienteServico.IdCliente));
+                //using SqlDataReader result = command.ExecuteReader();
+                //result.Read();
 
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
+                //if (result[0].ToString() != "-1")
+                //{
+                //    res = int.Parse(result[3].ToString());
+                //    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + res + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
+                //}
 
-                if (result[0].ToString() != "-1")
-                {
-                    res = int.Parse(result[3].ToString());
-                    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + res + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
-                }
-
-                conn.Close();
+                //conn.Close();
             }
 
             catch (Exception ex)
