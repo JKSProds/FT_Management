@@ -22,7 +22,7 @@ namespace FT_Management.Controllers
         {
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-                return RedirectToAction("Detalhes", new { IdUtilizador = int.Parse(this.User.Claims.First().Value) });
+                return RedirectToAction("Detalhes", new { id = int.Parse(this.User.Claims.First().Value) });
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -120,7 +120,7 @@ namespace FT_Management.Controllers
             {
                 if (int.Parse(this.User.Claims.First().Value) != id)
                 {
-                    return RedirectToAction("Detalhes", new { IdUtilizador = int.Parse(this.User.Claims.First().Value) });
+                    return RedirectToAction("Detalhes", new { id = int.Parse(this.User.Claims.First().Value) });
                 }
             }
 
