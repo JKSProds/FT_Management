@@ -40,6 +40,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Produtos\Movimentos.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\apple-touch-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

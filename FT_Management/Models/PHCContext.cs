@@ -194,7 +194,7 @@ namespace FT_Management.Models
         }
 
         //NAO FUNCIONA
-        public List<Movimentos> ObterListaMovimentos(string Referencia)
+        public List<Movimentos> ObterListaMovimentos(string SQL_Query)
         {
             List<Movimentos> LstGuias = new List<Movimentos>();
 
@@ -204,7 +204,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select pa.nopat, bi.ref, bi.design, bi.qtt from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and bi.ref='" + Referencia + "' order by ref;", conn)
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -215,7 +215,15 @@ namespace FT_Management.Models
                     {
                         LstGuias.Add(new Movimentos()
                         {
-                       
+                            IdFolhaObra = int.Parse(result["nopat"].ToString()),
+                            IdTecnico = int.Parse(result["tecnico"].ToString()),
+                            NomeTecnico = result["tecnnm"].ToString(),
+                            GuiaTransporte = result["obrano"].ToString(),
+                            RefProduto = result["ref"].ToString(),
+                            Designacao = result["design"].ToString(),
+                            Quantidade = float.Parse(result["qtt"].ToString()),
+                            NomeCliente = result["nome"].ToString(),
+                            DataMovimento = DateTime.Parse(DateTime.Parse(result["fdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["fhora"].ToString()).ToShortTimeString()),
                         });
                     }
                 }
@@ -807,9 +815,9 @@ namespace FT_Management.Models
         {
             return ObterPecas("select pa.nopat, bi.ref, bi.design, bi.qtt, (SELECT TOP 1 CONCAT(obrano, ' - AT ', atcodeid) from V_DOCS_GLOBAL WHERE ar2mazem=bi.armazem and dataobra<bi.dataobra and bi.ref not like '%SRV%' order by dataobra desc) as guiatransporte from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and pa.nopat=" + IdFolhaObra + " order by ref;");
         }
-        public List<Produto> ObterPecasGuiaTransporte(string GuiaTransporte, int IdArmazem)
+        public List<Movimentos> ObterPecasGuiaTransporte(string GuiaTransporte, int IdArmazem)
         {
-            return ObterPecas("select CONCAT(V_DOCS_GLOBAL.obrano, ' - AT ', V_DOCS_GLOBAL.atcodeid) as guiatransporte, pa.nopat, bi.ref, bi.design, bi.qtt from V_DOCS_GLOBAL, pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!='' and ref not like '%SRV%' and ref not like '%IMO%' and ref not like '%PAT%' and bo.ndos=49 and bi.armazem=" + IdArmazem+" and V_DOCS_GLOBAL.ar2mazem=bi.armazem and V_DOCS_GLOBAL.dataobra<bi.dataobra and V_DOCS_GLOBAL.obrano like '%"+GuiaTransporte+"%' order by ref;");
+            return ObterListaMovimentos("select CONCAT(V_DOCS_GLOBAL.obrano, ' - AT ', V_DOCS_GLOBAL.atcodeid) as guiatransporte, * from V_DOCS_GLOBAL, pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!='' and ref not like '%SRV%' and ref not like '%IMO%' and ref not like '%PAT%' and bo.ndos=49 and bi.armazem=" + IdArmazem+" and V_DOCS_GLOBAL.ar2mazem=bi.armazem and V_DOCS_GLOBAL.dataobra<=bi.dataobra and V_DOCS_GLOBAL.obrano like '%"+GuiaTransporte+"%' order by ref;");
         }
         public List<String> ObterGuiasTransporte(int IdArmazem)
         {

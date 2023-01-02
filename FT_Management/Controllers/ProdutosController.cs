@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using X.PagedList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 
 namespace FT_Management.Controllers
 {
@@ -147,6 +148,24 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return Json(phccontext.ObterProdutoStamp(id));
+        }
+
+
+        public ActionResult ObterPecasUso(int id, string gt)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First();
+            List<string> LstGuias = phccontext.ObterGuiasTransporte(u.IdArmazem);
+            if (string.IsNullOrEmpty(gt)) gt = LstGuias.First();
+
+            ViewData["IdArmazem"] = id;
+            ViewData["Guias"] = new SelectList(LstGuias);
+            ViewData["Utilizador"] = u.NomeCompleto;
+            ViewData["GT"] = gt;
+
+            return View("Movimentos", phccontext.ObterPecasGuiaTransporte(gt, u.IdArmazem).OrderBy(m => m.DataMovimento));
         }
     }
 }

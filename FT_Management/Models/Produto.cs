@@ -46,14 +46,23 @@ namespace FT_Management.Models
 
     public class Movimentos
     {
+        [Display(Name = "Num. da Folha de Obra")]
         public int IdFolhaObra { get; set; }
+        [Display(Name = "Num do Técnico")]
         public int IdTecnico { get; set; }
+        [Display(Name = "Guia de Transporte")]
         public string GuiaTransporte { get; set; }
+        [Display(Name = "Técnico")]
         public string NomeTecnico { get; set; }
+        [Display(Name = "Referência")]
         public string RefProduto { get; set; }
+        [Display(Name = "Designação")]
         public string Designacao { get; set; }
+        [Display(Name = "Quantidade")]
         public float Quantidade { get; set; }
+        [Display(Name = "Cliente")]
         public string NomeCliente { get; set; }
+        [Display(Name = "Data")]
         public DateTime DataMovimento { get; set; }
     }
 }

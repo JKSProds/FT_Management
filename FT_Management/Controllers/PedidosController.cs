@@ -647,22 +647,5 @@ namespace FT_Management.Controllers
             return View(m);
         }
 
-        public ActionResult<string> ObterPecasUso(int id)
-        {
-            string res = "";
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            int IdArmazem = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First().IdArmazem;
-            string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
-            res += "### " + ultimaGT + " ###\r\n";
-
-                foreach (var item in phccontext.ObterPecasGuiaTransporte(ultimaGT, IdArmazem))
-            {
-                res += "Ref: " + item.Ref_Produto + " | Designacao: " + item.Designacao_Produto + " | Qtd: " + item.Stock_Fisico + " " + item.TipoUn + "\r\n";
-            }
-
-            return res;
-        }
     }
 }
