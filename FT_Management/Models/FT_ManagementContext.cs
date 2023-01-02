@@ -1106,6 +1106,10 @@ namespace FT_Management.Models
             int y = 1;
             int x = 1;
 
+            workSheet.Cells[y, x].Value = Ano;
+            workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+            workSheet.Cells[y, x].Style.Font.Bold = true;
+
             //workSheet.Cells[y, 33].Value = "Total";
             //workSheet.Cells[y, 33].Style.Border.BorderAround(ExcelBorderStyle.Medium);
             //workSheet.Cells[y, 33].Style.Font.Bold = true;

@@ -87,9 +87,11 @@ namespace FT_Management.Controllers
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
-        public virtual ActionResult Exportar(string id)
+        public virtual ActionResult Exportar()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            string id = context.ObterAnoAtivo();
+
             var file = context.GerarMapaFerias(id);
             var output = new MemoryStream();
 
