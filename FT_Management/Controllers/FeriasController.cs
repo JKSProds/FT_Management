@@ -22,12 +22,12 @@ namespace FT_Management.Controllers
         {
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-                return RedirectToAction("Detalhes", new { IdUtilizador = int.Parse(this.User.Claims.First().Value) });
+                return RedirectToAction("Detalhes", new { id = int.Parse(this.User.Claims.First().Value) });
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterListaUtilizadores(true));
+            return View(context.ObterListaUtilizadores(true, false));
         }
 
         [AllowAnonymous]
@@ -40,7 +40,7 @@ namespace FT_Management.Controllers
             int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
             if (IdUtilizador == 0) return Forbid();
 
-            List<Ferias> LstFerias = context.ObterListaFeriasValidadas(DateTime.Parse(DateTime.Now.Year + "-01-01"), DateTime.Parse(DateTime.Now.Year + "-12-31"));
+            List<Ferias> LstFerias = context.ObterListaFeriasValidadas();
 
             foreach (var f in LstFerias)
             {
@@ -83,13 +83,15 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end), context.ObterListaFeriados(start.Year.ToString())).ToList());
+            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(), context.ObterListaFeriados(start.Year.ToString())).ToList());
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
-        public virtual ActionResult Exportar(string id)
+        public virtual ActionResult Exportar()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            string id = context.ObterAnoAtivo();
+
             var file = context.GerarMapaFerias(id);
             var output = new MemoryStream();
 
@@ -111,25 +113,25 @@ namespace FT_Management.Controllers
 
         public ActionResult CalendarioView()
         {
-            return View("CalendarioNew");
+            return View("Calendario");
         }
 
-        public ActionResult Detalhes(int IdUtilizador)
+        public ActionResult Detalhes(int id)
         {
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
             {
-                if (int.Parse(this.User.Claims.First().Value) != IdUtilizador)
+                if (int.Parse(this.User.Claims.First().Value) != id)
                 {
-                    return RedirectToAction("Detalhes", new { IdUtilizador = int.Parse(this.User.Claims.First().Value) });
+                    return RedirectToAction("Detalhes", new { id = int.Parse(this.User.Claims.First().Value) });
                 }
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             ViewData["Ano"] = context.ObterAnoAtivo();
-            ViewData["IdUtilizador"] = IdUtilizador;
+            ViewData["IdUtilizador"] = id;
 
-            return View(context.ObterListaFeriasUtilizador(IdUtilizador, ViewData["Ano"].ToString()));
+            return View(context.ObterListaFeriasUtilizador(id));
         }
 
         [Authorize(Roles = "Admin")]
@@ -143,7 +145,9 @@ namespace FT_Management.Controllers
             Ferias ferias = context.ObterFerias(int.Parse(id));
             ferias.Validado = true;
             ferias.Obs = obs;
-            ferias.ValidadoPor = int.Parse(this.User.Claims.First().Value);
+            ferias.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            ferias.ValidadoPor = ferias.Utilizador.Id;
+            ferias.ValidadoPorNome = ferias.Utilizador.NomeCompleto;
             LstFerias.Add(ferias);
             context.CriarFerias(LstFerias);
 
@@ -190,7 +194,7 @@ namespace FT_Management.Controllers
             DateTime dataAtual = DateTime.Parse(datainicio);
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             List<Ferias> LstFerias = new List<Ferias>();
-            List<Ferias> LstFeriasExistentes = context.ObterListaFerias(idutilizador, dataInicio.Year.ToString());
+            List<Ferias> LstFeriasExistentes = context.ObterListaFerias(idutilizador);
             List<Feriado> LstFeriados = context.ObterListaFeriados(DateTime.Parse(datainicio).Year.ToString());
 
             bool weekend = false;

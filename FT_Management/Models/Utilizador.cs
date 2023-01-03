@@ -22,6 +22,17 @@ namespace FT_Management.Models
         }
 
     }
+
+    public class Zona
+    {
+        public int Id { get; set; }
+        public string Valor { get; set; }
+    }
+    public class TipoTecnico
+    {
+        public int Id { get; set; }
+        public string Valor { get; set; }
+    }
     public class Utilizador
     {
         public int Id { get; set; }
@@ -66,6 +77,9 @@ namespace FT_Management.Models
         [Display(Name = "Ultimo Acesso")]
         public DateTime UltimoAcesso { get; set; }
         public bool AcessoAtivo { get; set; }
+        public int TipoTecnico { get; set; }
+        public int Zona { get; set; }
+        public string ChatToken { get; set; }
         public Utilizador()
         {
             this.Id = 0;

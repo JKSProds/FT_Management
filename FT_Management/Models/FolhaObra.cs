@@ -56,6 +56,7 @@ namespace FT_Management.Models
         public bool AssistenciaRemota { get; set; }
         [Display(Name = "Rúbrica")]
         public string RubricaCliente { get; set; }
+        public bool Piquete { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/FolhasObra/Detalhes/" + IdFolhaObra; } }
         [Display(Name = "Estado do Serviço")]
         public string EstadoFolhaObra { get; set; }

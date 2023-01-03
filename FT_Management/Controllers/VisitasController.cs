@@ -63,7 +63,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterListaComerciais());
+            return View(context.ObterListaComerciais(true));
         }
 
 
@@ -88,11 +88,11 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             if (User.IsInRole("Admin") || User.IsInRole("Escritorio")) { 
-                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList(); 
+                ViewData["Comerciais"] = context.ObterListaComerciais(true); 
             } 
             else
             {
-               ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
+               ViewData["Comerciais"] = context.ObterListaComerciais(true).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
             }
 
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
@@ -114,11 +114,11 @@ namespace FT_Management.Controllers
 
             if (User.IsInRole("Admin") || User.IsInRole("Escritorio"))
             {
-                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+                ViewData["Comerciais"] = context.ObterListaComerciais(true);
             }
             else
             {
-                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
+                ViewData["Comerciais"] = context.ObterListaComerciais(true).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
             }
 
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
@@ -138,11 +138,11 @@ namespace FT_Management.Controllers
 
             if (User.IsInRole("Admin") || User.IsInRole("Escritorio"))
             {
-                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+                ViewData["Comerciais"] = context.ObterListaComerciais(true);
             }
             else
             {
-                ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
+                ViewData["Comerciais"] = context.ObterListaComerciais(true).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
                 if (v.IdComercial != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("AcessoNegado", "Home");
             }
 
@@ -171,7 +171,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Visita visita = context.ObterVisita(idVisita);
-            ViewData["Comerciais"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+            ViewData["Comerciais"] = context.ObterListaComerciais(true);
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio")) IdComercial = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).Id;
             if (visita.IdComercial == IdComercial || User.IsInRole("Admin")) return View(visita);

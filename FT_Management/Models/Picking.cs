@@ -20,6 +20,10 @@ namespace FT_Management.Models
         public bool DespacharEncomenda { get; set; }
         public List<Linha_Picking> Linhas { get; set; }
         public string EditadoPor { get; set; }
+        public string Obs { get; set; }
+        public Armazem ArmazemDestino { get; set; }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Picking/PrintPicking/" + Picking_Stamp; } }
+
     }
     public class Linha_Picking
     {
@@ -32,6 +36,7 @@ namespace FT_Management.Models
         public double Qtd_Linha { get; set; }
         [Display(Name = "Quantidade a Separar")]
         public double Qtd_Separar { get; set; }
+        public string TipoUnidade { get; set; }
         [Display(Name = "Núm. de Série")]
         public List<Ref_Linha_Picking> Lista_Ref { get; set; }
         public bool Serie { get; set; }

@@ -42,7 +42,7 @@ namespace FT_Management.Models
 
         //UTILIZADOR
         #region UTILIZADORES
-        public List<Utilizador> ObterListaUtilizadores(bool Enable)
+        public List<Utilizador> ObterListaUtilizadores(bool Enable, bool Viatura)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
             string sqlQuery = "SELECT * FROM sys_utilizadores inner join dat_acessos_utilizador on sys_utilizadores.IdUtilizador = dat_acessos_utilizador.IdUtilizador " + (Enable ? "WHERE enable=1" : "") + " order by NomeCompleto;";
@@ -70,6 +70,9 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
                         IdArmazem = result["IdArmazem"],
+                        TipoTecnico = result["TipoTecnico"],
+                        Zona = result["Zona"],
+                        ChatToken = result["ChatToken"],
 #if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif                        
@@ -77,17 +80,21 @@ namespace FT_Management.Models
                         AcessoAtivo = result["TipoUltimoAcesso"] == 1,
                         Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
                     });
+                    if (!string.IsNullOrEmpty(LstUtilizadores.Last().Viatura.Matricula) && Viatura)
+                    {
+                        LstUtilizadores.Last().Viatura = ObterViatura(LstUtilizadores.Last());
+                    }
                 }
             }
             return LstUtilizadores;
         }
-        public List<Utilizador> ObterListaTecnicos(bool Enable)
+        public List<Utilizador> ObterListaTecnicos(bool Enable, bool Viatura)
         {
-            return ObterListaUtilizadores(Enable).Where(u => u.TipoUtilizador == 1).ToList();
+            return ObterListaUtilizadores(Enable, Viatura).Where(u => u.TipoUtilizador == 1).ToList();
         }
-        public List<Utilizador> ObterListaComerciais()
+        public List<Utilizador> ObterListaComerciais(bool Enable)
         {
-            return ObterListaUtilizadores(true).Where(u => u.TipoUtilizador == 2).ToList();
+            return ObterListaUtilizadores(Enable,false).Where(u => u.TipoUtilizador == 2).ToList();
         }
         public Utilizador ObterUtilizador(int Id)
         {
@@ -117,6 +124,9 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
                         IdArmazem = result["IdArmazem"],
+                        TipoTecnico = result["TipoTecnico"],
+                        Zona = result["Zona"],
+                        ChatToken = result["ChatToken"],
 #if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif
@@ -144,7 +154,7 @@ namespace FT_Management.Models
 
         public List<Marcacao> ObterUtilizadorMarcacao(List<Marcacao> LstMarcacao)
         {
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false, false);
 
             foreach (var item in LstMarcacao)
             {
@@ -182,13 +192,46 @@ namespace FT_Management.Models
             }
             return 0;
         }
+
+        public List<Zona> ObterZonas()
+        {
+            string sqlQuery = "SELECT * FROM sys_zonas;";
+            List<Zona> LstZonas = new List<Zona>();
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstZonas.Add(new Zona() { Id = result["IdZona"], Valor = result["Zona"] });
+                }
+            }
+            return LstZonas;
+        }
+
+        public List<TipoTecnico> ObterTipoTecnicos()
+        {
+            string sqlQuery = "SELECT * FROM sys_tipo_tecnico;";
+            List<TipoTecnico> LstTipoTecnico = new List<TipoTecnico>();
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstTipoTecnico.Add(new TipoTecnico() { Id = result["IdTipoTecnico"], Valor = result["TipoTecnico"] });
+                }
+            }
+            return LstTipoTecnico;
+        }
+
         public void NovoUtilizador(Utilizador utilizador)
         {
-            string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, admin, enable, IdPHC, IdArmazem, IniciaisUtilizador, CorCalendario, TipoMapa, DataNascimento, TelemovelUtilizador, Matricula_Viatura, ImgUtilizador) VALUES ";
+            string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, admin, enable, IdPHC, IdArmazem, IniciaisUtilizador, CorCalendario, TipoMapa, DataNascimento, TelemovelUtilizador, Matricula_Viatura, ImgUtilizador, TipoTecnico, Zona, ChatToken) VALUES ";
 
-            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ", '" + utilizador.DataNascimento.ToString("yyyy-MM-dd") + "', '" + utilizador.ObterTelemovelFormatado(true) + "', '" + utilizador.Viatura.Matricula + "', '" + utilizador.ImgUtilizador + "') \r\n");
+            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ", '" + utilizador.DataNascimento.ToString("yyyy-MM-dd") + "', '" + utilizador.ObterTelemovelFormatado(true) + "', '" + utilizador.Viatura.Matricula + "', '" + utilizador.ImgUtilizador + "', '" + utilizador.TipoTecnico + "', '" + utilizador.Zona + "', '" + utilizador.ChatToken + "') \r\n");
 
-            sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), admin = VALUES(admin), enable = VALUES(enable), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario), TipoMapa = VALUES(TipoMapa), DataNascimento = VALUES(DataNascimento), TelemovelUtilizador = VALUES(TelemovelUtilizador), Matricula_Viatura = VALUES(Matricula_Viatura), ImgUtilizador = VALUES(ImgUtilizador);";
+            sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), admin = VALUES(admin), enable = VALUES(enable), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario), TipoMapa = VALUES(TipoMapa), DataNascimento = VALUES(DataNascimento), TelemovelUtilizador = VALUES(TelemovelUtilizador), Matricula_Viatura = VALUES(Matricula_Viatura), ImgUtilizador = VALUES(ImgUtilizador), TipoTecnico = VALUES(TipoTecnico), Zona = VALUES(Zona), ChatToken = VALUES(ChatToken);";
 
             using (Database db = ConnectionString)
             {
@@ -225,7 +268,7 @@ namespace FT_Management.Models
         {
             Viatura res = new Viatura();
 
-            string sqlQuery = "SELECT * FROM dat_viaturas where matricula_viatura='" + utilizador.Viatura.Matricula + "';";
+            string sqlQuery = "SELECT *, (Select  fim_localizacao from dat_viaturas_viagens where matricula_viatura='" + utilizador.Viatura.Matricula + "' order by timestamp DESC limit 1) as localizacao2 FROM dat_viaturas where matricula_viatura='" + utilizador.Viatura.Matricula + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -242,6 +285,11 @@ namespace FT_Management.Models
                         Utilizador = utilizador,
                         Ignicao = result["ignicao"] == 1
                     };
+                    if (DateTime.Parse(result["timestamp"]) < DateTime.Now.AddMinutes(-60))
+                    {
+                        res.Ignicao = result["localizacao2"] == "";
+                        res.LocalizacaoMorada = result["localizacao2"] == "" ? "Não foi possivel obter a localização desta viatura!" : result["localizacao2"];
+                    }
                 }
             }
 
@@ -252,7 +300,7 @@ namespace FT_Management.Models
         public List<Viatura> ObterViaturas()
         {
             List<Viatura> res = new List<Viatura>();
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true).Where(u => u.Viatura.Matricula != "").ToList();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u => u.Viatura.Matricula != "").ToList();
             string sqlQuery = "SELECT * FROM dat_viaturas;";
 
             using Database db = ConnectionString;
@@ -693,58 +741,6 @@ namespace FT_Management.Models
         }
 #endregion
 
-        //ARMAZENS
-#region Armazens
-        public List<Armazem> ObterListaArmazens()
-        {
-            List<Armazem> LstArmazens = new List<Armazem>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM sys_armazem;"))
-            {
-                while (result.Read())
-                {
-                    LstArmazens.Add(new Armazem()
-                    {
-                        ArmazemId = result["armazem_id"],
-                        ArmazemNome = result["armazem_nome"]
-                    });
-                }
-            }
-            db.Connection.Close();
-
-            return LstArmazens;
-        }
-        public List<Produto> ObterListaProdutoArmazem(string referencia)
-        {
-            List<Produto> LstProdutos = new List<Produto>();
-
-            Database db = ConnectionString;
-
-            using (var result = db.Query("SELECT * FROM dat_produtos Where ref_produto='" + referencia + "';"))
-            {
-                while (result.Read())
-                {
-                    LstProdutos.Add(new Produto()
-                    {
-                        Ref_Produto = result["ref_produto"],
-                        Designacao_Produto = result["designacao_produto"],
-                        Stock_Fisico = result["stock_fisico"],
-                        Stock_PHC = result["stock_phc"],
-                        Stock_Rec = result["stock_rec"],
-                        Stock_Res = result["stock_res"],
-                        Armazem_ID = result["armazem_id"],
-                        Pos_Stock = result["pos_stock"],
-                        Obs_Produto = result["obs"]
-                    });
-                }
-            }
-            db.Connection.Close();
-            return LstProdutos;
-        }
-#endregion
-
         //FERIAS
 #region Ferias
         public bool VerificarFeriasUtilizador(int IdUtilizador, DateTime Data)
@@ -759,16 +755,8 @@ namespace FT_Management.Models
 
             return res;
         }
-        public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador, string Ano)
+        public int ObterDiasDireitoUtilizador(int IdUtilizador, string Ano)
         {
-            FeriasUtilizador feriasUtilizador = new FeriasUtilizador();
-
-            using (Database db = ConnectionString)
-            {
-                using var resultQuery = db.QueryValue("SELECT Count(*) from dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + Ano + "';");
-                if (resultQuery == 0) CriarFeriasUtilizador(IdUtilizador, Ano, 23);
-            }
-
             using (Database db = ConnectionString)
             {
 
@@ -776,23 +764,72 @@ namespace FT_Management.Models
                 while (result.Read())
                 {
 
+                    return int.Parse(result["DiasDireito"]);
+                }
+            }
+            return 0;
+        }
+        public FeriasUtilizador ObterListaFeriasUtilizador(int IdUtilizador)
+        {
+            FeriasUtilizador feriasUtilizador = new FeriasUtilizador();
+
+            using (Database db = ConnectionString)
+            {
+                string lastYear = (int.Parse(this.ObterAnoAtivo()) - 1).ToString();
+                using var resultQuery = db.QueryValue("SELECT Count(*) from dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "';");
+                if (resultQuery == 0) CriarFeriasUtilizador(IdUtilizador, this.ObterAnoAtivo(), 23 + (ObterDiasDireitoUtilizador(IdUtilizador, lastYear) - int.Parse(ObterFeriasDias(IdUtilizador, lastYear))));
+            }
+
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_ferias_utilizador where IdUtilizador='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "';");
+                while (result.Read())
+                {
+
                     feriasUtilizador.utilizador = ObterUtilizador(int.Parse(result["IdUtilizador"]));
-                    feriasUtilizador.DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador));
-                    feriasUtilizador.DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador));
+                    feriasUtilizador.DiasMarcados = int.Parse(ObterFeriasMarcadas(IdUtilizador, this.ObterAnoAtivo()));
+                    feriasUtilizador.DiasTotais = int.Parse(ObterFeriasDias(IdUtilizador, this.ObterAnoAtivo()));
                     feriasUtilizador.DiasDisponiveis = int.Parse(result["DiasDireito"]);
-                    feriasUtilizador.Ferias = ObterListaFerias(IdUtilizador, Ano);
+                    feriasUtilizador.Ferias = ObterListaFerias(IdUtilizador);
                 }
             }
 
             return feriasUtilizador;
 
         }
-        public List<Ferias> ObterListaFerias(int IdUtilizador, string Ano)
+        public List<Ferias> ObterListaFerias(int IdUtilizador)
         {
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND DataInicio>='" + Ano + "-01-01' AND DataFim<='" + Ano + "-12-31' order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND Ano='" + this.ObterAnoAtivo() + "' order by DataInicio;";
+                using var result = db.Query(sql);
+                while (result.Read())
+                {
+                    LstFerias.Add(new Ferias()
+                    {
+                        Id = result["Id"],
+                        IdUtilizador = result["IdUtilizador"],
+                        DataInicio = result["DataInicio"],
+                        DataFim = result["DataFim"],
+                        Validado = result["Validado"],
+                        Obs = result["Obs"],
+                        ValidadoPor = result["ValidadoPor"],
+                        ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
+                    });
+                }
+            }
+
+            return LstFerias;
+
+        }
+        public List<Ferias> ObterListaFerias()
+        {
+            List<Ferias> LstFerias = new List<Ferias>();
+            using (Database db = ConnectionString)
+            {
+                string sql = "SELECT * FROM dat_ferias where Ano='" + this.ObterAnoAtivo() + "' order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
@@ -818,7 +855,7 @@ namespace FT_Management.Models
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where DataInicio between '" + dataInicio.ToString("yyyy-MM-dd") + "' AND '" + dataFim.ToString("yyyy-MM-dd")  + "' or '" + dataInicio.ToString("yyyy-MM-dd") + "' between DataInicio and DataFim  order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias where DataInicio between '" + dataInicio.ToString("yyyy-MM-dd") + "' AND '" + dataFim.ToString("yyyy-MM-dd") + "' or '" + dataInicio.ToString("yyyy-MM-dd") + "' between DataInicio and DataFim  order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
@@ -839,12 +876,12 @@ namespace FT_Management.Models
             return LstFerias;
 
         }
-        public List<Ferias> ObterListaFeriasValidadas(DateTime dataInicio, DateTime dataFim)
+        public List<Ferias> ObterListaFeriasValidadas()
         {
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where DataInicio>='" + dataInicio.ToString("yyyy-MM-dd") + "' AND DataFim<='" + dataFim.ToString("yyyy-MM-dd") + "' AND Validado=1 order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias where Ano='" + this.ObterAnoAtivo() + "' AND Validado=1 order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {
@@ -946,11 +983,11 @@ namespace FT_Management.Models
         public List<Ferias> ObterListaFeriasValidar()
         {
             List<Ferias> LstFerias = new List<Ferias>();
-            List<Utilizador> LstUtilizadores = this.ObterListaUtilizadores(false);
+            List<Utilizador> LstUtilizadores = this.ObterListaUtilizadores(false, false);
             using (Database db = ConnectionString)
             {
 
-                using var result = db.Query("SELECT * FROM dat_ferias where mail_validacao=0 and Validado=0 order by DataInicio;");
+                using var result = db.Query("SELECT * FROM dat_ferias where mail_validacao=0 and Validado=0 AND Ano='" + this.ObterAnoAtivo() + "' order by DataInicio;");
                 while (result.Read())
                 {
                     LstFerias.Add(new Ferias()
@@ -980,24 +1017,24 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        public string ObterFeriasMarcadas(int IdUtilizador)
+        public string ObterFeriasMarcadas(int IdUtilizador, string Ano)
         {
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "' AND Ano='"+Ano+"';");
                 return result;
             }
 
         }
-        public string ObterFeriasDias(int IdUtilizador)
+        public string ObterFeriasDias(int IdUtilizador, string Ano)
         {
 
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where IdUtilizador ='" + IdUtilizador + "';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where IdUtilizador ='" + IdUtilizador + "' AND Ano='" + Ano + "';");
                 return result;
             }
 
@@ -1029,12 +1066,10 @@ namespace FT_Management.Models
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     isAllDay = true,
-                    IdTecnico = item.IdUtilizador,
-                    //color = ("#33FF77"),
-                    raw = "Detalhes/?IdUtilizador=" + item.IdUtilizador,
+                    url = "Detalhes/" + item.IdUtilizador,
                     category = "time",
                     dueDateClass = "",
-                    bgColor = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario)
+                    color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
                 });
             }
 
@@ -1063,13 +1098,17 @@ namespace FT_Management.Models
             //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             //int totalRows = workSheet.Dimension.Rows;
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true);
-            List<Ferias> LstFerias = ObterListaFerias(DateTime.Parse(Ano + "-01-01"), DateTime.Parse(Ano + "-12-31"));
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false);
+            List<Ferias> LstFerias = ObterListaFerias();
             List<Feriado> LstFeriados = ObterListaFeriados(Ano);
             int count = 0;
 
             int y = 1;
             int x = 1;
+
+            workSheet.Cells[y, x].Value = Ano;
+            workSheet.Cells[y, x].Style.Border.BorderAround(ExcelBorderStyle.Medium);
+            workSheet.Cells[y, x].Style.Font.Bold = true;
 
             //workSheet.Cells[y, 33].Value = "Total";
             //workSheet.Cells[y, 33].Style.Border.BorderAround(ExcelBorderStyle.Medium);
@@ -1156,7 +1195,7 @@ namespace FT_Management.Models
 
             foreach (var item in LstUtilizadores)
             {
-                FeriasUtilizador feriasUtilizador = ObterListaFeriasUtilizador(item.Id, Ano);
+                FeriasUtilizador feriasUtilizador = ObterListaFeriasUtilizador(item.Id);
 
                 y += 1;
                 workSheet.Cells[y, x].Value = item.NomeCompleto;
@@ -1181,15 +1220,16 @@ namespace FT_Management.Models
         {
             int max = 1000;
             int j = 0;
+            string Ano = this.ObterAnoAtivo();
             for (int i = 0; j < LstFerias.Count; i++)
             {
                 if ((j + max) > LstFerias.Count) max = (LstFerias.Count - j);
 
-                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs, ValidadoPor) VALUES ";
+                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs, ValidadoPor, Ano) VALUES ";
 
                 foreach (var ferias in LstFerias.GetRange(j, max))
                 {
-                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', " + ferias.ValidadoPor + "), \r\n");
+                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', " + ferias.ValidadoPor + ", " + Ano + "), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
@@ -1234,10 +1274,21 @@ namespace FT_Management.Models
         }
         public void CriarFeriasUtilizador(int IdUtilizador, string Ano, int DiasDireito)
         {
+            Utilizador u = this.ObterUtilizador(IdUtilizador);
+
             string sqlDelete = "Delete from dat_ferias_utilizador where IdUtilizador = '" + IdUtilizador + "' AND Ano='" + Ano + "';";
 
             string sqlInsert = "INSERT INTO dat_ferias_utilizador (IdUtilizador,Ano,DiasDireito) VALUES ";
             sqlInsert += ("('" + IdUtilizador + "', '" + Ano + "', '" + DiasDireito + "');");
+
+            DateTime dataAniversario = DateTime.Parse(u.DataNascimento.ToString(Ano + "/MM/dd"));
+
+            while (dataAniversario.DayOfWeek == DayOfWeek.Saturday || dataAniversario.DayOfWeek == DayOfWeek.Sunday)
+            {
+                dataAniversario = dataAniversario.AddDays(1);
+            } 
+
+            if (!VerificarFeriasUtilizador(IdUtilizador, dataAniversario)) CriarFerias(new List<Ferias>() { new Ferias() { IdUtilizador = IdUtilizador, DataInicio = dataAniversario, DataFim = dataAniversario, Obs = "Dia de Aniversário", Validado = true, ValidadoPorNome = "FT", ValidadoPor = 0} });
 
             Database db = ConnectionString;
 
@@ -1311,7 +1362,7 @@ namespace FT_Management.Models
             //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             int totalRows = workSheet.Dimension.Rows;
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false);
             List<Acesso> LstAcessos = ObterListaAcessosMes(Data);
 
             int y = 5;
@@ -1662,7 +1713,7 @@ namespace FT_Management.Models
             DateTime dt = new DateTime();
             DateTime.TryParse(Filtro, out dt);
 
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(false, false);
 
             List<Contacto> LstContacto = new List<Contacto>();
             string sqlQuery = "SELECT * FROM dat_contactos where Nome like '%" + Filtro + "%' or Morada like '%" + Filtro + "%' or PessoaContacto like '%" + Filtro + "%' or Email like '%" + Filtro + "%' or TipoContacto like '%" + Filtro + "%' or DataContacto like '%" + dt.ToString("yyyy-MM-dd") + "%';";
@@ -1826,18 +1877,13 @@ namespace FT_Management.Models
                             id = item.IdMarcacao.ToString() + "_" + dataMarcacao.ToString("yyyyMMdd"),
                             IdMarcacao = item.IdMarcacao,
                             calendarId = "1",
-                            title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.DataMarcacao < DateTime.Now ? "❌ " : "") + item.Tecnico.Iniciais + " - " + item.Cliente.NomeCliente,
-                            location = item.Cliente.MoradaCliente,
+                            title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.EstadoMarcacaoDesc == "Criado" && item.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : item.DataMarcacao < DateTime.Now && item.EstadoMarcacaoDesc != "Criado" ? "❌ " : "") + item.Cliente.NomeCliente,
                             start = dataMarcacao,
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
-                            raw = "Pedido/" + item.IdMarcacao + "?IdTecnico=" + (item.Tecnico.IdPHC),
                             category = "time",
                             dueDateClass = dataMarcacao.ToShortDateString(),
-                            bgColor = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
-                            body = "<h1>Num. da Marcação: " + item.IdMarcacao + "<br>" + "Incidente: " + item.Referencia + "</h1><br><br>" + item.ResumoMarcacao,
-                            state = item.EstadoMarcacaoDesc,
-                            attendees = item.Tecnico.NomeCompleto,
+                            color = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
                             url = "Pedido/" + item.IdMarcacao
                         });
                         dataMarcacao = dataMarcacao.AddMinutes(30);
@@ -2140,6 +2186,52 @@ namespace FT_Management.Models
                 Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
                 gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
+
+                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
+
+            }
+
+            return bm;
+        }
+        public Bitmap DesenharEtiquetaPicking(Picking p)
+        {
+
+            int x = 0;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Bitmap bm = new Bitmap(width, height);
+
+            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
+            Font fontBody = new Font("Tahoma", 30, FontStyle.Bold);
+            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
+
+            StringFormat format = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
+
+            using (Graphics gr = Graphics.FromImage(bm))
+            {
+                gr.Clear(Color.White);
+
+                gr.SmoothingMode = SmoothingMode.HighQuality;
+                gr.CompositingQuality = CompositingQuality.HighQuality;
+                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+
+                y += 65;
+                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
+
+                x = 10;
+                y += 165;
+
+                gr.DrawString("Cliente: " + p.Encomenda.NomeCliente + "\r\n\r\nEncomenda: " + p.Encomenda.Id + "\r\nData: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
+
+                y += 350;
 
                 gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
 
@@ -2614,5 +2706,81 @@ namespace FT_Management.Models
             return LstAtividades;
 
         }
+
+        //Produtos (INATIVO)
+        //public void CriarProduto(List<Produto> LstProdutos)
+        //{
+        //    int max = 1000;
+        //    int j = 0;
+        //    for (int i = 0; j < LstProdutos.Count; i++)
+        //    {
+        //        if ((j + max) > LstProdutos.Count) max = (LstProdutos.Count - j);
+
+        //        string sql = "INSERT INTO dat_produtos (Stamp, Designacao, Quantidade, NumeroSerie, Armazem) VALUES ";
+
+        //        foreach (var produto in LstProdutos.GetRange(j, max))
+        //        {
+        //            foreach (var equipamento in produto.Equipamentos)
+        //            {
+        //                sql += ("('" + produto.StampProduto + "', '" + produto.Designacao_Produto + "', '" + produto.Stock_Fisico + "', '" + equipamento.NumeroSerieEquipamento + "', '" + produto.Armazem_ID + "'), \r\n");
+        //            }
+        //            i++;
+        //        }
+        //        sql = sql.Remove(sql.Count() - 4);
+
+        //        sql += " ON DUPLICATE KEY UPDATE Quantidade=VALUES(Quantidade), Armazem = VALUES(Armazem);";
+
+        //        Database db = ConnectionString;
+
+        //        db.Execute(sql);
+        //        db.Connection.Close();
+
+        //        j += max;
+        //        //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
+        //    }
+        //}
+        //public Produto ObterProduto(Produto p)
+        //{
+        //    string sqlQuery = "SELECT * FROM dat_produtos where Stamp='" + p.StampProduto + "';";
+
+        //    using Database db = ConnectionString;
+        //    using (var result = db.Query(sqlQuery))
+        //    {
+        //        while (result.Read())
+        //        {
+        //            p.Stock_Fisico += Double.Parse(result["Quantidade"]);
+        //            p.Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
+        //        }
+        //    }
+        //    return p;
+        //}
+        //public List<Produto> ObterProdutos()
+        //{
+        //    string sqlQuery = "SELECT * FROM dat_produtos;";
+        //    List<Produto> LstProdutos = new List<Produto>();
+
+        //    using Database db = ConnectionString;
+        //    using (var result = db.Query(sqlQuery))
+        //    {
+        //        while (result.Read())
+        //        {
+        //            int i = LstProdutos.IndexOf(LstProdutos.Where(p => p.StampProduto == result["Stamp"]).DefaultIfEmpty().First());
+        //            if (i >= 0)
+        //            {
+        //                LstProdutos[i].Stock_Fisico += Double.Parse(result["Quantidade"]);
+        //                LstProdutos[i].Equipamentos.Add(new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] });
+        //            }
+        //            else
+        //            {
+        //                Produto p = new Produto();
+        //                p.StampProduto = result["Stamp"];
+        //                p.Stock_Fisico += Double.Parse(result["Quantidade"]);
+        //                p.Equipamentos = new List<Equipamento>() { new Equipamento() { NumeroSerieEquipamento = result["NumeroSerie"] } };
+        //                LstProdutos.Add(p);
+        //            }
+        //        }
+        //    }
+        //    return LstProdutos;
+        //}
     }
 }

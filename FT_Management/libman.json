@@ -75,9 +75,12 @@
       "destination": "wwwroot/lib/bulma-pageloader/"
     },
     {
-      "provider": "cdnjs",
       "library": "fullcalendar@4.2.0",
       "destination": "wwwroot/lib/fullcalendar/"
+    },
+    {
+      "library": "html2canvas@1.4.1",
+      "destination": "wwwroot/lib/html2canvas/"
     }
   ]
 }

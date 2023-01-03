@@ -39,7 +39,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return Content(MailContext.EnviarEmailSenhaCliente(email, phccontext.ObterCliente(id, loja)) ? "Sucesso" : "");
+            return Content(MailContext.EnviarEmailSenhaCliente(email, phccontext.ObterClienteSimples(id, loja)) ? "Sucesso" : "");
         }
         [HttpPost]
         public JsonResult ObterClientes(string prefix)

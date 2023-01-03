@@ -105,7 +105,7 @@
                 <div class="field">
                     <label asp-for="DataMarcacao" class="label"></label>
                     <div class="field has-addons">
-                        <p class="control " style="width:80%">
+                        <p class="control " style="width:100%">
                             <input type="date" class="input " value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData">
                             <script>
                                 bulmaCalendar.attach('#txtData', {
@@ -422,7 +422,7 @@
 
 <script>
     function AdicionarData(data) {
-        document.getElementById('divDatasAdicionais').innerHTML += '<div class="list-item" id="lst-datas-' + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD') + '"><div class="list-item-title" style="width:80%">' + data + '</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverData(' + moment(data, "DD/MM/YYYY").format('YYYYMMDD') + ')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>';
+        document.getElementById('divDatasAdicionais').innerHTML += '<div class="list-item" id="lst-datas-' + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD') + '"><div class="list-item-title" style="width:85%">' + data + '</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverData(' + moment(data, "DD/MM/YYYY").format('YYYYMMDD') + ')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>';
         document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD' + ";");  
     }
     function RemoverData(data) {

@@ -34,7 +34,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -54,6 +54,12 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             return Content(phccontext.ValidarMarcacao(m));
+        }
+
+        public List<int> ObterPercentagemTecnico(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            return phccontext.ObterPercentagemMarcacoes(id);
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
@@ -87,7 +93,7 @@ namespace FT_Management.Controllers
                 if (IdMarcacao>0) return RedirectToAction("Editar", "Pedidos", new { id=IdMarcacao});
             }
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -100,13 +106,14 @@ namespace FT_Management.Controllers
             return View(m);
         }
 
+
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Editar(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -148,7 +155,7 @@ namespace FT_Management.Controllers
                 return RedirectToAction("Editar", "Pedidos", new { id = id });
             }
 
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(false).Where(u => u.TipoUtilizador == 1).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
             ViewData["TipoEquipamento"] = phccontext.ObterTipoEquipamento();
             ViewData["TipoServico"] = phccontext.ObterTipoServico();
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
@@ -435,44 +442,37 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
-        public ActionResult CalendarioView(int id)
+        public ActionResult Agendamento(int id, int zona, int tipo)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (id != 0) id = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
-            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
-            {
-                if (id == 0) id = int.Parse(this.User.Claims.First().Value);
-                Utilizador u = context.ObterUtilizador(id);
-                return View("CalendarioTecnico", u);
-            }
-            return View("CalendarioNew");
-        }
+            if (id != 0) id = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
 
-        public ActionResult Agendamento(int id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (id != 0) id = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
+            ViewData["zona"] =  zona;
+            ViewData["tipo"] =  tipo;
+
+            List<Zona> LstZonas = context.ObterZonas();
+            LstZonas.Insert(0, new Zona() { Id = 0, Valor = "Todos" });
+            ViewBag.Zonas = LstZonas.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
+            List<TipoTecnico> LstTipoTecnicos = context.ObterTipoTecnicos();
+            LstTipoTecnicos.Insert(0, new TipoTecnico() { Id = 0, Valor = "Todos" });
+            ViewBag.TipoTecnico = LstTipoTecnicos.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio") || id != 0)
             {
                 if (id == 0) id = int.Parse(this.User.Claims.First().Value);
                 Utilizador u = context.ObterUtilizador(id);
                 return View("Calendario", new List<Utilizador>() { u });
             }
-            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(true);
+
+            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(false, true);
+
+            if (zona > 0) LstTecnicos = LstTecnicos.Where(t => t.Zona == zona).ToList();
+            if (tipo > 0) LstTecnicos = LstTecnicos.Where(t => t.TipoTecnico == tipo).ToList();
+
             return View("Calendario", LstTecnicos);
         }
 
-        [Authorize(Roles = "Admin, Escritorio")]
-        public JsonResult AlteracaoCalendario(int id, DateTime date, DateTime dateOriginal)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            Marcacao m = phccontext.ObterMarcacao(id);
-            m.DatasAdicionais = m.DatasAdicionais.Replace(dateOriginal.ToString("yyyy-MM-dd"), date.ToString("yyyy-MM-dd"));
-
-            phccontext.AtualizaMarcacao(m);
-
-            return Json("Ok");
-        }
         [Authorize(Roles = "Admin, Escritorio")]
         public JsonResult AlteracaoCalendarioTecnico(int id, string dateOriginal, string date, int idTecnicoOriginal, int idTecnico)
         {
@@ -482,8 +482,27 @@ namespace FT_Management.Controllers
             m.DatasAdicionais = m.DatasAdicionais.Replace(DateTime.Parse(dateOriginal).ToString("yyyy-MM-dd"), DateTime.Parse(date).ToString("yyyy-MM-dd"));
 
             Utilizador u = context.ObterUtilizador(idTecnico);
-            if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
-            if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+            if (idTecnicoOriginal == 0)
+            {
+                m.Tecnico = u;
+                m.LstTecnicos = new List<Utilizador>() { u };
+                m.EstadoMarcacaoDesc = "Agendado";
+                m.DatasAdicionais = m.DatasAdicionais.Replace(m.DataMarcacao.ToString("yyyy-MM-dd"), DateTime.Parse(date).ToString("yyyy-MM-dd"));
+                m.DataMarcacao = DateTime.Parse(date);
+
+            }
+            else if(idTecnico == 0) {
+                m.EstadoMarcacaoDesc = "Criado";
+                m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
+                m.Tecnico = new Utilizador();
+            }
+            else
+            {
+                if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
+                if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+            }
+
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             phccontext.AtualizaMarcacao(m);
 
@@ -500,7 +519,8 @@ namespace FT_Management.Controllers
             m.Tecnico = context.ObterUtilizador(Tecnico);
             m.LstTecnicos = new List<Utilizador>() { m.Tecnico };
             m.DatasAdicionais = DataMarcacao;
-            
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
             phccontext.AtualizaMarcacao(m);
 
             return Json("Ok");
@@ -508,10 +528,24 @@ namespace FT_Management.Controllers
 
         public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
         {
+            
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
-            return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(start, end).OrderBy(m => m.Tecnico.Id).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
+
+            List<Marcacao> LstMarcacoesCriadas = phccontext.ObterMarcacoesCriadas();
+            if (LstMarcacoesCriadas.Count > 0)
+            {
+                List<Marcacao> LstMarcacoesFiltro = new List<Marcacao>();
+                int nPerDay = LstMarcacoesCriadas.Count() / 6 == 0 ? 1 : LstMarcacoesCriadas.Count() / 6;
+                for (int i = 0; i < 7; i++)
+                {
+                    LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i -  (int) DateTime.Now.DayOfWeek + 1); return c; }).ToList());
+                }
+
+                return new JsonResult(context.ConverterMarcacoesEventos(LstMarcacoesFiltro).ToList());
+            }
+            return new JsonResult("");
         }
 
         public ActionResult Print(string id)
@@ -538,7 +572,7 @@ namespace FT_Management.Controllers
                 return RedirectToAction("ListaPedidos", new { IdTecnico, DataPedidos = DateTime.Now.ToShortDateString() });
             }
 
-            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(false).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(false, false).ToList();
             LstUtilizadores.Insert(0, new Utilizador() { Id = 0, NomeCompleto = "Todos" });
             ViewBag.ListaTecnicos = LstUtilizadores;
 
@@ -608,27 +642,10 @@ namespace FT_Management.Controllers
 
             ViewData["PessoaContacto"] = m.Cliente.PessoaContatoCliente;
             ViewData["SelectedTecnico"] = user.NomeCompleto;
-            ViewData["Tecnicos"] = context.ObterListaUtilizadores(true).Where(u => u.TipoUtilizador != 3).ToList();
+            ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
 
             return View(m);
         }
 
-        public ActionResult<string> ObterPecasUso(int id)
-        {
-            string res = "";
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            int IdArmazem = context.ObterListaUtilizadores(false).Where(u => u.IdPHC == id).First().IdArmazem;
-            string ultimaGT = phccontext.ObterGuiasTransporte(IdArmazem).First();
-            res += "### " + ultimaGT + " ###\r\n";
-
-                foreach (var item in phccontext.ObterPecasGuiaTransporte(ultimaGT, IdArmazem))
-            {
-                res += "Ref: " + item.Ref_Produto + " | Designacao: " + item.Designacao_Produto + " | Qtd: " + item.Stock_Fisico + " " + item.TipoUn + "\r\n";
-            }
-
-            return res;
-        }
     }
 }

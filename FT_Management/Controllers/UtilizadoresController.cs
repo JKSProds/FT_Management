@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net.Http;
 
 namespace FT_Management.Controllers
 {
@@ -21,7 +23,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterListaUtilizadores(false));
+            return View(context.ObterListaUtilizadores(false, false));
         }
             public IActionResult Login(string nome, string password, string ReturnUrl)
         {
@@ -31,7 +33,7 @@ namespace FT_Management.Controllers
             if (nome != null && password != null)
             {
 
-                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
                 if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
 
@@ -81,7 +83,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
             if (LstUtilizadores.Count == 0) {
                 Cliente c = phccontext.ObterClienteNIF(utilizador.NomeUtilizador);
@@ -169,6 +171,24 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
             if (!User.IsInRole("Admin") && id != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("Editar", new { id = int.Parse(this.User.Claims.First().Value) });
+
+            List<Viatura> LstViaturas = context.ObterViaturas();
+            LstViaturas.Insert(0, new Viatura() { Matricula = "N/D" });
+            ViewBag.Viaturas = LstViaturas.Select(l => new SelectListItem() { Value = l.Matricula, Text = l.Matricula });
+
+            List<Zona> LstZonas = context.ObterZonas();
+            LstZonas.Insert(0, new Zona() { Id = 0, Valor = "N/D" });
+            ViewBag.Zonas = LstZonas.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
+            List<TipoTecnico> LstTipoTecnicos = context.ObterTipoTecnicos();
+            LstTipoTecnicos.Insert(0, new TipoTecnico() { Id = 0, Valor = "N/D" });
+            ViewBag.TipoTecnico = LstTipoTecnicos.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
+
+            List<KeyValuePair<string, string>> LstChats = ChatContext.ObterChatsAtivos();
+            LstChats.Insert(0, new KeyValuePair<string, string>("", "N/D"));
+            ViewBag.Chats = LstChats.Select(l  => new SelectListItem() { Value = l.Key, Text = l.Value});
+
+
             return View(context.ObterUtilizador(id));
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
@@ -183,8 +203,12 @@ namespace FT_Management.Controllers
             u.TipoMapa = utilizador.TipoMapa;
             u.Telemovel = utilizador.Telemovel;
             u.DataNascimento = utilizador.DataNascimento;
-            u.Viatura.Matricula = utilizador.Viatura.Matricula;
+            u.Viatura.Matricula = utilizador.Viatura.Matricula == "N/D" ? "" : utilizador.Viatura.Matricula;
+            u.TipoTecnico = utilizador.TipoTecnico;
+            u.Zona = utilizador.Zona;
+            u.ChatToken = utilizador.ChatToken;
 
+            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
             context.NovoUtilizador(u);
 
             return RedirectToAction("Editar", new { id = u.Id});
@@ -306,6 +330,13 @@ namespace FT_Management.Controllers
             return Content("Ok");
         }
 
+        public JsonResult NovaSugestao(string Obs, string file)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            MailContext.EnviarEmailSugestao(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), Obs, new System.Net.Mail.Attachment(new MemoryStream(Convert.FromBase64String(file.Split(',').Last())), "PrintScreen_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".png"));
+            return Json("Ok");
+        }
 
         public async Task<IActionResult> Logout()
         {

@@ -42,16 +42,34 @@
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(DateTime.Now.Subtract(item.DataEnvio).Days)</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
-                                                </td>
+                                                @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
+                                            </td>
                                             </tr>
                                             <tbody class="detail is-hidden">
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                     @foreach (var linha in item.LinhasEncomenda)
                                                     {
                                                         <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
@@ -60,7 +78,7 @@
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                         </tr>
                                                     }
-                                            </tbody>
+                                        </tbody>
                                         }
                                         else
                                         {
@@ -72,16 +90,34 @@
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                      <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(DateTime.Now.Subtract(linha.DataEnvio).Days)</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                     <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
@@ -134,16 +170,34 @@
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                              </tr>
                                              <tbody class="detail is-hidden">
+                                                 @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                     @foreach (var linha in item.LinhasEncomenda)
                                                     {
                                                         <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
@@ -152,6 +206,7 @@
                                                             <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                         </tr>
                                                     }
+                                                    
                                             </tbody>
                                         }
                                         else
@@ -162,16 +217,34 @@
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                     <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
@@ -223,16 +296,34 @@
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                             </tr>
                                             <tbody class="detail is-hidden">
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                     @foreach (var linha in item.LinhasEncomenda)
                                                     {
                                                         <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
@@ -251,16 +342,34 @@
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                     <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="2">@linha.Produto.Designacao_Produto</td>
@@ -314,16 +423,34 @@
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(item.DataEnvio.Subtract(DateTime.Now).Days + 1)</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                             </tr>
                                             <tbody class="detail is-hidden">
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                 @foreach (var linha in item.LinhasEncomenda)
                                                 {
                                                     <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
@@ -331,7 +458,7 @@
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                     </tr>
-                                                }
+                                                    }
                                             </tbody>
                                         }
                                         else
@@ -343,21 +470,40 @@
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@linha.NomeCliente</td>
                                                      <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataEnvio)">@(linha.DataEnvio.Subtract(DateTime.Now).Days + 1)</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@linha.Produto.Stock_Fisico</td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)" style="width:100%">
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                     </span>
                                                     <span class="icon  mr-2">
                                                         <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                     </span>
+                                                    @if (item.Prioritario)
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-clock"></i>
+                                                    </span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(item.Obs))
+                                                {
+                                                    <span class="icon  mr-2">
+                                                        <i class="fa-solid fa-comment"></i>
+                                                    </span>
+                                                }
                                                 </td>
                                                 </tr>
                                                 <tbody class="detail is-hidden">
+                                                    @if (!string.IsNullOrEmpty(item.Obs))
+                                                    {
+                                                        <tr>
+                                                            <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
+                                                        </tr>
+                                                    }
                                                     <tr onclick="window.open('@(Url.Action("Detalhes", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
                                                         <td data-label="Designação" colspan="3">@linha.Produto.Designacao_Produto</td>
                                                         <td data-label="Quantidade">@linha.Produto.Stock_Fisico</td>
                                                     </tr>
+                                                    
                                             </tbody>
                                             }
                                         }

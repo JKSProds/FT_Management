@@ -32,7 +32,7 @@
                     </p>
 
                     <p class="control">
-                        <a class="button is-primary is-outlined"  onclick="location.href = '@(Url.Action("Exportar", "Ferias", new { id = DateTime.Now.Year }))'">
+                        <a class="button is-primary is-outlined"  onclick="location.href = '@(Url.Action("Exportar", "Ferias"))'">
                             <span class="icon">
                                 <i class="fas fa-cloud-download-alt"></i>
                             </span>
@@ -65,7 +65,7 @@ else
                             </span>
                             <span>@item.NomeCompleto</span>
                         </p>
-                        <a class="button is-primary is-rounded mx-2 my-2" onclick="location.href = '@(Url.Action("Detalhes", "Ferias", new { IdUtilizador = item.Id }))'">
+                        <a class="button is-primary is-rounded mx-2 my-2" onclick="location.href = '@(Url.Action("Detalhes", "Ferias", new { id = item.Id }))'">
                             <span class="icon">
                                 <i class="fas fa-info"></i>
                             </span>

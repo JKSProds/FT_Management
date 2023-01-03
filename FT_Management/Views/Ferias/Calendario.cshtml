@@ -40,6 +40,7 @@
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: [ 'dayGrid', 'interaction' ],
             timeZone: 'UTC',
             initialView: 'dayGridMonth',
             headerToolbar: {
@@ -64,7 +65,7 @@
             eventClick: function (info) {
                 info.jsEvent.preventDefault(); // don't let the browser navigate
                 if (info.event.url) {
-                    window.open(info.event.raw);
+                    window.open(info.event.url);
                 }
             }
         });

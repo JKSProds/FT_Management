@@ -182,7 +182,7 @@
                         <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">                        
                             <span class="tecnico">@item.Tecnico.NomeCompleto</span>
                         </td>
-                        <td class="is-actions-cell">
+                        <td class="is-actions-cell" style="min-width:200px">
                             <a class="button is-info is-rounded" onclick="ObterMarcacao(@item.IdMarcacao);">
                                 <span class="icon is-small">
                                     <i class="fas fa-list"></i>
@@ -193,7 +193,9 @@
                                     <i class="fas fa-sticky-note"></i>
                                 </span>
                             </a>
-                                    
+                            <a class="button is-info is-rounded is-outlined"onclick="copiarTexto('@item.Referencia');">
+                                      <i class="fa-solid fa-copy"></i>
+                            </a>  
                         </td>
                     </tr>
                 }
@@ -294,6 +296,36 @@
     document.getElementById('LstEstados').remove(0);
     document.getElementById('LstTecnicos').remove(0);
 
+     function copiarTexto(id) {
+                  
+                bulmaToast.toast({
+                  message: 'Texto copiado com sucesso!',
+                  type: 'is-success',
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  opacity: 0.8,
+                  duration: 5000,
+                  position: 'top-center'
+                })
+
+             // text area method
+            let textArea = document.createElement("textarea");
+            textArea.value = id;
+            // make the textarea out of viewport
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            return new Promise((res, rej) => {
+                // here the magic happens
+                document.execCommand('copy') ? res() : rej();
+                textArea.remove();
+            });
+
+        }
+
     function filtrar() {
         document.getElementById('pageloader').classList.add('is-active');
 
@@ -351,7 +383,7 @@
             url: '/Pedidos/ObterMarcacao/' + id,
             type: "GET",
             success: function (response) {
-                console.log(response);
+                //console.log(response);
                 document.getElementById('txtData').bulmaCalendar.value(new Date(response.dataMarcacao).toLocaleDateString());
                 document.getElementById('txtIdMarcacao').value = response.idMarcacao;
                 document.getElementById('txtNomeCliente2').value = response.cliente.nomeCliente;

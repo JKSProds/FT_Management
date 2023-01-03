@@ -1,0 +1,116 @@
+﻿@model IEnumerable<FT_Management.Models.Movimentos>
+
+@{
+    ViewData["Title"] = "Movimentos - " + ViewData["Utilizador"];
+}
+
+
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title"><b>@ViewData["Utilizador"]</b> - @ViewData["GT"]</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+         <form asp-action="ObterPecasUso" method="get">
+                             <div class="field has-addons has-addons-right mx-1">
+            <p class="control has-icons-left">
+                <span class="select">
+                    <select id="lstguias" asp-items="ViewBag.Guias" onchange="submitdata()">
+                    </select>
+                </span>
+                <span class="icon is-small is-left">
+                    <i class="fa-solid fa-paper"></i>
+                </span>
+            </p>
+            <a class="button is-info" href='/Produtos/ExportarPecasUso/@ViewData["IdArmazem"]?gt=@ViewData["GT"]'> 
+                <span class="icon">
+                                <i class="fas fa-download"></i>
+                            </span>
+                            <span>Exportar</span></a>
+            <input hidden id="hiddenSelectedGT" name="gt" value="@ViewData["GT"]" />
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<hr />
+
+
+@if (Model.Count() == 0)
+{
+    <br />
+    <button class="button is-danger is-fullwidth is-disabled">Não foram encontrados movimentos!</button>
+}
+else
+{
+    <div class="container">
+    <div class="b-table">
+    <div class="table-wrapper has-mobile-cards"> 
+        <table class="table is-hoverable is-fullwidth" id="tblProdutos">
+            <thead>
+                <tr >
+                    <th>
+                        @Html.DisplayNameFor(model => model.IdFolhaObra)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NomeCliente)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RefProduto)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Designacao)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Quantidade)
+                    </th>
+                                        <th>
+                        @Html.DisplayNameFor(model => model.DataMovimento)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr style="width:auto" onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                        <td data-label="@Html.DisplayNameFor(model => model.IdFolhaObra)">
+                            <span>@item.IdFolhaObra</span>
+                        </td>
+                        <td data-label="@Html.DisplayNameFor(model => model.NomeCliente)">
+                            <span>@item.NomeCliente</span>
+                        </td>
+                        <td data-label="@Html.DisplayNameFor(model => model.RefProduto)">
+                            <span >@item.RefProduto</span>
+                        </td>
+                        <td data-label="@Html.DisplayNameFor(model => model.Designacao)">
+                            <span>@item.Designacao</span>
+                        </td>
+                        <td data-label="@Html.DisplayNameFor(model => model.Quantidade)">
+                            <span>@item.Quantidade</span>
+                        </td>
+                        <td data-label="@Html.DisplayNameFor(model => model.DataMovimento)">
+                            <span>@item.DataMovimento</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+        </div>
+    </div>
+    }}
+    <br />
+
+<script>
+        function submitdata() {
+        document.getElementById("hiddenSelectedGT").value = document.getElementById("lstguias").value;
+        $('form').submit();
+    }
+        document.getElementById("lstguias").value = document.getElementById("hiddenSelectedGT").value;
+</script>

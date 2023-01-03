@@ -7,6 +7,7 @@ namespace FT_Management.Models
 {
     public class Fornecedor
     {
+        public string StampFornecedor { get; set; }
         [Display(Name = "Num. do Fornecedor")]
         public int IdFornecedor { get; set; }
         [Display(Name = "Nome do Fornecedor")]
@@ -23,6 +24,7 @@ namespace FT_Management.Models
         public string PessoaContactoFornecedor { get; set; }
         [Display(Name = "Comentários")]
         public string Obs { get; set; }
+        public string CodigoIntermedio  { get; set; }
 
     }
 }

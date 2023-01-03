@@ -38,7 +38,7 @@ namespace FT_Management.Models
         [Display(Name = "Comentários")]
         public string Obs { get; set; }
 
-        public string GetUrl { get { return "http://webapp.food-tech.pt/Ferias/Detalhes/?IdUtilizador=" + IdUtilizador; } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Ferias/Detalhes/" + IdUtilizador; } }
     }
 
     public class Feriado

@@ -46,11 +46,6 @@
                 </li>
                 <li>
                     <a>
-                        <span>Movimentos</span>
-                    </a>
-                </li>
-                <li>
-                    <a>
                         <span>Quantidades</span>
                     </a>
                 </li>
@@ -130,47 +125,6 @@
                             </div>
                         </div>
                     </div>
-                </li>
-                <li>
-                    @{ var LstGuiaPecas = ViewData["LstGuiasPecas"] as IList<Movimentos>;}
-
-                    <button class="button is-danger is-rounded is-outlined is-fullwidth @(LstGuiaPecas.Count() == 0 ? "" : "is-hidden")" disabled>Não foram encontrados movimentos!</button>
-
-                    <table class="table is-narrow is-hoverable is-fullwidth @(LstGuiaPecas.Count() > 0 ? "" : "is-hidden")">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Data do Movimento
-                                </th>
-                                <th>
-                                    Cliente
-                                </th>
-                                <th>Tecnico</th>
-                                <th>
-                                    Quantidade
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in LstGuiaPecas)
-                            {
-                                <tr onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                    <td>
-                                        <span>@item.DataMovimento.ToString("dd-MM-yyyy")</span>
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.NomeCliente)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.NomeTecnico)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Quantidade)
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
                 </li>
                 <li>
                     @{ var LstProdutosArmazem = ViewData["LstProdutosArmazem"] as IList<Produto>;}

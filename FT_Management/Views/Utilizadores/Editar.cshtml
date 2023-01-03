@@ -99,8 +99,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="field has-addons is-horizontal">
+                    <div class="field is-horizontal">
                       <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.ApiKey.Key)</label></div><div class="field-body">
+                          <div class="field has-addons">
                       <div class="control" style="width:100%">
                         <input class="input" type="text" readonly id="txtApiKey" asp-for="ApiKey.Key">
                       </div>
@@ -120,6 +121,7 @@
                               <i class="fa-solid fa-info"></i>
                             </button>
                           </p>
+                        </div>
                         </div>
                     </div>
                     </div>
@@ -250,9 +252,25 @@
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Viatura.Matricula)</label></div><div class="field-body">
-                                <div class="field">
-                                    <div class="control"><input type="text" class="input" asp-for="Viatura.Matricula"></div>
+                            <div class="field-label is-normal"><label class="label">Dados Adicionais</label></div><div class="field-body">
+                               <div class="field has-addons">
+                                    <div class="select" style="width:100%">
+                                        <select asp-for="Viatura.Matricula" asp-items="ViewBag.Viaturas" class="form-control" style="width:100%">
+                                            </select>
+                                      </div>
+
+                                   <div class="select" style="width:100%">
+                                        <select asp-for="Zona" asp-items="ViewBag.Zonas" class="form-control" style="width:100%">
+                                            </select>
+                                      </div>
+                                    <div class="select" style="width:100%">
+                                        <select asp-for="TipoTecnico" asp-items="ViewBag.TipoTecnico" class="form-control" style="width:100%">
+                                         </select>
+                                    </div>
+                                    <div class="select" style="width:100%">
+                                        <select asp-for="ChatToken" asp-items="ViewBag.Chats" class="form-control" style="width:100%">
+                                         </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -269,6 +287,18 @@
                                                     <button type="submit" class="button is-info" control-id="ControlID-17">
                                                         <span> Atualizar </span>
                                                     </button>
+                                                </div>
+                                                <div class="control">
+                                                     <a class="button is-black is-large" href="https://apps.apple.com/us/app/nextcloud-talk/id1296825574">
+                                                       <span class="mr-2"><i class="fa-brands fa-apple"></i></span>
+                                                       <p class="is-size-6">Disponivel na <br> <span class="has-text-weight-bold is-size-5">App Store</span></p>
+                                                      </a>
+                                                </div>
+                                                <div class="control">
+                                                     <a class="button is-black is-large" href="https://play.google.com/store/apps/details?id=com.nextcloud.talk2&hl=en&gl=US">
+                                                       <span class="mr-2"><i class="fa-brands fa-google-play"></i></span>
+                                                       <p class="is-size-6">Obter na <br> <span class="has-text-weight-bold is-size-5">Play Store</span></p>
+                                                      </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -349,7 +379,8 @@
                   closeOnClick: true,
                   pauseOnHover: true,
                   opacity: 0.8,
-                  duration: 5000
+                  duration: 5000,
+                  position: 'top-center'
                 })
 
              // text area method

@@ -4,61 +4,208 @@
 
 
 @{
-    ViewData["Title"] = "Marcacoes";
+    ViewData["Title"] = "Agendamento";
 }
 
-
-<div class="container">
-    <div class="columns">
-        <div class="column">
+<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
+    <div class="columns mx-2">
+        <div class="column is-8">
             <div class="tile">
                 <div class="tile is-parent is-vertical">
-                    <article class="tile is-child notification is-info">
-                        <p class="title">Agendamento de Marcações Técnicas</p>
-                    </article>
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fa-solid fa-calendar-alt"></i>
+                                </span>
+                                <span>Agendamento de Marcações Técnicas</span>
+                            </p>
+                        </article>
                 </div>
             </div>
         </div>
+        <div class="column is-4">
+            <form asp-action="Agendamento" name="frmFiltrar" id="frmFiltrar">
+                <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
+                    <p class="control has-icons-left">
+                        <span class="select">
+                            <select class="select" id="zona" name="zona" onchange="document.getElementById('frmFiltrar').submit();" style="height: auto;"
+                                    asp-items="@(new SelectList(@ViewBag.Zonas, "Value", "Text", ViewData["zona"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </span>
+                    </p>
+                    <p class="control has-icons-left">
+                        <span class="select">
+                            <select class="select" id="tipo" name="tipo" onchange="document.getElementById('frmFiltrar').submit();" style="height: auto" 
+                                    asp-items="@(new SelectList(@ViewBag.TipoTecnico, "Value", "Text", ViewData["tipo"]))">
+                            </select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </span>
+                    </p>
+                     <p class="control">
+                        <button type="button" onclick="window.location.href = '/Pedidos/Agendamento'" class="button is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-backspace fa-lg"></i>
+                            </span>
+                            <span>Limpar</span>
+                        </button>
+                    </p>
+                </div>
+                </form>
+            </div>
     </div>
-</div>
 <hr />
+@if(Model.Count() == 0)
+{
+    <button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontrados utilizadores!</button>
+}
+else
+{
 
-<link href='~/lib/fullcalendar/core/main.min.css' rel='stylesheet' />
-<link href='~/lib/fullcalendar/daygrid/main.min.css' rel='stylesheet' />
+<div class="columns mx-2">
+    <div class="column is-6">
+        <div class="field is-grouped is-grouped-left">
+          <p class="control">
+            <a class="button is-warning is-large" id="txtHeader">
+              ----
+            </a>
+          </p>
 
-<script src='~/lib/fullcalendar/core/main.js'></script>
-<script type="module" src='~/lib/fullcalendar/interaction/main.js'></script>
-<script type="module" src='~/lib/fullcalendar/daygrid/main.js'></script>
-
-<div class="field is-grouped is-grouped-centered">
-  <p class="control">
-    <a class="button is-info is-outlined is-pulled-left" id="month">
-      Modo Mensal
-    </a>
-  </p>
+        </div>
+        </div>
+    <div class="column is-6">
+    <div class="field is-grouped is-grouped-right">
     <p class="control">
-    <a class="button is-info is-outlined is-pulled-left" id="week">
-      Modo Semanal
+    <a class="button is-primary is-outlined is-large" id="mode">
+      <span class="icon">
+        <i class="fa-solid fa-eye"></i>
+    </span>
+    <span>Modo</span>
     </a>
   </p>
   <p class="control">
-    <a class="button is-primary is-pulled-right" id="prev">
-      Anterior
+    <a class="button is-info is-large" id="prev">
+    <span class="icon">
+        <i class="fa-solid fa-circle-left"></i>
+    </span>
     </a>
   </p>
   <p class="control" >
-    <a class="button is-info is-pulled-right" id="next">
-        Próximo
+    <a class="button is-info is-large" id="next">
+    <span class="icon">
+        <i class="fa-solid fa-circle-right"></i>
+    </span>
     </a>
   </p>
 </div>
+</div>
+</div>
 <br />
+    @if (Model.Count() > 1)
+    {
+        <div class="columns">
+            <div class="column is-3">
+                <div class="card" style="background:#3371FF;">
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">Marcações Por Associar</p>
+                            </div>
+                        </div>
+                        <a class="button is-link is-fullwidth is-large" href="~/Pedidos?estado=Criado">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="is-9 mx-1" id='cl_criado' data-id="0"></div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+          let criadoCalendar = document.getElementById('cl_criado');
+
+            let scr1Calendar = new FullCalendar.Calendar(criadoCalendar, {
+                plugins: ['dayGrid', 'interaction'],
+                defaultView: 'dayGridWeek',
+                editable: true,
+                droppable: true,
+                height: 'auto',
+                firstDay: 1,
+                header: false,
+                locale: 'pt',
+                displayEventTime: false,
+                eventColor: '#3371FF',
+                events: '/Pedidos/ObterMarcacoes/0',
+                columnHeader: false,
+                slotEventOverlap: true,
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault();
+                    ObterMarcacao(info.event.extendedProps.idMarcacao);
+                },
+                eventReceive: function(info) {
+                    id = info.event.extendedProps.idMarcacao;
+                    tecOriginal = info.event.extendedProps.idTecnico;
+                    dataOriginal = info.event.extendedProps.dueDateClass;
+
+                    tecDestino = info.event._calendar.el.attributes['data-id'].value;
+                     dataDestino = new Date(info.event.start).toLocaleDateString("pt-PT");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Pedidos/AlteracaoCalendarioTecnico/" + id + "?date="+dataDestino+"&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal ,
+                        traditional: true,
+                         success: function (result) {
+                             info.event.setExtendedProp("dueDateClass", dataDestino);
+                             bulmaToast.toast({
+                                      message: 'Agendamento atualizado com sucesso!',
+                                      type: 'is-success',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        error: function (response) {
+                             bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        failure: function (response) {
+                                bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        }
+                     });
+                  }
+        });
+          scr1Calendar.render();
+    });
+          </script>
+
+}
 <div id='calendar-container' class="mx-2">
     @foreach (var u in Model)
     {
     <div class="columns">
-        <div class="column is-2">
-            <div class="card" style="background:@u.CorCalendario;height:100%">
+        <div class="column is-3">
+            <div class="card" style="background:@u.CorCalendario;">
                   <div class="card-content">
                     <div class="media">
                       <div class="media-left">
@@ -71,13 +218,23 @@
                         <p class="subtitle is-6">@u.EmailUtilizador</p>
                       </div>
                     </div>
-                    <a class="button is-info is-fullwidth" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
+                    @if (u.Viatura.Matricula.Count() > 0) {
+                        <p class="subtitle is-6">            
+                            <span class="icon">
+                                <i class="fa-solid @(u.Viatura.Ignicao ? "fa-car-on" : "fa-car")"></i>
+                            </span>
+                            <span><b>@u.Viatura.LocalizacaoMorada</b></span>
+                         </p>
+                        }
+                    <div class="progress-container" id='pbval_@u.Id' data-text="---"><progress class="progress is-info is-large" id="pb_@u.Id" max="100"></progress></div>
+                    &nbsp;
+                    <a class="button is-link is-fullwidth is-large" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
                          <i class="fas fa-eye"></i>
                     </a>
                   </div>
                 </div>
         </div>
-        <div class="is-10 mx-1" id='cl_@u.Id' data-id="@u.Id"></div>
+        <div class="is-9 mx-1" id='cl_@u.Id' data-id="@u.Id"></div>
     </div>
     <script>
         var isMobile = false; //initiate as false
@@ -100,10 +257,10 @@
                 locale: 'pt',
                 displayEventTime: false,
                 eventColor: '@u.CorCalendario',
-                events: 'ObterMarcacoes/@u.Id',
+                events: '/Pedidos/ObterMarcacoes/@u.Id',
                 eventClick: function (info) {
                         info.jsEvent.preventDefault();
-                        window.open(info.event.url);
+                    ObterMarcacao(info.event.extendedProps.idMarcacao);
                 },
                  eventDrop: function(info) {
                     //console.log(info);
@@ -126,7 +283,30 @@
                                       closeOnClick: true,
                                       pauseOnHover: true,
                                       opacity: 0.8,
-                                      duration: 5000
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        error: function (response) {
+                             bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        failure: function (response) {
+                                bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
                                     })
                         }
                      });
@@ -154,7 +334,30 @@
                                       closeOnClick: true,
                                       pauseOnHover: true,
                                       opacity: 0.8,
-                                      duration: 5000
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        error: function (response) {
+                             bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
+                                    })
+                        },
+                        failure: function (response) {
+                                bulmaToast.toast({
+                                      message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
+                                      type: 'is-danger',
+                                      closeOnClick: true,
+                                      pauseOnHover: true,
+                                      opacity: 0.8,
+                                      duration: 5000,
+                                      position: 'top-center'
                                     })
                         }
                      });
@@ -162,25 +365,182 @@
           });
           
           srcCalendar.render();
+          document.getElementById('txtHeader').text = srcCalendar.view.title;
 
             document.getElementById('prev').addEventListener('click', function() {
-            srcCalendar.prev(); // call method
+            srcCalendar.prev();
+            document.getElementById('txtHeader').text = srcCalendar.view.title;
           });
 
           document.getElementById('next').addEventListener('click', function() {
-            srcCalendar.next(); // call method
+            srcCalendar.next(); 
+            document.getElementById('txtHeader').text = srcCalendar.view.title;
           });
-          document.getElementById('month').addEventListener('click', function() {
-            srcCalendar.changeView("dayGridMonth"); // call method
-          });
-          document.getElementById('week').addEventListener('click', function() {
-            srcCalendar.changeView("dayGridWeek"); // call method
+          document.getElementById('mode').addEventListener('click', function() {
+              console.log(srcCalendar);
+              view = srcCalendar.view.type;
+              if (view == "dayGridWeek") srcCalendar.changeView("dayGridMonth");
+              if (view == "dayGridMonth") srcCalendar.changeView("dayGridDay");
+              if (view == "dayGridDay") srcCalendar.changeView("dayGridWeek");
+              document.getElementById('txtHeader').text = srcCalendar.view.title;
           });
         });
+
+     function ObterMarcacao(id) {
+         document.getElementById('pageloader').classList.add('is-active');
+         $.ajax({
+             url: '/Pedidos/ObterMarcacao/' + id,
+             type: "GET",
+             success: function(response) {
+                //console.log(response);
+                document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function(elem){
+                                                                                    return new Date(elem).toLocaleDateString();
+                                                                                }).join(" | ");
+                document.getElementById('txtHeaderMarcacao').innerHTML = '#' + response.idMarcacao + ' - ' + response.cliente.nomeCliente;
+                document.getElementById('txtRef').value = response.referencia;
+                document.getElementById('txtTec').value = response.lstTecnicos.map(function(elem){
+                                                                                    return elem.nomeCompleto;
+                                                                                }).join(" | ");
+                document.getElementById('txtResumo').value = response.resumoMarcacao;
+                document.getElementById('txtEstado').value = response.estadoMarcacaoDesc;
+
+                document.getElementById('btnVer').href = '/Pedidos/Pedido/' + response.idMarcacao;
+                document.getElementById('btnEditar').href = '/Pedidos/Editar/' + response.idMarcacao;
+
+                document.getElementById('pageloader').classList.remove('is-active');
+                var modal = Bulma('#modalQuickViewMarcacao').modal().open();
+                
+            },
+            error: function (response) {
+                alert(response.responseText);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+        $.ajax({
+             url: '/Pedidos/ObterPercentagemTecnico/' + @u.IdPHC,
+             type: "GET",
+             success: function(response) {
+                //console.log(response);
+                 document.getElementById('pb_@u.Id').max = response[0];
+                 document.getElementById('pb_@u.Id').value = response[1];
+                 document.getElementById('pbval_@u.Id').setAttribute('data-text', response[1] + '/' + response[0])
+            },
+            error: function (response) {
+                alert(response.responseText);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            }
+        });
+
     </script>
     }
 </div>
+}
+<div id="modalQuickViewMarcacao" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title" id="txtHeaderMarcacao">#-----</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <label class="label">Nº de Incidente</label>
+                <div class="field has-addons">
+                  <div class="control" style="width:100%">
+                        <input type="text" class="input" readonly id="txtRef">
+                  </div>
+                  <div class="control">
+                    <a class="button is-info"onclick="copiarTexto('txtRef');">
+                              <i class="fa-solid fa-copy"></i>
+                    </a>
+                  </div>
+                </div>
+                    <div class="field">
+                    <div class="control">
+                        <label class="label">Estado</label>
+                        <input type="text" class="input" readonly id="txtEstado">
+                      </div>
+                    </div>
+                    <div class="field">
+                    <div class="control">
+                        <label class="label">Técnico</label>
+                        <input type="text" class="input" readonly id="txtTec">
+                      </div>
+                    </div>
+                   <div class="field">
+                    <div class="control">
+                        <label class="label">Data</label>
+                        <input type="text" class="input" readonly id="txtDatas">
+                      </div>
+                    </div>
+                   <div class="field">
+                    <div class="control">
+                        <label class="label">Resumo</label>
+                        <textarea type="text" class="textarea" readonly rows=12 id="txtResumo"></textarea>
+                      </div>
+                    </div>
+                </div>
+        </section>
+        <footer class="modal-card-foot">
+                <div class="field is-grouped is-grouped-right">
+            <p class="control">
+                <a class="button is-primary is-outlined" href="" target="_blank" id="btnVer">
+                  <span class="icon">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
+                <span>Ver</span>
+                </a>
+              </p>
+            <p class="control">
+                <a class="button is-info is-outlined" href="" target="_blank" id="btnEditar">
+                  <span class="icon">
+                    <i class="fa-solid fa-pencil"></i>
+                </span>
+                <span>Editar</span>
+                </a>
+              </p>
+            <button class="button is-secondary is-outlined" onclick="Bulma('#modalQuickViewMarcacao').modal().close();">Cancelar</button>
+       </div>
+        </footer>
+    </div>
+</div>
 
 <script>
-    
+ function copiarTexto(id) {
+                  
+            bulmaToast.toast({
+                message: 'Texto copiado com sucesso!',
+                type: 'is-success',
+                closeOnClick: true,
+                pauseOnHover: true,
+                opacity: 0.8,
+                duration: 5000,
+                position: 'top-center'
+            })
+
+            // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = document.getElementById(id).value;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((res, rej) => {
+            // here the magic happens
+            document.execCommand('copy') ? res() : rej();
+            textArea.remove();
+        });
+
+        }
+
 </script>
+

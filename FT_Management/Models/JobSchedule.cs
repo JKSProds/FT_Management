@@ -51,7 +51,7 @@ public class CronJobAniversario : IJob
         {
 
             FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
-            List<Utilizador> LstUtilizadores = dbContext.ObterListaUtilizadores(false).Where(u => u.DataNascimento.ToString("yyyy") != "0001").Where(u => u.DataNascimento.ToString("dd-MM") == DateTime.Now.AddDays(1).ToString("dd-MM")).ToList();
+            List<Utilizador> LstUtilizadores = dbContext.ObterListaUtilizadores(false, false).Where(u => u.DataNascimento.ToString("yyyy") != "0001").Where(u => u.DataNascimento.ToString("dd-MM") == DateTime.Now.AddDays(1).ToString("dd-MM")).ToList();
 
             if (LstUtilizadores.Count > 0)
             {
@@ -77,7 +77,7 @@ public class CronJobAgendamentoCRM : IJob
         {
             FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
 
-            foreach (var u in dbContext.ObterListaUtilizadores(true))
+            foreach (var u in dbContext.ObterListaUtilizadores(true, false))
             {
                 List<Visita> LstVisitas = dbContext.ObterListaVisitas(u.Id, DateTime.Parse(DateTime.Now.ToShortDateString()), DateTime.Parse(DateTime.Now.ToShortDateString()));
 

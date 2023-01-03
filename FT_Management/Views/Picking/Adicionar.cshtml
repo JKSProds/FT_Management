@@ -1,7 +1,7 @@
 ﻿@model FT_Management.Models.Picking
 
 @{
-    ViewData["Title"] = "Picking - " + Model.NomeCliente;
+    ViewData["Title"] = "Picking - " + Model.Encomenda.NomeCliente;
 }
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
     <div class="container">
@@ -14,7 +14,7 @@
                                 <span class="icon mr-3">
                                    <i class="fa-solid fa-barcode"></i>
                                 </span>
-                                <span>@Model.IdPicking - @Model.NomeCliente (@Model.EditadoPor)</span>
+                                <span>@Model.IdPicking - @Model.Encomenda.NomeCliente (@Model.EditadoPor)</span>
                             </p>
                         </article>
                     </div>
@@ -114,7 +114,18 @@
                                             <tr>
                                                 <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Ref_linha)">@item.Ref_linha</td>
                                                 <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Nome_Linha)">@item.Nome_Linha</td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Qtd_Separar)"><input class="input" type="number" value="@item.Qtd_Separar" id="txtQtd_@item.Picking_Linha_Stamp"/></td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Qtd_Separar)">
+                                                    <div class="field has-addons">
+                                                      <p class="control">
+                                                        <input class="input" type="number" value="@item.Qtd_Separar" id="txtQtd_@item.Picking_Linha_Stamp"/>
+                                                      </p>
+                                                      <p class="control">
+                                                        <a class="button is-static">
+                                                          @item.TipoUnidade
+                                                        </a>
+                                                      </p>
+                                                    </div>
+                                                    </td>
                                                 <td class="is-actions-cell">
                                                     <a class="button is-success is-rounded is-fullwidth" onclick="ValidarQuantidade('@item.Picking_Linha_Stamp')">
                                                         <span class="icon is-small">
@@ -166,9 +177,17 @@
       <p class="modal-card-title">Picking</p>
     </header>
     <section class="modal-card-body">
-      <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
-            <hr />
-      <p>Tem a certeza que deseja fechar o documento de Picking?</p> 
+      <p class="title is-5">Tem a certeza que deseja fechar o documento de Picking?</p> 
+      <div class="control"><textarea type="text" class="textarea" disabled id="txtMensagens" readonly rows=4 value=""></textarea></div>
+            <hr />  
+      <div class="control"><label class="label">Observações</label><textarea type="text" class="textarea" id="txtObs" rdonly rows=2 value=""></textarea></div>
+        &nbsp;
+      <div class="control" id="divArmazem">
+        <label class="label">Armazém</label>
+            <div class="select" style="width:100%">
+                <select id="lstArmazensModal" class="form-control" asp-items="ViewBag.Armazens" style="width:100%"></select>
+        </div>
+    </div>
   </section>
     <footer class="modal-card-foot">
       <button class="button is-success" onclick="FecharPicking('@Model.Picking_Stamp')">Sim</button>
@@ -305,6 +324,7 @@ function ValidarSerie(id, l) {
                     } else {
                         document.getElementById("txtMensagens").value = "Não foram encontrados problemas!";
                     }
+                     document.getElementById("divArmazem").hidden = (@Model.Encomenda.NumDossier != 2);
                      Bulma('#modalFecharPicking').modal().open();
                 });
             }
@@ -318,6 +338,7 @@ function ValidarSerie(id, l) {
             $.ajax({
                 url: '/Picking/Fechar/' + id,
                 type: "POST",
+                data: { "obs": document.getElementById('txtObs').value, "armazem":  document.getElementById('lstArmazensModal').value},
                 success: function (data) {
                     window.location = '/Picking';
                 }
