@@ -37,8 +37,6 @@ namespace FT_Management
             services.AddControllersWithViews();
             services.AddMvc();
 
-            //SMSContext.EnviarMensagemTeste("912321280");
-
             services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(Configuration.GetConnectionString("DefaultConnection"), Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
             services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(Configuration.GetConnectionString("PHCConnection"), Configuration.GetConnectionString("DefaultConnection"))));
 
@@ -84,6 +82,7 @@ namespace FT_Management
             });
 
             services.AddDataProtection().SetApplicationName("FT_Management");
+            services.AddLettuceEncrypt();
 
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
