@@ -182,8 +182,8 @@ namespace FT_Management.Controllers
             {
                 res += "Ref: " + item.RefProduto.Trim() + " | Designacao: " + item.Designacao.Trim() + " | Qtd: " + item.Quantidade + "%0D%0A";
             }
-            string url = "mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20("+u.NomeCompleto+")&body=" + res;
-            Response.Redirect(url);
+            var url = new System.Uri("mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20("+u.NomeCompleto+")&body=" + res);
+            Response.Redirect(url.AbsoluteUri);
             return new EmptyResult();
         }
     }
