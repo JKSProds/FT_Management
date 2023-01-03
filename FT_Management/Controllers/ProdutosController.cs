@@ -167,5 +167,24 @@ namespace FT_Management.Controllers
 
             return View("Movimentos", phccontext.ObterPecasGuiaTransporte(gt, u.IdArmazem).OrderBy(m => m.DataMovimento));
         }
+
+        public ActionResult ExportarPecasUso(int id, string gt)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            string res = "";
+
+            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First();
+            List<string> LstGuias = phccontext.ObterGuiasTransporte(u.IdArmazem);
+            if (string.IsNullOrEmpty(gt)) gt = LstGuias.First();
+
+            foreach (var item in phccontext.ObterPecasGuiaTransporte(gt, u.IdArmazem))
+            {
+                res += "Ref: " + item.RefProduto.Trim() + " | Designacao: " + item.Designacao.Trim() + " | Qtd: " + item.Quantidade + "%0D%0A";
+            }
+            string url = "mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20("+u.NomeCompleto+")&body=" + res;
+            Response.Redirect(url);
+            return new EmptyResult();
+        }
     }
 }

@@ -6,7 +6,7 @@
 
 
 <div class="container">
-    <div class="columns is-mobile is-centered">
+    <div class="columns">
         <div class="column">
             <div class="tile">
                 <div class="tile is-parent is-vertical">
@@ -18,16 +18,23 @@
         </div>
         <div class="column">
          <form asp-action="ObterPecasUso" method="get">
+                             <div class="field has-addons has-addons-right mx-1">
             <p class="control has-icons-left">
                 <span class="select">
                     <select id="lstguias" asp-items="ViewBag.Guias" onchange="submitdata()">
                     </select>
                 </span>
                 <span class="icon is-small is-left">
-                    <i class="fa-solid fa-warehouse"></i>
+                    <i class="fa-solid fa-paper"></i>
                 </span>
             </p>
+            <a class="button is-info" href='/Produtos/ExportarPecasUso/@ViewData["IdArmazem"]?gt=@ViewData["GT"]'> 
+                <span class="icon">
+                                <i class="fas fa-download"></i>
+                            </span>
+                            <span>Exportar</span></a>
             <input hidden id="hiddenSelectedGT" name="gt" value="@ViewData["GT"]" />
+            </div>
             </form>
         </div>
     </div>
