@@ -2267,5 +2267,175 @@ namespace FT_Management.Models
         }
 
         #endregion
+
+        //INVENTARIO
+        #region Inventario
+        public List<Picking> ObterInventarios(int ID_ARMAZEM)
+        {
+            List<Picking> LstPicking = new List<Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from V_Inv_Aberto WHERE armazem=" + ID_ARMAZEM + ";", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                            LstPicking.Add(new Picking()
+                            {
+                                Picking_Stamp = result["bostamp"].ToString(),
+                                NomeDossier = result["nmdos"].ToString(),
+                                IdPicking = int.Parse(result["obrano"].ToString()),
+                                DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                                NomeCliente = result["Nome"].ToString(),
+                                Obs = result["obs"].ToString(),
+                                EditadoPor = result["ousrinis"].ToString(),
+                            });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os dossiers de inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstPicking;
+        }
+        public Picking ObterInventario(string STAMP)
+        {
+            Picking p = new Picking();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_Inv_Cab WHERE INVSTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        p = new Picking()
+                        {
+                            Picking_Stamp = result["INVSTAMP"].ToString(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdPicking = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["DATA"].ToString()),
+                            NomeCliente = ObterArmazem(int.Parse(result["armazem"].ToString())).ArmazemNome,
+                            EditadoPor = result["usrinis"].ToString().ToUpper(),
+                            Linhas = ObterLinhasInventario(STAMP)
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o inventário do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return p;
+        }
+
+        public List<Linha_Picking> ObterLinhasInventario(string STAMP)
+        {
+            List<Linha_Picking> LstInventarioLinhas = new List<Linha_Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_Inv_Lin WHERE INVSTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (LstInventarioLinhas.Where(p => p.Ref_linha == result["ref"].ToString() && p.Serie == (result["USA_NSERIE"].ToString() == "True")).Count() == 0)
+                        {
+                            LstInventarioLinhas.Add(new Linha_Picking()
+                            {
+                                Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                                Ref_linha = result["ref"].ToString(),
+                                Nome_Linha = result["design"].ToString(),
+                                Qtd_Linha = Double.Parse(result["qtt"].ToString()),
+                                TipoUnidade = result["UNIDADE"].ToString(),
+                                Serie = result["USA_NSERIE"].ToString() == "True",
+                                EditadoPor = result["usrinis"].ToString()
+                            });
+                        }
+                        else
+                        {
+                            Linha_Picking Linha = LstInventarioLinhas.Where(p => p.Ref_linha == result["ref"].ToString()).First();
+                            Linha.Qtd_Linha += Double.Parse(result["qtt"].ToString());
+                           
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstInventarioLinhas;
+        }
+
+        public Picking CriarInventario(string STAMP_ARMAZEM)
+        {
+            Picking p = new Picking();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_INVENTARIO_CAB WHERE PISTAMP='" + STAMP_ARMAZEM + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+               
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar o inventário no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return p;
+        }
+
+
+        #endregion
     }
 }
