@@ -1895,7 +1895,7 @@ namespace FT_Management.Models
                         LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).First().LinhasEncomenda.Add(new Linha_Encomenda()
                         {
                             IdEncomenda = int.Parse(result["obrano"].ToString()),
-                            NomeCliente = result["Nome"].ToString(),
+                            NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
                             DataEnvio = DateTime.Parse(result["Data_Envio_Linha"].ToString()),
                             Total = result["Envio_Total"].ToString() == "True",
                             Produto = new Produto()
@@ -2080,7 +2080,7 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        if (LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString() && p.Serie == (result["USA_NSERIE"].ToString() == "True")).Count() == 0)
+                        if (LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString() && p.Serie == (result["USA_NSERIE"].ToString() == "True") && p.Nome_Loja == result["Loja_Lin"].ToString()).Count() == 0)
                         {
                             LstPickingLinhas.Add(new Linha_Picking()
                             {
@@ -2092,7 +2092,8 @@ namespace FT_Management.Models
                                 TipoUnidade = result["UNIDADE"].ToString(),
                                 Serie = result["USA_NSERIE"].ToString() == "True",
                                 Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())),
-                                EditadoPor = result["usrinis"].ToString()
+                                EditadoPor = result["usrinis"].ToString(),
+                                Nome_Loja = result["Loja_Lin"].ToString()
                             });
                         }
                         else
@@ -2114,7 +2115,7 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel ler as linhas do picking do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return LstPickingLinhas;
+            return LstPickingLinhas.OrderBy(p => p.Qtd_Separar).ToList();
         }
         public List<Ref_Linha_Picking> ObterSerieLinhaPicking(string BI_STAMP, Double Qtt)
         {

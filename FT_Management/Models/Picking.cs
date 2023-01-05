@@ -27,6 +27,8 @@ namespace FT_Management.Models
     }
     public class Linha_Picking
     {
+        [Display(Name = "Loja")]
+        public string Nome_Loja { get; set; }
         public string Picking_Linha_Stamp { get; set; }
         [Display(Name = "Referência")]
         public string Ref_linha { get; set; }
