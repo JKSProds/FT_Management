@@ -14,10 +14,34 @@
                                 <span class="icon mr-3">
                                    <i class="fa-solid fa-barcode"></i>
                                 </span>
-                                <span>Inventário Nº @Model.IdPicking - Armazém: @Model.NomeCliente (@Model.EditadoPor)</span>
+                                <span>Inventário Nº @Model.IdPicking (@Model.EditadoPor)</span>
                             </p>
                         </article>
                     </div>
+                </div>
+            </div>
+            <div class="column my-auto">
+                <div class="field is-horizontal">
+                  <div class="field-body">
+                    <div class="field">
+                      <p class="control is-expanded has-icons-left">
+                        <input class="input" type="text" readonly value="@Model.NomeCliente">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-warehouse"></i>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="field">
+                      <div class="control">
+                        <a class="button is-info is-outlined"  onclick="AdicionarReferencia()">
+                            <span class="icon">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Adicionar</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>
