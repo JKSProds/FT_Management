@@ -2080,7 +2080,7 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        if (LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString()).Count() == 0)
+                        if (LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString() && p.Serie == (result["USA_NSERIE"].ToString() == "True")).Count() == 0)
                         {
                             LstPickingLinhas.Add(new Linha_Picking()
                             {
@@ -2236,9 +2236,9 @@ namespace FT_Management.Models
                     while (result.Read())
                     {
                         double qtt = double.Parse(result[0].ToString());
-                        res += qtt == 0 ? "As referências reccecionadas satisfazem a encomenda na totalidade e a encomenda será fechada!\r\n\r\n" : "";
-                        res += qtt > 0 ? "As referências reccecionadas não satisfazem a encomenda na totalidade, por esse motivo a encomenda manter-se-á em aberto!\r\n\r\n" : "";
-                        res += qtt < 0 ? "As referências reccecionadas são superiores á quantidade encomendada, por esse motivo a encomenda será fechada!\r\n\r\n" : "";
+                        res += qtt == 0 ? "As referências lidas satisfazem a encomenda na totalidade e a encomenda será fechada!\r\n\r\n" : "";
+                        res += qtt > 0 ? "As referências lidas não satisfazem a encomenda na totalidade, por esse motivo a encomenda manter-se-á em aberto!\r\n\r\n" : "";
+                        res += qtt < 0 ? "As referências lidas são superiores á quantidade encomendada, por esse motivo a encomenda será fechada!\r\n\r\n" : "";
                     }
                 }
 
