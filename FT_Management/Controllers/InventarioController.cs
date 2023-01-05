@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin, Escritorio")]
+    [Authorize(Roles = "Admin")]
     public class InventarioController : Controller
     {
         public ActionResult Index()
