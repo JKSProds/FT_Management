@@ -82,7 +82,7 @@ namespace FT_Management
             });
 
             services.AddDataProtection().SetApplicationName("FT_Management");
-            services.AddLettuceEncrypt();
+           //Remove lets  services.AddLettuceEncrypt();
 
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
