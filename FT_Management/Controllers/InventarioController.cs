@@ -41,7 +41,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             List<string> res = phccontext.CriarInventario(id, this.User.ObterNomeCompleto());
-            res[3] = (!string.IsNullOrEmpty(res[2])) ? "/Inventario/Dossier/" + res : "";
+            res[3] = (!string.IsNullOrEmpty(res[2])) ? "/Inventario/Dossier/" + res[2] : "";
 
             return new JsonResult(res);
         }
