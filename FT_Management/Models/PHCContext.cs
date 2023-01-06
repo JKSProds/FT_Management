@@ -2271,6 +2271,44 @@ namespace FT_Management.Models
 
         //INVENTARIO
         #region Inventario
+
+        public string CriarInventario(int ID_ARMAZEM, string NomeUtilizador)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("GERA_INVENTARIO", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@ARMAZEM", ID_ARMAZEM));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", NomeUtilizador));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = res[0] == "1" ? "" : result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar o dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res[2];
+        }
         public List<Picking> ObterInventarios(int ID_ARMAZEM)
         {
             List<Picking> LstPicking = new List<Picking>();
@@ -2408,33 +2446,6 @@ namespace FT_Management.Models
             return LstInventarioLinhas;
         }
 
-        public Picking CriarInventario(string STAMP_ARMAZEM)
-        {
-            Picking p = new Picking();
-
-            try
-            {
-
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("SELECT * from V_INVENTARIO_CAB WHERE PISTAMP='" + STAMP_ARMAZEM + "'", conn)
-                {
-                    CommandTimeout = TIMEOUT
-                };
-               
-
-                conn.Close();
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine("Não foi possivel criar o inventário no PHC!\r\n(Exception: " + ex.Message + ")");
-            }
-
-            return p;
-        }
 
 
         #endregion

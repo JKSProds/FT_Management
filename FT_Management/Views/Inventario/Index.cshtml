@@ -84,28 +84,96 @@ else
         </div>
   </section>
     <footer class="modal-card-foot">
+      <button class="button is-info" onclick="Bulma('#modalConfirmNovoDossier').modal().open();">Criar Dossier</button>
       <button class="button" onclick="Bulma('#modalDossiersInventario').modal().close();">Fechar</button>
     </footer>
   </div>
 </div>
 
+<div class="modal" id="modalConfirmNovoDossier">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Novo Dossier</p>
+    </header>
+    <section class="modal-card-body">
+        <div class="modal-body">
+            <p>Tem a certeza que deseja criar um novo dossier de inventário associado a este armazém?</p>
+        </div>
+  </section>
+    <footer class="modal-card-foot">
+      <button class="button is-info" onclick="CriarDossier(document.getElementById('txtHiddenNumArmazem').value);">Confirmar</button>
+      <button class="button" onclick="Bulma('#modalConfirmNovoDossier').modal().close();">Não</button>
+    </footer>
+  </div>
+</div>
+
+<input id="txtHiddenNumArmazem" hidden />
 <script>
+    function CriarDossier(id) {
+         $.ajax({
+            url: '/Inventario/CriarDossier/',
+            data: { "id": id},
+            type: "POST",
+            success: function (data) {
+                if (data != '') {
+                    window.location.href = data;
+                } else {
+                     bulmaToast.toast({
+                        message: 'Ocorreu um erro ao criar um novo dossier!',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000,
+                        position: 'top-center'
+                    });  
+                }
+            },
+            error: function (response) {
+                bulmaToast.toast({
+                        message: 'Ocorreu um erro ao criar um novo dossier!',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000,
+                        position: 'top-center'
+                    });  
+            },
+            failure: function (response) {
+                bulmaToast.toast({
+                        message: 'Ocorreu um erro ao criar um novo dossier!',
+                        type: 'is-danger',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000,
+                        position: 'top-center'
+                    });       
+            }
+        });
+                    Bulma('#modalConfirmNovoDossier').modal().close();
+                    Bulma('#modalDossiersInventario').modal().close();
+    }
+
     function VerDossiersInventario(id) {
+        document.getElementById('txtHiddenNumArmazem').value = id;
 
         $.ajax({
             url: '/Inventario/ObterDossiers/',
             data: { "id": id},
-            type: "POST",
+            type: "GET",
             success: function (data) {
                 document.getElementById("txtHeaderModal").innerHTML = "Dossiers - Armazém " + id;
                 if (!data || data.length === 0) {
                    var html = "<button class='button is-danger is-rounded is-outlined is-fullwidth' disabled>Não foram encontrados dossiers associados a este armazém!</button>"; 
                    document.getElementById("divDossiers").innerHTML = html;
                 } else {
-                   var html = "<table style='width:100%;border-width:3px;' border='1'><tr><th>Nº do Dossier</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
+                   var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº do Dossier</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
                    data.forEach(obj => {
-                        console.log(obj);
-                        html += "<tr><td style='padding: 5px;'>" + obj.idPicking + "</td><td style='padding: 5px;'>" + new Date(obj.dataDossier).toLocaleDateString() + "</td><td style='padding: 5px;'>" + obj.editadoPor + "</td><td style='padding: 5px;'><a class='button is-large is-success is-rounded is-pulled-right' style='width:100%' href='/Inventario/Dossier/"+obj.picking_Stamp+"'><span class='icon is-small'><i class='fa-solid fa-eye'></i></span></a> </td></tr>";
+                        //console.log(obj);
+                        html += "<tr><td>" + obj.idPicking + "</td><td>" + new Date(obj.dataDossier).toLocaleDateString() + "</td><td>" + obj.editadoPor + "</td><td><a class='button is-large is-success is-rounded is-pulled-right' style='width:100%' href='/Inventario/Dossier/"+obj.picking_Stamp+"'><span class='icon is-small'><i class='fa-solid fa-eye'></i></span></a> </td></tr>";
                     });
                    html += "</table>";
                    document.getElementById("divDossiers").innerHTML = html;
