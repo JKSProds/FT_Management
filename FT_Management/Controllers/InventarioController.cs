@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FT_Management.Controllers
 {
@@ -19,7 +20,13 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return View(phccontext.ObterInventario(id));
+            if (string.IsNullOrEmpty(referencia)) referencia = "";
+            ViewData["Referencia"] = referencia;
+
+            Picking p = phccontext.ObterInventario(id);
+            p.Linhas = p.Linhas.Where(l => l.Ref_linha.Contains(referencia)).ToList();
+
+            return View(p);
         }
 
         public JsonResult ObterDossiers(int id)
@@ -32,20 +39,53 @@ namespace FT_Management.Controllers
         public JsonResult CriarDossier(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            string res = phccontext.CriarInventario(id, this.User.ObterNomeCompleto());
-            return new JsonResult((!string.IsNullOrEmpty(res)) ? "/Inventario/Dossier/" + res : "" );
+
+            List<string> res = phccontext.CriarInventario(id, this.User.ObterNomeCompleto());
+            res[3] = (!string.IsNullOrEmpty(res[2])) ? "/Inventario/Dossier/" + res : "";
+
+            return new JsonResult(res);
         }
-        public JsonResult ValidarQuantidade(string stamp, double qtt)
+        public JsonResult ValidarQuantidade(string stamp, string ref_produto, double qtd)
+        {
+            //DESENVOLVER
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Linha_Picking l = new Linha_Picking() {
+                Picking_Linha_Stamp = stamp,
+                Ref_linha = ref_produto,
+                Qtd_Linha = qtd,
+                EditadoPor = this.User.ObterNomeCompleto()
+            };
+
+            return new JsonResult(phccontext.CriarLinhaInventario(l));
+        }
+        public JsonResult ValidarSerie(string stamp, string stamp_linha, string serie)
+        {
+            //DESENVOLVER
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Ref_Linha_Picking l = new Ref_Linha_Picking()
+            {
+                Picking_Linha_Stamp = stamp_linha,
+                BOMA_STAMP = stamp,
+                NumSerie = serie,
+                CriadoPor = this.User.ObterNomeCompleto()
+            };
+
+            return new JsonResult(phccontext.CriarSerieLinhaInventario(l));
+        }
+        public JsonResult ObterSerieLinha(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return new JsonResult("");
+            return new JsonResult(phccontext.ObterSerieLinhaInventario(id));
         }
-        public JsonResult ValidarSerie(string stamp, string serie)
+        public JsonResult ApagarLinha(string stamp, string stamp_linha)
         {
+            //DESENVOLVER
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return new JsonResult("");
+            return new JsonResult(phccontext.ApagarLinhaInventario(new Ref_Linha_Picking() { BOMA_STAMP = stamp, Picking_Linha_Stamp = stamp_linha}));
         }
     }
      

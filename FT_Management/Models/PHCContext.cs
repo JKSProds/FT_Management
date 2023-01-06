@@ -124,7 +124,7 @@ namespace FT_Management.Models
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.armazem;");
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '" + Referencia + "' order by sa.armazem;");
         }
         public Produto ObterProdutoStamp(string Stamp)
         {
@@ -2272,7 +2272,7 @@ namespace FT_Management.Models
         //INVENTARIO
         #region Inventario
 
-        public string CriarInventario(int ID_ARMAZEM, string NomeUtilizador)
+        public List<string> CriarInventario(int ID_ARMAZEM, string NomeUtilizador)
         {
             List<string> res = new List<string>() { "-1", "Erro", "" };
             try
@@ -2296,7 +2296,7 @@ namespace FT_Management.Models
                 result.Read();
 
                 res[0] = result[0].ToString();
-                res[1] = res[0] == "1" ? "" : result[1].ToString();
+                res[1] = result[1].ToString();
                 res[2] = result[2].ToString();
 
                 conn.Close();
@@ -2307,8 +2307,127 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel criar o dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return res[2];
+            return res;
         }
+        public List<string> CriarLinhaInventario(Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("CRIA_LINHA_INV", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@REF", l.Ref_linha));
+                command.Parameters.Add(new SqlParameter("@QTT", l.Qtd_Linha));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.EditadoPor));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+                res[3] = result[3].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel adicionar a linha ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+        public List<string> CriarSerieLinhaInventario(Ref_Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("CRIA_LINHA_INV_SERIE", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@STAMP", l.BOMA_STAMP));
+                command.Parameters.Add(new SqlParameter("@SERIE", l.NumSerie));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+                res[3] = result[3].ToString();
+                res[4] = result[4].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel adicionar o numero de serie ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> ApagarLinhaInventario(Ref_Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("APAGA_LINHA_INV", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@STAMP", l.BOMA_STAMP));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel adicionar o numero de serie ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         public List<Picking> ObterInventarios(int ID_ARMAZEM)
         {
             List<Picking> LstPicking = new List<Picking>();
@@ -2413,8 +2532,6 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        if (LstInventarioLinhas.Where(p => p.Ref_linha == result["ref"].ToString() && p.Serie == (result["USA_NSERIE"].ToString() == "True")).Count() == 0)
-                        {
                             LstInventarioLinhas.Add(new Linha_Picking()
                             {
                                 Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
@@ -2425,13 +2542,6 @@ namespace FT_Management.Models
                                 Serie = result["USA_NSERIE"].ToString() == "True",
                                 EditadoPor = result["usrinis"].ToString()
                             });
-                        }
-                        else
-                        {
-                            Linha_Picking Linha = LstInventarioLinhas.Where(p => p.Ref_linha == result["ref"].ToString()).First();
-                            Linha.Qtd_Linha += Double.Parse(result["qtt"].ToString());
-                           
-                        }
                     }
                 }
 
@@ -2446,6 +2556,91 @@ namespace FT_Management.Models
             return LstInventarioLinhas;
         }
 
+        public List<Ref_Linha_Picking> ObterSerieLinhaInventario(string STAMP)
+        {
+            List<Ref_Linha_Picking> LstInventarioSerieLinhas = new List<Ref_Linha_Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_Inv_Serie WHERE BISTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                            LstInventarioSerieLinhas.Add(new Ref_Linha_Picking()
+                            {
+                                Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                                Ref_linha = result["ref"].ToString().Trim(),
+                                Nome_Linha = result["design"].ToString().Trim(),
+                                Qtd_Separar = Double.Parse(result["qtt"].ToString()),
+                                BOMA_STAMP = result["BOMASTAMP"].ToString(),
+                                NumSerie = result["serie"].ToString(),
+                                CriadoA = DateTime.Parse(result["ousrdata"].ToString()),
+                                CriadoPor = result["usrinis"].ToString()
+                            });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas de serie do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstInventarioSerieLinhas;
+        }
+
+        public List<string> ValidarLinhaInventario(string STAMP)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select qtt, ISNULL((select COUNT(*) from boma(nolock) where bi.bistamp = bistamp),0) as contagem_sn from bi (nolock) where bistamp = '"+STAMP+"'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (double.Parse(result[0].ToString()) > double.Parse(result[1].ToString()))
+                        {
+                            res[0] = "-1";
+                            res[1] = "Os numeros de série lidos são inferiores á quantidade registada!";
+                        }
+                        else
+                        {
+                            res[0] = "1";
+                            res[1] = "Está tudo OK";
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas de serie do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
 
 
         #endregion

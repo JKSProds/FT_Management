@@ -116,11 +116,11 @@ else
             data: { "id": id},
             type: "POST",
             success: function (data) {
-                if (data != '') {
-                    window.location.href = data;
+                if (data[0] == "1") {
+                    window.location.href = data[3];
                 } else {
                      bulmaToast.toast({
-                        message: 'Ocorreu um erro ao criar um novo dossier!',
+                        message: data[1],
                         type: 'is-danger',
                         closeOnClick: true,
                         pauseOnHover: true,

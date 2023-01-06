@@ -58,6 +58,8 @@ namespace FT_Management.Models
         public string BOMA_STAMP { get; set; }
         public string NumSerie { get; set; }
         public bool Validado { get { return (NumSerie != "" && BOMA_STAMP != ""); } }
+        public string CriadoPor { get; set; }
+        public DateTime CriadoA { get; set; }
 
         public Ref_Linha_Picking()
         {

@@ -141,7 +141,7 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().First());
+            return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
         }
         public JsonResult ObterDetalhes(string id)
         {
