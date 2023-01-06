@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.DataProtection;
+using LettuceEncrypt;
+using System.IO;
 
 namespace FT_Management
 {
@@ -82,7 +84,9 @@ namespace FT_Management
             });
 
             services.AddDataProtection().SetApplicationName("FT_Management");
-           //Remove lets  services.AddLettuceEncrypt();
+            services
+                .AddLettuceEncrypt()
+                .PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123"); ;
 
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
