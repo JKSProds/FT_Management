@@ -84,10 +84,10 @@ namespace FT_Management
             });
 
             services.AddDataProtection().SetApplicationName("FT_Management");
-            services
-                .AddLettuceEncrypt()
-                .PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123"); ;
 
+            #if !DEBUG
+                 services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
+            #endif
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
 
