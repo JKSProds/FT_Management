@@ -94,7 +94,7 @@ namespace FT_Management.Models
         }
         public List<Utilizador> ObterListaComerciais(bool Enable)
         {
-            return ObterListaUtilizadores(Enable,false).Where(u => u.TipoUtilizador == 2).ToList();
+            return ObterListaUtilizadores(Enable, false).Where(u => u.TipoUtilizador == 2).ToList();
         }
         public Utilizador ObterUtilizador(int Id)
         {
@@ -158,7 +158,9 @@ namespace FT_Management.Models
 
             foreach (var item in LstMarcacao)
             {
-                if (item.IdTecnico == 0) { item.Tecnico = new Utilizador(); } else {
+                if (item.IdTecnico == 0) { item.Tecnico = new Utilizador(); }
+                else
+                {
                     item.Tecnico = LstUtilizadores.Where(u => u.IdPHC == item.IdTecnico).FirstOrDefault() ?? new Utilizador();
 
                     try
@@ -241,7 +243,7 @@ namespace FT_Management.Models
 
         public void ApagarUtilizador(Utilizador u)
         {
-            string sql = "DELETE FROM sys_utilizadores WHERE IdUtilizador="+u.Id+";\r\n";
+            string sql = "DELETE FROM sys_utilizadores WHERE IdUtilizador=" + u.Id + ";\r\n";
 
             Database db = ConnectionString;
 
@@ -328,7 +330,7 @@ namespace FT_Management.Models
         public List<Viagem> ObterViagens(string Matricula, string DataViagens)
         {
             List<Viagem> res = new List<Viagem>();
-            string sqlQuery = "SELECT * FROM dat_viaturas_viagens where matricula_viatura='"+Matricula+ "' and inicio_viagem>='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd")+ " 00:00:00' and fim_viagem<='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 23:59:59';";
+            string sqlQuery = "SELECT * FROM dat_viaturas_viagens where matricula_viatura='" + Matricula + "' and inicio_viagem>='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 00:00:00' and fim_viagem<='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 23:59:59';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -352,10 +354,10 @@ namespace FT_Management.Models
 
             return res.OrderBy(v => v.Inicio_Viagem).ToList();
         }
-#endregion
+        #endregion
 
         //PARAMETROS
-#region PARAMETROS
+        #region PARAMETROS
         public string ObterParam(string NomeParam)
         {
             string res = "";
@@ -426,15 +428,15 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-#endregion
+        #endregion
 
         //LOGS
-#region LOGS
+        #region LOGS
         public List<Log> ObterListaLogs(int IdUtilizador)
         {
             List<Log> LstLogs = new List<Log>();
             Utilizador u = ObterUtilizador(IdUtilizador);
-            string sqlQuery = "SELECT * FROM dat_logs where id_user="+u.Id+" order by data_log;";
+            string sqlQuery = "SELECT * FROM dat_logs where id_user=" + u.Id + " order by data_log;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -462,10 +464,10 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-#endregion
+        #endregion
 
         //VISITAS
-#region Visitas
+        #region Visitas
         public List<Visita> ObterListaVisitas(int IdComercial, DateTime DataInicial, DateTime DataFinal)
         {
             PHCContext phccontext = new PHCContext(ConfigurationManager.AppSetting["ConnectionStrings:PHCConnection"], ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
@@ -739,10 +741,10 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-#endregion
+        #endregion
 
         //FERIAS
-#region Ferias
+        #region Ferias
         public bool VerificarFeriasUtilizador(int IdUtilizador, DateTime Data)
         {
             bool res = false;
@@ -1023,7 +1025,7 @@ namespace FT_Management.Models
             using (Database db = ConnectionString)
             {
 
-                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "' AND Ano='"+Ano+"';");
+                using var result = db.QueryValue("SELECT COALESCE(SUM(DATEDIFF(DataFim, DataInicio) + 1),0) FROM dat_ferias where Validado=1 AND IdUtilizador ='" + IdUtilizador + "' AND Ano='" + Ano + "';");
                 return result;
             }
 
@@ -1286,9 +1288,9 @@ namespace FT_Management.Models
             while (dataAniversario.DayOfWeek == DayOfWeek.Saturday || dataAniversario.DayOfWeek == DayOfWeek.Sunday)
             {
                 dataAniversario = dataAniversario.AddDays(1);
-            } 
+            }
 
-            if (!VerificarFeriasUtilizador(IdUtilizador, dataAniversario)) CriarFerias(new List<Ferias>() { new Ferias() { IdUtilizador = IdUtilizador, DataInicio = dataAniversario, DataFim = dataAniversario, Obs = "Dia de Aniversário", Validado = true, ValidadoPorNome = "FT", ValidadoPor = 0} });
+            if (!VerificarFeriasUtilizador(IdUtilizador, dataAniversario)) CriarFerias(new List<Ferias>() { new Ferias() { IdUtilizador = IdUtilizador, DataInicio = dataAniversario, DataFim = dataAniversario, Obs = "Dia de Aniversário", Validado = true, ValidadoPorNome = "FT", ValidadoPor = 0 } });
 
             Database db = ConnectionString;
 
@@ -1304,10 +1306,10 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-#endregion
+        #endregion
 
         //ACESSOS
-#region Acessos
+        #region Acessos
         public List<Acesso> ObterListaAcessos(DateTime Data)
         {
             List<Acesso> LstAcessos = new List<Acesso>();
@@ -1476,10 +1478,10 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-#endregion
+        #endregion
 
         //Notificacoes
-#region Notificacoes
+        #region Notificacoes
         public List<Notificacao> ObterNotificacoesPendentes()
         {
             List<Notificacao> LstNotificacoes = new List<Notificacao>();
@@ -1503,23 +1505,23 @@ namespace FT_Management.Models
         public void CriarNotificacao(Notificacao notificacao)
         {
 
-                string sql = "INSERT INTO dat_notificacoes (Mensagem,Destino,IdUtilizador, Tipo, Pendente) VALUES ('" + notificacao.Mensagem + "', '" + notificacao.Destino + "', '" + notificacao.Utilizador.Id + "', '" + notificacao.Tipo + "', '" + notificacao.Pendente + "', )";
+            string sql = "INSERT INTO dat_notificacoes (Mensagem,Destino,IdUtilizador, Tipo, Pendente) VALUES ('" + notificacao.Mensagem + "', '" + notificacao.Destino + "', '" + notificacao.Utilizador.Id + "', '" + notificacao.Tipo + "', '" + notificacao.Pendente + "', )";
 
-                try
-                {
-                    Database db = ConnectionString;
+            try
+            {
+                Database db = ConnectionString;
 
-                    db.Execute(sql);
-                    db.Connection.Close();
-                }
-                catch
-                {
-                }
+                db.Execute(sql);
+                db.Connection.Close();
+            }
+            catch
+            {
+            }
         }
-#endregion
+        #endregion
 
         //CONTACTOS
-#region Contactos
+        #region Contactos
         public Contacto ObterContacto(int id)
         {
             PHCContext phccontext = new PHCContext(ConfigurationManager.AppSetting["ConnectionStrings:PHCConnection"], ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
@@ -1638,7 +1640,7 @@ namespace FT_Management.Models
         {
 
             List<HistoricoContacto> LstHistorico = new List<HistoricoContacto>();
-            string sqlQuery = "SELECT * FROM dat_contactos_historico WHERE IdContacto="+IdContacto+";";
+            string sqlQuery = "SELECT * FROM dat_contactos_historico WHERE IdContacto=" + IdContacto + ";";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -1828,12 +1830,12 @@ namespace FT_Management.Models
         }
         public void ApagarContactoAdicional(int Id)
         {
-            string sql = "DELETE FROM dat_contactos_adicionais where IdContactoAdicional="+Id+";";
+            string sql = "DELETE FROM dat_contactos_adicionais where IdContactoAdicional=" + Id + ";";
 
             using Database db = ConnectionString;
             db.Execute(sql);
         }
-#endregion
+        #endregion
 
         //OUTROS
         static string GetRandomString(int length)
@@ -1877,7 +1879,7 @@ namespace FT_Management.Models
                             id = item.IdMarcacao.ToString() + "_" + dataMarcacao.ToString("yyyyMMdd"),
                             IdMarcacao = item.IdMarcacao,
                             calendarId = "1",
-                            title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26  ? "⌛ " : item.EstadoMarcacaoDesc == "Criado" && item.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : item.DataMarcacao < DateTime.Now && item.EstadoMarcacaoDesc != "Criado" ? "❌ " : "") + item.Cliente.NomeCliente,
+                            title = (item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "✔ " : item.EstadoMarcacao != 1 && item.EstadoMarcacao != 26 ? "⌛ " : item.EstadoMarcacaoDesc == "Criado" && item.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : item.DataMarcacao < DateTime.Now && item.EstadoMarcacaoDesc != "Criado" ? "❌ " : "") + item.Cliente.NomeCliente,
                             start = dataMarcacao,
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
@@ -1893,7 +1895,7 @@ namespace FT_Management.Models
                 {
 
                 }
- 
+
             }
 
             return LstEventos;
@@ -1973,7 +1975,7 @@ namespace FT_Management.Models
                 Alignment = StringAlignment.Center
             };
 
-   
+
 
             using (Graphics gr = Graphics.FromImage(bm))
             {
@@ -2051,22 +2053,22 @@ namespace FT_Management.Models
                     y += 50;
                     for (int j = 0; j < 4; j++)
                     {
-                            //x +=20;
-                            //if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 84, 50); }
+                        //x +=20;
+                        //if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 84, 50); }
 
-                            QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                            QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
-                            QRCode qrCode = new QRCode(qrCodeData);
-                            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+                        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
+                        QRCode qrCode = new QRCode(qrCodeData);
+                        Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
-                            gr.DrawImage(qrCodeImage, x, y, 100, 100);
+                        gr.DrawImage(qrCodeImage, x, y, 100, 100);
 
-                            x += 100;
-                            gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width/2 - 100, 50), format);
+                        x += 100;
+                        gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width / 2 - 100, 50), format);
 
-                            gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y + 60, width/2 - 100, 35), format);
+                        gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y + 60, width / 2 - 100, 35), format);
 
-                  
+
                         x = width / 2;
 
                     }
@@ -2245,7 +2247,7 @@ namespace FT_Management.Models
             int x = 0;
             int y = 0;
             int width = 1024;
-            int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count()*140)*2;
+            int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() * 140) * 2;
 
             Bitmap bm = new Bitmap(width, height);
 
@@ -2292,7 +2294,7 @@ namespace FT_Management.Models
                     QRCode qrCode = new QRCode(qrCodeData);
                     Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
-                    gr.DrawImage(qrCodeImage, width-200, y + 20, 200, 200);
+                    gr.DrawImage(qrCodeImage, width - 200, y + 20, 200, 200);
 
                     rect = new Rectangle(x + 410, y + 20, width - 620, 40);
                     gr.DrawString(HeaderPagina, fontBody, Brushes.Black, rect, formatRight);
@@ -2377,9 +2379,12 @@ namespace FT_Management.Models
 
                     y += 60;
                     rect = new Rectangle(x + 10, y + 20, width - 20, 60);
-                    if (fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() > 0) { 
-                        gr.DrawString("Peças retiradas da: " + fo.GuiaTransporteAtual, fontBody, Brushes.Black, rect, format); 
-                    } else {
+                    if (fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() > 0)
+                    {
+                        gr.DrawString("Peças retiradas da: " + fo.GuiaTransporteAtual, fontBody, Brushes.Black, rect, format);
+                    }
+                    else
+                    {
                         gr.DrawString("Não foram retiradas nenhumas peças nesta assistência!", fontBody, Brushes.Black, rect, format);
                     }
 
@@ -2413,7 +2418,7 @@ namespace FT_Management.Models
 
                     y += 150;
                     penB.DashStyle = DashStyle.Dash;
-                    gr.DrawLine(penB, new Point(0, y), new Point (width, y));
+                    gr.DrawLine(penB, new Point(0, y), new Point(width, y));
                     penB.DashStyle = DashStyle.Solid;
 
                     y += 80;
@@ -2675,7 +2680,7 @@ namespace FT_Management.Models
         }
         public void GuardarLocalizacaoCliente(Cliente c)
         {
-            string sql = "INSERT INTO dat_clientes (Cliente_Stamp, Latitude, Longitude) VALUES ('" + c.ClienteStamp + "', '"+c.Latitude+"', '"+c.Longitude+ "')  ON DUPLICATE KEY UPDATE Latitude = VALUES(Latitude), Longitude = VALUES(Longitude);";
+            string sql = "INSERT INTO dat_clientes (Cliente_Stamp, Latitude, Longitude) VALUES ('" + c.ClienteStamp + "', '" + c.Latitude + "', '" + c.Longitude + "')  ON DUPLICATE KEY UPDATE Latitude = VALUES(Latitude), Longitude = VALUES(Longitude);";
 
             Database db = ConnectionString;
 
@@ -2685,7 +2690,7 @@ namespace FT_Management.Models
 
         public List<Atividade> ObterAtividade(Marcacao m)
         {
-            string sqlQuery = "SELECT * FROM dat_marcacoes_atividade where IdMarcacao="+m.IdMarcacao+";";
+            string sqlQuery = "SELECT * FROM dat_marcacoes_atividade where IdMarcacao=" + m.IdMarcacao + ";";
             List<Atividade> LstAtividades = new List<Atividade>();
 
             using Database db = ConnectionString;
@@ -2694,7 +2699,7 @@ namespace FT_Management.Models
                 while (result.Read())
                 {
                     LstAtividades.Add(new Atividade
-                    { 
+                    {
                         Id = result["Id"],
                         Tipo = result["TipoAtividade"],
                         Nome = result["NomeAtividade"],
