@@ -2544,7 +2544,7 @@ namespace FT_Management.Models
                             Ref_linha = result["ref"].ToString(),
                             Nome_Linha = result["design"].ToString(),
                             Qtd_Linha = Double.Parse(result["qtt"].ToString()),
-                            Qtd_Separar = Double.Parse(result["Qtd_Lida"].ToString()),
+                            Qtd_Separar = result["USA_NSERIE"].ToString() == "True" ? Double.Parse(result["Qtd_Lida"].ToString()) : Double.Parse(result["qtt"].ToString()),
                             TipoUnidade = result["UNIDADE"].ToString(),
                             Serie = result["USA_NSERIE"].ToString() == "True",
                             EditadoPor = result["usrinis"].ToString()
@@ -2588,7 +2588,7 @@ namespace FT_Management.Models
                             Ref_linha = result["ref"].ToString().Trim(),
                             Nome_Linha = result["design"].ToString(),
                             Qtd_Linha = Double.Parse(result["qtt"].ToString()),
-                            Qtd_Separar = Double.Parse(result["Qtd_Lida"].ToString()),
+                            Qtd_Separar = result["USA_NSERIE"].ToString() == "True" ? Double.Parse(result["Qtd_Lida"].ToString()) : Double.Parse(result["qtt"].ToString()),
                             TipoUnidade = result["UNIDADE"].ToString(),
                             Serie = result["USA_NSERIE"].ToString() == "True",
                             EditadoPor = result["usrinis"].ToString()

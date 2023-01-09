@@ -279,6 +279,9 @@ else{
                             <div class="control" style="width:100%">
                                 <input type="text" class="input" id="txtNumeroSerie" disabled>
                             </div>
+                            <div class="control" style="width:100%">
+                                <input type="text" class="input" id="txtNumeroAnterior" disabled>
+                            </div>
                             <div class="control">
                                 <input class="button is-danger" type="button"
                                     onclick="document.getElementById('txtNumeroSerie').value = ''" value="Limpar">
@@ -478,6 +481,7 @@ else{
     function AdicionarNumeroSerie(id, serie) {
         document.getElementById('btnAdicionarNumeroSerie').classList.add("is-loading");
         document.getElementById('txtNumeroSerie').disabled = true;
+
         $.ajax({
             url: '/Inventario/ValidarSerie/',
             data: { "stamp": '@Model.Picking_Stamp', "stamp_linha": id, "serie": serie },
@@ -485,26 +489,31 @@ else{
             success: function (data) {
                 if (data[0] == "1") {
                     //console.log(data);
+                    document.getElementById('txtNumeroAnterior').value = document.getElementById('txtNumeroSerie').value
                     document.getElementById('txtNumeroSerie').value = ''
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
                     document.getElementById('txtNumeroSerie').disabled = false;
                     document.getElementById('txtQtdSeparada').value = parseInt(document.getElementById('txtQtdSeparada').value) + 1
+                    document.getElementById('txtNumeroSerie').focus();
                     notify(data[1]);
                 } else {
                     notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
                     document.getElementById('txtNumeroSerie').disabled = false;
+                    document.getElementById('txtNumeroSerie').focus();
                 }
             },
             error: function (data) {
                 notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
                 document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
                 document.getElementById('txtNumeroSerie').disabled = false;
+                document.getElementById('txtNumeroSerie').focus();
             },
             failure: function (data) {
                 notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
                 document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
                 document.getElementById('txtNumeroSerie').disabled = false;
+                document.getElementById('txtNumeroSerie').focus();
             }
         });
     }
