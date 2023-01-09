@@ -45,16 +45,18 @@
                 </div>
             </div>
             <div class="field is-horizontal">
+
                 <div class="field-body">
+
                     <div class="field">
                         <p class="control is-expanded has-icons-left">
-                            <input class="input" type="text" id="txtRefPesquisa" value="@ViewData["Referencia"]"
+                            <input class="input" type="text" id="txtRefPesquisa" on value="@ViewData["Referencia"]"
                                 placeholder="Referência">
                             <span class="icon is-small is-left">
                                 <i class="fa-solid fa-arrow-down-1-9""></i>
                             </span>
                           </p>
-                        </div>
+                    </div>
                         <div class=" field">
                                     <div class="control buttons">
                                         <button type="submit" class="button is-info is-outlined" onclick="filtrar();">
@@ -67,7 +69,6 @@
                                             <span class="icon">
                                                 <i class="fas fa-backspace"></i>
                                             </span>
-                                            <span>Limpar</span>
                                         </a>
                                         <a class="button is-danger"
                                             href='/Inventario/FecharDossier/@Model.Picking_Stamp'>
@@ -293,7 +294,7 @@ else{
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-primary" type="button"
+            <button class="button is-primary is-large is-fullwidth" type="button"
                 onclick="Bulma('#ModalAdicionarLinha').modal().close();">Fechar</button>
         </footer>
     </div>
@@ -301,6 +302,12 @@ else{
 
 <input id="txtHiddenStampLinha" hidden />
 <script>
+    document.getElementById('txtRefPesquisa').addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            filtrar();
+        }
+    });
     function filtrar() {
         window.location.href = '/Inventario/Dossier/@Model.Picking_Stamp?referencia=' + document.getElementById('txtRefPesquisa').value;
     }
