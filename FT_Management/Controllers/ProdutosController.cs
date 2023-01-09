@@ -38,7 +38,7 @@ namespace FT_Management.Controllers
             ViewData["Fornecedores"] = new SelectList(LstFornecedores, "IdFornecedor", "NomeFornecedor", Armazem);
             ViewData["TiposEquipamento"] = new SelectList(LstTiposEquipamento);
 
-            if (Armazem>9)
+            if (Armazem > 9)
             {
                 return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
@@ -57,8 +57,8 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50(phccontext.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-            
+            context.DesenharEtiqueta80x50(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
+
             return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
@@ -122,8 +122,8 @@ namespace FT_Management.Controllers
 
             ViewData["LstProdutosArmazem"] = phccontext.ObterProdutosArmazem(id);
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
-            
-            return View(phccontext.ObterProduto(id,armazemid));
+
+            return View(phccontext.ObterProduto(id, armazemid));
         }
 
         [HttpPost]
@@ -141,7 +141,8 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
+            //return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
+            return Json(phccontext.ObterProdutos(ref_produto, "", 3).ToList().FirstOrDefault() ?? new Produto());
         }
         public JsonResult ObterDetalhes(string id)
         {
@@ -182,7 +183,7 @@ namespace FT_Management.Controllers
             {
                 res += "Ref: " + item.RefProduto.Trim() + " | Designacao: " + item.Designacao.Trim() + " | Qtd: " + item.Quantidade + "%0D%0A";
             }
-            var url = new System.Uri("mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20("+u.NomeCompleto+")&body=" + res);
+            var url = new System.Uri("mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20(" + u.NomeCompleto + ")&body=" + res);
             Response.Redirect(url.AbsoluteUri);
             return new EmptyResult();
         }
