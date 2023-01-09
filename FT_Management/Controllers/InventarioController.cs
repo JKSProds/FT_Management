@@ -47,10 +47,10 @@ namespace FT_Management.Controllers
         }
         public JsonResult ValidarQuantidade(string stamp, string ref_produto, double qtd)
         {
-            //DESENVOLVER
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Linha_Picking l = new Linha_Picking() {
+            Linha_Picking l = new Linha_Picking()
+            {
                 Picking_Linha_Stamp = stamp,
                 Ref_linha = ref_produto,
                 Qtd_Linha = qtd,
@@ -61,7 +61,6 @@ namespace FT_Management.Controllers
         }
         public JsonResult ValidarSerie(string stamp, string stamp_linha, string serie)
         {
-            //DESENVOLVER
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Ref_Linha_Picking l = new Ref_Linha_Picking()
@@ -74,6 +73,12 @@ namespace FT_Management.Controllers
 
             return new JsonResult(phccontext.CriarSerieLinhaInventario(l));
         }
+        public JsonResult ObterLinha(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return new JsonResult(phccontext.ObterLinhaInventario(id));
+        }
         public JsonResult ObterSerieLinha(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -82,11 +87,18 @@ namespace FT_Management.Controllers
         }
         public JsonResult ApagarLinha(string stamp, string stamp_linha)
         {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return new JsonResult(phccontext.ApagarLinhaInventario(new Ref_Linha_Picking() { BOMA_STAMP = stamp, Picking_Linha_Stamp = stamp_linha }));
+        }
+
+        public JsonResult FecharDossier(string id)
+        {
             //DESENVOLVER
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return new JsonResult(phccontext.ApagarLinhaInventario(new Ref_Linha_Picking() { BOMA_STAMP = stamp, Picking_Linha_Stamp = stamp_linha}));
+            return new JsonResult("Por desenvolver");
         }
     }
-     
+
 }

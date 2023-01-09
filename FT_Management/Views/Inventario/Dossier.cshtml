@@ -4,108 +4,118 @@
     ViewData["Title"] = "Inventário - Armazém " + Model.NomeCliente;
 }
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
-    <div class="container">
-        <div class="columns">
-            <div class="column">
-                <div class="tile">
-                    <div class="tile is-parent is-vertical">
-                        <article class="tile is-child notification is-info">
-                            <p class="title">
-                                <span class="icon mr-3">
-                                   <i class="fa-solid fa-barcode"></i>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fa-solid fa-barcode"></i>
+                            </span>
+                            <span>@Model.IdPicking (@Model.EditadoPor)</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column my-auto">
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                            <input class="input" type="text" readonly value="@Model.NomeCliente">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-warehouse"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <a class="button is-primary is-outlined is-fullwidth"
+                                onclick="Bulma('#ModalAdicionarLinha').modal().open();document.getElementById('txtRef').focus();">
+                                <span class="icon">
+                                    <i class="fas fa-plus"></i>
                                 </span>
-                                <span>@Model.IdPicking (@Model.EditadoPor)</span>
-                            </p>
-                        </article>
+                                <span>Adicionar</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="column my-auto">
-                <div class="field is-horizontal">
-                  <div class="field-body">
+            <div class="field is-horizontal">
+                <div class="field-body">
                     <div class="field">
-                      <p class="control is-expanded has-icons-left">
-                        <input class="input" type="text" readonly value="@Model.NomeCliente">
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-warehouse"></i>
-                        </span>
-                      </p>
-                    </div>
-                    <div class="field">
-                      <div class="control">
-                        <a class="button is-primary is-outlined is-fullwidth"  onclick="Bulma('#ModalAdicionarLinha').modal().open();">
-                            <span class="icon">
-                                <i class="fas fa-plus"></i>
-                            </span>
-                            <span>Adicionar</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="field is-horizontal">
-                      <div class="field-body">
-                        <div class="field">
-                          <p class="control is-expanded has-icons-left">
-                            <input class="input" type="text" id="txtRefPesquisa" value="@ViewData["Referencia"]" placeholder="Referência">
+                        <p class="control is-expanded has-icons-left">
+                            <input class="input" type="text" id="txtRefPesquisa" value="@ViewData["Referencia"]"
+                                placeholder="Referência">
                             <span class="icon is-small is-left">
                                 <i class="fa-solid fa-arrow-down-1-9""></i>
                             </span>
                           </p>
                         </div>
-                        <div class="field">
-                          <div class="control buttons">
-                            <button type="submit" class="button is-info is-outlined" onclick="filtrar();">
-                                <span class="icon">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                                <span>Pesquisar</span>
-                            </button>
-                            <a class="button is-outlined" href='/Inventario/Dossier/@Model.Picking_Stamp'>
-                                <span class="icon">
-                                    <i class="fas fa-backspace"></i>
-                                </span>
-                                <span>Limpar</span>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                     
+                        <div class=" field">
+                                    <div class="control buttons">
+                                        <button type="submit" class="button is-info is-outlined" onclick="filtrar();">
+                                            <span class="icon">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <span>Pesquisar</span>
+                                        </button>
+                                        <a class="button is-outlined" href='/Inventario/Dossier/@Model.Picking_Stamp'>
+                                            <span class="icon">
+                                                <i class="fas fa-backspace"></i>
+                                            </span>
+                                            <span>Limpar</span>
+                                        </a>
+                                        <a class="button is-danger"
+                                            href='/Inventario/FecharDossier/@Model.Picking_Stamp'>
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                            <span>Fechar</span>
+                                        </a>
+                                    </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
-<hr />  
+</div>
+<hr />
 @if (Model.Linhas.Count() == 0)
 {
-        <button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontradas linhas!</button>
+<button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontradas
+    linhas!</button>
 }
 else{
-    <div class="container">
+<div class="container">
     <div class="b-table">
-    <div class="table-wrapper has-mobile-cards"> 
-        <table class="table is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Linhas.First().Ref_linha)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Linhas.First().Nome_Linha)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model =>  model.Linhas.First().Qtd_Linha)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Linhas.First().EditadoPor)
-                    </th>
-                    <th>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Linhas)
-                {
+        <div class="table-wrapper has-mobile-cards">
+            <table class="table is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Ref_linha)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Nome_Linha)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Qtd_Linha)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().EditadoPor)
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Linhas)
+                    {
                     <tr style="width:auto" id="linha_@item.Picking_Linha_Stamp">
                         <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Ref_linha)">
                             <span>@item.Ref_linha</span>
@@ -114,125 +124,179 @@ else{
                             <span>@item.Nome_Linha</span>
                         </td>
                         <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Qtd_Linha)">
-                            <span >@item.Qtd_Linha @item.TipoUnidade</span>
+                            <span>@item.Qtd_Separar / @item.Qtd_Linha @item.TipoUnidade</span>
                         </td>
                         <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().EditadoPor)">
                             <span>@item.EditadoPor</span>
                         </td>
                         <td style="min-width: 240px" class="is-actions-cell">
+
                             @if (item.Serie)
-                                {
-                                    <a class="button is-info" style="width:45%" onclick="AbrirModalSerie('@item.Picking_Linha_Stamp')"><i class="fas fa-eye"></i></a>
-                                }
-                                <a class="button is-danger" style="width:45%" onclick="ConfirmApagarLinha('@item.Picking_Linha_Stamp')"><i class="fas fa-trash-can"></i></a>
+                            {
+                            <a class="button is-primary" style="width:30%"
+                                onclick="AbrirModalAdicionar('@item.Picking_Linha_Stamp')"><i
+                                    class="fas fa-plus"></i></a>
+                            <a class="button is-info" style="width:30%"
+                                onclick="AbrirModalSerie('@item.Picking_Linha_Stamp')"><i class="fas fa-eye"></i></a>
+                            }
+                            <a class="button is-danger" style="width:30%"
+                                onclick="ConfirmApagarLinha('@item.Picking_Linha_Stamp')"><i
+                                    class="fas fa-trash-can"></i></a>
                         </td>
                     </tr>
-                }
-            </tbody>
-        </table>
-        </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 }
 
 <div class="modal" id="ModalConfirmApagarLinha">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Apagar Linha</p>
-    </header>
-    <section class="modal-card-body">
-        <div class="modal-body">
-            <p>Tem a certeza que deseja apagar esta linha e todos os números de série associados?</p>
-        </div>
-  </section>
-    <footer class="modal-card-foot">
-      <button class="button is-danger" onclick="ApagarLinha(document.getElementById('txtHiddenStampLinha').value);">Confirmar</button>
-      <button class="button" onclick="Bulma('#ModalConfirmApagarLinha').modal().close();">Não</button>
-    </footer>
-  </div>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Apagar Linha</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p>Tem a certeza que deseja apagar esta linha e todos os números de série associados?</p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-danger"
+                onclick="ApagarLinha(document.getElementById('txtHiddenStampLinha').value);">Confirmar</button>
+            <button class="button" onclick="Bulma('#ModalConfirmApagarLinha').modal().close();">Não</button>
+        </footer>
+    </div>
 </div>
 
 <div class="modal" id="ModalSerie">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title is-size-6" id="txtHeaderSerieModal">###</p>
-    </header>
-    <section class="modal-card-body">
-        <div class="modal-body" id="divSeriesModal">
-            
-        </div>
-  </section>
-    <footer class="modal-card-foot">
-      <button class="button" onclick="Bulma('#ModalSerie').modal().close();">Fechar</button>
-    </footer>
-  </div>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title is-size-6" id="txtHeaderSerieModal">###</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body" id="divSeriesModal">
+
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button" onclick="Bulma('#ModalSerie').modal().close();">Fechar</button>
+        </footer>
+    </div>
 </div>
 
 <div class="modal" id="ModalAdicionarLinha">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Adicionar Linha</p>
-    </header>
-    <section class="modal-card-body">
-        <div class="modal-body">
-            <form method="POST" onsubmit="event.preventDefault();">
-            <div class="field">
-                <label class="label">Referência</label>
-                <div class="field has-addons">
-                  <div class="control" style="width:100%">
-                        <input type="text" class="input" id="txtRef">
-                  </div>
-                  <div class="control">
-                    <input type="submit" class="button is-info" id="btnSearchRef" onclick="PreencherRef(document.getElementById('txtRef').value);" value="Pesquisar">
-
-                  </div>
-                </div>
-            </div>
-            </form>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Adicionar Linha</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <form method="POST" onsubmit="event.preventDefault();">
+                    <div class="field">
+                        <label class="label">Referência</label>
+                        <div class="field has-addons">
+                            <div class="control" style="width:100%">
+                                <input type="text" class="input" id="txtRef">
+                            </div>
+                            <div class="control">
+                                <input type="submit" class="button is-info" id="btnSearchRef"
+                                    onclick="PreencherRef(document.getElementById('txtRef').value);" value="Pesquisar">
+                            </div>
+                        </div>
+                    </div>
+                </form>
                 <fieldset disabled>
                     <div class="field has-addons">
-                      <div class="control" style="width:100%">
-                    <input type="text" class="input" id="txtDesignacao">
-                    </div>                    
-                </div>
+                        <div class="control" style="width:100%">
+                            <input type="text" class="input" id="txtDesignacao">
+                        </div>
+                    </div>
                 </fieldset>
                 <hr />
                 <form method="POST" onsubmit="event.preventDefault();">
-                <div class="field">
-                <label class="label">Quantidade</label>
-                <div class="field has-addons">
-                  <div class="control" style="width:100%">
-                        <input type="text" class="input" id="txtQtd">
-                  </div>
-                  <div class="control">
-                    <input type="submit" class="button is-info" id="btnAdicionarLinha" onclick="AdicionarLinha(document.getElementById('txtRef').value,document.getElementById('txtQtd').value);" value="Criar Linha">
-                  </div>
-                </div>
+                    <div class="field" id="divQtd">
+                        <label class="label">Quantidade</label>
+                        <div class="field has-addons">
+                            <div class="control">
+                                <button type="button" class="button is-primary is-outlined"
+                                    onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 10">
+                                    <span class="icon">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                    <span>10</span>
+                                </button>
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-primary is-outlined"
+                                    onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
+                                    <span class="icon">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="control" style="width:100%">
+                                <input type="number" class="input" id="txtQtdSeparada" value="0" disabled>
+                            </div>
+                            <div class="control" style="width:100%">
+                                <input type="number" class="input" id="txtQtd" disabled value="1">
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-primary is-outlined"
+                                    onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-primary is-outlined"
+                                    onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 10">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    <span>10</span>
+                                </button>
+                            </div>
+                            <div class="control">
+                                <input type="submit" class="button is-info" disabled id="btnAdicionarLinha"
+                                    onclick="AdicionarLinha(document.getElementById('txtRef').value,document.getElementById('txtQtd').value);"
+                                    value="Criar Linha">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <form method="POST" onsubmit="event.preventDefault();">
+                    <div class="field" id="divSerie" hidden>
+                        <label class="label">Número de Série</label>
+                        <div class="field has-addons">
+                            <div class="control" style="width:100%">
+                                <input type="text" class="input" id="txtNumeroSerie" disabled>
+                            </div>
+                            <div class="control">
+                                <input class="button is-danger" type="button"
+                                    onclick="document.getElementById('txtNumeroSerie').value = ''" value="Limpar">
+                            </div>
+                            <div class="control">
+                                <input type="submit" value="Adicionar" disabled class="button is-info"
+                                    id="btnAdicionarNumeroSerie"
+                                    onclick="AdicionarNumeroSerie(document.getElementById('txtHiddenStampLinha').value, document.getElementById('txtNumeroSerie').value);">
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            </form>
-            <hr>
-            <form method="POST" onsubmit="event.preventDefault();">
-            <div class="field" id="divSerie" hidden>
-                <label class="label">Número de Série</label>
-                <div class="field has-addons">
-                  <div class="control" style="width:100%">
-                        <input type="text" class="input" id="txtNumeroSerie">
-                  </div>
-                  <div class="control">
-                    <input type="submit" value="Adicionar" class="button is-info" id="btnAdicionarNumeroSerie" onclick="AdicionarNumeroSerie(document.getElementById('txtHiddenStampLinha').value, document.getElementById('txtNumeroSerie').value);">
-                  </div>
-                </div>
-            </div>
-            </form>
-        </div>
-  </section>
-    <footer class="modal-card-foot">
-      <button class="button is-primary" type="button" onclick="Bulma('#ModalAdicionarLinha').modal().close();">Fechar</button>
-    </footer>
-  </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-primary" type="button"
+                onclick="Bulma('#ModalAdicionarLinha').modal().close();">Fechar</button>
+        </footer>
+    </div>
 </div>
 
 <input id="txtHiddenStampLinha" hidden />
@@ -242,30 +306,68 @@ else{
     }
     function AbrirModalSerie(id) {
         document.getElementById('txtHiddenStampLinha').value = id;
-                 $.ajax({
+        $.ajax({
             url: '/Inventario/ObterSerieLinha/',
-            data: { "id": id},
+            data: { "id": id },
             type: "POST",
             success: function (data) {
                 if (data != '') {
                     document.getElementById('txtHeaderSerieModal').innerHTML = data[0].ref_linha + " - " + data[0].nome_Linha;
-                   var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº de Série</th><th>Criado a:</th><th>Criado por:</th></tr>";
-                   data.forEach(obj => {
+                    var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº de Série</th><th>Criado a:</th><th>Criado por:</th></tr>";
+                    data.forEach(obj => {
                         console.log(obj);
                         html += "<tr><td>" + obj.numSerie + "</td><td>" + new Date(obj.criadoA).toLocaleDateString() + "</td><td>" + obj.criadoPor + "</td></tr>";
                     });
-                   html += "</table>";
-                   document.getElementById("divSeriesModal").innerHTML = html;
-                           Bulma('#ModalSerie').modal().open();
+                    html += "</table>";
+                    document.getElementById("divSeriesModal").innerHTML = html;
+                    Bulma('#ModalSerie').modal().open();
                 } else {
-                     notifyError('Ainda não existem numeros de série associados a esta linha!');           
+                    notifyError('Ainda não existem numeros de série associados a esta linha!');
                 }
             },
             error: function (data) {
-                     notifyError('Ocorreu um erro ao obter os números de série associados a esta linha do dossier!');           
+                notifyError('Ocorreu um erro ao obter os números de série associados a esta linha do dossier!');
             },
             failure: function (data) {
-                     notifyError('Ocorreu um erro ao obter os números de série associados a esta linha do dossier!');           
+                notifyError('Ocorreu um erro ao obter os números de série associados a esta linha do dossier!');
+            }
+        });
+    }
+
+    function AbrirModalAdicionar(id) {
+        document.getElementById('txtHiddenStampLinha').value = id;
+        $.ajax({
+            url: '/Inventario/ObterLinha/',
+            data: { "id": id },
+            type: "POST",
+            success: function (data) {
+                if (data != '') {
+                    //console.log(data);
+                    document.getElementById('txtRef').value = data.ref_linha;
+                    document.getElementById('txtDesignacao').value = data.nome_Linha;
+                    document.getElementById('btnSearchRef').disabled = true;
+                    document.getElementById('txtRef').disabled = true;
+
+                    document.getElementById('txtQtd').value = data.qtd_Linha;
+                    document.getElementById('txtQtdSeparada').value = data.qtd_Separar;
+                    document.getElementById('btnAdicionarLinha').disabled = true;
+                    document.getElementById('txtQtd').disabled = true;
+
+                    document.getElementById('txtNumeroSerie').disabled = false;
+                    document.getElementById('btnAdicionarNumeroSerie').disabled = false;
+                    document.getElementById('divSerie').hidden = false;
+                    document.getElementById('txtNumeroSerie').focus();
+
+                    Bulma('#ModalAdicionarLinha').modal().open();
+                } else {
+                    notifyError('Erro ao obter informações da linha!');
+                }
+            },
+            error: function (data) {
+                notifyError('Erro ao obter informações da linha!');
+            },
+            failure: function (data) {
+                notifyError('Erro ao obter informações da linha!');
             }
         });
     }
@@ -275,33 +377,33 @@ else{
         Bulma('#ModalConfirmApagarLinha').modal().open();
     }
     function ApagarLinha(id) {
-         $.ajax({
+        $.ajax({
             url: '/Inventario/ApagarLinha/',
-            data: { "stamp": '@Model.Picking_Stamp', "stamp_linha": id},
+            data: { "stamp": '@Model.Picking_Stamp', "stamp_linha": id },
             type: "POST",
             success: function (data) {
                 if (data[0] == "1") {
                     document.getElementById('linha_' + id).remove();
                     notify(data[1]);
                 } else {
-                 notifyError('Ocorreu um erro ao apagar a linha do dossier! ' + data[1]);            
+                    notifyError('Ocorreu um erro ao apagar a linha do dossier! ' + data[1]);
                 }
             },
             error: function (data) {
-                 notifyError('Ocorreu um erro ao apagar a linha do dossier! ' + data[1]);           
+                notifyError('Ocorreu um erro ao apagar a linha do dossier! ' + data[1]);
             },
             failure: function (data) {
-                 notifyError('Ocorreu um erro ao apagar a linha do dossier! ' + data[1]);           
+                notifyError('Ocorreu um erro ao apagar a linha do dossier! ' + data[1]);
             }
         });
-                    Bulma('#ModalConfirmApagarLinha').modal().close();
+        Bulma('#ModalConfirmApagarLinha').modal().close();
     }
 
-        function PreencherRef(id) {
-            document.getElementById('btnSearchRef').classList.add("is-loading");
-         $.ajax({
+    function PreencherRef(id) {
+        document.getElementById('btnSearchRef').classList.add("is-loading");
+        $.ajax({
             url: '/Produtos/ObterPeca/',
-            data: { "ref_produto": id},
+            data: { "ref_produto": id },
             type: "POST",
             success: function (data) {
                 if (data.ref_Produto != null) {
@@ -312,26 +414,29 @@ else{
                     document.getElementById('txtRef').disabled = true;
                     document.getElementById('divSerie').hidden = !data.serie
 
+                    document.getElementById('txtQtd').disabled = false;
+                    document.getElementById('btnAdicionarLinha').disabled = false;
+
                     document.getElementById('txtQtd').focus();
                 } else {
-                 notifyError('Não foi encontrado nenhum produto com essa referência!');       
+                    notifyError('Não foi encontrado nenhum produto com essa referência!');
                 }
             },
             error: function (data) {
-                 notifyError('Ocorreu um erro ao obter informação do produto!');      
+                notifyError('Ocorreu um erro ao obter informação do produto!');
 
             },
             failure: function (data) {
-                 notifyError('Ocorreu um erro ao obter informação do produto!');      
+                notifyError('Ocorreu um erro ao obter informação do produto!');
             }
         });
     }
 
-      function AdicionarLinha(id, qtd) {
-            document.getElementById('btnAdicionarLinha').classList.add("is-loading");
-         $.ajax({
+    function AdicionarLinha(id, qtd) {
+        document.getElementById('btnAdicionarLinha').classList.add("is-loading");
+        $.ajax({
             url: '/Inventario/ValidarQuantidade/',
-             data: { "stamp": '@Model.Picking_Stamp', "ref_produto": id, "qtd": qtd },
+            data: { "stamp": '@Model.Picking_Stamp', "ref_produto": id, "qtd": qtd },
             type: "POST",
             success: function (data) {
                 if (data[0] == "1") {
@@ -341,49 +446,58 @@ else{
                     document.getElementById('btnAdicionarLinha').classList.remove("is-loading");
                     document.getElementById('txtQtd').disabled = true;
 
+                    document.getElementById('txtNumeroSerie').disabled = false;
+                    document.getElementById('btnAdicionarNumeroSerie').disabled = false;
+
                     if (!document.getElementById('divSerie').hidden) document.getElementById('txtNumeroSerie').focus();
 
                     notify(data[1]);
                 } else {
-                notifyError('Ocorreu um erro ao criar a linha! ' + data[1]); 
+                    notifyError('Ocorreu um erro ao criar a linha! ' + data[1]);
                     document.getElementById('btnAdicionarLinha').classList.remove("is-loading");
                 }
             },
             error: function (data) {
-                notifyError('Ocorreu um erro ao criar a linha! ' + data[1]); 
-                    document.getElementById('btnAdicionarLinha').classList.remove("is-loading");
+                notifyError('Ocorreu um erro ao criar a linha! ' + data[1]);
+                document.getElementById('btnAdicionarLinha').classList.remove("is-loading");
             },
             failure: function (data) {
-              notifyError('Ocorreu um erro ao criar a linha! ' + data[1]);    
-                    document.getElementById('btnAdicionarLinha').classList.remove("is-loading");
+                notifyError('Ocorreu um erro ao criar a linha! ' + data[1]);
+                document.getElementById('btnAdicionarLinha').classList.remove("is-loading");
             }
         });
     }
 
-     function AdicionarNumeroSerie(id, serie) {
-            document.getElementById('btnAdicionarNumeroSerie').classList.add("is-loading");
-         $.ajax({
+    function AdicionarNumeroSerie(id, serie) {
+        document.getElementById('btnAdicionarNumeroSerie').classList.add("is-loading");
+        document.getElementById('txtNumeroSerie').disabled = true;
+        $.ajax({
             url: '/Inventario/ValidarSerie/',
-             data: { "stamp": '@Model.Picking_Stamp', "stamp_linha": id, "serie": serie },
+            data: { "stamp": '@Model.Picking_Stamp', "stamp_linha": id, "serie": serie },
             type: "POST",
             success: function (data) {
                 if (data[0] == "1") {
                     //console.log(data);
                     document.getElementById('txtNumeroSerie').value = ''
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
+                    document.getElementById('txtNumeroSerie').disabled = false;
+                    document.getElementById('txtQtdSeparada').value = parseInt(document.getElementById('txtQtdSeparada').value) + 1
                     notify(data[1]);
                 } else {
-                notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]); 
+                    notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
+                    document.getElementById('txtNumeroSerie').disabled = false;
                 }
             },
             error: function (data) {
-                notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]); 
-                    document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
+                notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
+                document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
+                document.getElementById('txtNumeroSerie').disabled = false;
             },
             failure: function (data) {
-                notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]); 
-                    document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
+                notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
+                document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
+                document.getElementById('txtNumeroSerie').disabled = false;
             }
         });
     }
@@ -397,7 +511,7 @@ else{
             opacity: 0.8,
             duration: 5000,
             position: 'top-center'
-        });   
+        });
     }
     function notify(mensagem) {
         bulmaToast.toast({
@@ -411,11 +525,11 @@ else{
         });
     }
 
-        (document.querySelectorAll('#ModalAdicionarLinha') || []).forEach(($close) => {
-    const $target = $close.closest('#ModalAdicionarLinha');
+    (document.querySelectorAll('#ModalAdicionarLinha') || []).forEach(($close) => {
+        const $target = $close.closest('#ModalAdicionarLinha');
 
-    $close.addEventListener('click', () => {
-    if (!($target.classList.contains('is-active'))) window.location.reload();
+        $close.addEventListener('click', () => {
+            if (!($target.classList.contains('is-active'))) window.location.reload();
+        });
     });
-  });
 </script>

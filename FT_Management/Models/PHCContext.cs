@@ -2502,7 +2502,7 @@ namespace FT_Management.Models
                             IdPicking = int.Parse(result["obrano"].ToString()),
                             DataDossier = DateTime.Parse(result["DATA"].ToString()),
                             NomeCliente = ObterArmazem(int.Parse(result["armazem"].ToString())).ArmazemNome,
-                            EditadoPor = result["usrinis"].ToString().ToUpper(),
+                            EditadoPor = result["ousrinis"].ToString().ToUpper(),
                             Linhas = ObterLinhasInventario(STAMP)
                         };
                     }
@@ -2530,7 +2530,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT * from V_Inv_Lin WHERE INVSTAMP='" + STAMP + "'", conn)
+                SqlCommand command = new SqlCommand("select *, (select COUNT(*) from V_INV_SERIE where BISTAMP=V_INV_LIN.BISTAMP) as Qtd_Lida from V_INV_LIN WHERE INVSTAMP='" + STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -2544,6 +2544,7 @@ namespace FT_Management.Models
                             Ref_linha = result["ref"].ToString(),
                             Nome_Linha = result["design"].ToString(),
                             Qtd_Linha = Double.Parse(result["qtt"].ToString()),
+                            Qtd_Separar = Double.Parse(result["Qtd_Lida"].ToString()),
                             TipoUnidade = result["UNIDADE"].ToString(),
                             Serie = result["USA_NSERIE"].ToString() == "True",
                             EditadoPor = result["usrinis"].ToString()
@@ -2560,6 +2561,50 @@ namespace FT_Management.Models
             }
 
             return LstInventarioLinhas;
+        }
+
+        public Linha_Picking ObterLinhaInventario(string STAMP)
+        {
+            Linha_Picking Linha = new Linha_Picking();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select *, (select COUNT(*) from V_INV_SERIE where BISTAMP=V_INV_LIN.BISTAMP) as Qtd_Lida from V_INV_LIN WHERE BISTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        Linha = new Linha_Picking()
+                        {
+                            Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                            Ref_linha = result["ref"].ToString().Trim(),
+                            Nome_Linha = result["design"].ToString(),
+                            Qtd_Linha = Double.Parse(result["qtt"].ToString()),
+                            Qtd_Separar = Double.Parse(result["Qtd_Lida"].ToString()),
+                            TipoUnidade = result["UNIDADE"].ToString(),
+                            Serie = result["USA_NSERIE"].ToString() == "True",
+                            EditadoPor = result["usrinis"].ToString()
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler a linha do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return Linha;
         }
 
         public List<Ref_Linha_Picking> ObterSerieLinhaInventario(string STAMP)

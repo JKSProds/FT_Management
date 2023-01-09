@@ -43,6 +43,7 @@ namespace FT_Management.Models
         public List<Ref_Linha_Picking> Lista_Ref { get; set; }
         public bool Serie { get; set; }
         public bool Validado { get { return Qtd_Linha >= Qtd_Separar; } }
+        [Display(Name = "Editado")]
         public string EditadoPor { get; set; }
     }
 
