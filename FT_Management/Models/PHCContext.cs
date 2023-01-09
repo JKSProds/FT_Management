@@ -2560,7 +2560,7 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel ler as linhas do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return LstInventarioLinhas;
+            return LstInventarioLinhas.OrderBy(l => l.Ref_linha).ToList();
         }
 
         public Linha_Picking ObterLinhaInventario(string STAMP)
