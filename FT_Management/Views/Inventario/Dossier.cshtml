@@ -430,14 +430,17 @@ else{
                     document.getElementById('txtQtd').focus();
                 } else {
                     notifyError('Não foi encontrado nenhum produto com essa referência!');
+                    document.getElementById('btnSearchRef').classList.remove("is-loading");
                 }
             },
             error: function (data) {
                 notifyError('Ocorreu um erro ao obter informação do produto!');
+                document.getElementById('btnSearchRef').classList.remove("is-loading");
 
             },
             failure: function (data) {
                 notifyError('Ocorreu um erro ao obter informação do produto!');
+                document.getElementById('btnSearchRef').classList.remove("is-loading");
             }
         });
     }
