@@ -297,6 +297,7 @@ else{
             </div>
         </section>
         <footer class="modal-card-foot">
+            <button class="button is-info is-large is-fullwidth" type="button" onclick="resetModal();">Validar</button>
             <button class="button is-primary is-large is-fullwidth" type="button"
                 onclick="Bulma('#ModalAdicionarLinha').modal().close();">Fechar</button>
         </footer>
@@ -384,6 +385,23 @@ else{
                 notifyError('Erro ao obter informações da linha!');
             }
         });
+    }
+
+    function resetModal() {
+        document.getElementById('txtRef').value = '';
+        document.getElementById('txtDesignacao').value = '';
+        document.getElementById('btnSearchRef').disabled = false;
+        document.getElementById('txtRef').disabled = false;
+
+        document.getElementById('txtQtd').value = 1;
+        document.getElementById('txtQtdSeparada').value = '0';
+        document.getElementById('btnAdicionarLinha').disabled = true;
+        document.getElementById('txtQtd').disabled = true;
+
+        document.getElementById('txtNumeroSerie').disabled = true;
+        document.getElementById('btnAdicionarNumeroSerie').disabled = true;
+        document.getElementById('divSerie').hidden = true;
+        document.getElementById('txtRef').focus();
     }
 
     function ConfirmApagarLinha(id) {
@@ -503,7 +521,7 @@ else{
                     document.getElementById('txtQtdSeparada').value = parseInt(document.getElementById('txtQtdSeparada').value) + 1
                     document.getElementById('txtNumeroSerie').focus();
                     notify(data[1]);
-                    PlayBeep();
+                    //PlayBeep();
                 } else {
                     notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
