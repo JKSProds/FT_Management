@@ -401,6 +401,8 @@ else{
         document.getElementById('txtNumeroSerie').disabled = true;
         document.getElementById('btnAdicionarNumeroSerie').disabled = true;
         document.getElementById('divSerie').hidden = true;
+        document.getElementById('txtNumeroAnterior').value = '';
+        document.getElementById('txtNumeroSerie').value = '';
         document.getElementById('txtRef').focus();
     }
 
@@ -514,8 +516,8 @@ else{
             success: function (data) {
                 if (data[0] == "1") {
                     //console.log(data);
-                    document.getElementById('txtNumeroAnterior').value = document.getElementById('txtNumeroSerie').value
-                    document.getElementById('txtNumeroSerie').value = ''
+                    document.getElementById('txtNumeroAnterior').value = document.getElementById('txtNumeroSerie').value;
+                    document.getElementById('txtNumeroSerie').value = '';
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
                     document.getElementById('txtNumeroSerie').disabled = false;
                     document.getElementById('txtQtdSeparada').value = parseInt(document.getElementById('txtQtdSeparada').value) + 1
