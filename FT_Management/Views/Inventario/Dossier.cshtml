@@ -302,9 +302,13 @@ else{
         </footer>
     </div>
 </div>
+<audio id="info_beep" src="~/audio/info_beep.mp3"></audio>
 
 <input id="txtHiddenStampLinha" hidden />
 <script>
+    function PlayBeep() {
+        document.getElementById('info_beep').play();
+    }
     document.getElementById('txtRefPesquisa').addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -499,6 +503,7 @@ else{
                     document.getElementById('txtQtdSeparada').value = parseInt(document.getElementById('txtQtdSeparada').value) + 1
                     document.getElementById('txtNumeroSerie').focus();
                     notify(data[1]);
+                    PlayBeep();
                 } else {
                     notifyError('Ocorreu um erro ao adicionar o numero de serie! ' + data[1]);
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
