@@ -42,7 +42,7 @@ namespace FT_Management.Controllers
             {
                 return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
-            phccontext.ObterGuiasTransporte(32);
+            //phccontext.ObterGuiasTransporte(32);
             return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).ToPagedList(pageNumber, pageSize));
         }
 
@@ -142,7 +142,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             //return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
-            return Json(phccontext.ObterProdutos(ref_produto, "", 3).ToList().Where(p => p.Ref_Produto == ref_produto).FirstOrDefault() ?? new Produto());
+            return Json(phccontext.ObterProduto(ref_produto));
         }
         public JsonResult ObterDetalhes(string id)
         {

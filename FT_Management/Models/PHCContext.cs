@@ -93,10 +93,10 @@ namespace FT_Management.Models
                             Ref_Produto = result["ref"].ToString(),
                             Designacao_Produto = result["design"].ToString(),
                             //Stock_Fisico = double.Parse(result["stock_fis"].ToString()),
-                            Stock_PHC = double.Parse(result["stock"].ToString()),
-                            Stock_Rec = double.Parse(result["qttrec"].ToString()),
-                            Stock_Res = double.Parse(result["rescli"].ToString()),
-                            Armazem_ID = int.Parse(result["armazem"].ToString()),
+                            Stock_PHC = !string.IsNullOrEmpty(result["stock"].ToString()) ? double.Parse(result["stock"].ToString()) : 0,
+                            Stock_Rec = !string.IsNullOrEmpty(result["qttrec"].ToString()) ? double.Parse(result["qttrec"].ToString()) : 0,
+                            Stock_Res = !string.IsNullOrEmpty(result["rescli"].ToString()) ? double.Parse(result["rescli"].ToString()) : 0,
+                            Armazem_ID = !string.IsNullOrEmpty(result["armazem"].ToString()) ? int.Parse(result["armazem"].ToString()) : 0,
                             Pos_Stock = result["u_locpt"].ToString(),
                             Serie = result["noserie"].ToString() == "True"
                         });
@@ -114,9 +114,9 @@ namespace FT_Management.Models
 
             return LstProdutos;
         }
-        public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem)
+        public Produto ObterProduto(string Referencia)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
+            return ObterProdutos("SELECT ststamp, st.ref, st.design, st.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM st left outer join sa on sa.ref=st.ref inner join stobs on st.ref=stobs.ref where st.ref like '%" + Referencia + "%' order by st.ref;").DefaultIfEmpty(new Produto()).First();
         }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor, string TipoEquipamento)
         {
