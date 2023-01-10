@@ -2428,7 +2428,44 @@ namespace FT_Management.Models
 
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel adicionar o numero de serie ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel apagar a linha do dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> ApagarLinhaSerieInventario(Ref_Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("APAGA_LINHA_INV_SERIE", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_BOMA", l.BOMA_STAMP));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel apagar o numero de serie ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;

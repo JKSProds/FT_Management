@@ -172,6 +172,25 @@ else{
     </div>
 </div>
 
+<div class="modal" id="ModalConfirmApagarLinhaSerie">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Apagar Número de Série</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p>Tem a certeza que deseja apagar esta linha com este numero de série?</p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-danger"
+                onclick="ApagarLinhaSerie(document.getElementById('txtHiddenStampLinhaSerie').value);">Confirmar</button>
+            <button class="button" onclick="Bulma('#ModalConfirmApagarLinhaSerie').modal().close();">Não</button>
+        </footer>
+    </div>
+</div>
+
 <div class="modal" id="ModalSerie">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -306,6 +325,7 @@ else{
 <audio id="info_beep" src="~/audio/info_beep.mp3"></audio>
 
 <input id="txtHiddenStampLinha" hidden />
+<input id="txtHiddenStampLinhaSerie" hidden />
 <script>
     function PlayBeep() {
         document.getElementById('info_beep').play();
@@ -328,10 +348,10 @@ else{
             success: function (data) {
                 if (data != '') {
                     document.getElementById('txtHeaderSerieModal').innerHTML = data[0].ref_linha + " - " + data[0].nome_Linha;
-                    var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº de Série</th><th>Criado a:</th><th>Criado por:</th></tr>";
+                    var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº de Série</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
                     data.forEach(obj => {
                         console.log(obj);
-                        html += "<tr><td>" + obj.numSerie + "</td><td>" + new Date(obj.criadoA).toLocaleDateString() + "</td><td>" + obj.criadoPor + "</td></tr>";
+                        html += "<tr id='linha_serie_" + obj.bomA_STAMP + "'><td>" + obj.numSerie + "</td><td>" + new Date(obj.criadoA).toLocaleDateString() + "</td><td>" + obj.criadoPor + "</td><td><a class='button is-danger' onclick='alert('POR DESENVOLVER')'><i class='fas fa-trash-can'></i></a></td></tr>";
                     });
                     html += "</table>";
                     document.getElementById("divSeriesModal").innerHTML = html;
@@ -410,6 +430,10 @@ else{
         document.getElementById('txtHiddenStampLinha').value = id;
         Bulma('#ModalConfirmApagarLinha').modal().open();
     }
+    function ConfirmApagarLinhaSerie(id) {
+        document.getElementById('txtHiddenStampLinhaSerie').value = id;
+        Bulma('#ModalConfirmApagarLinhaSerie').modal().open();
+    }
     function ApagarLinha(id) {
         $.ajax({
             url: '/Inventario/ApagarLinha/',
@@ -428,6 +452,28 @@ else{
             },
             failure: function (data) {
                 notifyError('Ocorreu um erro ao apagar a linha do dossier! ' + data[1]);
+            }
+        });
+        Bulma('#ModalConfirmApagarLinha').modal().close();
+    }
+    function ApagarLinhaSerie(id) {
+        $.ajax({
+            url: '/Inventario/ApagarLinhaSerie/',
+            data: { "stamp": id, "stamp_linha": document.getElementById('txtHiddenStampLinha') },
+            type: "POST",
+            success: function (data) {
+                if (data[0] == "1") {
+                    document.getElementById('linha_serie_' + id).remove();
+                    notify(data[1]);
+                } else {
+                    notifyError('Ocorreu um erro ao apagar a linha de serie do dossier! ' + data[1]);
+                }
+            },
+            error: function (data) {
+                notifyError('Ocorreu um erro ao apagar a linha de serie do dossier! ' + data[1]);
+            },
+            failure: function (data) {
+                notifyError('Ocorreu um erro ao apagar a linha de serie do dossier! ' + data[1]);
             }
         });
         Bulma('#ModalConfirmApagarLinha').modal().close();
