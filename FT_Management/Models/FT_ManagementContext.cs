@@ -831,7 +831,7 @@ namespace FT_Management.Models
             List<Ferias> LstFerias = new List<Ferias>();
             using (Database db = ConnectionString)
             {
-                string sql = "SELECT * FROM dat_ferias where Ano='" + this.ObterAnoAtivo() + "' order by DataInicio;";
+                string sql = "SELECT * FROM dat_ferias order by DataInicio;";
                 using var result = db.Query(sql);
                 while (result.Read())
                 {

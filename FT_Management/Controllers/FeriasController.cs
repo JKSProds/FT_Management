@@ -83,7 +83,7 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(), context.ObterListaFeriados(start.Year.ToString())).ToList());
+            return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end), context.ObterListaFeriados(start.Year.ToString())).ToList());
         }
 
         [Authorize(Roles = "Admin, Escritorio")]
@@ -100,7 +100,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "MapaFerias_"+id+".xlsx",
+                FileName = "MapaFerias_" + id + ".xlsx",
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
@@ -151,7 +151,7 @@ namespace FT_Management.Controllers
             LstFerias.Add(ferias);
             context.CriarFerias(LstFerias);
 
-            MailContext.EnviarEmailFeriasAprovadas(context.ObterUtilizador(ferias.IdUtilizador), ferias);           
+            MailContext.EnviarEmailFeriasAprovadas(context.ObterUtilizador(ferias.IdUtilizador), ferias);
 
             return RedirectToAction("Detalhes", new { IdUtilizador = ferias.IdUtilizador });
         }
@@ -188,7 +188,8 @@ namespace FT_Management.Controllers
             context.CriarFeriasUtilizador(int.Parse(idutilizador), ano, int.Parse(dias));
         }
 
-        public void AdicionarFerias(string datainicio, string datafim, int idutilizador) {
+        public void AdicionarFerias(string datainicio, string datafim, int idutilizador)
+        {
             DateTime dataInicio = DateTime.Parse(datainicio);
             DateTime dataFim = DateTime.Parse(datafim);
             DateTime dataAtual = DateTime.Parse(datainicio);
@@ -199,8 +200,8 @@ namespace FT_Management.Controllers
 
             bool weekend = false;
 
-            do 
-                {
+            do
+            {
                 if (weekend) { dataInicio = dataAtual; }
 
                 weekend = (dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday);
@@ -239,9 +240,9 @@ namespace FT_Management.Controllers
 
                         weekend = true;
                     }
-                }      
-                    dataAtual = dataAtual.AddDays(1);
-                } while (dataAtual <= dataFim);
+                }
+                dataAtual = dataAtual.AddDays(1);
+            } while (dataAtual <= dataFim);
 
             context.CriarFerias(LstFerias);
         }
