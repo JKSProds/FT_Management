@@ -25,17 +25,20 @@ namespace FT_Management.Controllers
         {
             return View();
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult ValidarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             return View(context.ObterCodigo(id));
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult AprovarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.AtualizarCodigo(id, 1);
             return RedirectToAction("Index");
         }
+        [Authorize(Roles = "Admin")]
         public IActionResult RejeitarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
