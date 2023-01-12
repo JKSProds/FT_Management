@@ -20,6 +20,10 @@ namespace FT_Management.Models
         {
             return u.NotificacaoAutomatica == 1 || u.NotificacaoAutomatica == 3;
         }
+        public static bool NotificacaoClienteIndustrial(Cliente c)
+        {
+            return c.TipoCliente == "Indústria";
+        }
     }
     public static class ChatContext
     {

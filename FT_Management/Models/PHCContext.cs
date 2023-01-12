@@ -270,7 +270,7 @@ namespace FT_Management.Models
 
             List<Cliente> LstClientes = new List<Cliente>();
             List<Cliente> LstClientesMySQL = FT_ManagementContext.ObterClientes();
-
+            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaComerciais(true);
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -297,6 +297,7 @@ namespace FT_Management.Models
                             MoradaCliente = result["endereco"].ToString().Trim(),
                             EmailCliente = result["emailfo"].ToString().Trim(),
                             IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
+                            Vendedor = LstUtilizadores.Where(v => v.IdPHC == int.Parse(result["vendedor"].ToString().Trim())).DefaultIfEmpty(new Utilizador()).First(),
                             TipoCliente = result["tipo"].ToString().Trim()
                         });
                         if (LoadMarcacoes) LstClientes.Last().Marcacoes = ObterMarcacoes(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
@@ -877,6 +878,7 @@ namespace FT_Management.Models
 
                     if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico)) ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
                     if (NotificacaoContext.NotificacaoAutomaticaEmail(m.Tecnico)) MailContext.EnviarEmailMarcacaoTecnico(m.Tecnico.EmailUtilizador, m, m.Tecnico.NomeCompleto);
+                    if (NotificacaoContext.NotificacaoClienteIndustrial(m.Cliente) && m.Cliente.Vendedor.Id > 0) MailContext.EnviarEmailMarcacaoCliente(m.Cliente.Vendedor.EmailUtilizador, m, null);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 }
 

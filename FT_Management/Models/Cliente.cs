@@ -35,6 +35,7 @@ namespace FT_Management.Models
         public string NumeroContribuinteCliente { get { return _NumeroContribuinteCliente ?? ""; } set { _NumeroContribuinteCliente = value; } }
         [Display(Name = "Num. do Vendedor")]
         public int IdVendedor { get; set; }
+        public Utilizador Vendedor { get; set; }
         [Display(Name = "Tipo de Cliente")]
         public string TipoCliente { get; set; }
         public string Latitude { get; set; }
@@ -85,7 +86,7 @@ namespace FT_Management.Models
             return functionReturnValue;
         }
         public string Senha { get; set; }
-        public string GetUrl { get { return "http://webapp.food-tech.pt/Utilizadores/Login";  } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Utilizadores/Login"; } }
         public Cliente()
         {
             this.IdCliente = 0;
