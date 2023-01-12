@@ -23,7 +23,8 @@ namespace FT_Management.Models
 
         private static bool EnviarMensagem(string token, string mensagem)
         {
-            if (!string.IsNullOrEmpty(token) && EnableSend()) {
+            if (!string.IsNullOrEmpty(token) && EnableSend())
+            {
                 try
                 {
                     var values = new Dictionary<string, string>
@@ -56,7 +57,7 @@ namespace FT_Management.Models
 
         public static bool EnviarNotificacao(string Mensagem, Utilizador u)
         {
-           return EnviarMensagem(u.ChatToken, Mensagem);
+            return EnviarMensagem(u.ChatToken, Mensagem);
         }
         public static bool EnviarNotificacaoMarcacaoTecnico(Marcacao m, Utilizador u)
         {
@@ -71,7 +72,8 @@ namespace FT_Management.Models
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
 
-        public static List<KeyValuePair<String, String>> ObterChatsAtivos() {
+        public static List<KeyValuePair<String, String>> ObterChatsAtivos()
+        {
             List<KeyValuePair<string, string>> LstChats = new List<KeyValuePair<string, string>>();
 
             try
@@ -100,7 +102,7 @@ namespace FT_Management.Models
                             nome = reader.ReadElementString();
                         }
 
-                        if (!string.IsNullOrEmpty(token) && ! string.IsNullOrEmpty(nome))
+                        if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(nome))
                         {
                             LstChats.Add(new KeyValuePair<string, string>(token, nome));
                             token = "";
@@ -110,7 +112,7 @@ namespace FT_Management.Models
                 }
             }
             catch
-            {}
+            { }
 
             return LstChats;
         }
@@ -207,7 +209,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailMarcacaoCliente(string EmailDestino, Marcacao m, Attachment anexo)
         {
             string Assunto = "Nova Marcação - Cliente - " + m.Cliente.NomeCliente;
-            string Mensagem = "Foi agendada uma marcação para o dia: " + m.DataMarcacao.ToShortDateString() + "<br><br><b>Dados adicionais:</b><br>Técnico: <b>" + string.Join(" | ", m.LstTecnicos.Select(x => x.NomeCompleto)) + "</b><br>Data: <b>" + m.DataMarcacao.ToShortDateString() + " " + (m.Hora!="00:00" ? m.Hora : (!string.IsNullOrEmpty(m.Periodo) ? m.Periodo : "")) + "</b><br>Cliente: <b>" + m.Cliente.NomeCliente + "</b><br>Morada: <b>" + m.Cliente.MoradaCliente + "</b><br>Prioridade: <b>" + m.PrioridadeMarcacao + "</b><br>Equipamento: <b>" + m.TipoEquipamento + "</b>";
+            string Mensagem = "Foi agendada uma marcação para o dia: " + m.DataMarcacao.ToShortDateString() + "<br><br><b>Dados adicionais:</b><br>Técnico: <b>" + string.Join(" | ", m.LstTecnicos.Select(x => x.NomeCompleto)) + "</b><br>Data: <b>" + m.DataMarcacao.ToShortDateString() + " " + (m.Hora != "00:00" ? m.Hora : (!string.IsNullOrEmpty(m.Periodo) ? m.Periodo : "")) + "</b><br>Cliente: <b>" + m.Cliente.NomeCliente + "</b><br>Morada: <b>" + m.Cliente.MoradaCliente + "</b><br>Prioridade: <b>" + m.PrioridadeMarcacao + "</b><br>Equipamento: <b>" + m.TipoEquipamento + "</b>";
             EnviarMail(EmailDestino, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;
@@ -225,10 +227,10 @@ namespace FT_Management.Models
                 Mensagem += "<tr><td>" + v.Cliente.NomeCliente + "</td><td>" + v.ResumoVisita + "</td><td><a href=\"" + v.GetUrl + "\" class=\"button\">Ver</a></td></tr>";
             }
 
-            
+
 
             Mensagem += "</table><br><br>";
-            Mensagem += "<a href=\"http://"+ "webapp.food-tech.pt" + "/Visitas/ListaVisitas?IdComercial=" + u.Id + "\" class=\"button\">Ver</a>";
+            Mensagem += "<a href=\"http://" + "webapp.food-tech.pt" + "/Visitas/ListaVisitas?IdComercial=" + u.Id + "\" class=\"button\">Ver</a>";
 
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(2));
 
@@ -250,7 +252,7 @@ namespace FT_Management.Models
             foreach (var u in LstUtilizadores)
             {
                 string Assunto = "Aniversário - " + u.NomeCompleto;
-                string Mensagem = u.NomeCompleto + " MUITOS PARABÉNS!!!<br><br>Amanhã é o teu dia. Não queremos passar ao lado deste momento tão especial e por isso queremos ser os primeiros a desejar-te um feliz aniversário.<br><br>Está na hora de assinalar esta data importante e oferecer-te o próximo dia de trabalho. Aproveita o dia com os teus e as maiores felicidades.";
+                string Mensagem = u.NomeCompleto + " MUITOS PARABÉNS!!!<br><br>Hoje é o teu dia. Não queremos passar ao lado deste momento tão especial e por isso queremos ser os primeiros a desejar-te um feliz aniversário.<br><br>Está na hora de assinalar esta data importante e oferecer-te o próximo dia de trabalho. Aproveita o dia com os teus e as maiores felicidades.";
                 EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(5));
             }
             return true;
@@ -299,7 +301,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailFolhaObra(string EmailDestino, FolhaObra fo, Attachment anexo)
         {
             string Assunto = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-            string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <br><b>" + fo.DataServico.ToShortDateString() + "</b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento+" ("+fo.EquipamentoServico.NumeroSerieEquipamento+ ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico))+"</b>.";
+            string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <br><b>" + fo.DataServico.ToShortDateString() + "</b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico)) + "</b>.";
             EnviarMail(EmailDestino, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;
@@ -316,9 +318,9 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailFechoPicking(Utilizador u, Picking p, Attachment anexo)
         {
-            string Assunto = "Novo Picking - "+p.IdPicking+" - " + p.Encomenda.NomeCliente;
+            string Assunto = "Novo Picking - " + p.IdPicking + " - " + p.Encomenda.NomeCliente;
             string Mensagem = "Foi criado um novo documento de picking!<br><br><b>Dados adicionais:</b><br>Cliente: " + p.NomeCliente + "<br>" + (p.NomeCliente != p.Encomenda.NomeCliente ? "Loja: " + p.Encomenda.NomeCliente + "<br>" : "") + "Encomenda: " + p.Encomenda.Id + "<br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>" + p.NomeDossier + ": " + p.IdPicking + "<br><br>";
-                
+
             if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações:</b><br>" + p.Obs.Replace("\r\n", "<br>").ToString() + "<br><br>";
 
             if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0)
@@ -337,7 +339,7 @@ namespace FT_Management.Models
                         }
                         else
                         {
-                            Mensagem += "<tr><td style='padding: 5px;'>" + item.Ref_linha + "</td><td style='padding: 5px;'>" + item.Nome_Linha + "</td><td style='padding: 5px;'>" + item.Qtd_Linha + " " + item.TipoUnidade +"</td></tr>";
+                            Mensagem += "<tr><td style='padding: 5px;'>" + item.Ref_linha + "</td><td style='padding: 5px;'>" + item.Nome_Linha + "</td><td style='padding: 5px;'>" + item.Qtd_Linha + " " + item.TipoUnidade + "</td></tr>";
                         }
                     }
                 }
