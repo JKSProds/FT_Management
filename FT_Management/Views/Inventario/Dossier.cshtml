@@ -184,8 +184,7 @@ else{
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-danger"
-                onclick="ApagarLinhaSerie(document.getElementById('txtHiddenStampLinhaSerie').value);">Confirmar</button>
+            <button class="button is-danger" onclick="ApagarLinhaSerie();">Confirmar</button>
             <button class="button" onclick="Bulma('#ModalConfirmApagarLinhaSerie').modal().close();">Não</button>
         </footer>
     </div>
@@ -327,6 +326,7 @@ else{
 <input id="txtHiddenStampLinha" hidden />
 <input id="txtHiddenStampLinhaSerie" hidden />
 <script>
+    var Refresh = false;
     function PlayBeep() {
         document.getElementById('info_beep').play();
     }
@@ -339,6 +339,7 @@ else{
     function filtrar() {
         window.location.href = '/Inventario/Dossier/@Model.Picking_Stamp?referencia=' + document.getElementById('txtRefPesquisa').value;
     }
+
     function AbrirModalSerie(id) {
         document.getElementById('txtHiddenStampLinha').value = id;
         $.ajax({
@@ -348,13 +349,22 @@ else{
             success: function (data) {
                 if (data != '') {
                     document.getElementById('txtHeaderSerieModal').innerHTML = data[0].ref_linha + " - " + data[0].nome_Linha;
-                    var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº de Série</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
+                    var html = "<table id='table-" + id + "' class='table is-hoverable' style='width:100%;'><tr><th>Nº de Série</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
                     data.forEach(obj => {
                         console.log(obj);
-                        html += "<tr id='linha_serie_" + obj.bomA_STAMP + "'><td>" + obj.numSerie + "</td><td>" + new Date(obj.criadoA).toLocaleDateString() + "</td><td>" + obj.criadoPor + "</td><td><a class='button is-danger' onclick='alert('POR DESENVOLVER')'><i class='fas fa-trash-can'></i></a></td></tr>";
+                        html += "<tr id='linha_serie_" + obj.bomA_STAMP + "'><td>" + obj.numSerie + "</td><td>" + new Date(obj.criadoA).toLocaleString() + "</td><td>" + obj.criadoPor + "</td><td><a id='" + obj.bomA_STAMP + "' class='button is-danger'><i id='" + obj.bomA_STAMP + "' class='fas fa-trash-can'></i></a></td></tr>";
                     });
                     html += "</table>";
                     document.getElementById("divSeriesModal").innerHTML = html;
+
+                    const buttonGroup = document.getElementById("table-" + id).getElementsByTagName('a');
+                    const buttonGroupPressed = e => {
+                        ConfirmApagarLinhaSerie(e.target.id);
+                    };
+                    for (var i = 0; i < buttonGroup.length; i++) {
+                        buttonGroup[i].addEventListener('click', buttonGroupPressed)
+                    }
+
                     Bulma('#ModalSerie').modal().open();
                 } else {
                     notifyError('Ainda não existem numeros de série associados a esta linha!');
@@ -456,15 +466,16 @@ else{
         });
         Bulma('#ModalConfirmApagarLinha').modal().close();
     }
-    function ApagarLinhaSerie(id) {
+    function ApagarLinhaSerie() {
         $.ajax({
             url: '/Inventario/ApagarLinhaSerie/',
-            data: { "stamp": id, "stamp_linha": document.getElementById('txtHiddenStampLinha') },
+            data: { "stamp": '@Model.Picking_Stamp', "stamp_boma": document.getElementById('txtHiddenStampLinhaSerie').value, "stamp_linha": document.getElementById('txtHiddenStampLinha').value },
             type: "POST",
             success: function (data) {
                 if (data[0] == "1") {
-                    document.getElementById('linha_serie_' + id).remove();
+                    document.getElementById('linha_serie_' + document.getElementById('txtHiddenStampLinhaSerie').value).remove();
                     notify(data[1]);
+                    Refresh = true;
                 } else {
                     notifyError('Ocorreu um erro ao apagar a linha de serie do dossier! ' + data[1]);
                 }
@@ -476,7 +487,7 @@ else{
                 notifyError('Ocorreu um erro ao apagar a linha de serie do dossier! ' + data[1]);
             }
         });
-        Bulma('#ModalConfirmApagarLinha').modal().close();
+        Bulma('#ModalConfirmApagarLinhaSerie').modal().close();
     }
 
     function PreencherRef(id) {
@@ -620,6 +631,14 @@ else{
 
         $close.addEventListener('click', () => {
             if (!($target.classList.contains('is-active'))) window.location.reload();
+        });
+    });
+    (document.querySelectorAll('#ModalSerie') || []).forEach(($close) => {
+        const $target = $close.closest('#ModalSerie');
+
+        $close.addEventListener('click', () => {
+            if (!($target.classList.contains('is-active')) && Refresh) window.location.reload();
+            Refresh = false;
         });
     });
 </script>

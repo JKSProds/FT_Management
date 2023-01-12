@@ -2434,7 +2434,7 @@ namespace FT_Management.Models
             return res;
         }
 
-        public List<string> ApagarLinhaSerieInventario(Ref_Linha_Picking l)
+        public List<string> ApagarLinhaSerieInventario(string stamp, Ref_Linha_Picking l)
         {
             List<string> res = new List<string>() { "-1", "Erro" };
             try
@@ -2449,7 +2449,7 @@ namespace FT_Management.Models
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
                 };
-
+                command.Parameters.Add(new SqlParameter("@STAMP", stamp));
                 command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
                 command.Parameters.Add(new SqlParameter("@STAMP_BOMA", l.BOMA_STAMP));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
@@ -2671,7 +2671,7 @@ namespace FT_Management.Models
                             Qtd_Separar = Double.Parse(result["qtt"].ToString()),
                             BOMA_STAMP = result["BOMASTAMP"].ToString(),
                             NumSerie = result["serie"].ToString(),
-                            CriadoA = DateTime.Parse(result["ousrdata"].ToString()),
+                            CriadoA = DateTime.Parse(DateTime.Parse(result["usrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["usrhora"].ToString()).ToShortTimeString()),
                             CriadoPor = result["usrinis"].ToString()
                         });
                     }
