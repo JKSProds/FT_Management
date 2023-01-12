@@ -875,7 +875,8 @@ namespace FT_Management.Models
                 {
                     m.IdMarcacao = int.Parse(result[3].ToString());
 
-                    ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico)) ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaEmail(m.Tecnico)) MailContext.EnviarEmailMarcacaoTecnico(m.Tecnico.EmailUtilizador, m, m.Tecnico.NomeCompleto);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 }
 
@@ -956,6 +957,17 @@ namespace FT_Management.Models
         public string ValidarMarcacao(Marcacao m)
         {
             string res = "";
+            if (m.IdMarcacao == 0)
+            {
+                foreach (var item in m.LstTecnicosSelect)
+                {
+                    Utilizador u = FT_ManagementContext.ObterUtilizador(item);
+                    //if (NotificacaoContext.NotificacaoAutomaticaEmail(u) || NotificacaoContext.NotificacaoAutomaticaNextcloud(u)) res += "Será enviada um notificação automatica para o técnico " + u.NomeCompleto + " no momento da criação da mesma!\r\n";
+                }
+                //Ja existe incedente
+                if (ExecutarQuery("SELECT COUNT(*) FROM U_MARCACAO where nincidente='" + m.Referencia + "'").First() != "0") res += "Já existe marcações com o mesmo numero de incidente. Tem a certeza que deseja proseguir?\r\n";
+            }
+
             //Tem de retornar 1 para poder proceder
             if (ExecutarQuery("SELECT 'valor' = COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '" + m.Cliente.IdCliente + "' AND bo.estab = '" + m.Cliente.IdLoja + "' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');").First() == "0") res += "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.\r\n";
 

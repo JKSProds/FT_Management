@@ -25,15 +25,15 @@ namespace FT_Management.Controllers
 
             return View(context.ObterListaUtilizadores(false, false));
         }
-            public IActionResult Login(string nome, string password, string ReturnUrl)
+        public IActionResult Login(string nome, string password, string ReturnUrl)
         {
-            Utilizador utilizador = new Utilizador {NomeUtilizador = nome, Password = password};
+            Utilizador utilizador = new Utilizador { NomeUtilizador = nome, Password = password };
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             if (nome != null && password != null)
             {
 
-                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
                 if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
 
@@ -73,7 +73,7 @@ namespace FT_Management.Controllers
                     }
                 }
             }
-                return View();
+            return View();
         }
 
         [HttpPost]
@@ -83,13 +83,14 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
-            if (LstUtilizadores.Count == 0) {
+            if (LstUtilizadores.Count == 0)
+            {
                 Cliente c = phccontext.ObterClienteNIF(utilizador.NomeUtilizador);
                 if (c.IdCliente != 0)
                 {
-                    if(c.Senha == utilizador.Password)
+                    if (c.Senha == utilizador.Password)
                     {
                         var claims = new List<Claim>
                         {
@@ -131,7 +132,7 @@ namespace FT_Management.Controllers
 
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    await  HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
                     context.AdicionarLog(user.Id, "Utilizador realizou um login com sucesso!", 4);
 
@@ -186,7 +187,10 @@ namespace FT_Management.Controllers
 
             List<KeyValuePair<string, string>> LstChats = ChatContext.ObterChatsAtivos();
             LstChats.Insert(0, new KeyValuePair<string, string>("", "N/D"));
-            ViewBag.Chats = LstChats.Select(l  => new SelectListItem() { Value = l.Key, Text = l.Value});
+            ViewBag.Chats = LstChats.Select(l => new SelectListItem() { Value = l.Key, Text = l.Value });
+
+            List<KeyValuePair<int, string>> LstNotificacoes = new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(0, "Desativado"), new KeyValuePair<int, string>(1, "Email"), new KeyValuePair<int, string>(2, "Nextcloud"), new KeyValuePair<int, string>(3, "Ambos") };
+            ViewBag.Notificacoes = LstNotificacoes.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
 
 
             return View(context.ObterUtilizador(id));
@@ -207,11 +211,12 @@ namespace FT_Management.Controllers
             u.TipoTecnico = utilizador.TipoTecnico;
             u.Zona = utilizador.Zona;
             u.ChatToken = utilizador.ChatToken;
+            u.NotificacaoAutomatica = utilizador.NotificacaoAutomatica;
 
             if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
             context.NovoUtilizador(u);
 
-            return RedirectToAction("Editar", new { id = u.Id});
+            return RedirectToAction("Editar", new { id = u.Id });
         }
         [HttpPost]
         public IActionResult AtualizarImagem(int id, IFormFile file)

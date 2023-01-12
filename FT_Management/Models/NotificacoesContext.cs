@@ -10,6 +10,17 @@ using System.Xml;
 
 namespace FT_Management.Models
 {
+    public static class NotificacaoContext
+    {
+        public static bool NotificacaoAutomaticaNextcloud(Utilizador u)
+        {
+            return u.NotificacaoAutomatica == 2 || u.NotificacaoAutomatica == 3;
+        }
+        public static bool NotificacaoAutomaticaEmail(Utilizador u)
+        {
+            return u.NotificacaoAutomatica == 1 || u.NotificacaoAutomatica == 3;
+        }
+    }
     public static class ChatContext
     {
         private static readonly HttpClient client = new HttpClient();
