@@ -153,8 +153,13 @@ namespace FT_Management.Models
                     mySmtpClient.Credentials = basicAuthenticationInfo;
 
                     MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
-                    MailAddress to = new MailAddress(EmailDestino);
-                    MailMessage myMail = new System.Net.Mail.MailMessage(from, to);
+                    MailMessage myMail = new MailMessage();
+
+                    foreach (var item in EmailDestino.Split(";"))
+                    {
+                        myMail.To.Add(item);
+                    }
+                    myMail.From = from;
                     myMail.Bcc.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailBCC"]));
 
                     foreach (var item in EmailCC)
