@@ -418,10 +418,10 @@ else
 
                         },
                         error: function (response) {
-                            alert(response.responseText);
+                            console.log(response.responseText);
                         },
                         failure: function (response) {
-                            alert(response.responseText);
+                            console.log(response.responseText);
                         }
                     });
                 }
@@ -436,10 +436,10 @@ else
                         document.getElementById('pbval_@u.Id').setAttribute('data-text', response[1] + '/' + response[0])
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        console.log(response.responseText);
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        console.log(response.responseText);
                     }
                 });
 
