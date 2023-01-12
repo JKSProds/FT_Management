@@ -84,8 +84,10 @@ namespace FT_Management.Controllers
                 Obs = obs
             };
             context.CriarCodigo(c);
-            ChatContext.EnviarNotificacaoCodigo(c, context.ObterUtilizador(2));
-            ChatContext.EnviarNotificacaoCodigo(c, context.ObterUtilizador(1));
+            foreach (var u in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
+            {
+                ChatContext.EnviarNotificacaoCodigo(c, u);
+            }
             return Content("OK");
         }
         [HttpPost]
