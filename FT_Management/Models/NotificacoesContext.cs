@@ -86,7 +86,12 @@ namespace FT_Management.Models
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
+        public static bool EnviarNotificacaoCodigo(Codigo c, Utilizador u)
+        {
+            string Mensagem = "Foi criado um novo código para aprovação pelo utilizador " + c.utilizador.NomeCompleto + ". Para aprovar ou rejeitar aceda ao link abaixo: \r\n\r\n" + c.GetUrl;
 
+            return EnviarMensagem(u.ChatToken, Mensagem);
+        }
         public static List<KeyValuePair<String, String>> ObterChatsAtivos()
         {
             List<KeyValuePair<string, string>> LstChats = new List<KeyValuePair<string, string>>();

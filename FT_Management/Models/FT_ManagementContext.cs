@@ -2714,6 +2714,66 @@ namespace FT_Management.Models
 
         }
 
+        public void CriarCodigo(Codigo c)
+        {
+
+            string sql = "INSERT INTO dat_codigos (CodigoValidacao, EstadoCodigo, Observacoes, Utilizador, ValidadeCodigo) VALUES ('" + c.Stamp + "', '" + c.Estado + "', '" + c.Obs + "', '" + c.utilizador.Id + "', '" + c.ValidadeCodigo.ToString("yyyy-MM-dd HH:mm:ss") + "') ;";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+        public void AtualizarCodigo(string stamp, int estado)
+        {
+
+            string sql = "UPDATE dat_codigos set EstadoCodigo=" + estado + " WHERE CodigoValidacao='" + stamp + "';";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+
+        public int ValidarCodigo(string stamp)
+        {
+            int res = 0;
+            string sqlQuery = "SELECT EstadoCodigo FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    res = int.Parse(result[0]);
+                }
+            }
+            return res;
+        }
+
+        public Codigo ObterCodigo(string stamp)
+        {
+            Codigo c = new Codigo();
+            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    c = new Codigo()
+                    {
+                        Stamp = result["CodigoValidacao"],
+                        Estado = result["EstadoCodigo"],
+                        Obs = result["Observacoes"],
+                        ValidadeCodigo = result["ValidadeCodigo"],
+                        utilizador = this.ObterUtilizador(int.Parse(result["Utilizador"])),
+                    };
+                }
+            }
+            return c;
+        }
+
         //Produtos (INATIVO)
         //public void CriarProduto(List<Produto> LstProdutos)
         //{

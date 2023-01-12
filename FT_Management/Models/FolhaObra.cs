@@ -20,18 +20,18 @@ namespace FT_Management.Models
         private string _ReferenciaServico;
         [Display(Name = "Referência")]
         [Required]
-        public string ReferenciaServico { get {return _ReferenciaServico ?? ""; } set {_ReferenciaServico = value ;} }
+        public string ReferenciaServico { get { return _ReferenciaServico ?? ""; } set { _ReferenciaServico = value; } }
         [Display(Name = "Estado do Equipamento")]
         public string EstadoEquipamento { get; set; }
         private string _RelatorioServico;
         [DataType(DataType.MultilineText)]
         [Display(Name = "Relatório do Serviço")]
         [Required]
-        public string RelatorioServico { get {return _RelatorioServico ?? ""; } set {_RelatorioServico = value ;}  }
+        public string RelatorioServico { get { return _RelatorioServico ?? ""; } set { _RelatorioServico = value; } }
         private string _SituacoesPendentes;
         [DataType(DataType.MultilineText)]
         [Display(Name = "Observações Internas")]
-        public string SituacoesPendentes { get {return _SituacoesPendentes ?? ""; } set {_SituacoesPendentes = value ;} }
+        public string SituacoesPendentes { get { return _SituacoesPendentes ?? ""; } set { _SituacoesPendentes = value; } }
         [Display(Name = "Lista de Peças")]
         public string ListaPecas { get; set; }
         public List<Produto> PecasServico { get; set; }
@@ -48,10 +48,10 @@ namespace FT_Management.Models
         private string _ConferidoPor;
         [Display(Name = "Conferido por")]
         [Required]
-        public string ConferidoPor { get {return _ConferidoPor ?? ""; } set {_ConferidoPor = value ;} }
-        private string _GuiaTransporteAtual; 
+        public string ConferidoPor { get { return _ConferidoPor ?? ""; } set { _ConferidoPor = value; } }
+        private string _GuiaTransporteAtual;
         [Display(Name = "Número da tua Guia de Transporte")]
-        public string GuiaTransporteAtual { get {return _GuiaTransporteAtual ?? ""; } set {_GuiaTransporteAtual = value ;} }
+        public string GuiaTransporteAtual { get { return _GuiaTransporteAtual ?? ""; } set { _GuiaTransporteAtual = value; } }
         [Display(Name = "Assistência Remota?")]
         public bool AssistenciaRemota { get; set; }
         [Display(Name = "Rúbrica")]
@@ -73,7 +73,7 @@ namespace FT_Management.Models
         public string EmailCliente { get; set; }
         public bool GuardarLocalizacao { get; set; }
         public bool FecharMarcacao { get; set; }
-
+        public double ValorTotal { get { return PecasServico.Sum(p => p.Valor); } }
 
         public FolhaObra()
         {
@@ -98,7 +98,7 @@ namespace FT_Management.Models
             this.DataServico = m.DataMarcacao;
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
-            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) ? m.QuemPediuEmail : m.Cliente.EmailCliente ;
+            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) ? m.QuemPediuEmail : m.Cliente.EmailCliente;
 
             return this;
         }

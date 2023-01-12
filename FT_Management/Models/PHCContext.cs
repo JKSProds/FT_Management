@@ -581,6 +581,10 @@ namespace FT_Management.Models
         {
             string res = "";
 
+            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
+            if (fo.ValorTotal > 500) res += "A data escolhida para a intervenção é diferente da data atual.\r\n";
+
+            if (!string.IsNullOrEmpty(res)) res += "\r\nDeseja proseguir?";
             return res;
         }
         private List<FolhaObra> ObterFolhasObra(string SQL_Query, bool LoadEquipamento, bool LoadCliente, bool LoadIntervencoes, bool LoadPecas, bool LoadRubrica)

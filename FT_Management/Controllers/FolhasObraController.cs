@@ -65,7 +65,35 @@ namespace FT_Management.Controllers
 
             return View(fo);
         }
-
+        [HttpPost]
+        public ActionResult ValidarCodigo(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return Content(context.ValidarCodigo(id).ToString());
+        }
+        [HttpPost]
+        public ActionResult CriarCodigo(string id, string obs)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Codigo c = new Codigo()
+            {
+                Stamp = id,
+                Estado = 0,
+                ValidadeCodigo = DateTime.Now.AddMinutes(10),
+                utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)),
+                Obs = obs
+            };
+            context.CriarCodigo(c);
+            ChatContext.EnviarNotificacaoCodigo(c, context.ObterUtilizador(2));
+            ChatContext.EnviarNotificacaoCodigo(c, context.ObterUtilizador(1));
+            return Content("OK");
+        }
+        [HttpPost]
+        public ActionResult ValidarFolhaObra(FolhaObra fo)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            return Content(phccontext.ValidarFolhaObra(fo));
+        }
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public JsonResult GuardarLocalizacao(int IdCliente, int IdLoja)
@@ -159,11 +187,11 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "FolhaObra_"+ id +".pdf",
+                FileName = "FolhaObra_" + id + ".pdf",
                 Inline = true,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
-                
+
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
             //Send the File to Download.
@@ -188,7 +216,7 @@ namespace FT_Management.Controllers
                 Inline = false,
                 CreationDate = DateTime.Now
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());            
+            Response.Headers.Add("Content-Disposition", cd.ToString());
             return new FileContentResult(context.BitMapToMemoryStream(filePath, bm.Width, bm.Height).ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
 

@@ -1,0 +1,30 @@
+﻿@model FT_Management.Models.Codigo
+@{
+  ViewData["Title"] = "Validar Código";
+}
+
+<section class="hero is-info is-medium">
+  <div class="hero-body">
+    <p class="title">
+      Validação de Código
+    </p>
+    <br>
+    @if (Model.Stamp != null)
+    {
+      <p class="subtitle">
+        Foi requisitado um código para aprovação pelo utilizador @Model.utilizador.NomeCompleto!
+        <br>
+        Observações:<br>;
+        @Model.Obs
+      </p>
+      <a class="button is-success is-large is-fullwidth my-2" href="/Home/AprovarCodigo/@Model.Stamp">Aprovar</a>
+      <a class="button is-danger is-large is-fullwidth my-2" href="/Home/RejeitarCodigo/@Model.Stamp">Rejeitar</a>
+    }
+    else
+    {
+      <p class="subtitle">
+        Não foi encontrado o código requisitado!
+      </p>
+    }
+  </div>
+</section>

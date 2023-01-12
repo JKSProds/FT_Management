@@ -25,7 +25,23 @@ namespace FT_Management.Controllers
         {
             return View();
         }
-
+        public IActionResult ValidarCodigo(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return View(context.ObterCodigo(id));
+        }
+        public IActionResult AprovarCodigo(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            context.AtualizarCodigo(id, 1);
+            return RedirectToAction("Index");
+        }
+        public IActionResult RejeitarCodigo(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            context.AtualizarCodigo(id, 2);
+            return RedirectToAction("Index");
+        }
         public IActionResult AcessoNegado()
         {
             return View();
