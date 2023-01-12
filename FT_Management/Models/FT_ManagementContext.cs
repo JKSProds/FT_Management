@@ -2754,7 +2754,7 @@ namespace FT_Management.Models
         public Codigo ObterCodigo(string stamp)
         {
             Codigo c = new Codigo();
-            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "';";
+            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "' and EstadoCodigo=0;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
