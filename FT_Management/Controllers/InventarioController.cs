@@ -83,7 +83,7 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return new JsonResult(phccontext.ObterSerieLinhaInventario(id));
+            return new JsonResult(phccontext.ObterSerieLinhaInventario(id).OrderBy(s => s.CriadoA).ToList());
         }
         public JsonResult ApagarLinha(string stamp, string stamp_linha)
         {
