@@ -2730,6 +2730,41 @@ namespace FT_Management.Models
             return res;
         }
 
+        public List<string> FecharInventario(Picking i)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("FECHA_INV", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@STAMP", i.Picking_Stamp));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.EditadoPor));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel fechar o dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
 
         #endregion
     }

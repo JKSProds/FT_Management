@@ -98,12 +98,11 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.ApagarLinhaSerieInventario(stamp, new Ref_Linha_Picking() { BOMA_STAMP = stamp_boma, Picking_Linha_Stamp = stamp_linha, CriadoPor = this.User.ObterNomeCompleto() }));
         }
 
-        public JsonResult FecharDossier(string id)
+        public JsonResult Fechar(string id)
         {
-            //DESENVOLVER
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return new JsonResult("Por desenvolver");
+            return new JsonResult(phccontext.FecharInventario(new Picking() { Picking_Stamp = id, EditadoPor = this.User.ObterNomeCompleto() }));
         }
     }
 

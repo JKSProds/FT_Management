@@ -70,8 +70,7 @@
                                                 <i class="fas fa-backspace"></i>
                                             </span>
                                         </a>
-                                        <a class="button is-danger"
-                                            href='/Inventario/FecharDossier/@Model.Picking_Stamp'>
+                                        <a class="button is-danger" onclick="FecharInventario()">
                                             <span class="icon">
                                                 <i class="fas fa-check"></i>
                                             </span>
@@ -562,6 +561,30 @@ else{
         });
     }
 
+    function FecharInventario() {
+        $.ajax({
+            url: '/Inventario/Fechar/',
+            data: { "id": '@Model.Picking_Stamp' },
+            type: "POST",
+            success: function (data) {
+                if (data[0] == "1") {
+                    window.location.href = "/Inventario";
+                } else {
+                    notifyError('Ocorreu um erro ao fechar o dossier! ' + data[1]);
+                    document.getElementById('btnFechar').classList.remove("is-loading");
+                }
+            },
+            error: function (data) {
+                notifyError('Ocorreu um erro ao fechar o dossier! ' + data[1]);
+                document.getElementById('btnFechar').classList.remove("is-loading");
+            },
+            failure: function (data) {
+                notifyError('Ocorreu um erro ao fechar o dossier! ' + data[1]);
+                document.getElementById('btnFechar').classList.remove("is-loading");
+            }
+        });
+    }
+
     function AdicionarNumeroSerie(id, serie) {
         document.getElementById('btnAdicionarNumeroSerie').classList.add("is-loading");
         document.getElementById('txtNumeroSerie').disabled = true;
@@ -641,4 +664,6 @@ else{
             Refresh = false;
         });
     });
+
+
 </script>
