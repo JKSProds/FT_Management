@@ -574,8 +574,9 @@ namespace FT_Management.Models
                 {
                     fo.StampFO = res[2].ToString();
                     fo = ObterFolhaObra(fo.StampFO);
-                    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + res + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
                     res[1] = fo.IdFolhaObra.ToString();
+                    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + fo.IdFolhaObra.ToString() + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
+
                 }
                 else
                 {
