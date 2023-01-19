@@ -175,7 +175,7 @@
         <input hidden value="@Model.Id" name="id" />
 
         <div>
-            <input type="text" maxLength="1" name="first" size="1" min="0" max="9" pattern="[0-9]{1}"
+            <input type="text" maxLength="6" name="first" size="1" min="0" max="9" pattern="[0-9]{1}"
                 autocomplete="one-time-code" />
             <input class="not-first" type="text" name="second" maxLength="1" size="1" min="0" max="9"
                 pattern="[0-9]{1}" />
@@ -218,6 +218,7 @@
 
             if (!sib || !sib.length) {
                 sib = body.find('input').eq(0);
+                document.getElementById('form').submit();
                 $('.btn-verify').prop("disabled", false);
             }
 
