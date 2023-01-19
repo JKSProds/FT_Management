@@ -8,12 +8,14 @@ namespace FT_Management.Models
 {
     public class FolhaObra
     {
+        public string StampFO { get; set; }
         [Display(Name = "Num. da Folha de Obra")]
         public int IdFolhaObra { get; set; }
         [Display(Name = "Num. da Assistência Técnica")]
         public string IdAT { get; set; }
         [Display(Name = "Num. da Marcação")]
         public int IdMarcacao { get; set; }
+        public Marcacao Marcacao { get; set; }
         [Display(Name = "Data")]
         [Required]
         public DateTime DataServico { get; set; }
@@ -59,7 +61,7 @@ namespace FT_Management.Models
         public bool Piquete { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/FolhasObra/Detalhes/" + IdFolhaObra; } }
         [Display(Name = "Estado do Serviço")]
-        public string EstadoFolhaObra { get; set; }
+        public int EstadoFolhaObra { get; set; }
         [Display(Name = "Tipo de Serviço")]
         public string TipoFolhaObra { get; set; }
         [Display(Name = "Em Garantia")]
@@ -99,7 +101,6 @@ namespace FT_Management.Models
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
             this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) ? m.QuemPediuEmail : m.Cliente.EmailCliente;
-
             return this;
         }
         public void ValidarIntervencoes()
@@ -121,6 +122,7 @@ namespace FT_Management.Models
         public void ValidarPecas()
         {
             this.PecasServico.Clear();
+            if (this.ListaPecas == null) return;
             foreach (var item in this.ListaPecas.Split(";"))
             {
                 if (item != "")

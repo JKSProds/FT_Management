@@ -8,7 +8,7 @@ namespace FT_Management.Models
     public class Equipamento
     {
         [Required]
-        public string IdEquipamento { get; set; }
+        public string EquipamentoStamp { get; set; }
         public string DescricaoEquipamento { get { return this.NumeroSerieEquipamento + " - (" + MarcaEquipamento + " " + this.ModeloEquipamento + ")"; } }
         private string _DesignacaoEquipamento;
         [Display(Name = "Designação do Equipamento")]

@@ -191,15 +191,16 @@
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
                                         <select id="selectEquipamentos" style="width:100%"
-                                            value="@Model.EquipamentoServico.IdEquipamento"
-                                            asp-for="EquipamentoServico.IdEquipamento"></select>
+                                            value="@Model.EquipamentoServico.EquipamentoStamp"
+                                            asp-for="EquipamentoServico.EquipamentoStamp"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-check"></i>
                                     </span>
                                 </p>
                             </div>
-                            <span asp-validation-for="EquipamentoServico.IdEquipamento" class="has-text-danger"></span>
+                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
+                                class="has-text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -321,11 +322,9 @@
                                 <label asp-for="EstadoFolhaObra"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
-                                        @{
-                                            var LstEstadoFolhaObra = ViewData["EstadoFolhaObra"] as IList<String>;
-                                        }
-                                        <select class="select" style="width:100%" asp-for="EstadoFolhaObra"
-                                            asp-items="@(new SelectList(LstEstadoFolhaObra))"></select>
+                                        <select asp-for="EstadoFolhaObra" asp-items="ViewBag.EstadoFolhaObra"
+                                            class="form-control" style="width:100%">
+                                        </select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
@@ -815,7 +814,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             success: function (response) {
                 var equipamentos = "";
                 $(response).each(function () {
-                    equipamentos = equipamentos + '<option value="' + this.idEquipamento + '">' + this.descricaoEquipamento + '</option>'
+                    equipamentos = equipamentos + '<option value="' + this.equipamentoStamp + '">' + this.descricaoEquipamento + '</option>'
                 });
 
                 var equipamentosList = $("#selectEquipamentos");

@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Custom;
 using Microsoft.AspNetCore.Authorization;
 using System.Drawing;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 
 namespace FT_Management.Controllers
 {
@@ -26,7 +28,7 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
         }
-        [Authorize(Roles = "Admin, Tech")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Adicionar(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -35,7 +37,7 @@ namespace FT_Management.Controllers
             FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(phccontext.ObterMarcacao(id));
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
+            ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
             return View(fo);
         }
@@ -47,20 +49,24 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
+            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             if (ModelState.IsValid)
             {
-                fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
-                fo.EquipamentoServico = phccontext.ObterEquipamento(fo.EquipamentoServico.IdEquipamento);
+                fo.EquipamentoServico = phccontext.ObterEquipamento(fo.EquipamentoServico.EquipamentoStamp);
                 fo.ValidarIntervencoes();
                 fo.ValidarPecas();
+                fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
-                int idFolhaObra = phccontext.CriarFolhaObra(fo);
-                if (idFolhaObra > 0) return RedirectToAction("Detalhes", "FolhasObra", new { id = idFolhaObra });
+                List<string> res = phccontext.CriarFolhaObra(fo);
+                if (int.Parse(res[0]) > 0) return RedirectToAction("Detalhes", "FolhasObra", new { id = res[1] });
+
+                ModelState.AddModelError("", res[1]);
             }
 
-            ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
+            ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 
             return View(fo);

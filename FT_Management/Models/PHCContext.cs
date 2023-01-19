@@ -498,7 +498,7 @@ namespace FT_Management.Models
                     {
                         LstEquipamento.Add(new Equipamento()
                         {
-                            IdEquipamento = result["mastamp"].ToString().Trim(),
+                            EquipamentoStamp = result["mastamp"].ToString().Trim(),
                             DesignacaoEquipamento = result["design"].ToString().Trim(),
                             MarcaEquipamento = result["marca"].ToString().Trim(),
                             ModeloEquipamento = result["maquina"].ToString().Trim(),
@@ -541,33 +541,48 @@ namespace FT_Management.Models
         #region FOLHASOBRA
 
         //EM DESENVOLVIMENTO
-        public int CriarFolhaObra(FolhaObra fo)
+        public List<string> CriarFolhaObra(FolhaObra fo)
         {
-            int res = 0;
+            List<string> res = new List<string>() { "-1", "Erro", "" };
             try
             {
-                //SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                //conn.Open();
+                conn.Open();
 
-                //SqlCommand command = new SqlCommand("Gera_FolhaObra", conn)
-                //{
-                //    CommandTimeout = TIMEOUT,
-                //    CommandType = CommandType.StoredProcedure
-                //};
+                SqlCommand command = new SqlCommand("WEB_Gera_PAT", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                //command.Parameters.Add(new SqlParameter("@NO", fo.ClienteServico.IdCliente));
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@MASTAMP", fo.EquipamentoServico.EquipamentoStamp));
+                command.Parameters.Add(new SqlParameter("@ESTADO", fo.EstadoFolhaObra));
+                command.Parameters.Add(new SqlParameter("@OFICINA", fo.RecolhaOficina));
+                command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
 
-                //using SqlDataReader result = command.ExecuteReader();
-                //result.Read();
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
 
-                //if (result[0].ToString() != "-1")
-                //{
-                //    res = int.Parse(result[3].ToString());
-                //    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + res + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
-                //}
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
 
-                //conn.Close();
+                if (res[0].ToString() != "-1")
+                {
+                    fo.StampFO = res[2].ToString();
+                    fo = ObterFolhaObra(fo.StampFO);
+                    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + res + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
+                    res[1] = fo.IdFolhaObra.ToString();
+                }
+                else
+                {
+                    return res;
+                }
+
+                conn.Close();
             }
 
             catch (Exception ex)
@@ -581,8 +596,8 @@ namespace FT_Management.Models
         {
             string res = "";
 
-            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
-            if (fo.ValorTotal > 500) res += "A data escolhida para a intervenção é diferente da data atual.\r\n";
+            if (fo.DataServico.ToShortDateString() != DateTime.Now.ToShortDateString()) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
+            if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";
 
             if (!string.IsNullOrEmpty(res)) res += "\r\nDeseja proseguir?";
             return res;
@@ -694,6 +709,11 @@ namespace FT_Management.Models
             return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=" + IdFolhaObra + " and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.nopat=" + IdFolhaObra + " order by nopat;", true);
 
         }
+        public FolhaObra ObterFolhaObra(string STAMP)
+        {
+            return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", true);
+
+        }
 
         public string ObterRubrica(int IdFolhaObra)
         {
@@ -711,7 +731,7 @@ namespace FT_Management.Models
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     result.Read();
-                    return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
+                    if (result.HasRows) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
                 }
             }
             catch (Exception ex)
@@ -1716,17 +1736,11 @@ namespace FT_Management.Models
 
             return res;
         }
-        public List<String> ObterEstadoFolhaObra()
+        public List<KeyValuePair<int, string>> ObterEstadoFolhaObra()
         {
 
-            List<String> res = new List<String>
-            {
-                "Concluído",
-                "Pedido de Peças",
-                "Pedido de Orçamento"
-            };
+            return new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(1, "Concluído"), new KeyValuePair<int, string>(2, "Pedido de Peças"), new KeyValuePair<int, string>(3, "Pedido de Orçamento") };
 
-            return res;
         }
         public List<String> ObterTipoFolhaObra()
         {
