@@ -247,8 +247,19 @@ namespace FT_Management.Controllers
             List<KeyValuePair<int, string>> LstNotificacoes = new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(0, "Desativado"), new KeyValuePair<int, string>(1, "Email"), new KeyValuePair<int, string>(2, "Nextcloud"), new KeyValuePair<int, string>(3, "Ambos") };
             ViewBag.Notificacoes = LstNotificacoes.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
 
+            Utilizador u = context.ObterUtilizador(id);
+            if (string.IsNullOrEmpty(u.SecondFactorAuthStamp))
+            {
+                String stamp = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
 
-            return View(context.ObterUtilizador(id));
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", u.NomeUtilizador, stamp, false, 3);
+
+                u.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
+                u.SecondFactorAuthCode = setupInfo.ManualEntryKey;
+                ViewData["2FASTAMP"] = stamp;
+            }
+            return View(u);
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         public IActionResult AtualizarUtilizador(int id, Utilizador utilizador)
@@ -267,6 +278,38 @@ namespace FT_Management.Controllers
             u.Zona = utilizador.Zona;
             u.ChatToken = utilizador.ChatToken;
             u.NotificacaoAutomatica = utilizador.NotificacaoAutomatica;
+
+            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+            context.NovoUtilizador(u);
+
+            return RedirectToAction("Editar", new { id = u.Id });
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult Atualizar2FA(int id, string code, string stamp)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+            u.SecondFactorAuthStamp = "";
+
+            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+            if (tfa.ValidateTwoFactorPIN(stamp, code))
+            {
+                u.SecondFactorAuthStamp = stamp;
+                if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+                context.NovoUtilizador(u);
+            }
+
+            return RedirectToAction("Editar", new { id = u.Id });
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult Remover2FA(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+
+            u.SecondFactorAuthStamp = "";
 
             if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
             context.NovoUtilizador(u);
