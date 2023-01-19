@@ -175,17 +175,17 @@
         <input hidden value="@Model.Id" name="id" />
 
         <div>
-            <input type="text" maxLength="6" name="first" id='first' size="1" min="0" max="9" pattern="[0-9]{1}"
-                autocomplete="one-time-code" />
-            <input class="not-first" type="text" name="second" maxLength="1" size="1" min="0" max="9"
+            <input type="text" inputmode="numeric" maxLength="6" name="first" id='first' size="1" min="0" max="9"
+                pattern="[0-9]{1}" autocomplete="one-time-code" />
+            <input class="not-first" type="text" inputmode="numeric" name="second" maxLength="1" size="1" min="0"
+                max="9" pattern="[0-9]{1}" />
+            <input class="not-first" type="text" inputmode="numeric" name="third" maxLength="1" size="1" min="0" max="9"
                 pattern="[0-9]{1}" />
-            <input class="not-first" type="text" name="third" maxLength="1" size="1" min="0" max="9"
+            <input class="not-first" type="text" inputmode="numeric" name="fourth" maxLength="1" size="1" min="0"
+                max="9" pattern="[0-9]{1}" />
+            <input class="not-first" type="text" inputmode="numeric" name="fifth" maxLength="1" size="1" min="0" max="9"
                 pattern="[0-9]{1}" />
-            <input class="not-first" type="text" name="fourth" maxLength="1" size="1" min="0" max="9"
-                pattern="[0-9]{1}" />
-            <input class="not-first" type="text" name="fifth" maxLength="1" size="1" min="0" max="9"
-                pattern="[0-9]{1}" />
-            <input class="not-first" type="text" name="sixth" maxLength="1" size="1" min="0" max="9"
+            <input class="not-first" type="text" inputmode="numeric" name="sixth" maxLength="1" size="1" min="0" max="9"
                 pattern="[0-9]{1}" />
         </div>
         <button type="submit" style="margin-top: 35px"
@@ -208,7 +208,7 @@
         var body = $('body');
 
         function goToNextInput(e) {
-            if (document.getElementById('first').value.length == 6) document.getElementById('form').submit();
+
             var key = e.which,
                 t = $(e.target),
                 sib = t.next('input');
@@ -237,4 +237,9 @@
 
     })
 
+    document.getElementById('first').addEventListener("paste", function () {
+        setTimeout(function () {
+            document.getElementById('form').submit();
+        });
+    });
 </script>
