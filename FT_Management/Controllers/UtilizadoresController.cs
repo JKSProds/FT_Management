@@ -426,7 +426,11 @@ namespace FT_Management.Controllers
             var passwordHasher = new PasswordHasher<string>();
             if (string.IsNullOrEmpty(senha)) return Content("Nok");
             Utilizador u = context.ObterUtilizador(id);
-            if (!u.Admin || this.User.IsInRole("Master")) u.Password = passwordHasher.HashPassword(null, senha);
+            if (!u.Admin || this.User.IsInRole("Master"))
+            {
+                u.Password = passwordHasher.HashPassword(null, senha);
+                u.SecondFactorAuthStamp = "";
+            }
 
             context.NovoUtilizador(u);
 
