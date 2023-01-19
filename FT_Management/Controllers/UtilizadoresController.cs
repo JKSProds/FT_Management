@@ -178,7 +178,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(id);
-            string res = first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
+            string res = first > 9 ? first.ToString() : first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
 
             TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
             bool result = tfa.ValidateTwoFactorPIN(u.SecondFactorAuthStamp, res);
