@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http;
+using Google.Authenticator;
 
 namespace FT_Management.Controllers
 {
@@ -120,30 +121,38 @@ namespace FT_Management.Controllers
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
-                    var claims = new List<Claim>
+                    if (string.IsNullOrEmpty(user.SecondFactorAuthStamp))
                     {
-                        new Claim(ClaimTypes.Name, user.Id.ToString()),
-                        new Claim(ClaimTypes.GivenName, user.NomeCompleto),
-                        new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
-                        new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
-                        new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
-                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
-                        new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, user.Id.ToString()),
+                            new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                            new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
+                            new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
+                            new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
+                            new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
+                            new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
 
-                    };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                        };
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                    context.AdicionarLog(user.Id, "Utilizador realizou um login com sucesso!", 4);
+                        context.AdicionarLog(user.Id, "Utilizador realizou um login com sucesso!", 4);
 
-                    if (ReturnUrl != "" && ReturnUrl != null)
-                    {
-                        Response.Redirect(ReturnUrl, true);
+                        if (ReturnUrl != "" && ReturnUrl != null)
+                        {
+                            Response.Redirect(ReturnUrl, true);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
+                        return View("SecondFA", user);
                     }
+
                 }
                 else
                 {
@@ -154,6 +163,52 @@ namespace FT_Management.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult SecondFA(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return View(context.ObterUtilizador(id));
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> SecondFA(int first, int second, int third, int fourth, int fifth, int sixth, int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(id);
+            string res = first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
+
+            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+            bool result = tfa.ValidateTwoFactorPIN(u.SecondFactorAuthStamp, res);
+            Console.WriteLine("KEY: " + u.SecondFactorAuthStamp);
+            Console.WriteLine("Resultado do 2FA: " + result);
+
+            if (result)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, u.Id.ToString()),
+                    new Claim(ClaimTypes.GivenName, u.NomeCompleto),
+                    new Claim(ClaimTypes.Thumbprint, u.ImgUtilizador),
+                    new Claim(ClaimTypes.Role, u.Id == 1 ? "Master" : ""),
+                    new Claim(ClaimTypes.Role, u.Admin ? "Admin" : "User"),
+                    new Claim(ClaimTypes.Role, u.TipoUtilizador == 1 ? "Tech" : u.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
+                    new Claim(ClaimTypes.UserData, u.TipoMapa == 1 ? "Google Maps" : (u.TipoMapa == 2 ? "Waze" : "Apple"))
+
+                };
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+
+                context.AdicionarLog(u.Id, "Utilizador realizou um login com sucesso!", 4);
+
+                return RedirectToAction("Index", "Home");
+            }
+            ModelState.AddModelError("", "Codigo de Autenticação Errado!");
+            return View(u);
+
+        }
         [Authorize(Roles = "Admin")]
         public IActionResult Logs(int id, string Data)
         {
