@@ -30,6 +30,8 @@ namespace FT_Management.Models
         public int IdFornecedor { get; set; }
         [Display(Name = "Referência do Equipamento")]
         public string RefProduto { get; set; }
+        public Cliente Cliente { get; set; }
+        public List<FolhaObra> FolhasObra { get; set; }
 
         public Equipamento()
         {

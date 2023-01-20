@@ -1,0 +1,263 @@
+﻿@model FT_Management.Models.Equipamento
+
+@{
+    ViewData["Title"] = "Equipamento - " + Model.NumeroSerieEquipamento;
+}
+
+<style>
+    .tabs-content li {
+        display: none;
+        list-style: none;
+    }
+
+    .tabs-content li.is-active {
+        display: block;
+    }
+</style>
+
+<div class="container">
+    <div class="columns is-mobile is-centered">
+        <div class="column is-12">
+            <div class="tile is-centered">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fa-solid fa-desktop"></i>
+                            </span>
+                            <span>@Model.MarcaEquipamento @Model.ModeloEquipamento
+                                (@Model.NumeroSerieEquipamento)</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="container">
+    <div class="tabs-wrapper">
+        <div class="tabs is-centered is-boxed">
+            <ul>
+                <li class="is-active">
+                    <a>
+                        <span>Dados</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span>Cliente</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span>Intervenções</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tabs-content mx-2">
+            <ul>
+                <li class="is-active">
+                    <div class="columns is-multiline">
+                        <div class="column is-8">
+                            <div class="field">
+                                <label asp-for="DesignacaoEquipamento" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" readonly asp-for="DesignacaoEquipamento">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="MarcaEquipamento" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" asp-for="MarcaEquipamento">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <label asp-for="ModeloEquipamento" class="label"></label>
+                            <div class="field">
+                                <div class="control" style="width:100%">
+                                    <input class="input is-fullwidth" type="text" readonly asp-for="ModeloEquipamento">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <label asp-for="NumeroSerieEquipamento" class="label"></label>
+                            <div class="field">
+                                <div class="control" style="width:100%">
+                                    <input class="input is-fullwidth" type="text" readonly
+                                        asp-for="NumeroSerieEquipamento">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="RefProduto" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" readonly asp-for="RefProduto">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <label asp-for="IdFornecedor" class="label"></label>
+                            <div class="field ">
+                                <div class="control">
+                                    <input class="input" type="text" readonly asp-for="IdFornecedor">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="columns is-multiline">
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="Cliente.IdCliente" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" readonly asp-for="Cliente.IdCliente">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-5">
+                            <div class="field">
+                                <label asp-for="Cliente.NomeCliente" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" asp-for="Cliente.NomeCliente">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-5">
+                            <label asp-for="Cliente.MoradaCliente" class="label"></label>
+                            <div class="field has-addons">
+                                <div class="control" style="width:100%">
+                                    <input class="input is-fullwidth" type="text" readonly
+                                        asp-for="Cliente.MoradaCliente">
+                                </div>
+                                <a href="@Utilizador.ObterLinkMapa(Model.Cliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"
+                                    target="_blank" class="button is-primary" @(Model.Cliente.MoradaCliente.Length < 2 ?
+                                    "disabled" : "")><i class="fas fa-location-arrow"></i></a>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="Cliente.NumeroContribuinteCliente" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" readonly
+                                        asp-for="Cliente.NumeroContribuinteCliente">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <label asp-for="Cliente.EmailCliente" class="label"></label>
+                            <div class="field has-addons">
+                                <div class="control" style="width:100%">
+                                    <input class="input" type="text" readonly asp-for="Cliente.EmailCliente">
+                                </div>
+                                <a href="mailto:@Model.Cliente.EmailCliente" target="_blank" class="button is-info"
+                                    @(Model.Cliente.EmailCliente.Length < 5 ? "disabled" : "")><i
+                                        class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <label asp-for="Cliente.TelefoneCliente" class="label"></label>
+                            <div class="field has-addons">
+                                <div class="control" style="width:100%">
+                                    <input class="input" type="text" readonly asp-for="Cliente.TelefoneCliente">
+                                </div>
+                                <a href="tel:@Model.Cliente.TelefoneCliente" target="_blank"
+                                    class="button is-success is-outlined" @(Model.Cliente.TelefoneCliente.Length < 9 ?
+                                    "disabled" : "")><i class="fas fa-phone"></i></a>
+                            </div>
+                        </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="Cliente.PessoaContatoCliente" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="text" readonly asp-for="Cliente.PessoaContatoCliente">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="container">
+                        @if (Model.FolhasObra.Count() == 0)
+                        {
+                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                encontradas intervenções!</button>
+                        }
+                        else
+                        {
+                            <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards">
+                                    <table class="table is-hoverable is-fullwidth">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    @Html.DisplayNameFor(model =>
+                                                model.FolhasObra.FirstOrDefault().IdFolhaObra)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model =>
+                                                model.FolhasObra.FirstOrDefault().EquipamentoServico.MarcaEquipamento)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model =>
+                                                model.FolhasObra.FirstOrDefault().EquipamentoServico.NumeroSerieEquipamento)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model =>
+                                                model.FolhasObra.FirstOrDefault().DataServico)
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.FolhasObra)
+                                            {
+                                                <tr>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().IdFolhaObra)"
+                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        <span>@item.IdFolhaObra</span>
+                                                    </td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.MarcaEquipamento)"
+                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        @Html.DisplayFor(modelItem =>
+                                                item.EquipamentoServico.MarcaEquipamento) -
+                                                        @Html.DisplayFor(modelItem =>
+                                                item.EquipamentoServico.ModeloEquipamento)
+
+                                                    </td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.NumeroSerieEquipamento)"
+                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        @Html.DisplayFor(modelItem =>
+                                                item.EquipamentoServico.NumeroSerieEquipamento)
+                                                    </td>
+                                                    <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().DataServico)"
+                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        <span>@item.DataServico.ToShortDateString()</span>
+                                                    </td>
+                                                    <td class="is-actions-cell">
+                                                        <a class="button is-outlined is-fullwidth is-primary"
+                                                    onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i
+                                                        class="fas fa-print" style="font-size:20px"></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

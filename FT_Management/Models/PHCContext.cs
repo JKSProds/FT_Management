@@ -477,7 +477,7 @@ namespace FT_Management.Models
 
         //Obter Equipamentos
         #region EQUIPAMENTOS
-        private List<Equipamento> ObterEquipamentos(string SQL_Query)
+        private List<Equipamento> ObterEquipamentos(string SQL_Query, bool LoadCliente, bool LoadFolhasObra)
         {
 
             List<Equipamento> LstEquipamento = new List<Equipamento>();
@@ -509,6 +509,14 @@ namespace FT_Management.Models
                             IdFornecedor = int.Parse(result["flno"].ToString())
 
                         });
+                        if (LoadCliente)
+                        {
+                            LstEquipamento.Last().Cliente = ObterClienteSimples(LstEquipamento.Last().IdCliente, LstEquipamento.Last().IdLoja);
+                        }
+                        if (LoadFolhasObra)
+                        {
+                            LstEquipamento.Last().FolhasObra = ObterFolhasObraEquipamento(LstEquipamento.Last().EquipamentoStamp);
+                        }
                     }
                 }
 
@@ -523,15 +531,25 @@ namespace FT_Management.Models
         }
         public List<Equipamento> ObterEquipamentos()
         {
-            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma;");
+            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma;", false, false);
         }
         public List<Equipamento> ObterEquipamentos(Cliente c)
         {
-            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';");
+            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';", false, false);
+        }
+        public List<Equipamento> ObterEquipamentosSerie(string NumeroSerie)
+        {
+            return ObterEquipamentos("SELECT TOP(100) serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where serie like '%" + NumeroSerie + "%';", false, false);
         }
         public Equipamento ObterEquipamento(string IdEquipamento)
         {
-            List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='" + IdEquipamento + "';");
+            List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='" + IdEquipamento + "';", true, true);
+            if (e.Count > 0) return e[0];
+            return new Equipamento();
+        }
+        public Equipamento ObterEquipamentoSimples(string IdEquipamento)
+        {
+            List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='" + IdEquipamento + "';", false, false);
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
@@ -753,7 +771,7 @@ namespace FT_Management.Models
                             Utilizador = FT_ManagementContext.ObterListaUtilizadores(true, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First()
                         });
 
-                        if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim());
+                        if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamentoSimples(result["mastamp"].ToString().Trim());
                         if (LoadCliente) LstFolhaObra.Last().ClienteServico = ObterClienteSimples(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()));
                         if (LoadIntervencoes)
                         {
@@ -812,6 +830,11 @@ namespace FT_Management.Models
         public List<FolhaObra> ObterFolhasObra(int IdMarcacao)
         {
             return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ") as u_marcacaostamp, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (select '" + IdMarcacao + "' as num) as num from pa where pastamp in (select STAMP_DEST from u_intervencao where u_marcacaostamp = (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ")) order by nopat", true, true, false, false, false);
+
+        }
+        public List<FolhaObra> ObterFolhasObraEquipamento(string StampEquipamento)
+        {
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.mastamp='" + StampEquipamento + "' order by nopat;", true, true, false, false, false);
 
         }
         public List<FolhaObra> ObterFolhasObra(Cliente c)

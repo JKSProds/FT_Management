@@ -55,7 +55,7 @@ namespace FT_Management.Controllers
             {
 
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
-                fo.EquipamentoServico = phccontext.ObterEquipamento(fo.EquipamentoServico.EquipamentoStamp);
+                fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
                 fo.ValidarIntervencoes();
                 fo.ValidarPecas();
                 fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
