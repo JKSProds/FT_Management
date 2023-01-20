@@ -9,6 +9,7 @@ namespace FT_Management.Models
 {
     public class Marcacao
     {
+        public string EmojiEstado { get { return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") + (this.EstadoMarcacao == 4 || this.EstadoMarcacao == 9 || this.EstadoMarcacao == 10 ? "✅ " : this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " : this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : ""); } }
         [Display(Name = "Num. da Marcação")]
         public int IdMarcacao { get; set; }
         [Display(Name = "Cliente")]

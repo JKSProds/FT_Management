@@ -108,7 +108,7 @@ else
                         <header class="card-header @(item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "has-background-success" : "") @(item.EstadoMarcacao == 1 ? "has-background-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 26 & @item.EstadoMarcacao != 4 ? "has-background-warning" : "")">
                             <button class="button mx-1 is-rounded my-auto @(item.PrioridadeMarcacao == "Normal" ? "is-info" : item.PrioridadeMarcacao == "Urgente" ? "is-warning" : "is-danger") "><p class="is-uppercase has-text-weight-bold @(item.Hora.Length==0 && item.Periodo.Length==0 ? "is-size-6" : "is-size-9")" style="line-height:1;">@item.DataMarcacao.Day.ToString() @item.DataMarcacao.ToString("MMM")<br />@(item.Hora.Length>0 ? item.Hora : item.Periodo)</p></button>
                             <p class="subtitle my-1 has-text-centered column">
-                                <b>@item.IdMarcacao</b> - @item.Cliente.NomeCliente
+                                @item.EmojiEstado<b>@item.IdMarcacao</b> - @item.Cliente.NomeCliente
                             </p>
                             <button class="card-header-icon card-toggle" style="text-align:right" aria-label="more options">
                                 <span class="icon">
