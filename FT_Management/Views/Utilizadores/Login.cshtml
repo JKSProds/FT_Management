@@ -260,6 +260,9 @@
                     console.log(data);
                     document.getElementById('frm2FA').hidden = false;
                     document.getElementById('frmLogin').hidden = true;
+                    setTimeout(function () {
+                        document.getElementById('first').focus();
+                    });
                 } else {
                     console.log(data);
                     document.getElementById('form').submit();
