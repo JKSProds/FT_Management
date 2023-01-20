@@ -182,9 +182,6 @@ namespace FT_Management.Controllers
 
             TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
             bool result = tfa.ValidateTwoFactorPIN(u.SecondFactorAuthStamp, res);
-            Console.WriteLine("KEY: " + u.SecondFactorAuthStamp);
-            Console.WriteLine("Resultado do 2FA: " + result);
-
             if (result)
             {
                 var claims = new List<Claim>

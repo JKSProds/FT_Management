@@ -573,10 +573,18 @@ namespace FT_Management.Models
                 if (res[0].ToString() != "-1")
                 {
                     fo.StampFO = res[2].ToString();
+
+                    //CRIAR INTERVENÇÔES
+
+                    //ASSOCIAR PEÇAS INTERVENÇÃO
+
+                    //GERAR AT
+
+
+                    //Obter Folha de Obra
                     fo = ObterFolhaObra(fo.StampFO);
                     res[1] = fo.IdFolhaObra.ToString();
                     FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + fo.IdFolhaObra.ToString() + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
-
                 }
                 else
                 {
@@ -625,6 +633,7 @@ namespace FT_Management.Models
                     {
                         LstFolhaObra.Add(new FolhaObra()
                         {
+                            StampFO = result["pastamp"].ToString(),
                             IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                             DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
                             ReferenciaServico = result["u_nincide"].ToString().Trim(),
@@ -632,6 +641,7 @@ namespace FT_Management.Models
                             ConferidoPor = result.IsDBNull("qassinou") ? "" : result["qassinou"].ToString().Trim(),
                             IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
                             IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
+                            Utilizador = FT_ManagementContext.ObterListaUtilizadores(true, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First()
                         });
 
                         if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim());

@@ -61,7 +61,15 @@ namespace FT_Management.Controllers
                 fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
                 List<string> res = phccontext.CriarFolhaObra(fo);
-                if (int.Parse(res[0]) > 0) return RedirectToAction("Detalhes", "FolhasObra", new { id = res[1] });
+                if (int.Parse(res[0]) > 0)
+                {
+                    fo.IdFolhaObra = int.Parse(res[1]);
+
+                    MailContext.EnviarEmailFolhaObra(((fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente)) ? fo.EmailCliente + ";" : "") + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(context.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+
+                    return RedirectToAction("Detalhes", "FolhasObra", new { id = fo.IdFolhaObra });
+                }
+
 
                 ModelState.AddModelError("", res[1]);
             }
