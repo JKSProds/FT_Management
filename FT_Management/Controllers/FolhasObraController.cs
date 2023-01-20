@@ -63,7 +63,7 @@ namespace FT_Management.Controllers
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)
                 {
-                    fo.IdFolhaObra = int.Parse(res[1]);
+                    fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
 
                     MailContext.EnviarEmailFolhaObra(((fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente)) ? fo.EmailCliente + ";" : "") + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(context.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
 

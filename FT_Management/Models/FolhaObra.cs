@@ -114,7 +114,11 @@ namespace FT_Management.Models
                     {
                         HoraInicio = DateTime.Parse(item.Split("|").First()),
                         HoraFim = DateTime.Parse(item.Split("|").Last()),
-                        DataServiço = this.DataServico
+                        DataServiço = this.DataServico,
+                        RelatorioServico = this.RelatorioServico,
+                        IdTecnico = this.Utilizador.IdPHC,
+                        NomeTecnico = this.Utilizador.NomeCompleto,
+                        IdFolhaObra = this.IdFolhaObra
                     });
                 }
             }
