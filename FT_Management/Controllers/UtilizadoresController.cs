@@ -78,7 +78,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl)
+        public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl, int first, int second, int third, int fourth, int fifth, int sixth)
         {
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
 
@@ -121,7 +121,9 @@ namespace FT_Management.Controllers
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
-                    if (string.IsNullOrEmpty(user.SecondFactorAuthStamp))
+                    TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                    string res = first > 9 ? first.ToString() : first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
+                    if (string.IsNullOrEmpty(user.SecondFactorAuthStamp) || tfa.ValidateTwoFactorPIN(user.SecondFactorAuthStamp, res))
                     {
                         var claims = new List<Claim>
                         {
@@ -150,7 +152,8 @@ namespace FT_Management.Controllers
                     }
                     else
                     {
-                        return View("SecondFA", user);
+                        ModelState.AddModelError("", "2FA errado!");
+                        context.AdicionarLog(user.Id, "Utilizador tentou um login sem sucesso!", 4);
                     }
 
                 }
@@ -163,49 +166,14 @@ namespace FT_Management.Controllers
             return View();
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public IActionResult SecondFA(int id)
+        public bool Check2FA(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return View(context.ObterUtilizador(id));
+            return !string.IsNullOrEmpty(context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == id).DefaultIfEmpty(new Utilizador()).First().SecondFactorAuthStamp);
         }
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<IActionResult> SecondFA(int first, int second, int third, int fourth, int fifth, int sixth, int id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Utilizador u = context.ObterUtilizador(id);
-            string res = first > 9 ? first.ToString() : first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
-
-            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-            bool result = tfa.ValidateTwoFactorPIN(u.SecondFactorAuthStamp, res);
-            if (result)
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, u.Id.ToString()),
-                    new Claim(ClaimTypes.GivenName, u.NomeCompleto),
-                    new Claim(ClaimTypes.Thumbprint, u.ImgUtilizador),
-                    new Claim(ClaimTypes.Role, u.Id == 1 ? "Master" : ""),
-                    new Claim(ClaimTypes.Role, u.Admin ? "Admin" : "User"),
-                    new Claim(ClaimTypes.Role, u.TipoUtilizador == 1 ? "Tech" : u.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
-                    new Claim(ClaimTypes.UserData, u.TipoMapa == 1 ? "Google Maps" : (u.TipoMapa == 2 ? "Waze" : "Apple"))
-
-                };
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-                context.AdicionarLog(u.Id, "Utilizador realizou um login com sucesso!", 4);
-
-                return RedirectToAction("Index", "Home");
-            }
-            ModelState.AddModelError("", "Codigo de Autenticação Errado!");
-            return View(u);
-
-        }
         [Authorize(Roles = "Admin")]
         public IActionResult Logs(int id, string Data)
         {

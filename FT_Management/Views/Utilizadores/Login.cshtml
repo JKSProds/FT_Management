@@ -4,18 +4,210 @@
     ViewData["Title"] = "Iniciar Sessão";
 }
 
+<style>
+    .txt-center {
+        text-align: center;
+    }
+
+    body {
+        height: 100vh;
+        font-family: 'Poppins', sans-serif;
+        background: url("https://wallpaperplay.com/walls/full/b/3/7/329976.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .center1 {
+        margin: auto;
+    }
+
+    .center3 {
+        display: flex;
+        align-items: center;
+        resize: both;
+    }
+
+    .two-step-div .two-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #3c3c3c;
+        margin-top: 15px;
+    }
+
+    .two-step-div .my-img {
+        width: 140px;
+        height: auto;
+    }
+
+    .two-step-div .two-p {
+        font-size: 13px;
+        margin-top: 15px;
+        margin-bottom: 30px;
+        color: #666666;
+    }
+
+    .two-step-div #form {
+        direction: ltr;
+    }
+
+    .two-step-div #form input {
+        border-color: transparent;
+        background: transparent;
+        border-bottom: 1.5px solid #cccccc;
+        text-align: center;
+        font-size: 20px;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .two-step-div #form input:focus {
+        outline: 0px transparent !important;
+        box-shadow: transparent !important;
+        border-right: transparent !important;
+        border-left: transparent !important;
+        border-top: transparent !important;
+        border-color: #00AEEF;
+        animation: border-pulsate 1.5s infinite;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .two-step-div .not-first:disabled {
+        background-color: transparent;
+        border-bottom: 1px solid #cccccc !important;
+    }
+
+    @@-moz-keyframes border-pulsate {
+        0% {
+            border-color: #00AEEF;
+        }
+
+        50% {
+            border-color: rgba(0, 0, 0, 0.3);
+        }
+
+        100% {
+            border-color: #00AEEF;
+        }
+    }
+
+    @@-webkit-keyframes border-pulsate {
+        0% {
+            border-color: #00AEEF;
+        }
+
+        50% {
+            border-color: rgba(0, 0, 0, 0.3);
+        }
+
+        100% {
+            border-color: #00AEEF;
+        }
+    }
+
+    @@-o-keyframes border-pulsate {
+        0% {
+            border-color: #00AEEF;
+        }
+
+        50% {
+            border-color: rgba(0, 0, 0, 0.3);
+        }
+
+        100% {
+            border-color: #00AEEF;
+        }
+    }
+
+    @@keyframes border-pulsate {
+        0% {
+            border-color: #00AEEF;
+        }
+
+        50% {
+            border-color: rgba(0, 0, 0, 0.3);
+        }
+
+        100% {
+            border-color: #00AEEF;
+        }
+    }
+
+    .btn-verify {
+        background: #00AEEF;
+        color: #ffffff;
+        border-color: transparent;
+        border-radius: 7px;
+        padding: 10px 25px;
+        font-size: 14px;
+        cursor: pointer;
+        /*transition: all 0.5s;*/
+        width: auto;
+        position: relative;
+        transition: 0.5s ease;
+
+    }
+
+    .btn-verify:hover {
+        transform: translateY(-8px);
+
+    }
+
+    .btn-verify:disabled {
+        background: rgba(103, 187, 209, 0.93);
+        cursor: auto;
+    }
+
+    .btn-verify:disabled:hover {
+        transform: none;
+
+    }
+</style>
+
 <div class="hero is-fullheight">
-    <div>
+    <div class="col-lg-6 float-right txt-center card-box2 two-step-div" hidden id="frm2FA">
+        <img class="my-img"
+            src="https://icons-for-free.com/iconfiles/png/512/locked+login+password+privacy+private+protect+protection+safe-1320196167397530530.png">
+        <p class="two-title">Autenticação de 2 Fatores</p>
+        <p class="two-p">Insira o código de 6 digitos da sua
+            <br>aplicação de autenticação!
+        </p>
+        <form id="form" method="post" asp-controller="Utilizadores" asp-action="Login">
+            <input hidden asp-for="NomeUtilizador" id="username">
+            <input hidden asp-for="Password" id="password">
+
+            <div>
+                <input type="text" inputmode="numeric" maxLength="6" name="first" id='first' size="1" min="0" max="9"
+                    pattern="[0-9]{1}" autocomplete="one-time-code" />
+                <input class="not-first" type="text" inputmode="numeric" name="second" maxLength="1" size="1" min="0"
+                    max="9" pattern="[0-9]{1}" />
+                <input class="not-first" type="text" inputmode="numeric" name="third" maxLength="1" size="1" min="0"
+                    max="9" pattern="[0-9]{1}" />
+                <input class="not-first" type="text" inputmode="numeric" name="fourth" maxLength="1" size="1" min="0"
+                    max="9" pattern="[0-9]{1}" />
+                <input class="not-first" type="text" inputmode="numeric" name="fifth" maxLength="1" size="1" min="0"
+                    max="9" pattern="[0-9]{1}" />
+                <input class="not-first" type="text" inputmode="numeric" name="sixth" maxLength="1" size="1" min="0"
+                    max="9" pattern="[0-9]{1}" />
+            </div>
+            <button type="submit" style="margin-top: 35px"
+                class="btn btn-primary btn-embossed btn-verify">Verificar</button>
+        </form>
+    </div>
+
+    <div id="frmLogin">
         <div class="container has-text-centered">
             <div class="column is-8 is-offset-2">
-                <div class="card card-signin my-5" style=" border: 0; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);">
-                    <div class="card-body">
-                        <img src="~/img/ft_logo.png" width="150" height="90" class="" style="display:block;margin:auto;">
-                        <br />
-                        <form class="form-signin" method="post">
+                <div class="card card-signin my-5"
+                    style=" border: 0; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);">
+                    <form onsubmit="event.preventDefault(); checkLogin(); return false;">
+                        <div class="card-body">
+                            <img src="~/img/ft_logo.png" width="150" height="90" class=""
+                                style="display:block;margin:auto;">
+                            <br />
                             <div class="field mx-2">
                                 <p class="control has-icons-left has-icons-right">
-                                    <input type="text" asp-for="NomeUtilizador" id="inputNome" class="input is-success" placeholder="Nome de Utilizador" required autofocus>
+                                    <input type="text" asp-for="NomeUtilizador" id="inputNome" class="input is-success"
+                                        placeholder="Nome de Utilizador" required autofocus>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-user"></i>
                                     </span>
@@ -23,7 +215,8 @@
                             </div>
                             <div class="field mx-2">
                                 <p class="control has-icons-left">
-                                    <input type="password" asp-for="Password" id="inputPassword" class="input is-success" placeholder="Password" required>
+                                    <input type="password" asp-for="Password" id="inputPassword"
+                                        class="input is-success" placeholder="Password" required>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-key"></i>
                                     </span>
@@ -37,12 +230,90 @@
                                 <span>Iniciar Sessão</span>
                             </button>
                             <br />
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        </form>
-                    </div>
+                            <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+    $(document).ready(function () {
+
+        $('.not-first').prop("disabled", true);
+
+        $('.btn-verify').prop("disabled", true);
+    });
+
+    function checkLogin() {
+        document.getElementById('username').value = document.getElementById('inputNome').value;
+        document.getElementById('password').value = document.getElementById('inputPassword').value;
+
+        $.ajax({
+            url: '/Utilizadores/Check2FA/',
+            data: { "id": document.getElementById('inputNome').value },
+            type: "GET",
+            success: function (data) {
+                if (data) {
+                    console.log(data);
+                    document.getElementById('frm2FA').hidden = false;
+                    document.getElementById('frmLogin').hidden = true;
+                } else {
+                    console.log(data);
+                    document.getElementById('form').submit();
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            },
+            failure: function (data) {
+                console.log(data);
+            }
+        });
+
+    }
+
+    $(function () {
+        'use strict';
+        var body = $('body');
+
+        function goToNextInput(e) {
+
+            var key = e.which,
+                t = $(e.target),
+                sib = t.next('input');
+
+            if (key === 9) {
+                return true;
+            }
+
+            if (!sib || !sib.length) {
+                if (document.getElementById('first').value.length > 0) {
+                    sib = body.find('input').eq(0);
+                    document.getElementById('form').submit();
+                    $('.btn-verify').prop("disabled", false);
+                }
+            }
+
+            sib.select().removeAttr('disabled');
+            sib.select().focus();
+
+        }
+
+        function onFocus(e) {
+            $(e.target).select();
+        }
+
+        body.on('keyup', 'input', goToNextInput);
+        body.on('click', 'input', onFocus);
+
+    })
+
+    document.getElementById('first').addEventListener("paste", function () {
+        setTimeout(function () {
+            document.getElementById('form').submit();
+        });
+    });
+</script>
