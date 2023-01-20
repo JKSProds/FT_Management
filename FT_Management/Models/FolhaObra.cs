@@ -131,10 +131,19 @@ namespace FT_Management.Models
             {
                 if (item != "")
                 {
-                    this.PecasServico.Add(new Produto
+                    if (this.PecasServico.Where(p => p.Ref_Produto == item).Count() == 0)
                     {
-                        Ref_Produto = item
-                    });
+                        this.PecasServico.Add(new Produto
+                        {
+                            Ref_Produto = item,
+                            Stock_Fisico = 1
+                        });
+                    }
+                    else
+                    {
+                        this.PecasServico.Where(p => p.Ref_Produto == item).First().Stock_Fisico += 1;
+                    }
+
                 }
             }
         }

@@ -65,8 +65,14 @@ namespace FT_Management.Controllers
                 {
                     fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
 
-                    MailContext.EnviarEmailFolhaObra(((fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente)) ? fo.EmailCliente + ";" : "") + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(context.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
-
+                    if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
+                    {
+                        MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(context.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+                    }
+                    else
+                    {
+                        ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
+                    }
                     return RedirectToAction("Detalhes", "FolhasObra", new { id = fo.IdFolhaObra });
                 }
 
@@ -108,7 +114,7 @@ namespace FT_Management.Controllers
         public ActionResult ValidarFolhaObra(FolhaObra fo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            return Content(phccontext.ValidarFolhaObra(fo));
+            return Content(User.IsInRole("Admin") ? "" : phccontext.ValidarFolhaObra(fo));
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]

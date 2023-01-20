@@ -579,17 +579,27 @@ namespace FT_Management.Models
                     //CRIAR INTERVENÇÔES
                     for (int i = 0; i < fo.IntervencaosServico.Count(); i++)
                     {
-                        res = CriarIntervencaos(fo.IntervencaosServico[i], fo);
+                        res = CriarIntervencao(fo.IntervencaosServico[i], fo);
                         if (res[0].ToString() != "-1")
                         {
                             fo.IntervencaosServico[i].StampIntervencao = res[2].ToString();
+
+                            //ASSOCIAR PEÇAS INTERVENÇÃO
+                            if (i == 0)
+                            {
+                                foreach (Produto p in fo.PecasServico)
+                                {
+                                    res = CriarPecaIntervencao(p, fo.IntervencaosServico[i], fo);
+                                    if (res[0] == "-1") return res;
+                                }
+                            }
                         }
                         else
                         {
                             return res;
                         }
                     }
-                    //ASSOCIAR PEÇAS INTERVENÇÃO
+
 
                     //GERAR AT
 
@@ -613,7 +623,7 @@ namespace FT_Management.Models
             return res;
         }
 
-        public List<string> CriarIntervencaos(Intervencao i, FolhaObra fo)
+        public List<string> CriarIntervencao(Intervencao i, FolhaObra fo)
         {
             List<string> res = new List<string>() { "-1", "Erro", "" };
             try
@@ -634,6 +644,49 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@HORA_FIM", i.HoraFim.ToShortTimeString()));
                 command.Parameters.Add(new SqlParameter("@DATA", i.DataServiço.ToString("yyyyMMdd")));
                 command.Parameters.Add(new SqlParameter("@RELATORIO", i.RelatorioServico));
+                command.Parameters.Add(new SqlParameter("@TECNICO", i.IdTecnico));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.NomeTecnico));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+
+                return res;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a intervencao para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+        public List<string> CriarPecaIntervencao(Produto p, Intervencao i, FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_INSERE_PECA", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
+                command.Parameters.Add(new SqlParameter("@STAMP_MH", i.StampIntervencao));
+                command.Parameters.Add(new SqlParameter("@REF", p.Ref_Produto));
+                command.Parameters.Add(new SqlParameter("@QTT", p.Stock_Fisico));
+                command.Parameters.Add(new SqlParameter("@SERIE", ""));
                 command.Parameters.Add(new SqlParameter("@TECNICO", i.IdTecnico));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.NomeTecnico));
 

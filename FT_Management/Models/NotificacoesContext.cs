@@ -80,6 +80,12 @@ namespace FT_Management.Models
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
+        public static bool EnviarNotificacaoFolhaObraTecnico(FolhaObra fo, Utilizador u)
+        {
+            string Mensagem = "Foi criada uma nova folha de obra para o cliente: " + fo.ClienteServico.NomeCliente + "\r\nData: " + fo.DataServico.ToShortDateString() + "\r\n\r\n" + fo.GetUrl;
+
+            return EnviarMensagem(u.ChatToken, Mensagem);
+        }
         public static bool EnviarNotificacaoAtualizacaoMarcacaoTecnico(Marcacao m, Utilizador u)
         {
             string Mensagem = "Foi atualizada uma marcação para o cliente: " + m.Cliente.NomeCliente + "\r\nData: " + string.Join(" | ", m.DatasAdicionaisDistintas.Select(x => x.ToShortDateString())) + "\r\n\r\n" + m.GetUrl;
