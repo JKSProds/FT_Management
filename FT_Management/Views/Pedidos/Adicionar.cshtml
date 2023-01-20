@@ -54,6 +54,25 @@
                 </div>
             </div>
             <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
+            <div class="steps-actions">
+                <div class="steps-action">
+                    <a href="#" data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-light">
+                        <span class="icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </span>
+                        <span>Anterior</span>
+                    </a>
+                </div>
+                <div class="steps-action">
+                    <a href="#" data-nav="next" id="stepsNext" onclick="resizeCanvas();"
+                        class="is-fullwidth button is-light">
+                        <span class="icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span>Próximo</span>
+                    </a>
+                </div>
+            </div>
             <div class="steps-content">
                 <div class="step-content is-active">
                     <div class="columns is-multiline mx-1">
@@ -78,9 +97,13 @@
                                 <label asp-for="TipoEquipamento"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        @{ var LstTipoEquipamento = ViewData["TipoEquipamento"] as IList<String>;}
+                                        @{
+                                            var LstTipoEquipamento = ViewData["TipoEquipamento"] as IList<String>;
+                                        }
                                         <span class="select" style="width:100%">
-                                            <select style="width:100%" asp-for="TipoEquipamento" asp-items="@(new SelectList(LstTipoEquipamento))" onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
+                                            <select style="width:100%" asp-for="TipoEquipamento"
+                                                asp-items="@(new SelectList(LstTipoEquipamento))"
+                                                onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
                                         </span>
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-cogs"></i>
@@ -109,7 +132,8 @@
                                 <label asp-for="QuemPediuEmail"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="email" class="input" asp-for="QuemPediuEmail" id="txtQuemPediuEmail">
+                                        <input type="email" class="input" asp-for="QuemPediuEmail"
+                                            id="txtQuemPediuEmail">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-envelope"></i>
                                         </span>
@@ -123,7 +147,8 @@
                                 <label asp-for="QuemPediuTelefone"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="tel" class="input" asp-for="QuemPediuTelefone" id="txtQuemPediuTelefone">
+                                        <input type="tel" class="input" asp-for="QuemPediuTelefone"
+                                            id="txtQuemPediuTelefone">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-phone"></i>
                                         </span>
@@ -140,9 +165,12 @@
                             <div class="field">
                                 <label asp-for="EstadoMarcacaoDesc"></label>
                                 <p class="control has-icons-left">
-                                    @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
+                                    @{
+                                        var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;
+                                    }
                                     <span class="select" style="width:100%">
-                                        <select style="width:100%" asp-for="EstadoMarcacaoDesc" asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                                        <select style="width:100%" asp-for="EstadoMarcacaoDesc"
+                                            asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-check"></i>
@@ -176,9 +204,12 @@
                                 <label asp-for="Tecnico"></label>
                                 <div class="control">
                                     <div class="select is-multiple" style="width:100%">
-                                        @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
+                                        @{
+                                            var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;
+                                        }
                                         <span class="select" style="width:100%">
-                                            <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect" asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+                                            <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect"
+                                                asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
                                         </span>
                                     </div>
                                 </div>
@@ -193,7 +224,9 @@
                             <div class="field">
                                 <label asp-for="DataPedido"></label>
                                 <div class="control">
-                                    <input type="date" class="input" value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataPedido" id="txtDataPedido">
+                                    <input type="date" class="input"
+                                        value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))"
+                                        asp-for="DataPedido" id="txtDataPedido">
                                     <script>
                                         bulmaCalendar.attach('#txtDataPedido', {
                                             color: 'info',
@@ -209,12 +242,17 @@
                                 <span asp-validation-for="DataPedido" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <input type="hidden" class="input" value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DatasAdicionais" id="txtDatasAdicionais">
+                        <input type="hidden" class="input"
+                            value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
+                            asp-for="DatasAdicionais" id="txtDatasAdicionais">
                         <div class="column is-6">
                             <div class="field">
                                 <label asp-for="DataMarcacao"></label>
                                 <div class="control">
-                                    <input type="date" class="input " value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData"  onchange="document.getElementById('txtDatasAdicionais').value = document.getElementById('txtData').value">
+                                    <input type="date" class="input "
+                                        value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
+                                        asp-for="DataMarcacao" id="txtData"
+                                        onchange="document.getElementById('txtDatasAdicionais').value = document.getElementById('txtData').value">
                                     <script>
                                         bulmaCalendar.attach('#txtData', {
                                             color: 'info',
@@ -228,7 +266,7 @@
                                         document.getElementById('txtData').bulmaCalendar.on('select', function (datepicker) {
                                             document.getElementById('txtDatasAdicionais').value = datepicker.data.value();
                                         });
-                                        
+
                                     </script>
                                 </div>
                                 <span asp-validation-for="DataMarcacao" class="has-text-danger"></span>
@@ -248,8 +286,11 @@
                                 <label asp-for="Periodo"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
-                                        @{ var LstPeriodo = ViewData["Periodo"] as IList<String>;}
-                                        <select class="select" style="width:100%" asp-for="Periodo" asp-items="@(new SelectList(LstPeriodo))"></select>
+                                        @{
+                                            var LstPeriodo = ViewData["Periodo"] as IList<String>;
+                                        }
+                                        <select class="select" style="width:100%" asp-for="Periodo"
+                                            asp-items="@(new SelectList(LstPeriodo))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-cloud-sun"></i>
@@ -267,8 +308,11 @@
                                 <label asp-for="TipoServico"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
-                                        @{ var LstTipoServico = ViewData["TipoServico"] as IList<String>;}
-                                        <select class="select" style="width:100%" asp-for="TipoServico" asp-items="@(new SelectList(LstTipoServico))"></select>
+                                        @{
+                                            var LstTipoServico = ViewData["TipoServico"] as IList<String>;
+                                        }
+                                        <select class="select" style="width:100%" asp-for="TipoServico"
+                                            asp-items="@(new SelectList(LstTipoServico))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-wrench"></i>
@@ -282,8 +326,11 @@
                                 <label asp-for="PrioridadeMarcacao"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
-                                        @{ var LstPrioridade = ViewData["Prioridade"] as IList<String>;}
-                                        <select class="select" style="width:100%" asp-for="PrioridadeMarcacao" asp-items="@(new SelectList(LstPrioridade))"></select>
+                                        @{
+                                            var LstPrioridade = ViewData["Prioridade"] as IList<String>;
+                                        }
+                                        <select class="select" style="width:100%" asp-for="PrioridadeMarcacao"
+                                            asp-items="@(new SelectList(LstPrioridade))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
@@ -297,8 +344,11 @@
                                 <label asp-for="TipoPedido"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
-                                        @{ var LstTipoPedido = ViewData["TipoPedido"] as IList<String>;}
-                                        <select class="select" style="width:100%" asp-for="Periodo" asp-items="@(new SelectList(LstTipoPedido))"></select>
+                                        @{
+                                            var LstTipoPedido = ViewData["TipoPedido"] as IList<String>;
+                                        }
+                                        <select class="select" style="width:100%" asp-for="Periodo"
+                                            asp-items="@(new SelectList(LstTipoPedido))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-phone-slash"></i>
@@ -323,13 +373,15 @@
                             <div class="field">
                                 <label asp-for="ResumoMarcacao"></label>
                                 <div class="control">
-                                    <textarea class="textarea" rows="10" placeholder="Resumo" asp-for="ResumoMarcacao"></textarea>
+                                    <textarea class="textarea" rows="10" placeholder="Resumo"
+                                        asp-for="ResumoMarcacao"></textarea>
                                 </div>
                                 <span asp-validation-for="ResumoMarcacao" class="has-text-danger"></span>
                             </div>
                         </div>
                         &nbsp;
-                        <button type="button" onclick="ValidarMarcacao()" value="Criar Marcação" class="button is-info is-outlined is-fullwidth">
+                        <button type="button" onclick="ValidarMarcacao()" value="Criar Marcação"
+                            class="button is-info is-large is-fullwidth">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -337,25 +389,7 @@
                         </button>
                     </div>
                 </div>
-                &nbsp;
-                <div class="steps-actions">
-                    <div class="steps-action">
-                        <a href="#" data-nav="previous" class="button is-light">
-                            <span class="icon">
-                                <i class="fas fa-arrow-left"></i>
-                            </span>
-                            <span>Anterior</span>
-                        </a>
-                    </div>
-                    <div class="steps-action">
-                        <a href="#" data-nav="next" class="button is-light">
-                            <span class="icon">
-                                <i class="fas fa-arrow-right"></i>
-                            </span>
-                            <span>Próximo</span>
-                        </a>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -371,15 +405,18 @@
         </header>
         <section class="modal-card-body">
             <div class="field is-horizontal">
-                <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
+                <div class="field-label is-normal"><label class="label">Mensagens:</label></div>
+                <div class="field-body">
                     <div class="field" style="width:100%">
-                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
+                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8
+                                value=""></textarea></div>
                     </div>
                 </div>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
+            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check-circle"></i>
                 </span>
@@ -391,7 +428,7 @@
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
 <script>

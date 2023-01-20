@@ -70,21 +70,23 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            if (m.LstTecnicosSelect.Count() == 0)
-            {
-                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
-            }
-            else
+            if (m.LstTecnicosSelect.Count() > 0)
             {
                 foreach (var item in m.LstTecnicosSelect)
                 {
                     m.LstTecnicos.Add(context.ObterUtilizador(item));
                 }
-                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
                 m.Tecnico = m.LstTecnicos.First();
                 ModelState.Remove("Tecnico.Password");
             }
+            else
+            {
+                m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
+                m.Tecnico = new Utilizador();
+            }
 
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             if (ModelState.IsValid)
             {
@@ -132,21 +134,21 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            if (m.LstTecnicosSelect.Count() == 0)
-            {
-                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
-            }
-            else
+            if (m.LstTecnicosSelect.Count() > 0)
             {
                 foreach (var item in m.LstTecnicosSelect)
                 {
                     m.LstTecnicos.Add(context.ObterUtilizador(item));
                 }
-                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 m.Tecnico = m.LstTecnicos.First();
                 ModelState.Remove("Tecnico.Password");
             }
-
+            else
+            {
+                m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
+                m.Tecnico = new Utilizador();
+            }
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             if (m.DatasAdicionais == null) ModelState.AddModelError("", "Tem de adicionar pelo menos uma data!");
 
 
