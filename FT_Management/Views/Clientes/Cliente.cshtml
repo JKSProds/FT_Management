@@ -84,7 +84,8 @@
                                 <div class="field">
                                     <label asp-for="IdCliente" class="label"></label>
                                     <div class="control">
-                                        <input class="input" type="text" readonly asp-for="IdCliente">
+                                        <input class="input" type="text" readonly
+                                            value="@Model.IdCliente - @Model.IdLoja">
                                     </div>
                                 </div>
                             </div>

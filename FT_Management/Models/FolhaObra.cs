@@ -88,8 +88,8 @@ namespace FT_Management.Models
                 new Intervencao()
                 {
                     NomeTecnico = "N/D",
-                    HoraInicio = DateTime.Now.AddMinutes(-60),
-                    HoraFim = DateTime.Now
+                    HoraInicio = DateTime.Parse(DateTime.Now.AddHours(-1).Hour.ToString() + ":00"),
+                    HoraFim = DateTime.Parse(DateTime.Now.Hour.ToString() + ":00")
                 }
             };
         }

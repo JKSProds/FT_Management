@@ -52,14 +52,8 @@
     <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
 
     <div class="container">
-        <div class="steps is-small" id="stepsDemo" )>
-            <div class="step-item is-success">
-                <div class="step-marker">0</div>
-                <div class="step-details">
-                    <p class="step-title">Cliente</p>
-                </div>
-            </div>
-            <div class="step-item">
+        <div class="steps is-small" id="stepsDemo">
+            <div class="step-item is-active">
                 <div class="step-marker">1</div>
                 <div class="step-details">
                     <p class="step-title">Equipamento</p>
@@ -96,111 +90,44 @@
                 </div>
             </div>
             <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
-            <div class="steps-content">
-                <div class="step-content">
-                    <div class="columns is-multiline mx-1 ">
-                        <div class="column is-12">
-                            <div class="field">
-                                <label asp-for="ClienteServico.NomeCliente"></label>
-                                <div class="control">
-                                    <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
-                                    <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
-                                    <p class="control has-icons-left">
-                                        <input type="text" class="input" value="@Model.ClienteServico.NomeCliente"
-                                            asp-for="ClienteServico.NomeCliente" id="txtCustomer">
-                                        <span class="icon is-small is-left">
-                                            <i class="fas fa-user-check"></i>
-                                        </span>
-                                    </p>
-                                </div>
-                                <span asp-validation-for="ClienteServico.IdCliente" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3">
-                            <div class="field">
-                                <label asp-for="ReferenciaServico"></label>
-                                <div class="control">
-                                    <p class="control">
-                                        <input type="text" class="input" asp-for="ReferenciaServico">
-                                    </p>
-                                </div>
-                                <span asp-validation-for="ReferenciaServico" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3">
-                            <div class="field">
-                                <label asp-for="IdMarcacao"></label>
-                                <div class="control">
-                                    <p class="control">
-                                        <input type="text" class="input" asp-for="IdMarcacao">
-                                    </p>
-                                </div>
-                                <span asp-validation-for="IdMarcacao" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="CobrarDeslocacao" id="chkCobrarDeslocacao">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model =>
-                                        model.CobrarDeslocacao)</span>
-                                </label>
-                                <span asp-validation-for="CobrarDeslocacao" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="EnviarEmail" id="chkEnviarEmail">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model => model.EnviarEmail)</span>
-                                </label>
-                                <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="GuardarLocalizacao" id="chkGuardarLocalizacao">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model =>
-                                        model.GuardarLocalizacao)</span>
-                                </label>
-                                <span asp-validation-for="GuardarLocalizacao" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model =>
-                                        model.FecharMarcacao)</span>
-                                </label>
-                                <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
+            <div class="steps-actions">
+                <div class="steps-action">
+                    <a href="#" data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-light">
+                        <span class="icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </span>
+                        <span>Anterior</span>
+                    </a>
                 </div>
-                <div class="step-content">
+                <div class="steps-action">
+                    <a href="#" data-nav="next" id="stepsNext" onclick="resizeCanvas();"
+                        class="is-fullwidth button is-light">
+                        <span class="icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span>Próximo</span>
+                    </a>
+                </div>
+            </div>
+            <div class="steps-content">
+                <div class="step-content is-active">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="EquipamentoServico.DesignacaoEquipamento"></label>
-                                <p class="control has-icons-left">
-                                    <span class="select" style="width:100%">
-                                        <select id="selectEquipamentos" style="width:100%"
-                                            value="@Model.EquipamentoServico.EquipamentoStamp"
-                                            asp-for="EquipamentoServico.EquipamentoStamp"></select>
-                                    </span>
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                </p>
+                                <label asp-for="EquipamentoServico.NumeroSerieEquipamento"></label>
+                                <div class="control">
+                                    <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
+                                        id="txtEquipamentoStamp" />
+                                    <p class="control has-icons-left">
+                                        <input type="text" class="input" inputmode="numeric"
+                                            asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <span asp-validation-for="EquipamentoServico.EquipamentoStamp" class="has-text-danger"></span>
                             </div>
-                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
-                                class="has-text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -417,23 +344,90 @@
                     </div>
                 </div>
             </div>
-            &nbsp;
-            <div class="steps-actions">
-                <div class="steps-action">
-                    <a href="#" data-nav="previous" id="stepsPrevious" class="button is-light">
-                        <span class="icon">
-                            <i class="fas fa-arrow-left"></i>
-                        </span>
-                        <span>Anterior</span>
-                    </a>
+        </div>
+    </div>
+    <div style="display: none;">
+        <div class="columns is-multiline mx-1 ">
+            <div class="column is-12">
+                <div class="field">
+                    <label asp-for="ClienteServico.NomeCliente"></label>
+                    <div class="control">
+                        <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
+                        <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
+                        <p class="control has-icons-left">
+                            <input type="text" class="input" value="@Model.ClienteServico.NomeCliente"
+                                asp-for="ClienteServico.NomeCliente" id="txtCustomer">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user-check"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <span asp-validation-for="ClienteServico.IdCliente" class="has-text-danger"></span>
                 </div>
-                <div class="steps-action">
-                    <a href="#" data-nav="next" id="stepsNext" onclick="resizeCanvas();" class="button is-light">
-                        <span class="icon">
-                            <i class="fas fa-arrow-right"></i>
-                        </span>
-                        <span>Próximo</span>
-                    </a>
+            </div>
+            <div class="column is-3">
+                <div class="field">
+                    <label asp-for="ReferenciaServico"></label>
+                    <div class="control">
+                        <p class="control">
+                            <input type="text" class="input" asp-for="ReferenciaServico">
+                        </p>
+                    </div>
+                    <span asp-validation-for="ReferenciaServico" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3">
+                <div class="field">
+                    <label asp-for="IdMarcacao"></label>
+                    <div class="control">
+                        <p class="control">
+                            <input type="text" class="input" asp-for="IdMarcacao">
+                        </p>
+                    </div>
+                    <span asp-validation-for="IdMarcacao" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="CobrarDeslocacao" id="chkCobrarDeslocacao">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model =>
+                            model.CobrarDeslocacao)</span>
+                    </label>
+                    <span asp-validation-for="CobrarDeslocacao" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="EnviarEmail" id="chkEnviarEmail">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model => model.EnviarEmail)</span>
+                    </label>
+                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="GuardarLocalizacao" id="chkGuardarLocalizacao">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model =>
+                            model.GuardarLocalizacao)</span>
+                    </label>
+                    <span asp-validation-for="GuardarLocalizacao" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model =>
+                            model.FecharMarcacao)</span>
+                    </label>
+                    <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
                 </div>
             </div>
         </div>
@@ -598,7 +592,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 <script>
     bulmaSteps.attach('.steps', {
         onShow: id => {
-            if (id == 6) resizeCanvas();
+            if (id == 5) {
+                resizeCanvas();
+            }
         },
         onError: error => {
             console.log(error);
@@ -635,10 +631,8 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
     resizeCanvas();
 
+    CarregarIntervencoes();
     CarregarPecas();
-    if (document.getElementById("txtIdCliente").value > 0) {
-        CarregarEquipamentos();
-    }
 
     let interval;
     let time = 0;
@@ -795,6 +789,21 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         if (document.getElementById('ListaIntervencoes').value.slice(-1) != ";" && document.getElementById('ListaIntervencoes').value != "") document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value + ";";
     }
 
+    function CarregarIntervencoes() {
+        var intervencoes = document.getElementById('ListaIntervencoes').value;
+        document.getElementById('ListaIntervencoes').value = '';
+
+        intervencoes.split(";").forEach(function (item) {
+            console.log(item.split("|")[0]);
+            console.log(item.split("|")[1]);
+            document.getElementById('txtHoraInicio').value = item.split("|")[0];
+            document.getElementById('txtHoraFim').value = item.split("|")[1];
+            AdicionarIntervencao();
+        });
+        document.getElementById('txtHoraInicio').value = '@Model.IntervencaosServico.First().HoraInicio.ToShortTimeString()';
+        document.getElementById('txtHoraFim').value = '@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()';
+    }
+
     function AdicionarPeca(ref, desig) {
         document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (1 UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + ref};`;
@@ -804,30 +813,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById(ref).remove();
         document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(ref + ';', '');
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
-    }
-
-    function CarregarEquipamentos() {
-        $.ajax({
-            url: '/FolhasObra/ObterEquipamentos/',
-            data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value },
-            type: "POST",
-            success: function (response) {
-                var equipamentos = "";
-                $(response).each(function () {
-                    equipamentos = equipamentos + '<option value="' + this.equipamentoStamp + '">' + this.descricaoEquipamento + '</option>'
-                });
-
-                var equipamentosList = $("#selectEquipamentos");
-                equipamentosList.empty();
-                equipamentosList.append(equipamentos);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            }
-        });
     }
 
     function CarregarPecas() {
@@ -897,11 +882,41 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             select: function (e, i) {
                 $("#txtIdCliente").val(i.item.val);
                 $("#txtIdLoja").val(i.item.val2);
-                CarregarEquipamentos();
             },
             minLength: 1
         });
     });
+
+    $(function () {
+        $("#txtEquipamento").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Equipamentos/ObterEquipamentos/',
+                    data: { "prefix": request.term, "no": "@Model.ClienteServico.IdCliente", "loja": "@Model.ClienteServico.IdLoja" },
+                    type: "GET",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.numeroSerieEquipamento + " (" + item.marcaEquipamento + " - " + item.modeloEquipamento + ")",
+                                val: item.equipamentoStamp
+                            };
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#txtEquipamentoStamp").val(i.item.val);
+            },
+            minLength: 1
+        });
+    });
+
 
     (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
         const $target = $close.closest('#modalAguardarValidacao');

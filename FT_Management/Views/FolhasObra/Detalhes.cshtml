@@ -417,12 +417,12 @@
 <script>
 
     function ObterHistoricoEquipamento() {
-        var NumeroSerie = document.getElementById("NumeroSerieEquipamento").value;
+        var Stamp = '@Model.EquipamentoServico.EquipamentoStamp';
 
         $.ajax({
-            url: "/FolhasObra/ObterHistorico",
+            url: "/Equipamentos/ObterHistorico",
             type: "GET",
-            data: "NumeroSerieEquipamento=" + NumeroSerie,
+            data: "id=" + Stamp,
             dataType: "json", // type of data you're expecting from response
             success: function (json) {
                 var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";

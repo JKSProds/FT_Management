@@ -171,27 +171,11 @@ namespace FT_Management.Controllers
             return View(fo);
         }
 
-        public JsonResult ObterHistorico(string NumeroSerieEquipamento)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return Json(new { json = phccontext.ObterHistorico(NumeroSerieEquipamento) });
-        }
-
         public JsonResult ObterEmailClienteFolhaObra(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return Json(phccontext.ObterFolhaObra(id).ClienteServico.EmailCliente);
-        }
-
-        [HttpPost]
-        public JsonResult ObterEquipamentos(string IdCliente, string IdLoja)
-        {
-            if (string.IsNullOrEmpty(IdCliente)) return Json("");
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = int.Parse(IdCliente), IdLoja = int.Parse(IdLoja) }).OrderBy(e => e.NumeroSerieEquipamento).ToList());
         }
 
         public virtual ActionResult PrintFolhaObra(int id)

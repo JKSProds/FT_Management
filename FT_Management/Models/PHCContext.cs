@@ -553,6 +553,10 @@ namespace FT_Management.Models
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
+        public bool AtualizarClienteEquipamento(Cliente c, Equipamento e)
+        {
+            return !string.IsNullOrEmpty(ExecutarQuery("UPDATE MA SET ma.no=cl.no, ma.nome=cl.nome, ma.estab=cl.estab, ma.morada=cl.morada, ma.local=cl.local, ma.codpost=cl.codpost, ma.contacto=cl.contacto, ma.email=cl.email, ma.telefone=cl.telefone FROM MA JOIN CL ON CL.NO=" + c.IdCliente + " AND CL.ESTAB=" + c.IdLoja + " WHERE ma.mastamp='" + e.EquipamentoStamp + "';")[0]);
+        }
         #endregion
 
         //Obter Folhas de Obra
@@ -937,9 +941,9 @@ namespace FT_Management.Models
         {
             return ObterIntervencoes("select nopat, mhstamp, tecnico, tecnnm, data, hora, horaf, relatorio from mh where nopat=" + IdFolhaObra + " order by nopat;");
         }
-        public List<Intervencao> ObterHistorico(string NumeroSerie)
+        public List<Intervencao> ObterHistorico(string stamp)
         {
-            return ObterIntervencoes("select nopat, mhstamp, tecnico, tecnnm, data, hora, horaf, relatorio, serie from mh where serie='" + NumeroSerie + "' order by data;");
+            return ObterIntervencoes("select nopat, mhstamp, tecnico, tecnnm, data, hora, horaf, relatorio, serie from mh where mastamp='" + stamp + "' order by data;");
         }
 
         private List<Produto> ObterPecas(string SQL_Query)

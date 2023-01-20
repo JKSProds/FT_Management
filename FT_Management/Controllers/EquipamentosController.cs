@@ -28,5 +28,21 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterEquipamento(id));
         }
+
+        public JsonResult ObterHistorico(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(new { json = phccontext.ObterHistorico(id) });
+        }
+
+        [HttpGet]
+        public JsonResult ObterEquipamentos(int no, int loja, string prefix)
+        {
+            if (no == 0) return Json("");
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = no, IdLoja = loja }).Where(e => e.NumeroSerieEquipamento.ToLower().Contains(prefix.ToLower())).OrderBy(e => e.NumeroSerieEquipamento).ToList());
+        }
     }
 }
