@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using FT_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 namespace FT_Management.Controllers
 {
+    [Authorize(Roles = "Admin, Escritorio, Tech, Comercial")]
     public class EquipamentosController : Controller
     {
 
