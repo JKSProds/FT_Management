@@ -120,7 +120,7 @@
                             <div class="field">
                                 <label asp-for="Cliente.IdCliente" class="label"></label>
                                 <div class="field has-addons">
-                                    <div class="control">
+                                    <div class="control" style="width: 100%">
                                         <input class="input" type="text" readonly
                                             value="@Model.IdCliente - @Model.IdLoja">
                                     </div>
@@ -384,7 +384,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Equipamentos/CriarCodigo/" + stamp,
-                data: { "obs": document.getElementById('txtCustomer').value }
+                data: { "equipamento": '@Model.NumeroSerieEquipamento', "cliente": document.getElementById('txtCustomer').value }
             });
         }
     }

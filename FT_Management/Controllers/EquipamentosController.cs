@@ -7,6 +7,7 @@ using FT_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+
 namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio, Tech, Comercial")]
@@ -47,7 +48,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public ActionResult CriarCodigo(string id, string obs)
+        public ActionResult CriarCodigo(string id, string equipamento, string cliente)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Codigo c = new Codigo()
@@ -57,7 +58,7 @@ namespace FT_Management.Controllers
                 ValidadeCodigo = DateTime.Now.AddMinutes(10),
                 utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value))
             };
-            c.Obs = "O utilizador " + c.utilizador.NomeCompleto + " deseja associar um equipamento ao cliente: " + obs + "!";
+            c.Obs = "Deseja associar o equipamento com número de serie: " + equipamento + " ao cliente: " + cliente + "?";
 
             context.CriarCodigo(c);
             foreach (var u in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
