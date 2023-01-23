@@ -119,8 +119,19 @@
                         <div class="column is-2">
                             <div class="field">
                                 <label asp-for="Cliente.IdCliente" class="label"></label>
-                                <div class="control">
-                                    <input class="input" type="text" readonly value="@Model.IdCliente - @Model.IdLoja">
+                                <div class="field has-addons">
+                                    <div class="control">
+                                        <input class="input" type="text" readonly
+                                            value="@Model.IdCliente - @Model.IdLoja">
+                                    </div>
+                                    <div class="control">
+                                        <button type="button" class="button is-info"
+                                            onclick="Bulma('#modalAssociarClienteEquipamento').modal().open();">
+                                            <span class="icon">
+                                                <i class="fas fa-refresh"></i>
+                                            </span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -261,3 +272,198 @@
         </div>
     </div>
 </div>
+
+
+<div id="modalAssociarClienteEquipamento" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Associar Cliente</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <div class="field">
+                    <label>Cliente</label>
+                    <div class="control">
+                        <p class="control has-icons-left">
+                            <input type="hidden" id="txtStampCliente" />
+                            <input type="text" class="input" id="txtCustomer">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user-check"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" onclick="GerarCodigo();">Associar</button>
+            <button class="button"
+                onclick="Bulma('#modalAssociarClienteEquipamento').modal().close();">Cancelar</button>
+        </footer>
+    </div>
+</div>
+
+<div class="modal" id="modalAguardarValidacao">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Por favor aguarde ...</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field" style="width:100%">
+                        <p class="title has-text-centered has-text-weight-bold" style="font-size:125px" id='countdown'>
+                        </p><progress class="progress is-info is-large" id='pb_timer'></progress>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    //CLIENTES
+    function AssociarCliente(stamp) {
+        $.ajax({
+            type: "POST",
+            url: "/Equipamentos/AssociarCliente/" + '@Model.EquipamentoStamp',
+            data: { "stamp": stamp },
+            success: function (result) {
+                $(function () {
+                    console.log(result);
+                    if (result == "True") {
+                        bulmaToast.toast({
+                            message: 'Código aprovado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        });
+                        window.location.reload();
+                    } else {
+                        bulmaToast.toast({
+                            message: 'O código foi rejeitado pelo utilizador!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        });
+                        clearInterval(interval);
+                        Bulma('#modalAguardarValidacao').modal().close();
+                    }
+                });
+            }
+        });
+    }
+
+    //CODIGO DE VALIDACAO
+    let interval;
+    let time = 0;
+    let stamp_codigo = '';
+    function AtualizarTimer() {
+        const minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        document.getElementById('countdown').innerHTML = minutes + ':' + seconds;
+        document.getElementById('pb_timer').value = time;
+        time--;
+        if (seconds % 10 === 0) ValidarCodigo(stamp_codigo);
+    }
+
+    function CriarCodigo(stamp) {
+        if (document.getElementById('txtStampCliente').value !== "") {
+            $.ajax({
+                type: "POST",
+                url: "/Equipamentos/CriarCodigo/" + stamp,
+                data: { "obs": document.getElementById('txtCustomer').value }
+            });
+        }
+    }
+
+    function ValidarCodigo(stamp) {
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/ValidarCodigo/" + stamp,
+            success: function (result) {
+                $(function () {
+                    if (result == "1") {
+                        bulmaToast.toast({
+                            message: 'Código aprovado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        });
+                        clearInterval(interval);
+                        Bulma('#modalAguardarValidacao').modal().close();
+                        AssociarCliente(document.getElementById('txtStampCliente').value);
+                    } else if (result == "2") {
+                        bulmaToast.toast({
+                            message: 'O código foi rejeitado pelo utilizador!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000,
+                            position: 'top-center'
+                        });
+                        clearInterval(interval);
+                        Bulma('#modalAguardarValidacao').modal().close();
+                    }
+                });
+            }
+        });
+    }
+
+    function GerarCodigo() {
+        stamp_codigo = Date.now() + Math.random();
+        CriarCodigo(stamp_codigo);
+        time = 5 * 60;
+        interval = setInterval(AtualizarTimer, 1000);
+        document.getElementById('pb_timer').max = time;
+
+        Bulma('#modalAguardarValidacao').modal().open();
+    }
+
+
+    $(function () {
+        $("#txtCustomer").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Clientes/ObterClientes/',
+                    data: { "prefix": request.term },
+                    type: "POST",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.nomeCliente + " (" + item.idCliente + " - " + item.idLoja + ")",
+                                val: item.clienteStamp
+                            };
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#txtStampCliente").val(i.item.val);
+            },
+            minLength: 1
+        });
+    });
+</script>

@@ -44,5 +44,34 @@ namespace FT_Management.Controllers
 
             return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = no, IdLoja = loja }).Where(e => e.NumeroSerieEquipamento.ToLower().Contains(prefix.ToLower())).OrderBy(e => e.NumeroSerieEquipamento).ToList());
         }
+
+        [HttpPost]
+        public ActionResult CriarCodigo(string id, string obs)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Codigo c = new Codigo()
+            {
+                Stamp = id,
+                Estado = 0,
+                ValidadeCodigo = DateTime.Now.AddMinutes(10),
+                utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value))
+            };
+            c.Obs = "O utilizador " + c.utilizador.NomeCompleto + " deseja associar um equipamento ao cliente: " + obs + "!";
+
+            context.CriarCodigo(c);
+            foreach (var u in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
+            {
+                ChatContext.EnviarNotificacaoCodigo(c, u);
+            }
+            return Content("OK");
+        }
+        [HttpPost]
+        public ActionResult AssociarCliente(string id, string stamp)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Cliente c = phccontext.ObterClienteSimples(stamp);
+            Equipamento e = phccontext.ObterEquipamento(id);
+            return Content(phccontext.AtualizarClienteEquipamento(c, e).ToString());
+        }
     }
 }
