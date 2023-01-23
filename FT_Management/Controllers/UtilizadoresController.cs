@@ -76,7 +76,12 @@ namespace FT_Management.Controllers
             }
             return View();
         }
-
+        [HttpGet]
+        public IActionResult Login(string ReturnUrl)
+        {
+            ViewData["ReturnUrl"] = ReturnUrl;
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl, int first, int second, int third, int fourth, int fifth, int sixth)
         {

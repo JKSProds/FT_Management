@@ -174,7 +174,7 @@
         <form id="form" method="post" asp-controller="Utilizadores" asp-action="Login">
             <input hidden asp-for="NomeUtilizador" id="username">
             <input hidden asp-for="Password" id="password">
-
+            <input hidden name="ReturnUrl" value=@ViewData["ReturnUrl"]>
             <div>
                 <input type="text" inputmode="numeric" maxLength="6" name="first" id='first' size="1" min="0" max="9"
                     pattern="[0-9]{1}" autocomplete="one-time-code" />
@@ -231,6 +231,7 @@
                             </button>
                             <br />
                             <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+                            <input hidden name="ReturnUrl" value=@ViewData["ReturnUrl"]>
                         </div>
                     </form>
                 </div>
