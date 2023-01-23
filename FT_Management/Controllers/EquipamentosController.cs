@@ -51,29 +51,53 @@ namespace FT_Management.Controllers
         public ActionResult CriarCodigo(string id, string equipamento, string cliente)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Codigo c = new Codigo()
-            {
-                Stamp = id,
-                Estado = 0,
-                ValidadeCodigo = DateTime.Now.AddMinutes(10),
-                utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value))
-            };
-            c.Obs = "Deseja associar o equipamento com número de serie: " + equipamento + " ao cliente: " + cliente + "?";
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            context.CriarCodigo(c);
-            foreach (var u in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
+            Cliente cl = phccontext.ObterClienteSimples(cliente);
+            Equipamento e = phccontext.ObterEquipamento(equipamento);
+
+            if (this.User.IsInRole("Admin"))
             {
-                ChatContext.EnviarNotificacaoCodigo(c, u);
+                AssociarCliente(e.EquipamentoStamp, cl.ClienteStamp, "");
+                return Content("Refresh");
             }
+            else
+            {
+                Codigo c = new Codigo()
+                {
+                    Stamp = id,
+                    Estado = 0,
+                    ValidadeCodigo = DateTime.Now.AddMinutes(10),
+                    utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value))
+                };
+                c.Obs = "Deseja associar o equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " ao cliente: " + cl.NomeCliente + "?";
+
+                context.CriarCodigo(c);
+                foreach (var u in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
+                {
+                    ChatContext.EnviarNotificacaoCodigo(c, u);
+                }
+            }
+
             return Content("OK");
         }
         [HttpPost]
-        public ActionResult AssociarCliente(string id, string stamp)
+        public ActionResult AssociarCliente(string id, string stamp, string codigo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            Cliente c = phccontext.ObterClienteSimples(stamp);
-            Equipamento e = phccontext.ObterEquipamento(id);
-            return Content(phccontext.AtualizarClienteEquipamento(c, e).ToString());
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            if (context.ValidarCodigo(codigo) == 1 || User.IsInRole("Admin"))
+            {
+                Cliente c = phccontext.ObterClienteSimples(stamp);
+                Equipamento e = phccontext.ObterEquipamento(id);
+                return Content(phccontext.AtualizarClienteEquipamento(c, e).ToString());
+            }
+            else
+            {
+                return Content("False");
+            }
+
         }
     }
 }

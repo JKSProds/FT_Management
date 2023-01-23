@@ -330,7 +330,7 @@
         $.ajax({
             type: "POST",
             url: "/Equipamentos/AssociarCliente/" + '@Model.EquipamentoStamp',
-            data: { "stamp": stamp },
+            data: { "stamp": stamp, "codigo": stamp_codigo },
             success: function (result) {
                 $(function () {
                     console.log(result);
@@ -384,7 +384,15 @@
             $.ajax({
                 type: "POST",
                 url: "/Equipamentos/CriarCodigo/" + stamp,
-                data: { "equipamento": '@Model.NumeroSerieEquipamento', "cliente": document.getElementById('txtCustomer').value }
+                data: { "equipamento": '@Model.EquipamentoStamp', "cliente": document.getElementById('txtStampCliente').value },
+                success: function (result) {
+                    $(function () {
+                        Bulma('#modalAguardarValidacao').modal().open();
+                        if (result == "Refresh") {
+                            window.location.reload();
+                        }
+                    });
+                }
             });
         }
     }
@@ -432,8 +440,6 @@
         time = 5 * 60;
         interval = setInterval(AtualizarTimer, 1000);
         document.getElementById('pb_timer').max = time;
-
-        Bulma('#modalAguardarValidacao').modal().open();
     }
 
 
