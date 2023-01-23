@@ -43,10 +43,12 @@ namespace FT_Management.Models
 
         public static string FormatLinuxServer(string res)
         {
-            #if DEBUG 
-                return res;
-            #endif
-            return res.Replace("\\", "/").Replace("S:", "/server");
+#if DEBUG
+            return res;
+#else
+return res.Replace("\\", "/").Replace("S:", "/server");
+#endif
+
         }
 
         public static bool CriarAnexoMarcacao(Anexo a, IFormFile ficheiro)

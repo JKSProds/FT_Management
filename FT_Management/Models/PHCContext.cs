@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-
+using System.Net.Mail;
 
 namespace FT_Management.Models
 {
@@ -732,12 +732,31 @@ namespace FT_Management.Models
             return res;
         }
 
+        public bool FecharFolhaObra(FolhaObra fo)
+        {
+            if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
+            {
+                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+            }
+            else
+            {
+                ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
+            }
+            return true;
+        }
+
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
 
             if (fo.DataServico.ToShortDateString() != DateTime.Now.ToShortDateString()) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
             if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";
+
+            foreach (Produto item in fo.PecasServico)
+            {
+                Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.Ref_Produto == item.Ref_Produto.Trim()).DefaultIfEmpty(new Produto()).First();
+                if (p.Stock_Atual < item.Stock_Fisico) res += "Não tem stock suficiente da seguinte peça: " + p.Ref_Produto.Trim() + "!\r\n";
+            }
 
             if (!string.IsNullOrEmpty(res)) res += "\r\nDeseja proseguir?";
             return res;

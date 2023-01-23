@@ -47,32 +47,24 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
             if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
+
             if (ModelState.IsValid)
             {
-
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
+                fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
                 fo.ValidarIntervencoes();
                 fo.ValidarPecas();
-                fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)
                 {
                     fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
+                    phccontext.FecharFolhaObra(fo);
 
-                    if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
-                    {
-                        MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(context.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
-                    }
-                    else
-                    {
-                        ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
-                    }
                     return RedirectToAction("Detalhes", "FolhasObra", new { id = fo.IdFolhaObra });
                 }
 
@@ -114,7 +106,17 @@ namespace FT_Management.Controllers
         public ActionResult ValidarFolhaObra(FolhaObra fo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            return Content(User.IsInRole("Admin") ? "" : phccontext.ValidarFolhaObra(fo));
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            fo.ValidarIntervencoes();
+            fo.ValidarPecas();
+
+#if DEBUG
+            return Content(phccontext.ValidarFolhaObra(fo));
+#else
+                        return Content(User.IsInRole("Admin") ? "" : phccontext.ValidarFolhaObra(fo));
+#endif
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]

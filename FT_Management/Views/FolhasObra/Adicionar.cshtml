@@ -113,18 +113,28 @@
                 <div class="step-content is-active">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
-                            <div class="field">
+                            <div class="field ">
                                 <label asp-for="EquipamentoServico.NumeroSerieEquipamento"></label>
-                                <div class="control">
-                                    <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
-                                        id="txtEquipamentoStamp" />
-                                    <p class="control has-icons-left">
-                                        <input type="text" class="input"
-                                            asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
-                                        <span class="icon is-small is-left">
-                                            <i class="fas fa-check"></i>
-                                        </span>
-                                    </p>
+                                <div class="field has-addons">
+                                    <div class="control" style="width:100%">
+                                        <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
+                                            id="txtEquipamentoStamp" />
+                                        <p class="control has-icons-left">
+                                            <input type="text" class="input"
+                                                asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
+                                            <span class="icon is-small is-left">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="control">
+                                        <button type="button" class="button is-info" id="btnObterHistorico"
+                                            onclick="ObterHistoricoEquipamento()" disabled>
+                                            <span class="icon">
+                                                <i class="fas fa-history"></i>
+                                            </span>
+                                        </button>
+                                    </div>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
                                     class="has-text-danger"></span>
@@ -184,6 +194,7 @@
                             <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
+                            <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -348,6 +359,7 @@
     </div>
     <div style="display: none;">
         <div class="columns is-multiline mx-1 ">
+            <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
             <div class="column is-12">
                 <div class="field">
                     <label asp-for="ClienteServico.NomeCliente"></label>
@@ -432,6 +444,7 @@
             </div>
         </div>
     </div>
+
 </form>
 
 <div class="modal" id="modalDeslocacao">
@@ -583,6 +596,36 @@
     </div>
 </div>
 
+<div id="modalObterHistorico" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Histórico de Intervenções</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p> </p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div id="modalObterHistoricoVazio" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Histórico de Intervenções</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <button class="button is-danger is-outlined is-rounded is-fullwidth">Não existem intervenções!</button>
+            </div>
+        </section>
+    </div>
+</div>
+
 @section Scripts {
 @{
 await Html.RenderPartialAsync("_ValidationScriptsPartial");
@@ -599,6 +642,14 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         onError: error => {
             console.log(error);
         }
+    });
+
+    (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
+        const $target = $close.closest('#modalAguardarValidacao');
+
+        $close.addEventListener('click', () => {
+            if (!($target.classList.contains('is-active'))) clearInterval(interval);
+        });
     });
 
     var canvas = document.getElementById('signature-pad');
@@ -632,8 +683,31 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     resizeCanvas();
 
     CarregarIntervencoes();
+    CarregarPecasStock();
     CarregarPecas();
 
+    function ValidarFolhaObra() {
+        document.getElementById('txtRubricaCliente').value = canvas.toDataURL();
+
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/ValidarFolhaObra",
+            data: $("#frmAdicionar").serialize(),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                $(function () {
+                    document.getElementById("txtMensagens").value = result;
+                    if (result != "") {
+                        Bulma('#modalValidacao').modal().open();
+                    } else {
+                        Bulma('#modalDeslocacao').modal().open();
+                    }
+                });
+            }
+        });
+    }
+
+    //CODIGO DE VALIDACAO
     let interval;
     let time = 0;
     let stamp_codigo = '';
@@ -694,27 +768,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         });
     }
 
-    function ValidarFolhaObra() {
-        document.getElementById('txtRubricaCliente').value = canvas.toDataURL();
-
-        $.ajax({
-            type: "POST",
-            url: "/FolhasObra/ValidarFolhaObra",
-            data: $("#frmAdicionar").serialize(),
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-            success: function (result) {
-                $(function () {
-                    document.getElementById("txtMensagens").value = result;
-                    if (result != "") {
-                        Bulma('#modalValidacao').modal().open();
-                    } else {
-                        Bulma('#modalDeslocacao').modal().open();
-                    }
-                });
-            }
-        });
-    }
-
     function GerarCodigo() {
         stamp_codigo = Date.now() + Math.random();
         CriarCodigo(stamp_codigo);
@@ -725,6 +778,8 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalAguardarValidacao').modal().open();
     }
+
+    //VALIDACOES FINAIS DA FOLHA DE OBRA
     function CobrarDeslocacao(valor) {
         document.getElementById('chkCobrarDeslocacao').checked = valor;
         Bulma('#modalDeslocacao').modal().close();
@@ -734,7 +789,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     function EnviarEmail(valor) {
         document.getElementById('chkEnviarEmail').checked = valor;
         Bulma('#modalEnviarEmail').modal().close();
-
+        document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
         Bulma('#modalGuardarLocalizacao').modal().open();
     }
     function GuardarLocalizacao(valor) {
@@ -749,36 +804,11 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
         document.getElementById('frmAdicionar').submit();
     }
-    function GuardarLocalizacao2() {
-        $.ajax({
-            url: '/FolhasObra/GuardarLocalizacao/',
-            data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value },
-            type: "POST",
-            success: function (response) {
-                var equipamentos = "";
-                $(response).each(function () {
-                    equipamentos = equipamentos + '<option value="' + this.idEquipamento + '">' + this.descricaoEquipamento + '</option>'
-                });
 
-                var equipamentosList = $("#selectEquipamentos");
-                equipamentosList.empty();
-                equipamentosList.append(equipamentos);
-            },
-            error: function (response) {
-                alert(response.responseText);
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            }
-        });
-
-        Bulma('#modalGuardarLocalizacao2').modal().close();
-
-    }
-
+    //INTERVENCOES
     function AdicionarIntervencao() {
         if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid()) {
-            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:80%">${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:100%">${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
         }
     }
@@ -794,8 +824,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById('ListaIntervencoes').value = '';
 
         intervencoes.split(";").forEach(function (item) {
-            console.log(item.split("|")[0]);
-            console.log(item.split("|")[1]);
             document.getElementById('txtHoraInicio').value = item.split("|")[0];
             document.getElementById('txtHoraFim').value = item.split("|")[1];
             AdicionarIntervencao();
@@ -804,8 +832,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById('txtHoraFim').value = '@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()';
     }
 
+    //PEÇAS
     function AdicionarPeca(ref, desig) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (1 UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + ref};`;
     }
 
@@ -816,13 +845,23 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     function CarregarPecas() {
+        document.getElementById('divListaPecas').innerHTML = '';
+        var pecas = document.getElementById('ListaPecas').value;
+        document.getElementById('ListaPecas').value = '';
+
+        pecas.split(";").forEach(function (item) {
+            ObterPeca(item);
+        });
+    }
+
+    function CarregarPecasStock() {
         $.ajax({
             url: '/Produtos/ObterPecasUtilizador/',
             type: "POST",
             success: function (response) {
                 var pecas = "";
                 $(response).each(function () {
-                    pecas = pecas + '<option value="' + this.ref_Produto + '">' + this.ref_Produto + ' - ' + this.designacao_Produto + ' (' + (this.stock_PHC - this.stock_Res + this.stock_Rec) + ' UN)</option>'
+                    pecas = pecas + '<option value="' + this.ref_Produto + '">' + this.ref_Produto + ' - ' + this.designacao_Produto + ' - <b>Stock Atual: ' + (this.stock_PHC - this.stock_Res + this.stock_Rec) + ' UN</b></option>'
                 });
 
                 var pecasList = $("#selectPecas");
@@ -839,22 +878,25 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     function ObterPeca(ref) {
-        $.ajax({
-            url: '/Produtos/ObterPeca?ref_produto=' + ref,
-            type: "POST",
-            success: function (response) {
-                AdicionarPeca(response.ref_Produto, response.designacao_Produto)
-            },
-            error: function (response) {
-                alert(response.responseText);
-            },
-            failure: function (response) {
-                alert(response.responseText);
-            }
-        });
-
+        console.log(ref);
+        if (ref !== "") {
+            $.ajax({
+                url: '/Produtos/ObterPeca?ref_produto=' + ref,
+                type: "POST",
+                success: function (response) {
+                    AdicionarPeca(response.ref_Produto, response.designacao_Produto)
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
     }
 
+    //CLIENTES
     $(function () {
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
@@ -887,6 +929,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         });
     });
 
+    //EQUIPAMENTOS
     $(function () {
         $("#txtEquipamento").autocomplete({
             source: function (request, response) {
@@ -912,17 +955,56 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             },
             select: function (e, i) {
                 $("#txtEquipamentoStamp").val(i.item.val);
+                document.getElementById("btnObterHistorico").disabled = false;
             },
             minLength: 1
         });
     });
 
+    function ObterHistoricoEquipamento() {
+        var Stamp = document.getElementById('txtEquipamentoStamp').value;
 
-    (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
-        const $target = $close.closest('#modalAguardarValidacao');
+        $.ajax({
+            url: "/Equipamentos/ObterHistorico",
+            type: "GET",
+            data: "id=" + Stamp,
+            dataType: "json", // type of data you're expecting from response
+            success: function (json) {
+                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
+                console.log(json);
+                var existeFolhasObra = false;
+                for (var i = 0; i < json.json.length; i++) {
+                    var obj = json.json[i];
+                    var tecnico = obj.nomeTecnico;
 
-        $close.addEventListener('click', () => {
-            if (!($target.classList.contains('is-active'))) clearInterval(interval);
+                    var date = new Date(obj.dataServiço);
+
+                    var year = date.getFullYear();
+                    var month = date.getMonth() + 1;
+                    var day = date.getDate();
+
+                    if (day < 10) {
+                        day = '0' + day;
+                    }
+                    if (month < 10) {
+                        month = '0' + month;
+                    }
+                    html += "<tr onclick=\"location.href = '/FolhasObra/Detalhes/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
+                    existeFolhasObra = true;
+                }
+                html += "</tbody></table>"
+                $('#modalObterHistorico').find('.modal-body').html(html);
+                if (existeFolhasObra) {
+                    var modal = Bulma('#modalObterHistorico').modal();
+                    modal.open();
+                } else {
+                    var modal = Bulma('#modalObterHistoricoVazio').modal();
+                    modal.open();
+                };
+
+            },
+            error: function (error) { }
         });
-    });
+    }
+
 </script>
