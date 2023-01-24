@@ -46,7 +46,7 @@ namespace FT_Management.Controllers
 
             return View(new Marcacao());
         }
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Iniciar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
