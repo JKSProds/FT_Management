@@ -558,15 +558,16 @@ namespace FT_Management.Models
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
-        public bool AtualizarClienteEquipamento(Cliente c, Equipamento e)
+        public bool AtualizarClienteEquipamento(Cliente c, Equipamento e, Utilizador u)
         {
             try
             {
                 ExecutarQuery("UPDATE MA SET ma.no=cl.no, ma.nome=cl.nome, ma.estab=cl.estab, ma.morada=cl.morada, ma.local=cl.local, ma.codpost=cl.codpost, ma.contacto=cl.contacto, ma.email=cl.email, ma.telefone=cl.telefone FROM MA JOIN CL ON CL.NO=" + c.IdCliente + " AND CL.ESTAB=" + c.IdLoja + " WHERE ma.mastamp='" + e.EquipamentoStamp + "';");
+                FT_ManagementContext.AdicionarLog(u.Id, "Foi atualizado o equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " ao cliente: " + c.NomeCliente + " pelo utilizador " + u.NomeCompleto, 2);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel associar o clinete no PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel associar o cliente no PHC!\r\n(Exception: " + ex.Message + ")");
                 return false;
             }
             return true;

@@ -91,7 +91,7 @@ namespace FT_Management.Controllers
             {
                 Cliente c = phccontext.ObterClienteSimples(stamp);
                 Equipamento e = phccontext.ObterEquipamento(id);
-                return Content(phccontext.AtualizarClienteEquipamento(c, e).ToString());
+                return Content(phccontext.AtualizarClienteEquipamento(c, e, context.ObterUtilizador(int.Parse(this.User.Claims.First().Value))).ToString());
             }
             else
             {
