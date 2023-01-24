@@ -416,8 +416,8 @@ namespace FT_Management.Controllers
                     LastModified = new CalDateTime(DateTime.Now),
                     Uid = m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
-                    Summary = (m.EstadoMarcacao == 4 || m.EstadoMarcacao == 9 || m.EstadoMarcacao == 10 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 26 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                    Url = new Uri("http://" + Request.Host + "/Pedidos/Pedido?id=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC),
+                    Summary = m.EmojiEstado + m.Cliente.NomeCliente,
+                    Url = new Uri(m.GetUrl),
                     Location = m.Cliente.MoradaCliente
                 };
                 calendar.Events.Add(e);
