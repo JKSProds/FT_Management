@@ -80,28 +80,30 @@
                                 @Html.DisplayNameFor(model => model.NumeroSerieEquipamento)
                             </th>
                             <th>
-
+                                @Html.DisplayNameFor(model => model.Cliente.NomeCliente)
+                            </th>
+                                                        <th>
+                                @Html.DisplayNameFor(model => model.UltimoTecnico)
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
-                                <td data-label="@Html.DisplayNameFor(model => model.MarcaEquipamento)"
-                            onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp}))')">
+                            <tr onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
+                                <td data-label="@Html.DisplayNameFor(model => model.MarcaEquipamento)">
                                     <span>@item.MarcaEquipamento</span>
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.ModeloEquipamento)"
-                            onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
+                                <td data-label="@Html.DisplayNameFor(model => model.ModeloEquipamento)">
                                     @Html.DisplayFor(modelItem => item.ModeloEquipamento)
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.NumeroSerieEquipamento)"
-                            onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
+                                <td data-label="@Html.DisplayNameFor(model => model.NumeroSerieEquipamento)">
                                     @Html.DisplayFor(modelItem => item.NumeroSerieEquipamento)
                                 </td>
-                                <td class="is-actions-cell">
-
+                                                                <td data-label="@Html.DisplayNameFor(model => model.Cliente.NomeCliente)">
+                                    @Html.DisplayFor(modelItem => item.Cliente.NomeCliente)
+                                </td>                                                                <td data-label="@Html.DisplayNameFor(model => model.UltimoTecnico)">
+                                    @Html.DisplayFor(modelItem => item.UltimoTecnico)
                                 </td>
                             </tr>
                         }

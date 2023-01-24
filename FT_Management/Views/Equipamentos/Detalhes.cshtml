@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-4">
+                        <div class="column is-3">
                             <label asp-for="NumeroSerieEquipamento" class="label"></label>
                             <div class="field">
                                 <div class="control" style="width:100%">
@@ -96,7 +96,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-4">
+
+                        <div class="column is-3">
                             <div class="field">
                                 <label asp-for="RefProduto" class="label"></label>
                                 <div class="control">
@@ -104,7 +105,23 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-4">
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="DataCompra" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="date" readonly asp-for="DataCompra">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="DataVenda" class="label"></label>
+                                <div class="control">
+                                    <input class="input" type="date" readonly asp-for="DataVenda">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-2">
                             <label asp-for="IdFornecedor" class="label"></label>
                             <div class="field ">
                                 <div class="control">

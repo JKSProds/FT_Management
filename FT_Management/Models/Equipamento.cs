@@ -33,6 +33,13 @@ namespace FT_Management.Models
         public Cliente Cliente { get; set; }
         public List<FolhaObra> FolhasObra { get; set; }
 
+        [Display(Name = "Técnico")]
+        public string UltimoTecnico { get; set; }
+        [Display(Name = "Data de Compra")]
+        public DateTime DataCompra { get; set; }
+        [Display(Name = "Data de Venda")]
+        public DateTime DataVenda { get; set; }
+
         public Equipamento()
         {
             NumeroSerieEquipamento = "";

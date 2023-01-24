@@ -511,9 +511,13 @@ namespace FT_Management.Models
                             RefProduto = result["ref"].ToString().Trim(),
                             IdCliente = int.Parse(result["no"].ToString()),
                             IdLoja = int.Parse(result["estab"].ToString()),
-                            IdFornecedor = int.Parse(result["flno"].ToString())
-
+                            IdFornecedor = int.Parse(result["flno"].ToString()),
+                            UltimoTecnico = !result.IsDBNull("utecnnm") ? result["utecnnm"].ToString() : "N/D",
+                            DataCompra = DateTime.Parse(result["fldata"].ToString()),
+                            DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
+                            Cliente = new Cliente() { NomeCliente = result["nome"].ToString() }
                         });
+
                         if (LoadCliente)
                         {
                             LstEquipamento.Last().Cliente = ObterClienteSimples(LstEquipamento.Last().IdCliente, LstEquipamento.Last().IdLoja);
@@ -536,25 +540,25 @@ namespace FT_Management.Models
         }
         public List<Equipamento> ObterEquipamentos()
         {
-            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma;", false, false);
+            return ObterEquipamentos("SELECT * FROM ma;", false, false);
         }
         public List<Equipamento> ObterEquipamentos(Cliente c)
         {
-            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';", false, false);
+            return ObterEquipamentos("SELECT * FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';", false, false);
         }
         public List<Equipamento> ObterEquipamentosSerie(string NumeroSerie)
         {
-            return ObterEquipamentos("SELECT TOP(100) serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where serie like '%" + NumeroSerie + "%';", false, false);
+            return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + NumeroSerie + "%';", false, false);
         }
         public Equipamento ObterEquipamento(string IdEquipamento)
         {
-            List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='" + IdEquipamento + "';", true, true);
+            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", true, true);
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
         public Equipamento ObterEquipamentoSimples(string IdEquipamento)
         {
-            List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='" + IdEquipamento + "';", false, false);
+            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", false, false);
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
