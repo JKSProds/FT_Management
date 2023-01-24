@@ -47,6 +47,16 @@ namespace FT_Management.Controllers
             return View(new Marcacao());
         }
 
+        public ActionResult Iniciar(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Marcacao m = phccontext.ObterMarcacao(id);
+            m.EstadoMarcacaoDesc = "Em Curso";
+            phccontext.AtualizaMarcacao(m);
+
+            return Content("1");
+        }
 
         [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]

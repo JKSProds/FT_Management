@@ -11,9 +11,9 @@
         list-style: none;
     }
 
-        .tabs-content li.is-active {
-            display: block;
-        }
+    .tabs-content li.is-active {
+        display: block;
+    }
 </style>
 
 <div class="container">
@@ -22,7 +22,8 @@
             <div class="tile">
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
-                        <p class="title has-text-centered is-hoverable" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'">
+                        <p class="title has-text-centered is-hoverable"
+                            onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'">
                             <span class="icon mr-3">
                                 <i class="fas fa-calendar-day"></i>
                             </span>
@@ -72,19 +73,20 @@
                             <div class="field ">
                                 <label asp-for="Cliente.NomeCliente" class="label"></label>
                                 <div class="field has-addons">
-                                <p class="control has-icons-left" style="width:100%">
-                                    <input asp-for="Cliente.NomeCliente" class="input" readonly />
-                                    <span class="icon is-small is-left">
-                                        <i class="fas fa-user-check"></i>
-                                    </span>
-                                </p>
-                                @if (User.IsInRole("Admin")){
-                                 <div class="control">
-                                    <a class="button is-info" href="~/Pedidos/Editar/@Model.IdMarcacao">
-                                         <i class="fas fa-pencil"></i>
-                                    </a>
-                                  </div>
-                                }
+                                    <p class="control has-icons-left" style="width:100%">
+                                        <input asp-for="Cliente.NomeCliente" class="input" readonly />
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-user-check"></i>
+                                        </span>
+                                    </p>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <div class="control">
+                                            <a class="button is-info" href="~/Pedidos/Editar/@Model.IdMarcacao">
+                                                <i class="fas fa-pencil"></i>
+                                            </a>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -139,7 +141,8 @@
                                 <label asp-for="DataMarcacao" class="label"></label>
                                 <div class="control has-icons-left">
                                     <p class="control " style="width:100%">
-                                        <input class="input" type="text" readonly value="@string.Join(" | ", Model.DatasAdicionaisDistintas.Select(d => d.ToShortDateString())) @Model.Hora">
+                                        <input class="input" type="text" readonly
+                                            value="@string.Join(" | ", Model.DatasAdicionaisDistintas.Select(d => d.ToShortDateString())) @Model.Hora">
                                     </p>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-calendar-day"></i>
@@ -219,8 +222,8 @@
                                 <p class="control has-icons-left">
                                     <input asp-for="QuemPediuNome" class="input" readonly />
                                     <span class="icon is-small is-left">
-<i class="fa-solid fa-user"></i>
-</span>
+                                        <i class="fa-solid fa-user"></i>
+                                    </span>
                                 </p>
                             </div>
                         </div>
@@ -261,7 +264,8 @@
                             <div class="field">
                                 <label class="label">Técnico(s)</label>
                                 <p class="control has-icons-left">
-                                    <input value="@string.Join(" | ", Model.LstTecnicos.Select(x => x.NomeCompleto))" class="input" readonly />
+                                    <input value="@string.Join(" | ", Model.LstTecnicos.Select(x => x.NomeCompleto))"
+                                        class="input" readonly />
                                     <span class="icon is-small is-left">
                                         <i class="fa-solid fa-users"></i>
                                     </span>
@@ -289,17 +293,17 @@
                             </div>
                         </div>
                         <div class="column is-2 my-auto">
-                        <div class="field">
-                            <label disabled class="switch is-rounded">
-                                <input type="checkbox" disabled checked="@Model.Oficina">
-                                <span class="check is-info"></span>
-                                <span class="control-label">@Html.DisplayNameFor(model => model.Oficina)</span>
-                            </label>
+                            <div class="field">
+                                <label disabled class="switch is-rounded">
+                                    <input type="checkbox" disabled checked="@Model.Oficina">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Oficina)</span>
+                                </label>
+                            </div>
                         </div>
-                        </div>
-                        
+
                         <div class="column">
-                            <div  class="field">
+                            <div class="field">
                                 <label asp-for="ResumoMarcacao" class="label"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="15" asp-for="ResumoMarcacao"></textarea>
@@ -309,94 +313,98 @@
                     </div>
                 </li>
                 <li>
-                    <p>
-                        <a class="button is-primary is-pulled-right is-fullwidth" href="~/FolhasObra/Adicionar/@Model.IdMarcacao">
-                            <span class="icon is-small">
-                                <i class="fas fa-plus"></i>
-                            </span>
-                            <span>Nova Folha de Obra</span>
-                        </a>
-                    </p>
-                    &nbsp;
                     @if (Model.LstFolhasObra.Count() == 0)
                     {
-                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas folhas de obra!</button>
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas
+                            folhas de obra!</button>
                     }
                     else
                     {
                         <div class="b-table">
-                        <div class="table-wrapper has-mobile-cards"> 
-                        <table class="table is-hoverable is-fullwidth">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
-                                    </th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.LstFolhasObra)
-                                {
-                                    <tr>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)" onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                            <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
-                                        </td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)" onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                            @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
-                                        </td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)" onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
-                                            @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
-                                        </td>
-                                        <td class="is-actions-cell">
-                                            <div class="field has-addons">
-                                                                        <p class="control">
-                            <button class="button" onclick="window.open('@Url.Action("PrintFolhaObraSimples", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
-                                <span class="icon is-small">
-                                    <i class="fa-solid fa-screwdriver-wrench"></i>
-                                </span>
-                            </button>
-                        </p>
-                                                <p class="control">
-                                                    <button class="button" onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
-                                                        <span class="icon is-small">
-                                                            <i class="fas fa-sticky-note"></i>
-                                                        </span>
-                                                    </button>
-                                                </p>
-                                                <p class="control">
-                                                    <button class="button" onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')">
-                                                        <span class="icon is-small">
-                                                            <i class="fas fa-print"></i>
-                                                        </span>
-                                                    </button>
-                                                </p>
-                                                <p class="control">
-                                                    <button class="button" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)" id="btnEnviarMail_@item.IdFolhaObra">
-                                                        <span class="icon is-small">
-                                                            <i class="fas fa-paper-plane"></i>
-                                                        </span>
-                                                    </button>
-                                                </p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        </div>
+                            <div class="table-wrapper has-mobile-cards">
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model =>
+                                            model.LstFolhasObra.First().ClienteServico.NomeCliente)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model =>
+                                            model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.LstFolhasObra)
+                                        {
+                                            <tr>
+                                                <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().DataServico)"
+                                            onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                                    <span>@item.DataServico.ToString("dd/MM/yyyy")</span>
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().ClienteServico.NomeCliente)"
+                                            onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                                    @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
+                                                </td>
+                                                <td data-label="@Html.DisplayNameFor(model => model.LstFolhasObra.First().EquipamentoServico.NumeroSerieEquipamento)"
+                                            onclick="location.href = '@(Url.Action("Detalhes", "FolhasObra", new { id = item.IdFolhaObra }))'">
+                                                    @Html.DisplayFor(modelItem =>
+                                            item.EquipamentoServico.NumeroSerieEquipamento)
+                                                </td>
+                                                <td class="is-actions-cell">
+                                                    <div class="field has-addons">
+                                                        <p class="control">
+                                                            <button class="button"
+                                                        onclick="window.open('@Url.Action("PrintFolhaObraSimples", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
+                                                                <span class="icon is-small">
+                                                                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                                                                </span>
+                                                            </button>
+                                                        </p>
+                                                        <p class="control">
+                                                            <button class="button"
+                                                        onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
+                                                                <span class="icon is-small">
+                                                                    <i class="fas fa-sticky-note"></i>
+                                                                </span>
+                                                            </button>
+                                                        </p>
+                                                        <p class="control">
+                                                            <button class="button"
+                                                        onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')">
+                                                                <span class="icon is-small">
+                                                                    <i class="fas fa-print"></i>
+                                                                </span>
+                                                            </button>
+                                                        </p>
+                                                        <p class="control">
+                                                            <button class="button"
+                                                        onclick="ConfirmEnviarEmail(@item.IdFolhaObra)"
+                                                        id="btnEnviarMail_@item.IdFolhaObra">
+                                                                <span class="icon is-small">
+                                                                    <i class="fas fa-paper-plane"></i>
+                                                                </span>
+                                                            </button>
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     }
                 </li>
                 <li>
                     <p class="control">
-                        <button class="button is-primary is-pulled-right is-fullwidth" onclick="Bulma('#modalAdicionarComentario').modal().open();">
+                        <button class="button is-primary is-pulled-right is-fullwidth"
+                            onclick="Bulma('#modalAdicionarComentario').modal().open();">
                             <span class="icon is-small">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -407,33 +415,47 @@
                     @if (Model.LstComentarios.Count() == 0)
                     {
 
-                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados comentários!</button>
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados
+                            comentários!</button>
                     }
                     else
                     {
-                         <div class="b-table">
-                        <div class="table-wrapper has-mobile-cards"> 
-                        <table class="table is-hoverable is-fullwidth">
-                            <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.First().Utilizador.NomeCompleto)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)</th>
-                            <tbody>
+                        <div class="b-table">
+                            <div class="table-wrapper has-mobile-cards">
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayNameFor(model =>
+                                            model.LstComentarios.First().Utilizador.NomeCompleto)</th>
+                                            <th>@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)</th>
+                                            <th>@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)
+                                            </th>
+                                    <tbody>
 
-                                @foreach (var c in Model.LstComentarios)
-                                {
-                                    <tr>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().Utilizador.NomeCompleto)"><span>@c.Utilizador.NomeCompleto</span></td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)"><span>@c.Descricao</span></td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)"><span>@c.DataComentario</span></td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        </div>
+                                                @foreach (var c in Model.LstComentarios)
+                                                {
+                                            <tr>
+                                                <td
+                                            data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().Utilizador.NomeCompleto)">
+                                                    <span>@c.Utilizador.NomeCompleto</span></td>
+                                                <td
+                                            data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().Descricao)">
+                                                    <span>@c.Descricao</span></td>
+                                                <td
+                                            data-label="@Html.DisplayNameFor(model => model.LstComentarios.First().DataComentario)">
+                                                    <span>@c.DataComentario</span></td>
+                                            </tr>
+                                                }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     }
                 </li>
                 <li>
                     <p class="control">
-                        <button class="button is-primary is-pulled-right is-fullwidth" onclick="Bulma('#modalAdicionarAnexo').modal().open();">
+                        <button class="button is-primary is-pulled-right is-fullwidth"
+                            onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                             <span class="icon is-small">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -444,31 +466,47 @@
                     @if (Model.LstAnexos.Count() == 0)
                     {
 
-                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados anexos!</button>
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados
+                            anexos!</button>
                     }
                     else
                     {
-                         <div class="b-table">
-                        <div class="table-wrapper has-mobile-cards"> 
-                        <table class="table is-hoverable is-fullwidth">
-                            <thead><tr><th>@Html.DisplayNameFor(model => model.LstAnexos.First().NomeUtilizador)</th><th>@Html.DisplayNameFor(model => model.LstAnexos.First().NomeFicheiro)</th><th>@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)</th><th></th>
-                            <tbody>
+                        <div class="b-table">
+                            <div class="table-wrapper has-mobile-cards">
+                                <table class="table is-hoverable is-fullwidth">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayNameFor(model => model.LstAnexos.First().NomeUtilizador)</th>
+                                            <th>@Html.DisplayNameFor(model => model.LstAnexos.First().NomeFicheiro)</th>
+                                            <th>@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)</th>
+                                            <th></th>
+                                    <tbody>
 
-                                @foreach (var a in Model.LstAnexos)
-                                {
-                                    <tr>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().NomeUtilizador)"><span>@a.NomeUtilizador</span></td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().NomeFicheiro)"><span>@a.ObterNomeLegivel()</span></td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)"><span>@a.DataCriacao.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
-                                        <td class="is-actions-cell">
-                                            <a class="button is-primary is-outlined" onclick="window.open('@Url.Action("DownloadAnexo", "Pedidos", new { id = @a.AnexoStamp})')"><i class="fas fa-eye" style="font-size:20px"></i></a>
-                                            <a class="button is-danger" href="@Url.Action("ApagarAnexo", "Pedidos", new { id = @a.AnexoStamp })"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        </div>
+                                                @foreach (var a in Model.LstAnexos)
+                                                {
+                                            <tr>
+                                                <td
+                                            data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().NomeUtilizador)">
+                                                    <span>@a.NomeUtilizador</span></td>
+                                                <td
+                                            data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().NomeFicheiro)">
+                                                    <span>@a.ObterNomeLegivel()</span></td>
+                                                <td
+                                            data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)">
+                                                    <span>@a.DataCriacao.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
+                                                <td class="is-actions-cell">
+                                                    <a class="button is-primary is-outlined"
+                                                onclick="window.open('@Url.Action("DownloadAnexo", "Pedidos", new { id = @a.AnexoStamp})')"><i
+                                                    class="fas fa-eye" style="font-size:20px"></i></a>
+                                                    <a class="button is-danger"
+                                                href="@Url.Action("ApagarAnexo", "Pedidos", new { id = @a.AnexoStamp })"><i
+                                                    class="fas fa-trash" style="font-size:20px"></i></a>
+                                                </td>
+                                            </tr>
+                                                }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     }
                 </li>
@@ -492,19 +530,21 @@
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-                <textarea id="txtComentario" class="textarea is-info" rows="5" placeholder="Comentário" required></textarea>
+                <textarea id="txtComentario" class="textarea is-info" rows="5" placeholder="Comentário"
+                    required></textarea>
             </div>
             &nbsp;
-                <div class="form-check form-group col">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" id="chkFechar">
-                        <span class="check is-info"></span>
-                        <span class="control-label">Fechar Pedido?</span>
-                    </label>
-                </div>
+            <div class="form-check form-group col">
+                <label class="switch is-rounded">
+                    <input type="checkbox" id="chkFechar">
+                    <span class="check is-info"></span>
+                    <span class="control-label">Fechar Pedido?</span>
+                </label>
+            </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="AdicionarComentario()" id="btnConfirmAddComentario" href="javascript:;">Adicionar</button>
+            <button type="button" class="button is-info" onclick="AdicionarComentario()" id="btnConfirmAddComentario"
+                href="javascript:;">Adicionar</button>
         </footer>
     </div>
 </div>
@@ -517,13 +557,13 @@
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-                <form action="/Pedidos/AdicionarAnexo/@Model.IdMarcacao"
-                  class="dropzone"
-                  id="my-awesome-dropzone"></form>
+                <form action="/Pedidos/AdicionarAnexo/@Model.IdMarcacao" class="dropzone" id="my-awesome-dropzone">
+                </form>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="window.location.reload();" id="btnConfirmAddAnexo" href="javascript:;">Fechar</button>
+            <button type="button" class="button is-info" onclick="window.location.reload();" id="btnConfirmAddAnexo"
+                href="javascript:;">Fechar</button>
         </footer>
     </div>
 </div>
@@ -549,12 +589,12 @@
 
 <script>
     (document.querySelectorAll('#modalAdicionarAnexo') || []).forEach(($close) => {
-    const $target = $close.closest('#modalAdicionarAnexo');
+        const $target = $close.closest('#modalAdicionarAnexo');
 
-    $close.addEventListener('click', () => {
-    if (!($target.classList.contains('is-active'))) window.location.reload();
+        $close.addEventListener('click', () => {
+            if (!($target.classList.contains('is-active'))) window.location.reload();
+        });
     });
-  });
 
     function AdicionarComentario() {
 
@@ -630,12 +670,12 @@
 
                     if (result == "Sucesso") {
                         bulmaToast.toast({
-                          message: 'Email enviado com sucesso',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+                            message: 'Email enviado com sucesso',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
                         })
 
                         var json = {
@@ -655,12 +695,12 @@
 
                     } else {
                         bulmaToast.toast({
-                          message: 'Ocorreu um erro!',
-                          type: 'is-danger',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+                            message: 'Ocorreu um erro!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
                         })
                     }
 
