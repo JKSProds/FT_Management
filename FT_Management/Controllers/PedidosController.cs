@@ -536,7 +536,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
+            if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end.AddDays(-1)).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
 
             List<Marcacao> LstMarcacoesCriadas = phccontext.ObterMarcacoesCriadas();
             if (LstMarcacoesCriadas.Count > 0)
