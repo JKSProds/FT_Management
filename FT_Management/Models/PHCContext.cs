@@ -562,7 +562,7 @@ namespace FT_Management.Models
         {
             try
             {
-                ExecutarQuery("UPDATE MA SET ma.no=cl.no, ma.nome=cl.nome, ma.estab=cl.estab, ma.morada=cl.morada, ma.local=cl.local, ma.codpost=cl.codpost, ma.contacto=cl.contacto, ma.email=cl.email, ma.telefone=cl.telefone FROM MA JOIN CL ON CL.NO=" + c.IdCliente + " AND CL.ESTAB=" + c.IdLoja + " WHERE ma.mastamp='" + e.EquipamentoStamp + "';");
+                ExecutarQuery("UPDATE MA SET ma.no=cl.no, ma.nome=cl.nome, ma.estab=cl.estab, ma.morada=cl.morada, ma.local=cl.local, ma.codpost=cl.codpost, ma.contacto=cl.contacto, ma.email=cl.email, ma.telefone=cl.telefone, usrinis='" + u.Iniciais + "', usrdata='" + DateTime.Now.ToString("yyyy-MM-dd 00:00:00.000") + "', usrhora='" + DateTime.Now.ToString("HH:mm:ss") + "' FROM MA JOIN CL ON CL.NO=" + c.IdCliente + " AND CL.ESTAB=" + c.IdLoja + " WHERE ma.mastamp='" + e.EquipamentoStamp + "';");
                 FT_ManagementContext.AdicionarLog(u.Id, "Foi atualizado o equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " ao cliente: " + c.NomeCliente + " pelo utilizador " + u.NomeCompleto, 2);
             }
             catch (Exception ex)

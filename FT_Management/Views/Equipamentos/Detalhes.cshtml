@@ -297,7 +297,7 @@
                 </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-success" onclick="GerarCodigo();">Associar</button>
+            <button class="button is-success" id="btnAssociar" onclick="GerarCodigo();">Associar</button>
             <button class="button"
                 onclick="Bulma('#modalAssociarClienteEquipamento').modal().close();">Cancelar</button>
         </footer>
@@ -333,21 +333,11 @@
             data: { "stamp": stamp, "codigo": stamp_codigo },
             success: function (result) {
                 $(function () {
-                    console.log(result);
                     if (result == "True") {
-                        bulmaToast.toast({
-                            message: 'Código aprovado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        });
                         window.location.reload();
                     } else {
                         bulmaToast.toast({
-                            message: 'O código foi rejeitado pelo utilizador!',
+                            message: 'Erro ao atualizar cliente!',
                             type: 'is-danger',
                             closeOnClick: true,
                             pauseOnHover: true,
@@ -355,8 +345,10 @@
                             duration: 5000,
                             position: 'top-center'
                         });
+                        document.getElementById("btnAssociar").classList.remove('is-loading');
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
+                        Bulma('#modalAssociarClienteEquipamento').modal().close();
                     }
                 });
             }
@@ -381,6 +373,7 @@
 
     function CriarCodigo(stamp) {
         if (document.getElementById('txtStampCliente').value !== "") {
+            document.getElementById("btnAssociar").classList.add('is-loading');
             $.ajax({
                 type: "POST",
                 url: "/Equipamentos/CriarCodigo/" + stamp,
@@ -413,8 +406,6 @@
                             duration: 5000,
                             position: 'top-center'
                         });
-                        clearInterval(interval);
-                        Bulma('#modalAguardarValidacao').modal().close();
                         AssociarCliente(document.getElementById('txtStampCliente').value);
                     } else if (result == "2") {
                         bulmaToast.toast({
@@ -426,8 +417,10 @@
                             duration: 5000,
                             position: 'top-center'
                         });
+                        document.getElementById("btnAssociar").classList.remove('is-loading');
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
+                        Bulma('#modalAssociarClienteEquipamento').modal().close();
                     }
                 });
             }
