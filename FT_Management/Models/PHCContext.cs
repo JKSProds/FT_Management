@@ -1147,7 +1147,7 @@ namespace FT_Management.Models
 
                 if (resp != "-1")
                 {
-                    ChatContext.EnviarNotificacaoAtualizacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico)) ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                     conn.Close();
                     return true;
