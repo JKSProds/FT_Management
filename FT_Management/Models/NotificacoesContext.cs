@@ -352,7 +352,8 @@ namespace FT_Management.Models
             string Assunto = p.NomeDossier + " - " + p.IdPicking + " - " + p.Encomenda.NomeCliente;
             string Mensagem = "Foi criado um novo documento de picking!<br><br><b>Dados adicionais:</b><br>Cliente: " + p.NomeCliente + "<br>" + (p.NomeCliente != p.Encomenda.NomeCliente ? "Loja: " + p.Encomenda.NomeCliente + "<br>" : "") + "Encomenda: " + p.Encomenda.Id + "<br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>" + p.NomeDossier + ": " + p.IdPicking + "<br><br>";
 
-            if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações:</b><br>" + p.Obs.Replace("\r\n", "<br>").ToString() + "<br><br>";
+            if (!string.IsNullOrEmpty(p.Encomenda.Obs)) Mensagem += "<b>Observações da Encomenda:</b><br>" + p.Encomenda.Obs.Replace("\r\n", "<br>").ToString() + "<br><br>";
+            if (!string.IsNullOrEmpty(p.Obs)) Mensagem += "<b>Observações do Picking:</b><br>" + p.Obs.Replace("\r\n", "<br>").ToString() + "<br><br>";
 
             if (p.Linhas.Where(l => l.Qtd_Linha > 0).Count() > 0)
             {
