@@ -40,25 +40,6 @@
                     <input type="hidden" asp-for="Id" id="txtHiddenIdUtilizador" />
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
-                                model.ImgUtilizador)</label></div>
-                        <div class="field-body">
-                            <div class="field has-addons">
-                                <figure class="mr-3 image is-inline-block is-128x128">
-                                    <img class="is-rounded" src="@Model.ImgUtilizador" alt="user_image">
-                                </figure>
-                                <div class="form-group">
-                                    <form action="/Utilizadores/AtualizarImagem/@Model.Id" class="dropzone"
-                                        id="dropImage">
-                                        <div class="dz-message needsclick">
-                                            Largue uma imagem aqui para fazer o upload
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
                                 model.NomeUtilizador)</label></div>
                         <div class="field-body">
                             <div class="field">
@@ -98,6 +79,16 @@
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.Viatura)</label></div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly
+                                        asp-for="Viatura.Matricula"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
                                 model.TipoUtilizador)</label></div>
                         <div class="field-body">
                             <div class="field">
@@ -124,7 +115,7 @@
                                 </div>
                                 <div class="field has-addons">
                                     <p class="control">
-                                        <button class="button is-info" @(Model.ApiKey.Key == "" ? "disabled" : "" )
+                                        <button class="button is-info" @(Model.ApiKey.Key == "" ? "disabled" : "")
                                             onclick="copiarTexto('txtApiKey');">
                                             Copiar
                                         </button>
@@ -135,7 +126,7 @@
                                         </button>
                                     </p>
                                     <p class="control">
-                                        <button class="button is-link" @(Model.ApiKey.Key == "" ? "disabled" : "" )
+                                        <button class="button is-link" @(Model.ApiKey.Key == "" ? "disabled" : "")
                                             onclick="Bulma('#modalLinks').modal().open();">
                                             <i class="fa-solid fa-info"></i>
                                         </button>
@@ -161,7 +152,7 @@
                                 <div class="field-body">
                                     <div class="field">
                                         <div class="control"><input class="input" readonly
-                                            value="@Model.SecondFactorAuthCode">
+                                                value="@Model.SecondFactorAuthCode">
                                         </div>
                                     </div>
                                 </div>
@@ -171,14 +162,14 @@
                                 <div class="field-body">
                                     <div class="field">
                                         <div class="control"><input class="input" placeholder="Código" type="tel"
-                                            name="code">
+                                                name="code">
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <button type="submit" class="button is-info is-fullwidth is-large">
-                                <span> Ativar Autenticação de 2 Fatores </span>
+                                <span> Ativar </span>
                             </button>
                         </form>
                     }
@@ -187,7 +178,7 @@
                         <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="Remover2FA"
                         asp-route-id="@Model.Id">
                             <button type="submit" class="button is-danger is-large is-fullwidth">
-                                <span> Remover Autenticação de 2 Fatores </span>
+                                <span> Remover </span>
                             </button>
                         </form>
                     }
@@ -265,6 +256,25 @@
                 </header>
 
                 <div class="card-content">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.ImgUtilizador)</label></div>
+                        <div class="field-body">
+                            <div class="field has-addons">
+                                <figure class="mr-3 image is-inline-block is-128x128">
+                                    <img class="is-rounded" src="@Model.ImgUtilizador" alt="user_image">
+                                </figure>
+                                <div class="form-group">
+                                    <form action="/Utilizadores/AtualizarImagem/@Model.Id" class="dropzone"
+                                        id="dropImage">
+                                        <div class="dz-message needsclick">
+                                            Largue uma imagem aqui para fazer o upload
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <form method="post" style="width:100%" asp-controller="Utilizadores"
                         asp-action="AtualizarUtilizador">
                         <input type="hidden" class="input" asp-for="Id" name="id">
@@ -346,11 +356,6 @@
                             <div class="field-label is-normal"><label class="label">Dados Adicionais</label></div>
                             <div class="field-body">
                                 <div class="fields">
-                                    <div class="select mb-1" style="width:100%">
-                                        <select asp-for="Viatura.Matricula" asp-items="ViewBag.Viaturas"
-                                            class="form-control" style="width:100%">
-                                        </select>
-                                    </div>
 
                                     <div class="select mb-1" style="width:100%">
                                         <select asp-for="Zona" asp-items="ViewBag.Zonas" class="form-control"
