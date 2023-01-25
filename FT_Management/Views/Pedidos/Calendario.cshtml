@@ -56,6 +56,12 @@
                         <span>Limpar</span>
                     </button>
                 </p>
+                <p class="control has-icons-left">
+                    <input type="text" class="input" id="txtLastUpdate" readonly value="@DateTime.Now.ToLocalTime()">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-clock"></i>
+                    </span>
+                </p>
             </div>
         </form>
     </div>
@@ -207,6 +213,7 @@ else
     <div id='calendar-container' class="mx-2">
     @foreach (var u in Model)
         {
+            <div class="pageloader is-info" id="pageloader_@u.Id"><span class="title">A carregar ...</span></div>
             <div class="columns">
                 <div class="column is-3">
                     <div class="card" style="background:@u.CorCalendario;">
@@ -232,7 +239,7 @@ else
                                 </p>
                             }
                             <div class="progress-container" id='pbval_@u.Id' data-text="---"><progress
-                            class="progress is-info is-large" id="pb_@u.Id" max="100"></progress></div>
+                                    class="progress is-info is-large" id="pb_@u.Id" max="100"></progress></div>
                             &nbsp;
                             <a class="button is-link is-fullwidth is-large" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
                                 <i class="fas fa-eye"></i>
@@ -317,6 +324,13 @@ else
                                 }
                             });
                         },
+                        loading: function (isLoading, view) {
+                            if (isLoading) {// isLoading gives boolean value
+                                document.getElementById('pageloader_@u.Id').classList.add('is-active');
+                            } else {
+                                document.getElementById('pageloader_@u.Id').classList.remove('is-active');
+                            }
+                        },
                         eventReceive: function (info) {
                             //console.log(info);
 
@@ -371,6 +385,11 @@ else
                     });
 
                     srcCalendar.render();
+                    window.setInterval(function () {
+                        srcCalendar.refetchEvents();
+                        document.getElementById('txtLastUpdate').value = Date.now().toLocaleString();
+                        console.log('Refreshed: @u.NomeCompleto');
+                    }, 300000);
                     document.getElementById('txtHeader').text = srcCalendar.view.title;
 
                     document.getElementById('prev').addEventListener('click', function () {
