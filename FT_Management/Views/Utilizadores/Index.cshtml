@@ -100,11 +100,11 @@ else
                                             <span class="check is-primary"></span>
                                             <span class="control-label">@Html.DisplayNameFor(model => model.Admin)</span>
                                         </label>
-                                        <a class="button is-warning" href="~/Utilizadores/Logs/@item.Id"><i
+                                        <a class="button is-warning is-small" href="~/Utilizadores/Logs/@item.Id"><i
                                                 class="fas fa-eye"></i></a>
-                                        <button class="button is-danger is-outlined" onclick="ConfirmResetSenha(@item.Id)"><i
-                                                class="fas fa-unlock"></i></button>
-                                        <button class="button is-danger" onclick="ConfirmApagarUtilizador(@item.Id)"><i
+                                        <button class="button is-danger is-outlined is-small"
+                                            onclick="ConfirmResetSenha(@item.Id)"><i class="fas fa-unlock"></i></button>
+                                        <button class="button is-danger is-small" onclick="ConfirmApagarUtilizador(@item.Id)"><i
                                                 class="fas fa-trash"></i></button>
                                     </td>
                                 }

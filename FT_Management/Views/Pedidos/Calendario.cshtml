@@ -229,7 +229,7 @@ else
                                     <p class="subtitle is-6">@u.EmailUtilizador</p>
                                 </div>
                             </div>
-                            @if (u.Viatura.Matricula.Count() > 0)
+                            @if (u.Viatura.Matricula != null)
                             {
                                 <p class="subtitle is-6">
                                     <span class="icon">

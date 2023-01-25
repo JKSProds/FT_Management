@@ -75,17 +75,14 @@ namespace FT_Management.Models
                         ChatToken = result["ChatToken"],
                         SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
-#if !DEBUG 
-                        ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
-#endif                        
                         UltimoAcesso = result["DataUltimoAcesso"],
                         AcessoAtivo = result["TipoUltimoAcesso"] == 1,
-                        Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] }
+                        Viatura = new Viatura() { Matricula = result["Matricula_Viatura"] },
+#if !DEBUG
+                        ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
+#endif
                     });
-                    if (!string.IsNullOrEmpty(LstUtilizadores.Last().Viatura.Matricula) && Viatura)
-                    {
-                        LstUtilizadores.Last().Viatura = ObterViatura(LstUtilizadores.Last());
-                    }
+                    if (Viatura) LstUtilizadores.Last().Viatura = ObterViatura(LstUtilizadores.Last());
                 }
             }
             return LstUtilizadores;
@@ -274,7 +271,7 @@ namespace FT_Management.Models
         {
             Viatura res = new Viatura();
 
-            string sqlQuery = "SELECT *, (Select  fim_localizacao from dat_viaturas_viagens where matricula_viatura='" + utilizador.Viatura.Matricula + "' order by timestamp DESC limit 1) as localizacao2 FROM dat_viaturas where matricula_viatura='" + utilizador.Viatura.Matricula + "';";
+            string sqlQuery = "SELECT *, (Select  fim_localizacao from dat_viaturas_viagens where matricula_viatura=dat_viaturas.matricula_viatura order by timestamp DESC limit 1) as localizacao2 FROM dat_viaturas where IdUtilizador='" + utilizador.Id + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -300,7 +297,7 @@ namespace FT_Management.Models
             }
 
 
-            return res;
+            return res == null ? new Viatura() : res;
         }
 
         public List<Viatura> ObterViaturas()
@@ -321,7 +318,7 @@ namespace FT_Management.Models
                         Latitude = result["latitude"],
                         Longitude = result["longitude"],
                         KmsAtuais = result["ultimoKms"],
-                        Utilizador = LstUtilizadores.Where(u => u.Viatura.Matricula == result["matricula_viatura"]).FirstOrDefault(),
+                        Utilizador = LstUtilizadores.Where(u => u.Id == int.Parse(result["Id_Utilizador"])).FirstOrDefault(),
                         Ignicao = result["ignicao"] == 1
                     });
                     if (res.Last().Utilizador == null) res.Last().Utilizador = new Utilizador();
