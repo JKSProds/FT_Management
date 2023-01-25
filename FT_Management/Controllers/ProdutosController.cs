@@ -46,22 +46,6 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).ToPagedList(pageNumber, pageSize));
         }
 
-        public ActionResult Print(string id, int armazemid)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
-        }
-
         public ActionResult PrintQr(string id, int armazemid)
         {
             if (id == null)

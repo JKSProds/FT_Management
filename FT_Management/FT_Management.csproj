@@ -4,7 +4,7 @@
     <Authors>Jorge Monteiro</Authors>
     <Company>JKSProds - Software</Company>
     <Version>02.2022</Version>
-    <AssemblyVersion>03.2023.01.24</AssemblyVersion>
+    <AssemblyVersion>03.2023.01.25</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EPPlus.Core" Version="1.5.4"/>
@@ -33,15 +33,6 @@
     <PackageReference Include="GoogleAuthenticator" Version="3.0.0"/>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Code93">
-      <HintPath>Code93.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Views\Produtos\Movimentos.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="wwwroot\apple-touch-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
