@@ -43,6 +43,9 @@ else
                     <tr>
                         <th></th>
                         <th>
+                            @Html.DisplayNameFor(model => model.Id)
+                        </th>
+                        <th>
                             @Html.DisplayNameFor(model => model.NomeCompleto)
                         </th>
                         <th>
@@ -63,6 +66,10 @@ else
                                     <div class="image">
                                         <img src="@item.ImgUtilizador" class="is-rounded">
                                     </div>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Id)"
+                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    <span>#@item.Id</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.NomeCompleto)"
                                     onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
