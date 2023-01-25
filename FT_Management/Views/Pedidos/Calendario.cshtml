@@ -6,7 +6,6 @@
     ViewData["Title"] = "Agendamento";
 }
 
-<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
 <div class="columns mx-2">
     <div class="column is-8">
         <div class="tile">
@@ -324,13 +323,6 @@ else
                                 }
                             });
                         },
-                        loading: function (isLoading, view) {
-                            if (isLoading) {// isLoading gives boolean value
-                                document.getElementById('pageloader_@u.Id').classList.add('is-active');
-                            } else {
-                                document.getElementById('pageloader_@u.Id').classList.remove('is-active');
-                            }
-                        },
                         eventReceive: function (info) {
                             //console.log(info);
 
@@ -398,7 +390,6 @@ else
                             ("0" + m.getUTCSeconds()).slice(-2);
 
                         document.getElementById('txtLastUpdate').value = dateString;
-                        console.log('Refreshed: @u.NomeCompleto');
                     }, 300000);
                     document.getElementById('txtHeader').text = srcCalendar.view.title;
 
