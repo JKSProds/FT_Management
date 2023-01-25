@@ -153,7 +153,7 @@ else
                             <div class="container is-12">
                                 <div class="buttons has-addons">
                                     @if(item.EstadoMarcacaoDesc == "Em Curso") {
-<a class="button is-info is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.IdMarcacao }))'"><i class="fas fa-check float-left" style="margin-top:5px"></i></a>
+<a class="button is-danger is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.IdMarcacao }))'"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
                                     }else{
 <a class="button is-info is-outlined is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="IniciarAssistencia('@item.MarcacaoStamp')"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
                                     }
