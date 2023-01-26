@@ -643,7 +643,7 @@ namespace FT_Management.Models
 
 
                     //GERAR AT
-
+                    res = CriarAT(fo);
 
                     //Obter Folha de Obra
                     fo = ObterFolhaObra(fo.StampFO);
@@ -751,6 +751,83 @@ namespace FT_Management.Models
             return res;
         }
 
+        public string CriarAssinatura(FolhaObra fo)
+        {
+            string res = "";
+            try
+            {
+                byte[] bytes = Convert.FromBase64String(fo.RubricaCliente.Split(",").Last());
+                MemoryStream stream = new MemoryStream(bytes);
+
+                Anexo a = new Anexo()
+                {
+                    MarcacaoStamp = fo.Marcacao.MarcacaoStamp,
+                    IdMarcacao = fo.Marcacao.IdMarcacao,
+                    AnexoAssinatura = true,
+                    NomeUtilizador = fo.Utilizador.NomeCompleto
+                };
+                IFormFile file = new FormFile(stream, 0, bytes.Length, a.ObterNomeUnico(), a.ObterNomeUnico());
+                a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
+
+                res = CriarAnexoMarcacao(a);
+                if (res.Length == 0) return "";
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return res;
+
+        }
+        public List<string> CriarAT(FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_GERA_AT", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
+                command.Parameters.Add(new SqlParameter("@STAMPS_MH", string.Join(",", fo.IntervencaosServico.Select(x => x.StampIntervencao))));
+                command.Parameters.Add(new SqlParameter("@STAMP_ASSINATURA", CriarAssinatura(fo)));
+                command.Parameters.Add(new SqlParameter("@QASSINOU", fo.ConferidoPor));
+                command.Parameters.Add(new SqlParameter("@GARANTIA", fo.EmGarantia ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@INSTALACAO", false ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@OFICINA", fo.RecolhaOficina ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@REMOTO", fo.AssistenciaRemota ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@PIQUETE", fo.Piquete ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@DESLOCACAO", fo.CobrarDeslocacao ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+
+                return res;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return res;
+
+        }
         public bool FecharFolhaObra(FolhaObra fo)
         {
             if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
