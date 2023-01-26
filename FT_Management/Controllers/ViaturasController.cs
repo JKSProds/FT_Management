@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Custom;
+using System.Linq;
 
 namespace FT_Management.Controllers
 {
@@ -52,6 +53,7 @@ namespace FT_Management.Controllers
                 // ... Display the result.
                 if (response.IsSuccessStatusCode)
                 {
+                    context.AdicionarLog(int.Parse(this.User.Claims.First().Value.ToString()), (buzzer ? "Ativado" : "Desativado") + " buzzer da viatura com a matricula " + id + "!", 0);
                     return Content("1");
                 }
 
