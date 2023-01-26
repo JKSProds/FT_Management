@@ -29,41 +29,52 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            var TARGETURL = ConfigurationManager.AppSetting["CarTrack:URL"] + "/set_terminals_configuration_1_toggle_list?buzzer_toggle=UNCHANGED&immobilisation_toggle=UNCHANGED&did_toggle=" + (buzzer ? "ON" : "OFF") + "&terminal_identifiers=" + id;
+            Viatura v = context.ObterViatura(id);
 
-            HttpClientHandler handler = new HttpClientHandler()
+            if (v.Buzzer != buzzer)
             {
-                UseProxy = false
-            };
+                v.Buzzer = buzzer;
 
+                var TARGETURL = ConfigurationManager.AppSetting["CarTrack:URL"] + "/set_terminals_configuration_1_toggle_list?buzzer_toggle=UNCHANGED&immobilisation_toggle=UNCHANGED&did_toggle=" + (v.Buzzer ? "ON" : "OFF") + "&terminal_identifiers=" + v.Matricula;
 
-            // ... Use HttpClient.            
-            HttpClient client = new HttpClient(handler);
-
-            var byteArray = Encoding.ASCII.GetBytes(ConfigurationManager.AppSetting["CarTrack:Auth"]);
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(TARGETURL);
-                HttpContent content = response.Content;
-
-                string result = await content.ReadAsStringAsync();
-
-                // ... Display the result.
-                if (response.IsSuccessStatusCode)
+                HttpClientHandler handler = new HttpClientHandler()
                 {
-                    context.AdicionarLog(int.Parse(this.User.Claims.First().Value.ToString()), (buzzer ? "Ativado" : "Desativado") + " buzzer da viatura com a matricula " + id + "!", 0);
-                    return Content("1");
+                    UseProxy = false
+                };
+
+
+                // ... Use HttpClient.            
+                HttpClient client = new HttpClient(handler);
+
+                var byteArray = Encoding.ASCII.GetBytes(ConfigurationManager.AppSetting["CarTrack:Auth"]);
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(TARGETURL);
+                    HttpContent content = response.Content;
+
+                    string result = await content.ReadAsStringAsync();
+
+                    // ... Display the result.
+                    if (response.IsSuccessStatusCode)
+                    {
+                        context.AtualizarBuzzer(v);
+                        context.AdicionarLog(int.Parse(this.User.Claims.First().Value.ToString()), (buzzer ? "Ativado" : "Desativado") + " buzzer da viatura com a matricula " + id + "!", 0);
+                        return Content("1");
+                    }
+
                 }
+                catch (Exception ex)
+                {
 
+                    Console.WriteLine(ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-
-                Console.WriteLine(ex.Message);
+                return Content("1");
             }
-
             return Content("0");
         }
 

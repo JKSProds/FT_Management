@@ -297,6 +297,41 @@ namespace FT_Management.Models
             return res == null ? new Viatura() : res;
         }
 
+        public Viatura ObterViatura(string Matricula)
+        {
+            Viatura res = new Viatura();
+
+            string sqlQuery = "SELECT *, (Select  fim_localizacao from dat_viaturas_viagens where matricula_viatura=dat_viaturas.matricula_viatura order by timestamp DESC limit 1) as localizacao2 FROM dat_viaturas where matricula_viatura='" + Matricula + "' order by UltimaAtualizacao DESC LIMIT 1;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    res = new Viatura()
+                    {
+                        Matricula = result["matricula_viatura"],
+                        LocalizacaoMorada = result["localizacao"],
+                        Latitude = result["latitude"],
+                        Longitude = result["longitude"],
+                        KmsAtuais = result["ultimoKms"],
+                        Utilizador = ObterUtilizador(int.Parse(result["IdUtilizador"])),
+                        Ignicao = result["ignicao"] == 1,
+                        Buzzer = result["Buzzer"] == 1,
+                        UltimoUpdate = DateTime.Parse(result["UltimaAtualizacao"])
+                    };
+                    if (DateTime.Parse(result["timestamp"]) < DateTime.Now.AddMinutes(-60))
+                    {
+                        res.Ignicao = result["localizacao2"] == "";
+                        res.LocalizacaoMorada = result["localizacao2"] == "" ? "Não foi possivel obter a localização desta viatura!" : result["localizacao2"];
+                    }
+                }
+            }
+
+
+            return res == null ? new Viatura() : res;
+        }
+
         public List<Viatura> ObterViaturas()
         {
             List<Viatura> res = new List<Viatura>();
@@ -327,6 +362,17 @@ namespace FT_Management.Models
 
             return res.OrderBy(v => v.Utilizador.NomeCompleto).ToList();
         }
+
+        public void AtualizarBuzzer(Viatura v)
+        {
+            string sql = "UPDATE dat_viaturas set Buzzer=" + v.Buzzer + " WHERE matricula_viatura='" + v.Matricula + "';";
+
+            using (Database db = ConnectionString)
+            {
+                db.Execute(sql);
+            }
+        }
+
         public List<Viagem> ObterViagens(string Matricula, string DataViagens)
         {
             List<Viagem> res = new List<Viagem>();
