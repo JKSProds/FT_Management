@@ -20,5 +20,6 @@ namespace FT_Management.Models
         [Display(Name = "Ultimo Evento")]
         public DateTime UltimoUpdate { get; set; }
         public Utilizador Utilizador { get; set; }
+        public string GetUrl { get { return "https://www.google.com/maps/search/?api=1&query=" + this.Latitude + "," + this.Longitude; } }
     }
 }

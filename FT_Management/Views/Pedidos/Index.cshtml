@@ -380,10 +380,10 @@
                     var obj = response[i];
                     var condutor = 'N/D';
                     if (obj.utilizador != null) condutor = obj.utilizador.nomeCompleto;
-
+                    console.log(obj);
                     html += "<tr onclick=\"location.href = '/Viaturas/Viagens/" + obj.matricula + "'\" ";
                     if (obj.ignicao) html += " class=\"has-background-success\"";
-                    html += "><td>" + condutor + "</td><td>" + obj.matricula + "</td><td>" + obj.localizacaoMorada + "</td><td><a class=\"button is-outlined is-info is-large\" href=\"https://www.google.com/maps/search/?api=1&query=" + obj.latitude + "," + obj.longitude + "\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></td></tr>";
+                    html += "><td>" + condutor + "</td><td>" + obj.matricula + "</td><td>" + obj.localizacaoMorada + "</td><td><a class=\"button is-outlined is-info is-large\" href=" + obj.getUrl + "><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></td></tr>";
 
 
                 }

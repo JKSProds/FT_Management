@@ -21,8 +21,6 @@
                     </div>
                 </div>
             </div>
-            <div class="column">
-            </div>
         </div>
     </div>
 </form>
@@ -84,8 +82,9 @@
                                         <span class="check is-primary"></span>
                                         <span class="control-label">@Html.DisplayNameFor(model => model.Buzzer)</span>
                                     </label>
-                                    <a class="button is-warning is-fullwidth" href="~/Viaturas/Viagens/@item.Matricula"><i
+                                    <a class="button is-warning" href="~/Viaturas/Viagens/@item.Matricula"><i
                                             class="fas fa-eye"></i></a>
+                                    <a class="button is-info" href="@item.GetUrl"><i class="fa-solid fa-location-arrow"></i></a>
                                 </td>
                             </tr>
                         }
