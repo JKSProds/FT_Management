@@ -24,6 +24,14 @@ namespace FT_Management.Controllers
             return View(context.ObterViaturas());
         }
 
+        public ActionResult Tracking()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+
+            return View();
+        }
+
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> AtualizarBuzzer(string id, bool buzzer)
         {
@@ -92,7 +100,7 @@ namespace FT_Management.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin, Escritorio")]
-        public List<Viatura> ObterViaturas()
+        public List<Viatura> ObterViaturas(string API_KEY)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 

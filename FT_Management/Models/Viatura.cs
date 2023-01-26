@@ -19,7 +19,9 @@ namespace FT_Management.Models
         public bool Buzzer { get; set; }
         [Display(Name = "Ultimo Evento")]
         public DateTime UltimoUpdate { get; set; }
+        public int Velocidade { get; set; }
+        public int Combustivel { get; set; }
         public Utilizador Utilizador { get; set; }
-        public string GetUrl { get { return "https://www.google.com/maps/search/?api=1&query=" + this.Latitude + "," + this.Longitude; } }
+        public string GetUrl { get { return "http://www.google.com/maps/search/?api=1&query=" + this.Latitude + "," + this.Longitude; } }
     }
 }
