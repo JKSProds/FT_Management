@@ -26,27 +26,31 @@
             <div class="column">
                 <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                     <p class="control has-icons-left">
-                        <input type="number" class="input" placeholder="Num. da Marcação" id="txtNumMarcacao" name="numMarcacao" value="@ViewData["numMarcacao"]" aria-describedby="basic-addon2">
+                        <input type="number" class="input" placeholder="Num. da Marcação" id="txtNumMarcacao"
+                            name="numMarcacao" value="@ViewData["numMarcacao"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-1-9"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Nome do Cliente" id="txtNomeCliente" name="nomeCliente" value="@ViewData["nomeCliente"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Nome do Cliente" id="txtNomeCliente"
+                            name="nomeCliente" value="@ViewData["nomeCliente"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Num. de Incidente" id="txtReferencia" name="referencia" value="@ViewData["referencia"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Num. de Incidente" id="txtReferencia"
+                            name="referencia" value="@ViewData["referencia"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
                         <span class="select">
-                            <select class="select" id="lstestados" name="estado" style="height: auto; max-width:250px" onchange="filtrar()"
-                                    asp-items="@(new SelectList(@ViewBag.Estados, "Value", "Text", @ViewData["estado"]))">
+                            <select class="select" id="lstestados" name="estado" style="height: auto; max-width:250px"
+                                onchange="filtrar()"
+                                asp-items="@(new SelectList(@ViewBag.Estados, "Value", "Text", @ViewData["estado"]))">
                             </select>
                         </span>
                         <span class="icon is-small is-left">
@@ -56,7 +60,7 @@
                     <p class="control has-icons-left">
                         <span class="select">
                             <select class="select" id="lsttipoe" name="tipoe" style="height: auto" onchange="filtrar()"
-                                    asp-items="@(new SelectList(@ViewBag.TipoEquipamento, "Value", "Text", @ViewData["tipoe"]))">
+                                asp-items="@(new SelectList(@ViewBag.TipoEquipamento, "Value", "Text", @ViewData["tipoe"]))">
                             </select>
                         </span>
                         <span class="icon is-small is-left">
@@ -65,19 +69,20 @@
                     </p>
                     <p class="control has-addons has-icons-left">
                         <span class="select" style="max-width:150px">
-                            <select class="select" id="idtecnico" name="idtecnico" style="height: auto" onchange="filtrar()"
-                                    asp-items="@(new SelectList(@ViewBag.ListaTecnicos, "IdPHC", "NomeCompleto", @ViewData["idtecnico"]))">
+                            <select class="select" id="idtecnico" name="idtecnico" style="height: auto"
+                                onchange="filtrar()"
+                                asp-items="@(new SelectList(@ViewBag.ListaTecnicos, "IdPHC", "NomeCompleto", @ViewData["idtecnico"]))">
                             </select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-person"></i>
                         </span>
 
-                         <div class="control">
-                                    <a class="button is-info" href="~/Pedidos/ListaPedidos?IdTecnico=@ViewData["idtecnico"]">
-                                         <i class="fas fa-eye"></i>
-                                    </a>
-                        </div>
+                    <div class="control">
+                        <a class="button is-info" href="~/Pedidos/ListaPedidos?IdTecnico=@ViewData["idtecnico"]">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
                     </p>
                 </div>
                 <div class="buttons is-right">
@@ -98,7 +103,8 @@
                         </button>
                     </p>
                     <p class="control">
-                        <button class="button is-primary is-info" type="button" onclick="window.location.href = '/Pedidos/Adicionar'">
+                        <button class="button is-primary is-info" type="button"
+                            onclick="window.location.href = '/Pedidos/Adicionar'">
                             <span class="icon">
                                 <i class="fas fa-plus fa-lg"></i>
                             </span>
@@ -106,7 +112,8 @@
                         </button>
                     </p>
                     <p class="control">
-                        <button type="button" onclick="window.location.href = '/Pedidos/Agendamento'" class="button is-success is-outlined">
+                        <button type="button" onclick="window.location.href = '/Pedidos/Agendamento'"
+                            class="button is-success is-outlined">
                             <span class="icon">
                                 <i class="fas fa-calendar"></i>
                             </span>
@@ -134,75 +141,84 @@
         <button class="button is-danger is-fullwidth is-disabled">Não foram encontradas marcações!</button>
     }
     else
-    {   
-    <div class="b-table">
-        <div class="table-wrapper has-mobile-cards">
-        <table class="table is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)
-                    </th>                    
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)
-                    </th>                    
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-                @foreach (var item in Model)
-                {
-                    <tr id="marcacao_@item.IdMarcacao" class="@(item.EstadoMarcacaoDesc=="Finalizado" ? "has-background-success" : "")" >
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">
-                            <span>@item.IdMarcacao</span>
-                        </td>
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">
-                            <span>@item.Cliente.NomeCliente</span>
-                        </td>
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
-                            <span class="data">@item.DataMarcacao.ToShortDateString()</span>
-                        </td>
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)">
-                            <span>@item.Referencia</span>
-                        </td>
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">
-                            <span class="estado">@item.EstadoMarcacaoDesc</span>
-                        </td>
-                        <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">                        
-                            <span class="tecnico">@item.Tecnico.NomeCompleto</span>
-                        </td>
-                        <td class="is-actions-cell" style="min-width:200px">
-                            <a class="button is-info is-rounded" onclick="ObterMarcacao(@item.IdMarcacao);">
-                                <span class="icon is-small">
-                                    <i class="fas fa-list"></i>
-                                </span>
-                            </a>
-                            <a class="button is-primary is-rounded" onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'">
-                                <span class="icon is-small">
-                                    <i class="fas fa-sticky-note"></i>
-                                </span>
-                            </a>
-                            <a class="button is-info is-rounded is-outlined"onclick="copiarTexto('@item.Referencia');">
-                                      <i class="fa-solid fa-copy"></i>
-                            </a>  
-                        </td>
-                    </tr>
-                }
-        </table>
-    </div>
-</div>
-        
+    {
+        <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+                <table class="table is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model =>
+                            model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="marcacao_@item.IdMarcacao"
+                            class="@(item.EstadoMarcacaoDesc=="Finalizado" ? "has-background-success" : "")">
+                            <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
+                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">
+                                <span>@item.IdMarcacao</span>
+                            </td>
+                            <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
+                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">
+                                <span>@item.Cliente.NomeCliente</span>
+                            </td>
+                            <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
+                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
+                                <span class="data">@item.DataMarcacao.ToShortDateString()</span>
+                            </td>
+                            <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
+                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)">
+                                <span>@item.Referencia</span>
+                            </td>
+                            <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
+                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">
+                                <span class="estado">@item.EstadoMarcacaoDesc</span>
+                            </td>
+                            <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
+                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">
+                                <span class="tecnico">@item.Tecnico.NomeCompleto</span>
+                            </td>
+                            <td class="is-actions-cell" style="min-width:200px">
+                                <a class="button is-info is-rounded" onclick="ObterMarcacao(@item.IdMarcacao);">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-list"></i>
+                                    </span>
+                                </a>
+                                <a class="button is-primary is-rounded"
+                                    onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-sticky-note"></i>
+                                    </span>
+                                </a>
+                                <a class="button is-info is-rounded is-outlined" onclick="copiarTexto('@item.Referencia');">
+                                    <i class="fa-solid fa-copy"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
     }
 </div>
 
@@ -218,6 +234,11 @@
                 <p> </p>
             </div>
         </section>
+        <footer class="modal-card-foot">
+            <a class="button is-info" href="~/Viaturas"><i class="fas fa-eye"></i></a>
+            <button class="button is-secondary is-outlined"
+                onclick="Bulma('#modalObterViaturas').modal().close();">Cancelar</button>
+        </footer>
     </div>
 </div>
 
@@ -233,12 +254,12 @@
             <div class="modal-body">
                 <fieldset disabled>
                     <div class="field has-addons">
-                      <div class="control">
-                        <input type="text" class="input"  id="txtIdMarcacao">
-                      </div>
-                      <div class="control" style="width:100%">
-                        <input type="text" class="input"  id="txtNomeCliente2">
-                      </div>
+                        <div class="control">
+                            <input type="text" class="input" id="txtIdMarcacao">
+                        </div>
+                        <div class="control" style="width:100%">
+                            <input type="text" class="input" id="txtNomeCliente2">
+                        </div>
                     </div>
                 </fieldset>
                 <hr />
@@ -246,7 +267,8 @@
                     <label class="label">Estado</label>
                     <p class="control has-icons-left">
                         <span class="select" style="width:100%">
-                            @Html.DropDownList("LstEstados", new SelectList(ViewBag.Estados, "Value", "Text"), new { style = "width: 100%;" })
+                            @Html.DropDownList("LstEstados", new SelectList(ViewBag.Estados, "Value", "Text"), new {
+                            style = "width: 100%;" })
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-check"></i>
@@ -257,7 +279,8 @@
                     <label class="label">Data da Marcação</label>
                     <div class="field">
                         <p class="control ">
-                            <input type="date" class="input" value="@(DateTime.Parse(DateTime.Now.ToString()).ToString("yyyy-MM-dd"))" id="txtData">
+                            <input type="date" class="input"
+                                value="@(DateTime.Parse(DateTime.Now.ToString()).ToString("yyyy-MM-dd"))" id="txtData">
                             <script>
                                 bulmaCalendar.attach('#txtData', {
                                     color: 'info',
@@ -277,7 +300,8 @@
                     <div class="control">
                         <div class="select" style="width:100%">
                             <span class="select" style="width:100%">
-                            @Html.DropDownList("LstTecnicos", new SelectList(ViewBag.ListaTecnicos, "Id", "NomeCompleto"), new { style = "width: 100%;" })
+                                @Html.DropDownList("LstTecnicos", new SelectList(ViewBag.ListaTecnicos, "Id",
+                                "NomeCompleto"), new { style = "width: 100%;" })
                             </span>
                         </div>
                     </div>
@@ -286,8 +310,10 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-             <button class="button is-info" onclick="AtualizarMarcacao(document.getElementById('txtIdMarcacao').value);">Atualizar Marcação</button>
-            <button class="button is-secondary is-outlined" onclick="Bulma('#modalQuickActionMarcacao').modal().close();">Cancelar</button>
+            <button class="button is-info"
+                onclick="AtualizarMarcacao(document.getElementById('txtIdMarcacao').value);">Atualizar Marcação</button>
+            <button class="button is-secondary is-outlined"
+                onclick="Bulma('#modalQuickActionMarcacao').modal().close();">Cancelar</button>
         </footer>
     </div>
 </div>
@@ -296,35 +322,35 @@
     document.getElementById('LstEstados').remove(0);
     document.getElementById('LstTecnicos').remove(0);
 
-     function copiarTexto(id) {
-                  
-                bulmaToast.toast({
-                  message: 'Texto copiado com sucesso!',
-                  type: 'is-success',
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  opacity: 0.8,
-                  duration: 5000,
-                  position: 'top-center'
-                })
+    function copiarTexto(id) {
 
-             // text area method
-            let textArea = document.createElement("textarea");
-            textArea.value = id;
-            // make the textarea out of viewport
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            textArea.style.top = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            return new Promise((res, rej) => {
-                // here the magic happens
-                document.execCommand('copy') ? res() : rej();
-                textArea.remove();
-            });
+        bulmaToast.toast({
+            message: 'Texto copiado com sucesso!',
+            type: 'is-success',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        })
 
-        }
+        // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = id;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((res, rej) => {
+            // here the magic happens
+            document.execCommand('copy') ? res() : rej();
+            textArea.remove();
+        });
+
+    }
 
     function filtrar() {
         document.getElementById('pageloader').classList.add('is-active');
@@ -344,7 +370,7 @@
     }
 
     function ObterViaturas() {
-         $.ajax({
+        $.ajax({
             url: '/Viaturas/ObterViaturas/',
             type: "GET",
             success: function (response) {
@@ -357,7 +383,7 @@
 
                     html += "<tr onclick=\"location.href = '/Viaturas/Viagens/" + obj.matricula + "'\" ";
                     if (obj.ignicao) html += " class=\"has-background-success\"";
-                    html += "><td>"+ condutor +"</td><td>" + obj.matricula + "</td><td>" + obj.localizacaoMorada + "</td><td><a class=\"button is-outlined is-info is-large\" href=\"https://www.google.com/maps/search/?api=1&query="+obj.latitude+","+obj.longitude+"\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></td></tr>";
+                    html += "><td>" + condutor + "</td><td>" + obj.matricula + "</td><td>" + obj.localizacaoMorada + "</td><td><a class=\"button is-outlined is-info is-large\" href=\"https://www.google.com/maps/search/?api=1&query=" + obj.latitude + "," + obj.longitude + "\"><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></td></tr>";
 
 
                 }
@@ -366,7 +392,7 @@
 
                 var modal = Bulma('#modalObterViaturas').modal();
                 modal.open();
-                
+
             },
             error: function (response) {
                 alert(response.responseText);
@@ -378,8 +404,8 @@
     }
 
     function ObterMarcacao(id) {
-         document.getElementById('pageloader').classList.add('is-active');
-         $.ajax({
+        document.getElementById('pageloader').classList.add('is-active');
+        $.ajax({
             url: '/Pedidos/ObterMarcacao/' + id,
             type: "GET",
             success: function (response) {
@@ -393,7 +419,7 @@
                 document.getElementById('pageloader').classList.remove('is-active');
                 var modal = Bulma('#modalQuickActionMarcacao').modal();
                 modal.open();
-                
+
             },
             error: function (response) {
                 alert(response.responseText);
@@ -408,48 +434,48 @@
     function AtualizarMarcacao(id) {
         if (document.getElementById('LstTecnicos').selectedIndex <= 0) {
             bulmaToast.toast({
-                          message: 'Tem de definir um técnico!',
-                          type: 'is-danger',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+                message: 'Tem de definir um técnico!',
+                type: 'is-danger',
+                closeOnClick: true,
+                pauseOnHover: true,
+                opacity: 0.8,
+                duration: 5000
             })
         } else {
-                
+
             document.getElementById('pageloader').classList.add('is-active');
             var m = {
-                    DataMarcacao : document.getElementById('txtData').value,
-                    EstadoMarcacaoDesc: document.getElementById('LstEstados').value,
-                    Tecnico: document.getElementById('LstTecnicos').value
-                }
+                DataMarcacao: document.getElementById('txtData').value,
+                EstadoMarcacaoDesc: document.getElementById('LstEstados').value,
+                Tecnico: document.getElementById('LstTecnicos').value
+            }
             $.ajax({
                 url: '/Pedidos/AlteracaoRapida/' + id,
                 type: "POST",
                 data: m,
-                success: function(response) {
+                success: function (response) {
                     document.getElementById('marcacao_' + id).querySelector('.data').childNodes[0].data = m.DataMarcacao;
                     document.getElementById('marcacao_' + id).querySelector('.estado').childNodes[0].data = m.EstadoMarcacaoDesc;
                     document.getElementById('marcacao_' + id).querySelector('.tecnico').childNodes[0].data = document.getElementById('LstTecnicos').selectedIndex > 0 ? document.getElementById('LstTecnicos')[document.getElementById('LstTecnicos').selectedIndex].text : "N/D";
 
-                    
+
                     document.getElementById('pageloader').classList.remove('is-active');
                     var modal = Bulma('#modalQuickActionMarcacao').modal();
                     modal.close();
 
                     bulmaToast.toast({
-                          message: 'Agendamento atualizado com sucesso!',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
-                        })
+                        message: 'Agendamento atualizado com sucesso!',
+                        type: 'is-success',
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        opacity: 0.8,
+                        duration: 5000
+                    })
                 },
-                error: function(response) {
+                error: function (response) {
                     alert(response.responseText);
                 },
-                failure: function(response) {
+                failure: function (response) {
                     alert(response.responseText);
                 }
             });

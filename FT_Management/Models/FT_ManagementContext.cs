@@ -281,7 +281,9 @@ namespace FT_Management.Models
                         Longitude = result["longitude"],
                         KmsAtuais = result["ultimoKms"],
                         Utilizador = utilizador,
-                        Ignicao = result["ignicao"] == 1
+                        Ignicao = result["ignicao"] == 1,
+                        Buzzer = result["Buzzer"] == 1,
+                        UltimoUpdate = DateTime.Parse(result["UltimaAtualizacao"])
                     };
                     if (DateTime.Parse(result["timestamp"]) < DateTime.Now.AddMinutes(-60))
                     {
@@ -314,7 +316,9 @@ namespace FT_Management.Models
                         Longitude = result["longitude"],
                         KmsAtuais = result["ultimoKms"],
                         Utilizador = LstUtilizadores.Where(u => u.Id == int.Parse(result["IdUtilizador"])).FirstOrDefault(),
-                        Ignicao = result["ignicao"] == 1
+                        Ignicao = result["ignicao"] == 1,
+                        Buzzer = result["Buzzer"] == 1,
+                        UltimoUpdate = DateTime.Parse(result["UltimaAtualizacao"])
                     });
                     if (res.Last().Utilizador == null) res.Last().Utilizador = new Utilizador();
                 }
