@@ -65,6 +65,12 @@ namespace FT_Management.Controllers
                     fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
                     phccontext.FecharFolhaObra(fo);
 
+                    Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
+                    if (fo.EstadoFolhaObra == 1) fo.Marcacao.EstadoMarcacaoDesc = "Finalizado";
+                    if (fo.EstadoFolhaObra == 2) fo.Marcacao.EstadoMarcacaoDesc = "Pedido Peças";
+                    if (fo.EstadoFolhaObra == 3) fo.Marcacao.EstadoMarcacaoDesc = "Pedido Orçamento";
+                    phccontext.AtualizaMarcacao(fo.Marcacao);
+
                     return RedirectToAction("Detalhes", "FolhasObra", new { id = fo.IdFolhaObra });
                 }
 
