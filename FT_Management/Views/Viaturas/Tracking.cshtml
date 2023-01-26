@@ -51,7 +51,7 @@
         success: function (data) {
             data.forEach((element) => {
                 var marker = L.marker([element.latitude, element.longitude], { icon: (element.ignicao ? carroLigado : carro) }).addTo(map);
-                marker.bindPopup("<b>" + element.matricula + " - " + element.kmsAtuais + " km</b><br>" + element.utilizador.nomeCompleto + " (" + element.velocidade + " km/h | " + element.combustivel + "%)<br>" + element.localizacaoMorada).openPopup();
+                marker.bindPopup("<b>" + element.matricula + " - " + element.kmsAtuais + " km</b><br>" + element.utilizador.nomeCompleto + " (" + element.velocidade + " km/h | " + element.combustivel + "%)<br>" + element.localizacaoMorada + "<br><br><a type='button' href='" + element.getUrl + "' class='button is-success is-fullwidth'><span class='icon'><i class='fas fa-location'></i></span><span>Direções</span></a>");
             });
         },
         error: function (data) {
