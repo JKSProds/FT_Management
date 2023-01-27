@@ -128,12 +128,24 @@ namespace FT_Management.Models
         }
         public void ValidarTipoFolhaObra()
         {
-            this.CobrarDeslocacao = this.TipoFolhaObra == "Interno";
-            this.CobrarDeslocacao = this.TipoFolhaObra == "Remoto";
-            this.CobrarDeslocacao = this.TipoFolhaObra == "Instalação";
-
-            this.AssistenciaRemota = this.TipoFolhaObra == "Remoto";
-            this.Instalação = this.TipoFolhaObra == "Instalação";
+            if (this.TipoFolhaObra == "Interno")
+            {
+                this.CobrarDeslocacao = false;
+            }
+            else if (this.TipoFolhaObra == "Externo")
+            {
+                this.CobrarDeslocacao = true;
+            }
+            else if (this.TipoFolhaObra == "Remoto")
+            {
+                this.CobrarDeslocacao = false;
+                this.AssistenciaRemota = true;
+            }
+            else if (this.TipoFolhaObra == "Instalação")
+            {
+                this.CobrarDeslocacao = false;
+                this.Instalação = true;
+            }
         }
         public void ValidarPecas()
         {
