@@ -685,6 +685,7 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@HORA_FIM", i.HoraFim.ToShortTimeString()));
                 command.Parameters.Add(new SqlParameter("@DATA", i.DataServiço.ToString("yyyyMMdd")));
                 command.Parameters.Add(new SqlParameter("@RELATORIO", i.RelatorioServico));
+                command.Parameters.Add(new SqlParameter("@QASSINOU", fo.ConferidoPor));
                 command.Parameters.Add(new SqlParameter("@TECNICO", i.IdTecnico));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.NomeTecnico));
 
