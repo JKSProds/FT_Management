@@ -757,6 +757,7 @@ namespace FT_Management.Models
         public string CriarAssinatura(FolhaObra fo)
         {
             string res = "";
+            if (string.IsNullOrEmpty(fo.RubricaCliente)) return res;
             try
             {
                 byte[] bytes = Convert.FromBase64String(fo.RubricaCliente.Split(",").Last());

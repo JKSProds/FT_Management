@@ -27,7 +27,7 @@
         background-color: white;
     }
 </style>
-
+<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
 <form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
     <div class="container">
         <div class="columns is-mobile is-centered">
@@ -796,7 +796,7 @@
     function FecharMarcacao(valor) {
         document.getElementById('chkFecharMarcacao').checked = valor;
         Bulma('#modalFecharMarcacao').modal().close();
-
+        document.getElementById('pageloader').classList.add('is-active');
         document.getElementById('frmAdicionar').submit();
     }
 
