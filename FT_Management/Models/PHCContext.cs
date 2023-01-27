@@ -811,6 +811,7 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@PIQUETE", fo.Piquete ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@DESLOCACAO", fo.CobrarDeslocacao ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@OBS", fo.SituacoesPendentes));
+                command.Parameters.Add(new SqlParameter("@DATA", fo.DataServico.ToString("yyyyMMdd")));
                 command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
 
