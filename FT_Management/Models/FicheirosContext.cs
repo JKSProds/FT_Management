@@ -6,7 +6,7 @@ namespace FT_Management.Models
     public static class FicheirosContext
     {
 
-        //private static string CaminhoServerAnexos = "/server/Assistencias_Tecnicas/";
+        private static string CaminhoServerAnexos = "/server/Assistencias_Tecnicas/";
         private static string CaminhoImagensProduto = "/server/Imagens/EQUIPAMENTOS/";
         private static string CaminhoImagensUtilizador = "S:\\Imagens\\UTILIZADORES\\";
 
@@ -55,6 +55,10 @@ return res.Replace("\\", "/").Replace("S:", "/server");
         public static bool CriarAnexoMarcacao(Anexo a, IFormFile ficheiro)
         {
             return CriarFicheiro(FormatLinuxServer(a.NomeFicheiro), ficheiro);
+        }
+        public static bool CriarAnexoAssinatura(Anexo a, IFormFile ficheiro)
+        {
+            return CriarFicheiro(FormatLinuxServer(CaminhoServerAnexos + a.NomeFicheiro), ficheiro);
         }
         public static bool ApagarAnexoMarcacao(Anexo a)
         {

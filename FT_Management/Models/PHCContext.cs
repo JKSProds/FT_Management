@@ -771,7 +771,7 @@ namespace FT_Management.Models
 
 
 
-                if (FicheirosContext.CriarAnexoMarcacao(a, file)) res = CriarAnexoMarcacao(a);
+                if (FicheirosContext.CriarAnexoAssinatura(a, file)) res = CriarAnexoMarcacao(a);
                 if (res.Length == 0) return "";
             }
 
