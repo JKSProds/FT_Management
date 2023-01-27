@@ -766,16 +766,18 @@ namespace FT_Management.Models
                     AnexoAssinatura = true,
                     NomeUtilizador = fo.Utilizador.NomeCompleto
                 };
-                IFormFile file = new FormFile(stream, 0, bytes.Length, a.ObterNomeUnico(), a.ObterNomeUnico());
-                a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
+                a.NomeFicheiro = a.ObterNomeUnico() + ".png";
+                IFormFile file = new FormFile(stream, 0, bytes.Length, a.NomeFicheiro.Split(".").First(), a.NomeFicheiro);
 
-                res = CriarAnexoMarcacao(a);
+
+
+                if (FicheirosContext.CriarAnexoMarcacao(a, file)) res = CriarAnexoMarcacao(a);
                 if (res.Length == 0) return "";
             }
 
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel a assinatura para a folha de Obra!\r\n(Exception: " + ex.Message + ")");
             }
             return res;
 

@@ -59,17 +59,17 @@ namespace FT_Management.Controllers
                 fo.ValidarIntervencoes();
                 fo.ValidarPecas();
 
+                Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
+                if (fo.FecharMarcacao) m.EstadoMarcacaoDesc = "Finalizado";
+                if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
+                if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
+
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)
                 {
                     fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
                     phccontext.FecharFolhaObra(fo);
-
-                    Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
-                    if (fo.EstadoFolhaObra == 1) fo.Marcacao.EstadoMarcacaoDesc = "Finalizado";
-                    if (fo.EstadoFolhaObra == 2) fo.Marcacao.EstadoMarcacaoDesc = "Pedido Peças";
-                    if (fo.EstadoFolhaObra == 3) fo.Marcacao.EstadoMarcacaoDesc = "Pedido Orçamento";
-                    phccontext.AtualizaMarcacao(fo.Marcacao);
+                    phccontext.AtualizaMarcacao(m);
 
                     return RedirectToAction("Detalhes", "FolhasObra", new { id = fo.IdFolhaObra });
                 }
