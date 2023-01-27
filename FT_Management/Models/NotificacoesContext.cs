@@ -247,7 +247,7 @@ namespace FT_Management.Models
 
                     myMail.Body = Mensagem;
                     myMail.BodyEncoding = System.Text.Encoding.UTF8;
-                    myMail.IsBodyHtml = false;
+                    myMail.IsBodyHtml = true;
 
                     mySmtpClient.SendMailAsync(myMail);
                 }
