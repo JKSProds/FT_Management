@@ -212,6 +212,52 @@ namespace FT_Management.Models
                 }
             }
         }
+        private static void EnviarMailSimples(string EmailDestino, string Assunto, string Mensagem, List<String> EmailCC)
+        {
+            if (EnableSend())
+            {
+                try
+                {
+                    SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"])
+                    {
+                        UseDefaultCredentials = false
+                    };
+
+                    System.Net.NetworkCredential basicAuthenticationInfo = new
+                       System.Net.NetworkCredential(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:SenhaEmailOrigem"]);
+                    mySmtpClient.Credentials = basicAuthenticationInfo;
+
+                    MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
+                    MailMessage myMail = new MailMessage();
+
+                    foreach (var item in EmailDestino.Split(";"))
+                    {
+                        myMail.To.Add(item);
+                    }
+                    myMail.From = from;
+                    myMail.Bcc.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailBCC"]));
+
+                    foreach (var item in EmailCC)
+                    {
+                        myMail.CC.Add(new MailAddress(item));
+                    }
+
+                    myMail.Subject = Assunto;
+                    myMail.SubjectEncoding = System.Text.Encoding.UTF8;
+
+                    myMail.Body = Mensagem;
+                    myMail.BodyEncoding = System.Text.Encoding.UTF8;
+                    myMail.IsBodyHtml = false;
+
+                    mySmtpClient.SendMailAsync(myMail);
+                }
+                catch (SmtpException ex)
+                {
+                    throw new ApplicationException
+                      ("SmtpException has occured: " + ex.Message);
+                }
+            }
+        }
         public static List<String> ObterEmailCC(int tipo)
         {
             //TIPO 1 == TECNICOS | TIPO 2 == COMERCIAIS | TIPO 3 == Férias
@@ -342,7 +388,7 @@ namespace FT_Management.Models
             if (!string.IsNullOrEmpty(Mensagem))
             {
                 string Assunto = "[Ticket#" + Referencia + "] Resolvido";
-                EnviarMail("2370@kyntech.pt", Assunto, Mensagem, null, ObterEmailCC(1));
+                EnviarMailSimples("2370@kyntech.pt", Assunto, Mensagem, ObterEmailCC(1));
             }
 
             return true;
