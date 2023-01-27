@@ -337,6 +337,16 @@ namespace FT_Management.Models
 
             return true;
         }
+        public static bool EnviarEmailMarcacaoResolvidaPD(string Mensagem, string Referencia)
+        {
+            if (!string.IsNullOrEmpty(Mensagem))
+            {
+                string Assunto = "[Ticket#" + Referencia + "] Resolvido";
+                EnviarMail("2370@kyntech.pt", Assunto, Mensagem, null, ObterEmailCC(1));
+            }
+
+            return true;
+        }
 
         public static bool EnviarEmailPropostaComercial(Utilizador u, Visita v, Proposta p)
         {

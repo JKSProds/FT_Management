@@ -205,6 +205,7 @@ namespace FT_Management.Controllers
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
                 phccontext.AtualizaMarcacao(m);
+                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoResolvidaPD(m.JustificacaoFecho, m.Referencia);
             }
 
             return Json(new { json = res });
