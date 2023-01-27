@@ -804,11 +804,12 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@STAMP_ASSINATURA", CriarAssinatura(fo)));
                 command.Parameters.Add(new SqlParameter("@QASSINOU", fo.ConferidoPor));
                 command.Parameters.Add(new SqlParameter("@GARANTIA", fo.EmGarantia ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@INSTALACAO", false ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@INSTALACAO", fo.Instalação ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@OFICINA", fo.RecolhaOficina ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@REMOTO", fo.AssistenciaRemota ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@PIQUETE", fo.Piquete ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@DESLOCACAO", fo.CobrarDeslocacao ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@OBS", fo.SituacoesPendentes));
                 command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
 

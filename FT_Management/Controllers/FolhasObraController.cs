@@ -58,6 +58,7 @@ namespace FT_Management.Controllers
                 fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
                 fo.ValidarIntervencoes();
                 fo.ValidarPecas();
+                fo.ValidarTipoFolhaObra();
 
                 Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
                 if (fo.FecharMarcacao) m.EstadoMarcacaoDesc = "Finalizado";

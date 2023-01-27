@@ -71,6 +71,7 @@ namespace FT_Management.Models
         [Display(Name = "Recolher para Oficina")]
         public bool RecolhaOficina { get; set; }
         public bool CobrarDeslocacao { get; set; }
+        public bool Instalação { get; set; }
         public bool EnviarEmail { get; set; }
         public string EmailCliente { get; set; }
         public bool GuardarLocalizacao { get; set; }
@@ -101,6 +102,8 @@ namespace FT_Management.Models
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
             this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) ? m.QuemPediuEmail : m.Cliente.EmailCliente;
+            this.Piquete = m.Piquete;
+            this.TipoFolhaObra = m.TipoServico;
             return this;
         }
         public void ValidarIntervencoes()
@@ -122,6 +125,15 @@ namespace FT_Management.Models
                     });
                 }
             }
+        }
+        public void ValidarTipoFolhaObra()
+        {
+            this.CobrarDeslocacao = this.TipoFolhaObra == "Interno";
+            this.CobrarDeslocacao = this.TipoFolhaObra == "Remoto";
+            this.CobrarDeslocacao = this.TipoFolhaObra == "Instalação";
+
+            this.AssistenciaRemota = this.TipoFolhaObra == "Remoto";
+            this.Instalação = this.TipoFolhaObra == "Instalação";
         }
         public void ValidarPecas()
         {
