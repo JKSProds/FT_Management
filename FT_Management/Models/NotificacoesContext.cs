@@ -387,7 +387,7 @@ namespace FT_Management.Models
         {
             if (!string.IsNullOrEmpty(Mensagem))
             {
-                string Assunto = "[Ticket#" + Referencia + "] Resolvido";
+                string Assunto = "[Ticket#" + Referencia + "] - Resolvido";
                 EnviarMailSimples("2370@kyntech.pt", Assunto, Mensagem, ObterEmailCC(1));
             }
 
