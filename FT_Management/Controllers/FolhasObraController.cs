@@ -33,8 +33,11 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
 
-            FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(phccontext.ObterMarcacao(id));
+            if (m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado") return Forbid();
+
+            FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(m);
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
