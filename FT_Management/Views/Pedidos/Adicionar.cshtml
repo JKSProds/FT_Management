@@ -64,8 +64,7 @@
                     </a>
                 </div>
                 <div class="steps-action">
-                    <a href="#" data-nav="next" id="stepsNext" onclick="resizeCanvas();"
-                        class="is-fullwidth button is-light">
+                    <a href="#" data-nav="next" id="stepsNext" class="is-fullwidth button is-light">
                         <span class="icon">
                             <i class="fas fa-arrow-right"></i>
                         </span>
@@ -428,7 +427,9 @@
 
 
 @section Scripts {
-@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
 <script>
