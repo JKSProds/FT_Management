@@ -118,6 +118,7 @@ namespace FT_Management.Models
         public void ValidarIntervencoes()
         {
             this.IntervencaosServico.Clear();
+            if (this.ListaIntervencoes == null) return;
             foreach (var item in this.ListaIntervencoes.Split(";"))
             {
                 if (item != "")

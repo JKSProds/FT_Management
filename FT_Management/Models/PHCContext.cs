@@ -853,7 +853,7 @@ namespace FT_Management.Models
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
-
+            if (fo.IntervencaosServico.Count() == 0) res += "Não foram adicionadas intervenções!";
             if (fo.DataServico.ToShortDateString() != DateTime.Now.ToShortDateString()) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
             if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";
 

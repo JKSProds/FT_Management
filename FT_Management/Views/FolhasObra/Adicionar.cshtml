@@ -127,11 +127,17 @@
                                             </span>
                                         </p>
                                     </div>
-                                    <div class="control">
+                                    <div class="field has-addons">
                                         <button type="button" class="button is-info" id="btnObterHistorico"
                                             onclick="ObterHistoricoEquipamento()" disabled>
                                             <span class="icon">
                                                 <i class="fas fa-history"></i>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="button is-success" id="btnObterEquipamentos"
+                                            onclick="ObterEquipamentosCliente()">
+                                            <span class="icon">
+                                                <i class="fas fa-desktop"></i>
                                             </span>
                                         </button>
                                     </div>
@@ -598,6 +604,7 @@
     </div>
 </div>
 
+
 <div id="modalObterHistoricoVazio" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -608,6 +615,21 @@
         <section class="modal-card-body">
             <div class="form-group">
                 <button class="button is-danger is-outlined is-rounded is-fullwidth">Não existem intervenções!</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div id="modalEquipamentos" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Equipamentos</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p> </p>
             </div>
         </section>
     </div>
@@ -674,7 +696,7 @@
     CarregarPecas();
 
     function ValidarFolhaObra() {
-        document.getElementById('txtRubricaCliente').value = canvas.isEmpty ? "" : canvas.toDataURL();
+        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() ? "" : canvas.toDataURL();
 
         $.ajax({
             type: "POST",
@@ -954,6 +976,28 @@
             minLength: 1
         });
     });
+
+    function ObterEquipamentosCliente() {
+        $.ajax({
+            url: '/Equipamentos/ObterEquipamentos/',
+            data: { "prefix": "", "no": "@Model.ClienteServico.IdCliente", "loja": "@Model.ClienteServico.IdLoja" },
+            type: "GET",
+            success: function (data) {
+                console.log(data);
+                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th></tr></thead><tbody>";
+                $(data).each(function () {
+                    html += "<tr><td>" + this.marcaEquipamento + "</td><td>" + this.modeloEquipamento + "</td><td>" + this.numeroSerieEquipamento + "</td></tr>";
+                });
+                html += "</tbody></table>"
+                $('#modalEquipamentos').find('.modal-body').html(html);
+                Bulma('#modalEquipamentos').modal().open();
+            },
+            error: function (response) {
+            },
+            failure: function (response) {
+            }
+        });
+    }
 
     function ObterHistoricoEquipamento() {
         var Stamp = document.getElementById('txtEquipamentoStamp').value;

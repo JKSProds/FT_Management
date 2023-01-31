@@ -42,6 +42,8 @@ namespace FT_Management.Controllers
         public JsonResult ObterEquipamentos(int no, int loja, string prefix)
         {
             if (no == 0) return Json("");
+            if (string.IsNullOrEmpty(prefix)) prefix = "";
+
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = no, IdLoja = loja }).Where(e => e.NumeroSerieEquipamento.ToLower().Contains(prefix.ToLower())).OrderBy(e => e.NumeroSerieEquipamento).ToList());
