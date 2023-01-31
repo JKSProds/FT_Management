@@ -77,6 +77,7 @@ namespace FT_Management.Models
         public bool GuardarLocalizacao { get; set; }
         public bool FecharMarcacao { get; set; }
         public double ValorTotal { get { return PecasServico.Sum(p => p.Valor); } }
+        public double KmsDeslocacao { get; set; }
 
         public FolhaObra()
         {
@@ -106,6 +107,14 @@ namespace FT_Management.Models
             this.TipoFolhaObra = m.TipoServico;
             return this;
         }
+
+        public void PreencherViagem(Viagem v)
+        {
+            this.IntervencaosServico.First().HoraInicio = v.Fim_Viagem;
+            this.IntervencaosServico.First().HoraFim = DateTime.Now;
+            this.KmsDeslocacao = double.Parse(v.Distancia_Viagem);
+        }
+
         public void ValidarIntervencoes()
         {
             this.IntervencaosServico.Clear();
