@@ -154,7 +154,6 @@
                                         bulmaCalendar.attach('#txtData', {
                                             color: 'info',
                                             lang: 'pt',
-                                            displayMode: 'inline',
                                             dateFormat: 'dd/MM/yyyy',
                                             todayLabel: 'Hoje',
                                             showClearButton: false,
@@ -675,7 +674,7 @@
     CarregarPecas();
 
     function ValidarFolhaObra() {
-        document.getElementById('txtRubricaCliente').value = canvas.toDataURL();
+        document.getElementById('txtRubricaCliente').value = canvas.isEmpty ? "" : canvas.toDataURL();
 
         $.ajax({
             type: "POST",
@@ -803,7 +802,7 @@
     //INTERVENCOES
     function AdicionarIntervencao() {
         if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid()) {
-            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:100%">${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:100%">${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
         }
     }
@@ -829,7 +828,7 @@
 
     //PEÇAS
     function AdicionarPeca(ref, desig) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + ref};`;
     }
 
