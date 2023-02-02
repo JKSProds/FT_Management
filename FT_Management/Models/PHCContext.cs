@@ -100,7 +100,7 @@ namespace FT_Management.Models
                             Armazem_ID = !string.IsNullOrEmpty(result["armazem"].ToString()) ? int.Parse(result["armazem"].ToString()) : 0,
                             Pos_Stock = result["u_locpt"].ToString(),
                             Serie = result["noserie"].ToString() == "True",
-                            Valor = !string.IsNullOrEmpty(result["pv1"].ToString()) ? double.Parse(result["pv1"].ToString()) : 0,
+                            Valor = !string.IsNullOrEmpty(result["epv1"].ToString()) ? double.Parse(result["epv1"].ToString()) : 0,
                         });
                         //LstProdutos.Last().ImgProduto = ObterProdutoImagem(LstProdutos.Last());
                     }
@@ -118,23 +118,49 @@ namespace FT_Management.Models
         }
         public Produto ObterProduto(string Referencia)
         {
-            return ObterProdutos("SELECT ststamp, st.ref, st.design, st.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, pv1 FROM st left outer join sa on sa.ref=st.ref inner join stobs on st.ref=stobs.ref where st.ref like '%" + Referencia + "%' order by st.ref;").DefaultIfEmpty(new Produto()).First();
+            return ObterProdutos("SELECT ststamp, st.ref, st.design, st.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM st left outer join sa on sa.ref=st.ref inner join stobs on st.ref=stobs.ref where st.ref like '%" + Referencia + "%' order by st.ref;").DefaultIfEmpty(new Produto()).First();
         }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor, string TipoEquipamento)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, pv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%" + TipoEquipamento + "%' AND st.inactivo=0 order by sa.ref;");
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%" + TipoEquipamento + "%' AND st.inactivo=0 order by sa.ref;");
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, pv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '" + Referencia + "' order by sa.armazem;");
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '" + Referencia + "' order by sa.armazem;");
         }
         public Produto ObterProdutoStamp(string Stamp)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, pv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where ststamp like '%" + Stamp + "%' order by sa.armazem;").DefaultIfEmpty(new Produto()).First();
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where ststamp like '%" + Stamp + "%' order by sa.armazem;").DefaultIfEmpty(new Produto()).First();
         }
         public List<Produto> ObterProdutosArmazem(int Armazem)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, pv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
+        }
+        public Produto ObterProduto(string Referencia, int IdArmazem)
+        {
+            List<Produto> p = ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
+            if (p.Count > 0)
+            {
+                p[0].ImgProduto = ObterProdutoImagem(p[0]);
+                return p[0];
+            }
+            return new Produto();
+        }
+        private string ObterProdutoImagem(Produto p)
+        {
+            string res = ""; string img = FicheirosContext.ObterCaminhoProdutoImagem(p.Ref_Produto);
+            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
+            using (Image image = Image.FromFile(img))
+            {
+                using MemoryStream m = new MemoryStream();
+                image.Save(m, image.RawFormat);
+                byte[] imageBytes = m.ToArray();
+
+                // Convert byte[] to Base64 String
+                string base64String = Convert.ToBase64String(imageBytes);
+                res = base64String;
+            }
+            return res;
         }
 
         private List<Armazem> ObterArmazens(string SQL_Query)
@@ -237,32 +263,7 @@ namespace FT_Management.Models
 
             return LstGuias;
         }
-        public Produto ObterProduto(string Referencia, int IdArmazem)
-        {
-            List<Produto> p = ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, pv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
-            if (p.Count > 0)
-            {
-                p[0].ImgProduto = ObterProdutoImagem(p[0]);
-                return p[0];
-            }
-            return new Produto();
-        }
-        private string ObterProdutoImagem(Produto p)
-        {
-            string res = ""; string img = FicheirosContext.ObterCaminhoProdutoImagem(p.Ref_Produto);
-            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
-            using (Image image = Image.FromFile(img))
-            {
-                using MemoryStream m = new MemoryStream();
-                image.Save(m, image.RawFormat);
-                byte[] imageBytes = m.ToArray();
 
-                // Convert byte[] to Base64 String
-                string base64String = Convert.ToBase64String(imageBytes);
-                res = base64String;
-            }
-            return res;
-        }
         #endregion
 
         //Obter Clientes
