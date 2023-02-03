@@ -4,7 +4,7 @@
     <Authors>Jorge Monteiro</Authors>
     <Company>JKSProds - Software</Company>
     <Version>02.2022</Version>
-    <AssemblyVersion>03.2023.02.02</AssemblyVersion>
+    <AssemblyVersion>03.2023.02.03</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EPPlus.Core" Version="1.5.4"/>
