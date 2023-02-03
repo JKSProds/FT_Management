@@ -1167,7 +1167,7 @@ namespace FT_Management.Models
                 LstEventos.Add(new CalendarioEvent
                 {
                     id = item.Id.ToString(),
-                    title = item.DescFeriado,
+                    title = item.Emoji + item.DescFeriado,
                     start = item.DataFeriado,
                     end = item.DataFeriado,
                     category = "time",

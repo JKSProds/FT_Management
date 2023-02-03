@@ -45,6 +45,7 @@ namespace FT_Management.Models
 
     public class Feriado
     {
+        public string Emoji { get { return "📅 "; } }
         [Display(Name = "Num. do Feriado")]
         public int Id { get; set; }
         [Display(Name = "Data")]
