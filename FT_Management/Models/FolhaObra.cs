@@ -125,9 +125,9 @@ namespace FT_Management.Models
                 {
                     this.IntervencaosServico.Add(new Intervencao
                     {
-                        HoraInicio = DateTime.Parse(item.Split("|").First()),
-                        HoraFim = DateTime.Parse(item.Split("|").Last()),
-                        DataServiço = this.DataServico,
+                        DataServiço = DateTime.Parse(item.Split(" ").First()),
+                        HoraInicio = DateTime.Parse(item.Split(" ").First() + " " + item.Split(" ").Last().Split("|").First()),
+                        HoraFim = DateTime.Parse(item.Split(" ").First() + " " + item.Split(" ").Last().Split("|").Last()),
                         RelatorioServico = this.RelatorioServico,
                         IdTecnico = this.Utilizador.IdPHC,
                         NomeTecnico = this.Utilizador.NomeCompleto,
