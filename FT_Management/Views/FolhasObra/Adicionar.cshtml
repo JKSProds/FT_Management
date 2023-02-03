@@ -129,28 +129,28 @@
                                     </div>
                                     <div class="field has-addons">
                                         <div class="control">
-                                        <button type="button" class="button is-info" id="btnObterHistorico"
-                                            onclick="ObterHistoricoEquipamento()" disabled>
-                                            <span class="icon">
-                                                <i class="fas fa-history"></i>
-                                            </span>
-                                        </button>
+                                            <button type="button" class="button is-info" id="btnObterHistorico"
+                                                onclick="ObterHistoricoEquipamento()" disabled>
+                                                <span class="icon">
+                                                    <i class="fas fa-history"></i>
+                                                </span>
+                                            </button>
                                         </div>
                                         <div class="control">
-                                        <button type="button" class="button is-success" id="btnObterEquipamentos"
-                                            onclick="ObterEquipamentosCliente()">
-                                            <span class="icon">
-                                                <i class="fas fa-desktop"></i>
-                                            </span>
-                                        </button>
+                                            <button type="button" class="button is-success" id="btnObterEquipamentos"
+                                                onclick="ObterEquipamentosCliente()">
+                                                <span class="icon">
+                                                    <i class="fas fa-desktop"></i>
+                                                </span>
+                                            </button>
                                         </div>
                                         <div class="control">
-                                                                                    <button type="button" class="button is-warning"
-                                            onclick="AllEquipments = true;">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                            </span>
-                                        </button>
+                                            <button type="button" class="button is-warning"
+                                                onclick="DesbloquearEquipamentos();">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                                </span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -736,7 +736,7 @@
 }
 
 <script>
-    var AllEquipments = true;
+    var AllEquipments = false;
     bulmaSteps.attach('.steps', {
         onShow: id => {
             if (id == 5) {
@@ -792,7 +792,7 @@
 
     function ValidarFolhaObra() {
         document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() ? "" : canvas.toDataURL();
-
+        notify("A validar folha de obra ...");
         $.ajax({
             type: "POST",
             url: "/FolhasObra/ValidarFolhaObra",
@@ -804,6 +804,7 @@
                     if (result != "") {
                         Bulma('#modalValidacao').modal().open();
                     } else {
+                        notify("Folha de Obra sem mensagens de validação!");
                         AbrirMensagens();
                     }
                 });
@@ -811,6 +812,15 @@
         });
     }
 
+    function DesbloquearEquipamentos() {
+        if (AllEquipments) {
+            AllEquipments = false;
+            notify('Listagem de equipamentos bloqueada!');
+        } else {
+            AllEquipments = true;
+            notify('Listagem de equipamentos desbloqueada!');
+        }
+    }
     //CODIGO DE VALIDACAO
     let interval;
     let time = 0;
@@ -842,28 +852,12 @@
             success: function (result) {
                 $(function () {
                     if (result == "1") {
-                        bulmaToast.toast({
-                            message: 'Código aprovado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        });
+                        notify("Código Aprovado");
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
                         AbrirMensagens();
                     } else if (result == "2") {
-                        bulmaToast.toast({
-                            message: 'O código foi rejeitado pelo utilizador!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        });
+                        notifyError("Código Rejeitado");
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
                     }
@@ -881,6 +875,7 @@
 
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalAguardarValidacao').modal().open();
+        notify("Código gerado com sucesso. A aguardar aprovação!");
     }
 
     //VALIDACOES FINAIS DA FOLHA DE OBRA
@@ -921,6 +916,7 @@
         if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid() && moment(document.getElementById('txtData').bulmaCalendar.value(), "DD/MM/YYYY", true).isValid()) {
             document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:100%">${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtData').bulmaCalendar.value() + " " + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
+            notify("Intervenção adicionada com sucesso!");
         }
     }
 
@@ -928,6 +924,7 @@
         document.getElementById('lst-datas-' + data).remove();
         document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value.replace(data + ';', '');
         if (document.getElementById('ListaIntervencoes').value.slice(-1) != ";" && document.getElementById('ListaIntervencoes').value != "") document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value + ";";
+        notify("Intervenção removida com sucesso!");
     }
 
     function CarregarIntervencoes() {
@@ -949,12 +946,14 @@
     function AdicionarPeca(stamp, ref, desig, qtd) {
         document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd};`;
+        notify("Peça " + ref + " adicionada com sucesso!");
     }
 
     function RemoverPeca(stamp) {
         document.getElementById(stamp).remove();
         document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(stamp + ';', '');
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
+        notify("Peça removida com sucesso!");
     }
 
     function CarregarPecas() {
@@ -983,16 +982,17 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError(response.responseText);
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError(response.responseText);
                     }
                 });
             },
             select: function (e, i) {
                 $("#txtStampPeca").val(i.item.val);
                 document.getElementById("btnAdicionarPeca").disabled = false;
+                notify("Peça " + i.item.label + " selecionada com sucesso!");
             },
             minLength: 1
         });
@@ -1012,10 +1012,10 @@
                 $('#modalPecas').find('.modal-body').html(html);
             },
             error: function (response) {
-                alert(response.responseText);
+                notifyError(response.responseText);
             },
             failure: function (response) {
-                alert(response.responseText);
+                notifyError(response.responseText);
             }
         });
     }
@@ -1025,6 +1025,7 @@
         $("#txtPecas").val(designacao);
         document.getElementById("btnAdicionarPeca").disabled = false;
         Bulma('#modalPecas').modal().close();
+        notify("Peça " + designacao + " selecionada com sucesso!");
     }
     function ObterPeca(stamp, qtd) {
         if (stamp !== "" && qtd > 0) {
@@ -1033,17 +1034,17 @@
                 type: "POST",
                 success: function (response) {
                     //console.log(response);
-                    AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto, qtd);
+                    AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
                     document.getElementById('txtPecas').value = '';
                     document.getElementById('txtStampPeca').value = '';
                     document.getElementById("btnAdicionarPeca").disabled = true;
                     document.getElementById("txtQtd").value = '1';
                 },
                 error: function (response) {
-                    alert(response.responseText);
+                    notifyError(response.responseText);
                 },
                 failure: function (response) {
-                    alert(response.responseText);
+                    notifyError(response.responseText);
                 }
             });
         }
@@ -1067,16 +1068,17 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError(response.responseText);
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError(response.responseText);
                     }
                 });
             },
             select: function (e, i) {
                 $("#txtIdCliente").val(i.item.val);
                 $("#txtIdLoja").val(i.item.val2);
+                notify("Cliente " + i.item.label + " selecionado com sucesso!");
             },
             minLength: 1
         });
@@ -1099,16 +1101,17 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError(response.responseText);
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError(response.responseText);
                     }
                 });
             },
             select: function (e, i) {
                 $("#txtEquipamentoStamp").val(i.item.val);
                 document.getElementById("btnObterHistorico").disabled = false;
+                notify("Equipamento " + i.item.label + " selecionado com sucesso!");
             },
             minLength: 1
         });
@@ -1119,6 +1122,7 @@
         $("#txtEquipamento").val(designacao);
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
+        notify("Equipamento " + designacao + " selecionado com sucesso!");
     }
 
     function ObterEquipamentosCliente() {
@@ -1134,10 +1138,13 @@
                 html += "</tbody></table>"
                 $('#modalEquipamentos').find('.modal-body').html(html);
                 Bulma('#modalEquipamentos').modal().open();
+                notify("Obtidos com sucesso os equipamentos associados a este cliente!");
             },
             error: function (response) {
+                notifyError(response.responseText);
             },
             failure: function (response) {
+                notifyError(response.responseText);
             }
         });
     }
@@ -1182,10 +1189,34 @@
                     var modal = Bulma('#modalObterHistoricoVazio').modal();
                     modal.open();
                 };
-
+                notify("Obtido com sucesso as intervenções associadas ao equipamento selecionado!");
             },
-            error: function (error) { }
+            error: function (error) {
+                notifyError(response.responseText);
+            }
         });
     }
 
+    function notifyError(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-danger',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        });
+    }
+    function notify(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-success',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        });
+    }
 </script>
