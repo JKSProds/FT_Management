@@ -1313,11 +1313,11 @@ namespace FT_Management.Models
             {
                 if ((j + max) > LstFerias.Count) max = (LstFerias.Count - j);
 
-                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs, ValidadoPor, Ano) VALUES ";
+                string sql = "INSERT INTO dat_ferias (Id,IdUtilizador,DataInicio,DataFim,Validado,Obs, Aniversario, ValidadoPor, Ano) VALUES ";
 
                 foreach (var ferias in LstFerias.GetRange(j, max))
                 {
-                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', " + ferias.ValidadoPor + ", " + Ano + "), \r\n");
+                    sql += ("('" + ferias.Id + "', '" + ferias.IdUtilizador + "', '" + ferias.DataInicio.ToString("yy-MM-dd") + "', '" + ferias.DataFim.ToString("yy-MM-dd") + "', '" + (ferias.Validado ? "1" : "0") + "', '" + ferias.Obs + "', '" + ferias.Aniversario + "', " + ferias.ValidadoPor + ", " + Ano + "), \r\n");
                     i++;
                 }
                 sql = sql.Remove(sql.Count() - 4);
@@ -1376,7 +1376,7 @@ namespace FT_Management.Models
                 dataAniversario = dataAniversario.AddDays(1);
             }
 
-            if (!VerificarFeriasUtilizador(IdUtilizador, dataAniversario)) CriarFerias(new List<Ferias>() { new Ferias() { IdUtilizador = IdUtilizador, DataInicio = dataAniversario, DataFim = dataAniversario, Obs = "Dia de Aniversário", Validado = true, ValidadoPorNome = "FT", ValidadoPor = 0 } });
+            if (!VerificarFeriasUtilizador(IdUtilizador, dataAniversario)) CriarFerias(new List<Ferias>() { new Ferias() { IdUtilizador = IdUtilizador, DataInicio = dataAniversario, DataFim = dataAniversario, Obs = "Dia de Aniversário", Aniversario = true, Validado = true, ValidadoPorNome = "FT", ValidadoPor = 0 } });
 
             Database db = ConnectionString;
 
