@@ -51,7 +51,7 @@ namespace FT_Management.Controllers
                     IsAllDay = true,
                     Uid = f.Id.ToString(),
                     Description = "Validado por: " + f.ValidadoPorNome + "\r\nObservações: " + f.Obs,
-                    Summary = "Férias - " + context.ObterUtilizador(f.IdUtilizador).NomeCompleto,
+                    Summary = f.Emoji + context.ObterUtilizador(f.IdUtilizador).NomeCompleto,
                     LastModified = new CalDateTime(DateTime.Now)
                 };
                 calendar.Events.Add(e);
