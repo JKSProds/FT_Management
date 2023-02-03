@@ -41,11 +41,11 @@ namespace FT_Management.Controllers
         [HttpGet]
         public JsonResult ObterEquipamentos(int no, int loja, string prefix)
         {
-            if (no == 0) return Json("");
             if (string.IsNullOrEmpty(prefix)) prefix = "";
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
+            if (no == 0 && loja == 0) return Json(phccontext.ObterEquipamentosSerie(prefix));
             return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = no, IdLoja = loja }).Where(e => e.NumeroSerieEquipamento.ToLower().Contains(prefix.ToLower())).OrderBy(e => e.NumeroSerieEquipamento).ToList());
         }
 

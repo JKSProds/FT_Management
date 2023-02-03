@@ -128,18 +128,30 @@
                                         </p>
                                     </div>
                                     <div class="field has-addons">
+                                        <div class="control">
                                         <button type="button" class="button is-info" id="btnObterHistorico"
                                             onclick="ObterHistoricoEquipamento()" disabled>
                                             <span class="icon">
                                                 <i class="fas fa-history"></i>
                                             </span>
                                         </button>
+                                        </div>
+                                        <div class="control">
                                         <button type="button" class="button is-success" id="btnObterEquipamentos"
                                             onclick="ObterEquipamentosCliente()">
                                             <span class="icon">
                                                 <i class="fas fa-desktop"></i>
                                             </span>
                                         </button>
+                                        </div>
+                                        <div class="control">
+                                                                                    <button type="button" class="button is-warning"
+                                            onclick="AllEquipments = true;">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                            </span>
+                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
@@ -724,6 +736,7 @@
 }
 
 <script>
+    var AllEquipments = true;
     bulmaSteps.attach('.steps', {
         onShow: id => {
             if (id == 5) {
@@ -1075,7 +1088,7 @@
             source: function (request, response) {
                 $.ajax({
                     url: '/Equipamentos/ObterEquipamentos/',
-                    data: { "prefix": request.term, "no": "@Model.ClienteServico.IdCliente", "loja": "@Model.ClienteServico.IdLoja" },
+                    data: { "prefix": request.term, "no": (AllEquipments ? "0" : "@Model.ClienteServico.IdCliente"), "loja": (AllEquipments ? "0" : "@Model.ClienteServico.IdLoja") },
                     type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {

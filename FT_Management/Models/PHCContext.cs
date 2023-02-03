@@ -561,7 +561,7 @@ namespace FT_Management.Models
         }
         public Equipamento ObterEquipamentoSimples(string IdEquipamento)
         {
-            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", false, false);
+            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", true, false);
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
@@ -854,6 +854,7 @@ namespace FT_Management.Models
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
+            if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
             if (fo.IntervencaosServico.Count() == 0) res += "Não foram adicionadas intervenções!";
             if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
             if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";

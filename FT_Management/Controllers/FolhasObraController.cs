@@ -64,6 +64,8 @@ namespace FT_Management.Controllers
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
                 fo.ValidarTipoFolhaObra();
 
+                if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) phccontext.AtualizarClienteEquipamento(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
+
                 Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
                 if (fo.FecharMarcacao) m.EstadoMarcacaoDesc = "Finalizado";
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
@@ -122,7 +124,8 @@ namespace FT_Management.Controllers
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.ValidarIntervencoes();
             fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
-
+            fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
+            fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
 #if DEBUG
             return Content(phccontext.ValidarFolhaObra(fo));
 #else
