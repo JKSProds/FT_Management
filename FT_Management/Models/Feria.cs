@@ -20,6 +20,7 @@ namespace FT_Management.Models
 
     public class Ferias
     {
+        public string Emoji { get { return Aniversario ? "🎂 " : "🏖️ "; } }
         [Display(Name = "Num. da Requisitação de Férias")]
         public int Id { get; set; }
         [Display(Name = "Num. do Utilizador")]
@@ -37,6 +38,7 @@ namespace FT_Management.Models
         public bool Validado { get; set; }
         [Display(Name = "Comentários")]
         public string Obs { get; set; }
+        public bool Aniversario { get; set; }
 
         public string GetUrl { get { return "http://webapp.food-tech.pt/Ferias/Detalhes/" + IdUtilizador; } }
     }

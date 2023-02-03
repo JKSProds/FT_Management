@@ -158,9 +158,10 @@ namespace FT_Management.Models
             {
                 try
                 {
-                    SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"])
+                    SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"], 465)
                     {
-                        UseDefaultCredentials = false
+                        UseDefaultCredentials = false,
+                        EnableSsl = true
                     };
 
                     System.Net.NetworkCredential basicAuthenticationInfo = new
@@ -218,9 +219,10 @@ namespace FT_Management.Models
             {
                 try
                 {
-                    SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"])
+                    SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"], 587)
                     {
-                        UseDefaultCredentials = false
+                        UseDefaultCredentials = false,
+                        EnableSsl = true
                     };
 
                     System.Net.NetworkCredential basicAuthenticationInfo = new

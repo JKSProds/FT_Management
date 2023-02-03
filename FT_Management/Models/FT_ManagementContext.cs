@@ -869,6 +869,7 @@ namespace FT_Management.Models
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
                         Obs = result["Obs"],
+                        Aniversario = result["Aniversario"] == "True",
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
                     });
@@ -896,6 +897,7 @@ namespace FT_Management.Models
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
                         Obs = result["Obs"],
+                        Aniversario = result["Aniversario"] == "True",
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
                     });
@@ -922,6 +924,7 @@ namespace FT_Management.Models
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
                         Obs = result["Obs"],
+                        Aniversario = result["Aniversario"] == "True",
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
                     });
@@ -948,6 +951,7 @@ namespace FT_Management.Models
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
                         Obs = result["Obs"],
+                        Aniversario = result["Aniversario"] == "True",
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
                     });
@@ -974,6 +978,7 @@ namespace FT_Management.Models
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
                         Obs = result["Obs"],
+                        Aniversario = result["Aniversario"] == "True",
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
                     });
@@ -1000,6 +1005,7 @@ namespace FT_Management.Models
                         DataFim = result["DataFim"],
                         Validado = result["Validado"],
                         Obs = result["Obs"],
+                        Aniversario = result["Aniversario"] == "True",
                         ValidadoPor = result["ValidadoPor"],
                         ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
                     });
@@ -1143,7 +1149,7 @@ namespace FT_Management.Models
                     id = item.Id.ToString(),
                     calendarId = "1",
                     body = item.Obs,
-                    title = "🏖️ " + ut.NomeCompleto,
+                    title = item.Emoji + ut.NomeCompleto,
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     isAllDay = true,

@@ -823,9 +823,9 @@
 
     //INTERVENCOES
     function AdicionarIntervencao() {
-        if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid()) {
-            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:100%">${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
-            document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
+        if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid() && moment(document.getElementById('txtData').value, "DD/MM/YYYY", true).isValid()) {
+            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtData').value} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:100%">${document.getElementById('txtData').value} ${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtData').value} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+            document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtData').value + " " + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
         }
     }
 
