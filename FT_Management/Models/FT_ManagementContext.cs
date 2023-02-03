@@ -878,6 +878,33 @@ namespace FT_Management.Models
             return LstFerias;
 
         }
+
+        public List<Ferias> ObterListaFerias(DateTime dataInicio, DateTime dataFim, int IdUtilizador)
+        {
+            List<Ferias> LstFerias = new List<Ferias>();
+            using (Database db = ConnectionString)
+            {
+                string sql = "SELECT * FROM dat_ferias where IdUtilizador='" + IdUtilizador + "' AND (DataInicio between '" + dataInicio.ToString("yyyy-MM-dd") + "' AND '" + dataFim.ToString("yyyy-MM-dd") + "' or '" + dataInicio.ToString("yyyy-MM-dd") + "' between DataInicio and DataFim)  order by DataInicio;";
+                using var result = db.Query(sql);
+                while (result.Read())
+                {
+                    LstFerias.Add(new Ferias()
+                    {
+                        Id = result["Id"],
+                        IdUtilizador = result["IdUtilizador"],
+                        DataInicio = result["DataInicio"],
+                        DataFim = result["DataFim"],
+                        Validado = result["Validado"],
+                        Obs = result["Obs"],
+                        ValidadoPor = result["ValidadoPor"],
+                        ValidadoPorNome = result["ValidadoPor"] == 0 ? "" : ObterUtilizador(result["ValidadoPor"]).NomeCompleto,
+                    });
+                }
+            }
+
+            return LstFerias;
+
+        }
         public List<Ferias> ObterListaFerias()
         {
             List<Ferias> LstFerias = new List<Ferias>();
@@ -1116,13 +1143,14 @@ namespace FT_Management.Models
                     id = item.Id.ToString(),
                     calendarId = "1",
                     body = item.Obs,
-                    title = ut.NomeCompleto,
+                    title = "🏖️ " + ut.NomeCompleto,
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     isAllDay = true,
                     url = "Detalhes/" + item.IdUtilizador,
                     category = "time",
                     dueDateClass = "",
+                    editable = false,
                     color = (ut.CorCalendario == string.Empty ? "#3371FF" : ut.CorCalendario),
                 });
             }
@@ -1936,6 +1964,7 @@ namespace FT_Management.Models
                             end = dataMarcacao.AddMinutes(25),
                             IdTecnico = item.Tecnico.Id,
                             category = "time",
+                            editable = true,
                             dueDateClass = dataMarcacao.ToShortDateString(),
                             color = (item.Tecnico.CorCalendario == string.Empty ? "#3371FF" : item.Tecnico.CorCalendario),
                             url = "Pedido/" + item.IdMarcacao
@@ -1949,7 +1978,6 @@ namespace FT_Management.Models
                 }
 
             }
-
             return LstEventos;
         }
         public Bitmap DesenharEtiqueta80x50QR(Produto produto)

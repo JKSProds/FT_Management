@@ -26,5 +26,6 @@ namespace FT_Management.Models
         public string attendees { get; set; }
         public string url { get; set; }
         public string raw { get; set; }
+        public bool editable { get; set; }
     }
 }

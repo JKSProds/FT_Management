@@ -414,37 +414,39 @@ else
                 });
 
                 function ObterMarcacao(id) {
-                    document.getElementById('pageloader').classList.add('is-active');
-                    $.ajax({
-                        url: '/Pedidos/ObterMarcacao/' + id,
-                        type: "GET",
-                        success: function (response) {
-                            //console.log(response);
-                            document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function (elem) {
-                                return new Date(elem).toLocaleDateString();
-                            }).join(" | ");
-                            document.getElementById('txtHeaderMarcacao').innerHTML = '#' + response.idMarcacao + ' - ' + response.cliente.nomeCliente;
-                            document.getElementById('txtRef').value = response.referencia;
-                            document.getElementById('txtTec').value = response.lstTecnicos.map(function (elem) {
-                                return elem.nomeCompleto;
-                            }).join(" | ");
-                            document.getElementById('txtResumo').value = response.resumoMarcacao;
-                            document.getElementById('txtEstado').value = response.estadoMarcacaoDesc;
+                    if (id > 0) {
+                        document.getElementById('pageloader').classList.add('is-active');
+                        $.ajax({
+                            url: '/Pedidos/ObterMarcacao/' + id,
+                            type: "GET",
+                            success: function (response) {
+                                //console.log(response);
+                                document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function (elem) {
+                                    return new Date(elem).toLocaleDateString();
+                                }).join(" | ");
+                                document.getElementById('txtHeaderMarcacao').innerHTML = '#' + response.idMarcacao + ' - ' + response.cliente.nomeCliente;
+                                document.getElementById('txtRef').value = response.referencia;
+                                document.getElementById('txtTec').value = response.lstTecnicos.map(function (elem) {
+                                    return elem.nomeCompleto;
+                                }).join(" | ");
+                                document.getElementById('txtResumo').value = response.resumoMarcacao;
+                                document.getElementById('txtEstado').value = response.estadoMarcacaoDesc;
 
-                            document.getElementById('btnVer').href = '/Pedidos/Pedido/' + response.idMarcacao;
-                            document.getElementById('btnEditar').href = '/Pedidos/Editar/' + response.idMarcacao;
+                                document.getElementById('btnVer').href = '/Pedidos/Pedido/' + response.idMarcacao;
+                                document.getElementById('btnEditar').href = '/Pedidos/Editar/' + response.idMarcacao;
 
-                            document.getElementById('pageloader').classList.remove('is-active');
-                            var modal = Bulma('#modalQuickViewMarcacao').modal().open();
+                                document.getElementById('pageloader').classList.remove('is-active');
+                                var modal = Bulma('#modalQuickViewMarcacao').modal().open();
 
-                        },
-                        error: function (response) {
-                            console.log(response.responseText);
-                        },
-                        failure: function (response) {
-                            console.log(response.responseText);
-                        }
-                    });
+                            },
+                            error: function (response) {
+                                console.log(response.responseText);
+                            },
+                            failure: function (response) {
+                                console.log(response.responseText);
+                            }
+                        });
+                    }
                 }
 
                 $.ajax({
