@@ -158,7 +158,7 @@ namespace FT_Management.Models
             {
                 try
                 {
-                    SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"], 465)
+                    SmtpClient mySmtpClient = new SmtpClient(ConfigurationManager.AppSetting["Email:ClienteSMTP"], 587)
                     {
                         UseDefaultCredentials = false,
                         EnableSsl = true

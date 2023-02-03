@@ -111,22 +111,23 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult ObterPecasUtilizador()
+        public JsonResult ObterPecasUtilizador(string filter)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             int idArmazem = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdArmazem;
+            if (string.IsNullOrEmpty(filter)) filter = "";
 
-            return Json(phccontext.ObterProdutosArmazem(idArmazem).ToList());
+            return Json(phccontext.ObterProdutosArmazem(idArmazem).Where(p => p.Ref_Produto.ToLower().Contains(filter.ToLower()) || p.Designacao_Produto.ToLower().Contains(filter.ToLower())).ToList());
         }
         [HttpPost]
-        public JsonResult ObterPeca(string ref_produto)
+        public JsonResult ObterPeca(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             //return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
-            return Json(phccontext.ObterProduto(ref_produto));
+            return Json(phccontext.ObterProdutoStamp(id));
         }
         public JsonResult ObterDetalhes(string id)
         {

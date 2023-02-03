@@ -230,27 +230,34 @@
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
-                            <div class="field">
+                            <div class="field ">
+                                <label asp-for="PecasServico"></label>
                                 <div class="field has-addons">
-                                    <p class="control has-icons-left" style="width:100%">
-                                        <span class="select" style="width:100%">
-                                            <select id="selectPecas" style="width:100%"></select>
-                                        </span>
-                                        <span class="icon is-small is-left">
-                                            <i class="fas fa-check"></i>
-                                        </span>
-                                    </p>
-                                    <div class="control">
+                                    <div class="control" style="width:100%">
+                                        <p class="control has-icons-left">
+                                            <input type="text" class="input" id="txtPecas">
+                                            <span class="icon is-small is-left">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="field has-addons">
+                                        <button type="button" class="button is-info" id="btnObterHistorico"
+                                            onclick="Bulma('#modalPecasStock').modal().open();" disabled>
+                                            <span class="icon">
+                                                <i class="fa-solid fa-list-ul"></i>
+                                            </span>
+                                        </button>
                                         <a class="button is-info"
-                                            onclick="ObterPeca(document.getElementById('selectPecas').value)">
+                                            onclick="ObterPeca(document.getElementById('txtStampPeca').value, 1)">
                                             <i class="fa-solid fa-plus"></i>
                                         </a>
                                     </div>
                                 </div>
+                                <input type="hidden" class="input" id="txtStampPeca">
+                                <span asp-validation-for="PecasServico" class="has-text-danger"></span>
                             </div>
-                            <span asp-validation-for="PecasServico" class="has-text-danger"></span>
                         </div>
-
                         <div class="column is-12">
                             <label asp-for="ListaPecas"></label>
                             <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
@@ -851,14 +858,14 @@
     }
 
     //PEÇAS
-    function AdicionarPeca(ref, desig) {
+    function AdicionarPeca(stamp, ref, desig, qtd) {
         document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + ref};`;
     }
 
-    function RemoverPeca(ref) {
-        document.getElementById(ref).remove();
-        document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(ref + ';', '');
+    function RemoverPeca(stamp) {
+        document.getElementById(stamp).remove();
+        document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(stamp + ';', '');
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
     }
 
@@ -872,6 +879,36 @@
         });
     }
 
+    $(function () {
+        $("#txtPecas").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Produtos/ObterPecasUtilizador/',
+                    data: { "filter": request.term },
+                    type: "POST",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.ref_Produto + " - " + item.designacao_Produto.trim(),
+                                val: item.stampProduto
+                            };
+                        }))
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#txtStampPeca").val(i.item.val);
+            },
+            minLength: 1
+        });
+    });
+
     function CarregarPecasStock() {
         $.ajax({
             url: '/Produtos/ObterPecasUtilizador/',
@@ -879,12 +916,8 @@
             success: function (response) {
                 var pecas = "";
                 $(response).each(function () {
-                    pecas = pecas + '<option value="' + this.ref_Produto + '">' + this.ref_Produto + ' - ' + this.designacao_Produto + ' - <b>Stock Atual: ' + (this.stock_PHC - this.stock_Res + this.stock_Rec) + ' UN</b></option>'
+                    //pecas = pecas + '<option value="' + this.stampProduto + '">' + this.ref_Produto + ' - ' + this.designacao_Produto + ' - <b>Stock Atual: ' + (this.stock_PHC - this.stock_Res + this.stock_Rec) + ' UN</b></option>'
                 });
-
-                var pecasList = $("#selectPecas");
-                pecasList.empty();
-                pecasList.append(pecas);
             },
             error: function (response) {
                 alert(response.responseText);
@@ -895,14 +928,15 @@
         });
     }
 
-    function ObterPeca(ref) {
-        console.log(ref);
-        if (ref !== "") {
+    function ObterPeca(stamp, qtd) {
+        if (stamp !== "" && qtd > 0) {
             $.ajax({
-                url: '/Produtos/ObterPeca?ref_produto=' + ref,
+                url: '/Produtos/ObterPeca/' + stamp,
                 type: "POST",
                 success: function (response) {
-                    AdicionarPeca(response.ref_Produto, response.designacao_Produto)
+                    console.log(response);
+                    AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto, qtd);
+
                 },
                 error: function (response) {
                     alert(response.responseText);
