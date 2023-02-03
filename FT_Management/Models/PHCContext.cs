@@ -2057,7 +2057,7 @@ namespace FT_Management.Models
         public List<KeyValuePair<int, string>> ObterEstadoFolhaObra()
         {
 
-            return new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(1, "Concluído"), new KeyValuePair<int, string>(2, "Pedido de Peças"), new KeyValuePair<int, string>(3, "Pedido de Orçamento") };
+            return new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(1, "Concluído"), new KeyValuePair<int, string>(2, "Pedido de Peças"), new KeyValuePair<int, string>(3, "Pedido de Orçamento"), new KeyValuePair<int, string>(4, "Pendente"), };
 
         }
         public List<String> ObterTipoFolhaObra()
