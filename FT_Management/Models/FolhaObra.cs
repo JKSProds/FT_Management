@@ -136,6 +136,7 @@ namespace FT_Management.Models
                     });
                 }
             }
+            this.DataServico = DateTime.Now;
         }
         public void ValidarTipoFolhaObra()
         {
