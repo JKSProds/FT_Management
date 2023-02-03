@@ -1172,7 +1172,7 @@ namespace FT_Management.Models
                 {
                     m.IdMarcacao = int.Parse(result[3].ToString());
 
-                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico)) ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico) && m.LstTecnicos.Where(t => t.Id == m.Utilizador.Id).Count() == 0) ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
                     if (NotificacaoContext.NotificacaoAutomaticaEmail(m.Tecnico)) MailContext.EnviarEmailMarcacaoTecnico(m.Tecnico.EmailUtilizador, m, m.Tecnico.NomeCompleto);
                     if (NotificacaoContext.NotificacaoClienteIndustrial(m.Cliente) && m.Cliente.Vendedor.Id > 0) MailContext.EnviarEmailMarcacaoCliente(m.Cliente.Vendedor.EmailUtilizador, m, null);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
@@ -1238,7 +1238,7 @@ namespace FT_Management.Models
 
                 if (resp != "-1")
                 {
-                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico)) ChatContext.EnviarNotificacaoAtualizacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico) && m.LstTecnicos.Where(t => t.Id == m.Utilizador.Id).Count() == 0) ChatContext.EnviarNotificacaoAtualizacaoMarcacaoTecnico(m, m.Tecnico);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                     conn.Close();
                     return true;
