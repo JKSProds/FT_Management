@@ -78,13 +78,13 @@ namespace FT_Management.Controllers
                     phccontext.FecharFolhaObra(fo);
                     phccontext.AtualizaMarcacao(m);
 
-                    return RedirectToAction("Detalhes", "FolhasObra", new { id = fo.IdFolhaObra });
+                    return RedirectToAction("ListaPedidos", "Pedidos", new { IdTecnico = fo.Utilizador.IdPHC });
                 }
-
 
                 ModelState.AddModelError("", res[1]);
             }
 
+            ModelState.AddModelError("", string.Join("|", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)));
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 

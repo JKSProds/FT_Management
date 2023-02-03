@@ -28,7 +28,7 @@ namespace FT_Management.Models
         private string _RelatorioServico;
         [DataType(DataType.MultilineText)]
         [Display(Name = "Relatório do Serviço")]
-        [Required]
+        [Required(ErrorMessage = "Falta preencher o relatório do serviço!")]
         public string RelatorioServico { get { return _RelatorioServico ?? ""; } set { _RelatorioServico = value; } }
         private string _SituacoesPendentes;
         [DataType(DataType.MultilineText)]
@@ -39,18 +39,18 @@ namespace FT_Management.Models
         [Display(Name = "Peças")]
         public List<Produto> PecasServico { get; set; }
         [Display(Name = "Lista de Intervenções")]
-        [Required]
+        [Required(ErrorMessage = "Tem de adicionar pelo menos 1 intervenção!")]
         public string ListaIntervencoes { get; set; }
         public List<Intervencao> IntervencaosServico { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Falta selecionar o equipamento!")]
         public Equipamento EquipamentoServico { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Falta selecionar o cliente!")]
         public Cliente ClienteServico { get; set; }
         public Utilizador Utilizador { get; set; }
         public string IdCartao { get; set; }
         private string _ConferidoPor;
         [Display(Name = "Conferido por")]
-        [Required]
+        [Required(ErrorMessage = "Falta preencher o campo Conferido por!")]
         public string ConferidoPor { get { return _ConferidoPor ?? ""; } set { _ConferidoPor = value; } }
         private string _GuiaTransporteAtual;
         [Display(Name = "Número da tua Guia de Transporte")]
