@@ -20,7 +20,7 @@ namespace FT_Management.Models
 
     public class Ferias
     {
-        public string Emoji { get { return Aniversario ? "🎂 " : "🏖️ "; } }
+        public string Emoji { get { return Aniversario ? "🎂 " : (DataInicio.Month >= 3 && DataInicio.Month < 7 ? "🌻 " : (DataInicio.Month >= 7 && DataInicio.Month < 10 ? "🏖️ " : (DataInicio.Month >= 10 && DataInicio.Month < 12 ? "🍁 " : "❄ "))); } }
         [Display(Name = "Num. da Requisitação de Férias")]
         public int Id { get; set; }
         [Display(Name = "Num. do Utilizador")]
