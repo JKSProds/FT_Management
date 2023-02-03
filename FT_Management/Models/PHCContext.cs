@@ -1252,43 +1252,81 @@ namespace FT_Management.Models
 
             return false;
         }
-        public string ValidarMarcacao(Marcacao m)
+        public List<string> ValidarMarcacao(Marcacao m)
         {
-            string res = "";
+            List<string> res = new List<string>() { "0", "", "" };
+
+            //Validacoes Opcionais
+
+            //Ja existem marcacoes com essa referencia
             if (m.IdMarcacao == 0)
             {
-                foreach (var item in m.LstTecnicosSelect)
-                {
-                    Utilizador u = FT_ManagementContext.ObterUtilizador(item);
-                    //if (NotificacaoContext.NotificacaoAutomaticaEmail(u) || NotificacaoContext.NotificacaoAutomaticaNextcloud(u)) res += "Será enviada um notificação automatica para o técnico " + u.NomeCompleto + " no momento da criação da mesma!\r\n";
-                }
                 //Ja existe incedente
-                if (ExecutarQuery("SELECT COUNT(*) FROM U_MARCACAO where nincidente='" + m.Referencia + "'").First() != "0") res += "Já existe marcações com o mesmo numero de incidente. Tem a certeza que deseja proseguir?\r\n";
+                if (ExecutarQuery("SELECT COUNT(*) FROM U_MARCACAO where nincidente='" + m.Referencia + "'").First() != "0")
+                {
+                    res[1] += "Já existe marcações com o mesmo numero de incidente. Tem a certeza que deseja proseguir?\r\n";
+                }
             }
-
-            //Tem de retornar 1 para poder proceder
-            if (ExecutarQuery("SELECT 'valor' = COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '" + m.Cliente.IdCliente + "' AND bo.estab = '" + m.Cliente.IdLoja + "' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');").First() == "0") res += "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.\r\n";
-
-            //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
-            if (m.Cliente.IdCliente == 878 && String.IsNullOrEmpty(m.QuemPediuNome)) res += "Tem que indicar Quem Pediu!\r\n";
-
-            //O cliente não pode ter as marcacoes canceladas
-            if (ExecutarQuery("SELECT U_MARCCANC FROM cl (NOLOCK) WHERE no = '" + m.Cliente.IdCliente + "' AND estab = '" + m.Cliente.IdLoja + "'").First() == "True") res += "O Cliente escolhido na Marcação tem as marcações canceladas. Não pode gravar.\r\n";
 
             //Caso esteja a 0 faz a validação da conta corrente
             if (ExecutarQuery("SELECT u_navdivma FROM CL(Nolock) WHERE cl.no='" + m.Cliente.IdCliente + "' AND cl.estab = 0").First() == "False")
             {
                 //Verificar documentos vencidos
-                if (ExecutarQuery("select 'valor' = COUNT(*) from cc (nolock) left join re (nolock) on cc.restamp = re.restamp where cc.no = " + m.Cliente.IdCliente + " and (case when cc.moeda ='EURO' or cc.moeda=space(11) then abs((cc.edeb-cc.edebf)-(cc.ecred-cc.ecredf)) else abs((cc.debm-cc.debfm)-(cc.credm-cc.credfm)) end) > (case when cc.moeda='EURO' or cc.moeda=space(11) then 0.010000 else 0 end) AND cc.dataven < GETDATE();").First() != "0") res += "O Cliente escolhido na Marcação tem documentos não regularizados vencidos!!! Verifique por favor!\r\n";
+                if (ExecutarQuery("select 'valor' = COUNT(*) from cc (nolock) left join re (nolock) on cc.restamp = re.restamp where cc.no = " + m.Cliente.IdCliente + " and (case when cc.moeda ='EURO' or cc.moeda=space(11) then abs((cc.edeb-cc.edebf)-(cc.ecred-cc.ecredf)) else abs((cc.debm-cc.debfm)-(cc.credm-cc.credfm)) end) > (case when cc.moeda='EURO' or cc.moeda=space(11) then 0.010000 else 0 end) AND cc.dataven < GETDATE();").First() != "0")
+                {
+                    res[1] += "O Cliente escolhido na Marcação tem documentos não regularizados vencidos!!! Verifique por favor!\r\n";
+                }
             }
+
+            //Validar ferias do tecnico
             foreach (var item in m.LstTecnicosSelect)
             {
-                if (FT_ManagementContext.VerificarFeriasUtilizador(item, m.DataMarcacao)) res += "O utilizador, " + FT_ManagementContext.ObterUtilizador(item).NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.\r\n";
+                if (FT_ManagementContext.VerificarFeriasUtilizador(item, m.DataMarcacao))
+                {
+                    res[1] += "O utilizador, " + FT_ManagementContext.ObterUtilizador(item).NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.\r\n";
+                }
             }
+
+            //Validar dia de feriados
             List<DateTime> LstFeriados = FT_ManagementContext.ObterListaFeriados(m.DataMarcacao.Year.ToString()).Select(f => f.DataFeriado).ToList();
             foreach (var item in m.DatasAdicionaisDistintas)
             {
-                if (LstFeriados.Where(f => f.ToShortDateString() == item.ToShortDateString()).Count() > 0) res += "O seguinte dia: " + item.ToShortDateString() + " é feriado! Por favor verifique.\r\n";
+                if (LstFeriados.Where(f => f.ToShortDateString() == item.ToShortDateString()).Count() > 0)
+                {
+                    res[1] += "O seguinte dia: " + item.ToShortDateString() + " é feriado! Por favor verifique.\r\n";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(res[1]))
+            {
+                res[0] = "1";
+                res[1] += "\r\n";
+            }
+
+            //Validacoes Obrigatorias
+
+            //Tem de retornar 1 para poder proceder
+            if (ExecutarQuery("SELECT 'valor' = COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '" + m.Cliente.IdCliente + "' AND bo.estab = '" + m.Cliente.IdLoja + "' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');").First() == "0")
+            {
+                res[2] += "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.\r\n";
+            }
+
+            //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
+            if (m.Cliente.IdCliente == 878 && String.IsNullOrEmpty(m.QuemPediuNome))
+            {
+                res[2] += "Tem que indicar Quem Pediu!\r\n";
+            }
+
+            //O cliente não pode ter as marcacoes canceladas
+            if (ExecutarQuery("SELECT U_MARCCANC FROM cl (NOLOCK) WHERE no = '" + m.Cliente.IdCliente + "' AND estab = '" + m.Cliente.IdLoja + "'").First() == "True")
+            {
+                res[2] += "O Cliente escolhido na Marcação tem as marcações canceladas.\r\n";
+            }
+
+            if (!string.IsNullOrEmpty(res[2]))
+            {
+                res[0] = "2";
+                res[2] += "Não pode gravar.";
             }
             return res;
         }

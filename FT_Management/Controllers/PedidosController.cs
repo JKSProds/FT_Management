@@ -60,10 +60,10 @@ namespace FT_Management.Controllers
 
         [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
-        public ActionResult ValidarMarcacao(Marcacao m)
+        public JsonResult ValidarMarcacao(Marcacao m)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            return Content(phccontext.ValidarMarcacao(m));
+            return Json(phccontext.ValidarMarcacao(m));
         }
 
         public List<int> ObterPercentagemTecnico(int id)

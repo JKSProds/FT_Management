@@ -414,8 +414,8 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();"
-                href="javascript:;">
+            <button type="button" id="btnValidar" class="button is-info"
+                onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check-circle"></i>
                 </span>
@@ -462,8 +462,12 @@
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
                 $(function () {
-                    document.getElementById("txtMensagens").value = result;
-                    if (result != "") {
+                    document.getElementById("txtMensagens").value = result[1] + result[2];
+                    if (result[0] == "1") {
+                        document.getElementById("btnValidar").disabled = false;
+                        Bulma('#modalValidacao').modal().open();
+                    } else if (result[0] == "2") {
+                        document.getElementById("btnValidar").disabled = true;
                         Bulma('#modalValidacao').modal().open();
                     } else {
                         document.getElementById('frmAdicionar').submit();

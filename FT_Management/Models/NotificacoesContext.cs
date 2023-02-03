@@ -329,7 +329,7 @@ namespace FT_Management.Models
             foreach (var u in LstUtilizadores)
             {
                 string Assunto = "Aniversário - " + u.NomeCompleto;
-                string Mensagem = u.NomeCompleto + " MUITOS PARABÉNS!!!<br><br>Hoje é o teu dia. Não queremos passar ao lado deste momento tão especial e por isso queremos ser os primeiros a desejar-te um feliz aniversário.<br><br>Está na hora de assinalar esta data importante e oferecer-te o próximo dia de trabalho. Aproveita o dia com os teus e as maiores felicidades.";
+                string Mensagem = u.NomeCompleto + " MUITOS PARABÉNS!!!<br><br>Amanhã é o teu dia. Não queremos passar ao lado deste momento tão especial e por isso queremos ser os primeiros a desejar-te um feliz aniversário.<br><br>Está na hora de assinalar esta data importante e oferecer-te o próximo dia de trabalho. Aproveita o dia com os teus e as maiores felicidades.";
                 EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(5));
             }
             return true;
