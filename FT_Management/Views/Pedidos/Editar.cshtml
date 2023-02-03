@@ -11,9 +11,9 @@
         list-style: none;
     }
 
-        .tabs-content li.is-active {
-            display: block;
-        }
+    .tabs-content li.is-active {
+        display: block;
+    }
 </style>
 
 <div class="container">
@@ -22,7 +22,8 @@
             <div class="tile">
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
-                        <p class="title has-text-centered is-hoverable" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'">
+                        <p class="title has-text-centered is-hoverable"
+                            onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.Cliente.IdCliente, IdLoja = @Model.Cliente.IdLoja }))'">
                             <span class="icon mr-3">
                                 <i class="fas fa-calendar-day"></i>
                             </span>
@@ -97,7 +98,9 @@
                 <div class="field">
                     <label asp-for="DataPedido" class="label"></label>
                     <p class="control has-icons-left">
-                        <input type="date" class="input" value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataPedido" id="txtDataPedido" disabled>
+                        <input type="date" class="input"
+                            value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))"
+                            asp-for="DataPedido" id="txtDataPedido" disabled>
                     </p>
                 </div>
             </div>
@@ -106,7 +109,9 @@
                     <label asp-for="DataMarcacao" class="label"></label>
                     <div class="field has-addons">
                         <p class="control " style="width:100%">
-                            <input type="date" class="input " value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))" asp-for="DataMarcacao" id="txtData">
+                            <input type="date" class="input "
+                                value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
+                                asp-for="DataMarcacao" id="txtData">
                             <script>
                                 bulmaCalendar.attach('#txtData', {
                                     color: 'info',
@@ -120,7 +125,8 @@
                             </script>
                         </p>
                         <div class="control">
-                            <button class="button is-info" onclick="AdicionarData(document.getElementById('txtData').value)" type="button">
+                            <button class="button is-info"
+                                onclick="AdicionarData(document.getElementById('txtData').value)" type="button">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
@@ -149,23 +155,29 @@
                     <label asp-for="Tecnico" class="label"></label>
                     <div class="control">
                         <div class="select is-multiple" style="width:100%">
-                            @{ var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;}
+                            @{
+                                var LstTecnicos = ViewData["Tecnicos"] as IList<Utilizador>;
+                            }
                             <span class="select" style="width:100%">
-                                <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect" asp-items="@(new MultiSelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+                                <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect"
+                                    asp-items="@(new MultiSelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
                             </span>
                         </div>
                     </div>
                     <span asp-validation-for="Tecnico" class="has-text-danger"></span>
                 </div>
             </div>
-            
+
             <div class="column is-3">
                 <div class="field">
                     <label asp-for="Periodo" class="label"></label>
                     <p class="control has-icons-left">
                         <span class="select" style="width: 100%">
-                            @{ var LstPeriodo = ViewData["Periodo"] as IList<String>;}
-                            <select class="select" style="width:100%" asp-for="Periodo" asp-items="@(new SelectList(LstPeriodo))"></select>
+                            @{
+                                var LstPeriodo = ViewData["Periodo"] as IList<String>;
+                            }
+                            <select class="select" style="width:100%" asp-for="Periodo"
+                                asp-items="@(new SelectList(LstPeriodo))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-cloud-sun"></i>
@@ -178,9 +190,12 @@
                 <div class="field">
                     <label asp-for="EstadoMarcacaoDesc" class="label"></label>
                     <p class="control has-icons-left">
-                        @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
+                        @{
+                            var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;
+                        }
                         <span class="select" style="width:100%">
-                            <select style="width:100%" asp-for="EstadoMarcacaoDesc" asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                            <select style="width:100%" asp-for="EstadoMarcacaoDesc"
+                                asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-check"></i>
@@ -195,8 +210,11 @@
                     <label asp-for="PrioridadeMarcacao" class="label"></label>
                     <p class="control has-icons-left">
                         <span class="select" style="width: 100%">
-                            @{ var LstPrioridade = ViewData["Prioridade"] as IList<String>;}
-                            <select class="select" style="width:100%" asp-for="PrioridadeMarcacao" asp-items="@(new SelectList(LstPrioridade))"></select>
+                            @{
+                                var LstPrioridade = ViewData["Prioridade"] as IList<String>;
+                            }
+                            <select class="select" style="width:100%" asp-for="PrioridadeMarcacao"
+                                asp-items="@(new SelectList(LstPrioridade))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-hourglass"></i>
@@ -210,8 +228,11 @@
                     <label asp-for="TipoServico" class="label"></label>
                     <p class="control has-icons-left">
                         <span class="select" style="width: 100%">
-                            @{ var LstTipoServico = ViewData["TipoServico"] as IList<String>;}
-                            <select class="select" style="width:100%" asp-for="TipoServico" asp-items="@(new SelectList(LstTipoServico))"></select>
+                            @{
+                                var LstTipoServico = ViewData["TipoServico"] as IList<String>;
+                            }
+                            <select class="select" style="width:100%" asp-for="TipoServico"
+                                asp-items="@(new SelectList(LstTipoServico))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-wrench"></i>
@@ -225,9 +246,13 @@
                     <label asp-for="TipoEquipamento" class="label"></label>
                     <div class="control">
                         <p class="control has-icons-left">
-                            @{ var LstTipoEquipamento = ViewData["TipoEquipamento"] as IList<String>;}
+                            @{
+                                var LstTipoEquipamento = ViewData["TipoEquipamento"] as IList<String>;
+                            }
                             <span class="select" style="width:100%">
-                                <select style="width:100%" asp-for="TipoEquipamento" asp-items="@(new SelectList(LstTipoEquipamento))" onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
+                                <select style="width:100%" asp-for="TipoEquipamento"
+                                    asp-items="@(new SelectList(LstTipoEquipamento))"
+                                    onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
                             </span>
                             <span class="icon is-small is-left">
                                 <i class="fas fa-cogs"></i>
@@ -284,8 +309,11 @@
                     <label asp-for="TipoPedido" class="label"></label>
                     <p class="control has-icons-left">
                         <span class="select" style="width: 100%">
-                            @{ var LstTipoPedido = ViewData["TipoPedido"] as IList<String>;}
-                            <select class="select" style="width:100%" asp-for="TipoPedido" asp-items="@(new SelectList(LstTipoPedido))"></select>
+                            @{
+                                var LstTipoPedido = ViewData["TipoPedido"] as IList<String>;
+                            }
+                            <select class="select" style="width:100%" asp-for="TipoPedido"
+                                asp-items="@(new SelectList(LstTipoPedido))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-phone-slash"></i>
@@ -335,7 +363,8 @@
             </div>
         </div>
         &nbsp;
-        <button type="button" onclick="ValidarMarcacao()" value="Guardar Marcação" class="button is-info is-outlined is-fullwidth">
+        <button type="button" onclick="ValidarMarcacao()" value="Guardar Marcação"
+            class="button is-info is-outlined is-fullwidth">
             <span class="icon">
                 <i class="fas fa-plus"></i>
             </span>
@@ -356,15 +385,18 @@
         </header>
         <section class="modal-card-body">
             <div class="field is-horizontal">
-                <div class="field-label is-normal"><label class="label">Mensagens:</label></div><div class="field-body">
+                <div class="field-label is-normal"><label class="label">Mensagens:</label></div>
+                <div class="field-body">
                     <div class="field" style="width:100%">
-                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8 value=""></textarea></div>
+                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8
+                                value=""></textarea></div>
                     </div>
                 </div>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
+            <button type="button" class="button is-info" onclick="document.getElementById('frmAdicionar').submit();"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check-circle"></i>
                 </span>
@@ -385,7 +417,8 @@
             <p>Tem a certeza que deseja enviar um email aos tecnicos associados a esta marcacao?</p>
         </section>
         <footer class="modal-card-foot">
-            <button id="btnEnviarEmailMarcacaoTecnico" type="button" class="button is-info" onclick="EnviarEmailMarcacaoTecnico(@Model.IdMarcacao)" href="javascript:;">
+            <button id="btnEnviarEmailMarcacaoTecnico" type="button" class="button is-info"
+                onclick="EnviarEmailMarcacaoTecnico(@Model.IdMarcacao)" href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-paper-plane"></i>
                 </span>
@@ -406,11 +439,14 @@
         <section class="modal-card-body">
             <p>Tem a certeza que deseja enviar um email para o cliente?</p>
             <div class="field" style="width:100%">
-                <div class="control"><input type="email" class="input" id="txtEmailCliente" value="@Model.QuemPediuEmail"></div>
+                <div class="control"><input type="email" class="input" id="txtEmailCliente"
+                        value="@Model.QuemPediuEmail"></div>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button id="btnEnviarEmailMarcacaoCliente" type="button" class="button is-info" onclick="EnviarEmailMarcacaoCliente(@Model.IdMarcacao, document.getElementById('txtEmailCliente').value)" href="javascript:;">
+            <button id="btnEnviarEmailMarcacaoCliente" type="button" class="button is-info"
+                onclick="EnviarEmailMarcacaoCliente(@Model.IdMarcacao, document.getElementById('txtEmailCliente').value)"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-paper-plane"></i>
                 </span>
@@ -423,12 +459,12 @@
 <script>
     function AdicionarData(data) {
         document.getElementById('divDatasAdicionais').innerHTML += '<div class="list-item" id="lst-datas-' + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD') + '"><div class="list-item-title" style="width:85%">' + data + '</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger" type="button" onclick="RemoverData(' + moment(data, "DD/MM/YYYY").format('YYYYMMDD') + ')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>';
-        document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD' + ";");  
+        document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value + moment(data, "DD/MM/YYYY").format('YYYY-MM-DD' + ";");
     }
     function RemoverData(data) {
         data = moment(data, "YYYYMMDD").format('YYYY-MM-DD')
         document.getElementById('lst-datas-' + data).remove();
-        document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value.replace(data + ';', '');  
+        document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value.replace(data + ';', '');
     }
     if (document.getElementById('DatasAdicionais').value.slice(-1) != ";" && document.getElementById('DatasAdicionais').value != "") document.getElementById('DatasAdicionais').value = document.getElementById('DatasAdicionais').value + ";";
 
@@ -448,8 +484,12 @@
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
                 $(function () {
-                    document.getElementById("txtMensagens").value = result;
-                    if (result != "") {
+                    document.getElementById("txtMensagens").value = result[1] + result[2];
+                    if (result[0] == "1") {
+                        document.getElementById("btnValidar").disabled = false;
+                        Bulma('#modalValidacao').modal().open();
+                    } else if (result[0] == "2") {
+                        document.getElementById("btnValidar").disabled = true;
                         Bulma('#modalValidacao').modal().open();
                     } else {
                         document.getElementById('frmAdicionar').submit();

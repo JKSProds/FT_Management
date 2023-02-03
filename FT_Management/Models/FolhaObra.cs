@@ -36,6 +36,7 @@ namespace FT_Management.Models
         public string SituacoesPendentes { get { return _SituacoesPendentes ?? ""; } set { _SituacoesPendentes = value; } }
         [Display(Name = "Lista de Peças")]
         public string ListaPecas { get; set; }
+        [Display(Name = "Peças")]
         public List<Produto> PecasServico { get; set; }
         [Display(Name = "Lista de Intervenções")]
         [Required]
@@ -76,7 +77,7 @@ namespace FT_Management.Models
         public string EmailCliente { get; set; }
         public bool GuardarLocalizacao { get; set; }
         public bool FecharMarcacao { get; set; }
-        public double ValorTotal { get { return PecasServico.Sum(p => p.Valor); } }
+        public double ValorTotal { get { return PecasServico.Sum(p => p.Valor * p.Stock_Fisico); } }
         public double KmsDeslocacao { get; set; }
 
         public FolhaObra()
@@ -157,7 +158,7 @@ namespace FT_Management.Models
                 this.Instalação = true;
             }
         }
-        public void ValidarPecas()
+        public void ValidarPecas(List<Produto> LstPecas)
         {
             this.PecasServico.Clear();
             if (this.ListaPecas == null) return;
@@ -165,21 +166,18 @@ namespace FT_Management.Models
             {
                 if (item != "")
                 {
-                    if (this.PecasServico.Where(p => p.Ref_Produto == item).Count() == 0)
+                    if (this.PecasServico.Where(p => p.StampProduto == item.Split("|").First()).Count() == 0)
                     {
-                        this.PecasServico.Add(new Produto
-                        {
-                            Ref_Produto = item,
-                            Stock_Fisico = 1
-                        });
+                        this.PecasServico.Add(LstPecas.Where(p => p.StampProduto == item.Split("|").First()).First());
+                        this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|").Last());
                     }
                     else
                     {
-                        this.PecasServico.Where(p => p.Ref_Produto == item).First().Stock_Fisico += 1;
+                        this.PecasServico.Where(p => p.StampProduto == item.Split("|").First()).First().Stock_Fisico += Double.Parse(item.Split("|").Last());
                     }
-
                 }
             }
         }
     }
 }
+

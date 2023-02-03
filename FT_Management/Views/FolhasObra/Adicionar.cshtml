@@ -1,7 +1,7 @@
 ﻿@model FT_Management.Models.FolhaObra
 
 @{
-    ViewData["Title"] = "Nova Folha de Obra";
+    ViewData["Title"] = "Nova Folha de Obra - " + @Model.ClienteServico.NomeCliente;
 }
 
 <link rel="stylesheet" href="~/lib/bulma-steps/dist/css/bulma-steps.min.css">
@@ -39,7 +39,7 @@
                                 <span class="icon mr-3">
                                     <i class="fas fa-plus-square"></i>
                                 </span>
-                                <span>Nova Folha de Obra</span>
+                                <span>Nova Folha de Obra - @Model.ClienteServico.NomeCliente</span>
                             </p>
                         </article>
                     </div>
@@ -123,7 +123,7 @@
                                             <input type="text" class="input"
                                                 asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
                                             <span class="icon is-small is-left">
-                                                <i class="fas fa-check"></i>
+                                                <i class="fa-solid fa-display"></i>
                                             </span>
                                         </p>
                                     </div>
@@ -237,31 +237,55 @@
                                         <p class="control has-icons-left">
                                             <input type="text" class="input" id="txtPecas">
                                             <span class="icon is-small is-left">
-                                                <i class="fas fa-check"></i>
+                                                <i class="fa-solid fa-gears"></i>
                                             </span>
                                         </p>
                                     </div>
                                     <div class="field has-addons">
-                                        <button type="button" class="button is-info" id="btnObterHistorico"
-                                            onclick="Bulma('#modalPecasStock').modal().open();" disabled>
-                                            <span class="icon">
-                                                <i class="fa-solid fa-list-ul"></i>
-                                            </span>
-                                        </button>
-                                        <a class="button is-info"
-                                            onclick="ObterPeca(document.getElementById('txtStampPeca').value, 1)">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </a>
+                                        <div class="control">
+                                            <button type="button" class="button is-primary is-outlined"
+                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
+                                                <span class="icon">
+                                                    <i class="fas fa-minus"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="control" style="width:100%">
+                                            <input type="number" class="input" id="txtQtd" value="1">
+                                        </div>
+                                        <div class="control">
+                                            <button type="button" class="button is-primary is-outlined"
+                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
+                                                <span class="icon">
+                                                    <i class="fas fa-plus"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="control">
+                                            <button class="button is-info" type="button"
+                                                onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
+                                                disabled id="btnAdicionarPeca">
+                                                <i class="fa-solid fa-check"></i>
+                                            </button>
+                                        </div>
+                                        <div class="control">
+                                            <button type="button" class="button is-info"
+                                                onclick="Bulma('#modalPecas').modal().open();">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-list-ul"></i>
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
+                                    <input type="hidden" class="input" id="txtStampPeca">
+                                    <span asp-validation-for="PecasServico" class="has-text-danger"></span>
                                 </div>
-                                <input type="hidden" class="input" id="txtStampPeca">
-                                <span asp-validation-for="PecasServico" class="has-text-danger"></span>
                             </div>
-                        </div>
-                        <div class="column is-12">
-                            <label asp-for="ListaPecas"></label>
-                            <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
-                            <div class="list has-visible-pointer-controls" id="divListaPecas">
+                            <div class="column is-12">
+                                <label asp-for="ListaPecas"></label>
+                                <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
+                                <div class="list has-visible-pointer-controls" id="divListaPecas">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -307,7 +331,8 @@
                                 <label class="switch is-rounded">
                                     <input type="checkbox" asp-for="EmGarantia">
                                     <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model => model.EmGarantia)</span>
+                                    <span class="control-label">@Html.DisplayNameFor(model =>
+                                        model.EmGarantia)</span>
                                 </label>
                                 <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
                             </div>
@@ -608,6 +633,15 @@
                 <p> </p>
             </div>
         </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalObterHistorico').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
@@ -617,13 +651,22 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Histórico de Intervenções</p>
-            <button class="delete" aria-label="close"></button>
+            <button type="button" class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             <div class="form-group">
                 <button class="button is-danger is-outlined is-rounded is-fullwidth">Não existem intervenções!</button>
             </div>
         </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalObterHistoricoVazio').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
@@ -632,13 +675,45 @@
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Equipamentos</p>
-            <button class="delete" aria-label="close"></button>
+            <button type="button" class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             <div class="modal-body">
                 <p> </p>
             </div>
         </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalEquipamentos').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+<div id="modalPecas" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Peças em Stock</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p> </p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalPecas').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
     </div>
 </div>
 
@@ -859,8 +934,8 @@
 
     //PEÇAS
     function AdicionarPeca(stamp, ref, desig, qtd) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${ref}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${ref}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
-        document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + ref};`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd};`;
     }
 
     function RemoverPeca(stamp) {
@@ -875,7 +950,7 @@
         document.getElementById('ListaPecas').value = '';
 
         pecas.split(";").forEach(function (item) {
-            ObterPeca(item);
+            ObterPeca(item.split("|")[0], item.split("|")[1]);
         });
     }
 
@@ -904,6 +979,7 @@
             },
             select: function (e, i) {
                 $("#txtStampPeca").val(i.item.val);
+                document.getElementById("btnAdicionarPeca").disabled = false;
             },
             minLength: 1
         });
@@ -914,10 +990,13 @@
             url: '/Produtos/ObterPecasUtilizador/',
             type: "POST",
             success: function (response) {
-                var pecas = "";
+                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Referência</th><th>Designação</th><th>Quantidade</th><th></th></tr></thead><tbody>";
                 $(response).each(function () {
-                    //pecas = pecas + '<option value="' + this.stampProduto + '">' + this.ref_Produto + ' - ' + this.designacao_Produto + ' - <b>Stock Atual: ' + (this.stock_PHC - this.stock_Res + this.stock_Rec) + ' UN</b></option>'
+                    html += "<tr><td>" + this.ref_Produto + "</td><td>" + this.designacao_Produto.trim() + "</td><td>" + this.stock_Atual + " / " + this.stock_PHC + "</td><td><button class='button is-info' type='button' onclick='PreencherPeca(\"" + this.ref_Produto + " - " + this.designacao_Produto + "\", \"" + this.stampProduto + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span></button></td></tr>";
+
                 });
+                html += "</tbody></table>"
+                $('#modalPecas').find('.modal-body').html(html);
             },
             error: function (response) {
                 alert(response.responseText);
@@ -928,15 +1007,24 @@
         });
     }
 
+    function PreencherPeca(designacao, stamp) {
+        $("#txtStampPeca").val(stamp);
+        $("#txtPecas").val(designacao);
+        document.getElementById("btnAdicionarPeca").disabled = false;
+        Bulma('#modalPecas').modal().close();
+    }
     function ObterPeca(stamp, qtd) {
         if (stamp !== "" && qtd > 0) {
             $.ajax({
                 url: '/Produtos/ObterPeca/' + stamp,
                 type: "POST",
                 success: function (response) {
-                    console.log(response);
+                    //console.log(response);
                     AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto, qtd);
-
+                    document.getElementById('txtPecas').value = '';
+                    document.getElementById('txtStampPeca').value = '';
+                    document.getElementById("btnAdicionarPeca").disabled = true;
+                    document.getElementById("txtQtd").value = '1';
                 },
                 error: function (response) {
                     alert(response.responseText);
@@ -1013,16 +1101,22 @@
         });
     });
 
+    function PreencherEquipamento(designacao, stamp) {
+        $("#txtEquipamentoStamp").val(stamp);
+        $("#txtEquipamento").val(designacao);
+        document.getElementById("btnObterHistorico").disabled = false;
+        Bulma('#modalEquipamentos').modal().close();
+    }
+
     function ObterEquipamentosCliente() {
         $.ajax({
             url: '/Equipamentos/ObterEquipamentos/',
             data: { "prefix": "", "no": "@Model.ClienteServico.IdCliente", "loja": "@Model.ClienteServico.IdLoja" },
             type: "GET",
             success: function (data) {
-                console.log(data);
-                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th></tr></thead><tbody>";
+                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th><th></th></tr></thead><tbody>";
                 $(data).each(function () {
-                    html += "<tr><td>" + this.marcaEquipamento + "</td><td>" + this.modeloEquipamento + "</td><td>" + this.numeroSerieEquipamento + "</td></tr>";
+                    html += "<tr><td>" + this.marcaEquipamento + "</td><td>" + this.modeloEquipamento + "</td><td>" + this.numeroSerieEquipamento + "</td><td><button class='button is-info' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span></button></td></tr>";
                 });
                 html += "</tbody></table>"
                 $('#modalEquipamentos').find('.modal-body').html(html);

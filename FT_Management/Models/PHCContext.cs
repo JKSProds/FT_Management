@@ -860,7 +860,7 @@ namespace FT_Management.Models
 
             foreach (Produto item in fo.PecasServico)
             {
-                Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.Ref_Produto == item.Ref_Produto.Trim()).DefaultIfEmpty(new Produto()).First();
+                Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
                 if (p.Stock_Atual < item.Stock_Fisico) res += "Não tem stock suficiente da seguinte peça: " + p.Ref_Produto.Trim() + "!\r\n";
             }
 

@@ -61,7 +61,7 @@ namespace FT_Management.Controllers
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
                 fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
                 fo.ValidarIntervencoes();
-                fo.ValidarPecas();
+                fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
                 fo.ValidarTipoFolhaObra();
 
                 Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
@@ -121,7 +121,7 @@ namespace FT_Management.Controllers
 
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.ValidarIntervencoes();
-            fo.ValidarPecas();
+            fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
 
 #if DEBUG
             return Content(phccontext.ValidarFolhaObra(fo));
