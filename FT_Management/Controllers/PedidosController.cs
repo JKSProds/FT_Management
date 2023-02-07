@@ -638,6 +638,12 @@ namespace FT_Management.Controllers
             return View(ListaMarcacoes);
         }
 
+        public ActionResult Lista()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return RedirectToAction("ListaPedidos", new { IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC });
+        }
+
         public ActionResult ListaPedidosPendentes(string IdTecnico)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -649,6 +655,7 @@ namespace FT_Management.Controllers
 
             return View("ListaPedidos", ListaMarcacoes);
         }
+
 
         public ActionResult Pedido(int id)
         {
