@@ -1524,12 +1524,12 @@ namespace FT_Management.Models
             return res;
 
         }
-        public Acesso ObterUltimoAcesso(int IdPHC)
+        public Acesso ObterUltimoAcesso(int Id)
         {
             Acesso a = new Acesso();
 
             using Database db = ConnectionString;
-            using var result = db.Query("select * from dat_acessos_utilizador where IdUtilizador=(SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + IdPHC + " LIMIT 1);");
+            using var result = db.Query("select * from dat_acessos_utilizador where IdUtilizador=" + Id + ";");
             while (result.Read())
             {
                 a = new Acesso()
@@ -1556,6 +1556,39 @@ namespace FT_Management.Models
                     sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "', 1),\r\n";
 
                     if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) sql2 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 1),\r\n";
+                }
+
+                sql1 = sql1.Remove(sql1.Count() - 3);
+                sql1 += ";";
+                sql2 = sql2.Remove(sql2.Count() - 3);
+                sql2 += " ON DUPLICATE KEY UPDATE DataUltimoAcesso = VALUES(DataUltimoAcesso), TipoUltimoAcesso = VALUES(TipoUltimoAcesso);";
+
+                try
+                {
+                    Database db = ConnectionString;
+
+                    db.Execute(sql1);
+                    db.Execute(sql2);
+                    db.Connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+        public void CriarAcessoInterno(List<Acesso> LstAcessos)
+        {
+            if (LstAcessos.Count > 0)
+            {
+                string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura, App) VALUES ";
+                string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso, App) VALUES";
+
+                foreach (Acesso acesso in LstAcessos.OrderBy(a => a.Data))
+                {
+                    sql1 += "(" + acesso.Id + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "', 1),\r\n";
+
+                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) sql2 += "(" + acesso.Id + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 1),\r\n";
                 }
 
                 sql1 = sql1.Remove(sql1.Count() - 3);

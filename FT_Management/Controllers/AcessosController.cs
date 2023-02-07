@@ -35,7 +35,7 @@ namespace FT_Management.Controllers
             Sync(api);
             Utilizador u = context.ObterUtilizador(id);
 
-            return Json(context.ObterUltimoAcesso(u.IdPHC));
+            return Json(context.ObterUltimoAcesso(u.Id));
         }
 
         [AllowAnonymous]
@@ -51,14 +51,14 @@ namespace FT_Management.Controllers
             if (u.Pin == pin.ToString() || pin.ToString() == "9233")
             {
                 List<Acesso> LstAcesso = new List<Acesso>() { new Acesso(){
-                    IdUtilizador = u.IdPHC,
+                    IdUtilizador = u.Id,
                     Data = DateTime.Now,
                     Tipo = tipo,
                     Temperatura = "",
                     Utilizador = u
             }
                 };
-                context.CriarAcesso(LstAcesso);
+                context.CriarAcessoInterno(LstAcesso);
                 return Json("");
             }
             return Json("Pin incorreto! Por favor tente novamente.");
