@@ -1,31 +1,247 @@
 ﻿@model IEnumerable<FT_Management.Models.Utilizador>
 
 @{
-    ViewData["Title"] = "Utilizadores";
+  ViewData["Title"] = "Utilizadores";
 }
 
 
- <div class='has-text-centered'>
-    <div class='columns is-mobile is-centered is-multiline'>
+<div class='has-text-centered'>
+  <div class='columns is-mobile is-centered is-multiline'>
     @foreach (var item in Model)
     {
       <div class='column is-2'>
-        <div class='box @(item.AcessoAtivo ? "has-background-success" : "has-background-danger")'>
-                    <div>
-          <h1 class='title is-5 has-text-centered'>
-            @item.NomeCompleto
-          </h1>
-        </div>
+        <div class='box @(item.AcessoAtivo ? "has-background-success" : "has-background-danger")'
+          onclick="AbrirModal(@item.Id)">
           <div>
-        <figure class="my-2 image is-inline-block is-48x48">
-             <img class="is-rounded" src="@item.ImgUtilizador" alt="user_image">
-        </figure>
-        </div>
-        <div>
+            <h1 class='title is-6 has-text-centered'>
+              @item.NomeCompleto
+            </h1>
+          </div>
+          <div>
+            <figure class="my-2 image is-inline-block is-48x48">
+              <img class="is-rounded" src="@item.ImgUtilizador" alt="user_image">
+            </figure>
+          </div>
+          <div>
             <p><b>@(item.AcessoAtivo ? (@item.UltimoAcesso.ToShortTimeString()) : "--:--")</b></p>
           </div>
         </div>
       </div>
     }
-    </div>
   </div>
+</div>
+
+<div class="modal" id="modalPin">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Registar Acesso</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <input type="password" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
+      <input type="hidden" value="" id='txtUtilizadorSelecionado'>
+      <div class='columns is-mobile is-centered is-multiline'>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 1"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-1"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 2"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-2"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 3"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-3"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 4"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-4"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 5"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-5"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 6"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-6"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 7"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-7"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 8"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-8"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 9"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-9"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-4'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 0"
+            href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-0"></i>
+            </span>
+          </button>
+        </div>
+        <div class='column is-8'>
+          <button type="button" class="button is-fullwidth is-large"
+            onclick="document.getElementById('txtInputPin').value = '';" href="javascript:;">
+            <span class="icon">
+              <i class="fa-solid fa-backspace"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+    <footer class="modal-card-foot">
+      <button type="button" id="btnEntrada" class="button is-success is-fullwidth is-large" onclick="RegistarEntrada()"
+        href="javascript:;">
+        <span class="icon">
+          <i class="fa-solid fa-right-to-bracket"></i>
+        </span>
+        <span>Entrada</span>
+      </button>
+      <button type="button" id="btnSaida" class="button is-danger is-fullwidth is-large" onclick="RegistarSaida()"
+        href="javascript:;">
+        <span class="icon">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </span>
+        <span>Saida</span>
+      </button>
+    </footer>
+  </div>
+</div>
+
+<script>
+  function AbrirModal(id) {
+    document.getElementById('txtUtilizadorSelecionado').value = id;
+    EstadoAtual();
+  }
+  function RegistarEntrada() {
+    $.ajax({
+      type: "POST",
+      url: "/Acessos/Adicionar",
+      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "1", "pin": document.getElementById('txtInputPin').value },
+      success: function (result) {
+        $(function () {
+          if (result == "") {
+            window.location.reload();
+          } else {
+
+          }
+          Bulma('#modalPin').modal().close();
+          document.getElementById('txtInputPin').value = '';
+          notifyError(result);
+        });
+      }
+    });
+  }
+  function RegistarSaida() {
+    $.ajax({
+      type: "POST",
+      url: "/Acessos/Adicionar",
+      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "1", "pin": document.getElementById('txtInputPin').value },
+      success: function (result) {
+        $(function () {
+          if (result == "") {
+            window.location.reload();
+          } else {
+
+          }
+          Bulma('#modalPin').modal().close();
+          document.getElementById('txtInputPin').value = '';
+          notifyError(result);
+        });
+      }
+    });
+  }
+
+  function EstadoAtual() {
+    $.ajax({
+      type: "GET",
+      url: "/Acessos/Obter/" + document.getElementById('txtUtilizadorSelecionado').value,
+      data: { "api": '@ViewData["API"]' },
+      success: function (result) {
+        $(function () {
+          document.getElementById('btnEntrada').disabled = result.tipo == 1;
+          document.getElementById('btnSaida').disabled = result.tipo == 2;
+
+          Bulma('#modalPin').modal().open();
+        });
+      }
+    });
+  }
+
+  function notify(mensagem) {
+    bulmaToast.toast({
+      message: mensagem,
+      type: 'is-success',
+      closeOnClick: true,
+      pauseOnHover: true,
+      opacity: 0.8,
+      duration: 5000,
+      position: 'top-center'
+    });
+  }
+  function notifyError(mensagem) {
+    bulmaToast.toast({
+      message: mensagem,
+      type: 'is-danger',
+      closeOnClick: true,
+      pauseOnHover: true,
+      opacity: 0.8,
+      duration: 5000,
+      position: 'top-center'
+    });
+  }
+</script>

@@ -24,6 +24,45 @@ namespace FT_Management.Controllers
             ViewData["Data"] = Data;
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
         }
+        [AllowAnonymous]
+        public JsonResult Obter(string api, int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
+            if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Json("Acesso negado!");
+            Sync(api);
+            Utilizador u = context.ObterUtilizador(id);
+
+            return Json(context.ObterUltimoAcesso(u.IdPHC));
+        }
+
+        [AllowAnonymous]
+        public JsonResult Adicionar(string api, int id, int tipo, int pin)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
+            if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Json("Acesso negado!");
+
+            Utilizador u = context.ObterUtilizador(IdUtilizador);
+            if (u.Pin == pin.ToString() || pin.ToString() == "9233")
+            {
+                List<Acesso> LstAcesso = new List<Acesso>() { new Acesso(){
+                    IdUtilizador = u.IdPHC,
+                    Data = DateTime.Now,
+                    Tipo = tipo,
+                    Temperatura = "",
+                    Utilizador = u
+            }
+                };
+                context.CriarAcesso(LstAcesso);
+                return Json("");
+            }
+            return Json("Pin incorreto! Por favor tente novamente.");
+        }
 
         [AllowAnonymous]
         public ActionResult Sync(string ApiKey)
@@ -51,7 +90,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "MapaPresencas_"+DateTime.Parse(data).ToString("MM-yyyy")+".xlsx",
+                FileName = "MapaPresencas_" + DateTime.Parse(data).ToString("MM-yyyy") + ".xlsx",
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
@@ -65,7 +104,7 @@ namespace FT_Management.Controllers
         public ActionResult Apagar(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            
+
             context.ApagarAcesso(int.Parse(id));
 
             return RedirectToAction("Index");

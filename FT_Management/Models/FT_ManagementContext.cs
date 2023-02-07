@@ -1510,7 +1510,7 @@ namespace FT_Management.Models
 
             return package.GetAsByteArray();
         }
-        public DateTime ObterUltimoAcesso(int IdPHC)
+        public DateTime ObterDataUltimoAcesso(int IdPHC)
         {
 
             DateTime res = new DateTime();
@@ -1524,6 +1524,26 @@ namespace FT_Management.Models
             return res;
 
         }
+        public Acesso ObterUltimoAcesso(int IdPHC)
+        {
+            Acesso a = new Acesso();
+
+            using Database db = ConnectionString;
+            using var result = db.Query("select * from dat_acessos_utilizador where IdUtilizador=(SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + IdPHC + " LIMIT 1);");
+            while (result.Read())
+            {
+                a = new Acesso()
+                {
+
+                    IdUtilizador = result["IdUtilizador"],
+                    Data = result["DataUltimoAcesso"],
+                    Tipo = result["TipoUltimoAcesso"],
+                    App = result["App"] == "1"
+                };
+            }
+            return a;
+        }
+
         public void CriarAcesso(List<Acesso> LstAcessos)
         {
             if (LstAcessos.Count > 0)
@@ -1535,7 +1555,7 @@ namespace FT_Management.Models
                 {
                     sql1 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "', 1),\r\n";
 
-                    if (acesso.Data > ObterUltimoAcesso(acesso.IdUtilizador)) sql2 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 1),\r\n";
+                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) sql2 += "((SELECT IdUtilizador FROM sys_utilizadores WHERE IdPHC = " + acesso.IdUtilizador + "), '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 1),\r\n";
                 }
 
                 sql1 = sql1.Remove(sql1.Count() - 3);
@@ -1551,8 +1571,9 @@ namespace FT_Management.Models
                     db.Execute(sql2);
                     db.Connection.Close();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
