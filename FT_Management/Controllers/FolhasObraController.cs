@@ -29,7 +29,7 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
         }
         [Authorize(Roles = "Admin")]
-        public ActionResult Adicionar(int id)
+        public ActionResult Adicionar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -67,6 +67,7 @@ namespace FT_Management.Controllers
                 if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) phccontext.AtualizarClienteEquipamento(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
 
                 Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
+                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 if (fo.FecharMarcacao) m.EstadoMarcacaoDesc = "Finalizado";
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";

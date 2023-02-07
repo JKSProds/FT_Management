@@ -4,7 +4,7 @@
     ViewData["Title"] = "Agendamento";
 }
 
-<input type="hidden" id="hiddenIdPedido" name="IdPedido">
+<input type="hidden" id="txtStampMarcacao">
 
 <div class="container">
     <div class="columns">
@@ -153,9 +153,9 @@ else
                             <div class="container is-12">
                                 <div class="buttons has-addons">
                                     @if(item.EstadoMarcacaoDesc == "Em Curso") {
-<a class="button is-danger is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.IdMarcacao }))'"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
+<a class="button is-danger is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.MarcacaoStamp }))'"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
                                     }else if(item.EstadoMarcacaoDesc != "Finalizado" && item.EstadoMarcacaoDesc != "Cancelado"){
-<a class="button is-info is-outlined is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="IniciarAssistencia('@item.MarcacaoStamp')"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
+<a class="button is-info is-outlined is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
                                     }
                                     @if (item.Cliente.ContactoValido)
                                     {
@@ -181,7 +181,42 @@ else
     </div>
 }
 
-
+<div id="modalIniciarAssistencia" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Iniciar Assistência</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p>Deseja iniciar a deslocação para o cliente ou efetuar a folha de obra?</p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" id='btnIniciarDeslocacao' class="button is-small is-success is-fullwidth"
+                onclick="IniciarAssistencia(document.getElementById('txtStampMarcacao').value);" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-solid fa-car-side"></i>
+                </span>
+                <span>Iniciar Deslocação</span>
+            </button>
+                        <button type="button" class="button is-info is-small is-fullwidth"
+                onclick="location.href = '/FolhasObra/Adicionar/' + document.getElementById('txtStampMarcacao').value;" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                </span>
+                <span>Iniciar Assistência</span>
+            </button>
+            <button type="button" class="button is-secondary is-small is-fullwidth"
+                onclick="Bulma('#modalIniciarAssistencia').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+            </button>
+        </footer>
+    </div>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -195,6 +230,7 @@ else
 
     function IniciarAssistencia(stamp) {
         document.getElementById('btnStart_' + stamp).classList.add('is-loading');
+        document.getElementById('btnIniciarDeslocacao').classList.add('is-loading');
         $.ajax({
             type: "POST",
             url: "/Pedidos/Iniciar/" + stamp,
@@ -215,7 +251,8 @@ else
                           duration: 5000
                         })
                     }
-
+        document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
+        document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');
                 });
             }
         });

@@ -379,7 +379,7 @@
                             </div>
                         </div>
                         &nbsp;
-                        <button type="button" onclick="ValidarMarcacao()" value="Criar Marcação"
+                        <button type="button" id="btnCriarMarcacao" onclick="ValidarMarcacao()" value="Criar Marcação"
                             class="button is-info is-large is-fullwidth">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
@@ -455,6 +455,7 @@
 
 
     function ValidarMarcacao() {
+        document.getElementById('btnCriarMarcacao').classList.add('is-loading');
         $.ajax({
             type: "POST",
             url: "/Pedidos/ValidarMarcacao",
@@ -472,6 +473,7 @@
                     } else {
                         document.getElementById('frmAdicionar').submit();
                     }
+                    document.getElementById('btnCriarMarcacao').classList.remove('is-loading');
                 });
             }
         });

@@ -363,7 +363,7 @@
             </div>
         </div>
         &nbsp;
-        <button type="button" onclick="ValidarMarcacao()" value="Guardar Marcação"
+        <button type="button" id="btnGuardarMarcacao" onclick="ValidarMarcacao()" value="Guardar Marcação"
             class="button is-info is-outlined is-fullwidth">
             <span class="icon">
                 <i class="fas fa-plus"></i>
@@ -476,6 +476,7 @@
     });
 
     function ValidarMarcacao() {
+        document.getElementById('btnGuardarMarcacao').classList.add('is-loading');
         if (!document.getElementById('DatasAdicionais').value.includes(moment(document.getElementById("txtData").value, "DD/MM/YYYY").format('YYYY-MM-DD')) && document.getElementById('DatasAdicionais').value.length < 12) document.getElementById('DatasAdicionais').value = document.getElementById("txtData").value;
         $.ajax({
             type: "POST",
@@ -494,6 +495,7 @@
                     } else {
                         document.getElementById('frmAdicionar').submit();
                     }
+                    document.getElementById('btnGuardarMarcacao').classList.remove('is-loading');
                 });
             }
         });
