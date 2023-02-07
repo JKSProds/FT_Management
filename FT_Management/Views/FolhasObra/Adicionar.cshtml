@@ -127,31 +127,37 @@
                                             </span>
                                         </p>
                                     </div>
-                                    <div class="field has-addons">
-                                        <div class="control">
-                                            <button type="button" class="button is-info" id="btnObterHistorico"
-                                                onclick="ObterHistoricoEquipamento()" disabled>
-                                                <span class="icon">
-                                                    <i class="fas fa-history"></i>
-                                                </span>
-                                            </button>
-                                        </div>
-                                        <div class="control">
-                                            <button type="button" class="button is-success" id="btnObterEquipamentos"
-                                                onclick="ObterEquipamentosCliente()">
-                                                <span class="icon">
-                                                    <i class="fas fa-desktop"></i>
-                                                </span>
-                                            </button>
-                                        </div>
-                                        <div class="control">
-                                            <button type="button" class="button is-warning"
-                                                onclick="DesbloquearEquipamentos();">
-                                                <span class="icon">
-                                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                                </span>
-                                            </button>
-                                        </div>
+                                </div>
+                                <div class="field">
+                                    <div class="control buttons">
+                                        <button class="button is-secondary is-fullwidth" type="button"
+                                            onclick="LimparEquipamento()">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-backspace"></i>
+                                            </span>
+                                            <span>Limpar</span>
+                                        </button>
+                                        <button type="button" class="button is-info is-fullwidth" id="btnObterHistorico"
+                                            onclick="ObterHistoricoEquipamento()" disabled>
+                                            <span class="icon">
+                                                <i class="fas fa-history"></i>
+                                            </span>
+                                            <span>Histórico de Manutenções</span>
+                                        </button>
+                                        <button type="button" class="button is-success is-fullwidth"
+                                            id="btnObterEquipamentos" onclick="ObterEquipamentosCliente()">
+                                            <span class="icon">
+                                                <i class="fas fa-desktop"></i>
+                                            </span>
+                                            <span>Visualizar Equipamentos do Cliente</span>
+                                        </button>
+                                        <button type="button" class="button is-warning is-fullwidth"
+                                            onclick="DesbloquearEquipamentos();">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                            </span>
+                                            <span>Pesquisar Todos os Equipamentos</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
@@ -262,7 +268,7 @@
                                                 </span>
                                             </button>
                                         </div>
-                                        <div class="control" style="width:100%">
+                                        <div class="control" style="width:75px">
                                             <input type="number" class="input" id="txtQtd" value="1">
                                         </div>
                                         <div class="control">
@@ -273,25 +279,34 @@
                                                 </span>
                                             </button>
                                         </div>
-                                        <div class="control">
-                                            <button class="button is-info" type="button"
-                                                onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
-                                                disabled id="btnAdicionarPeca">
-                                                <i class="fa-solid fa-check"></i>
-                                            </button>
-                                        </div>
-                                        <div class="control">
-                                            <button type="button" class="button is-info"
-                                                onclick="Bulma('#modalPecas').modal().open();">
-                                                <span class="icon">
-                                                    <i class="fa-solid fa-list-ul"></i>
-                                                </span>
-                                            </button>
-                                        </div>
                                     </div>
                                     <input type="hidden" class="input" id="txtStampPeca">
                                     <span asp-validation-for="PecasServico" class="has-text-danger"></span>
                                 </div>
+                            </div>
+                            <div class="control buttons">
+                                <button class="button is-info is-fullwidth" type="button"
+                                    onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
+                                    disabled id="btnAdicionarPeca">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-check"></i>
+                                    </span>
+                                    <span>Adicionar Peça</span>
+                                </button>
+                                <button class="button is-secondary is-fullwidth" type="button" onclick="LimparPecas()">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-backspace"></i>
+                                    </span>
+                                    <span>Limpar</span>
+                                </button>
+                                <button type="button" class="button is-success is-fullwidth"
+                                    onclick="Bulma('#modalPecas').modal().open();">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-list-ul"></i>
+                                    </span>
+                                    <span>Visualizar Stock</span>
+                                </button>
+
                             </div>
                             <div class="column is-12">
                                 <label asp-for="ListaPecas"></label>
@@ -1003,12 +1018,12 @@
             url: '/Produtos/ObterPecasUtilizador/',
             type: "POST",
             success: function (response) {
-                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Referência</th><th>Designação</th><th>Quantidade</th><th></th></tr></thead><tbody>";
+                var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th style=\"width: 110px\">Referência</th><th>Designação</th><th>Quantidade</th><th></th></tr></thead><tbody>";
                 $(response).each(function () {
-                    html += "<tr><td>" + this.ref_Produto + "</td><td>" + this.designacao_Produto.trim() + "</td><td>" + this.stock_Atual + " / " + this.stock_PHC + "</td><td><button class='button is-info' type='button' onclick='PreencherPeca(\"" + this.ref_Produto + " - " + this.designacao_Produto + "\", \"" + this.stampProduto + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span></button></td></tr>";
+                    html += "<tr><td data-label='Referência'>" + this.ref_Produto + "</td><td data-label='Designação'>" + this.designacao_Produto.trim() + "</td><td data-label='Quantidade'>" + this.stock_Atual + " / " + this.stock_PHC + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherPeca(\"" + this.ref_Produto + " - " + this.designacao_Produto + "\", \"" + this.stampProduto + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
 
                 });
-                html += "</tbody></table>"
+                html += "</tbody></table></div></div>"
                 $('#modalPecas').find('.modal-body').html(html);
             },
             error: function (response) {
@@ -1035,10 +1050,7 @@
                 success: function (response) {
                     //console.log(response);
                     AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
-                    document.getElementById('txtPecas').value = '';
-                    document.getElementById('txtStampPeca').value = '';
-                    document.getElementById("btnAdicionarPeca").disabled = true;
-                    document.getElementById("txtQtd").value = '1';
+                    LimparPecas();
                 },
                 error: function (response) {
                     notifyError(response.responseText);
@@ -1048,6 +1060,14 @@
                 }
             });
         }
+    }
+
+    function LimparPecas() {
+        document.getElementById('txtPecas').value = '';
+        document.getElementById('txtStampPeca').value = '';
+        document.getElementById("btnAdicionarPeca").disabled = true;
+        document.getElementById("txtQtd").value = '1';
+        notify('Peça limpa com sucesso!');
     }
 
     //CLIENTES
@@ -1117,6 +1137,14 @@
         });
     });
 
+    function LimparEquipamento() {
+        document.getElementById("btnObterHistorico").disabled = true;
+        document.getElementById("txtEquipamentoStamp").value = '';
+        document.getElementById("txtEquipamento").value = '';
+        notify('Equipamento limpo com sucesso!');
+
+    }
+
     function PreencherEquipamento(designacao, stamp) {
         $("#txtEquipamentoStamp").val(stamp);
         $("#txtEquipamento").val(designacao);
@@ -1131,11 +1159,11 @@
             data: { "prefix": "", "no": "@Model.ClienteServico.IdCliente", "loja": "@Model.ClienteServico.IdLoja" },
             type: "GET",
             success: function (data) {
-                var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th><th></th></tr></thead><tbody>";
+                var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"><thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th><th></th></tr></thead><tbody>";
                 $(data).each(function () {
-                    html += "<tr><td>" + this.marcaEquipamento + "</td><td>" + this.modeloEquipamento + "</td><td>" + this.numeroSerieEquipamento + "</td><td><button class='button is-info' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span></button></td></tr>";
+                    html += "<tr><td data-label='Marca'>" + this.marcaEquipamento + "</td><td data-label='Modelo'>" + this.modeloEquipamento + "</td><td data-label='N/S'>" + this.numeroSerieEquipamento + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
                 });
-                html += "</tbody></table>"
+                html += "</tbody></table></div></div>"
                 $('#modalEquipamentos').find('.modal-body').html(html);
                 Bulma('#modalEquipamentos').modal().open();
                 notify("Obtidos com sucesso os equipamentos associados a este cliente!");

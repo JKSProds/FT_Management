@@ -76,6 +76,7 @@ namespace FT_Management.Controllers
                 if (int.Parse(res[0]) > 0)
                 {
                     fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
+                    fo.Marcacao = m;
                     phccontext.FecharFolhaObra(fo);
                     phccontext.AtualizaMarcacao(m);
 
