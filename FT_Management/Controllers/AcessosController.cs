@@ -47,7 +47,7 @@ namespace FT_Management.Controllers
             if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Json("Acesso negado!");
 
-            Utilizador u = context.ObterUtilizador(IdUtilizador);
+            Utilizador u = context.ObterUtilizador(id);
             if (u.Pin == pin.ToString() || pin.ToString() == "9233")
             {
                 List<Acesso> LstAcesso = new List<Acesso>() { new Acesso(){
