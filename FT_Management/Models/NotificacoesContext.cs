@@ -387,7 +387,7 @@ namespace FT_Management.Models
         }
         public static bool EnviarEmailMarcacaoResolvidaPD(FolhaObra fo, Marcacao m)
         {
-            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoPedido == "Pesagem")
+            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
             {
                 string Assunto = "[Ticket#" + fo.ReferenciaServico + "] Resolvido";
                 EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
