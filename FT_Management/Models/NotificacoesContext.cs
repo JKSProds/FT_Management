@@ -213,7 +213,7 @@ namespace FT_Management.Models
                 }
             }
         }
-        private static void EnviarMailSimples(string EmailDestino, string Assunto, string Mensagem, List<String> EmailCC)
+        private static void EnviarMailSimples(string EmailDestino, string Assunto, string Mensagem, List<String> EmailCC, Utilizador u)
         {
             if (EnableSend())
             {
@@ -229,7 +229,7 @@ namespace FT_Management.Models
                        System.Net.NetworkCredential(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:SenhaEmailOrigem"]);
                     mySmtpClient.Credentials = basicAuthenticationInfo;
 
-                    MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"]);
+                    MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"] + (u != null ? " - " + u.NomeCompleto : ""));
                     MailMessage myMail = new MailMessage();
 
                     foreach (var item in EmailDestino.Split(";"))
@@ -385,12 +385,12 @@ namespace FT_Management.Models
 
             return true;
         }
-        public static bool EnviarEmailMarcacaoResolvidaPD(string Mensagem, string Referencia)
+        public static bool EnviarEmailMarcacaoResolvidaPD(FolhaObra fo)
         {
-            if (!string.IsNullOrEmpty(Mensagem))
+            if (!string.IsNullOrEmpty(fo.RelatorioServico))
             {
-                string Assunto = "[Ticket#" + Referencia + "] Resolvido";
-                EnviarMailSimples("2370@kyntech.pt", Assunto, Mensagem, ObterEmailCC(1));
+                string Assunto = "[Ticket#" + fo.ReferenciaServico + "] Resolvido";
+                EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
             }
 
             return true;

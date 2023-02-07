@@ -847,7 +847,7 @@ namespace FT_Management.Models
             {
                 ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
             }
-            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0) MailContext.EnviarEmailMarcacaoResolvidaPD(fo.IntervencaosServico.First().RelatorioServico, fo.ReferenciaServico);
+            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0) MailContext.EnviarEmailMarcacaoResolvidaPD(fo);
             return true;
         }
 
