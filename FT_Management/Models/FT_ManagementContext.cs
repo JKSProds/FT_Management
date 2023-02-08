@@ -1582,13 +1582,13 @@ namespace FT_Management.Models
             if (LstAcessos.Count > 0)
             {
                 string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura, App) VALUES ";
-                string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso, App) VALUES";
+                string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso, App, timestamp) VALUES";
 
                 foreach (Acesso acesso in LstAcessos.OrderBy(a => a.Data))
                 {
                     sql1 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "', 0),\r\n";
 
-                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0),\r\n";
+                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0, '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'),\r\n";
                 }
 
                 sql1 = sql1.Remove(sql1.Count() - 3);
