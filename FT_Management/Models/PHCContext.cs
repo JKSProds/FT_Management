@@ -594,7 +594,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("WEB_Gera_PAT", conn)
+                SqlCommand command = new SqlCommand("WEB_PAT_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -676,7 +676,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("WEB_Gera_Intervencao", conn)
+                SqlCommand command = new SqlCommand("WEB_Intervencao_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -720,7 +720,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("WEB_INSERE_PECA", conn)
+                SqlCommand command = new SqlCommand("WEB_AT_INSERE_PECA", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -796,7 +796,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("WEB_GERA_AT", conn)
+                SqlCommand command = new SqlCommand("WEB_AT_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1137,7 +1137,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Marcacao", conn)
+                SqlCommand command = new SqlCommand("WEB_Marcacao_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1200,7 +1200,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Altera_Marcacao", conn)
+                SqlCommand command = new SqlCommand("WEB_Marcacao_Altera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1340,7 +1340,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Anexo", conn)
+                SqlCommand command = new SqlCommand("WEB_Anexo_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1380,7 +1380,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Apaga_Anexo", conn)
+                SqlCommand command = new SqlCommand("WEB_Anexo_Apaga", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2084,7 +2084,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Comentario", conn)
+                SqlCommand command = new SqlCommand("WEB_Comentario_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2304,7 +2304,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Picking", conn)
+                SqlCommand command = new SqlCommand("WEB_Picking_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2340,7 +2340,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Fecha_Picking", conn)
+                SqlCommand command = new SqlCommand("WEB_Picking_Fecha", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2525,7 +2525,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Atualiza_Linha_Picking", conn)
+                SqlCommand command = new SqlCommand("WEB_Picking_Atualiza_Linha", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2634,7 +2634,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("GERA_INVENTARIO", conn)
+                SqlCommand command = new SqlCommand("WEB_INV_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2671,7 +2671,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("CRIA_LINHA_INV", conn)
+                SqlCommand command = new SqlCommand("WEB_INV_CRIA_LINHA", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2711,7 +2711,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("CRIA_LINHA_INV_SERIE", conn)
+                SqlCommand command = new SqlCommand("WEB_INV_CRIA_LINHA_SERIE", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2753,7 +2753,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("APAGA_LINHA_INV", conn)
+                SqlCommand command = new SqlCommand("WEB_INV_Apaga_Linha", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2790,7 +2790,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("APAGA_LINHA_INV_SERIE", conn)
+                SqlCommand command = new SqlCommand("WEB_INV_APAGA_LINHA_SERIE", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -3086,7 +3086,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("FECHA_INV", conn)
+                SqlCommand command = new SqlCommand("WEB_INV_Fecha", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
