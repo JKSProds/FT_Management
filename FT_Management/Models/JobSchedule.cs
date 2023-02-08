@@ -66,6 +66,38 @@ public class CronJobAniversario : IJob
     }
 }
 
+public class CronJobSaida : IJob
+{
+
+
+    public Task Execute(IJobExecutionContext context)
+    {
+        //_logger.LogInformation("Hello world!");
+        try
+        {
+
+            FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            List<Acesso> LstAcessos = new List<Acesso>();
+
+            foreach (Utilizador u in dbContext.ObterListaUtilizadores(true, false).Where(u => u.AcessoAtivo))
+            {
+                LstAcessos.Add(new Acesso()
+                {
+                    IdUtilizador = u.Id,
+                    Data = DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy 18:30:00")),
+                    Tipo = 2,
+                    Temperatura = "Saida Automática - " + DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                });
+            }
+            dbContext.CriarAcessoInterno(LstAcessos);
+        }
+        catch
+        {
+        }
+        return Task.CompletedTask;
+    }
+}
+
 public class CronJobAgendamentoCRM : IJob
 {
 

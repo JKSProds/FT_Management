@@ -46,7 +46,8 @@ namespace FT_Management
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-          if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1") {
+            if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1")
+            {
                 // Add our job
                 services.AddSingleton<CronJobFerias>();
                 services.AddSingleton(new JobSchedule(
@@ -54,7 +55,8 @@ namespace FT_Management
                     cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection"))));
             }
 
-            if (FT_ManagementContext.ObterParam("EnvioEmailAgendamentoComercial", Configuration.GetConnectionString("DefaultConnection")) == "1") {
+            if (FT_ManagementContext.ObterParam("EnvioEmailAgendamentoComercial", Configuration.GetConnectionString("DefaultConnection")) == "1")
+            {
                 services.AddSingleton<CronJobAgendamentoCRM>();
                 services.AddSingleton(new JobSchedule(
                     jobType: typeof(CronJobAgendamentoCRM),
@@ -68,6 +70,14 @@ namespace FT_Management
                 services.AddSingleton(new JobSchedule(
                     jobType: typeof(CronJobAniversario),
                     cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAniversario", Configuration.GetConnectionString("DefaultConnection"))));
+            }
+
+            if (FT_ManagementContext.ObterParam("SaidaAutomatica", Configuration.GetConnectionString("DefaultConnection")) == "1")
+            {
+                services.AddSingleton<CronJobSaida>();
+                services.AddSingleton(new JobSchedule(
+                    jobType: typeof(CronJobSaida),
+                    cronExpression: FT_ManagementContext.ObterParam("DataSaidaAutomatica", Configuration.GetConnectionString("DefaultConnection"))));
             }
 
             services.AddHostedService<QuartzHostedService>();
@@ -85,9 +95,9 @@ namespace FT_Management
 
             services.AddDataProtection().SetApplicationName("FT_Management");
 
-            #if !DEBUG
+#if !DEBUG
                  services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
-            #endif
+#endif
             Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
 
@@ -126,7 +136,7 @@ namespace FT_Management
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
         }
     }
 }
