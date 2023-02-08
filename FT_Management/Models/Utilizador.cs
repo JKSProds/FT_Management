@@ -73,6 +73,7 @@ namespace FT_Management.Models
         public int TipoMapa { get; set; }
         [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
+        public bool Aniversario { get { return DataNascimento.ToString("ddMM") == DateTime.Now.ToString("ddMM"); } }
         public Viatura Viatura { get; set; }
         [Display(Name = "Ultimo Acesso")]
         public DateTime UltimoAcesso { get; set; }
@@ -84,6 +85,7 @@ namespace FT_Management.Models
         public string SecondFactorAuthStamp { get; set; }
         public string SecondFactorImgUrl { get; set; }
         public string SecondFactorAuthCode { get; set; }
+        public bool Ferias { get; set; }
         public Utilizador()
         {
             this.Id = 0;

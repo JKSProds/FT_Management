@@ -28,11 +28,13 @@ namespace FT_Management.Controllers
         public JsonResult Obter(string api, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
             if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Json("Acesso negado!");
-            Sync(api);
+
+            phccontext.AtualizarAcessos();
             Utilizador u = context.ObterUtilizador(id);
 
             return Json(context.ObterUltimoAcesso(u.Id));
@@ -41,11 +43,12 @@ namespace FT_Management.Controllers
         [AllowAnonymous]
         public JsonResult Adicionar(string api, int id, int tipo, int pin)
         {
+            List<string> res = new List<string>() { "0", "Erro" };
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
             if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
-            if (IdUtilizador == 0) return Json("Acesso negado!");
+            if (IdUtilizador == 0) return Json(res);
 
             Utilizador u = context.ObterUtilizador(id);
             if (u.Pin == pin.ToString() || pin.ToString() == "9233")
@@ -56,12 +59,19 @@ namespace FT_Management.Controllers
                     Tipo = tipo,
                     Temperatura = "",
                     Utilizador = u
-            }
+                    }
                 };
                 context.CriarAcessoInterno(LstAcesso);
-                return Json("");
+                res[0] = "1";
+                res[1] = (tipo == 1 ? "Bom Trabalho, " : "Bom Descanso, ") + u.NomeCompleto;
+                return Json(res);
             }
-            return Json("Pin incorreto! Por favor tente novamente.");
+            else
+            {
+                res[1] = "Pin incorreto! Por favor tente novamente.";
+            }
+
+            return Json(res);
         }
 
         [AllowAnonymous]

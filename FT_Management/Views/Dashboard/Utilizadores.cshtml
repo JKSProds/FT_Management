@@ -10,30 +10,31 @@
   }
 </style>
 
-<div class='has-text-centered'>
-  <div class='columns is-mobile is-centered is-multiline'>
-    @foreach (var item in Model)
-    {
-      <div class='column is-2'>
-        <div class='box @(item.AcessoAtivo ? "has-background-success" : "has-background-danger")'
-          onclick="AbrirModal(@item.Id)">
-          <div>
-            <h1 class='title is-6 has-text-centered'>
-              @item.NomeCompleto
-            </h1>
-          </div>
-          <div>
-            <figure class="my-2 image is-inline-block is-48x48">
-              <img class="is-rounded" src="@item.ImgUtilizador" alt="user_image">
-            </figure>
-          </div>
-          <div>
-            <p><b>@(item.AcessoAtivo ? (@item.UltimoAcesso.ToShortTimeString()) : "--:--")</b></p>
+<div class='columns is-centered is-multiline'>
+  @foreach (var u in Model)
+  {
+    <div class="column is-3" onclick="AbrirModal(@u.Id)">
+      <div
+        class='card @(u.Aniversario || u.Ferias ? "has-background-info" : (u.AcessoAtivo ? "has-background-success" : "has-background-danger"))'>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-left">
+              <figure class="image is-48x48">
+                <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
+              </figure>
+            </div>
+            <div class="media-content">
+              <p class="title is-4">@u.NomeCompleto</p>
+              <p class="subtitle is-6">@u.UltimoAcesso.ToShortTimeString()<b>@(u.Aniversario ? " Aniversário" :
+                (u.Aniversario ? " Férias" : ""))
+                </b>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    }
-  </div>
+    </div>
+  }
 </div>
 
 <div class="modal" id="modalPin">
@@ -167,6 +168,19 @@
   </div>
 </div>
 
+<div class="modal" id="modalMensagem">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Acesso</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <div id="divMensagem" class="is-1 has-text-centered title"></div>
+    </section>
+  </div>
+</div>
+
 <script>
   function AbrirModal(id) {
     document.getElementById('txtUtilizadorSelecionado').value = id;
@@ -179,14 +193,18 @@
       data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "1", "pin": document.getElementById('txtInputPin').value },
       success: function (result) {
         $(function () {
-          if (result == "") {
-            window.location.reload();
+          if (result[0] == "1") {
+            document.getElementById("divMensagem").innerHTML = result[1];
+            Bulma('#modalPin').modal().close();
+            Bulma('#modalMensagem').modal().open();
+            setTimeout(function () {
+              window.location.reload();
+            }, 2500);
           } else {
-
+            Bulma('#modalPin').modal().close();
+            document.getElementById('txtInputPin').value = '';
+            notifyError(result[1]);
           }
-          Bulma('#modalPin').modal().close();
-          document.getElementById('txtInputPin').value = '';
-          notifyError(result);
         });
       }
     });
@@ -198,14 +216,18 @@
       data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "2", "pin": document.getElementById('txtInputPin').value },
       success: function (result) {
         $(function () {
-          if (result == "") {
-            window.location.reload();
+          if (result[0] == "1") {
+            document.getElementById("divMensagem").innerHTML = result[1];
+            Bulma('#modalPin').modal().close();
+            Bulma('#modalMensagem').modal().open();
+            setTimeout(function () {
+              window.location.reload();
+            }, 2500);
           } else {
-
+            Bulma('#modalPin').modal().close();
+            document.getElementById('txtInputPin').value = '';
+            notifyError(result[1]);
           }
-          Bulma('#modalPin').modal().close();
-          document.getElementById('txtInputPin').value = '';
-          notifyError(result);
         });
       }
     });
