@@ -13,7 +13,7 @@
 <div class='columns is-centered is-multiline'>
   @foreach (var u in Model)
   {
-    <div class="column is-3" onclick="AbrirModal(@u.Id)">
+    <div class="column is-3" onclick="AbrirModal(@u.Id, '@u.NomeCompleto')">
       <div
         class='card @(u.Aniversario || u.Ferias ? "has-background-info" : (u.AcessoAtivo ? "has-background-success" : "has-background-danger"))'>
         <div class="card-content">
@@ -41,7 +41,7 @@
   <div class="modal-background"></div>
   <div class="modal-card">
     <header class="modal-card-head">
-      <p class="modal-card-title">Registar Acesso</p>
+      <p class="modal-card-title" id="txtHeaderModal">Registar Acesso</p>
       <button class="delete" aria-label="close"></button>
     </header>
     <section class="modal-card-body">
@@ -182,8 +182,9 @@
 </div>
 
 <script>
-  function AbrirModal(id) {
+  function AbrirModal(id, nome) {
     document.getElementById('txtUtilizadorSelecionado').value = id;
+    document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
     EstadoAtual();
   }
   function RegistarEntrada() {
@@ -240,9 +241,9 @@
       data: { "api": '@ViewData["API"]' },
       success: function (result) {
         $(function () {
-          document.getElementById('btnEntrada').disabled = result.tipo == 1;
-          document.getElementById('btnSaida').disabled = result.tipo == 2;
 
+          result.tipo == 1 ? document.getElementById('btnEntrada').classList.add('is-hidden') : document.getElementById('btnEntrada').classList.remove('is-hidden');
+          result.tipo == 2 ? document.getElementById('btnSaida').classList.add('is-hidden') : document.getElementById('btnSaida').classList.remove('is-hidden');
           Bulma('#modalPin').modal().open();
         });
       }

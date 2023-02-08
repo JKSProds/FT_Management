@@ -34,7 +34,6 @@ namespace FT_Management.Controllers
             if (IdUtilizador == 0) return Json("Acesso negado!");
 
             Utilizador u = context.ObterUtilizador(id);
-
             return Json(context.ObterUltimoAcesso(u.Id));
         }
 
