@@ -18,7 +18,6 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            phccontext.AtualizarAcessos();
             context.AdicionarLog(int.Parse(this.User.Claims.First().Value), "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
@@ -34,7 +33,6 @@ namespace FT_Management.Controllers
             if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Json("Acesso negado!");
 
-            phccontext.AtualizarAcessos();
             Utilizador u = context.ObterUtilizador(id);
 
             return Json(context.ObterUltimoAcesso(u.Id));
@@ -81,7 +79,6 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
-            if (IdUtilizador != 0) phccontext.AtualizarAcessos();
 
             context.AdicionarLog(IdUtilizador, "Acessos atualizados com sucesso!", 6);
 

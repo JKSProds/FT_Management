@@ -35,7 +35,6 @@ namespace FT_Management.Controllers
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Forbid();
 
-            phccontext.AtualizarAcessos();
             ViewData["API"] = Api;
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false);
             List<Ferias> LstFerias = context.ObterListaFerias(DateTime.Parse(DateTime.Now.ToLongDateString() + " 00:00:00"), DateTime.Parse(DateTime.Now.ToLongDateString() + " 23:59:59"));

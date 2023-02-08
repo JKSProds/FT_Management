@@ -2202,10 +2202,6 @@ namespace FT_Management.Models
 
             return LstAcessos;
         }
-        public void AtualizarAcessos()
-        {
-            FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
-        }
         #endregion
 
         //Encomendas
