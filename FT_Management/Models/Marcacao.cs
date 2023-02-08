@@ -125,6 +125,7 @@ namespace FT_Management.Models
     {
         [Display(Name = "Id")]
         public string Id { get; set; }
+        public string StampAtividade { get; set; }
         [Display(Name = "Tipo")]
         public int Tipo { get; set; }
         [Display(Name = "Nome")]

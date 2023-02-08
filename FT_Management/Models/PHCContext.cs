@@ -869,6 +869,8 @@ namespace FT_Management.Models
             if (!string.IsNullOrEmpty(res)) res += "\r\nDeseja proseguir?";
             return res;
         }
+
+
         private List<FolhaObra> ObterFolhasObra(string SQL_Query, bool LoadEquipamento, bool LoadCliente, bool LoadIntervencoes, bool LoadPecas, bool LoadRubrica)
         {
 
@@ -986,6 +988,11 @@ namespace FT_Management.Models
         public FolhaObra ObterFolhaObra(string STAMP)
         {
             return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", true);
+
+        }
+        public FolhaObra ObterFolhaObraSimples(string STAMP)
+        {
+            return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", false);
 
         }
 
@@ -1756,6 +1763,11 @@ namespace FT_Management.Models
             //return ObterMarcacao("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora, u_marcacao.ousrinis  FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
             return ObterMarcacao("select * from v_marcacoes where u_marcacaostamp='" + Stamp + "'", true);
         }
+        public Marcacao ObterMarcacaoSimples(string Stamp)
+        {
+            //return ObterMarcacao("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora, u_marcacao.ousrinis  FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
+            return ObterMarcacao("select * from v_marcacoes where u_marcacaostamp='" + Stamp + "'", false);
+        }
         public List<int> ObterPercentagemMarcacoes(int IdTecnico)
         {
             List<int> res = new List<int>();
@@ -1809,7 +1821,8 @@ namespace FT_Management.Models
                         CriadoPor = string.IsNullOrEmpty(result["inome"].ToString()) ? result["tabela1"].ToString() : result["inome"].ToString(),
                         Id = result["obrano"].ToString(),
                         Data = DateTime.Parse(DateTime.Parse(result["dataobra"].ToString()).ToShortDateString() + " " + result["hora"].ToString()),
-                        Tipo = int.Parse(result["ndos"].ToString())
+                        Tipo = int.Parse(result["ndos"].ToString()),
+                        StampAtividade = result["bostamp"].ToString()
                     });
                 }
 
@@ -3112,6 +3125,99 @@ namespace FT_Management.Models
         }
 
 
+        #endregion
+
+        //Dossier Pedidos
+        #region Dossier
+        public Dossier ObterDossier(string STAMP)
+        {
+            Dossier d = new Dossier();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97) and bostamp='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        d = new Dossier()
+                        {
+                            StampDossier = result["bostamp"].ToString().Trim(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdDossier = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
+                            Referencia = result["obranome"].ToString(),
+                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            FolhaObra = ObterFolhaObraSimples(result["pastamp"].ToString()),
+                            Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
+                            Estado = result["u_estado"].ToString(),
+                            Obs = result["obstab2"].ToString(),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            Linhas = ObterLinhasDossier(STAMP),
+                            Fechado = result["fechada"].ToString() == "1"
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return d;
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossier(string STAMP)
+        {
+            List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where a.ndos in (96, 97) and b.bostamp = '" + STAMP + "' order by bostamp", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstLinhasDossier.Add(new Linha_Dossier
+                        {
+                            Referencia = result["ref"].ToString().Trim(),
+                            Designacao = result["design"].ToString().Trim(),
+                            Quantidade = Double.Parse(result["qtt"].ToString())
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstLinhasDossier;
+        }
         #endregion
     }
 }
