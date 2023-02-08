@@ -72,20 +72,6 @@ namespace FT_Management.Controllers
             return Json(res);
         }
 
-        [AllowAnonymous]
-        public ActionResult Sync(string ApiKey)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
-
-            context.AdicionarLog(IdUtilizador, "Acessos atualizados com sucesso!", 6);
-
-            return Content("");
-        }
-
-
         public virtual ActionResult ExportarListagemAcessos(string data)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
