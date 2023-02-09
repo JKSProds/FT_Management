@@ -73,7 +73,8 @@
             </div>
             <div class="buttons is-right">
                 <p class="control">
-                    <button class="button is-primary is-info" type="button">
+                    <button class="button is-primary is-info" onclick="Bulma('#modalAdicionarPeca').modal().open();"
+                        type="button">
                         <span class="icon">
                             <i class="fas fa-plus fa-lg"></i>
                         </span>
@@ -182,3 +183,170 @@ else
         }
     </div>
 }
+
+
+<div id="modalPecas" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Peças em Stock</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p> </p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalPecas').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div id="modalAdicionarPeca" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Peças</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <div class="field ">
+                    <div class="field has-addons">
+                        <div class="control" style="width:100%">
+                            <p class="control has-icons-left">
+                                <input type="text" class="input" id="txtPecas">
+                                <span class="icon is-small is-left">
+                                    <i class="fa-solid fa-gears"></i>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="field has-addons">
+                            <div class="control">
+                                <button type="button" class="button is-primary is-outlined"
+                                    onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
+                                    <span class="icon">
+                                        <i class="fas fa-minus"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="control" style="width:75px">
+                                <input type="number" class="input" id="txtQtd" value="1">
+                            </div>
+                            <div class="control">
+                                <button type="button" class="button is-primary is-outlined"
+                                    onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
+                                    <span class="icon">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" class="input" id="txtStampPeca">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-info is-fullwidth is-large" type="button"
+                onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
+                disabled id="btnAdicionarPeca">
+                <span class="icon">
+                    <i class="fa-solid fa-check"></i>
+                </span>
+                <span>Adicionar Peça</span>
+            </button>
+            <button type="button" class="button is-large is-fullwidth is-danger"
+                onclick="Bulma('#modalAdicionarPeca').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    function ObterPeca(stamp, qtd) {
+        if (stamp !== "" && qtd > 0) {
+            $.ajax({
+                url: '/Produtos/ObterPeca/' + stamp,
+                type: "POST",
+                success: function (response) {
+                    console.log(response);
+
+                },
+                error: function (response) {
+                    notifyError(response.responseText);
+                },
+                failure: function (response) {
+                    notifyError(response.responseText);
+                }
+            });
+        }
+    }
+
+    $(function () {
+        $("#txtPecas").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Produtos/ObterPecas/',
+                    data: { "filter": request.term },
+                    type: "POST",
+                    success: function (data) {
+                        response($.map(data, function (item) {
+
+                            return {
+                                label: item.ref_Produto + " - " + item.designacao_Produto.trim(),
+                                val: item.stampProduto
+                            };
+                        }))
+                    },
+                    error: function (response) {
+                        notifyError(response.responseText);
+                    },
+                    failure: function (response) {
+                        notifyError(response.responseText);
+                    }
+                });
+            },
+            select: function (e, i) {
+                $("#txtStampPeca").val(i.item.val);
+                document.getElementById("btnAdicionarPeca").disabled = false;
+                notify("Peça " + i.item.label + " selecionada com sucesso!");
+            },
+            minLength: 1
+        }).css('z-index', 100);
+    });
+
+    function notifyError(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-danger',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        });
+    }
+    function notify(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-success',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        });
+    }
+</script>

@@ -3199,12 +3199,16 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        LstLinhasDossier.Add(new Linha_Dossier
+                        if (!string.IsNullOrEmpty(result["design"].ToString()))
                         {
-                            Referencia = result["ref"].ToString().Trim(),
-                            Designacao = result["design"].ToString().Trim(),
-                            Quantidade = Double.Parse(result["qtt"].ToString())
-                        });
+                            LstLinhasDossier.Add(new Linha_Dossier
+                            {
+                                Referencia = result["ref"].ToString().Trim(),
+                                Designacao = result["design"].ToString().Trim(),
+                                Quantidade = Double.Parse(result["qtt"].ToString())
+                            });
+                        }
+
                     }
                 }
 
