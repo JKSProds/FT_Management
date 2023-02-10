@@ -148,12 +148,12 @@ namespace FT_Management.Controllers
         }
 
 
-        public ActionResult ObterPecasUso(int id, string gt)
+        public ActionResult Armazem(int id, string gt)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First();
+            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == id).First();
             List<string> LstGuias = phccontext.ObterGuiasTransporte(u.IdArmazem);
             if (string.IsNullOrEmpty(gt)) gt = LstGuias.First();
 
@@ -162,7 +162,7 @@ namespace FT_Management.Controllers
             ViewData["Utilizador"] = u.NomeCompleto;
             ViewData["GT"] = gt;
 
-            return View("Movimentos", phccontext.ObterPecasGuiaTransporte(gt, u.IdArmazem).OrderBy(m => m.DataMovimento));
+            return View(phccontext.ObterPecasGuiaTransporte(gt, u.IdArmazem).OrderBy(m => m.DataMovimento));
         }
 
         public ActionResult ExportarPecasUso(int id, string gt)
@@ -171,7 +171,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             string res = "";
 
-            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First();
+            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == id).First();
             List<string> LstGuias = phccontext.ObterGuiasTransporte(u.IdArmazem);
             if (string.IsNullOrEmpty(gt)) gt = LstGuias.First();
 
@@ -182,6 +182,13 @@ namespace FT_Management.Controllers
             var url = new System.Uri("mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20(" + u.NomeCompleto + ")&body=" + res);
             Response.Redirect(url.AbsoluteUri);
             return new EmptyResult();
+        }
+
+        public JsonResult GerarGuiaGlobal(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.GerarGuiaGlobal(id));
         }
     }
 }

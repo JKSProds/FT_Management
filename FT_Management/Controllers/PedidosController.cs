@@ -632,11 +632,14 @@ namespace FT_Management.Controllers
         {
             if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
+            Utilizador u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == int.Parse(IdTecnico)).DefaultIfEmpty(new Utilizador()).First();
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(u.IdPHC, DateTime.Parse(DataPedidos));
 
             ViewData["DataPedidos"] = DataPedidos;
-            ViewData["IdTecnico"] = IdTecnico;
+            ViewData["IdTecnico"] = u.IdPHC;
+            ViewData["IdArmazem"] = u.IdArmazem;
 
             return View(ListaMarcacoes);
         }

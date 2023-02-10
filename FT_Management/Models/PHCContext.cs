@@ -163,6 +163,44 @@ namespace FT_Management.Models
             return res;
         }
 
+        public List<string> GerarGuiaGlobal(int IdArmazem)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_Guia_Global_Gera", conn)
+                {
+                    CommandTimeout = 120,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@ARMAZEM", IdArmazem));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                if (result.HasRows)
+                {
+                    res[0] = result[0].ToString();
+                    res[1] = result[1].ToString();
+                    res[2] = result[2].ToString();
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel gerar a guia global no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         private List<Armazem> ObterArmazens(string SQL_Query)
         {
 
