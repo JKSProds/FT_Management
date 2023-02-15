@@ -813,7 +813,7 @@
     };
 
     resizeCanvas();
-    signaturePad.fromDataURL("data:image/png;base64,@Model.RubricaCliente");
+    signaturePad.fromDataURL("data:image/png;base64," + document.getElementById("txtRubricaCliente").value);
 
     CarregarIntervencoes();
     CarregarPecasStock();
