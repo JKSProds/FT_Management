@@ -653,11 +653,14 @@ namespace FT_Management.Controllers
         public ActionResult ListaPedidosPendentes(string IdTecnico)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            Utilizador u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == int.Parse(IdTecnico)).DefaultIfEmpty(new Utilizador()).First();
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoesPendentes(int.Parse(IdTecnico)).OrderBy(m => m.DataMarcacao).ToList();
 
             ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewData["IdTecnico"] = IdTecnico;
+            ViewData["IdTecnico"] = u.IdPHC;
+            ViewData["IdArmazem"] = u.IdArmazem;
 
             return View("ListaPedidos", ListaMarcacoes);
         }
