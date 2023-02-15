@@ -138,7 +138,7 @@ namespace FT_Management.Controllers
 #if DEBUG
             return Content(phccontext.ValidarFolhaObra(fo));
 #else
-                        return Content(User.IsInRole("Admin") ? "" : phccontext.ValidarFolhaObra(fo));
+                        return Content(phccontext.ValidarFolhaObra(fo));
 #endif
         }
         [HttpPost]

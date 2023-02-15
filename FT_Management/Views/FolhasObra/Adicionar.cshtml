@@ -618,12 +618,25 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="GerarCodigo();" href="javascript:;">
-                <span class="icon">
-                    <i class="fas fa-check-circle"></i>
-                </span>
-                <span>Gerar Código</span>
-            </button>
+            @if (User.IsInRole("Admin"))
+            {
+                <button type="button" class="button is-info" onclick="AbrirMensagens();" href="javascript:;">
+                    <span class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span>Ignorar</span>
+                </button>
+            }
+            else
+            {
+                <button type="button" class="button is-info" onclick="GerarCodigo();" href="javascript:;">
+                    <span class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span>Gerar Código</span>
+                </button>
+            }
+
         </footer>
     </div>
 </div>
