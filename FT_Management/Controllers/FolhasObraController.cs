@@ -34,12 +34,18 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Marcacao m = phccontext.ObterMarcacao(id);
+            List<FolhaObra> LstFolhasObra = phccontext.ObterFolhasObra(DateTime.Now, m.Cliente);
 
             if (m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado") return Forbid();
 
             FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(m);
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.PreencherViagem(context.ObterViagens(fo.Utilizador.Viatura.Matricula, DateTime.Now.ToShortDateString()).Where(v => v.Fim_Viagem.Year > 1).DefaultIfEmpty(new Viagem() { Fim_Viagem = fo.IntervencaosServico.First().HoraInicio, Distancia_Viagem = "0" }).Last());
+            if (LstFolhasObra.Count() > 0)
+            {
+                fo.RubricaCliente = LstFolhasObra.First().RubricaCliente;
+                fo.ConferidoPor = LstFolhasObra.First().ConferidoPor;
+            }
 
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();

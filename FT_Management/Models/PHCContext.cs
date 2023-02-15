@@ -939,6 +939,7 @@ namespace FT_Management.Models
                             ConferidoPor = result.IsDBNull("qassinou") ? "" : result["qassinou"].ToString().Trim(),
                             IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
                             IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
+                            RubricaCliente = "",
                             Utilizador = FT_ManagementContext.ObterListaUtilizadores(true, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First()
                         });
 
@@ -1016,6 +1017,11 @@ namespace FT_Management.Models
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
             return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' order by nopat;", true, true, true, false, false);
+
+        }
+        public List<FolhaObra> ObterFolhasObra(DateTime Data, Cliente c)
+        {
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' and pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by nopat;", true, true, true, false, true);
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
