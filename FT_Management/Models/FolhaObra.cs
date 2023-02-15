@@ -8,7 +8,7 @@ namespace FT_Management.Models
 {
     public class FolhaObra
     {
-        public string EmojiFO { get { return this.StampFO.Contains("WEBAPP") ? "⭐ " : ""; } }
+        public string EmojiFO { get { return !string.IsNullOrEmpty(this.StampFO) && this.StampFO.Contains("WEBAPP") ? "⭐ " : ""; } }
         public string StampFO { get; set; }
         [Display(Name = "Num. da Folha de Obra")]
         public int IdFolhaObra { get; set; }
