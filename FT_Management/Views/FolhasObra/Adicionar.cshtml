@@ -806,6 +806,7 @@
 
         signaturePad.clear();
         if (data.length > 0) { signaturePad.fromData(data) };
+        if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
     }
 
     window.onresize = function (event) {
@@ -813,7 +814,6 @@
     };
 
     resizeCanvas();
-    signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value);
 
     CarregarIntervencoes();
     CarregarPecasStock();
