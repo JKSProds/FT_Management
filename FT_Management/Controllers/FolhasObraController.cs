@@ -28,7 +28,7 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Tech")]
         public ActionResult Adicionar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -46,7 +46,7 @@ namespace FT_Management.Controllers
             return View(fo);
         }
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Tech")]
         public ActionResult Adicionar(FolhaObra fo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
