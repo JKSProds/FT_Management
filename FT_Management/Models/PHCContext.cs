@@ -970,15 +970,17 @@ namespace FT_Management.Models
                         if (LoadRubrica)
                         {
                             string img = ObterRubrica(LstFolhaObra.Last().IdFolhaObra);
-                            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
-                            using Image image = Image.FromFile(img);
-                            using MemoryStream m = new MemoryStream();
-                            image.Save(m, image.RawFormat);
-                            byte[] imageBytes = m.ToArray();
+                            if (File.Exists(img))
+                            {
+                                using Image image = Image.FromFile(img);
+                                using MemoryStream m = new MemoryStream();
+                                image.Save(m, image.RawFormat);
+                                byte[] imageBytes = m.ToArray();
 
-                            // Convert byte[] to Base64 String
-                            string base64String = Convert.ToBase64String(imageBytes);
-                            LstFolhaObra.Last().RubricaCliente = base64String;
+                                // Convert byte[] to Base64 String
+                                string base64String = Convert.ToBase64String(imageBytes);
+                                LstFolhaObra.Last().RubricaCliente = base64String;
+                            }
 
                             LstFolhaObra.Last().IdAT = result["id_at"].ToString();
                         }
