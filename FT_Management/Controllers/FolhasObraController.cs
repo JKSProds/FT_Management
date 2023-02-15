@@ -43,6 +43,7 @@ namespace FT_Management.Controllers
             fo.PreencherViagem(context.ObterViagens(fo.Utilizador.Viatura.Matricula, DateTime.Now.ToShortDateString()).Where(v => v.Fim_Viagem.Year > 1).DefaultIfEmpty(new Viagem() { Fim_Viagem = fo.IntervencaosServico.First().HoraInicio, Distancia_Viagem = "0" }).Last());
             if (LstFolhasObra.Count() > 0)
             {
+                Console.WriteLine(LstFolhasObra.First().RubricaCliente);
                 fo.RubricaCliente = LstFolhasObra.First().RubricaCliente;
                 fo.ConferidoPor = LstFolhasObra.First().ConferidoPor;
             }
