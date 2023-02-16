@@ -80,7 +80,7 @@
 
 <body>
     <header>
-        <nav class="navbar is-light has-shadow" role="navigation" aria-label="main navigation">
+        <nav class='navbar @(Environment.GetEnvironmentVariable("DEV") == "1" ? "is-warning" : "is-light")  has-shadow' role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
                     <img src="~/img/ft_logo.png" width="50" height="28">
@@ -418,8 +418,8 @@
     <footer class="footer" style="padding:0px">
         <div class="content has-text-centered">
             <p>
-                <strong>Jorge Monteiro</strong> (V.@GetType().Assembly.GetName().Version.ToString())
-                @Environment.GetEnvironmentVariable("TYPE");
+                <strong>Jorge Monteiro</strong> (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ? "_DEV" : ""))
+                
             </p>
         </div>
     </footer>
