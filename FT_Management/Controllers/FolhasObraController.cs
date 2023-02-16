@@ -74,6 +74,7 @@ namespace FT_Management.Controllers
 
                 Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
                 m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                int Estado = fo.EstadoFolhaObra;
                 if (fo.FecharMarcacao) m.EstadoMarcacaoDesc = "Finalizado";
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
@@ -87,6 +88,8 @@ namespace FT_Management.Controllers
                     phccontext.FecharFolhaObra(fo);
                     phccontext.AtualizaMarcacao(m);
 
+                    if (Estado == 2) return RedirectToAction("CriarDossier", "Dossiers", new { id = fo.StampFO, serie = 96 });
+                    if (Estado == 3) return RedirectToAction("CriarDossier", "Dossiers", new { id = fo.StampFO, serie = 97 });
                     return RedirectToAction("ListaPedidos", "Pedidos", new { IdTecnico = fo.Utilizador.IdPHC });
                 }
 
