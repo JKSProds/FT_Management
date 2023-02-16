@@ -3449,7 +3449,43 @@ namespace FT_Management.Models
 
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel criar o dossier no PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel criar a linha do dossier no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+        public List<string> ApagarLinhaDossier(string STAMP_DOSSIER, string STAMP_LINHA)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_Dossier_Apaga_Linha", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@STAMP", STAMP_DOSSIER));
+                command.Parameters.Add(new SqlParameter("@STAMP_LIN", STAMP_LINHA));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+                res[3] = result[3].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel remover a linha do dossier no PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;

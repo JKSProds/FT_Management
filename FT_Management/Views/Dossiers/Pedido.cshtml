@@ -161,7 +161,7 @@ else
                 <tbody>
                     @foreach (var item in Model.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
                         {
-                            <tr>
+                            <tr id="@item.Stamp_Linha">
                                 <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Referencia)">
                                     <span>@item.Referencia</span>
                                 </td>
@@ -172,18 +172,28 @@ else
                                     @Html.DisplayFor(modelItem => item.Quantidade)
                                 </td>
                                 <td class="is-actions-cell">
-
+                                    <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
+                                        onclick="RemoverLinha('@item.Stamp_Linha')">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </span>
+                                    </button>
                                 </td>
                             </tr>
                         }
                         @foreach (var item in Model.Linhas.Where(l => string.IsNullOrEmpty(l.Referencia.Trim())).Skip(3))
                         {
-                            <tr>
+                            <tr id="@item.Stamp_Linha">
                                 <td colspan="3" data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
                                     <span>@item.Designacao</span>
                                 </td>
                                 <td class="is-actions-cell">
-
+                                    <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
+                                        onclick="RemoverLinha('@item.Stamp_Linha')">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </span>
+                                    </button>
                                 </td>
                             </tr>
                         }
@@ -320,7 +330,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-info is-fullwidth is-large" type="button"
+            <button class="button is-info is-fullwidth is-large" type="button" id="btnAdicionarLinha"
                 onclick="AdicionarLinha(document.getElementById('txtLinha').value)">
                 <span class="icon">
                     <i class="fa-solid fa-check"></i>
@@ -339,8 +349,35 @@ else
 </div>
 
 <script>
+    function RemoverLinha(id) {
+        document.getElementById("btn_" + id).classList.add("is-loading");
+        $.ajax({
+            url: '/Dossiers/RemoverLinha',
+            data: { "id": id },
+            type: "POST",
+            success: function (response) {
+                if (response[0] == 1) {
+                    notify("Linha removida com sucesso!");
+                    var row = document.getElementById(id);
+                    row.parentNode.removeChild(row);
+                } else {
+                    notifyError(response[1]);
+                    document.getElementById("btn_" + id).classList.remove("is-loading");
+                }
+
+            },
+            error: function (response) {
+                notifyError(response);
+            },
+            failure: function (response) {
+                notifyError(response);
+            }
+        });
+    }
+
     function AdicionarPeca(stamp, qtd) {
         if (stamp != "" && qtd > 0) {
+            document.getElementById("btnAdicionarPeca").classList.add("is-loading");
             $.ajax({
                 url: '/Produtos/ObterPeca/' + stamp,
                 type: "POST",
@@ -353,8 +390,10 @@ else
                             if (response.quantidade == 0) {
                                 notifyError("Ocorreu um erro ao adicionar a referência!");
                             } else {
+                                console.log(response);
                                 var row = document.getElementById('tblReferencias').getElementsByTagName('tbody')[0].insertRow();
-                                row.innerHTML = "<tr><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Referencia)'>" + response.referencia + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)'>" + response.quantidade + "</td></tr>";
+                                row.id = response.stamp_Linha;
+                                row.innerHTML = "<td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Referencia)'>" + response.referencia + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)'>" + response.quantidade + "</td><td  class='is-actions-cell'><button id='btn_" + response.stamp_Linha + "' class='button is-danger is-fullwidth is-large' onclick='RemoverLinha(\"" + response.stamp_Linha + "\")'><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>";
                                 Bulma('#modalAdicionarPeca').modal().close();
                                 $("#txtStampPeca").val("");
                                 $("#txtPecas").val("");
@@ -362,6 +401,7 @@ else
                                 document.getElementById("btnAdicionarPeca").disabled = true;
                                 notify("Referência adicionada com sucesso!");
                             }
+                            document.getElementById("btnAdicionarPeca").classList.remove("is-loading");
                         },
                         error: function (response) {
                             notifyError(response);
@@ -383,16 +423,19 @@ else
 
     function AdicionarLinha(linha) {
         if (linha != "") {
+            document.getElementById("btnAdicionarLinha").classList.add("is-loading");
             $.ajax({
                 url: '/Dossiers/CriarLinha/@Model.StampDossier',
                 data: { "design": linha },
                 type: "POST",
                 success: function (response) {
                     var row = document.getElementById('tblReferencias').getElementsByTagName('tbody')[0].insertRow();
-                    row.innerHTML = "<tr><td colspan='3' data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td></tr>";
+                    row.id = response.stamp_Linha;
+                    row.innerHTML = "<td colspan='3' data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td  class='is-actions-cell'><button id='btn_" + response.stamp_Linha + "' class='button is-danger is-fullwidth is-large' onclick='RemoverLinha(\"" + response.stamp_Linha + "\")'><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>";
                     Bulma('#modalAdicionarLinha').modal().close();
                     $("#txtLinha").val("");
                     notify("Linha adicionada com sucesso!");
+                    document.getElementById("btnAdicionarLinha").classList.remove("is-loading");
                 },
                 error: function (response) {
                     notifyError(response);

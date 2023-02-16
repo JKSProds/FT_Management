@@ -109,6 +109,15 @@ namespace FT_Management.Controllers
             List<string> res = phccontext.CriarLinhaDossier(l);
             return Json(int.Parse(res[0].ToString()) > 0 ? phccontext.ObterLinhaDossier(res[3].ToString()) : new Linha_Dossier());
         }
+
+        public JsonResult RemoverLinha(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Linha_Dossier l = phccontext.ObterLinhaDossier(id);
+            return Json(phccontext.ApagarLinhaDossier(l.Stamp_Dossier, l.Stamp_Linha));
+        }
+
         public ActionResult FecharDossier(string id, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
