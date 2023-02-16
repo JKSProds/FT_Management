@@ -3187,7 +3187,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and dataobra='" + Data.ToString("yyyy-MM-dd") + "'", conn)
+                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and dataobra='" + Data.ToString("yyyy-MM-dd") + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3240,7 +3240,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and bostamp='" + STAMP + "'", conn)
+                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and bostamp='" + STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3393,8 +3393,8 @@ namespace FT_Management.Models
                     CommandType = CommandType.StoredProcedure
                 };
                 command.Parameters.Add(new SqlParameter("@SERIE", d.Serie));
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", d.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@STAMP_PA", d.FolhaObra.StampFO));
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_PA", d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", d.EditadoPor));
 
                 using SqlDataReader result = command.ExecuteReader();

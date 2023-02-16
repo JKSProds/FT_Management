@@ -80,10 +80,24 @@ namespace FT_Management.Controllers
             //Criação de linhas por defeito
             if (load == 1)
             {
+                List<Linha_Dossier> Linhas = new List<Linha_Dossier>();
                 foreach (Movimentos m in phccontext.ObterPecasGuiaTransporte(id.Replace("|", "/"), armazem))
                 {
-                    phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = m.RefProduto, Designacao = m.Designacao, Quantidade = m.Quantidade, CriadoPor = u.NomeCompleto });
+                    if (Linhas.Where(l => l.Referencia == m.RefProduto).Count() == 0)
+                    {
+                        Linhas.Add(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = m.RefProduto, Designacao = m.Designacao, Quantidade = m.Quantidade, CriadoPor = u.NomeCompleto });
+                    }
+                    else
+                    {
+                        Linhas.Where(l => l.Referencia == m.RefProduto).First().Quantidade += m.Quantidade;
+                    }
                 }
+
+                foreach (Linha_Dossier l in Linhas)
+                {
+                    phccontext.CriarLinhaDossier(l);
+                }
+
             }
             return RedirectToAction("Pedido", new { id = d.StampDossier });
         }
