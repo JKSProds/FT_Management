@@ -2621,7 +2621,7 @@ namespace FT_Management.Models
             pdfFormFields.SetField("Marca", folhaobra.EquipamentoServico.MarcaEquipamento);
             pdfFormFields.SetField("Mod", folhaobra.EquipamentoServico.ModeloEquipamento);
             pdfFormFields.SetField("NºSerie", folhaobra.EquipamentoServico.NumeroSerieEquipamento);
-            pdfFormFields.SetField(folhaobra.EstadoEquipamento, "On");
+            pdfFormFields.SetField(string.IsNullOrEmpty(folhaobra.EstadoEquipamento) ? "" : folhaobra.EstadoEquipamento, "On");
             pdfFormFields.SetField("RGPD", "Yes");
 
             //Cliente

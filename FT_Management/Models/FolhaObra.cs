@@ -85,6 +85,7 @@ namespace FT_Management.Models
         {
             ListaIntervencoes = "";
             ListaPecas = "";
+            EstadoEquipamento = "";
             EquipamentoServico = new Equipamento();
             this.PecasServico = new List<Produto>();
             this.IntervencaosServico = new List<Intervencao>()

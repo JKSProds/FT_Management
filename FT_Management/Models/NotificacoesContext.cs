@@ -440,5 +440,24 @@ namespace FT_Management.Models
 
             return true;
         }
+
+        public static bool EnviarEmailFechoDossier(Utilizador u, Dossier d)
+        {
+            string Assunto = d.SerieNome + " Nº " + d.IdDossier + " - " + d.Tecnico.NomeCompleto;
+            string Mensagem = "Foi criado um novo dossier pelo utilizador " + u.NomeCompleto + "!<br><br><b>Dados adicionais:</b><br>Cliente: " + d.Cliente.NomeCliente + "<br>Equipamento: " + d.FolhaObra.EquipamentoServico.NumeroSerieEquipamento + "<br>Nº da Marcação: " + d.Marcacao.IdMarcacao + "<br>Nº da Folha de Obra: " + d.FolhaObra.IdFolhaObra + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + d.NomeDossier + ": " + d.IdDossier + "<br>Link: " + d.GetUrl + "<br><br>";
+
+            if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
+            {
+                Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade</th></tr>";
+                foreach (var l in d.Linhas)
+                {
+                    Mensagem += "<tr><td style='padding: 5px;'>" + l.Referencia + "</td><td style='padding: 5px;'>" + l.Designacao + "</td><td style='padding: 5px;'>" + l.Quantidade + "</td></tr>";
+                }
+            }
+            Mensagem += "</table>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
+
+            return true;
+        }
     }
 }

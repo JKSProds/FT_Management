@@ -29,6 +29,7 @@ namespace FT_Management.Models
         public string EditadoPor { get; set; }
         public List<Linha_Dossier> Linhas { get; set; }
         public bool Fechado { get; set; }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Pedido/" + StampDossier; } }
 
         public void DefinirSerie(TipoDossier tp)
         {
@@ -45,5 +46,13 @@ namespace FT_Management.Models
         public string Designacao { get; set; }
         public double Quantidade { get; set; }
         public string CriadoPor { get; set; }
+
+        public Linha_Dossier()
+        {
+            this.Referencia = "";
+            this.Designacao = "";
+            this.Quantidade = 0;
+            this.CriadoPor = "N/D";
+        }
     }
 }

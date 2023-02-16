@@ -1,0 +1,115 @@
+﻿@model IEnumerable<FT_Management.Models.Dossier>
+
+@{
+    ViewData["Title"] = "Dossiers";
+}
+
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-file-alt"></i>
+                            </span>
+                            <span>Dossiers</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-right my-auto">
+            <form method="get" style="width:100%" asp-action="Index">
+                <input class="input" type="date"
+                    value="@(DateTime.Parse(ViewData["Data"].ToString()).ToString("yyyy-MM-dd"))" id="txtData"
+                    name="Data" />
+                <script>
+                    bulmaCalendar.attach('#txtData', {
+                        color: 'info',
+                        lang: 'pt',
+                        dateFormat: 'dd/MM/yyyy',
+                        todayLabel: 'Hoje',
+                        showClearButton: false,
+                        cancelLabel: 'Cancelar'
+                    });
+                    document.getElementById('txtData').bulmaCalendar.on('select', function (datepicker) {
+                        document.getElementById('txtData').value = datepicker.data.value();
+                        $('form').submit();
+                    });
+                </script>
+            </form>
+        </div>
+    </div>
+</div>
+<hr />
+@if (Model.Count() == 0)
+{
+    <div class="container">
+    <br />
+    <button class="button is-danger is-fullwidth" disabled>Não foram encontrados dossiers!</button>
+</div>
+}
+else
+{
+    <div class="container">
+    <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">
+            <table class="table is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.NomeDossier)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.IdDossier)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Cliente.NomeCliente)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Tecnico.NomeCompleto)
+                        </th>
+                        <th>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td data-label="@Html.DisplayNameFor(model => model.NomeDossier)">
+                                    <span>@item.NomeDossier</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.IdDossier)">
+                                    @Html.DisplayFor(modelItem => item.IdDossier)
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Cliente.NomeCliente)">
+                                    @Html.DisplayFor(modelItem => item.Cliente.NomeCliente)
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Tecnico.NomeCompleto)">
+                                    @Html.DisplayFor(modelItem => item.Tecnico.NomeCompleto)
+                                </td>
+                                <td class="is-actions-cell">
+                                    <div class="field has-addons">
+                                        <p class="control">
+                                            <a class="button" href="~/Dossiers/Pedido/@item.StampDossier">
+                                                <span class="icon is-small">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </span>
+                                            </a>
+                                        </p>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+

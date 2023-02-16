@@ -545,6 +545,7 @@ namespace FT_Management.Models
                         LstEquipamento.Add(new Equipamento()
                         {
                             EquipamentoStamp = result["mastamp"].ToString().Trim(),
+                            TipoEquipamento = result["tipo"].ToString().Trim(),
                             DesignacaoEquipamento = result["design"].ToString().Trim(),
                             MarcaEquipamento = result["marca"].ToString().Trim(),
                             ModeloEquipamento = result["maquina"].ToString().Trim(),
@@ -3175,6 +3176,59 @@ namespace FT_Management.Models
 
         //Dossier Pedidos
         #region Dossier
+        public List<Dossier> ObterDossiers(DateTime Data)
+        {
+            List<Dossier> LstDossiers = new List<Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and dataobra='" + Data.ToString("yyyy-MM-dd") + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstDossiers.Add(new Dossier()
+                        {
+                            StampDossier = result["bostamp"].ToString().Trim(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdDossier = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            Serie = int.Parse(result["ndos"].ToString()),
+                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
+                            Referencia = result["obranome"].ToString(),
+                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            //FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
+                            //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
+                            Estado = result["u_estado"].ToString(),
+                            Obs = result["obstab2"].ToString(),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            //Linhas = ObterLinhasDossier(result["bostamp"].ToString().Trim()),
+                            Fechado = result["fechada"].ToString() == "1"
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstDossiers;
+        }
+
+
         public Dossier ObterDossier(string STAMP)
         {
             Dossier d = new Dossier();
@@ -3204,7 +3258,7 @@ namespace FT_Management.Models
                             Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
                             Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
-                            FolhaObra = ObterFolhaObraSimples(result["pastamp"].ToString()),
+                            FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
                             Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
                             Estado = result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
@@ -3250,9 +3304,12 @@ namespace FT_Management.Models
                         {
                             LstLinhasDossier.Add(new Linha_Dossier
                             {
+                                Stamp_Dossier = result["bostamp"].ToString(),
+                                Stamp_Linha = result["bistamp"].ToString(),
                                 Referencia = result["ref"].ToString().Trim(),
                                 Designacao = result["design"].ToString().Trim(),
-                                Quantidade = Double.Parse(result["qtt"].ToString())
+                                Quantidade = Double.Parse(result["qtt"].ToString()),
+                                CriadoPor = result["ousrinis"].ToString()
                             });
                         }
 
@@ -3268,6 +3325,52 @@ namespace FT_Management.Models
             }
 
             return LstLinhasDossier;
+        }
+
+        public Linha_Dossier ObterLinhaDossier(string STAMP)
+        {
+            Linha_Dossier l = new Linha_Dossier();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where a.ndos in (96, 97, 36) and b.bistamp = '" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["design"].ToString()))
+                        {
+                            l = new Linha_Dossier
+                            {
+                                Stamp_Dossier = result["bostamp"].ToString(),
+                                Stamp_Linha = result["bistamp"].ToString(),
+                                Referencia = result["ref"].ToString().Trim(),
+                                Designacao = result["design"].ToString().Trim(),
+                                Quantidade = Double.Parse(result["qtt"].ToString()),
+                                CriadoPor = result["ousrinis"].ToString()
+                            };
+                        }
+
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel obter a linha do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return l;
         }
 
         public List<string> CriarDossier(Dossier d)
