@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin, Escritorio")]
+    [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class DossiersController : Controller
     {
+        [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Index(string Data)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -20,6 +21,8 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterDossiers(DateTime.Parse(Data)));
         }
+
+
         public ActionResult Pedido(string id, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -34,13 +37,16 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             FolhaObra fo = phccontext.ObterFolhaObra(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = new Dossier()
             {
                 Serie = serie,
                 FolhaObra = fo,
                 Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao),
-                EditadoPor = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeCompleto
+                EditadoPor = u.NomeCompleto
             };
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") || u.Id != d.Tecnico.Id) return Forbid();
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
 
@@ -57,14 +63,18 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Dossier d = phccontext.ObterDossier(id);
             Linha_Dossier l = new Linha_Dossier()
             {
                 Stamp_Dossier = id,
                 Referencia = string.IsNullOrEmpty(referencia) ? "" : referencia,
                 Designacao = design,
                 Quantidade = qtd,
-                CriadoPor = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).NomeCompleto
+                CriadoPor = u.NomeCompleto
             };
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") || u.Id != d.Tecnico.Id) return Json("");
+
             List<string> res = phccontext.CriarLinhaDossier(l);
             return Json(int.Parse(res[0].ToString()) > 0 ? phccontext.ObterLinhaDossier(res[3].ToString()) : new Linha_Dossier());
         }
@@ -74,6 +84,10 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Dossier d = phccontext.ObterDossier(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") || u.Id != d.Tecnico.Id) return Forbid();
+
             MailContext.EnviarEmailFechoDossier(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), d);
 
             if (ReturnUrl != "" && ReturnUrl != null)
