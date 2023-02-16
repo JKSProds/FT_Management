@@ -3238,10 +3238,13 @@ namespace FT_Management.Models
 
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
+                conn.Open();
+
                 SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and bostamp='" + STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
+
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
