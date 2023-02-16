@@ -139,69 +139,58 @@
 else
 {
     <div class="container">
-    @if (Model.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
-        {
-            <div class="b-table">
-                <div class="table-wrapper has-mobile-cards">
-                    <table class="table is-hoverable is-fullwidth" id="tblReferencias">
-                        <thead>
+    <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">
+            <table class="table is-hoverable is-fullwidth" id="tblReferencias">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Referencia)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Designacao)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Quantidade)
+                        </th>
+                        <th>
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
+                        {
                             <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Linhas.First().Referencia)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Linhas.First().Designacao)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Linhas.First().Quantidade)
-                                </th>
-                                <th>
+                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Referencia)">
+                                    <span>@item.Referencia</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
+                                    @Html.DisplayFor(modelItem => item.Designacao)
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)">
+                                    @Html.DisplayFor(modelItem => item.Quantidade)
+                                </td>
+                                <td class="is-actions-cell">
 
-                                </th>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
-                            {
-                                <tr>
-                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Referencia)">
-                                        <span>@item.Referencia</span>
-                                    </td>
-                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
-                                        @Html.DisplayFor(modelItem => item.Designacao)
-                                    </td>
-                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)">
-                                        @Html.DisplayFor(modelItem => item.Quantidade)
-                                    </td>
-                                    <td class="is-actions-cell">
+                        }
+                        @foreach (var item in Model.Linhas.Where(l => string.IsNullOrEmpty(l.Referencia.Trim())).Skip(3))
+                        {
+                            <tr>
+                                <td colspan="3" data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
+                                    <span>@item.Designacao</span>
+                                </td>
+                                <td class="is-actions-cell">
 
-                                    </td>
-                                </tr>
-                            }
-                            @foreach (var item in Model.Linhas.Where(l => l.Quantidade == 0).Skip(3))
-                            {
-                                <tr>
-                                    <td colspan="3" data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
-                                        <span>@item.Designacao</span>
-                                    </td>
-                                    <td class="is-actions-cell">
-
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-
-        }
-        else
-        {
-            <div class="container">
-                <br />
-                <button class="button is-danger is-fullwidth" disabled>Não foram encontradas referências!</button>
-            </div>
-        }
+        </div>
         @if (!Model.Fechado)
         {
             <hr>

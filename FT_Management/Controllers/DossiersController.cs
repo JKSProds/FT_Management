@@ -46,7 +46,7 @@ namespace FT_Management.Controllers
                 EditadoPor = u.NomeCompleto
             };
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") || u.Id != d.Tecnico.Id) return Forbid();
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
 
@@ -73,7 +73,7 @@ namespace FT_Management.Controllers
                 Quantidade = qtd,
                 CriadoPor = u.NomeCompleto
             };
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") || u.Id != d.Tecnico.Id) return Json("");
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Json("");
 
             List<string> res = phccontext.CriarLinhaDossier(l);
             return Json(int.Parse(res[0].ToString()) > 0 ? phccontext.ObterLinhaDossier(res[3].ToString()) : new Linha_Dossier());
@@ -86,7 +86,7 @@ namespace FT_Management.Controllers
             Dossier d = phccontext.ObterDossier(id);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") || u.Id != d.Tecnico.Id) return Forbid();
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
             MailContext.EnviarEmailFechoDossier(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), d);
 
