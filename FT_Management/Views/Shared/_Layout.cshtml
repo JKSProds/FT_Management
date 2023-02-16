@@ -396,7 +396,7 @@
             </div>
         </nav>
     </header>
-    <div class="container-fluid is-fullheight mx-1">
+    <div class="container-fluid is-fullheight mx-1" style="height:90vh;margin-bottom: 70px">
         <main role="main">
             &nbsp;
             @RenderBody()
@@ -419,13 +419,10 @@
             </footer>
         </div>
     </div>
-    <br />
-    <br />
-    <br />
-    <br />
     <footer class="footer" style="padding:0px">
         <div class="content has-text-centered">
             <p>
+                &nbsp;
                 <strong>Jorge Monteiro</strong> (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ? "_DEV" : ""))
                 
             </p>
