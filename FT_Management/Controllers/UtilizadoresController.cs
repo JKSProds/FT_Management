@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http;
+using Google.Authenticator;
 
 namespace FT_Management.Controllers
 {
@@ -25,15 +26,15 @@ namespace FT_Management.Controllers
 
             return View(context.ObterListaUtilizadores(false, false));
         }
-            public IActionResult Login(string nome, string password, string ReturnUrl)
+        public IActionResult Login(string nome, string password, string ReturnUrl)
         {
-            Utilizador utilizador = new Utilizador {NomeUtilizador = nome, Password = password};
+            Utilizador utilizador = new Utilizador { NomeUtilizador = nome, Password = password };
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             if (nome != null && password != null)
             {
 
-                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
                 if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
 
@@ -73,23 +74,29 @@ namespace FT_Management.Controllers
                     }
                 }
             }
-                return View();
+            return View();
         }
-
+        [HttpGet]
+        public IActionResult Login(string ReturnUrl)
+        {
+            ViewData["ReturnUrl"] = ReturnUrl;
+            return View();
+        }
         [HttpPost]
-        public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl)
+        public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl, int first, int second, int third, int fourth, int fifth, int sixth)
         {
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true,false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
 
-            if (LstUtilizadores.Count == 0) {
+            if (LstUtilizadores.Count == 0)
+            {
                 Cliente c = phccontext.ObterClienteNIF(utilizador.NomeUtilizador);
                 if (c.IdCliente != 0)
                 {
-                    if(c.Senha == utilizador.Password)
+                    if (c.Senha == utilizador.Password)
                     {
                         var claims = new List<Claim>
                         {
@@ -119,30 +126,41 @@ namespace FT_Management.Controllers
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
-                    var claims = new List<Claim>
+                    TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                    string res = first > 9 ? first.ToString() : first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
+                    if (string.IsNullOrEmpty(user.SecondFactorAuthStamp) || tfa.ValidateTwoFactorPIN(user.SecondFactorAuthStamp, res))
                     {
-                        new Claim(ClaimTypes.Name, user.Id.ToString()),
-                        new Claim(ClaimTypes.GivenName, user.NomeCompleto),
-                        new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
-                        new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
-                        new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
-                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
-                        new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, user.Id.ToString()),
+                            new Claim(ClaimTypes.GivenName, user.NomeCompleto),
+                            new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
+                            new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
+                            new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
+                            new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
+                            new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
 
-                    };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    await  HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                        };
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
-                    context.AdicionarLog(user.Id, "Utilizador realizou um login com sucesso!", 4);
+                        context.AdicionarLog(user.Id, "Utilizador realizou um login com sucesso!", 4);
 
-                    if (ReturnUrl != "" && ReturnUrl != null)
-                    {
-                        Response.Redirect(ReturnUrl, true);
+                        if (ReturnUrl != "" && ReturnUrl != null)
+                        {
+                            Response.Redirect(ReturnUrl, true);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
+                        ModelState.AddModelError("", "2FA errado!");
+                        context.AdicionarLog(user.Id, "Utilizador tentou um login sem sucesso!", 4);
                     }
+
                 }
                 else
                 {
@@ -151,6 +169,14 @@ namespace FT_Management.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpGet]
+        public bool Check2FA(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return !string.IsNullOrEmpty(context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == id).DefaultIfEmpty(new Utilizador()).First().SecondFactorAuthStamp);
         }
 
         [Authorize(Roles = "Admin")]
@@ -186,10 +212,24 @@ namespace FT_Management.Controllers
 
             List<KeyValuePair<string, string>> LstChats = ChatContext.ObterChatsAtivos();
             LstChats.Insert(0, new KeyValuePair<string, string>("", "N/D"));
-            ViewBag.Chats = LstChats.Select(l  => new SelectListItem() { Value = l.Key, Text = l.Value});
+            ViewBag.Chats = LstChats.Select(l => new SelectListItem() { Value = l.Key, Text = l.Value });
 
+            List<KeyValuePair<int, string>> LstNotificacoes = new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(0, "Desativado"), new KeyValuePair<int, string>(1, "Email"), new KeyValuePair<int, string>(2, "Nextcloud"), new KeyValuePair<int, string>(3, "Ambos") };
+            ViewBag.Notificacoes = LstNotificacoes.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
 
-            return View(context.ObterUtilizador(id));
+            Utilizador u = context.ObterUtilizador(id);
+            if (string.IsNullOrEmpty(u.SecondFactorAuthStamp))
+            {
+                String stamp = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
+
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", u.NomeUtilizador, stamp, false, 3);
+
+                u.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
+                u.SecondFactorAuthCode = setupInfo.ManualEntryKey;
+                ViewData["2FASTAMP"] = stamp;
+            }
+            return View(u);
         }
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         public IActionResult AtualizarUtilizador(int id, Utilizador utilizador)
@@ -203,15 +243,47 @@ namespace FT_Management.Controllers
             u.TipoMapa = utilizador.TipoMapa;
             u.Telemovel = utilizador.Telemovel;
             u.DataNascimento = utilizador.DataNascimento;
-            u.Viatura.Matricula = utilizador.Viatura.Matricula == "N/D" ? "" : utilizador.Viatura.Matricula;
             u.TipoTecnico = utilizador.TipoTecnico;
             u.Zona = utilizador.Zona;
             u.ChatToken = utilizador.ChatToken;
+            u.NotificacaoAutomatica = utilizador.NotificacaoAutomatica;
 
             if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
             context.NovoUtilizador(u);
 
-            return RedirectToAction("Editar", new { id = u.Id});
+            return RedirectToAction("Editar", new { id = u.Id });
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult Atualizar2FA(int id, string code, string stamp)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+            u.SecondFactorAuthStamp = "";
+
+            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+            if (tfa.ValidateTwoFactorPIN(stamp, code))
+            {
+                u.SecondFactorAuthStamp = stamp;
+                if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+                context.NovoUtilizador(u);
+            }
+
+            return RedirectToAction("Editar", new { id = u.Id });
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult Remover2FA(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+
+            u.SecondFactorAuthStamp = "";
+
+            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+            context.NovoUtilizador(u);
+
+            return RedirectToAction("Editar", new { id = u.Id });
         }
         [HttpPost]
         public IActionResult AtualizarImagem(int id, IFormFile file)
@@ -323,7 +395,11 @@ namespace FT_Management.Controllers
             var passwordHasher = new PasswordHasher<string>();
             if (string.IsNullOrEmpty(senha)) return Content("Nok");
             Utilizador u = context.ObterUtilizador(id);
-            if (!u.Admin || this.User.IsInRole("Master")) u.Password = passwordHasher.HashPassword(null, senha);
+            if (!u.Admin || this.User.IsInRole("Master"))
+            {
+                u.Password = passwordHasher.HashPassword(null, senha);
+                u.SecondFactorAuthStamp = "";
+            }
 
             context.NovoUtilizador(u);
 

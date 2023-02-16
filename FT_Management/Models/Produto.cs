@@ -37,6 +37,7 @@ namespace FT_Management.Models
         public string ImgProduto { get; set; }
         public bool Serie { get; set; }
         public List<Equipamento> Equipamentos { get; set; }
+        public double Valor { get; set; }
 
         public Produto()
         {

@@ -1,0 +1,115 @@
+﻿@model IEnumerable<FT_Management.Models.Equipamento>
+
+
+@{
+    ViewData["Title"] = "Equipamentos";
+}
+<form asp-action="Index" method="get">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fa-solid fa-desktop"></i>
+                                </span>
+                                <span>Equipamentos</span>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <form asp-action="Index" asp-controller="Equipamentos">
+                    <div class="field has-addons has-addons-right mx-1">
+                        <p class="control has-icons-left">
+                            <input type="text" class="input" placeholder="Número de Série" name="Serie"
+                                value="@ViewData["Serie"]">
+                            <span class="icon is-small is-left">
+                                <i class="fa-solid fa-arrow-down-1-9"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="buttons is-right">
+                        <p class="control">
+                            <button type="submit" class="button is-info is-outlined">
+                                <span class="icon">
+                                    <i class="fas fa-search fa-lg"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </p>
+                        <p class="control">
+                            <button type="button" onclick="window.location.href = '/Equipamentos'"
+                                class="button is-outlined">
+                                <span class="icon">
+                                    <i class="fas fa-backspace fa-lg"></i>
+                                </span>
+                                <span>Limpar Pesquisa</span>
+                            </button>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</form>
+<hr />
+<div class="container">
+    @if (Model.Count() == 0)
+    {
+        <br />
+        <button class="button is-danger is-fullwidth is-disabled">Não foram encontrados equipamentos!</button>
+    }
+    else
+    {
+        <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+                <table class="table is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.MarcaEquipamento)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ModeloEquipamento)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.NumeroSerieEquipamento)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Cliente.NomeCliente)
+                            </th>
+                                                        <th>
+                                @Html.DisplayNameFor(model => model.UltimoTecnico)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
+                                <td data-label="@Html.DisplayNameFor(model => model.MarcaEquipamento)">
+                                    <span>@item.MarcaEquipamento</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.ModeloEquipamento)">
+                                    @Html.DisplayFor(modelItem => item.ModeloEquipamento)
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.NumeroSerieEquipamento)">
+                                    @Html.DisplayFor(modelItem => item.NumeroSerieEquipamento)
+                                </td>
+                                                                <td data-label="@Html.DisplayNameFor(model => model.Cliente.NomeCliente)">
+                                    @Html.DisplayFor(modelItem => item.Cliente.NomeCliente)
+                                </td>                                                                <td data-label="@Html.DisplayNameFor(model => model.UltimoTecnico)">
+                                    @Html.DisplayFor(modelItem => item.UltimoTecnico)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

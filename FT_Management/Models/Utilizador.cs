@@ -11,7 +11,7 @@ namespace FT_Management.Models
     {
         public static string ObterNomeCompleto(this ClaimsPrincipal principal)
         {
-            var firstName = principal.Claims.Where(c=> c.Type.Contains("givenname")).First();
+            var firstName = principal.Claims.Where(c => c.Type.Contains("givenname")).First();
             return firstName?.Value;
         }
         public static string ObterImgUtilizador(this ClaimsPrincipal principal)
@@ -73,6 +73,7 @@ namespace FT_Management.Models
         public int TipoMapa { get; set; }
         [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
+        public bool Aniversario { get { return DataNascimento.ToString("ddMM") == DateTime.Now.ToString("ddMM"); } }
         public Viatura Viatura { get; set; }
         [Display(Name = "Ultimo Acesso")]
         public DateTime UltimoAcesso { get; set; }
@@ -80,6 +81,11 @@ namespace FT_Management.Models
         public int TipoTecnico { get; set; }
         public int Zona { get; set; }
         public string ChatToken { get; set; }
+        public int NotificacaoAutomatica { get; set; } //0 Desativado > 1 Email > 2 Nextcloud > 3 Ambos
+        public string SecondFactorAuthStamp { get; set; }
+        public string SecondFactorImgUrl { get; set; }
+        public string SecondFactorAuthCode { get; set; }
+        public bool Ferias { get; set; }
         public Utilizador()
         {
             this.Id = 0;
@@ -94,7 +100,7 @@ namespace FT_Management.Models
             this.ImgUtilizador = "/img/user.png";
             this.AcessoAtivo = false;
         }
-        
+
 
         public string ObterTelemovelFormatado(bool Indicativo)
         {
@@ -147,8 +153,8 @@ namespace FT_Management.Models
             }
             else
             {
-                if (valor == "Waze") return "https://waze.com/ul?ll=" +c.Latitude + "," + c.Longitude + "&navigate=yes";
-                if (valor == "Apple") return "https://maps.apple.com/?q=" + c.NomeCliente + "&ll=" + c.Latitude + "," + c.Longitude ;
+                if (valor == "Waze") return "https://waze.com/ul?ll=" + c.Latitude + "," + c.Longitude + "&navigate=yes";
+                if (valor == "Apple") return "https://maps.apple.com/?q=" + c.NomeCliente + "&ll=" + c.Latitude + "," + c.Longitude;
                 return "https://maps.google.com/?q=" + c.Latitude + "," + c.Longitude;
 
             }

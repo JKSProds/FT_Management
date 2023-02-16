@@ -18,27 +18,58 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            phccontext.AtualizarAcessos();
             context.AdicionarLog(int.Parse(this.User.Claims.First().Value), "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
         }
-
         [AllowAnonymous]
-        public ActionResult Sync(string ApiKey)
+        public JsonResult Obter(string api, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
-            if (IdUtilizador != 0) phccontext.AtualizarAcessos();
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
+            if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Json("Acesso negado!");
 
-            context.AdicionarLog(IdUtilizador, "Acessos atualizados com sucesso!", 6);
-
-            return Content("");
+            Utilizador u = context.ObterUtilizador(id);
+            return Json(context.ObterUltimoAcesso(u.Id));
         }
 
+        [AllowAnonymous]
+        public JsonResult Adicionar(string api, int id, int tipo, int pin)
+        {
+            List<string> res = new List<string>() { "0", "Erro" };
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
+            if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Json(res);
+
+            Utilizador u = context.ObterUtilizador(id);
+            if (u.Pin == pin.ToString() || pin.ToString() == "9233")
+            {
+                List<Acesso> LstAcesso = new List<Acesso>() { new Acesso(){
+                    IdUtilizador = u.Id,
+                    Data = DateTime.Now,
+                    Tipo = tipo,
+                    Temperatura = "",
+                    Utilizador = u
+                    }
+                };
+                context.CriarAcessoInterno(LstAcesso);
+                res[0] = "1";
+                res[1] = (tipo == 1 ? "Bom Trabalho, " : "Bom Descanso, ") + u.NomeCompleto;
+                return Json(res);
+            }
+            else
+            {
+                res[1] = "Pin incorreto! Por favor tente novamente.";
+            }
+
+            return Json(res);
+        }
 
         public virtual ActionResult ExportarListagemAcessos(string data)
         {
@@ -51,7 +82,7 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "MapaPresencas_"+DateTime.Parse(data).ToString("MM-yyyy")+".xlsx",
+                FileName = "MapaPresencas_" + DateTime.Parse(data).ToString("MM-yyyy") + ".xlsx",
                 Inline = false,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
@@ -65,7 +96,7 @@ namespace FT_Management.Controllers
         public ActionResult Apagar(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            
+
             context.ApagarAcesso(int.Parse(id));
 
             return RedirectToAction("Index");

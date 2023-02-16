@@ -27,6 +27,8 @@ namespace FT_Management.Models
     }
     public class Linha_Picking
     {
+        [Display(Name = "Loja")]
+        public string Nome_Loja { get; set; }
         public string Picking_Linha_Stamp { get; set; }
         [Display(Name = "Referência")]
         public string Ref_linha { get; set; }
@@ -41,6 +43,7 @@ namespace FT_Management.Models
         public List<Ref_Linha_Picking> Lista_Ref { get; set; }
         public bool Serie { get; set; }
         public bool Validado { get { return Qtd_Linha >= Qtd_Separar; } }
+        [Display(Name = "Editado")]
         public string EditadoPor { get; set; }
     }
 
@@ -56,6 +59,8 @@ namespace FT_Management.Models
         public string BOMA_STAMP { get; set; }
         public string NumSerie { get; set; }
         public bool Validado { get { return (NumSerie != "" && BOMA_STAMP != ""); } }
+        public string CriadoPor { get; set; }
+        public DateTime CriadoA { get; set; }
 
         public Ref_Linha_Picking()
         {

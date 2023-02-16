@@ -38,28 +38,12 @@ namespace FT_Management.Controllers
             ViewData["Fornecedores"] = new SelectList(LstFornecedores, "IdFornecedor", "NomeFornecedor", Armazem);
             ViewData["TiposEquipamento"] = new SelectList(LstTiposEquipamento);
 
-            if (Armazem>9)
+            if (Armazem > 9)
             {
                 return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).Where(p => p.Stock_PHC - p.Stock_Res > 0).ToPagedList(pageNumber, pageSize));
             }
-            phccontext.ObterGuiasTransporte(32);
+            //phccontext.ObterGuiasTransporte(32);
             return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento).ToPagedList(pageNumber, pageSize));
-        }
-
-        public ActionResult Print(string id, int armazemid)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x50(phccontext.ObterProduto(id,armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-            
-            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
         }
 
         public ActionResult PrintQr(string id, int armazemid)
@@ -122,26 +106,39 @@ namespace FT_Management.Controllers
 
             ViewData["LstProdutosArmazem"] = phccontext.ObterProdutosArmazem(id);
             ViewData["Armazens"] = new SelectList(LstArmazens, "ArmazemId", "ArmazemNome", armazemid);
-            
-            return View(phccontext.ObterProduto(id,armazemid));
+
+            return View(phccontext.ObterProduto(id, armazemid));
         }
 
         [HttpPost]
-        public JsonResult ObterPecasUtilizador()
+        public JsonResult ObterPecasUtilizador(string filter)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             int idArmazem = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdArmazem;
+            if (string.IsNullOrEmpty(filter)) filter = "";
 
-            return Json(phccontext.ObterProdutosArmazem(idArmazem).ToList());
+            return Json(phccontext.ObterProdutosArmazem(idArmazem).Where(p => p.Ref_Produto.ToLower().Contains(filter.ToLower()) || p.Designacao_Produto.ToLower().Contains(filter.ToLower())).ToList());
         }
         [HttpPost]
-        public JsonResult ObterPeca(string ref_produto)
+        public JsonResult ObterPecas(string filter)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            int idArmazem = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdArmazem;
+            if (string.IsNullOrEmpty(filter)) filter = "";
+
+            return Json(phccontext.ObterProdutosArmazem(3).Where(p => p.Ref_Produto.ToLower().Contains(filter.ToLower()) || p.Designacao_Produto.ToLower().Contains(filter.ToLower())).ToList());
+        }
+        [HttpPost]
+        public JsonResult ObterPeca(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().First());
+            //return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
+            return Json(phccontext.ObterProdutoStamp(id));
         }
         public JsonResult ObterDetalhes(string id)
         {
@@ -151,12 +148,12 @@ namespace FT_Management.Controllers
         }
 
 
-        public ActionResult ObterPecasUso(int id, string gt)
+        public ActionResult Armazem(int id, string gt)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First();
+            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == id).First();
             List<string> LstGuias = phccontext.ObterGuiasTransporte(u.IdArmazem);
             if (string.IsNullOrEmpty(gt)) gt = LstGuias.First();
 
@@ -165,7 +162,7 @@ namespace FT_Management.Controllers
             ViewData["Utilizador"] = u.NomeCompleto;
             ViewData["GT"] = gt;
 
-            return View("Movimentos", phccontext.ObterPecasGuiaTransporte(gt, u.IdArmazem).OrderBy(m => m.DataMovimento));
+            return View(phccontext.ObterPecasGuiaTransporte(gt, u.IdArmazem).OrderBy(m => m.DataMovimento));
         }
 
         public ActionResult ExportarPecasUso(int id, string gt)
@@ -174,7 +171,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             string res = "";
 
-            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).First();
+            Utilizador u = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == id).First();
             List<string> LstGuias = phccontext.ObterGuiasTransporte(u.IdArmazem);
             if (string.IsNullOrEmpty(gt)) gt = LstGuias.First();
 
@@ -182,9 +179,16 @@ namespace FT_Management.Controllers
             {
                 res += "Ref: " + item.RefProduto.Trim() + " | Designacao: " + item.Designacao.Trim() + " | Qtd: " + item.Quantidade + "%0D%0A";
             }
-            var url = new System.Uri("mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20("+u.NomeCompleto+")&body=" + res);
+            var url = new System.Uri("mailto:pecas@food-tech.pt?subject=Pedido%20de%20Pecas%20(" + u.NomeCompleto + ")&body=" + res);
             Response.Redirect(url.AbsoluteUri);
             return new EmptyResult();
+        }
+
+        public JsonResult GerarGuiaGlobal(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.GerarGuiaGlobal(id));
         }
     }
 }

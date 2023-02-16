@@ -34,17 +34,19 @@
                 <p class="control">
                     @if (this.User.IsInRole("Admin"))
                     {
-                    <button class="button is-danger" id="alterarDiasFerias">
-                        <span class="icon"><i class="fa fa-calendar-xmark"></i></span>
-                        <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis - Model.DiasTotais)</span>
-                    </button>
+                        <button class="button is-danger" id="alterarDiasFerias">
+                            <span class="icon"><i class="fa fa-calendar-xmark"></i></span>
+                            <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis -
+                            Model.DiasTotais)</span>
+                        </button>
                     }
                     else
                     {
-                <button class="button is-danger disabled">
-                    <span class="icon"><i class="fa fa-calendar-plus"></i></span>
-                    <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis - Model.DiasTotais)</span>
-                </button>
+                        <button class="button is-danger disabled">
+                            <span class="icon"><i class="fa fa-calendar-plus"></i></span>
+                            <span>@Html.DisplayNameFor(model => model.DiasDisponiveis): @(Model.DiasDisponiveis -
+                            Model.DiasTotais)</span>
+                        </button>
                     }
                 </p>
                 <p class="control">
@@ -56,7 +58,8 @@
             </div>
             <div class="buttons is-right is-grouped">
                 <p class="control">
-                    <a class="button is-info is-outlined" onclick="location.href = '@(Url.Action("CalendarioView", "Ferias"))'">
+                    <a class="button is-info is-outlined"
+                        onclick="location.href = '@(Url.Action("CalendarioView", "Ferias"))'">
                         <span class="icon">
                             <i class="far fa-calendar-alt"></i>
                         </span>
@@ -94,65 +97,73 @@
 else
 {
     <div class="container">
-        <div class="b-table">
-        <div class="table-wrapper has-mobile-cards">        
-        <table class="table is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Ferias)
-                {
-                <tr class="@(item.Validado ? "has-background-success-light" : "has-background-danger-light")">
-                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)">
-                        <span>@item.DataInicio.ToString("dd/MM/yyyy")</span>
-                    </td>
-                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)">
-                        <span>@item.DataFim.ToString("dd/MM/yyyy")</span>
-                    </td>
-                    <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)">
-                        @Html.DisplayFor(modelItem => item.ValidadoPorNome)
-                    </td>
-
-                    <td  data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)" style="width: 60%;">
-                        @Html.DisplayFor(modelItem => item.Obs)
-                    </td>
-                    <td class="is-actions-cell">
-                        <div class="field has-addons is-pulled-right">
-
-                            @if (this.User.IsInRole("Admin"))
-                            {
-                                @if (!item.Validado)
-                                {<a class="button mr-2 is-outlined is-primary" onclick="ConfirmValidarFerias(@item.Id)" href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>}
-                                <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias2(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                            }
-
-                            else
-                            {
-                                <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias1(@item.Id)" href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-
-                            }
-                        </div>
-                    </td>
+    <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">
+            <table class="table is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)
+                        </th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-        </div>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Ferias)
+                        {
+                            <tr class="@(item.Validado ? "has-background-success-light" : "has-background-danger-light")">
+                                <td style="min-width: 20%;"
+                            data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)">
+                                    <span>@item.DataInicio.ToString("ddd dd/MM/yyyy")</span>
+                                </td>
+                                <td style="min-width: 20%;"
+                            data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)">
+                                    <span>@item.DataFim.ToString("ddd dd/MM/yyyy")</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)">
+                                    @Html.DisplayFor(modelItem => item.ValidadoPorNome)
+                                </td>
+
+                                <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)"
+                            style="width: 40%;">
+                                    @Html.DisplayFor(modelItem => item.Obs)
+                                </td>
+                                <td class="is-actions-cell">
+                                    <div class="field has-addons is-pulled-right">
+
+                                        @if (this.User.IsInRole("Admin"))
+                                        {
+                                            @if (!item.Validado)
+                                            {
+                                                <a class="button mr-2 is-outlined is-primary" onclick="ConfirmValidarFerias(@item.Id)"
+                                    href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
+                                            }
+                                            <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias2(@item.Id)"
+                                    href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                                        }
+
+                                        else
+                                        {
+                                            <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias1(@item.Id)"
+                                    href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 }
@@ -180,7 +191,8 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" id="btnAlterarDiasFerias" onclick="AlterarDiasFerias()" href="javascript:;">
+            <button type="button" class="button is-info" id="btnAlterarDiasFerias" onclick="AlterarDiasFerias()"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check-circle"></i>
                 </span>
@@ -208,12 +220,14 @@ else
             </div>
             <div class="form-group">
                 <p class="control has-icons-left">
-                    <textarea class="textarea" rows="8" placeholder="Observações" id="txtObsApagar" name="Obs" required></textarea>
+                    <textarea class="textarea" rows="8" placeholder="Observações" id="txtObsApagar" name="Obs"
+                        required></textarea>
                 </p>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-danger" id="btnApagarFerias" onclick="ApagarFerias()" href="javascript:;">
+            <button type="button" class="button is-danger" id="btnApagarFerias" onclick="ApagarFerias()"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-trash"></i>
                 </span>
@@ -239,12 +253,14 @@ else
         <section class="modal-card-body">
             <div class="control">
                 <p class="control has-icons-left">
-                    <textarea class="textarea" rows="8" placeholder="Observações" id="txtObsValidar" name="Obs" required></textarea>
+                    <textarea class="textarea" rows="8" placeholder="Observações" id="txtObsValidar" name="Obs"
+                        required></textarea>
                 </p>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" id="btnValidarFerias" onclick="ValidarFerias()" href="javascript:;">
+            <button type="button" class="button is-info" id="btnValidarFerias" onclick="ValidarFerias()"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check"></i>
                 </span>
@@ -272,7 +288,8 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-danger" id="btnApagarFerias2" onclick="ApagarFerias2()" href="javascript:;">
+            <button type="button" class="button is-danger" id="btnApagarFerias2" onclick="ApagarFerias2()"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-trash"></i>
                 </span>
@@ -298,12 +315,12 @@ else
             <div class="control">
                 <input type="date" class="input" id="txtDataInicio" disabled>
                 <script>
-                     bulmaCalendar.attach('#txtDataInicio', {
+                    bulmaCalendar.attach('#txtDataInicio', {
                         color: 'info',
-                        isRange:   true,
+                        isRange: true,
                         lang: 'pt',
                         labelFrom: 'Inicio',
-                        labelTo:   'Fim',
+                        labelTo: 'Fim',
                         displayMode: 'inline',
                         dateFormat: 'dd/MM/yyyy',
                         todayLabel: 'Hoje',
@@ -316,7 +333,8 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" id="btnAdicionarFerias" onclick="AdicionarFerias()" href="javascript:;">
+            <button type="button" class="button is-info" id="btnAdicionarFerias" onclick="AdicionarFerias()"
+                href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-plus"></i>
                 </span>
@@ -338,18 +356,18 @@ else
         modal.open();
     });
 
-function AdicionarFerias() {
-            if (document.getElementById('txtDataInicio').value.split('-')[0] == '') {
-                bulmaToast.toast({
-                        message: 'Tem de escolher a data de inicio e fim!',
-                        type: 'is-danger',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000,
-                        position: 'top-center'
-                    })
-            } else {
+    function AdicionarFerias() {
+        if (document.getElementById('txtDataInicio').value.split('-')[0] == '') {
+            bulmaToast.toast({
+                message: 'Tem de escolher a data de inicio e fim!',
+                type: 'is-danger',
+                closeOnClick: true,
+                pauseOnHover: true,
+                opacity: 0.8,
+                duration: 5000,
+                position: 'top-center'
+            })
+        } else {
             document.getElementById("btnAdicionarFerias").classList.add("is-loading");
             var json = {
                 datainicio: document.getElementById('txtDataInicio').value.split('-')[0],
@@ -364,7 +382,7 @@ function AdicionarFerias() {
 
             if (Diff >= DiasMarcados) {
                 document.getElementById("btnAdicionarFerias").classList.remove("is-loading");
-                $(function() {
+                $(function () {
                     bulmaToast.toast({
                         message: 'Dias escolhidos excedem dias disponiveis!',
                         type: 'is-danger',
@@ -380,8 +398,8 @@ function AdicionarFerias() {
                     url: "/Ferias/AdicionarFerias",
                     data: json,
                     traditional: true,
-                    success: function(result) {
-                        $(function() {
+                    success: function (result) {
+                        $(function () {
                             window.location.reload();
                         });
                     }
@@ -399,17 +417,17 @@ function AdicionarFerias() {
         };
 
 
-            $.ajax({
-                type: "POST",
-                url: "/Ferias/AlterarDiasFerias",
-                data: json,
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        window.location.reload();
-                    });
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: "/Ferias/AlterarDiasFerias",
+            data: json,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
+                });
+            }
+        });
     }
 
     function ConfirmValidarFerias(Id) {

@@ -37,146 +37,211 @@
                     </p>
                 </header>
                 <div class="card-content">
-                    <input type="hidden" asp-for="Id" id="txtHiddenIdUtilizador"/>
+                    <input type="hidden" asp-for="Id" id="txtHiddenIdUtilizador" />
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.ImgUtilizador)</label></div><div class="field-body">
-                            <div class="field has-addons">
-                                <figure class="mr-3 image is-inline-block is-128x128">
-                                    <img class="is-rounded" src="@Model.ImgUtilizador" alt="user_image">
-                                </figure>
-                                <div class="form-group">
-                                    <form action="/Utilizadores/AtualizarImagem/@Model.Id"
-                                      class="dropzone" id="dropImage">
-                                  <div class="dz-message needsclick">    
-                                    Largue uma imagem aqui para fazer o upload
-                                    </div>
-                                  </form>
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.NomeUtilizador)</label></div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly asp-for="NomeUtilizador">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeUtilizador)</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.NomeCompleto)</label></div>
+                        <div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly  asp-for="NomeUtilizador"></div>
+                                <div class="control"><input type="text" class="input" readonly asp-for="NomeCompleto">
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.NomeCompleto)</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.EmailUtilizador)</label></div>
+                        <div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly  asp-for="NomeCompleto"></div>
+                                <div class="control"><input type="text" class="input" readonly
+                                        asp-for="EmailUtilizador"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.EmailUtilizador)</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.IdPHC)</label></div>
+                        <div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly asp-for="EmailUtilizador"></div>
+                                <div class="control"><input type="text" class="input" readonly asp-for="IdPHC"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.IdPHC)</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.Viatura)</label></div>
+                        <div class="field-body">
                             <div class="field">
-                                <div class="control"><input type="text" class="input" readonly  asp-for="IdPHC"></div>
+                                <div class="control"><input type="text" class="input" readonly
+                                        asp-for="Viatura.Matricula"></div>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.TipoUtilizador)</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.TipoUtilizador)</label></div>
+                        <div class="field-body">
                             <div class="field">
-                                    <span class="select" style="width:100%">
-                                        <select style="width:100%" asp-for="TipoUtilizador" id="LstTipoUtilizador" disabled >
-                                            <option id="1">Técnico</option>
-                                            <option id="2">Comercial</option>
-                                            <option id="3">Escritório</option>
-                                        </select>
-                                    </span>
-                                    <script>
-                                        document.getElementById("LstTipoUtilizador").selectedIndex = @Model.TipoUtilizador - 1;
-                                    </script>
+                                <span class="select" style="width:100%">
+                                    <select style="width:100%" asp-for="TipoUtilizador" id="LstTipoUtilizador" disabled>
+                                        <option id="1">Técnico</option>
+                                        <option id="2">Comercial</option>
+                                        <option id="3">Escritório</option>
+                                    </select>
+                                </span>
+                                <script>
+                                    document.getElementById("LstTipoUtilizador").selectedIndex = @Model.TipoUtilizador - 1;
+                                </script>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                      <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.ApiKey.Key)</label></div><div class="field-body">
-                          <div class="field has-addons">
-                      <div class="control" style="width:100%">
-                        <input class="input" type="text" readonly id="txtApiKey" asp-for="ApiKey.Key">
-                      </div>
-                      <div class="field has-addons">
-                          <p class="control">
-                            <button class="button is-info" @(Model.ApiKey.Key == "" ? "disabled" : "" ) onclick="copiarTexto('txtApiKey');">
-                              Copiar
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.ApiKey.Key)</label></div>
+                        <div class="field-body">
+                            <div class="field has-addons">
+                                <div class="control" style="width:100%">
+                                    <input class="input" type="text" readonly id="txtApiKey" asp-for="ApiKey.Key">
+                                </div>
+                                <div class="field has-addons">
+                                    <p class="control">
+                                        <button class="button is-info" @(Model.ApiKey.Key == "" ? "disabled" : "")
+                                            onclick="copiarTexto('txtApiKey');">
+                                            Copiar
+                                        </button>
+                                    </p>
+                                    <p class="control">
+                                        <button class="button is-primary" onclick="GerarApiKey();">
+                                            Gerar
+                                        </button>
+                                    </p>
+                                    <p class="control">
+                                        <button class="button is-link" @(Model.ApiKey.Key == "" ? "disabled" : "")
+                                            onclick="Bulma('#modalLinks').modal().open();">
+                                            <i class="fa-solid fa-info"></i>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    @if (string.IsNullOrEmpty(Model.SecondFactorAuthStamp))
+                    {
+                        <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="Atualizar2FA"
+                        asp-route-id="@Model.Id">
+                            <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+                            <input hidden value=@ViewData["2FASTAMP"] name="stamp">
+
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <figure class="image is-256x256">
+                                        <img src="@Model.SecondFactorImgUrl">
+                                    </figure>
+                                </div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control"><input class="input" readonly
+                                                value="@Model.SecondFactorAuthCode">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-horizontal">
+                                <div class="field-label is-normal"><label class="label">Código</label></div>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control"><input class="input" placeholder="Código" type="tel"
+                                                name="code">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="button is-info is-fullwidth is-large">
+                                <span> Ativar </span>
                             </button>
-                          </p>
-                          <p class="control">
-                            <button class="button is-primary" onclick="GerarApiKey();">
-                              Gerar
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="Remover2FA"
+                        asp-route-id="@Model.Id">
+                            <button type="submit" class="button is-danger is-large is-fullwidth">
+                                <span> Remover </span>
                             </button>
-                          </p>
-                           <p class="control">
-                            <button class="button is-link" @(Model.ApiKey.Key == "" ? "disabled" : "" ) onclick="Bulma('#modalLinks').modal().open();">
-                              <i class="fa-solid fa-info"></i>
-                            </button>
-                          </p>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
+                        </form>
+                    }
                 </div>
             </div>
         </div>
 
         <div class="modal" id="modalLinks">
-          <div class="modal-background"></div>
-          <div class="modal-card">
-            <header class="modal-card-head">
-              <p class="modal-card-title">Calendários</p>
-              <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Calendários</p>
+                    <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Calendário de Serviços</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">Calendário de Serviços</label></div>
+                        <div class="field-body">
                             <div class="field" style="width:100%">
-                                <div class="control"><input type="text" class="input" id="txtPedidos" disabled value="@(new Uri("http://"+@Context.Request.Host+"/Pedidos/Calendario?ApiKey=" + @Model.ApiKey.Key))"></div>
+                                <div class="control"><input type="text" class="input" id="txtPedidos" disabled
+                                        value="@(new Uri("http://"+@Context.Request.Host+"/Pedidos/Calendario?ApiKey=" + @Model.ApiKey.Key))">
+                                </div>
                             </div>
                             <div class="field has-addons">
-                              <p class="control">
-                                <button class="button is-info" onclick="copiarTexto('txtPedidos');">
-                                  Copiar
-                                </button>
-                              </p>
-                              <p class="control">
-                                <a class="button is-primary" href="@(new Uri("http://"+@Context.Request.Host+"/Pedidos/Calendario?ApiKey=" + @Model.ApiKey.Key))">
-                                   <i class="fa-solid fa-plus"></i>
-                                </a>
-                              </p>
+                                <p class="control">
+                                    <button class="button is-info" onclick="copiarTexto('txtPedidos');">
+                                        Copiar
+                                    </button>
+                                </p>
+                                <p class="control">
+                                    <a class="button is-primary"
+                                        href="@(new Uri("http://"+@Context.Request.Host+"/Pedidos/Calendario?ApiKey=" + @Model.ApiKey.Key))">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </a>
+                                </p>
                             </div>
                         </div>
                     </div>
                     <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">Calendário de Férias</label></div><div class="field-body">
+                        <div class="field-label is-normal"><label class="label">Calendário de Férias</label></div>
+                        <div class="field-body">
                             <div class="field" style="width:100%">
-                                <div class="control"><input type="text" class="input" id="txtFerias" disabled value="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))" ></div>
+                                <div class="control"><input type="text" class="input" id="txtFerias" disabled
+                                        value="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))">
+                                </div>
                             </div>
                             <div class="field has-addons">
-                              <p class="control">
-                                <button class="button is-info" onclick="copiarTexto('txtFerias');">
-                                  Copiar
-                                </button>
-                              </p>
-                              <p class="control">
-                                <a class="button is-primary" href="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))">
-                                   <i class="fa-solid fa-plus"></i>
-                                </a>
-                              </p>
+                                <p class="control">
+                                    <button class="button is-info" onclick="copiarTexto('txtFerias');">
+                                        Copiar
+                                    </button>
+                                </p>
+                                <p class="control">
+                                    <a class="button is-primary"
+                                        href="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </a>
+                                </p>
                             </div>
                         </div>
                     </div>
-            </section>
-          </div>
+                </section>
+            </div>
         </div>
 
         <div class="tile is-parent">
@@ -186,53 +251,86 @@
                         <span class="icon">
                             <i class="fa-solid fa-user-pen"></i>
                         </span>
-                         - Editar Perfil
+                        - Editar Perfil
                     </p>
                 </header>
 
                 <div class="card-content">
-                    <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="AtualizarUtilizador">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.ImgUtilizador)</label></div>
+                        <div class="field-body">
+                            <div class="field has-addons">
+                                <figure class="mr-3 image is-inline-block is-128x128">
+                                    <img class="is-rounded" src="@Model.ImgUtilizador" alt="user_image">
+                                </figure>
+                                <div class="form-group">
+                                    <form action="/Utilizadores/AtualizarImagem/@Model.Id" class="dropzone"
+                                        id="dropImage">
+                                        <div class="dz-message needsclick">
+                                            Largue uma imagem aqui para fazer o upload
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form method="post" style="width:100%" asp-controller="Utilizadores"
+                        asp-action="AtualizarUtilizador">
                         <input type="hidden" class="input" asp-for="Id" name="id">
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Pin)</label></div><div class="field-body">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                    model.Pin)</label></div>
+                            <div class="field-body">
                                 <div class="field">
-                                    <div class="control"><input type="text" maxlength=4 class="input" asp-for="Pin"></div>
+                                    <div class="control"><input type="text" maxlength=4 class="input" asp-for="Pin">
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Iniciais)</label></div><div class="field-body">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                    model.Iniciais)</label></div>
+                            <div class="field-body">
                                 <div class="field">
-                                    <div class="control"><input type="text" maxlength=2 class="input" asp-for="Iniciais"></div>
+                                    <div class="control"><input type="text" maxlength=2 class="input"
+                                            asp-for="Iniciais"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.DataNascimento)</label></div><div class="field-body">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                    model.DataNascimento)</label></div>
+                            <div class="field-body">
                                 <div class="field">
-                                    <div class="control"><input type="date" class="input" asp-for="DataNascimento" id="txtDataNascimento"></div>
-                                        <script>
-                                            bulmaCalendar.attach('#txtDataNascimento', {
-                                                color: 'info',
-                                                lang: 'pt',
-                                                dateFormat: 'dd/MM/yyyy',
-                                                todayLabel: 'Hoje',
-                                                showClearButton: false,
-                                                cancelLabel: 'Cancelar'
-                                            });
-                                        </script>
+                                    <div class="control"><input type="date" class="input" asp-for="DataNascimento"
+                                            id="txtDataNascimento"></div>
+                                    <script>
+                                        bulmaCalendar.attach('#txtDataNascimento', {
+                                            color: 'info',
+                                            lang: 'pt',
+                                            dateFormat: 'dd/MM/yyyy',
+                                            todayLabel: 'Hoje',
+                                            showClearButton: false,
+                                            cancelLabel: 'Cancelar'
+                                        });
+                                    </script>
                                 </div>
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.Telemovel)</label></div><div class="field-body">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                    model.Telemovel)</label></div>
+                            <div class="field-body">
                                 <div class="field">
                                     <div class="control"><input type="tel" class="input" asp-for="Telemovel"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.TipoMapa)</label></div><div class="field-body">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                    model.TipoMapa)</label></div>
+                            <div class="field-body">
                                 <div class="field">
                                     <div class="select" style="width:100%">
                                         <select class="select" style="width:100%" asp-for="TipoMapa">
@@ -240,42 +338,81 @@
                                             <option value="2">Waze</option>
                                             <option value="3">Apple Maps</option>
                                         </select>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model => model.CorCalendario)</label></div><div class="field-body">
-                                <div class="field">
-                                    <div class="control"><input type="color" class="input" asp-for="CorCalendario"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">Dados Adicionais</label></div><div class="field-body">
-                               <div class="field has-addons">
-                                    <div class="select" style="width:100%">
-                                        <select asp-for="Viatura.Matricula" asp-items="ViewBag.Viaturas" class="form-control" style="width:100%">
-                                            </select>
-                                      </div>
-
-                                   <div class="select" style="width:100%">
-                                        <select asp-for="Zona" asp-items="ViewBag.Zonas" class="form-control" style="width:100%">
-                                            </select>
-                                      </div>
-                                    <div class="select" style="width:100%">
-                                        <select asp-for="TipoTecnico" asp-items="ViewBag.TipoTecnico" class="form-control" style="width:100%">
-                                         </select>
                                     </div>
-                                    <div class="select" style="width:100%">
-                                        <select asp-for="ChatToken" asp-items="ViewBag.Chats" class="form-control" style="width:100%">
-                                         </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                    model.CorCalendario)</label></div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control"><input type="color" class="input" asp-for="CorCalendario">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">Dados Adicionais</label></div>
+                            <div class="field-body">
+                                <div class="fields">
+
+                                    <div class="select mb-1" style="width:100%">
+                                        <select asp-for="Zona" asp-items="ViewBag.Zonas" class="form-control"
+                                            style="width:100%">
+                                        </select>
+                                    </div>
+                                    <div class="select mb-1" style="width:100%">
+                                        <select asp-for="TipoTecnico" asp-items="ViewBag.TipoTecnico"
+                                            class="form-control" style="width:100%">
+                                        </select>
+                                    </div>
+                                    <div class="select mb-1" style="width:100%">
+                                        <select asp-for="ChatToken" asp-items="ViewBag.Chats" class="form-control"
+                                            style="width:100%">
+                                        </select>
+                                    </div>
+                                    <div class="select mb-1" style="width:100%">
+                                        <select asp-for="NotificacaoAutomatica" asp-items="ViewBag.Notificacoes"
+                                            class="form-control" style="width:100%">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <hr>
                         <div class="field is-horizontal">
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="field">
+                                        <div class="field-body">
+                                            <div class="field is-grouped">
+                                                <div class="control" style="width:50%">
+                                                    <a class="button is-black is-large is-fullwidth"
+                                                        href="https://apps.apple.com/us/app/nextcloud-talk/id1296825574">
+                                                        <span class="mr-2"><i class="fa-brands fa-apple"></i></span>
+                                                        <p class="is-size-6">Disponivel na <br> <span
+                                                                class="has-text-weight-bold is-size-5">App Store</span>
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div class="control" style="width:50%">
+                                                    <a class="button is-black is-large is-fullwidth"
+                                                        href="https://play.google.com/store/apps/details?id=com.nextcloud.talk2&hl=en&gl=US">
+                                                        <span class="mr-2"><i
+                                                                class="fa-brands fa-google-play"></i></span>
+                                                        <p class="is-size-6">Obter na <br> <span
+                                                                class="has-text-weight-bold is-size-5">Play Store</span>
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
                             <div class="field-label is-normal">
                             </div>
                             <div class="field-body">
@@ -283,22 +420,11 @@
                                     <div class="field">
                                         <div class="field-body">
                                             <div class="field is-grouped">
-                                                <div class="control">
-                                                    <button type="submit" class="button is-info" control-id="ControlID-17">
+                                                <div class="control" style="width:100%">
+                                                    <button type="submit" class="button is-info is-fullwidth is-large"
+                                                        control-id="ControlID-17">
                                                         <span> Atualizar </span>
                                                     </button>
-                                                </div>
-                                                <div class="control">
-                                                     <a class="button is-black is-large" href="https://apps.apple.com/us/app/nextcloud-talk/id1296825574">
-                                                       <span class="mr-2"><i class="fa-brands fa-apple"></i></span>
-                                                       <p class="is-size-6">Disponivel na <br> <span class="has-text-weight-bold is-size-5">App Store</span></p>
-                                                      </a>
-                                                </div>
-                                                <div class="control">
-                                                     <a class="button is-black is-large" href="https://play.google.com/store/apps/details?id=com.nextcloud.talk2&hl=en&gl=US">
-                                                       <span class="mr-2"><i class="fa-brands fa-google-play"></i></span>
-                                                       <p class="is-size-6">Obter na <br> <span class="has-text-weight-bold is-size-5">Play Store</span></p>
-                                                      </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -313,49 +439,65 @@
     </div>
     <div class="card">
         <header class="card-header">
-            <p class="card-header-title"><span class="icon"><i class="fa-solid fa-user-lock"></i></span> - Alterar Senha </p>
-        </header><div class="card-content">
+            <p class="card-header-title"><span class="icon"><i class="fa-solid fa-user-lock"></i></span> - Alterar Senha
+            </p>
+        </header>
+        <div class="card-content">
             <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="AtualizarSenha">
-                <input type="hidden" class="input"   asp-for="Id" name="id">
+                <input type="hidden" class="input" asp-for="Id" name="id">
                 <div class="field is-horizontal">
-                    <div class="field-label is-normal"><label class="label">Senha Atual</label></div><div class="field-body">
+                    <div class="field-label is-normal"><label class="label">Senha Atual</label></div>
+                    <div class="field-body">
                         <div class="field">
                             <div class="control">
-                                <input type="password" autocomplete="on" name="password_current" required="required" autcomplete="current-password" class="input" control-id="ControlID-19">
-                            </div><p class="help">
+                                <input type="password" autocomplete="on" name="password_current" required="required"
+                                    autcomplete="current-password" class="input" control-id="ControlID-19">
+                            </div>
+                            <p class="help">
                                 Required. Your current password
                             </p>
                         </div>
                     </div>
-                </div><hr><div class="field is-horizontal">
-                    <div class="field-label is-normal"><label class="label">Nova Senha</label></div><div class="field-body">
+                </div>
+                <hr>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">Nova Senha</label></div>
+                    <div class="field-body">
                         <div class="field">
                             <div class="control">
-                                <input type="password" autocomplete="new-password" name="password" required="required" class="input" control-id="ControlID-20">
+                                <input type="password" autocomplete="new-password" name="password" required="required"
+                                    class="input" control-id="ControlID-20">
 
 
-                            </div><p class="help">
+                            </div>
+                            <p class="help">
                                 Required. New password
                             </p>
                         </div>
                     </div>
-                </div><div class="field is-horizontal">
-                    <div class="field-label is-normal"><label class="label">Confirmar Nova Senha</label></div><div class="field-body">
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">Confirmar Nova Senha</label></div>
+                    <div class="field-body">
                         <div class="field">
                             <div class="control">
-                                <input type="password" autocomplete="new-password" name="password_confirmation" required="required" class="input" control-id="ControlID-21">
+                                <input type="password" autocomplete="new-password" name="password_confirmation"
+                                    required="required" class="input" control-id="ControlID-21">
 
 
-                            </div><p class="help">
+                            </div>
+                            <p class="help">
                                 Required. New password one more time
                             </p>
                         </div>
                     </div>
                 </div>
                 <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
-                <hr><div class="field is-horizontal">
+                <hr>
+                <div class="field is-horizontal">
                     <div class="field-label is-normal">
-                    </div><div class="field-body">
+                    </div>
+                    <div class="field-body">
                         <div class="field">
                             <div class="control">
                                 <button type="submit" class="button is-info" control-id="ControlID-22">
@@ -371,69 +513,69 @@
 </section>
 
 <script>
- function copiarTexto(id) {
-                  
-                bulmaToast.toast({
-                  message: 'Texto copiado com sucesso!',
-                  type: 'is-success',
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  opacity: 0.8,
-                  duration: 5000,
-                  position: 'top-center'
-                })
+    function copiarTexto(id) {
 
-             // text area method
-            let textArea = document.createElement("textarea");
-            textArea.value = document.getElementById(id).value;
-            // make the textarea out of viewport
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            textArea.style.top = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            return new Promise((res, rej) => {
-                // here the magic happens
-                document.execCommand('copy') ? res() : rej();
-                textArea.remove();
-            });
+        bulmaToast.toast({
+            message: 'Texto copiado com sucesso!',
+            type: 'is-success',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        })
 
-        }
+        // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = document.getElementById(id).value;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        return new Promise((res, rej) => {
+            // here the magic happens
+            document.execCommand('copy') ? res() : rej();
+            textArea.remove();
+        });
 
-    
-        function GerarApiKey() {
-            $.ajax({
-                type: "POST",
-                url: "/Utilizadores/GerarApiKey/" + document.getElementById("txtHiddenIdUtilizador").value,
-                traditional: true,
-                success: function (result) {
-                    if (result != "") {
+    }
+
+
+    function GerarApiKey() {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/GerarApiKey/" + document.getElementById("txtHiddenIdUtilizador").value,
+            traditional: true,
+            success: function (result) {
+                if (result != "") {
                     $(function () {
                         document.getElementById("txtApiKey").value = result;
                         bulmaToast.toast({
-                          message: 'Api Key gerada com sucesso!',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+                            message: 'Api Key gerada com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
                         });
                         window.location.reload();
                     });
-                    }else{
+                } else {
                     $(function () {
                         bulmaToast.toast({
-                          message: 'Não foi possivel gerar a Api Key!',
-                          type: 'is-danger',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
+                            message: 'Não foi possivel gerar a Api Key!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
                         })
                     });
-                    }
                 }
-            });
-        }
+            }
+        });
+    }
 </script>

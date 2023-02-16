@@ -6,7 +6,7 @@ namespace FT_Management.Models
     public static class FicheirosContext
     {
 
-        //private static string CaminhoServerAnexos = "/server/Assistencias_Tecnicas/";
+        private static string CaminhoServerAnexos = "/server/Assistencias_Tecnicas/";
         private static string CaminhoImagensProduto = "/server/Imagens/EQUIPAMENTOS/";
         private static string CaminhoImagensUtilizador = "S:\\Imagens\\UTILIZADORES\\";
 
@@ -14,6 +14,7 @@ namespace FT_Management.Models
         {
             try
             {
+                System.Console.WriteLine("A criar ficheiro na pasta: " + Caminho + " (" + ficheiro.FileName + "|" + ficheiro.Length + ")!");
                 using (Stream fileStream = new FileStream(Caminho, FileMode.Create))
                 {
                     ficheiro.CopyTo(fileStream);
@@ -43,15 +44,21 @@ namespace FT_Management.Models
 
         public static string FormatLinuxServer(string res)
         {
-            #if DEBUG 
-                return res;
-            #endif
-            return res.Replace("\\", "/").Replace("S:", "/server");
+#if DEBUG
+            return res;
+#else
+return res.Replace("\\", "/").Replace("S:", "/server");
+#endif
+
         }
 
         public static bool CriarAnexoMarcacao(Anexo a, IFormFile ficheiro)
         {
             return CriarFicheiro(FormatLinuxServer(a.NomeFicheiro), ficheiro);
+        }
+        public static bool CriarAnexoAssinatura(Anexo a, IFormFile ficheiro)
+        {
+            return CriarFicheiro(FormatLinuxServer(CaminhoServerAnexos + a.NomeFicheiro), ficheiro);
         }
         public static bool ApagarAnexoMarcacao(Anexo a)
         {

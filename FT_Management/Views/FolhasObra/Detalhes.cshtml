@@ -10,9 +10,9 @@
         list-style: none;
     }
 
-        .tabs-content li.is-active {
-            display: block;
-        }
+    .tabs-content li.is-active {
+        display: block;
+    }
 </style>
 
 <div class="container">
@@ -21,7 +21,8 @@
             <div class="tile">
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
-                        <p class="title has-text-centered is-hoverable is-clickable" onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.ClienteServico.IdCliente, IdLoja = @Model.ClienteServico.IdLoja }))'">
+                        <p class="title has-text-centered is-hoverable is-clickable"
+                            onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.ClienteServico.IdCliente, IdLoja = @Model.ClienteServico.IdLoja }))'">
                             <span class="icon mr-3">
                                 <i class="fas fa-eye"></i>
                             </span>
@@ -94,88 +95,100 @@
                             </div>
                         </div>
                         <div class="column is-2 my-auto">
-                                <div class="field">
+                            <div class="field">
                                 <label class="switch is-rounded">
-                                    <input id="AssistenciaRemota" type="checkbox" name="AssistenciaRemota" disabled checked="@(Model.AssistenciaRemota)">
+                                    <input id="AssistenciaRemota" type="checkbox" name="AssistenciaRemota" disabled
+                                        checked="@(Model.AssistenciaRemota)">
                                     <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model => model.AssistenciaRemota)</span>
+                                    <span class="control-label">@Html.DisplayNameFor(model =>
+                                        model.AssistenciaRemota)</span>
                                 </label>
-                                </div>
+                            </div>
                         </div>
-                            @if (Model.IntervencaosServico.Count == 0)
-                            {
-                                
-                                <div class="column is-12">
-                                    <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas intervenções!</button>
-                                </div>
-                            }
-                            else
-                            {
-                                
+                        @if (Model.IntervencaosServico.Count == 0)
+                        {
+
+                            <div class="column is-12">
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                    encontradas intervenções!</button>
+                            </div>
+                        }
+                        else
+                        {
+
                             <div class="column is-12">
                                 <label class="label">Intervenções</label>
                                 <div class="b-table">
-                                <div class="table-wrapper has-mobile-cards"> 
-                                <table class="table is-hoverable is-fullwidth" id="tblIntervencao">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().DataServiço)
-                                            </th>
-                                            <th>
-                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraInicio)
-                                            </th>
-                                            <th>
-                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraFim)
-                                            </th>
-                                            <th>
-                                                @Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)
-                                            </th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in Model.IntervencaosServico)
-                                        {
-                                            <tr id="row_@item.IdIntervencao">
-                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().DataServiço)">
-                                                    <span>@item.DataServiço.ToString("dd-MM-yyyy")</span>
-                                                </td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraInicio)">
-                                                    <span>@item.HoraInicio.ToString("HH:mm")</span>
-                                                </td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraFim)">
-                                                    <span>@item.HoraFim.ToString("HH:mm")</span>
-                                                </td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)">
-                                                    <span>@item.NomeTecnico</span>
-                                                </td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
+                                    <div class="table-wrapper has-mobile-cards">
+                                        <table class="table is-hoverable is-fullwidth" id="tblIntervencao">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model =>
+                                                    model.IntervencaosServico.FirstOrDefault().DataServiço)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model =>
+                                                    model.IntervencaosServico.FirstOrDefault().HoraInicio)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model =>
+                                                    model.IntervencaosServico.FirstOrDefault().HoraFim)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model =>
+                                                    model.IntervencaosServico.FirstOrDefault().NomeTecnico)
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.IntervencaosServico)
+                                                {
+                                                    <tr id="row_@item.StampIntervencao">
+                                                        <td
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().DataServiço)">
+                                                            <span>@item.DataServiço.ToString("dd-MM-yyyy")</span>
+                                                        </td>
+                                                        <td
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraInicio)">
+                                                            <span>@item.HoraInicio.ToString("HH:mm")</span>
+                                                        </td>
+                                                        <td
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraFim)">
+                                                            <span>@item.HoraFim.ToString("HH:mm")</span>
+                                                        </td>
+                                                        <td
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)">
+                                                            <span>@item.NomeTecnico</span>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                </div>
-                            
-                        </div>
-                        <div class="column is-12">
-                            <div class="field">
-                                <label asp-for="RelatorioServico" class="label"></label>
-                                <div class="control">
-                                    <textarea class="textarea" readonly rows="10" asp-for="RelatorioServico"></textarea>
+
+                            </div>
+                            <div class="column is-12">
+                                <div class="field">
+                                    <label asp-for="RelatorioServico" class="label"></label>
+                                    <div class="control">
+                                        <textarea class="textarea" readonly rows="10" asp-for="RelatorioServico"></textarea>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="column is-12">
-                            <div class="field">
-                                <label asp-for="SituacoesPendentes" class="label"></label>
-                                <div class="control">
-                                    <textarea class="textarea" readonly rows="5" asp-for="SituacoesPendentes"></textarea>
+                            <div class="column is-12">
+                                <div class="field">
+                                    <label asp-for="SituacoesPendentes" class="label"></label>
+                                    <div class="control">
+                                        <textarea class="textarea" readonly rows="5"
+                                        asp-for="SituacoesPendentes"></textarea>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         }
                     </div>
                 </li>
@@ -260,10 +273,12 @@
                                 <div class="control">
                                     <div class="field has-addons">
                                         <div class="control" style="width:100%">
-                                            <input asp-for="EquipamentoServico.NumeroSerieEquipamento" id="NumeroSerieEquipamento" class="input" readonly />
+                                            <input asp-for="EquipamentoServico.NumeroSerieEquipamento"
+                                                id="NumeroSerieEquipamento" class="input" readonly />
                                         </div>
                                         <div class="control">
-                                            <button type="button" class="button is-info" onclick="ObterHistoricoEquipamento()">
+                                            <button type="button" class="button is-info"
+                                                onclick="ObterHistoricoEquipamento()">
                                                 <span class="icon">
                                                     <i class="fas fa-history"></i>
                                                 </span>
@@ -305,48 +320,55 @@
                         <div class="column is-12">
                             @if (Model.PecasServico.Count == 0)
                             {
-                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas peças aplicadas!</button>
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                    encontradas peças aplicadas!</button>
                             }
                             else
                             {
                                 <label class="label">Peças Aplicadas</label>
                                 <div class="b-table">
-                                <div class="table-wrapper has-mobile-cards"> 
-                                <table class="table is-hoverable is-fullwidth" id="tblPecas">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                @Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Ref_Produto)
-                                            </th>
-                                            <th>
-                                                @Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Designacao_Produto)
-                                            </th>
-                                            <th>
-                                                @Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Stock_Fisico)
-                                            </th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in Model.PecasServico)
-                                        {
-                                            <tr id="linha_@item.Ref_Produto">
-                                                <td data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Ref_Produto)">
-                                                    <span>@item.Ref_Produto</span>
-                                                </td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Designacao_Produto)">
-                                                    <span>@item.Designacao_Produto</span>
-                                                </td>
-                                                <td data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Stock_Fisico)">
-                                                    <span>@item.Stock_Fisico</span>
-                                                </td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                                </div>
+                                    <div class="table-wrapper has-mobile-cards">
+                                        <table class="table is-hoverable is-fullwidth" id="tblPecas">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model =>
+                                                    model.PecasServico.FirstOrDefault().Ref_Produto)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model =>
+                                                    model.PecasServico.FirstOrDefault().Designacao_Produto)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model =>
+                                                    model.PecasServico.FirstOrDefault().Stock_Fisico)
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.PecasServico)
+                                                {
+                                                    <tr id="linha_@item.Ref_Produto">
+                                                        <td
+                                                    data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Ref_Produto)">
+                                                            <span>@item.Ref_Produto</span>
+                                                        </td>
+                                                        <td
+                                                    data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Designacao_Produto)">
+                                                            <span>@item.Designacao_Produto</span>
+                                                        </td>
+                                                        <td
+                                                    data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Stock_Fisico)">
+                                                            <span>@item.Stock_Fisico</span>
+                                                        </td>
+                                                        <td>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -388,19 +410,19 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
 
 <script>
 
     function ObterHistoricoEquipamento() {
-        var NumeroSerie = document.getElementById("NumeroSerieEquipamento").value;
+        var Stamp = '@Model.EquipamentoServico.EquipamentoStamp';
 
         $.ajax({
-            url: "/FolhasObra/ObterHistorico",
+            url: "/Equipamentos/ObterHistorico",
             type: "GET",
-            data: "NumeroSerieEquipamento=" + NumeroSerie,
+            data: "id=" + Stamp,
             dataType: "json", // type of data you're expecting from response
             success: function (json) {
                 var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
@@ -437,7 +459,7 @@
                     var modal = Bulma('#modalObterHistoricoVazio').modal();
                     modal.open();
                 };
-                
+
             },
             error: function (error) { }
         });

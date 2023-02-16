@@ -46,14 +46,27 @@ namespace FT_Management.Controllers
 
             return View(new Marcacao());
         }
+        [Authorize(Roles = "Admin")]
+        public ActionResult Iniciar(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            Marcacao m = phccontext.ObterMarcacao(id);
+            m.EstadoMarcacaoDesc = "Em Curso";
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            phccontext.AtualizaMarcacao(m);
+
+            return Content("1");
+        }
 
         [Authorize(Roles = "Admin, Escritorio")]
         [HttpPost]
-        public ActionResult ValidarMarcacao(Marcacao m)
+        public JsonResult ValidarMarcacao(Marcacao m)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            return Content(phccontext.ValidarMarcacao(m));
+            return Json(phccontext.ValidarMarcacao(m));
         }
 
         public List<int> ObterPercentagemTecnico(int id)
@@ -70,27 +83,30 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            if (m.LstTecnicosSelect.Count() == 0)
-            {
-                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
-            }
-            else
+            if (m.LstTecnicosSelect.Count() > 0)
             {
                 foreach (var item in m.LstTecnicosSelect)
                 {
                     m.LstTecnicos.Add(context.ObterUtilizador(item));
                 }
-                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
                 m.Tecnico = m.LstTecnicos.First();
                 ModelState.Remove("Tecnico.Password");
             }
+            else
+            {
+                m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
+                m.Tecnico = new Utilizador();
+            }
 
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             if (ModelState.IsValid)
             {
+                m.Cliente = phccontext.ObterClienteSimples(m.Cliente.IdCliente, m.Cliente.IdLoja);
                 IdMarcacao = phccontext.CriarMarcacao(m);
-                
-                if (IdMarcacao>0) return RedirectToAction("Editar", "Pedidos", new { id=IdMarcacao});
+
+                if (IdMarcacao > 0) return RedirectToAction("Editar", "Pedidos", new { id = IdMarcacao });
             }
 
             ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
@@ -131,21 +147,21 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            if (m.LstTecnicosSelect.Count() == 0)
-            {
-                ModelState.AddModelError("", "Tem de selecionar pelo menos um técnico!");
-            }
-            else
+            if (m.LstTecnicosSelect.Count() > 0)
             {
                 foreach (var item in m.LstTecnicosSelect)
                 {
                     m.LstTecnicos.Add(context.ObterUtilizador(item));
                 }
-                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 m.Tecnico = m.LstTecnicos.First();
                 ModelState.Remove("Tecnico.Password");
             }
-
+            else
+            {
+                m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
+                m.Tecnico = new Utilizador();
+            }
+            m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             if (m.DatasAdicionais == null) ModelState.AddModelError("", "Tem de adicionar pelo menos uma data!");
 
 
@@ -186,11 +202,13 @@ namespace FT_Management.Controllers
 
             bool res = phccontext.CriarComentarioMarcacao(c);
 
-            if (fechar == 1) {
+            if (fechar == 1)
+            {
                 m.JustificacaoFecho = comentario;
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
                 phccontext.AtualizaMarcacao(m);
+                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoResolvidaPD(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
             }
 
             return Json(new { json = res });
@@ -198,32 +216,32 @@ namespace FT_Management.Controllers
 
         [HttpPost]
         public JsonResult AdicionarAnexo(int id, IFormFile file)
-         {
+        {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             //foreach (IFormFile file in files)
             //{
             if (file.Length > 0)
+            {
+                Anexo a = new Anexo()
                 {
-                    Anexo a = new Anexo()
-                    {
-                        MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
-                        IdMarcacao = id,
-                        AnexoMarcacao = true,
-                        NomeUtilizador = this.User.ObterNomeCompleto()
-                    };
-                    a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
+                    MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
+                    IdMarcacao = id,
+                    AnexoMarcacao = true,
+                    NomeUtilizador = this.User.ObterNomeCompleto()
+                };
+                a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
 
-                    string res = phccontext.CriarAnexoMarcacao(a);
-                    if (res.Length == 0) return Json("-1");
-                    if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file))
-                    {
-                        ApagarAnexo(res);
-                        return Json("-1");
-                    }
-
+                string res = phccontext.CriarAnexoMarcacao(a);
+                if (res.Length == 0) return Json("-1");
+                if (!FicheirosContext.CriarAnexoMarcacao(phccontext.ObterAnexo(res), file))
+                {
+                    ApagarAnexo(res);
+                    return Json("-1");
                 }
+
+            }
             //}
 
             return Json("0");
@@ -276,9 +294,9 @@ namespace FT_Management.Controllers
 
             foreach (var item in m.LstTecnicos)
             {
-               if (!MailContext.EnviarEmailMarcacaoTecnico(item.EmailUtilizador, m, item.NomeCompleto)) return Content("Erro");
+                if (!MailContext.EnviarEmailMarcacaoTecnico(item.EmailUtilizador, m, item.NomeCompleto)) return Content("Erro");
             }
-            
+
             return Content("Sucesso");
         }
 
@@ -300,7 +318,7 @@ namespace FT_Management.Controllers
                 Uid = m.IdMarcacao.ToString() + "_Cliente",
                 Description = "Foi agendada uma assistência técnica. Para mais informações contacte: +351 229 479 670 (" + m.Utilizador.NomeCompleto + ")",
                 Location = m.Cliente.MoradaCliente,
-                Contacts = new List<string>() { "+351229479670"},
+                Contacts = new List<string>() { "+351229479670" },
                 //Name = "Assistência Técnica | Food-Tech",
                 Summary = "Food-Tech | Marc. Nº" + m.IdMarcacao + " - Assistência Técnica",
             };
@@ -326,7 +344,7 @@ namespace FT_Management.Controllers
 
             foreach (var item in ListaMarcacoes)
             {
-                url += "/"+item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
+                url += "/" + item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
             }
             //url += "//@";
             return Redirect(new Uri(url).AbsoluteUri);
@@ -348,7 +366,7 @@ namespace FT_Management.Controllers
             Marcacao m = phccontext.ObterMarcacao(id);
 
             string res = "";
-            res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + m.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + m.Cliente.IdCliente+"&IdLoja="+m.Cliente.IdLoja+"'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Cliente</label><div class=\"input-group\"><input type=\"text\" class=\"form-control\" value='" + m.Cliente.NomeCliente + "' readonly><a class=\"btn btn-outline-warning\"  onclick=\"location.href = '/Clientes/Cliente?IdCliente=" + m.Cliente.IdCliente + "&IdLoja=" + m.Cliente.IdLoja + "'\" type=\"button\"><i class=\"fas fa-eye float-left\" style=\"margin-top:5px\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Detalhes</label><textarea type=\"text\" class=\"form-control\" rows=\"12\" readonly>" + m.ResumoMarcacao + "</textarea></div>";
 
             if (m.LstComentarios.Count() > 0)
@@ -404,16 +422,16 @@ namespace FT_Management.Controllers
 
             foreach (Marcacao m in LstMarcacoes)
             {
-                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d= m.DataMarcacao.Add(TimeSpan.FromHours(8));
+                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d = m.DataMarcacao.Add(TimeSpan.FromHours(8));
                 var e = new CalendarEvent
                 {
                     Start = new CalDateTime(d),
                     End = new CalDateTime(d.AddMinutes(30)),
                     LastModified = new CalDateTime(DateTime.Now),
-                    Uid =  m.IdMarcacao.ToString(),
+                    Uid = m.IdMarcacao.ToString(),
                     Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
-                    Summary = (m.EstadoMarcacao == 4 || m.EstadoMarcacao == 9 || m.EstadoMarcacao == 10 ? "✔ " : m.EstadoMarcacao != 1 && m.EstadoMarcacao != 26 ? "⌛ " : m.DataMarcacao < DateTime.Now ? "❌ " : "") + m.Cliente.NomeCliente,
-                    Url = new Uri("http://"+Request.Host+"/Pedidos/Pedido?id=" + m.IdMarcacao + "&IdTecnico=" + context.ObterUtilizador(IdUtilizador).IdPHC),
+                    Summary = m.EmojiEstado + m.Cliente.NomeCliente,
+                    Url = new Uri(m.GetUrl),
                     Location = m.Cliente.MoradaCliente
                 };
                 calendar.Events.Add(e);
@@ -447,8 +465,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (id != 0) id = context.ObterListaUtilizadores(false, false).Where(u => u.IdPHC == id).FirstOrDefault().Id;
 
-            ViewData["zona"] =  zona;
-            ViewData["tipo"] =  tipo;
+            ViewData["zona"] = zona;
+            ViewData["tipo"] = tipo;
 
             List<Zona> LstZonas = context.ObterZonas();
             LstZonas.Insert(0, new Zona() { Id = 0, Valor = "Todos" });
@@ -491,7 +509,8 @@ namespace FT_Management.Controllers
                 m.DataMarcacao = DateTime.Parse(date);
 
             }
-            else if(idTecnico == 0) {
+            else if (idTecnico == 0)
+            {
                 m.EstadoMarcacaoDesc = "Criado";
                 m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
                 m.Tecnico = new Utilizador();
@@ -528,10 +547,14 @@ namespace FT_Management.Controllers
 
         public JsonResult ObterMarcacoes(DateTime start, DateTime end, int id)
         {
-            
+
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            if (id > 0) return new JsonResult(context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList());
+
+            List<CalendarioEvent> LstEventos = context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end.AddDays(-1)).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList();
+            LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end, id), new List<Feriado>()));
+
+            if (id > 0) return new JsonResult(LstEventos);
 
             List<Marcacao> LstMarcacoesCriadas = phccontext.ObterMarcacoesCriadas();
             if (LstMarcacoesCriadas.Count > 0)
@@ -540,7 +563,7 @@ namespace FT_Management.Controllers
                 int nPerDay = LstMarcacoesCriadas.Count() / 6 == 0 ? 1 : LstMarcacoesCriadas.Count() / 6;
                 for (int i = 0; i < 7; i++)
                 {
-                    LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i -  (int) DateTime.Now.DayOfWeek + 1); return c; }).ToList());
+                    LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i - (int)DateTime.Now.DayOfWeek + 1); return c; }).ToList());
                 }
 
                 return new JsonResult(context.ConverterMarcacoesEventos(LstMarcacoesFiltro).ToList());
@@ -563,7 +586,7 @@ namespace FT_Management.Controllers
 
         public ActionResult Index(string numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico, string estado)
         {
-           FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
@@ -609,26 +632,39 @@ namespace FT_Management.Controllers
         {
             if (DataPedidos == null || DataPedidos == string.Empty) DataPedidos = DateTime.Now.ToString("dd-MM-yyyy");
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(int.Parse(IdTecnico), DateTime.Parse(DataPedidos));
-           
+            Utilizador u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == int.Parse(IdTecnico)).DefaultIfEmpty(new Utilizador()).First();
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(u.IdPHC, DateTime.Parse(DataPedidos));
+
             ViewData["DataPedidos"] = DataPedidos;
-            ViewData["IdTecnico"] = IdTecnico;
+            ViewData["IdTecnico"] = u.IdPHC;
+            ViewData["IdArmazem"] = u.IdArmazem;
 
             return View(ListaMarcacoes);
+        }
+
+        public ActionResult Lista()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return RedirectToAction("ListaPedidos", new { IdTecnico = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)).IdPHC });
         }
 
         public ActionResult ListaPedidosPendentes(string IdTecnico)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            Utilizador u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == int.Parse(IdTecnico)).DefaultIfEmpty(new Utilizador()).First();
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoesPendentes(int.Parse(IdTecnico)).OrderBy(m => m.DataMarcacao).ToList();
- 
+
             ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewData["IdTecnico"] = IdTecnico;
-   
+            ViewData["IdTecnico"] = u.IdPHC;
+            ViewData["IdArmazem"] = u.IdArmazem;
+
             return View("ListaPedidos", ListaMarcacoes);
         }
+
 
         public ActionResult Pedido(int id)
         {

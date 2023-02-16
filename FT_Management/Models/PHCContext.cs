@@ -6,7 +6,8 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-
+using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace FT_Management.Models
 {
@@ -30,7 +31,7 @@ namespace FT_Management.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel conectar á BD PHC!\r\n(Exception: "+ex.Message+")");
+                Console.WriteLine("Não foi possivel conectar á BD PHC!\r\n(Exception: " + ex.Message + ")");
             }
         }
         public List<string> ExecutarQuery(string SQL_Query)
@@ -93,12 +94,13 @@ namespace FT_Management.Models
                             Ref_Produto = result["ref"].ToString(),
                             Designacao_Produto = result["design"].ToString(),
                             //Stock_Fisico = double.Parse(result["stock_fis"].ToString()),
-                            Stock_PHC = double.Parse(result["stock"].ToString()),
-                            Stock_Rec = double.Parse(result["qttrec"].ToString()),
-                            Stock_Res = double.Parse(result["rescli"].ToString()),
-                            Armazem_ID = int.Parse(result["armazem"].ToString()),
+                            Stock_PHC = !string.IsNullOrEmpty(result["stock"].ToString()) ? double.Parse(result["stock"].ToString()) : 0,
+                            Stock_Rec = !string.IsNullOrEmpty(result["qttrec"].ToString()) ? double.Parse(result["qttrec"].ToString()) : 0,
+                            Stock_Res = !string.IsNullOrEmpty(result["rescli"].ToString()) ? double.Parse(result["rescli"].ToString()) : 0,
+                            Armazem_ID = !string.IsNullOrEmpty(result["armazem"].ToString()) ? int.Parse(result["armazem"].ToString()) : 0,
                             Pos_Stock = result["u_locpt"].ToString(),
-                            Serie = result["noserie"].ToString() == "True"
+                            Serie = result["noserie"].ToString() == "True",
+                            Valor = !string.IsNullOrEmpty(result["epv1"].ToString()) ? double.Parse(result["epv1"].ToString()) : 0,
                         });
                         //LstProdutos.Last().ImgProduto = ObterProdutoImagem(LstProdutos.Last());
                     }
@@ -114,25 +116,89 @@ namespace FT_Management.Models
 
             return LstProdutos;
         }
-        public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem)
+        public Produto ObterProduto(string Referencia)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%"+Referencia+"%' AND st.design like '%"+Designacao+"%' AND sa.armazem='"+IdArmazem+"' order by sa.ref;");
+            return ObterProdutos("SELECT ststamp, st.ref, st.design, st.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM st left outer join sa on sa.ref=st.ref inner join stobs on st.ref=stobs.ref where st.ref like '%" + Referencia + "%' order by st.ref;").DefaultIfEmpty(new Produto()).First();
         }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor, string TipoEquipamento)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%"+TipoEquipamento+ "%' AND st.inactivo=0 order by sa.ref;");
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%" + TipoEquipamento + "%' AND st.inactivo=0 order by sa.ref;");
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' order by sa.armazem;");
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '" + Referencia + "' order by sa.armazem;");
         }
         public Produto ObterProdutoStamp(string Stamp)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where ststamp like '%" + Stamp + "%' order by sa.armazem;").DefaultIfEmpty(new Produto()).First();
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where ststamp like '%" + Stamp + "%' order by sa.armazem;").DefaultIfEmpty(new Produto()).First();
         }
         public List<Produto> ObterProdutosArmazem(int Armazem)
         {
-            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
+            return ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0).ToList();
+        }
+        public Produto ObterProduto(string Referencia, int IdArmazem)
+        {
+            List<Produto> p = ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
+            if (p.Count > 0)
+            {
+                p[0].ImgProduto = ObterProdutoImagem(p[0]);
+                return p[0];
+            }
+            return new Produto();
+        }
+        private string ObterProdutoImagem(Produto p)
+        {
+            string res = ""; string img = FicheirosContext.ObterCaminhoProdutoImagem(p.Ref_Produto);
+            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
+            using (Image image = Image.FromFile(img))
+            {
+                using MemoryStream m = new MemoryStream();
+                image.Save(m, image.RawFormat);
+                byte[] imageBytes = m.ToArray();
+
+                // Convert byte[] to Base64 String
+                string base64String = Convert.ToBase64String(imageBytes);
+                res = base64String;
+            }
+            return res;
+        }
+
+        public List<string> GerarGuiaGlobal(int IdArmazem)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_Guia_Global_Gera", conn)
+                {
+                    CommandTimeout = 120,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@ARMAZEM", IdArmazem));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                if (result.HasRows)
+                {
+                    res[0] = result[0].ToString();
+                    res[1] = result[1].ToString();
+                    res[2] = result[2].ToString();
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel gerar a guia global no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
         }
 
         private List<Armazem> ObterArmazens(string SQL_Query)
@@ -186,7 +252,7 @@ namespace FT_Management.Models
         }
         public Armazem ObterArmazem(string stamp)
         {
-            return ObterArmazens("select * from sz where szstamp='"+stamp+"' order by no;").FirstOrDefault() ?? new Armazem();
+            return ObterArmazens("select * from sz where szstamp='" + stamp + "' order by no;").FirstOrDefault() ?? new Armazem();
         }
         public Armazem ObterArmazem(int num)
         {
@@ -235,32 +301,7 @@ namespace FT_Management.Models
 
             return LstGuias;
         }
-        public Produto ObterProduto(string Referencia, int IdArmazem)
-        {
-            List<Produto> p = ObterProdutos("SELECT ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref='" + Referencia + "' AND sa.armazem='" + IdArmazem + "' order by sa.ref;");
-            if (p.Count > 0)
-            {
-                p[0].ImgProduto = ObterProdutoImagem(p[0]);
-                return p[0];
-            }
-            return new Produto();
-        }
-        private string ObterProdutoImagem(Produto p)
-        {
-            string res = ""; string img = FicheirosContext.ObterCaminhoProdutoImagem(p.Ref_Produto);
-            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
-            using (Image image = Image.FromFile(img))
-            {
-                using MemoryStream m = new MemoryStream();
-                image.Save(m, image.RawFormat);
-                byte[] imageBytes = m.ToArray();
 
-                // Convert byte[] to Base64 String
-                string base64String = Convert.ToBase64String(imageBytes);
-                res = base64String;
-            }
-            return res;
-        }
         #endregion
 
         //Obter Clientes
@@ -270,7 +311,7 @@ namespace FT_Management.Models
 
             List<Cliente> LstClientes = new List<Cliente>();
             List<Cliente> LstClientesMySQL = FT_ManagementContext.ObterClientes();
-
+            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaComerciais(true);
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -297,6 +338,7 @@ namespace FT_Management.Models
                             MoradaCliente = result["endereco"].ToString().Trim(),
                             EmailCliente = result["emailfo"].ToString().Trim(),
                             IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
+                            Vendedor = LstUtilizadores.Where(v => v.IdPHC == int.Parse(result["vendedor"].ToString().Trim())).DefaultIfEmpty(new Utilizador()).First(),
                             TipoCliente = result["tipo"].ToString().Trim()
                         });
                         if (LoadMarcacoes) LstClientes.Last().Marcacoes = ObterMarcacoes(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
@@ -324,8 +366,8 @@ namespace FT_Management.Models
         }
         private Cliente ObterCliente(string SQL_Query, bool LoadAll)
         {
-           return ObterClientes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Cliente()).First();
-           // return FT_ManagementContext.ObterCliente(c);
+            return ObterClientes(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new Cliente()).First();
+            // return FT_ManagementContext.ObterCliente(c);
         }
         public List<Cliente> ObterClientes()
         {
@@ -335,14 +377,19 @@ namespace FT_Management.Models
         {
             if (filtrar)
             {
-                return ObterClientes("SELECT cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, (select TOP 1 emailfo from u_clresp where cl.clstamp=u_clresp.clstamp) as emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl where cl.nome like '%" + filtro+"%' and no is not null order by no, estab;", false, false, false, false);
+                return ObterClientes("SELECT cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, (select TOP 1 emailfo from u_clresp where cl.clstamp=u_clresp.clstamp) as emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl where cl.nome like '%" + filtro + "%' and no is not null order by no, estab;", false, false, false, false);
             }
             return new List<Cliente>() { new Cliente() { } };
         }
         public Cliente ObterCliente(int IdCliente, int IdLoja)
         {
             return ObterCliente("SELECT cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and estab=" + IdLoja + " and no is not null;", true);
-           
+
+        }
+        public Cliente ObterClienteSimples(string STAMP)
+        {
+            return ObterCliente("SELECT cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.clstamp='" + STAMP + "' and no is not null;", false);
+
         }
         public Cliente ObterClienteSimples(int IdCliente, int IdLoja)
         {
@@ -361,30 +408,30 @@ namespace FT_Management.Models
 
             List<Vendedor> LstVendedor = new List<Vendedor>();
 
-                try
-                {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand("SELECT vendedor, vendnm FROM cl where cl.usrdata>='" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' GROUP BY vendedor, vendnm order by vendedor;", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstVendedor.Add(new Vendedor()
                         {
-                            LstVendedor.Add(new Vendedor()
-                            {
-                                IdVendedor = int.Parse(result["vendedor"].ToString()),
-                                NomeVendedor = result["vendnm"].ToString()
-                            });
-                        }
+                            IdVendedor = int.Parse(result["vendedor"].ToString()),
+                            NomeVendedor = result["vendnm"].ToString()
+                        });
                     }
-
-                    conn.Close();
                 }
+
+                conn.Close();
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler os vendedores do PHC!\r\n(Exception: " + ex.Message + ")");
@@ -401,38 +448,38 @@ namespace FT_Management.Models
 
             List<Fornecedor> LstFornecedor = new List<Fornecedor>();
 
-                try
-                {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstFornecedor.Add(new Fornecedor()
                         {
-                            LstFornecedor.Add(new Fornecedor()
-                            {
-                                StampFornecedor = result["flstamp"].ToString(),
-                                IdFornecedor = int.Parse(result["no"].ToString()),
-                                NomeFornecedor = result["nome"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
-                                MoradaFornecedor = result["MoradaFornecedor"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
-                                ContactoFornecedor = result["telefone"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
-                                EmailFornecedor = result["email"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
-                                PessoaContactoFornecedor = result["contacto"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
-                                Obs = result["obs"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
-                                CodigoIntermedio = result["u_numfart"].ToString(),
-                                ReferenciaFornecedor = "N/D"
-                            });
-                        }
+                            StampFornecedor = result["flstamp"].ToString(),
+                            IdFornecedor = int.Parse(result["no"].ToString()),
+                            NomeFornecedor = result["nome"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            MoradaFornecedor = result["MoradaFornecedor"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            ContactoFornecedor = result["telefone"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            EmailFornecedor = result["email"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            PessoaContactoFornecedor = result["contacto"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            Obs = result["obs"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            CodigoIntermedio = result["u_numfart"].ToString(),
+                            ReferenciaFornecedor = "N/D"
+                        });
                     }
-
-                    conn.Close();
                 }
+
+                conn.Close();
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler os Fornecedores do PHC!\r\n(Exception: " + ex.Message + ")");
@@ -476,42 +523,54 @@ namespace FT_Management.Models
 
         //Obter Equipamentos
         #region EQUIPAMENTOS
-        private List<Equipamento> ObterEquipamentos(string SQL_Query)
+        private List<Equipamento> ObterEquipamentos(string SQL_Query, bool LoadCliente, bool LoadFolhasObra)
         {
 
             List<Equipamento> LstEquipamento = new List<Equipamento>();
 
             try
             {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstEquipamento.Add(new Equipamento()
                         {
-                            LstEquipamento.Add(new Equipamento()
-                            {
-                                IdEquipamento = result["mastamp"].ToString().Trim(),
-                                DesignacaoEquipamento = result["design"].ToString().Trim(),
-                                MarcaEquipamento = result["marca"].ToString().Trim(),
-                                ModeloEquipamento = result["maquina"].ToString().Trim(),
-                                NumeroSerieEquipamento = result["serie"].ToString().Trim().Replace('\\', ' '),
-                                RefProduto = result["ref"].ToString().Trim(),
-                                IdCliente = int.Parse(result["no"].ToString()),
-                                IdLoja = int.Parse(result["estab"].ToString()),
-                                IdFornecedor = int.Parse(result["flno"].ToString())
+                            EquipamentoStamp = result["mastamp"].ToString().Trim(),
+                            DesignacaoEquipamento = result["design"].ToString().Trim(),
+                            MarcaEquipamento = result["marca"].ToString().Trim(),
+                            ModeloEquipamento = result["maquina"].ToString().Trim(),
+                            NumeroSerieEquipamento = result["serie"].ToString().Trim().Replace('\\', ' '),
+                            RefProduto = result["ref"].ToString().Trim(),
+                            IdCliente = int.Parse(result["no"].ToString()),
+                            IdLoja = int.Parse(result["estab"].ToString()),
+                            IdFornecedor = int.Parse(result["flno"].ToString()),
+                            UltimoTecnico = !result.IsDBNull("utecnnm") ? result["utecnnm"].ToString() : "N/D",
+                            DataCompra = DateTime.Parse(result["fldata"].ToString()),
+                            DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
+                            Cliente = new Cliente() { NomeCliente = result["nome"].ToString() }
+                        });
 
-                            });
+                        if (LoadCliente)
+                        {
+                            LstEquipamento.Last().Cliente = ObterClienteSimples(LstEquipamento.Last().IdCliente, LstEquipamento.Last().IdLoja);
+                        }
+                        if (LoadFolhasObra)
+                        {
+                            LstEquipamento.Last().FolhasObra = ObterFolhasObraEquipamento(LstEquipamento.Last().EquipamentoStamp);
                         }
                     }
+                }
 
-                    conn.Close();
+                conn.Close();
             }
             catch (Exception ex)
             {
@@ -522,17 +581,41 @@ namespace FT_Management.Models
         }
         public List<Equipamento> ObterEquipamentos()
         {
-            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma;");
+            return ObterEquipamentos("SELECT * FROM ma;", false, false);
         }
         public List<Equipamento> ObterEquipamentos(Cliente c)
         {
-            return ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where no='" + c.IdCliente + "' and estab='"+c.IdLoja+"';");
+            return ObterEquipamentos("SELECT * FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';", false, false);
+        }
+        public List<Equipamento> ObterEquipamentosSerie(string NumeroSerie)
+        {
+            return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + NumeroSerie + "%';", false, false);
         }
         public Equipamento ObterEquipamento(string IdEquipamento)
         {
-            List<Equipamento> e = ObterEquipamentos("SELECT serie, mastamp, design, marca, maquina, ref, no, estab, flno FROM ma where mastamp='"+ IdEquipamento +"';");
+            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", true, true);
             if (e.Count > 0) return e[0];
             return new Equipamento();
+        }
+        public Equipamento ObterEquipamentoSimples(string IdEquipamento)
+        {
+            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", true, false);
+            if (e.Count > 0) return e[0];
+            return new Equipamento();
+        }
+        public bool AtualizarClienteEquipamento(Cliente c, Equipamento e, Utilizador u)
+        {
+            try
+            {
+                ExecutarQuery("UPDATE MA SET ma.no=cl.no, ma.nome=cl.nome, ma.estab=cl.estab, ma.morada=cl.morada, ma.local=cl.local, ma.codpost=cl.codpost, ma.contacto=cl.contacto, ma.email=cl.email, ma.telefone=cl.telefone, usrinis='" + u.Iniciais + "', usrdata='" + DateTime.Now.ToString("yyyy-MM-dd 00:00:00.000") + "', usrhora='" + DateTime.Now.ToString("HH:mm:ss") + "' FROM MA JOIN CL ON CL.NO=" + c.IdCliente + " AND CL.ESTAB=" + c.IdLoja + " WHERE ma.mastamp='" + e.EquipamentoStamp + "';");
+                FT_ManagementContext.AdicionarLog(u.Id, "Foi atualizado o equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " ao cliente: " + c.NomeCliente + " pelo utilizador " + u.NomeCompleto, 2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel associar o cliente no PHC!\r\n(Exception: " + ex.Message + ")");
+                return false;
+            }
+            return true;
         }
         #endregion
 
@@ -540,33 +623,78 @@ namespace FT_Management.Models
         #region FOLHASOBRA
 
         //EM DESENVOLVIMENTO
-        public int CriarFolhaObra(FolhaObra fo)
+        public List<string> CriarFolhaObra(FolhaObra fo)
         {
-            int res = 0;
+            List<string> res = new List<string>() { "-1", "Erro", "" };
             try
             {
-                //SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                //conn.Open();
+                conn.Open();
 
-                //SqlCommand command = new SqlCommand("Gera_FolhaObra", conn)
-                //{
-                //    CommandTimeout = TIMEOUT,
-                //    CommandType = CommandType.StoredProcedure
-                //};
+                SqlCommand command = new SqlCommand("WEB_PAT_Gera", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                //command.Parameters.Add(new SqlParameter("@NO", fo.ClienteServico.IdCliente));
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@MASTAMP", fo.EquipamentoServico.EquipamentoStamp));
+                command.Parameters.Add(new SqlParameter("@ESTADO", fo.EstadoFolhaObra));
+                command.Parameters.Add(new SqlParameter("@OFICINA", fo.RecolhaOficina));
+                command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
 
-                //using SqlDataReader result = command.ExecuteReader();
-                //result.Read();
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
 
-                //if (result[0].ToString() != "-1")
-                //{
-                //    res = int.Parse(result[3].ToString());
-                //    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + res + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
-                //}
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
 
-                //conn.Close();
+                conn.Close();
+
+                if (res[0].ToString() != "-1")
+                {
+                    fo.StampFO = res[2].ToString();
+
+                    //CRIAR INTERVENÇÔES
+                    for (int i = 0; i < fo.IntervencaosServico.Count(); i++)
+                    {
+                        res = CriarIntervencao(fo.IntervencaosServico[i], fo);
+                        if (res[0].ToString() != "-1")
+                        {
+                            fo.IntervencaosServico[i].StampIntervencao = res[2].ToString();
+
+                            //ASSOCIAR PEÇAS INTERVENÇÃO
+                            if (i == 0)
+                            {
+                                foreach (Produto p in fo.PecasServico)
+                                {
+                                    res = CriarPecaIntervencao(p, fo.IntervencaosServico[i], fo);
+                                    if (res[0] == "-1") return res;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return res;
+                        }
+                    }
+
+
+                    //GERAR AT
+                    res = CriarAT(fo);
+
+                    //Obter Folha de Obra
+                    fo = ObterFolhaObra(fo.StampFO);
+                    res[1] = fo.IdFolhaObra.ToString();
+                    FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + fo.IdFolhaObra.ToString() + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
+                }
+                else
+                {
+                    return res;
+                }
             }
 
             catch (Exception ex)
@@ -576,12 +704,211 @@ namespace FT_Management.Models
 
             return res;
         }
+
+        public List<string> CriarIntervencao(Intervencao i, FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_Intervencao_Gera", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
+                command.Parameters.Add(new SqlParameter("@HORA_INI", i.HoraInicio.ToShortTimeString()));
+                command.Parameters.Add(new SqlParameter("@HORA_FIM", i.HoraFim.ToShortTimeString()));
+                command.Parameters.Add(new SqlParameter("@DATA", i.DataServiço.ToString("yyyyMMdd")));
+                command.Parameters.Add(new SqlParameter("@RELATORIO", i.RelatorioServico));
+                command.Parameters.Add(new SqlParameter("@QASSINOU", fo.ConferidoPor));
+                command.Parameters.Add(new SqlParameter("@TECNICO", i.IdTecnico));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.NomeTecnico));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+
+                return res;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a intervencao para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+        public List<string> CriarPecaIntervencao(Produto p, Intervencao i, FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_AT_INSERE_PECA", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
+                command.Parameters.Add(new SqlParameter("@STAMP_MH", i.StampIntervencao));
+                command.Parameters.Add(new SqlParameter("@REF", p.Ref_Produto));
+                command.Parameters.Add(new SqlParameter("@QTT", p.Stock_Fisico));
+                command.Parameters.Add(new SqlParameter("@SERIE", ""));
+                command.Parameters.Add(new SqlParameter("@TECNICO", i.IdTecnico));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.NomeTecnico));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+
+                return res;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a intervencao para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public string CriarAssinatura(FolhaObra fo)
+        {
+            string res = "";
+            if (string.IsNullOrEmpty(fo.RubricaCliente)) return res;
+            try
+            {
+                byte[] bytes = Convert.FromBase64String(fo.RubricaCliente.Split(",").Last());
+                MemoryStream stream = new MemoryStream(bytes);
+
+                Anexo a = new Anexo()
+                {
+                    MarcacaoStamp = fo.Marcacao.MarcacaoStamp,
+                    IdMarcacao = fo.Marcacao.IdMarcacao,
+                    AnexoAssinatura = true,
+                    NomeUtilizador = fo.Utilizador.NomeCompleto
+                };
+                a.NomeFicheiro = a.ObterNomeUnico() + ".png";
+                IFormFile file = new FormFile(stream, 0, bytes.Length, a.NomeFicheiro.Split(".").First(), a.NomeFicheiro);
+
+
+
+                if (FicheirosContext.CriarAnexoAssinatura(a, file)) res = CriarAnexoMarcacao(a);
+                if (res.Length == 0) return "";
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel a assinatura para a folha de Obra!\r\n(Exception: " + ex.Message + ")");
+            }
+            return res;
+
+        }
+        public List<string> CriarAT(FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_AT_Gera", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
+                command.Parameters.Add(new SqlParameter("@STAMPS_MH", string.Join(",", fo.IntervencaosServico.Select(x => x.StampIntervencao))));
+                command.Parameters.Add(new SqlParameter("@STAMP_ASSINATURA", CriarAssinatura(fo)));
+                command.Parameters.Add(new SqlParameter("@QASSINOU", fo.ConferidoPor));
+                command.Parameters.Add(new SqlParameter("@GARANTIA", fo.EmGarantia ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@INSTALACAO", fo.Instalação ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@OFICINA", fo.RecolhaOficina ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@REMOTO", fo.AssistenciaRemota ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@PIQUETE", fo.Piquete ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@DESLOCACAO", fo.CobrarDeslocacao ? 1 : 0));
+                command.Parameters.Add(new SqlParameter("@OBS", fo.SituacoesPendentes));
+                command.Parameters.Add(new SqlParameter("@DATA", fo.DataServico.ToString("yyyyMMdd")));
+                command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+
+                return res;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return res;
+
+        }
+        public bool FecharFolhaObra(FolhaObra fo)
+        {
+            if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
+            {
+                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+            }
+            else
+            {
+                ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
+            }
+            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0) MailContext.EnviarEmailMarcacaoResolvidaPD(fo, fo.Marcacao);
+            return true;
+        }
+
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
-           
+            if (fo.EquipamentoServico.EquipamentoStamp == null) res += "Não foi selecionado um equipamento!\r\n";
+            if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
+            if (fo.IntervencaosServico.Count() == 0) res += "Não foram adicionadas intervenções!";
+            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
+            if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";
+            if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
+            foreach (Produto item in fo.PecasServico)
+            {
+                Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
+                if (p.Stock_Atual < item.Stock_Fisico) res += "Não tem stock suficiente da seguinte peça: " + p.Ref_Produto.Trim() + "!\r\n";
+            }
+
+            if (!string.IsNullOrEmpty(res)) res += "\r\nDeseja proseguir?";
             return res;
         }
+
+
         private List<FolhaObra> ObterFolhasObra(string SQL_Query, bool LoadEquipamento, bool LoadCliente, bool LoadIntervencoes, bool LoadPecas, bool LoadRubrica)
         {
 
@@ -590,32 +917,36 @@ namespace FT_Management.Models
             try
             {
 
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstFolhaObra.Add(new FolhaObra()
                         {
-                            LstFolhaObra.Add(new FolhaObra()
-                            {
-                                IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
-                                DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
-                                ReferenciaServico = result["u_nincide"].ToString().Trim(),
-                                EstadoEquipamento = result["situacao"].ToString().Trim(),
-                                ConferidoPor = result.IsDBNull("qassinou") ? "" : result["qassinou"].ToString().Trim(),
-                                IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
-                                IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
-                            });
+                            StampFO = result["pastamp"].ToString(),
+                            IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
+                            DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
+                            ReferenciaServico = result["u_nincide"].ToString().Trim(),
+                            EstadoEquipamento = result["situacao"].ToString().Trim(),
+                            ConferidoPor = result.IsDBNull("qassinou") ? "" : result["qassinou"].ToString().Trim(),
+                            IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
+                            IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
+                            RubricaCliente = "",
+                            Utilizador = FT_ManagementContext.ObterListaUtilizadores(true, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First()
+                        });
 
-                        if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamento(result["mastamp"].ToString().Trim());
+                        if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamentoSimples(result["mastamp"].ToString().Trim());
                         if (LoadCliente) LstFolhaObra.Last().ClienteServico = ObterClienteSimples(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()));
-                        if (LoadIntervencoes) {
+                        if (LoadIntervencoes)
+                        {
                             LstFolhaObra.Last().AssistenciaRemota = result.IsDBNull("tipo_int") ? false : result["tipo_int"].ToString() == "3";
                             LstFolhaObra.Last().Piquete = result.IsDBNull("piquete") ? false : result["piquete"].ToString().Trim() == "True";
 
@@ -630,7 +961,8 @@ namespace FT_Management.Models
                             }
 
                         }
-                        if (LoadPecas) {
+                        if (LoadPecas)
+                        {
                             LstFolhaObra.Last().PecasServico = ObterPecas(int.Parse(result["nopat"].ToString().Trim()));
                             LstFolhaObra.Last().GuiaTransporteAtual = LstFolhaObra.Last().PecasServico.Count() == 0 ? "" : (LstFolhaObra.Last().PecasServico.FirstOrDefault(p => p.Pos_Stock.Length > 0)?.Pos_Stock.ToString() ?? "");
                         }
@@ -638,22 +970,24 @@ namespace FT_Management.Models
                         if (LoadRubrica)
                         {
                             string img = ObterRubrica(LstFolhaObra.Last().IdFolhaObra);
-                            if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
-                            using Image image = Image.FromFile(img);
-                            using MemoryStream m = new MemoryStream();
-                            image.Save(m, image.RawFormat);
-                            byte[] imageBytes = m.ToArray();
+                            if (File.Exists(img))
+                            {
+                                using Image image = Image.FromFile(img);
+                                using MemoryStream m = new MemoryStream();
+                                image.Save(m, image.RawFormat);
+                                byte[] imageBytes = m.ToArray();
 
-                            // Convert byte[] to Base64 String
-                            string base64String = Convert.ToBase64String(imageBytes);
-                            LstFolhaObra.Last().RubricaCliente = base64String;
+                                // Convert byte[] to Base64 String
+                                string base64String = Convert.ToBase64String(imageBytes);
+                                LstFolhaObra.Last().RubricaCliente = base64String;
+                            }
 
                             LstFolhaObra.Last().IdAT = result["id_at"].ToString();
                         }
                     }
                 }
 
-                    conn.Close();
+                conn.Close();
             }
             catch (Exception ex)
             {
@@ -664,27 +998,47 @@ namespace FT_Management.Models
         }
         public FolhaObra ObterFolhaObra(string SQL_Query, bool LoadAll)
         {
-                return ObterFolhasObra(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new FolhaObra()).First();
+            return ObterFolhasObra(SQL_Query, LoadAll, LoadAll, LoadAll, LoadAll, LoadAll).DefaultIfEmpty(new FolhaObra()).First();
         }
 
         public List<FolhaObra> ObterFolhasObra(int IdMarcacao)
         {
-            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ") as u_marcacaostamp, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (select '"+IdMarcacao+"' as num) as num from pa where pastamp in (select STAMP_DEST from u_intervencao where u_marcacaostamp = (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao+ ")) order by nopat", true, true, false, false, false);
- 
+            return ObterFolhasObra("select *, (select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ") as u_marcacaostamp, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (select '" + IdMarcacao + "' as num) as num from pa where pastamp in (select STAMP_DEST from u_intervencao where u_marcacaostamp = (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ")) order by nopat", true, true, false, false, false);
+
+        }
+        public List<FolhaObra> ObterFolhasObraEquipamento(string StampEquipamento)
+        {
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.mastamp='" + StampEquipamento + "' order by nopat;", true, true, false, false, false);
+
         }
         public List<FolhaObra> ObterFolhasObra(Cliente c)
         {
-            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.no='" + c.IdCliente+"' and pa.estab='"+c.IdLoja+"' order by nopat;", true, true, false, false, false);
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by nopat;", true, true, false, false, false);
 
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
-            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd")+"' order by nopat;", true, true, true, false, false);
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' order by nopat;", true, true, true, false, false);
+
+        }
+        public List<FolhaObra> ObterFolhasObra(DateTime Data, Cliente c)
+        {
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' and pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by nopat;", true, true, true, false, true);
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
         {
             return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=" + IdFolhaObra + " and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.nopat=" + IdFolhaObra + " order by nopat;", true);
+
+        }
+        public FolhaObra ObterFolhaObra(string STAMP)
+        {
+            return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", true);
+
+        }
+        public FolhaObra ObterFolhaObraSimples(string STAMP)
+        {
+            return ObterFolhaObra("select TOP 1 (select TOP 1 obrano from bo where orinopat=nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", false);
 
         }
 
@@ -697,17 +1051,18 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select u_vestigio from bo where pastamp = (select pastamp from pa where nopat="+IdFolhaObra+");", conn)
+                SqlCommand command = new SqlCommand("select u_vestigio from bo where pastamp = (select pastamp from pa where nopat=" + IdFolhaObra + ");", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     result.Read();
-                    return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
+                    if (result.HasRows) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine("Não foi possivel obter a rubrica!\r\n(Exception: " + ex.Message + ")");
             }
             return "wwwroot/img/no_photo.png";
@@ -720,42 +1075,42 @@ namespace FT_Management.Models
 
             try
             {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstIntervencao.Add(new Intervencao()
                         {
-                            LstIntervencao.Add(new Intervencao()
-                            {
-                                IdIntervencao = int.Parse(result["mhid"].ToString().Trim()),
-                                IdTecnico = int.Parse(result["tecnico"].ToString().Trim()),
-                                IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
-                                NomeTecnico = result["tecnnm"].ToString().Trim(),
-                                RelatorioServico = result["relatorio"].ToString().TrimEnd(),
-                                DataServiço = DateTime.Parse(result["data"].ToString().Trim())
-                            });
+                            StampIntervencao = result["mhstamp"].ToString().Trim(),
+                            IdTecnico = int.Parse(result["tecnico"].ToString().Trim()),
+                            IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
+                            NomeTecnico = result["tecnnm"].ToString().Trim(),
+                            RelatorioServico = result["relatorio"].ToString().TrimEnd(),
+                            DataServiço = DateTime.Parse(result["data"].ToString().Trim())
+                        });
 
-                            DateTime.TryParse(result["hora"].ToString().Trim(), out DateTime horainicio);
-                            LstIntervencao[^1].HoraInicio = horainicio;
-                            DateTime.TryParse(result["horaf"].ToString().Trim(), out DateTime horafim);
-                            LstIntervencao[^1].HoraFim = horafim;
-                        
-                            
-                            //Console.WriteLine(result["nopat"].ToString().Trim());
+                        DateTime.TryParse(result["hora"].ToString().Trim(), out DateTime horainicio);
+                        LstIntervencao[^1].HoraInicio = horainicio;
+                        DateTime.TryParse(result["horaf"].ToString().Trim(), out DateTime horafim);
+                        LstIntervencao[^1].HoraFim = horafim;
 
-                        }
+
+                        //Console.WriteLine(result["nopat"].ToString().Trim());
+
                     }
-
-                    conn.Close();
                 }
-            catch (Exception ex) 
+
+                conn.Close();
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler as intervenções do PHC!\r\n(Exception: " + ex.Message + ")");
             }
@@ -764,11 +1119,11 @@ namespace FT_Management.Models
         }
         public List<Intervencao> ObterIntervencoes(int IdFolhaObra)
         {
-            return ObterIntervencoes("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio from mh where nopat=" + IdFolhaObra + " order by nopat;");
+            return ObterIntervencoes("select nopat, mhstamp, tecnico, tecnnm, data, hora, horaf, relatorio from mh where nopat=" + IdFolhaObra + " order by nopat;");
         }
-        public List<Intervencao> ObterHistorico(string NumeroSerie)
+        public List<Intervencao> ObterHistorico(string stamp)
         {
-            return ObterIntervencoes("select nopat, mhid, tecnico, tecnnm, data, hora, horaf, relatorio, serie from mh where serie='" + NumeroSerie + "' order by data;");
+            return ObterIntervencoes("select nopat, mhstamp, tecnico, tecnnm, data, hora, horaf, relatorio, serie from mh where mastamp='" + stamp + "' order by data;");
         }
 
         private List<Produto> ObterPecas(string SQL_Query)
@@ -778,32 +1133,32 @@ namespace FT_Management.Models
 
             try
             {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstProduto.Add(new Produto()
                         {
-                            LstProduto.Add(new Produto()
-                            {
-                                Armazem_ID = int.Parse(result["nopat"].ToString().Trim()),
-                                Ref_Produto = result["ref"].ToString().Trim(),
-                                Designacao_Produto = result["design"].ToString().Trim(),
-                                TipoUn = "UN",
-                                Pos_Stock = result["guiatransporte"].ToString().Trim(),
-                                Stock_Fisico = double.Parse(result["qtt"].ToString().Trim())
-                            });
-                        }
+                            Armazem_ID = int.Parse(result["nopat"].ToString().Trim()),
+                            Ref_Produto = result["ref"].ToString().Trim(),
+                            Designacao_Produto = result["design"].ToString().Trim(),
+                            TipoUn = "UN",
+                            Pos_Stock = result["guiatransporte"].ToString().Trim(),
+                            Stock_Fisico = double.Parse(result["qtt"].ToString().Trim())
+                        });
                     }
-
-                    conn.Close();
                 }
+
+                conn.Close();
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler as peças usadas pelos PAT's do PHC!\r\n(Exception: " + ex.Message + ")");
@@ -817,11 +1172,11 @@ namespace FT_Management.Models
         }
         public List<Movimentos> ObterPecasGuiaTransporte(string GuiaTransporte, int IdArmazem)
         {
-            return ObterListaMovimentos("select CONCAT(V_DOCS_GLOBAL.obrano, ' - AT ', V_DOCS_GLOBAL.atcodeid) as guiatransporte, * from V_DOCS_GLOBAL, pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!='' and ref not like '%SRV%' and ref not like '%IMO%' and ref not like '%PAT%' and bo.ndos=49 and bi.armazem=" + IdArmazem+" and V_DOCS_GLOBAL.ar2mazem=bi.armazem and V_DOCS_GLOBAL.dataobra<=bi.dataobra and V_DOCS_GLOBAL.obrano like '%"+GuiaTransporte+"%' order by ref;");
+            return ObterListaMovimentos("select CONCAT(V_DOCS_GLOBAL.obrano, ' - AT ', V_DOCS_GLOBAL.atcodeid) as guiatransporte, * from V_DOCS_GLOBAL, pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!='' and ref not like '%SRV%' and ref not like '%IMO%' and ref not like '%PAT%' and bo.ndos=49 and bi.armazem=" + IdArmazem + " and V_DOCS_GLOBAL.ar2mazem=bi.armazem and V_DOCS_GLOBAL.dataobra<=bi.dataobra and V_DOCS_GLOBAL.obrano like '%" + GuiaTransporte + "%' order by ref;");
         }
         public List<String> ObterGuiasTransporte(int IdArmazem)
         {
-            return ExecutarQuery("SELECT obrano from V_DOCS_GLOBAL where ar2mazem = "+IdArmazem+" order by dataobra desc");
+            return ExecutarQuery("SELECT obrano from V_DOCS_GLOBAL where ar2mazem = " + IdArmazem + " order by dataobra desc");
         }
         #endregion
 
@@ -835,7 +1190,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Marcacao", conn)
+                SqlCommand command = new SqlCommand("WEB_Marcacao_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -872,7 +1227,9 @@ namespace FT_Management.Models
                 {
                     m.IdMarcacao = int.Parse(result[3].ToString());
 
-                    ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico) && m.LstTecnicos.Where(t => t.Id == m.Utilizador.Id).Count() == 0) ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaEmail(m.Tecnico)) MailContext.EnviarEmailMarcacaoTecnico(m.Tecnico.EmailUtilizador, m, m.Tecnico.NomeCompleto);
+                    if (NotificacaoContext.NotificacaoClienteIndustrial(m.Cliente) && m.Cliente.Vendedor.Id > 0) MailContext.EnviarEmailMarcacaoCliente(m.Cliente.Vendedor.EmailUtilizador, m, null);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 }
 
@@ -896,7 +1253,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Altera_Marcacao", conn)
+                SqlCommand command = new SqlCommand("WEB_Marcacao_Altera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -926,7 +1283,7 @@ namespace FT_Management.Models
                 command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
                 command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
-                command.Parameters.Add(new SqlParameter("@JUSTFECHO", m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho)); 
+                command.Parameters.Add(new SqlParameter("@JUSTFECHO", m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho));
                 command.Parameters.Add(new SqlParameter("@TECFECHO", m.Utilizador.NomeCompleto));
 
                 using SqlDataReader result = command.ExecuteReader();
@@ -936,7 +1293,7 @@ namespace FT_Management.Models
 
                 if (resp != "-1")
                 {
-                    ChatContext.EnviarNotificacaoAtualizacaoMarcacaoTecnico(m, m.Tecnico);
+                    if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico) && m.LstTecnicos.Where(t => t.Id == m.Utilizador.Id).Count() == 0) ChatContext.EnviarNotificacaoAtualizacaoMarcacaoTecnico(m, m.Tecnico);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                     conn.Close();
                     return true;
@@ -950,32 +1307,81 @@ namespace FT_Management.Models
 
             return false;
         }
-        public string ValidarMarcacao(Marcacao m)
+        public List<string> ValidarMarcacao(Marcacao m)
         {
-            string res = "";
-            //Tem de retornar 1 para poder proceder
-            if (ExecutarQuery("SELECT 'valor' = COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '" + m.Cliente.IdCliente + "' AND bo.estab = '" + m.Cliente.IdLoja + "' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');").First() == "0") res += "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.\r\n";
+            List<string> res = new List<string>() { "0", "", "" };
 
-            //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
-            if (m.Cliente.IdCliente == 878 && String.IsNullOrEmpty(m.QuemPediuNome)) res += "Tem que indicar Quem Pediu!\r\n";
+            //Validacoes Opcionais
 
-            //O cliente não pode ter as marcacoes canceladas
-            if (ExecutarQuery("SELECT U_MARCCANC FROM cl (NOLOCK) WHERE no = '" + m.Cliente.IdCliente + "' AND estab = '" + m.Cliente.IdLoja + "'").First() == "True") res += "O Cliente escolhido na Marcação tem as marcações canceladas. Não pode gravar.\r\n";
+            //Ja existem marcacoes com essa referencia
+            if (m.IdMarcacao == 0)
+            {
+                //Ja existe incedente
+                if (ExecutarQuery("SELECT COUNT(*) FROM U_MARCACAO where nincidente='" + m.Referencia + "'").First() != "0")
+                {
+                    res[1] += "Já existe marcações com o mesmo numero de incidente. Tem a certeza que deseja proseguir?\r\n";
+                }
+            }
 
             //Caso esteja a 0 faz a validação da conta corrente
             if (ExecutarQuery("SELECT u_navdivma FROM CL(Nolock) WHERE cl.no='" + m.Cliente.IdCliente + "' AND cl.estab = 0").First() == "False")
             {
                 //Verificar documentos vencidos
-                if (ExecutarQuery("select 'valor' = COUNT(*) from cc (nolock) left join re (nolock) on cc.restamp = re.restamp where cc.no = " + m.Cliente.IdCliente + " and (case when cc.moeda ='EURO' or cc.moeda=space(11) then abs((cc.edeb-cc.edebf)-(cc.ecred-cc.ecredf)) else abs((cc.debm-cc.debfm)-(cc.credm-cc.credfm)) end) > (case when cc.moeda='EURO' or cc.moeda=space(11) then 0.010000 else 0 end) AND cc.dataven < GETDATE();").First() != "0") res += "O Cliente escolhido na Marcação tem documentos não regularizados vencidos!!! Verifique por favor!\r\n";
+                if (ExecutarQuery("select 'valor' = COUNT(*) from cc (nolock) left join re (nolock) on cc.restamp = re.restamp where cc.no = " + m.Cliente.IdCliente + " and (case when cc.moeda ='EURO' or cc.moeda=space(11) then abs((cc.edeb-cc.edebf)-(cc.ecred-cc.ecredf)) else abs((cc.debm-cc.debfm)-(cc.credm-cc.credfm)) end) > (case when cc.moeda='EURO' or cc.moeda=space(11) then 0.010000 else 0 end) AND cc.dataven < GETDATE();").First() != "0")
+                {
+                    res[1] += "O Cliente escolhido na Marcação tem documentos não regularizados vencidos!!! Verifique por favor!\r\n";
+                }
             }
+
+            //Validar ferias do tecnico
             foreach (var item in m.LstTecnicosSelect)
             {
-                if (FT_ManagementContext.VerificarFeriasUtilizador(item, m.DataMarcacao)) res += "O utilizador, " + FT_ManagementContext.ObterUtilizador(item).NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.\r\n";
+                if (FT_ManagementContext.VerificarFeriasUtilizador(item, m.DataMarcacao))
+                {
+                    res[1] += "O utilizador, " + FT_ManagementContext.ObterUtilizador(item).NomeCompleto + ", encontra-se de férias nesta data! Por favor verifique.\r\n";
+                }
             }
+
+            //Validar dia de feriados
             List<DateTime> LstFeriados = FT_ManagementContext.ObterListaFeriados(m.DataMarcacao.Year.ToString()).Select(f => f.DataFeriado).ToList();
             foreach (var item in m.DatasAdicionaisDistintas)
             {
-                if (LstFeriados.Where(f => f.ToShortDateString() == item.ToShortDateString()).Count() > 0) res += "O seguinte dia: " + item.ToShortDateString() + " é feriado! Por favor verifique.\r\n";
+                if (LstFeriados.Where(f => f.ToShortDateString() == item.ToShortDateString()).Count() > 0)
+                {
+                    res[1] += "O seguinte dia: " + item.ToShortDateString() + " é feriado! Por favor verifique.\r\n";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(res[1]))
+            {
+                res[0] = "1";
+                res[1] += "\r\n";
+            }
+
+            //Validacoes Obrigatorias
+
+            //Tem de retornar 1 para poder proceder
+            if (ExecutarQuery("SELECT 'valor' = COUNT(1) FROM bo (NOLOCK) INNER JOIN bi (NOLOCK) ON bo.bostamp = bi.bostamp WHERE bo.ndos = 45 AND bo.fechada = 0 AND bo.no = '" + m.Cliente.IdCliente + "' AND bo.estab = '" + m.Cliente.IdLoja + "' AND bi.ref IN ('SRV.101', 'SRV.102', 'SRV.103');").First() == "0")
+            {
+                res[2] += "O Cliente escolhido na Marcação não tem uma tabela de preços definida! Por favor defina uma tabela de preços antes da marcação.\r\n";
+            }
+
+            //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
+            if (m.Cliente.IdCliente == 878 && String.IsNullOrEmpty(m.QuemPediuNome))
+            {
+                res[2] += "Tem que indicar Quem Pediu!\r\n";
+            }
+
+            //O cliente não pode ter as marcacoes canceladas
+            if (ExecutarQuery("SELECT U_MARCCANC FROM cl (NOLOCK) WHERE no = '" + m.Cliente.IdCliente + "' AND estab = '" + m.Cliente.IdLoja + "'").First() == "True")
+            {
+                res[2] += "O Cliente escolhido na Marcação tem as marcações canceladas.\r\n";
+            }
+
+            if (!string.IsNullOrEmpty(res[2]))
+            {
+                res[0] = "2";
+                res[2] += "Não pode gravar.";
             }
             return res;
         }
@@ -987,7 +1393,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Anexo", conn)
+                SqlCommand command = new SqlCommand("WEB_Anexo_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1013,7 +1419,8 @@ namespace FT_Management.Models
 
                 if (resp != "-1") return resp;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine("Não foi possivel criar o anexo da marcação do PHC!\r\n(Exception: " + ex.Message + ")");
             }
             return "";
@@ -1026,7 +1433,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Apaga_Anexo", conn)
+                SqlCommand command = new SqlCommand("WEB_Anexo_Apaga", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1042,7 +1449,8 @@ namespace FT_Management.Models
                 if (resp != "-1") return true;
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine("Não foi possivel apagar o anexo da marcação do PHC!\r\n(Exception: " + ex.Message + ")");
             }
             return false;
@@ -1057,14 +1465,14 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from u_anexos_mar where u_marcacaostamp='"+m.MarcacaoStamp+"'", conn)
+                SqlCommand command = new SqlCommand("select * from u_anexos_mar where u_marcacaostamp='" + m.MarcacaoStamp + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using SqlDataReader result = command.ExecuteReader();
                 while (result.Read())
                 {
-                   LstAnexos.Add(new Anexo()
+                    LstAnexos.Add(new Anexo()
                     {
                         AnexoStamp = result["u_anexos_marstamp"].ToString(),
                         MarcacaoStamp = result["u_marcacaostamp"].ToString(),
@@ -1080,7 +1488,7 @@ namespace FT_Management.Models
                         DescricaoFicheiro = result["Titulo"].ToString(),
                         AnexoEmail = result["email"].ToString() == "True"
 
-                   });
+                    });
                 }
                 conn.Close();
             }
@@ -1215,10 +1623,10 @@ namespace FT_Management.Models
 
         private List<Marcacao> ObterMarcacoes(string SQL_Query, bool LoadComentarios, bool LoadCliente, bool LoadTecnico, bool LoadFolhasObra, bool LoadAnexos, bool LoadDossiers)
         {
-            List<Utilizador> LstUtilizadores = FT_ManagementContext.ObterListaUtilizadores(false, false);
+            List<Utilizador> LstUtilizadores = LoadTecnico ? FT_ManagementContext.ObterListaUtilizadores(false, false) : new List<Utilizador>();
             List<EstadoMarcacao> LstEstadoMarcacao = this.ObterMarcacaoEstados();
             List<Marcacao> LstMarcacao = new List<Marcacao>();
-            List<Cliente> LstClientes = this.ObterClientes();
+            List<Cliente> LstClientes = LoadCliente ? this.ObterClientes() : new List<Cliente>();
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -1258,6 +1666,7 @@ namespace FT_Management.Models
                         QuemPediuTelefone = result["resptlm"].ToString(),
                         Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() },
                         Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : "",
+                        Cliente = new Cliente() { NomeCliente = result["nome"].ToString() }
                     });
                     if (LoadCliente) LstMarcacao.Last().Cliente = LstClientes.Where(c => c.IdCliente == int.Parse(result["no"].ToString().Trim())).Where(c => c.IdLoja == int.Parse(result["estab"].ToString().Trim())).DefaultIfEmpty(new Cliente()).First();
                     if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
@@ -1270,7 +1679,7 @@ namespace FT_Management.Models
                         {
                             foreach (var item in result["LstTecnicos"].ToString().Split(";"))
                             {
-                               if (!string.IsNullOrEmpty(item)) LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
+                                if (!string.IsNullOrEmpty(item)) LstMarcacao.Last().LstTecnicos.Add(LstUtilizadores.Where(u => u.IdPHC == int.Parse(item)).FirstOrDefault() ?? new Utilizador());
                             }
                             foreach (var item in LstMarcacao.Last().LstTecnicos)
                             {
@@ -1305,7 +1714,7 @@ namespace FT_Management.Models
             //LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas,  no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and data='" + DataMarcacoes.ToString("yyyy-MM-dd") + "' and estado!='Cancelado' order by num;", true, true, true, false, false, false).AsEnumerable());
             //return LstMarcacoes;
 
-            return ObterMarcacoes("select * from v_marcacoes  where tecnno = "+IdTecnico+" and data = '"+DataMarcacoes.ToString("yyyyMMdd")+"'", true, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            return ObterMarcacoes("select * from v_marcacoes  where tecnno = " + IdTecnico + " and data = '" + DataMarcacoes.ToString("yyyyMMdd") + "'", true, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoes(int numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico, string estado)
         {
@@ -1316,7 +1725,7 @@ namespace FT_Management.Models
 
             string SQL_Query = "select TOP 200 * from v_marcacoes where ";
             SQL_Query += (numMarcacao > 0 ? "num like '%" + numMarcacao + "%' and " : "");
-            SQL_Query += (idtecnico > 0 ? "tecnno like '%" + idtecnico + "%' and " : "");
+            SQL_Query += (idtecnico > 0 ? "tecnno=" + idtecnico + " and " : "");
             SQL_Query += (nomeCliente != "" ? "nome like '%" + nomeCliente + "%' and " : "");
             SQL_Query += (referencia != "" ? "nincidente like '%" + referencia + "%' and " : "");
             SQL_Query += (tipoe != "" ? "tipoe like '%" + tipoe + "%' and " : "");
@@ -1328,7 +1737,7 @@ namespace FT_Management.Models
         }
         public List<Marcacao> ObterMarcacoes(DateTime DataInicio, DateTime DataFim)
         {
-            
+
             //List <Marcacao> LstMarcacoes = (ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, u_mtecnicos.tecnno, no, estab, tipos, tipoe, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis , resumo FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 WHERE data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "';", false, true, true, false, false, false));
             //LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, u_mdatas.data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, u_mtecnicos.tecnno,  u_marcacao.u_marcacaostamp, no, estab, tipos, tipoe, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_mtecnicos.tecnnm, nome, estado, hora, u_mdatas.periodo, prioridade, u_marcacao.ousrdata, u_marcacao.ousrhora, resumo, u_marcacao.ousrinis   FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp WHERE u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' ;", false, true, true, false, false, false).AsEnumerable());
             //return LstMarcacoes;
@@ -1340,7 +1749,7 @@ namespace FT_Management.Models
             //List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, u_mdatas.data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, u_mdatas.periodo, prioridade, u_marcacao.u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 inner join u_mdatas on u_mdatas.u_marcacaostamp=u_marcacao.u_marcacaostamp  WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and  u_mdatas.data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND u_mdatas.data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by u_mdatas.data;", false, true, true, false, false, false);
             //LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, u_marcacao.ousrdata, hora, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' and  data>='" + DataInicio.ToString("yyyy-MM-dd") + "'  AND data<='" + DataFim.ToString("yyyy-MM-dd") + "' order by data;", false, true, true, false, false, false).AsEnumerable());
             //return LstMarcacoes;
-            return ObterMarcacoes("select * from v_marcacoes where tecnno="+IdTecnico+" and data between '" + DataInicio.ToString("yyyyMMdd") + "' and '" + DataFim.ToString("yyyyMMdd") + "'", false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            return ObterMarcacoes("select * from v_marcacoes where tecnno=" + IdTecnico + " and data between '" + DataInicio.ToString("yyyyMMdd") + "' and '" + DataFim.ToString("yyyyMMdd") + "'", false, false, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoes(Cliente c)
         {
@@ -1348,7 +1757,7 @@ namespace FT_Management.Models
             //LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE no='" + c.IdCliente + "' and estab='" + c.IdLoja + "' order by data;", true, true, true, true, false, false).AsEnumerable());
             //return LstMarcacoes;
 
-            return ObterMarcacoes("select * from v_marcacoes where no="+c.IdCliente+" and estab="+c.IdLoja, true, true, true, true, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            return ObterMarcacoes("select * from v_marcacoes where no=" + c.IdCliente + " and estab=" + c.IdLoja, true, true, true, true, false, false).OrderBy(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoesPendentes()
         {
@@ -1371,7 +1780,7 @@ namespace FT_Management.Models
             //List<Marcacao> LstMarcacoes = ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao full outer join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE estado not in ('AT Validada', 'Aguarda Ped. Compra') order by estado;", false, false, false, false, false, false);
             //return LstMarcacoes;
 
-            return ObterMarcacoes("select * from v_marcacoes WHERE estado='Criado';", false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            return ObterMarcacoes("select * from v_marcacoes WHERE estado in ('Criado', 'Rececionado', 'Agendado') AND tecnno is null;", false, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
 
         }
         public List<Marcacao> ObterMarcacoesPendentes(int IdTecnico)
@@ -1380,7 +1789,7 @@ namespace FT_Management.Models
             //LstMarcacoes.AddRange(ObterMarcacoes("SELECT num, data, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, estab, u_mtecnicos.tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, u_marcacao.ousrdata, u_marcacao.ousrhora, u_marcacao.ousrinis  FROM u_marcacao inner join u_mtecnicos on u_mtecnicos.marcacaostamp = u_marcacao.u_marcacaostamp and u_mtecnicos.marcado=1 WHERE u_mtecnicos.tecnno='" + IdTecnico + "' AND estado not in ('Finalizado', 'Cancelado', 'AT Validada', 'Aguarda Ped. Compra') order by data;", true, true, true, false, false, false).AsEnumerable());
             //return LstMarcacoes;
 
-            return ObterMarcacoes("select * from v_marcacoes WHERE tecnno='" + IdTecnico + "' AND estado not in ('Finalizado', 'Cancelado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '"+DateTime.Now.ToString("yyyy-MM-dd")+"';", true, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+            return ObterMarcacoes("select * from v_marcacoes WHERE tecnno='" + IdTecnico + "' AND estado not in ('Finalizado', 'Cancelado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';", true, true, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoes()
         {
@@ -1395,6 +1804,16 @@ namespace FT_Management.Models
             //return ObterMarcacao("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora, u_marcacao.ousrinis  FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
             return ObterMarcacao("select * from v_marcacoes where num=" + IdMarcacao + "", true);
         }
+        public Marcacao ObterMarcacao(string Stamp)
+        {
+            //return ObterMarcacao("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora, u_marcacao.ousrinis  FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
+            return ObterMarcacao("select * from v_marcacoes where u_marcacaostamp='" + Stamp + "'", true);
+        }
+        public Marcacao ObterMarcacaoSimples(string Stamp)
+        {
+            //return ObterMarcacao("SELECT num, data, (select string_agg(CONVERT(VARCHAR(10),data,120), '|') from u_mdatas where u_mdatas.u_marcacaostamp = u_marcacao.u_marcacaostamp) as u_mdatas, no, (SELECT TOP 1 SUBSTRING((SELECT ';'+u_mtecnicos.tecnno  AS [text()] FROM u_mtecnicos WHERE u_mtecnicos.marcacaostamp=u_marcacao.u_marcacaostamp and marcado=1 ORDER BY tecnno FOR XML PATH (''), TYPE).value('text()[1]','nvarchar(max)'), 2, 1000)FROM u_mtecnicos) as LstTecnicos, estab, tecnno, tipoe, tipos, resumo, estado, periodo, prioridade, u_marcacaostamp, oficina, piquete, nincidente, datapedido, tipopedido, qpediu, respemail, resptlm, hora, ousrdata, ousrhora, u_marcacao.ousrinis  FROM u_marcacao where num='" + IdMarcacao + "' order by num;", true);
+            return ObterMarcacao("select * from v_marcacoes where u_marcacaostamp='" + Stamp + "'", false);
+        }
         public List<int> ObterPercentagemMarcacoes(int IdTecnico)
         {
             List<int> res = new List<int>();
@@ -1403,7 +1822,7 @@ namespace FT_Management.Models
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
                 conn.Open();
-                SqlCommand command = new SqlCommand("select Count(*) as Total from V_Marcacoes where tecnno = '" + IdTecnico + "' union all select Count(*) as Completas  from V_Marcacoes where tecnno = '" + IdTecnico+"' and estado not like 'Agendado'", conn)
+                SqlCommand command = new SqlCommand("select Count(*) as Total from V_Marcacoes where tecnno = '" + IdTecnico + "' union all select Count(*) as Completas  from V_Marcacoes where tecnno = '" + IdTecnico + "' and estado not like 'Agendado'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -1448,7 +1867,8 @@ namespace FT_Management.Models
                         CriadoPor = string.IsNullOrEmpty(result["inome"].ToString()) ? result["tabela1"].ToString() : result["inome"].ToString(),
                         Id = result["obrano"].ToString(),
                         Data = DateTime.Parse(DateTime.Parse(result["dataobra"].ToString()).ToShortDateString() + " " + result["hora"].ToString()),
-                        Tipo = int.Parse(result["ndos"].ToString())
+                        Tipo = int.Parse(result["ndos"].ToString()),
+                        StampAtividade = result["bostamp"].ToString()
                     });
                 }
 
@@ -1508,28 +1928,28 @@ namespace FT_Management.Models
 
             try
             {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
-                    SqlCommand command = new SqlCommand(SQL_Query, conn);
-                    int i = 1;
-                    command.CommandTimeout = TIMEOUT;
-                    using (SqlDataReader result = command.ExecuteReader())
+                SqlCommand command = new SqlCommand(SQL_Query, conn);
+                int i = 1;
+                command.CommandTimeout = TIMEOUT;
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstEstadoMarcacao.Add(new EstadoMarcacao()
                         {
-                            LstEstadoMarcacao.Add(new EstadoMarcacao()
-                            {
-                                IdEstado = int.Parse(result["id"].ToString().Trim()),
-                                EstadoMarcacaoDesc = result["estado"].ToString().Trim()
-                            });
-                            i++;
-                        }
+                            IdEstado = int.Parse(result["id"].ToString().Trim()),
+                            EstadoMarcacaoDesc = result["estado"].ToString().Trim()
+                        });
+                        i++;
                     }
-
-                    conn.Close();
                 }
+
+                conn.Close();
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler os Estados do PHC!\r\n(Exception: " + ex.Message + ")");
@@ -1547,7 +1967,8 @@ namespace FT_Management.Models
             return e.Where(e => e.EstadoMarcacaoDesc == Estado).FirstOrDefault();
         }
 
-        public List<String> ObterTipoEquipamento() {
+        public List<String> ObterTipoEquipamento()
+        {
 
             List<String> res = new List<String>();
 
@@ -1692,17 +2113,11 @@ namespace FT_Management.Models
 
             return res;
         }
-        public List<String> ObterEstadoFolhaObra()
+        public List<KeyValuePair<int, string>> ObterEstadoFolhaObra()
         {
 
-            List<String> res = new List<String>
-            {
-                "Concluído",
-                "Pedido de Peças",
-                "Pedido de Orçamento"
-            };
+            return new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(1, "Concluído"), new KeyValuePair<int, string>(2, "Pedido de Peças"), new KeyValuePair<int, string>(3, "Pedido de Orçamento"), new KeyValuePair<int, string>(4, "Pendente"), };
 
-            return res;
         }
         public List<String> ObterTipoFolhaObra()
         {
@@ -1728,7 +2143,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Comentario", conn)
+                SqlCommand command = new SqlCommand("WEB_Comentario_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1764,33 +2179,33 @@ namespace FT_Management.Models
 
             try
             {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
-                        {
                         DateTime.TryParse(result["ousrdata"].ToString()[..10] + " " + result["ousrhora"].ToString(), out DateTime data);
                         LstComentario.Add(new Comentario()
-                            {
-                                IdComentario = result["u_comentstamp"].ToString(),
-                                Descricao = result["comentario"].ToString().Trim(),
-                                IdMarcacao = result["marcacaostamp"].ToString().Trim(),
-                                Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString().Trim() },
-                                DataComentario = data
-                            });
-                        }
+                        {
+                            IdComentario = result["u_comentstamp"].ToString(),
+                            Descricao = result["comentario"].ToString().Trim(),
+                            IdMarcacao = result["marcacaostamp"].ToString().Trim(),
+                            Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString().Trim() },
+                            DataComentario = data
+                        });
+                    }
                 }
 
-                    conn.Close();
+                conn.Close();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler os comentarios das Marcacoes do PHC!\r\n(Exception: " + ex.Message + ")");
             }
@@ -1799,8 +2214,8 @@ namespace FT_Management.Models
         }
         public List<Comentario> ObterComentariosMarcacao(int IdMarcacao)
         {
-            return ObterComentariosMarcacao("select u_comentstamp, num as marcacaostamp, comentario, u_coment.ousrinis, u_coment.ousrdata, u_coment.ousrhora from u_coment inner join u_marcacao on u_marcacao.u_marcacaostamp = u_coment.marcacaostamp WHERE num=" + IdMarcacao+";").OrderBy(c => c.DataComentario).ToList();
-            
+            return ObterComentariosMarcacao("select u_comentstamp, num as marcacaostamp, comentario, u_coment.ousrinis, u_coment.ousrdata, u_coment.ousrhora from u_coment inner join u_marcacao on u_marcacao.u_marcacaostamp = u_coment.marcacaostamp WHERE num=" + IdMarcacao + ";").OrderBy(c => c.DataComentario).ToList();
+
         }
         #endregion
 
@@ -1813,42 +2228,38 @@ namespace FT_Management.Models
 
             try
             {
-                    SqlConnection conn = new SqlConnection(ConnectionString);
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                    conn.Open();
+                conn.Open();
 
                 SqlCommand command = new SqlCommand("select cm, acao, data, hora, CONCAT('KM: ', km, ' | Obs:', obs) as obs from u_dias join cm4 on u_dias.tecnico = cm4.nome where u_dias.usrdata >= '" + dataUltimaLeitura.ToString("yyyy-MM-dd HH:mm:ss") + "' ; ", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
                     {
-                        while (result.Read())
+                        LstAcessos.Add(new Acesso()
                         {
-                            LstAcessos.Add(new Acesso()
-                            {
-                                IdUtilizador = int.Parse(result["cm"].ToString()),
-                                Tipo = result["acao"].ToString().Contains("Inicio") ? 1 : 2,
-                                Data = DateTime.Parse(DateTime.Parse(result["data"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) + ":" + result["hora"].ToString().Substring(4, 2)).ToLongTimeString()),
-                                Temperatura = result["obs"].ToString()
-                            });
-                        }
+                            IdUtilizador = int.Parse(result["cm"].ToString()),
+                            Tipo = result["acao"].ToString().Contains("Inicio") ? 1 : 2,
+                            Data = DateTime.Parse(DateTime.Parse(result["data"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) + ":" + result["hora"].ToString().Substring(4, 2)).ToLongTimeString()),
+                            Temperatura = result["obs"].ToString()
+                        });
                     }
-
-                    conn.Close();
-
-                    FT_ManagementContext.AtualizarUltimaModificacao("u_dias", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 }
+
+                conn.Close();
+
+                FT_ManagementContext.AtualizarUltimaModificacao("u_dias", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler os Acessos do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstAcessos;
-        }
-        public void AtualizarAcessos()
-        {
-            FT_ManagementContext.CriarAcesso(ObterAcessos(FT_ManagementContext.ObterUltimaModificacaoPHC("u_dias")));
         }
         #endregion
 
@@ -1895,7 +2306,7 @@ namespace FT_Management.Models
                         LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).First().LinhasEncomenda.Add(new Linha_Encomenda()
                         {
                             IdEncomenda = int.Parse(result["obrano"].ToString()),
-                            NomeCliente = result["Nome"].ToString(),
+                            NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
                             DataEnvio = DateTime.Parse(result["Data_Envio_Linha"].ToString()),
                             Total = result["Envio_Total"].ToString() == "True",
                             Produto = new Produto()
@@ -1952,7 +2363,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Gera_Picking", conn)
+                SqlCommand command = new SqlCommand("WEB_Picking_Gera", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -1988,7 +2399,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Fecha_Picking", conn)
+                SqlCommand command = new SqlCommand("WEB_Picking_Fecha", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2080,7 +2491,7 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        if (LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString()).Count() == 0)
+                        if (LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString() && p.Serie == (result["USA_NSERIE"].ToString() == "True") && p.Nome_Loja == result["Loja_Lin"].ToString()).Count() == 0)
                         {
                             LstPickingLinhas.Add(new Linha_Picking()
                             {
@@ -2092,7 +2503,8 @@ namespace FT_Management.Models
                                 TipoUnidade = result["UNIDADE"].ToString(),
                                 Serie = result["USA_NSERIE"].ToString() == "True",
                                 Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())),
-                                EditadoPor = result["usrinis"].ToString()
+                                EditadoPor = result["usrinis"].ToString(),
+                                Nome_Loja = result["Loja_Lin"].ToString()
                             });
                         }
                         else
@@ -2114,7 +2526,7 @@ namespace FT_Management.Models
                 Console.WriteLine("Não foi possivel ler as linhas do picking do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return LstPickingLinhas;
+            return LstPickingLinhas.OrderBy(p => p.Qtd_Separar).ToList();
         }
         public List<Ref_Linha_Picking> ObterSerieLinhaPicking(string BI_STAMP, Double Qtt)
         {
@@ -2172,7 +2584,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("Atualiza_Linha_Picking", conn)
+                SqlCommand command = new SqlCommand("WEB_Picking_Atualiza_Linha", conn)
                 {
                     CommandTimeout = TIMEOUT,
                     CommandType = CommandType.StoredProcedure
@@ -2215,7 +2627,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select completo from V_PICKING_CAB where PISTAMP = '" + PI_STAMP+"'", conn)
+                SqlCommand command = new SqlCommand("select completo from V_PICKING_CAB where PISTAMP = '" + PI_STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -2236,13 +2648,13 @@ namespace FT_Management.Models
                     while (result.Read())
                     {
                         double qtt = double.Parse(result[0].ToString());
-                        res += qtt == 0 ? "As referências reccecionadas satisfazem a encomenda na totalidade e a encomenda será fechada!\r\n\r\n" : "";
-                        res += qtt > 0 ? "As referências reccecionadas não satisfazem a encomenda na totalidade, por esse motivo a encomenda manter-se-á em aberto!\r\n\r\n" : "";
-                        res += qtt < 0 ? "As referências reccecionadas são superiores á quantidade encomendada, por esse motivo a encomenda será fechada!\r\n\r\n" : "";
+                        res += qtt == 0 ? "As referências lidas satisfazem a encomenda na totalidade e a encomenda será fechada!\r\n\r\n" : "";
+                        res += qtt > 0 ? "As referências lidas não satisfazem a encomenda na totalidade, por esse motivo a encomenda manter-se-á em aberto!\r\n\r\n" : "";
+                        res += qtt < 0 ? "As referências lidas são superiores á quantidade encomendada, por esse motivo a encomenda será fechada!\r\n\r\n" : "";
                     }
                 }
 
-                command = new SqlCommand("select a.ref, a.serie, a.armazem, b.noarm  from boma a(nolock) join ma b(nolock) on a.mastamp = b.mastamp where a.bostamp = '"+PI_STAMP+"' and a.armazem <> b.noarm", conn)
+                command = new SqlCommand("select a.ref, a.serie, a.armazem, b.noarm  from boma a(nolock) join ma b(nolock) on a.mastamp = b.mastamp where a.bostamp = '" + PI_STAMP + "' and a.armazem <> b.noarm", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -2266,6 +2678,596 @@ namespace FT_Management.Models
             return res;
         }
 
+        #endregion
+
+        //INVENTARIO
+        #region Inventario
+
+        public List<string> CriarInventario(int ID_ARMAZEM, string NomeUtilizador)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_INV_Gera", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@ARMAZEM", ID_ARMAZEM));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", NomeUtilizador));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar o dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+        public List<string> CriarLinhaInventario(Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_INV_CRIA_LINHA", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@REF", l.Ref_linha));
+                command.Parameters.Add(new SqlParameter("@QTT", l.Qtd_Linha));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.EditadoPor));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+                res[3] = result[3].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel adicionar a linha ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+        public List<string> CriarSerieLinhaInventario(Ref_Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_INV_CRIA_LINHA_SERIE", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@STAMP", l.BOMA_STAMP));
+                command.Parameters.Add(new SqlParameter("@SERIE", l.NumSerie));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+                res[3] = result[3].ToString();
+                res[4] = result[4].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel adicionar o numero de serie ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> ApagarLinhaInventario(Ref_Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_INV_Apaga_Linha", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@STAMP", l.BOMA_STAMP));
+
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel apagar a linha do dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> ApagarLinhaSerieInventario(string stamp, Ref_Linha_Picking l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_INV_APAGA_LINHA_SERIE", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@STAMP", stamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_BOMA", l.BOMA_STAMP));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel apagar o numero de serie ao dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<Picking> ObterInventarios(int ID_ARMAZEM)
+        {
+            List<Picking> LstPicking = new List<Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from V_Inv_Aberto WHERE armazem=" + ID_ARMAZEM + ";", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstPicking.Add(new Picking()
+                        {
+                            Picking_Stamp = result["bostamp"].ToString(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdPicking = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            NomeCliente = result["Nome"].ToString(),
+                            Obs = result["obs"].ToString(),
+                            EditadoPor = result["ousrinis"].ToString(),
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os dossiers de inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstPicking;
+        }
+        public Picking ObterInventario(string STAMP)
+        {
+            Picking p = new Picking();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_Inv_Cab WHERE INVSTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        p = new Picking()
+                        {
+                            Picking_Stamp = result["INVSTAMP"].ToString(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdPicking = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["DATA"].ToString()),
+                            NomeCliente = ObterArmazem(int.Parse(result["armazem"].ToString())).ArmazemNome,
+                            EditadoPor = result["ousrinis"].ToString().ToUpper(),
+                            Linhas = ObterLinhasInventario(STAMP)
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o inventário do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return p;
+        }
+
+        public List<Linha_Picking> ObterLinhasInventario(string STAMP)
+        {
+            List<Linha_Picking> LstInventarioLinhas = new List<Linha_Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select *, (select COUNT(*) from V_INV_SERIE where BISTAMP=V_INV_LIN.BISTAMP) as Qtd_Lida from V_INV_LIN WHERE INVSTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstInventarioLinhas.Add(new Linha_Picking()
+                        {
+                            Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                            Ref_linha = result["ref"].ToString(),
+                            Nome_Linha = result["design"].ToString(),
+                            Qtd_Linha = Double.Parse(result["qtt"].ToString()),
+                            Qtd_Separar = result["USA_NSERIE"].ToString() == "True" ? Double.Parse(result["Qtd_Lida"].ToString()) : Double.Parse(result["qtt"].ToString()),
+                            TipoUnidade = result["UNIDADE"].ToString(),
+                            Serie = result["USA_NSERIE"].ToString() == "True",
+                            EditadoPor = result["usrinis"].ToString()
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstInventarioLinhas.OrderBy(l => l.Ref_linha).ToList();
+        }
+
+        public Linha_Picking ObterLinhaInventario(string STAMP)
+        {
+            Linha_Picking Linha = new Linha_Picking();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select *, (select COUNT(*) from V_INV_SERIE where BISTAMP=V_INV_LIN.BISTAMP) as Qtd_Lida from V_INV_LIN WHERE BISTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        Linha = new Linha_Picking()
+                        {
+                            Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                            Ref_linha = result["ref"].ToString().Trim(),
+                            Nome_Linha = result["design"].ToString(),
+                            Qtd_Linha = Double.Parse(result["qtt"].ToString()),
+                            Qtd_Separar = result["USA_NSERIE"].ToString() == "True" ? Double.Parse(result["Qtd_Lida"].ToString()) : Double.Parse(result["qtt"].ToString()),
+                            TipoUnidade = result["UNIDADE"].ToString(),
+                            Serie = result["USA_NSERIE"].ToString() == "True",
+                            EditadoPor = result["usrinis"].ToString()
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler a linha do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return Linha;
+        }
+
+        public List<Ref_Linha_Picking> ObterSerieLinhaInventario(string STAMP)
+        {
+            List<Ref_Linha_Picking> LstInventarioSerieLinhas = new List<Ref_Linha_Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_Inv_Serie WHERE BISTAMP='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstInventarioSerieLinhas.Add(new Ref_Linha_Picking()
+                        {
+                            Picking_Linha_Stamp = result["BISTAMP"].ToString().Trim(),
+                            Ref_linha = result["ref"].ToString().Trim(),
+                            Nome_Linha = result["design"].ToString().Trim(),
+                            Qtd_Separar = Double.Parse(result["qtt"].ToString()),
+                            BOMA_STAMP = result["BOMASTAMP"].ToString(),
+                            NumSerie = result["serie"].ToString(),
+                            CriadoA = DateTime.Parse(DateTime.Parse(result["usrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["usrhora"].ToString()).ToShortTimeString()),
+                            CriadoPor = result["usrinis"].ToString()
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas de serie do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstInventarioSerieLinhas;
+        }
+
+        public List<string> ValidarLinhaInventario(string STAMP)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select qtt, ISNULL((select COUNT(*) from boma(nolock) where bi.bistamp = bistamp),0) as contagem_sn from bi (nolock) where bistamp = '" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (double.Parse(result[0].ToString()) > double.Parse(result[1].ToString()))
+                        {
+                            res[0] = "-1";
+                            res[1] = "Os numeros de série lidos são inferiores á quantidade registada!";
+                        }
+                        else
+                        {
+                            res[0] = "1";
+                            res[1] = "Está tudo OK";
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas de serie do inventario do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> FecharInventario(Picking i)
+        {
+            List<string> res = new List<string>() { "-1", "Erro" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_INV_Fecha", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@STAMP", i.Picking_Stamp));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.EditadoPor));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel fechar o dossier de inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+
+        #endregion
+
+        //Dossier Pedidos
+        #region Dossier
+        public Dossier ObterDossier(string STAMP)
+        {
+            Dossier d = new Dossier();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97) and bostamp='" + STAMP + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        d = new Dossier()
+                        {
+                            StampDossier = result["bostamp"].ToString().Trim(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdDossier = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
+                            Referencia = result["obranome"].ToString(),
+                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            FolhaObra = ObterFolhaObraSimples(result["pastamp"].ToString()),
+                            Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
+                            Estado = result["u_estado"].ToString(),
+                            Obs = result["obstab2"].ToString(),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            Linhas = ObterLinhasDossier(STAMP),
+                            Fechado = result["fechada"].ToString() == "1"
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return d;
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossier(string STAMP)
+        {
+            List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where a.ndos in (96, 97) and b.bostamp = '" + STAMP + "' order by bostamp", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["design"].ToString()))
+                        {
+                            LstLinhasDossier.Add(new Linha_Dossier
+                            {
+                                Referencia = result["ref"].ToString().Trim(),
+                                Designacao = result["design"].ToString().Trim(),
+                                Quantidade = Double.Parse(result["qtt"].ToString())
+                            });
+                        }
+
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstLinhasDossier;
+        }
         #endregion
     }
 }

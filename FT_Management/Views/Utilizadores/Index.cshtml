@@ -29,19 +29,22 @@
 @if (Model.Count() == 0)
 {
     <div class="container">
-        <br />
-        <button class="button is-danger is-fullwidth" disabled>Não foram encontrados utilizadores!</button>
-        </div>
-        }
-        else
-        {
-        <div class="container">
-            <div class="b-table">
-            <div class="table-wrapper has-mobile-cards">
+    <br />
+    <button class="button is-danger is-fullwidth" disabled>Não foram encontrados utilizadores!</button>
+</div>
+}
+else
+{
+    <div class="container">
+    <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">
             <table class="table is-hoverable is-fullwidth">
                 <thead>
                     <tr>
                         <th></th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Id)
+                        </th>
                         <th>
                             @Html.DisplayNameFor(model => model.NomeCompleto)
                         </th>
@@ -57,37 +60,52 @@
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
-                    {
-                        <tr class="@(item.AcessoAtivo ? "has-background-success-light" : "has-background-danger-light")">
-                            <td class="is-image-cell">
-                              <div class="image">
-                                <img src="@item.ImgUtilizador" class="is-rounded">
-                              </div>
-                            </td>
-                            <td data-label="@Html.DisplayNameFor(model => model.NomeCompleto)" onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
-                                <span>@item.NomeCompleto</span>
-                            </td>
-                            <td data-label="@Html.DisplayNameFor(model => model.EmailUtilizador)"  onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
-                                <span>@item.EmailUtilizador</span>
-                            </td>
-                            <td data-label="@Html.DisplayNameFor(model => model.UltimoAcesso)"  onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
-                                <span>@item.UltimoAcesso</span>
-                            </td>
-                            @if (this.User.IsInRole("Master") || !item.Admin) {
-                            <td class="is-actions-cell" style="@(!this.User.IsInRole("Master") && @item.Admin ? "opacity:0.2;" : "")">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" id="chkEnable_@item.Id" checked="@item.Enable" onchange="AtualizarEnableUtilizador(@item.Id)">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model => model.Enable)</span>
-                                </label>
-                                <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "") class="switch is-rounded">
-                                    <input type="checkbox" id="chkAdmin_@item.Id" checked="@item.Admin" onchange="AtualizarAdminUtilizador(@item.Id)" >
-                                    <span class="check is-primary"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model => model.Admin)</span>
-                                </label>
-                                <a class="button is-warning" href="~/Utilizadores/Logs/@item.Id"><i class="fas fa-eye"></i></a>
-                                <button class="button is-danger is-outlined" onclick="ConfirmResetSenha(@item.Id)"><i class="fas fa-unlock"></i></button>
-                                <button class="button is-danger" onclick="ConfirmApagarUtilizador(@item.Id)"><i class="fas fa-trash"></i></button>
+                        {
+                            <tr class="@(item.AcessoAtivo ? "has-background-success-light" : "has-background-danger-light")">
+                                <td class="is-image-cell">
+                                    <div class="image">
+                                        <img src="@item.ImgUtilizador" class="is-rounded">
+                                    </div>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Id)"
+                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    <span>#@item.Id</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.NomeCompleto)"
+                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    <span>@item.NomeCompleto</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.EmailUtilizador)"
+                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    <span>@item.EmailUtilizador</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.UltimoAcesso)"
+                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    <span>@item.UltimoAcesso</span>
+                                </td>
+                                @if (this.User.IsInRole("Master") || !item.Admin)
+                                {
+                                    <td class="is-actions-cell"
+                                        style="@(!this.User.IsInRole("Master") && @item.Admin ? "opacity:0.2;" : "")">
+                                        <label class="switch is-rounded is-small">
+                                            <input type="checkbox" id="chkEnable_@item.Id" checked="@item.Enable"
+                                                onchange="AtualizarEnableUtilizador(@item.Id)">
+                                            <span class="check is-info"></span>
+                                            <span class="control-label">@Html.DisplayNameFor(model => model.Enable)</span>
+                                        </label>
+                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                            class="switch is-rounded is-small">
+                                            <input type="checkbox" id="chkAdmin_@item.Id" checked="@item.Admin"
+                                                onchange="AtualizarAdminUtilizador(@item.Id)">
+                                            <span class="check is-primary"></span>
+                                            <span class="control-label">@Html.DisplayNameFor(model => model.Admin)</span>
+                                        </label>
+                                        <a class="button is-warning is-small" href="~/Utilizadores/Logs/@item.Id"><i
+                                                class="fas fa-eye"></i></a>
+                                        <button class="button is-danger is-outlined is-small"
+                                            onclick="ConfirmResetSenha(@item.Id)"><i class="fas fa-unlock"></i></button>
+                                        <button class="button is-danger is-small" onclick="ConfirmApagarUtilizador(@item.Id)"><i
+                                                class="fas fa-trash"></i></button>
                                     </td>
                                 }
                                 else
@@ -95,183 +113,183 @@
                                     <td></td>
                                 }
                             </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<input class="input" type="hidden" id="hiddenIdUtilizador" />
+<div id="modalApagarUtilizador" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span>Apagar Utilizador</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>
+                Tem a certeza que deseja apagar este utilizador?
+            </p>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-danger" onclick="ApagarUtilizador()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span>Confirmar Apagar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+<div id="modalResetSenha" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-unlock"></i>
+                </span>
+                <span>Digite a senha para alterar</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <input class="input" type="password" id="txtResetSenha" />
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-danger" onclick="ResetSenha()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span>Reset Senha</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    function AtualizarEnableUtilizador(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/AlterarEstado/" + id,
+            data: { estado: document.getElementById('chkEnable_' + id).checked },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "Ok") {
+                        bulmaToast.toast({
+                            message: 'Utilizador atualizado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+                    } else {
+                        bulmaToast.toast({
+                            message: 'Erro ao atualizar o utilizador!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
                     }
-                </tbody>
-            </table>
-        </div>
-        </div>
-        </div>
-        }
-        
-        <input class="input" type="hidden" id="hiddenIdUtilizador" />
-        <div id="modalApagarUtilizador" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">
-                    <span class="icon">
-                        <i class="fas fa-trash"></i>
-                    </span>
-                    <span>Apagar Utilizador</span>
-                </p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <p>
-                    Tem a certeza que deseja apagar este utilizador?
-                </p>            
-            </section>
-            <footer class="modal-card-foot">
-                <button type="button" class="button is-danger" onclick="ApagarUtilizador()" href="javascript:;">
-                    <span class="icon">
-                        <i class="fas fa-trash"></i>
-                    </span>
-                    <span>Confirmar Apagar</span>
-                </button>
-            </footer>
-        </div>
-    </div>
-        <div id="modalResetSenha" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">
-                    <span class="icon">
-                        <i class="fas fa-unlock"></i>
-                    </span>
-                    <span>Digite a senha para alterar</span>
-                </p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-               <input class="input" type="password" id="txtResetSenha" />
-            </section>
-            <footer class="modal-card-foot">
-                <button type="button" class="button is-danger" onclick="ResetSenha()" href="javascript:;">
-                    <span class="icon">
-                        <i class="fas fa-trash"></i>
-                    </span>
-                    <span>Reset Senha</span>
-                </button>
-            </footer>
-        </div>
-    </div>
+                });
+            }
+        });
+    }
 
-        <script>
-        function AtualizarEnableUtilizador(id) {
-            $.ajax({
-                type: "POST",
-                url: "/Utilizadores/AlterarEstado/" + id,
-                data: {estado: document.getElementById('chkEnable_' + id).checked},
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        if (result == "Ok") {
-                            bulmaToast.toast({
-                              message: 'Utilizador atualizado com sucesso!',
-                              type: 'is-success',
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              opacity: 0.8,
-                              duration: 5000
-                            })
-                        }else{
-                            bulmaToast.toast({
-                              message: 'Erro ao atualizar o utilizador!',
-                              type: 'is-danger',
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              opacity: 0.8,
-                              duration: 5000
-                            })
-                        }
-                    });
-                }
-            });
-        }
+    function AtualizarAdminUtilizador(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/AlterarAdmin/" + id,
+            data: { admin: document.getElementById('chkAdmin_' + id).checked },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "Ok") {
+                        bulmaToast.toast({
+                            message: 'Utilizador atualizado com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+                    } else {
+                        bulmaToast.toast({
+                            message: 'Erro ao atualizar o utilizador!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+                    }
+                });
+            }
+        });
+    }
 
-        function AtualizarAdminUtilizador(id) {
-            $.ajax({
-                type: "POST",
-                url: "/Utilizadores/AlterarAdmin/" + id,
-                data: {admin: document.getElementById('chkAdmin_' + id).checked},
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        if (result == "Ok") {
-                            bulmaToast.toast({
-                              message: 'Utilizador atualizado com sucesso!',
-                              type: 'is-success',
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              opacity: 0.8,
-                              duration: 5000
-                            })
-                        }else{
-                            bulmaToast.toast({
-                              message: 'Erro ao atualizar o utilizador!',
-                              type: 'is-danger',
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              opacity: 0.8,
-                              duration: 5000
-                            })
-                        }
-                    });
-                }
-            });
-        }
-         
-        function ConfirmResetSenha(id) {
-            document.getElementById("hiddenIdUtilizador").value = id;
-            Bulma('#modalResetSenha').modal().open();
-        }
-        function ConfirmApagarUtilizador(id) {
-            document.getElementById("hiddenIdUtilizador").value = id;
-            Bulma('#modalApagarUtilizador').modal().open();
-        }
+    function ConfirmResetSenha(id) {
+        document.getElementById("hiddenIdUtilizador").value = id;
+        Bulma('#modalResetSenha').modal().open();
+    }
+    function ConfirmApagarUtilizador(id) {
+        document.getElementById("hiddenIdUtilizador").value = id;
+        Bulma('#modalApagarUtilizador').modal().open();
+    }
 
-         function ResetSenha() {
-            $.ajax({
-                type: "POST",
-                url: "/Utilizadores/ResetSenha/" + document.getElementById("hiddenIdUtilizador").value,
-                data: {senha: document.getElementById("txtResetSenha").value },
-                traditional: true,
-                success: function (result) {
-                    $(function () {
-                        Bulma('#modalResetSenha').modal().close();
-                        if (result == "Ok") {
-                            bulmaToast.toast({
-                              message: 'Senha alterada com sucesso!',
-                              type: 'is-success',
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              opacity: 0.8,
-                              duration: 5000
-                            })
-                        }else{
-                            bulmaToast.toast({
-                              message: 'Erro ao alterar a senha!',
-                              type: 'is-danger',
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              opacity: 0.8,
-                              duration: 5000
-                            })
-                        }
-                    });
-                }
-            });
-        }
+    function ResetSenha() {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/ResetSenha/" + document.getElementById("hiddenIdUtilizador").value,
+            data: { senha: document.getElementById("txtResetSenha").value },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    Bulma('#modalResetSenha').modal().close();
+                    if (result == "Ok") {
+                        bulmaToast.toast({
+                            message: 'Senha alterada com sucesso!',
+                            type: 'is-success',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+                    } else {
+                        bulmaToast.toast({
+                            message: 'Erro ao alterar a senha!',
+                            type: 'is-danger',
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            opacity: 0.8,
+                            duration: 5000
+                        })
+                    }
+                });
+            }
+        });
+    }
 
-        function ApagarUtilizador() {
-            $.ajax({
-                type: "POST",
-                url: "/Utilizadores/Apagar/" + document.getElementById("hiddenIdUtilizador").value,
-                traditional: true,
-                success: function (result) {
-                    window.location.reload();
-                }
-            });
-        }
-        </script>
+    function ApagarUtilizador() {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/Apagar/" + document.getElementById("hiddenIdUtilizador").value,
+            traditional: true,
+            success: function (result) {
+                window.location.reload();
+            }
+        });
+    }
+</script>

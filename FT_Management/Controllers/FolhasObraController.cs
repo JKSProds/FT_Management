@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Custom;
 using Microsoft.AspNetCore.Authorization;
 using System.Drawing;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 
 namespace FT_Management.Controllers
 {
@@ -27,45 +29,124 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterFolhasObra(DateTime.Parse(DataFolhasObra)));
         }
         [Authorize(Roles = "Admin, Tech")]
-        public ActionResult Adicionar(int id)
+        public ActionResult Adicionar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Marcacao m = phccontext.ObterMarcacao(id);
+            List<FolhaObra> LstFolhasObra = phccontext.ObterFolhasObra(DateTime.Now, m.Cliente);
 
-            FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(phccontext.ObterMarcacao(id));
+            if (m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado") return Forbid();
+
+            FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(m);
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            fo.PreencherViagem(context.ObterViagens(fo.Utilizador.Viatura.Matricula, DateTime.Now.ToShortDateString()).Where(v => v.Fim_Viagem.Year > 1).DefaultIfEmpty(new Viagem() { Fim_Viagem = fo.IntervencaosServico.First().HoraInicio, Distancia_Viagem = "0" }).Last());
+            if (LstFolhasObra.Count() > 0)
+            {
+                fo.RubricaCliente = LstFolhasObra.First().RubricaCliente.Replace("}", "").Replace("{", "");
+                fo.ConferidoPor = LstFolhasObra.First().ConferidoPor;
+            }
 
-            ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
+            ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
             return View(fo);
         }
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Tech")]
         public ActionResult Adicionar(FolhaObra fo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
             if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
+            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
 
             if (ModelState.IsValid)
             {
-                fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
-                fo.EquipamentoServico = phccontext.ObterEquipamento(fo.EquipamentoServico.IdEquipamento);
+                fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
+                fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
                 fo.ValidarIntervencoes();
-                fo.ValidarPecas();
+                fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
+                fo.ValidarTipoFolhaObra();
 
-                int idFolhaObra = phccontext.CriarFolhaObra(fo);
-                if (idFolhaObra > 0) return RedirectToAction("Detalhes", "FolhasObra", new { id = idFolhaObra });
+                if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) phccontext.AtualizarClienteEquipamento(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
+
+                Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
+                m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                if (fo.FecharMarcacao) m.EstadoMarcacaoDesc = "Finalizado";
+                if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
+                if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
+                if (fo.EstadoFolhaObra == 4) fo.EstadoFolhaObra = 2;
+
+                List<string> res = phccontext.CriarFolhaObra(fo);
+                if (int.Parse(res[0]) > 0)
+                {
+                    fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
+                    fo.Marcacao = m;
+                    phccontext.FecharFolhaObra(fo);
+                    phccontext.AtualizaMarcacao(m);
+
+                    return RedirectToAction("ListaPedidos", "Pedidos", new { IdTecnico = fo.Utilizador.IdPHC });
+                }
+
+                ModelState.AddModelError("", res[1]);
             }
 
-            ViewData["EstadoFolhaObra"] = phccontext.ObterEstadoFolhaObra();
+            ModelState.AddModelError("", string.Join("|", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)));
+            ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 
             return View(fo);
         }
 
+        public ActionResult Pedido(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            return View(phccontext.ObterDossier(id));
+        }
+        [HttpPost]
+        public ActionResult ValidarCodigo(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return Content(context.ValidarCodigo(id).ToString());
+        }
+        [HttpPost]
+        public ActionResult CriarCodigo(string id, string obs)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Codigo c = new Codigo()
+            {
+                Stamp = id,
+                Estado = 0,
+                ValidadeCodigo = DateTime.Now.AddMinutes(10),
+                utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)),
+                Obs = obs
+            };
+            context.CriarCodigo(c);
+            foreach (var u in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
+            {
+                ChatContext.EnviarNotificacaoCodigo(c, u);
+            }
+            return Content("OK");
+        }
+        [HttpPost]
+        public ActionResult ValidarFolhaObra(FolhaObra fo)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            fo.ValidarIntervencoes();
+            fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
+            fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
+            fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
+#if DEBUG
+            return Content(phccontext.ValidarFolhaObra(fo));
+#else
+                        return Content(phccontext.ValidarFolhaObra(fo));
+#endif
+        }
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public JsonResult GuardarLocalizacao(int IdCliente, int IdLoja)
@@ -121,27 +202,11 @@ namespace FT_Management.Controllers
             return View(fo);
         }
 
-        public JsonResult ObterHistorico(string NumeroSerieEquipamento)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return Json(new { json = phccontext.ObterHistorico(NumeroSerieEquipamento) });
-        }
-
         public JsonResult ObterEmailClienteFolhaObra(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return Json(phccontext.ObterFolhaObra(id).ClienteServico.EmailCliente);
-        }
-
-        [HttpPost]
-        public JsonResult ObterEquipamentos(string IdCliente, string IdLoja)
-        {
-            if (string.IsNullOrEmpty(IdCliente)) return Json("");
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = int.Parse(IdCliente), IdLoja = int.Parse(IdLoja) }).OrderBy(e => e.NumeroSerieEquipamento).ToList());
         }
 
         public virtual ActionResult PrintFolhaObra(int id)
@@ -159,11 +224,11 @@ namespace FT_Management.Controllers
 
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "FolhaObra_"+ id +".pdf",
+                FileName = "FolhaObra_" + id + ".pdf",
                 Inline = true,
                 Size = file.Length,
                 CreationDate = DateTime.Now,
-                
+
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
             //Send the File to Download.
@@ -188,7 +253,7 @@ namespace FT_Management.Controllers
                 Inline = false,
                 CreationDate = DateTime.Now
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());            
+            Response.Headers.Add("Content-Disposition", cd.ToString());
             return new FileContentResult(context.BitMapToMemoryStream(filePath, bm.Width, bm.Height).ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
 

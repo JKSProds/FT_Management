@@ -8,7 +8,7 @@ namespace FT_Management.Models
     public class Equipamento
     {
         [Required]
-        public string IdEquipamento { get; set; }
+        public string EquipamentoStamp { get; set; }
         public string DescricaoEquipamento { get { return this.NumeroSerieEquipamento + " - (" + MarcaEquipamento + " " + this.ModeloEquipamento + ")"; } }
         private string _DesignacaoEquipamento;
         [Display(Name = "Designação do Equipamento")]
@@ -30,6 +30,15 @@ namespace FT_Management.Models
         public int IdFornecedor { get; set; }
         [Display(Name = "Referência do Equipamento")]
         public string RefProduto { get; set; }
+        public Cliente Cliente { get; set; }
+        public List<FolhaObra> FolhasObra { get; set; }
+
+        [Display(Name = "Técnico")]
+        public string UltimoTecnico { get; set; }
+        [Display(Name = "Data de Compra")]
+        public DateTime DataCompra { get; set; }
+        [Display(Name = "Data de Venda")]
+        public DateTime DataVenda { get; set; }
 
         public Equipamento()
         {
