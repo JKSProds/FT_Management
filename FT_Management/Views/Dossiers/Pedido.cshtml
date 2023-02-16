@@ -109,7 +109,6 @@
         </div>
     </div>
 </div>
-</div>
 <hr />
 @if (Model.Linhas.Count() == 0)
 {
@@ -121,14 +120,14 @@
 else
 {
     <div class="container">
-    @foreach (var item in Model.Linhas.Where(l => string.IsNullOrEmpty(l.Referencia) && l.Quantidade == 0))
+    @foreach (var item in Model.Linhas)
         {
             <p class="control mx-2 my-2">
                 <input type="text" class="input" value="@item.Designacao" readonly>
             </p>
         }
 
-        @if (Model.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)).Count() > 0)
+        @if (Model.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
         {
             <div class="b-table">
                 <div class="table-wrapper has-mobile-cards">

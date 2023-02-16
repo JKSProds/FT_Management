@@ -1670,7 +1670,7 @@ namespace FT_Management.Models
                     });
                     if (LoadCliente) LstMarcacao.Last().Cliente = LstClientes.Where(c => c.IdCliente == int.Parse(result["no"].ToString().Trim())).Where(c => c.IdLoja == int.Parse(result["estab"].ToString().Trim())).DefaultIfEmpty(new Cliente()).First();
                     if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
-                    if (LoadAnexos) LstMarcacao.Last().LstAnexos = ObterAnexos(LstMarcacao.Last());
+                    if (LoadAnexos) LstMarcacao.Last().LstAnexos = ObterAnexos(LstMarcacao.Last()).Where(a => a.ObterTipoFicheiro() != TipoFicheiro.Assinatura).ToList();
                     if (LoadTecnico)
                     {
                         LstMarcacao.Last().Tecnico = string.IsNullOrEmpty(result["tecnno"].ToString()) ? new Utilizador() : (LstUtilizadores.Where(u => u.IdPHC == int.Parse(result["tecnno"].ToString().Trim())).FirstOrDefault() ?? new Utilizador());
@@ -3186,7 +3186,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97) and bostamp='" + STAMP + "'", conn)
+                SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and bostamp='" + STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3200,6 +3200,7 @@ namespace FT_Management.Models
                             NomeDossier = result["nmdos"].ToString(),
                             IdDossier = int.Parse(result["obrano"].ToString()),
                             DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            Serie = int.Parse(result["ndos"].ToString()),
                             Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
                             Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
@@ -3237,7 +3238,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where a.ndos in (96, 97) and b.bostamp = '" + STAMP + "' order by bostamp", conn)
+                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where a.ndos in (96, 97, 36) and b.bostamp = '" + STAMP + "' order by bostamp", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3267,6 +3268,84 @@ namespace FT_Management.Models
             }
 
             return LstLinhasDossier;
+        }
+
+        public List<string> CriarDossier(Dossier d)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_Dossier_Gera", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@SERIE", d.Serie));
+                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", d.Marcacao.MarcacaoStamp));
+                command.Parameters.Add(new SqlParameter("@STAMP_PA", d.FolhaObra.StampFO));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", d.EditadoPor));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar o dossier no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> CriarLinhaDossier(Linha_Dossier l)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_Dossier_Cria_Linha", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@STAMP", l.Stamp_Dossier));
+                command.Parameters.Add(new SqlParameter("@REF", l.Referencia));
+                command.Parameters.Add(new SqlParameter("@DESIGN", l.Designacao));
+                command.Parameters.Add(new SqlParameter("@QTT", l.Quantidade));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+                res[3] = result[3].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar o dossier no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
         }
         #endregion
     }

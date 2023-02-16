@@ -100,11 +100,7 @@ namespace FT_Management.Controllers
             return View(fo);
         }
 
-        public ActionResult Pedido(string id)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            return View(phccontext.ObterDossier(id));
-        }
+
         [HttpPost]
         public ActionResult ValidarCodigo(string id)
         {
