@@ -98,11 +98,10 @@ namespace FT_Management
 #if !DEBUG
                  services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
 #endif
-            Console.WriteLine("A iniciar app. (V." + System.Reflection.Assembly.GetEntryAssembly().GetName().Version + ")");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             System.Globalization.CultureInfo customCulture = new CultureInfo("pt-PT");
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
@@ -135,6 +134,21 @@ namespace FT_Management
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            appLifetime.ApplicationStarted.Register(() =>
+            {
+                Console.WriteLine("FT_Management started.");
+            });
+
+            appLifetime.ApplicationStopping.Register(() =>
+            {
+                Console.WriteLine("FT_Management is stopping...");
+            });
+
+            appLifetime.ApplicationStopped.Register(() =>
+            {
+                Console.WriteLine("FT_Management stopped.");
             });
 
         }

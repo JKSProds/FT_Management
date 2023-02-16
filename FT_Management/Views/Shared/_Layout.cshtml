@@ -80,7 +80,7 @@
 
 <body>
     <header>
-        <nav class="navbar is-light has-shadow" role="navigation" aria-label="main navigation">
+        <nav class='navbar @(Environment.GetEnvironmentVariable("DEV") == "1" ? "is-warning" : "is-light")  has-shadow' role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
                     <img src="~/img/ft_logo.png" width="50" height="28">
@@ -352,6 +352,14 @@
                                             <span>Utilizadores</span>
                                         </a>
                                     </div>
+                                     <div class="navbar-item">
+                                        <a class="button is-danger is-fullwidth" href="~/Home/Restart">
+                                            <span class="icon">
+                                               <i class="fa-solid fa-power-off"></i>
+                                            </span>
+                                            <span>Reiniciar</span>
+                                        </a>
+                                    </div>
                                 }
                                 <div class="navbar-item">
                                     <a class="button is-info is-light is-fullwidth"
@@ -388,7 +396,7 @@
             </div>
         </nav>
     </header>
-    <div class="container-fluid is-fullheight mx-1">
+    <div class="container-fluid is-fullheight mx-1" style="height:90vh;margin-bottom: 70px">
         <main role="main">
             &nbsp;
             @RenderBody()
@@ -411,14 +419,12 @@
             </footer>
         </div>
     </div>
-    <br />
-    <br />
-    <br />
-    <br />
     <footer class="footer" style="padding:0px">
         <div class="content has-text-centered">
             <p>
-                <strong>Jorge Monteiro</strong> (V.@GetType().Assembly.GetName().Version.ToString())
+                &nbsp;
+                <strong>Jorge Monteiro</strong> (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ? "_DEV" : ""))
+                
             </p>
         </div>
     </footer>

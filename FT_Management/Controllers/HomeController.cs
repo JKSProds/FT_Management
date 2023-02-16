@@ -9,16 +9,19 @@ using FT_Management.Models;
 using System.Text.Json;
 using System.Dynamic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Hosting;
 
 namespace FT_Management.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        IHostApplicationLifetime applicationLifetime;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHostApplicationLifetime appLifetime)
         {
             _logger = logger;
+            applicationLifetime = appLifetime;
         }
 
         public IActionResult Index()
@@ -49,7 +52,12 @@ namespace FT_Management.Controllers
         {
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
+        public IActionResult Restart()
+        {
+            applicationLifetime.StopApplication();
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
