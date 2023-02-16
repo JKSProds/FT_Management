@@ -19,30 +19,35 @@
         <div class="column">
             <form asp-action="Armazem" method="get">
                 <div class="field has-addons has-addons-right mx-1">
-                    <p class="control has-icons-left">
-                        <span class="select">
-                            <select id="lstguias" asp-items="ViewBag.Guias" onchange="submitdata()">
+                    <p class="control has-icons-left" style="width:100%">
+                        <span class="select" style="width:100%">
+                            <select id="lstguias" asp-items="ViewBag.Guias" style="width:100%" onchange="submitdata()">
                             </select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-file-invoice"></i>
                         </span>
                     </p>
-                    <div class="control buttons">
-                        <a class="button is-info"
-                            href='/Produtos/ExportarPecasUso/@ViewData["IdArmazem"]?gt=@ViewData["GT"]'>
-                            <span class="icon">
-                                <i class="fas fa-paper-plane"></i>
-                            </span>
-                            <span>Enviar</span></a>
-                        <a class="button is-success" onclick="Bulma('#modalGerarGuiaGlobal').modal().open();">
-                            <span class="icon">
-                                <i class="fa-solid fa-file-export"></i>
-                            </span>
-                            <span>Gerar Guia Global</span></a>
-                    </div>
-                    <input hidden id="hiddenSelectedGT" name="gt" value="@ViewData["GT"]" />
                 </div>
+                <div class="buttons has-addons is-right">
+                    <a class="button is-info is-outlined" href="~/Produtos?Armazem=@ViewData["IdArmazem"]">
+                        <span class="icon">
+                            <i class="fas  fa-dolly-flatbed"></i>
+                        </span>
+                        <span>Stock</span></a>
+                    <a class="button is-info" disabled
+                        onclick="Bulma('#modalGerarPedidoTransferencia').modal().open();">
+                        <span class="icon">
+                            <i class="fas fa-file-alt"></i>
+                        </span>
+                        <span>Nova Transferência</span></a>
+                    <a class="button is-success" onclick="Bulma('#modalGerarGuiaGlobal').modal().open();">
+                        <span class="icon">
+                            <i class="fa-solid fa-file-export"></i>
+                        </span>
+                        <span>Guia Global</span></a>
+                </div>
+                <input hidden id="hiddenSelectedGT" name="gt" value="@ViewData["GT"]" />
             </form>
         </div>
     </div>
@@ -148,6 +153,44 @@ else
     </div>
 </div>
 
+<div id="modalGerarPedidoTransferencia" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Novo Pedido de Transferências</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p>Tem a certeza que deseja gerar um documento de Pedido de Transferências para o Armazém Nº
+                    @ViewData["IdArmazem"]?</p>
+            </div>
+            &nbsp;
+            <div class="form-check form-group col">
+                <label class="switch is-rounded">
+                    <input type="checkbox" id="chkPecas">
+                    <span class="check is-info"></span>
+                    <span class="control-label">Pre-carregar com as peças selecionadas?</span>
+                </label>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <a class="button is-info is-fullwidth" type="button" onclick="GerarTransferencia();" <span class="icon">
+                <i class="fa-solid fa-file-export"></i>
+                </span>
+                <span>Novo Documento</span>
+            </a>
+            <button type="button" class="button is-fullwidth is-danger"
+                onclick="Bulma('#modalGerarPedidoTransferencia').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
 <script>
     function submitdata() {
         document.getElementById("hiddenSelectedGT").value = document.getElementById("lstguias").value;
@@ -179,6 +222,18 @@ else
                 document.getElementById('pageloader').classList.remove('is-active');
             }
         });
+    }
+
+    function GerarTransferencia() {
+        document.getElementById('pageloader').classList.add('is-active');
+        Bulma('#modalGerarPedidoTransferencia').modal().close();
+
+        var id = '@ViewData["GT"].ToString().Replace("/", "|")';
+        var armazem = '@ViewData["IdArmazem"]';
+        var load = document.getElementById('chkPecas').checked ? 1 : 0;
+
+        console.log("~/Dossiers/CriarDossierTransferencia/" + id + "?armazem=" + armazem + "&load=" + load);
+        window.location.href = "/Dossiers/CriarDossierTransferencia/" + id + "?armazem=" + armazem + "&load=" + load;
     }
 
     function notifyError(mensagem) {

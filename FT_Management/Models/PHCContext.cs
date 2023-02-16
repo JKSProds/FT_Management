@@ -3238,8 +3238,6 @@ namespace FT_Management.Models
 
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
-                conn.Open();
-
                 SqlCommand command = new SqlCommand("select * from bo (nolock) join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and bostamp='" + STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
@@ -3255,11 +3253,8 @@ namespace FT_Management.Models
                             IdDossier = int.Parse(result["obrano"].ToString()),
                             DataDossier = DateTime.Parse(result["dataobra"].ToString()),
                             Serie = int.Parse(result["ndos"].ToString()),
-                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
                             Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
-                            FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
-                            Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
                             Estado = result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
@@ -3267,6 +3262,12 @@ namespace FT_Management.Models
                             Linhas = ObterLinhasDossier(STAMP),
                             Fechado = result["fechada"].ToString() == "1"
                         };
+                        if (d.Serie != 36)
+                        {
+                            d.Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString()));
+                            d.FolhaObra = ObterFolhaObra(result["pastamp"].ToString());
+                            d.Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString());
+                        }
                     }
                 }
 

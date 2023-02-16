@@ -58,6 +58,37 @@ namespace FT_Management.Controllers
             return RedirectToAction("Pedido", new { id = d.StampDossier, ReturnUrl = ReturnUrl });
         }
 
+        public ActionResult CriarDossierTransferencia(string id, int armazem, int load)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Dossier d = new Dossier()
+            {
+                Serie = 36,
+                Marcacao = new Marcacao(),
+                FolhaObra = new FolhaObra(),
+                EditadoPor = u.NomeCompleto
+            };
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
+
+            d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
+            if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
+
+            //Criação de linhas por defeito
+            if (load == 1)
+            {
+                foreach (Movimentos m in phccontext.ObterPecasGuiaTransporte(id.Replace("|", "/"), armazem))
+                {
+                    phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = m.RefProduto, Designacao = m.Designacao, Quantidade = m.Quantidade, CriadoPor = u.NomeCompleto });
+                }
+            }
+            return RedirectToAction("Pedido", new { id = d.StampDossier });
+        }
+
+
         public JsonResult CriarLinha(string id, string referencia, string design, double qtd)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
