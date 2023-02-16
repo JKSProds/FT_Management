@@ -80,7 +80,8 @@
 
 <body>
     <header>
-        <nav class='navbar @(Environment.GetEnvironmentVariable("DEV") == "1" ? "is-warning" : "is-light")  has-shadow' role="navigation" aria-label="main navigation">
+        <nav class='navbar @(Environment.GetEnvironmentVariable("DEV") == "1" ? "is-warning" : "is-light")  has-shadow'
+            role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
                     <img src="~/img/ft_logo.png" width="50" height="28">
@@ -171,7 +172,7 @@
                                         <span>Inventário</span>
                                     </a>
                                 </p>
-                                                                <p class="control mx-1">
+                                <p class="control mx-1">
                                     <a class="button is-info is-rounded is-fullwidth" href="~/Dossiers">
                                         <span class="icon">
                                             <i class="fas fa-file-alt"></i>
@@ -360,10 +361,10 @@
                                             <span>Utilizadores</span>
                                         </a>
                                     </div>
-                                     <div class="navbar-item">
+                                    <div class="navbar-item">
                                         <a class="button is-danger is-fullwidth" href="~/Home/Restart">
                                             <span class="icon">
-                                               <i class="fa-solid fa-power-off"></i>
+                                                <i class="fa-solid fa-power-off"></i>
                                             </span>
                                             <span>Reiniciar</span>
                                         </a>
@@ -404,7 +405,7 @@
             </div>
         </nav>
     </header>
-    <div class="container-fluid is-fullheight mx-1" style="height:90vh;margin-bottom: 70px">
+    <div class="container-fluid is-fullheight mx-1">
         <main role="main">
             &nbsp;
             @RenderBody()
@@ -427,12 +428,16 @@
             </footer>
         </div>
     </div>
+    <br />
+    <br />
+    <br />
+    <br />
     <footer class="footer" style="padding:0px">
         <div class="content has-text-centered">
             <p>
-                &nbsp;
-                <strong>Jorge Monteiro</strong> (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ? "_DEV" : ""))
-                
+                <strong>Jorge Monteiro</strong>
+                (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ?
+                "_DEV" : ""))
             </p>
         </div>
     </footer>
