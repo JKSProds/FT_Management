@@ -188,7 +188,7 @@
                                     <input class="input" type="text" readonly asp-for="Cliente.EmailCliente">
                                 </div>
                                 <a href="mailto:@Model.Cliente.EmailCliente" target="_blank" class="button is-info"
-                                    @(Model.Cliente.EmailCliente.Length < 5 ? "disabled" : "")><i
+                                @(Model.Cliente.EmailCliente.Length < 5 ? "disabled" : "")><i
                                         class="fas fa-envelope"></i></a>
                             </div>
                         </div>
@@ -251,11 +251,11 @@
                                             {
                                                 <tr>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().IdFolhaObra)"
-                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         <span>@item.IdFolhaObra</span>
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.MarcaEquipamento)"
-                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         @Html.DisplayFor(modelItem =>
                                                 item.EquipamentoServico.MarcaEquipamento) -
                                                         @Html.DisplayFor(modelItem =>
@@ -263,18 +263,18 @@
 
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.NumeroSerieEquipamento)"
-                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         @Html.DisplayFor(modelItem =>
                                                 item.EquipamentoServico.NumeroSerieEquipamento)
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().DataServico)"
-                                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         <span>@item.DataServico.ToShortDateString()</span>
                                                     </td>
                                                     <td class="is-actions-cell">
                                                         <a class="button is-outlined is-fullwidth is-primary"
-                                                    onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i
-                                                        class="fas fa-print" style="font-size:20px"></i></a>
+                                                            onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i
+                                                                class="fas fa-print" style="font-size:20px"></i></a>
                                                     </td>
                                                 </tr>
                                             }
@@ -353,15 +353,7 @@
                     if (result == "True") {
                         window.location.reload();
                     } else {
-                        bulmaToast.toast({
-                            message: 'Erro ao atualizar cliente!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        });
+                        notifyError('Erro ao atualizar o cliente!')
                         document.getElementById("btnAssociar").classList.remove('is-loading');
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
@@ -414,26 +406,10 @@
             success: function (result) {
                 $(function () {
                     if (result == "1") {
-                        bulmaToast.toast({
-                            message: 'Código aprovado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        });
+                        notify('Codigo Aprovado');
                         AssociarCliente(document.getElementById('txtStampCliente').value);
                     } else if (result == "2") {
-                        bulmaToast.toast({
-                            message: 'O código foi rejeitado pelo utilizador!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        });
+                        notifyError('Codigo Rejeitado');
                         document.getElementById("btnAssociar").classList.remove('is-loading');
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
@@ -469,10 +445,10 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter os clientes.");
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter os clientes.");
                     }
                 });
             },
@@ -480,6 +456,8 @@
                 $("#txtStampCliente").val(i.item.val);
             },
             minLength: 1
-        });
+        }).css('z-index', 100);
     });
+
+
 </script>

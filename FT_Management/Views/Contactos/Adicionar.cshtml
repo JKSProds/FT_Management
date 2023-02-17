@@ -29,7 +29,7 @@
     </div>
     <hr />
     <div class="container">
-     <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
         <div class="steps" id="stepsDemo">
             <div class="step-item is-active is-success">
                 <div class="step-marker">1</div>
@@ -57,7 +57,7 @@
                                 <label asp-for="NomeContacto"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="text" class="input" asp-for="NomeContacto" id="txtNomeEmpresa">                                        
+                                        <input type="text" class="input" asp-for="NomeContacto" id="txtNomeEmpresa">
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -71,7 +71,7 @@
                                 <label asp-for="PessoaContacto"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="text" class="input" asp-for="PessoaContacto" id="txtNomeCliente">                                        
+                                        <input type="text" class="input" asp-for="PessoaContacto" id="txtNomeCliente">
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -85,7 +85,7 @@
                                 <label asp-for="CargoPessoaContacto"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="text" class="input" asp-for="CargoPessoaContacto">                                        
+                                        <input type="text" class="input" asp-for="CargoPessoaContacto">
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -99,7 +99,7 @@
                                 <label asp-for="TelefoneContacto"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="tel" class="input" asp-for="TelefoneContacto">                                        
+                                        <input type="tel" class="input" asp-for="TelefoneContacto">
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -113,7 +113,7 @@
                                 <label asp-for="EmailContacto"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="email" class="input" asp-for="EmailContacto">                                        
+                                        <input type="email" class="input" asp-for="EmailContacto">
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -135,7 +135,7 @@
                                                 <option>Feira</option>
                                                 <option>Visita</option>
                                                 <option>Outro</option>
-                                            </select>                                     
+                                            </select>
                                         </span>
                                         <span class="icon is-small is-left">
                                             <i></i>
@@ -150,11 +150,11 @@
                                 <label asp-for="AreaNegocio"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                    <span class="select" style="width:100%">
-                                        <select class="select" asp-for="AreaNegocio"
+                                        <span class="select" style="width:100%">
+                                            <select class="select" asp-for="AreaNegocio"
                                                 asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text"))">
-                                        </select>
-                                    </span>
+                                            </select>
+                                        </span>
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -163,16 +163,16 @@
                                 <span asp-validation-for="AreaNegocio" class="text-danger"></span>
                             </div>
                         </div>
-                        </div>
                     </div>
-                    <div class="step-content">
+                </div>
+                <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-3">
                             <div class="field">
                                 <label asp-for="NIFContacto"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="number" class="input" asp-for="NIFContacto">                                        
+                                        <input type="number" class="input" asp-for="NIFContacto">
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -186,7 +186,7 @@
                                 <label asp-for="MoradaContacto"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                        <input type="text" class="input" asp-for="MoradaContacto">                                        
+                                        <input type="text" class="input" asp-for="MoradaContacto">
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -200,7 +200,7 @@
                                 <label asp-for="Obs"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
-                                    <textarea class="textarea" rows="8" placeholder="" asp-for="Obs"></textarea>
+                                        <textarea class="textarea" rows="8" placeholder="" asp-for="Obs"></textarea>
                                         <span class="icon is-small is-left">
                                             <i></i>
                                         </span>
@@ -212,77 +212,79 @@
                     </div>
                 </div>
                 <div>
-                <div class="step-content">
-                    <div class="columns is-multiline mx-1">
-                        <div class="column is-12">
-                            <div class="file has-name is-fullwidth" id="file-with-js">
-                                <label class="file-label">
-                                    <input class="file-input" id="fileinput" type="file" name="resume">
-                                    <span class="file-cta">
-                                        <span class="file-icon">
-                                            <i class="fa fa-upload"></i>
+                    <div class="step-content">
+                        <div class="columns is-multiline mx-1">
+                            <div class="column is-12">
+                                <div class="file has-name is-fullwidth" id="file-with-js">
+                                    <label class="file-label">
+                                        <input class="file-input" id="fileinput" type="file" name="resume">
+                                        <span class="file-cta">
+                                            <span class="file-icon">
+                                                <i class="fa fa-upload"></i>
+                                            </span>
+                                            <span class="file-label">
+                                                Escolha um ficheiro...
+                                            </span>
                                         </span>
-                                        <span class="file-label">
-                                            Escolha um ficheiro...
-                                        </span>
-                                    </span>
-                                    <span class="file-name">Por favor escolha um ficheiro</span>
-                                </label>
+                                        <span class="file-name">Por favor escolha um ficheiro</span>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                         &nbsp;
-                        <button type="submit" class="button is-info is-outlined is-fullwidth">
-                            <span class="icon">
-                                <i class="fas fa-plus"></i>
-                            </span>
-                            <span>Criar Contacto</span>
-                        </button>
+                            &nbsp;
+                            <button type="submit" class="button is-info is-outlined is-fullwidth">
+                                <span class="icon">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Criar Contacto</span>
+                            </button>
 
+                        </div>
                     </div>
-                </div>
-                 &nbsp;
-                <div class="steps-actions">
-                    <div class="steps-action">
-                        <a href="#" data-nav="previous" class="button is-light">
-                            <span class="icon">
-                                <i class="fas fa-arrow-left"></i>
-                            </span>
-                            <span>Anterior</span>
-                        </a>
-                    </div>
-                    <div class="steps-action">
-                        <a href="#" data-nav="next" class="button is-light">
-                            <span class="icon">
-                                <i class="fas fa-arrow-right"></i>
-                            </span>
-                            <span>Próximo</span>
-                        </a>
+                    &nbsp;
+                    <div class="steps-actions">
+                        <div class="steps-action">
+                            <a href="#" data-nav="previous" class="button is-light">
+                                <span class="icon">
+                                    <i class="fas fa-arrow-left"></i>
+                                </span>
+                                <span>Anterior</span>
+                            </a>
+                        </div>
+                        <div class="steps-action">
+                            <a href="#" data-nav="next" class="button is-light">
+                                <span class="icon">
+                                    <i class="fas fa-arrow-right"></i>
+                                </span>
+                                <span>Próximo</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 </form>
 
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+}
 
-    <script>
+<script>
     bulmaSteps.attach();
-           var input = document.querySelector(
-            "#file-with-js>.file-label>.file-input"
-        );
-        input.onchange = function () {
-            if (input.files.length > 0) {
-                AdicionarAnexo();
-            }
+    var input = document.querySelector(
+        "#file-with-js>.file-label>.file-input"
+    );
+    input.onchange = function () {
+        if (input.files.length > 0) {
+            AdicionarAnexo();
         }
+    }
 
     function AdicionarAnexo(inputTxt) {
         var formData = new FormData();
-            formData.append("files", document.getElementById('fileinput').files[0]);
+        formData.append("files", document.getElementById('fileinput').files[0]);
         $.ajax(
             {
                 url: "/Contactos/AdicionarAnexo?NomeEmpresa=" + document.getElementById('txtNomeEmpresa').value + "&NomeCliente=" + document.getElementById('txtNomeCliente').value,
@@ -292,17 +294,10 @@
                 type: "POST",
                 success: function (data) {
                     $(function () {
-                        bulmaToast.toast({
-                          message: 'Anexo carregado com sucesso!',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
-                        })
+                        notify('Anexo carregado com sucesso!');
                     });
                 }
             }
         );
     }
-    </script>
+</script>

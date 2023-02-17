@@ -324,15 +324,7 @@
 
     function copiarTexto(id) {
 
-        bulmaToast.toast({
-            message: 'Texto copiado com sucesso!',
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        })
+        notify('Textfo copiado com sucesso!');
 
         // text area method
         let textArea = document.createElement("textarea");
@@ -395,10 +387,10 @@
 
             },
             error: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter as viaturas!");
             },
             failure: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter as viaturas!");
             }
         });
     }
@@ -422,10 +414,10 @@
 
             },
             error: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter a marcação!");
             },
             failure: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter a marcação!");
             }
         });
     }
@@ -433,14 +425,7 @@
 
     function AtualizarMarcacao(id) {
         if (document.getElementById('LstTecnicos').selectedIndex <= 0) {
-            bulmaToast.toast({
-                message: 'Tem de definir um técnico!',
-                type: 'is-danger',
-                closeOnClick: true,
-                pauseOnHover: true,
-                opacity: 0.8,
-                duration: 5000
-            })
+            notifyError('Tem de definir um tecnico!');
         } else {
 
             document.getElementById('pageloader').classList.add('is-active');
@@ -463,20 +448,13 @@
                     var modal = Bulma('#modalQuickActionMarcacao').modal();
                     modal.close();
 
-                    bulmaToast.toast({
-                        message: 'Agendamento atualizado com sucesso!',
-                        type: 'is-success',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000
-                    })
+                    notify('Agendamento atualizado com sucesso!');
                 },
                 error: function (response) {
-                    alert(response.responseText);
+                    notifyError("Ocorreu um erro ao atualizar a marcação!");
                 },
                 failure: function (response) {
-                    alert(response.responseText);
+                    notifyError("Ocorreu um erro ao atualizar a marcação!");
                 }
             });
         }

@@ -1024,7 +1024,7 @@
                 notify("Peça " + i.item.label + " selecionada com sucesso!");
             },
             minLength: 1
-        });
+        }).css('z-index', 100);
     });
 
     function CarregarPecasStock() {
@@ -1115,7 +1115,7 @@
                 notify("Cliente " + i.item.label + " selecionado com sucesso!");
             },
             minLength: 1
-        });
+        }).css('z-index', 100);
     });
 
     //EQUIPAMENTOS
@@ -1148,7 +1148,7 @@
                 notify("Equipamento " + i.item.label + " selecionado com sucesso!");
             },
             minLength: 1
-        });
+        }).css('z-index', 100);
     });
 
     function LimparEquipamento() {
@@ -1239,26 +1239,4 @@
         });
     }
 
-    function notifyError(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-danger',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
-    function notify(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
 </script>

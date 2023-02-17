@@ -515,16 +515,7 @@
 <script>
     function copiarTexto(id) {
 
-        bulmaToast.toast({
-            message: 'Texto copiado com sucesso!',
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        })
-
+       notify('Texto copiado com sucesso!');
         // text area method
         let textArea = document.createElement("textarea");
         textArea.value = document.getElementById(id).value;
@@ -553,26 +544,12 @@
                 if (result != "") {
                     $(function () {
                         document.getElementById("txtApiKey").value = result;
-                        bulmaToast.toast({
-                            message: 'Api Key gerada com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        });
+                        notify('API KEY gerada com sucesso!');
                         window.location.reload();
                     });
                 } else {
                     $(function () {
-                        bulmaToast.toast({
-                            message: 'Não foi possivel gerar a Api Key!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Não foi possivel gerar a API KEY!');
                     });
                 }
             }

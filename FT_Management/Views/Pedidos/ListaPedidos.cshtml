@@ -241,15 +241,7 @@ else
                        window.location.reload();
                     } else {
                         document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
-                        bulmaToast.toast({
-                          message: 'Ocorreu um erro ao iniciar a assistencia!',
-                          type: 'is-danger',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                                        position: 'top-center',
-                          duration: 5000
-                        })
+                        notifyError('Ocorreu um erro ao iniciar a assistencia!');
                     }
         document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
         document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');

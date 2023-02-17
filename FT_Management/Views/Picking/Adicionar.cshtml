@@ -200,8 +200,7 @@
 
 <script>
 function ValidarSerie(id, l) {
-    // alert(id);
-    //alert(document.getElementById('txtSerie_' + id + l).value);
+    
     var l_stamp = document.getElementById('txtBomaStamp_' + id + l).value;
     $.ajax({
         url: '/Picking/Validar/',
@@ -209,14 +208,7 @@ function ValidarSerie(id, l) {
         type: "POST",
         success: function(data) {
             if (data[1] == "") {
-                bulmaToast.toast({
-                    message: 'Núm. de Série inserido com sucesso!',
-                    type: 'is-success',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000
-                });
+                notify('N/S inserido com sucesso!');
                 document.getElementById('txtBomaStamp_' + id + l).value = data[2];
                 document.getElementById('txtSerie_' + id + l).disabled = true;
                 document.getElementById('btnApagar_' + id + l).style.display = 'block';
@@ -239,8 +231,7 @@ function ValidarSerie(id, l) {
 }
 
     function ApagarSerie(id, l) {
-       // alert(id);
-        //alert(document.getElementById('txtSerie_' + id + l).value);
+      
         var l_stamp = document.getElementById('txtBomaStamp_' + id + l).value;
         $.ajax({
             url: '/Picking/Validar/',
@@ -248,14 +239,7 @@ function ValidarSerie(id, l) {
             type: "POST",
             success: function (data) {
                 if (data[1] == "") {
-                    bulmaToast.toast({
-                        message: 'Núm. de Série apagado com sucesso!',
-                        type: 'is-success',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000
-                    });
+                    notify('Núm. de Série apagado com sucesso!');
                     document.getElementById('txtSerie_' + id + l).value = '';
                     document.getElementById('txtBomaStamp_' + id + l).value = '';
                     document.getElementById('txtSerie_' + id + l).disabled = false;
@@ -279,24 +263,14 @@ function ValidarSerie(id, l) {
     }
 
     function ValidarQuantidade(id) {
-        //alert(id);
-        //alert(document.getElementById('txtQtd_' + id).value);
-
-        $.ajax({
+       $.ajax({
             url: '/Picking/Validar/',
             data: { "stamp": id, "qtd": document.getElementById('txtQtd_' + id).value},
             type: "POST",
             success: function (data) {
                 document.getElementById('txtQtd_' + id).closest('.card').childNodes[1].classList.add('has-background-success');
                 if (data[1] == "") {
-                    bulmaToast.toast({
-                        message: 'Quantidade enviada com sucesso!',
-                        type: 'is-success',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000
-                    });
+                    notify('Quantidade enviada com sucesso!');
                 } else {
                 ModalMensagem(data[1], "danger");
                 PlayBeep();

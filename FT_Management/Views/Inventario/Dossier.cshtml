@@ -645,29 +645,6 @@ else{
         });
     }
 
-    function notifyError(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-danger',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
-    function notify(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
-
     (document.querySelectorAll('#ModalAdicionarLinha') || []).forEach(($close) => {
         const $target = $close.closest('#ModalAdicionarLinha');
 

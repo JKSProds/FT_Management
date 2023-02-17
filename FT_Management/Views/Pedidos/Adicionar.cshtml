@@ -433,6 +433,7 @@
 }
 
 <script>
+    bulmaSteps.attach();
     function CarregarDadosResponsavel() {
         $.ajax({
             url: '/Pedidos/ObterResponsavel/',
@@ -444,10 +445,10 @@
                 $("#txtQuemPediuTelefone").val(response.quemPediuTelefone)
             },
             error: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter o responsável!")
             },
             failure: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter o responsável!")
             }
         });
     }
@@ -495,10 +496,10 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     }
                 });
             },
@@ -508,6 +509,6 @@
                 CarregarDadosResponsavel();
             },
             minLength: 1
-        });
+        }).css('z-index', 100);
     });
 </script>

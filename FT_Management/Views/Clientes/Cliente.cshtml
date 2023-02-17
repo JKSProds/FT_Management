@@ -536,24 +536,9 @@
                 $(function () {
                     document.getElementById("btnEnviarEmailCliente").classList.remove("is-loading");
                     if (result == "Sucesso") {
-                        bulmaToast.toast({
-                            message: 'Email enviado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
-
+                    notify('Email enviado com sucesso!')
                     } else {
-                        bulmaToast.toast({
-                            message: 'Ocorreu um erro!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Ocorreu um erro ao enviar o email com a senha do cliente!')
                     }
 
                 });
@@ -571,26 +556,12 @@
                 if (result != "") {
                     $(function () {
                         document.getElementById("txtSenha").value = result;
-                        bulmaToast.toast({
-                            message: 'Senha gerada com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        });
+                        notify('Senha gerada  com sucesso!');
                         window.location.reload();
                     });
                 } else {
                     $(function () {
-                        bulmaToast.toast({
-                            message: 'Não foi possivel gerar a Senha!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Não foi possivel gerar a senha!');
                     });
                 }
             }

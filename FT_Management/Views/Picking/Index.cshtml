@@ -16,7 +16,7 @@
                         <article class="tile is-child notification is-info">
                             <p class="title">
                                 <span class="icon mr-3">
-                                   <i class="fa-solid fa-barcode"></i>
+                                    <i class="fa-solid fa-barcode"></i>
                                 </span>
                                 <span>Picking</span>
                             </p>
@@ -27,20 +27,23 @@
             <div class="column">
                 <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                     <p class="control has-icons-left">
-                        <input type="number" class="input" placeholder="Num. da Encomenda" id="txtIdEncomenda" name="IdEncomenda" value="@ViewData["IdEncomenda"]" aria-describedby="basic-addon2">
+                        <input type="number" class="input" placeholder="Num. da Encomenda" id="txtIdEncomenda"
+                            name="IdEncomenda" value="@ViewData["IdEncomenda"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-1-9"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Nome do Cliente" id="txtNomeCliente" name="NomeCliente" value="@ViewData["NomeCliente"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Nome do Cliente" id="txtNomeCliente"
+                            name="NomeCliente" value="@ViewData["NomeCliente"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
                     </p>
                     <p class="control has-addons" style="width:100%">
                         <span class="select" style="width:100%">
-                            <select class="select" style="width:100%;height: auto" id="ddlTipo" name="Tipo" onchange="this.form.submit();">
+                            <select class="select" style="width:100%;height: auto" id="ddlTipo" name="Tipo"
+                                onchange="this.form.submit();">
                                 <option value="0">Todos</option>
                                 <option value="46">Encomendas Div. Alimentar</option>
                                 <option value="2">Encomendas a Fornecedor</option>
@@ -72,309 +75,333 @@
     </div>
 </form>
 <hr />
-@if(Model.Count() == 0)
+@if (Model.Count() == 0)
 {
-    <button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontradas encomendas!</button>
+    <button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontradas
+    encomendas!</button>
 }
 else
 {
-     @if (Model.Where(e => e.NumDossier == 46).Count() > 0)
-     {
-    <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced">
-            <header class="card-header has-background-info">
-                <p class="card-header-title" style="color:#ffffff">
-                    <span class="icon"><i class="fa-solid fa-person"></i></span>
-                    Clientes
-                </p>
-            <a class="card-header-icon button is-success m-1 is-disabled">@Model.Where(e => e.NumDossier == 46).Count()</a>
-            </header>
-            <div class="card-content">
-                <div class="b-table">
-                    <div class="table-wrapper has-mobile-cards">
-                            <table class="table is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
-                                        <th>Data</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Where(e => e.NumDossier == 46))
+    @if (Model.Where(e => e.NumDossier == 46).Count() > 0)
+    {
+        <div class="column mx-1">
+    <div class="card has-table has-mobile-sort-spaced">
+        <header class="card-header has-background-info">
+            <p class="card-header-title" style="color:#ffffff">
+                <span class="icon"><i class="fa-solid fa-person"></i></span>
+                Clientes
+            </p>
+            <a class="card-header-icon button is-success m-1 is-disabled">@Model.Where(e => e.NumDossier ==
+                46).Count()</a>
+        </header>
+        <div class="card-content">
+            <div class="b-table">
+                <div class="table-wrapper has-mobile-cards">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
+                                <th>Data</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Where(e => e.NumDossier == 46))
                                     {
                                         <tr>
                                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">
+                                                @item.NomeCliente</td>
                                             <td data-label="Data">@item.Data.ToShortDateString()</td>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">
+                                                @item.NItems</td>
                                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
                                                 <span class="icon  mr-2">
                                                     <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                 </span>
                                                 <span class="icon  mr-2">
-                                                    <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
+                                                    <i
+                                                        class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                 </span>
                                             </td>
-                                             <td class="is-actions-cell">
+                                            <td class="is-actions-cell">
                                                 @if (item.PI_STAMP == "")
                                                 {
-                                                <a class="button is-large is-success is-rounded" style="width:45%" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
-                                                    <span class="icon is-small">
-                                                        <i class="fa-solid fa-circle-play"></i>
-                                                    </span>
+                                                    <a class="button is-large is-success is-rounded" style="width:45%"
+                                                        onclick="ConfirmNovoPicking('@item.BO_STAMP')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-circle-play"></i>
+                                                        </span>
                                                     </a>
                                                 }
                                                 else
                                                 {
-                                                 <a class="button is-large is-warning is-rounded" style="width:45%" onclick="NovoPicking('@item.BO_STAMP')">
-                                                    <span class="icon is-small">
-                                                        <i class="fa-solid fa-forward-step"></i>
-                                                    </span>
-                                                    </a>     
-                                                }
-                                                <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
-                                                    <span class="icon is-small">
-                                                        <i class="fa-solid fa-eye"></i>
-                                                    </span>
-                                                    </a> 
-                                            </td>
-                                        </tr>
-                                    }
-                                    </tbody>
-                            </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-@if (Model.Where(e => e.NumDossier == 2).Count() > 0)
-{
-    <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced">
-            <header class="card-header has-background-info">
-                <p class="card-header-title" style="color:#ffffff">
-                    <span class="icon"><i class="fa-solid fa-person"></i></span>
-                    Fornecedores
-                </p>
-            <a class="card-header-icon button is-success m-1 is-disabled">@Model.Where(e => e.NumDossier == 2).Count()</a>
-            </header>
-            <div class="card-content">
-                <div class="b-table">
-                    <div class="table-wrapper has-mobile-cards">
-                            <table class="table is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
-                                        <th>Data</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Where(e => e.NumDossier == 2))
-                                    {
-                                        <tr>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
-                                            <td data-label="Data">@item.Data.ToShortDateString()</td>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
-                                                <span class="icon  mr-2">
-                                                    <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
-                                                </span>
-                                                <span class="icon  mr-2">
-                                                    <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
-                                                </span>
-                                            </td>
-                                             <td class="is-actions-cell">
-                                                @if (item.PI_STAMP == "")
-                                                {
-                                                <a class="button is-large is-success is-rounded" style="width:45%" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
-                                                    <span class="icon is-small">
-                                                        <i class="fa-solid fa-circle-play"></i>
-                                                    </span>
+                                                    <a class="button is-large is-warning is-rounded" style="width:45%"
+                                                        onclick="NovoPicking('@item.BO_STAMP')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-forward-step"></i>
+                                                        </span>
                                                     </a>
                                                 }
-                                                else
-                                                {
-                                                 <a class="button is-large is-warning is-rounded" style="width:45%" onclick="NovoPicking('@item.BO_STAMP')">
-                                                    <span class="icon is-small">
-                                                        <i class="fa-solid fa-forward-step"></i>
-                                                    </span>
-                                                    </a>  
-                                                }
-                                                <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
+                                                <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%"
+                                                    onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </span>
-                                                    </a> 
+                                                </a>
                                             </td>
                                         </tr>
                                     }
-                                    </tbody>
+                                </tbody>
                             </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     }
-     @if (Model.Where(e => e.NumDossier == 36).Count() > 0)
-     {
-    <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced">
-            <header class="card-header has-background-info">
-                <p class="card-header-title" style="color:#ffffff">
-                    <span class="icon"><i class="fa-solid fa-user-gear"></i></span>
-                    Técnicos
-                </p>
-            <a class="card-header-icon button is-success m-1 is-disabled">@Model.Where(e => e.NumDossier == 36).Count()</a>
-            </header>
-            <div class="card-content">
-                <div class="b-table">
-                    <div class="table-wrapper has-mobile-cards">
-                            <table class="table is-fullwidth">
-                                <thead>
-                                    <tr>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
-                                        <th>Data</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Where(e => e.NumDossier == 36))
+    @if (Model.Where(e => e.NumDossier == 2).Count() > 0)
+    {
+        <div class="column mx-1">
+    <div class="card has-table has-mobile-sort-spaced">
+        <header class="card-header has-background-info">
+            <p class="card-header-title" style="color:#ffffff">
+                <span class="icon"><i class="fa-solid fa-person"></i></span>
+                Fornecedores
+            </p>
+            <a class="card-header-icon button is-success m-1 is-disabled">@Model.Where(e => e.NumDossier ==
+                2).Count()</a>
+        </header>
+        <div class="card-content">
+            <div class="b-table">
+                <div class="table-wrapper has-mobile-cards">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
+                                <th>Data</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Where(e => e.NumDossier == 2))
                                     {
                                         <tr>
                                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">@item.NomeCliente</td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">
+                                                @item.NomeCliente</td>
                                             <td data-label="Data">@item.Data.ToShortDateString()</td>
-                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">@item.NItems</td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">
+                                                @item.NItems</td>
                                             <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
                                                 <span class="icon  mr-2">
                                                     <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
                                                 </span>
                                                 <span class="icon  mr-2">
-                                                    <i class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
+                                                    <i
+                                                        class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
                                                 </span>
                                             </td>
-                                             <td class="is-actions-cell">
+                                            <td class="is-actions-cell">
                                                 @if (item.PI_STAMP == "")
                                                 {
-                                                <a class="button is-large is-success is-rounded" style="width:45%" onclick="ConfirmNovoPicking('@item.BO_STAMP')">
-                                                    <span class="icon is-small">
-                                                        <i class="fa-solid fa-circle-play"></i>
-                                                    </span>
+                                                    <a class="button is-large is-success is-rounded" style="width:45%"
+                                                        onclick="ConfirmNovoPicking('@item.BO_STAMP')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-circle-play"></i>
+                                                        </span>
                                                     </a>
                                                 }
                                                 else
                                                 {
-                                                 <a class="button is-large is-warning is-rounded" style="width:45%" onclick="NovoPicking('@item.BO_STAMP')">
+                                                    <a class="button is-large is-warning is-rounded" style="width:45%"
+                                                        onclick="NovoPicking('@item.BO_STAMP')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-forward-step"></i>
+                                                        </span>
+                                                    </a>
+                                                }
+                                                <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%"
+                                                    onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
                                                     <span class="icon is-small">
-                                                        <i class="fa-solid fa-forward-step"></i>
+                                                        <i class="fa-solid fa-eye"></i>
                                                     </span>
-                                                    </a>     
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Where(e => e.NumDossier == 36).Count() > 0)
+    {
+        <div class="column mx-1">
+    <div class="card has-table has-mobile-sort-spaced">
+        <header class="card-header has-background-info">
+            <p class="card-header-title" style="color:#ffffff">
+                <span class="icon"><i class="fa-solid fa-user-gear"></i></span>
+                Técnicos
+            </p>
+            <a class="card-header-icon button is-success m-1 is-disabled">@Model.Where(e => e.NumDossier ==
+                36).Count()</a>
+        </header>
+        <div class="card-content">
+            <div class="b-table">
+                <div class="table-wrapper has-mobile-cards">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)</th>
+                                <th>Data</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Where(e => e.NumDossier == 36))
+                                    {
+                                        <tr>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@item.Id</td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeCliente)">
+                                                @item.NomeCliente</td>
+                                            <td data-label="Data">@item.Data.ToShortDateString()</td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NItems)">
+                                                @item.NItems</td>
+                                            <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Total)">
+                                                <span class="icon  mr-2">
+                                                    <i class="fa-solid @(item.Total ? "fa-solid fa-t" : "fa-solid fa-p")"></i>
+                                                </span>
+                                                <span class="icon  mr-2">
+                                                    <i
+                                                        class="fa-solid @(item.DespacharEncomenda ? "fa-solid fa-car-side" : "fa-solid fa-warehouse")"></i>
+                                                </span>
+                                            </td>
+                                            <td class="is-actions-cell">
+                                                @if (item.PI_STAMP == "")
+                                                {
+                                                    <a class="button is-large is-success is-rounded" style="width:45%"
+                                                        onclick="ConfirmNovoPicking('@item.BO_STAMP')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-circle-play"></i>
+                                                        </span>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="button is-large is-warning is-rounded" style="width:45%"
+                                                        onclick="NovoPicking('@item.BO_STAMP')">
+                                                        <span class="icon is-small">
+                                                            <i class="fa-solid fa-forward-step"></i>
+                                                        </span>
+                                                    </a>
 
                                                 }
-                                                   <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%" onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
+                                                <a class="button is-large is-success is-rounded is-pulled-right" style="width:45%"
+                                                    onclick="VerEncomenda('@item.PI_STAMP', '@item.BO_STAMP')">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </span>
-                                                    </a> 
+                                                </a>
                                             </td>
                                         </tr>
                                     }
-                                    </tbody>
+                                </tbody>
                             </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-}
+    }
 }
 
 <div class="modal" id="modalNovoPicking">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Picking</p>
-    </header>
-    <section class="modal-card-body">
-      <p>Tem a certeza que deseja gerar um documento de Picking?</p>
-    </section>
-    <footer class="modal-card-foot">
-      <button class="button is-success" onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">Sim</button>
-      <button class="button" onclick="Bulma('#modalNovoPicking').modal().close();">Não</button>
-    </footer>
-  </div>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Picking</p>
+        </header>
+        <section class="modal-card-body">
+            <p>Tem a certeza que deseja gerar um documento de Picking?</p>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success"
+                onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">Sim</button>
+            <button class="button" onclick="Bulma('#modalNovoPicking').modal().close();">Não</button>
+        </footer>
+    </div>
 </div>
 
 <div class="modal" id="modalVerPicking">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Encomenda</p>
-    </header>
-    <section class="modal-card-body">
-        <div class="modal-body">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Encomenda</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
                 <label class="label">Nº da Encomenda</label>
                 <div class="field has-addons">
-                  <div class="control" style="width:100%">
+                    <div class="control" style="width:100%">
                         <input type="text" class="input" readonly id="txtIdEnc">
-                  </div>
-                  <div class="control">
-                    <a class="button is-info"onclick="copiarTexto('txtIdEnc');">
-                              <i class="fa-solid fa-copy"></i>
-                    </a>
-                  </div>
+                    </div>
+                    <div class="control">
+                        <a class="button is-info" onclick="copiarTexto('txtIdEnc');">
+                            <i class="fa-solid fa-copy"></i>
+                        </a>
+                    </div>
                 </div>
-                    <div class="field">
+                <div class="field">
                     <div class="control">
                         <label class="label">Nome Cliente</label>
                         <input type="text" class="input" readonly id="txtNome">
-                      </div>
                     </div>
-                   <div class="field">
+                </div>
+                <div class="field">
                     <div class="control">
                         <label class="label">Data de Envio</label>
                         <input type="text" class="input" readonly id="txtDataEnvio">
-                      </div>
                     </div>
-                   <div class="field">
+                </div>
+                <div class="field">
                     <div class="control">
                         <label class="label">Observações</label>
                         <textarea type="text" class="textarea" readonly rows=4 id="txtObs"></textarea>
-                      </div>
                     </div>
-                 <div id="divEncomenda"></div>
                 </div>
-  </section>
-    <footer class="modal-card-foot">
-      <button class="button is-success" onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">Abrir Picking</button>
-      <button class="button" onclick="Bulma('#modalVerPicking').modal().close();">Fechar</button>
-    </footer>
-  </div>
+                <div id="divEncomenda"></div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success"
+                onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">Abrir Picking</button>
+            <button class="button" onclick="Bulma('#modalVerPicking').modal().close();">Fechar</button>
+        </footer>
+    </div>
 </div>
 
 <script>
     document.getElementById("ddlTipo").value = @ViewData["Tipo"];
 
     function ConfirmNovoPicking(id) {
-            document.getElementById('txtIdEncomenda').value = id;
-            Bulma('#modalNovoPicking').modal().open();
+        document.getElementById('txtIdEncomenda').value = id;
+        Bulma('#modalNovoPicking').modal().open();
     }
     function NovoPicking(id) {
-            Bulma('#modalNovoPicking').modal().close();
+        Bulma('#modalNovoPicking').modal().close();
         window.location.href = 'Picking/Adicionar/' + id;
     }
 
@@ -383,61 +410,37 @@ else
 
         $.ajax({
             url: '/Picking/ObterEncomenda/',
-            data: { "stamp": enc},
+            data: { "stamp": enc },
             type: "POST",
             success: function (data) {
-               document.getElementById("txtIdEnc").value = data.id;
-               document.getElementById("txtNome").value = data.nomeCliente;
-               document.getElementById("txtDataEnvio").value = new Date(data.data).toLocaleDateString();
-               document.getElementById("txtObs").value = data.obs;
+                document.getElementById("txtIdEnc").value = data.id;
+                document.getElementById("txtNome").value = data.nomeCliente;
+                document.getElementById("txtDataEnvio").value = new Date(data.data).toLocaleDateString();
+                document.getElementById("txtObs").value = data.obs;
 
-               var html = "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade</th></tr>";
-               data.linhasEncomenda.forEach(obj => {
+                var html = "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade</th></tr>";
+                data.linhasEncomenda.forEach(obj => {
                     //console.log(obj.produto);
                     html += "<tr><td style='padding: 5px;'>" + obj.produto.ref_Produto + "</td><td style='padding: 5px;'>" + obj.produto.designacao_Produto + "</td><td style='padding: 5px;'>" + obj.produto.stock_Fisico + "</td></tr>";
                 });
-               html += "</table>";
-               document.getElementById("divEncomenda").innerHTML = html;
-               
-               Bulma('#modalVerPicking').modal().open();
+                html += "</table>";
+                document.getElementById("divEncomenda").innerHTML = html;
+
+                Bulma('#modalVerPicking').modal().open();
             },
             error: function (response) {
-                bulmaToast.toast({
-                        message: 'Ocorreu um erro ao obter a encomenda',
-                        type: 'is-danger',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000,
-                        position: 'top-center'
-                    });  
+                notifyError('Ocorreu um erro ao obter a encomenda');
             },
             failure: function (response) {
-                bulmaToast.toast({
-                        message: 'Ocorreu um erro ao obter a encomenda',
-                        type: 'is-danger',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000,
-                        position: 'top-center'
-                    });       
+                notifyError('Ocorreu um erro ao obter a encomenda');
             }
         });
     }
- function copiarTexto(id) {
-                  
-            bulmaToast.toast({
-                message: 'Texto copiado com sucesso!',
-                type: 'is-success',
-                closeOnClick: true,
-                pauseOnHover: true,
-                opacity: 0.8,
-                duration: 5000,
-                position: 'top-center'
-            })
+    function copiarTexto(id) {
 
-            // text area method
+        notify('Texto copiado com sucesso!');
+
+        // text area method
         let textArea = document.createElement("textarea");
         textArea.value = document.getElementById(id).value;
         // make the textarea out of viewport
@@ -453,6 +456,6 @@ else
             textArea.remove();
         });
 
-        }
+    }
 
 </script>

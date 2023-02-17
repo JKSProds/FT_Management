@@ -513,24 +513,10 @@
                 $(function () {
                     document.getElementById("btnEnviarEmailMarcacaoCliente").classList.remove("is-loading");
                     if (result == "Sucesso") {
-                        bulmaToast.toast({
-                            message: 'Email enviado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notify('Email enviado com sucesso!');
 
                     } else {
-                        bulmaToast.toast({
-                            message: 'Ocorreu um erro!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Ocorreu um erro.');
                     }
 
                 });
@@ -551,24 +537,10 @@
                 $(function () {
                     document.getElementById("btnEnviarEmailMarcacaoTecnico").classList.remove("is-loading");
                     if (result == "Sucesso") {
-                        bulmaToast.toast({
-                            message: 'Email enviado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notify('Email enviado com sucesso!');
 
                     } else {
-                        bulmaToast.toast({
-                            message: 'Ocorreu um erro!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Ocorreu um erro.');
                     }
 
                 });
@@ -603,14 +575,7 @@
                     document.getElementById("btnEnviarMail_" + idFolhaObra).classList.remove("is-loading");
 
                     if (result == "Sucesso") {
-                        bulmaToast.toast({
-                            message: 'Email enviado com sucesso',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notify('Email enviado com sucesso!');
 
                         var json = {
                             id: idFolhaObra,
@@ -628,14 +593,7 @@
                         });
 
                     } else {
-                        bulmaToast.toast({
-                            message: 'Ocorreu um erro!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Ocorreu um erro.');
                     }
 
                 });
@@ -654,10 +612,10 @@
                 $("#txtQuemPediuTelefone").val(response.quemPediuTelefone)
             },
             error: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter o responsável!");
             },
             failure: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter o responsável!");
             }
         });
     }
@@ -679,10 +637,10 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     }
                 });
             },
@@ -692,7 +650,7 @@
                 CarregarDadosResponsavel();
             },
             minLength: 1
-        });
+        }).css('z-index', 100);
     });
 
 </script>

@@ -463,36 +463,38 @@
             data: { "obs": document.getElementById('txtObs').value, "file": base64 },
             success: function (data) {
                 if (data == "Ok") {
-                    bulmaToast.toast({
-                        message: 'Sugestão enviada com sucesso!',
-                        type: 'is-success',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000
-                    });
+                    notify('Sugestão enviada com sucesso!');
                 }
             },
             error: function (data) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000
-                });
+                notifyError('Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!');
             },
             failure: function (data) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000
-                });
+                notifyError('Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!');
             }
+        });
+    }
+
+    function notifyError(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-danger',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        });
+    }
+    function notify(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-success',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
         });
     }
 </script>

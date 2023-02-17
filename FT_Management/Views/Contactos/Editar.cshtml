@@ -489,14 +489,7 @@
             traditional: true,
             success: function (result) {
                 if (result == "nok") {
-                     bulmaToast.toast({
-                        message: 'Não foi possivel adicionar o contacto! Por favor verifique se preencheu todos os dados.',
-                        type: 'is-danger',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000
-                    })
+                    notifyError('Não foi possivel adicionar o contacto! Por favor verifique se preencheu todos os dados.');
                 }else{
                 window.location.reload();
                 }
