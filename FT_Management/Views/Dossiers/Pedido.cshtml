@@ -181,7 +181,8 @@ else
                                 </td>
                             </tr>
                         }
-                        @foreach (var item in Model.Linhas.Where(l => string.IsNullOrEmpty(l.Referencia.Trim())).Skip(3))
+                        @foreach (var item in Model.Linhas.Where(l =>
+                       string.IsNullOrEmpty(l.Referencia.Trim())).Skip((Model.Serie == 96 || Model.Serie == 97 ? 3 : 0)))
                         {
                             <tr id="@item.Stamp_Linha">
                                 <td colspan="3" data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
@@ -201,18 +202,18 @@ else
                 </table>
             </div>
         </div>
-        <hr>
-        <p class="control">
-            <a class="button is-info is-fullwidth is-large" type="button"
-                href='~/Dossiers/FecharDossier/@Model.StampDossier?ReturnUrl=@ViewData["ReturnUrl"]'>
-                <span class="icon">
-                    <i class="fa-solid fa-circle-chevron-left"></i>
-                </span>
-                <span>Voltar</span>
-            </a>
-        </p>
     </div>
 }
+<hr>
+<p class="control">
+    <a class="button is-info is-fullwidth is-large" type="button"
+        href='~/Dossiers/FecharDossier/@Model.StampDossier?ReturnUrl=@ViewData["ReturnUrl"]'>
+        <span class="icon">
+            <i class="fa-solid fa-circle-chevron-left"></i>
+        </span>
+        <span>Voltar</span>
+    </a>
+</p>
 
 
 <div id="modalPecas" class="modal">
@@ -356,6 +357,7 @@ else
                     notify("Linha removida com sucesso!");
                     var row = document.getElementById(id);
                     row.parentNode.removeChild(row);
+                    if (document.getElementById('tblReferencias').rows.length < 2) window.location.reload();
                 } else {
                     notifyError(response[1]);
                     document.getElementById("btn_" + id).classList.remove("is-loading");
@@ -386,6 +388,7 @@ else
                             if (response.quantidade == 0) {
                                 notifyError("Ocorreu um erro ao adicionar a referência!");
                             } else {
+                                if (document.getElementById('tblReferencias') == null) window.location.reload();
                                 var row = document.getElementById('tblReferencias').getElementsByTagName('tbody')[0].insertRow();
                                 row.id = response.stamp_Linha;
                                 row.innerHTML = "<td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Referencia)'>" + response.referencia + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)'>" + response.quantidade + "</td><td  class='is-actions-cell'><button id='btn_" + response.stamp_Linha + "' class='button is-danger is-fullwidth is-large' onclick='RemoverLinha(\"" + response.stamp_Linha + "\")'><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>";
@@ -424,6 +427,7 @@ else
                 data: { "design": linha },
                 type: "POST",
                 success: function (response) {
+                    if (document.getElementById('tblReferencias') == null) window.location.reload();
                     var row = document.getElementById('tblReferencias').getElementsByTagName('tbody')[0].insertRow();
                     row.id = response.stamp_Linha;
                     row.innerHTML = "<td colspan='3' data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td  class='is-actions-cell'><button id='btn_" + response.stamp_Linha + "' class='button is-danger is-fullwidth is-large' onclick='RemoverLinha(\"" + response.stamp_Linha + "\")'><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>";

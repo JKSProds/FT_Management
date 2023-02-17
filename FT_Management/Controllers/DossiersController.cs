@@ -83,7 +83,6 @@ namespace FT_Management.Controllers
                 MailContext.EnviarEmailPedidoTransferencia(u, d);
             }
 
-            //Criação de linhas por defeito
             if (load == 1)
             {
                 List<Linha_Dossier> Linhas = new List<Linha_Dossier>();
@@ -116,7 +115,6 @@ namespace FT_Management.Controllers
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = phccontext.ObterDossier(id);
-            MailContext.EnviarEmailDossier(u, d);
 
             Linha_Dossier l = new Linha_Dossier()
             {
