@@ -12,6 +12,7 @@ namespace FT_Management.Models
             Pecas, Orcamento, Transferencia
 
         }
+
         public string StampDossier { get; set; }
         public int Serie { get; set; }
         public string SerieNome { get { return this.Serie == 96 ? "Pedido de Peças" : this.Serie == 97 ? "Pedido de Orçamento" : this.Serie == 36 ? "Pedido de Transferência" : "N/D"; } }

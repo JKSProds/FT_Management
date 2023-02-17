@@ -97,33 +97,34 @@ else
                                     @Html.DisplayFor(modelItem => item.IntervencaosServico.FirstOrDefault().NomeTecnico)
                                 </td>
                                 <td class="is-actions-cell">
-                                    <div class="field has-addons">
-                                        <p class="control">
-                                            <button class="button"
+                                    <div class="field has-addons" style="width:100%">
+                                        <p class="control" style="width:100%">
+                                            <button class="button is-success is-fullwidth"
                                                 onclick="window.open('@Url.Action("PrintFolhaObraSimples", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
                                                 <span class="icon is-small">
                                                     <i class="fa-solid fa-screwdriver-wrench"></i>
                                                 </span>
                                             </button>
                                         </p>
-                                        <p class="control">
-                                            <button class="button"
+                                        <p class="control" style="width:100%">
+                                            <button class="button is-success is-outlined is-fullwidth"
                                                 onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
                                                 <span class="icon is-small">
                                                     <i class="fas fa-sticky-note"></i>
                                                 </span>
                                             </button>
                                         </p>
-                                        <p class="control">
-                                            <button class="button"
+                                        <p class="control" style="width:100%">
+                                            <button class="button is-success is-fullwidth"
                                                 onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')">
                                                 <span class="icon is-small">
                                                     <i class="fas fa-print"></i>
                                                 </span>
                                             </button>
                                         </p>
-                                        <p class="control">
-                                            <button class="button" onclick="ConfirmEnviarEmail(@item.IdFolhaObra)"
+                                        <p class="control" style="width:100%">
+                                            <button class="button is-info is-fullwidth"
+                                                onclick="ConfirmEnviarEmail(@item.IdFolhaObra)"
                                                 id="btnEnviarMail_@item.IdFolhaObra">
                                                 <span class="icon is-small">
                                                     <i class="fas fa-paper-plane"></i>
