@@ -43,6 +43,7 @@ namespace FT_Management.Controllers
                     var passwordHasher = new PasswordHasher<string>();
                     if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                     {
+                        if (Environment.GetEnvironmentVariable("DEV") == "1" && !user.Dev) return Forbid();
                         var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
@@ -98,6 +99,7 @@ namespace FT_Management.Controllers
                 {
                     if (c.Senha == utilizador.Password)
                     {
+                        if (Environment.GetEnvironmentVariable("DEV") == "1") return Forbid();
                         var claims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, c.NumeroContribuinteCliente),
@@ -126,6 +128,8 @@ namespace FT_Management.Controllers
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
+                    if (Environment.GetEnvironmentVariable("DEV") == "1" && !user.Dev) return Forbid();
+
                     TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
                     string res = first > 9 ? first.ToString() : first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
                     if (string.IsNullOrEmpty(user.SecondFactorAuthStamp) || tfa.ValidateTwoFactorPIN(user.SecondFactorAuthStamp, res))
@@ -386,6 +390,19 @@ namespace FT_Management.Controllers
 
             Utilizador u = context.ObterUtilizador(id);
             if (this.User.IsInRole("Master")) u.Acessos = acessos;
+
+            context.NovoUtilizador(u);
+
+            return Content("Ok");
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AlterarDev(int id, bool dev)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(id);
+            if (this.User.IsInRole("Master")) u.Dev = dev;
 
             context.NovoUtilizador(u);
 

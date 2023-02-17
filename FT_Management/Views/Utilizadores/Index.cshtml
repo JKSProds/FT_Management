@@ -130,6 +130,17 @@ else
                                                     model.Acessos)</span>
                                                         </label>
                                                     </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                                            class="switch is-rounded is-small">
+                                                            <input type="checkbox" id="chkDev_@item.Id" checked="@item.Dev"
+                                                                onchange="AtualizarDevUtilizador(@item.Id)">
+                                                            <span class="check is-danger"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.Dev)</span>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -255,6 +266,24 @@ else
                 $(function () {
                     if (result == "Ok") {
                         notify('Valor de acessos do utilizador atualizado com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                });
+            }
+        });
+    }
+
+    function AtualizarDevUtilizador(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/AlterarDev/" + id,
+            data: { dev: document.getElementById('chkDev_' + id).checked },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "Ok") {
+                        notify('Valor de Developer do utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
                     }
