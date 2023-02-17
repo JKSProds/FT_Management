@@ -66,8 +66,6 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = phccontext.ObterDossierAberto(u).Where(d => !d.Fechado).DefaultIfEmpty(new Dossier()).Last();
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
-
             if (d.StampDossier == null)
             {
                 d = new Dossier()
@@ -82,7 +80,7 @@ namespace FT_Management.Controllers
                 if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
                 MailContext.EnviarEmailPedidoTransferencia(u, d);
             }
-
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
             if (load == 1)
             {
                 List<Linha_Dossier> Linhas = new List<Linha_Dossier>();
