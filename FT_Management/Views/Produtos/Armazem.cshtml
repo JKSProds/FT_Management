@@ -204,7 +204,6 @@ else
             url: '/Produtos/GerarGuiaGlobal/' + id,
             type: "POST",
             success: function (response) {
-                console.log(response);
                 if (response[0] == 1) {
                     notify("Guia gerada com sucesso! Por requisite a impressão/envio da sua guia! " + response[1])
                 } else {
@@ -231,7 +230,6 @@ else
         var armazem = '@ViewData["IdArmazem"]';
         var load = document.getElementById('chkPecas').checked ? 1 : 0;
 
-        console.log("~/Dossiers/CriarDossierTransferencia/" + id + "?armazem=" + armazem + "&load=" + load);
         window.location.href = "/Dossiers/CriarDossierTransferencia/" + id + "?armazem=" + armazem + "&load=" + load;
     }
 

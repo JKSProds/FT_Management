@@ -252,7 +252,6 @@ else
                             ObterMarcacao(info.event.extendedProps.idMarcacao);
                         },
                         eventDrop: function (info) {
-                            //console.log(info);
                             id = info.event.extendedProps.idMarcacao;
                             tecOriginal = info.event.extendedProps.idTecnico;
                             dataOriginal = info.event.extendedProps.dueDateClass;
@@ -277,8 +276,6 @@ else
                             });
                         },
                         eventReceive: function (info) {
-                            //console.log(info);
-
                             id = info.event.extendedProps.idMarcacao;
                             tecOriginal = info.event.extendedProps.idTecnico;
                             dataOriginal = info.event.extendedProps.dueDateClass;
@@ -332,7 +329,6 @@ else
                         document.getElementById('txtHeader').text = srcCalendar.view.title;
                     });
                     document.getElementById('mode').addEventListener('click', function () {
-                        console.log(srcCalendar);
                         view = srcCalendar.view.type;
                         if (view == "dayGridWeek") srcCalendar.changeView("dayGridMonth");
                         if (view == "dayGridMonth") srcCalendar.changeView("dayGridDay");
@@ -348,7 +344,6 @@ else
                             url: '/Pedidos/ObterMarcacao/' + id,
                             type: "GET",
                             success: function (response) {
-                                //console.log(response);
                                 document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function (elem) {
                                     return new Date(elem).toLocaleDateString();
                                 }).join(" | ");
@@ -368,10 +363,10 @@ else
 
                             },
                             error: function (response) {
-                                console.log(response.responseText);
+                                notifyError("Ocorreu um erro ao obter a marcação!");
                             },
                             failure: function (response) {
-                                console.log(response.responseText);
+                                notifyError("Ocorreu um erro ao obter a marcação!");
                             }
                         });
                     }
@@ -381,16 +376,15 @@ else
                     url: '/Pedidos/ObterPercentagemTecnico/' + @u.IdPHC,
                     type: "GET",
                     success: function (response) {
-                        //console.log(response);
                         document.getElementById('pb_@u.Id').max = response[0];
                         document.getElementById('pb_@u.Id').value = response[1];
                         document.getElementById('pbval_@u.Id').setAttribute('data-text', response[1] + '/' + response[0])
                     },
                     error: function (response) {
-                        console.log(response.responseText);
+                        notifyError("Ocorreu um erro ao obter a percentagem de assistências do tecnico!");
                     },
                     failure: function (response) {
-                        console.log(response.responseText);
+                        notifyError("Ocorreu um erro ao obter a percentagem de assistências do tecnico!");
                     }
                 });
 

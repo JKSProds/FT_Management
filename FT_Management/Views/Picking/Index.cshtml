@@ -420,7 +420,6 @@ else
 
                 var html = "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade</th></tr>";
                 data.linhasEncomenda.forEach(obj => {
-                    //console.log(obj.produto);
                     html += "<tr><td style='padding: 5px;'>" + obj.produto.ref_Produto + "</td><td style='padding: 5px;'>" + obj.produto.designacao_Produto + "</td><td style='padding: 5px;'>" + obj.produto.stock_Fisico + "</td></tr>";
                 });
                 html += "</table>";

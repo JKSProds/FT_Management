@@ -462,7 +462,6 @@
             url: '/Visitas/ObterProposta/' + id,
             type: "GET",
             success: function (response) {
-                console.log(response);
                 document.getElementById('txtDataEditar').value = response.dataProposta.slice(0, 10);
                 document.getElementById("txtEstadoEditar").value = response.estadoProposta;
                 document.getElementById("txtValorEditar").value = response.valorProposta;

@@ -155,7 +155,6 @@ else
                 } else {
                     var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº do Dossier</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
                     data.forEach(obj => {
-                        //console.log(obj);
                         html += "<tr><td>" + obj.idPicking + "</td><td>" + new Date(obj.dataDossier).toLocaleDateString() + "</td><td>" + obj.editadoPor + "</td><td><a class='button is-large is-success is-rounded is-pulled-right' style='width:100%' href='/Inventario/Dossier/" + obj.picking_Stamp + "'><span class='icon is-small'><i class='fa-solid fa-eye'></i></span></a> </td></tr>";
                     });
                     html += "</table>";

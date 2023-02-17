@@ -390,7 +390,6 @@ else
                             if (response.quantidade == 0) {
                                 notifyError("Ocorreu um erro ao adicionar a referência!");
                             } else {
-                                console.log(response);
                                 var row = document.getElementById('tblReferencias').getElementsByTagName('tbody')[0].insertRow();
                                 row.id = response.stamp_Linha;
                                 row.innerHTML = "<td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Referencia)'>" + response.referencia + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)'>" + response.quantidade + "</td><td  class='is-actions-cell'><button id='btn_" + response.stamp_Linha + "' class='button is-danger is-fullwidth is-large' onclick='RemoverLinha(\"" + response.stamp_Linha + "\")'><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>";
@@ -464,10 +463,10 @@ else
                         }))
                     },
                     error: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter as peças!');
                     },
                     failure: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter as peças!');
                     }
                 });
             },

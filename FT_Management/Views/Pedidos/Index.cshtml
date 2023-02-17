@@ -366,13 +366,12 @@
             url: '/Viaturas/ObterViaturas/',
             type: "GET",
             success: function (response) {
-                //console.log(response);
                 var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Condutor</th><th>Matricula</th><th>Localizacao</th><th></th></tr></thead><tbody>";
                 for (var i = 0; i < response.length; i++) {
                     var obj = response[i];
                     var condutor = 'N/D';
                     if (obj.utilizador != null) condutor = obj.utilizador.nomeCompleto;
-                    console.log(obj);
+                    
                     html += "<tr onclick=\"location.href = '/Viaturas/Viagens/" + obj.matricula + "'\" ";
                     if (obj.ignicao) html += " class=\"has-background-success\"";
                     html += "><td>" + condutor + "</td><td>" + obj.matricula + "</td><td>" + obj.localizacaoMorada + "</td><td><a class=\"button is-outlined is-info is-large\" href=" + obj.getUrl + "><i class=\"fas fa-location-arrow float-left\" style=\"margin-top:5px\"></i></a></td></tr>";
@@ -401,7 +400,6 @@
             url: '/Pedidos/ObterMarcacao/' + id,
             type: "GET",
             success: function (response) {
-                //console.log(response);
                 document.getElementById('txtData').bulmaCalendar.value(new Date(response.dataMarcacao).toLocaleDateString());
                 document.getElementById('txtIdMarcacao').value = response.idMarcacao;
                 document.getElementById('txtNomeCliente2').value = response.cliente.nomeCliente;
