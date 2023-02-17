@@ -1019,7 +1019,7 @@ namespace FT_Management.Models
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
-            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' order by nopat;", true, true, true, false, false);
+            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' order by nopat;", true, true, true, false, false).GroupBy(f => f.IdFolhaObra).Select(f => f.First()).ToList();
 
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data, Cliente c)
