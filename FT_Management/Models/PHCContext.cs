@@ -3212,7 +3212,7 @@ namespace FT_Management.Models
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
                             EditadoPor = result["usrinis"].ToString(),
                             //Linhas = ObterLinhasDossier(result["bostamp"].ToString().Trim()),
-                            Fechado = result["fechada"].ToString() == "1"
+                            Fechado = result["fechada"].ToString() == "True"
                         });
                     }
                 }
@@ -3227,6 +3227,59 @@ namespace FT_Management.Models
 
             return LstDossiers;
         }
+
+        public List<Dossier> ObterDossierAberto(Utilizador u)
+        {
+            List<Dossier> LstDossiers = new List<Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and tecnico=" + u.IdPHC + " order by bo.ousrdata DESC;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstDossiers.Add(new Dossier()
+                        {
+                            StampDossier = result["bostamp"].ToString().Trim(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdDossier = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            Serie = int.Parse(result["ndos"].ToString()),
+                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
+                            Referencia = result["obranome"].ToString(),
+                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            //FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
+                            //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
+                            Estado = result["u_estado"].ToString(),
+                            Obs = result["obstab2"].ToString(),
+                            DataCriacao = DateTime.Parse(result["ousrdata"].ToString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            //Linhas = ObterLinhasDossier(result["bostamp"].ToString().Trim()),
+                            Fechado = result["fechada"].ToString() == "True"
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstDossiers;
+        }
+
 
 
         public Dossier ObterDossier(string STAMP)
@@ -3263,7 +3316,7 @@ namespace FT_Management.Models
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
                             EditadoPor = result["usrinis"].ToString(),
                             Linhas = ObterLinhasDossier(STAMP),
-                            Fechado = result["fechada"].ToString() == "1"
+                            Fechado = result["fechada"].ToString() == "True"
                         };
                         if (d.Serie != 36)
                         {

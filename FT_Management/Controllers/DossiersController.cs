@@ -64,20 +64,24 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            Dossier d = new Dossier()
-            {
-                Serie = 36,
-                Marcacao = new Marcacao(),
-                FolhaObra = new FolhaObra(),
-                EditadoPor = u.NomeCompleto
-            };
+            Dossier d = phccontext.ObterDossierAberto(u).Where(d => !d.Fechado).DefaultIfEmpty(new Dossier()).Last();
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
-            d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
-            if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
-
-            MailContext.EnviarEmailDossier(u, d);
+            if (d.StampDossier == null)
+            {
+                d = new Dossier()
+                {
+                    Serie = 36,
+                    Marcacao = new Marcacao(),
+                    FolhaObra = new FolhaObra(),
+                    EditadoPor = u.NomeCompleto
+                };
+                d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
+                d = phccontext.ObterDossier(d.StampDossier);
+                if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
+                MailContext.EnviarEmailPedidoTransferencia(u, d);
+            }
 
             //Criação de linhas por defeito
             if (load == 1)
@@ -101,7 +105,7 @@ namespace FT_Management.Controllers
                 }
 
             }
-            return RedirectToAction("Pedido", new { id = d.StampDossier });
+            return RedirectToAction("Pedido", new { id = d.StampDossier, ReturnUrl = "/Produtos/Armazem/" + armazem });
         }
 
 
