@@ -377,6 +377,20 @@ namespace FT_Management.Controllers
 
             return Content("Ok");
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AlterarAcessos(int id, bool acessos)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(id);
+            if (this.User.IsInRole("Master")) u.Acessos = acessos;
+
+            context.NovoUtilizador(u);
+
+            return Content("Ok");
+        }
         public IActionResult GerarApiKey(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

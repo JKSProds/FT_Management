@@ -78,6 +78,7 @@ namespace FT_Management.Models
         [Display(Name = "Ultimo Acesso")]
         public DateTime UltimoAcesso { get; set; }
         public bool AcessoAtivo { get; set; }
+        public bool Acessos { get; set; }
         public int TipoTecnico { get; set; }
         public int Zona { get; set; }
         public string ChatToken { get; set; }

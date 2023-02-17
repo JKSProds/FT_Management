@@ -79,6 +79,16 @@
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
+                                model.IdArmazem)</label></div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control"><input type="text" class="input" readonly asp-for="IdArmazem">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
                                 model.Viatura)</label></div>
                         <div class="field-body">
                             <div class="field">
@@ -353,25 +363,45 @@
                             </div>
                         </div>
                         <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">Dados Adicionais</label></div>
+                            <div class="field-label is-normal"><label class="label">Zona</label></div>
                             <div class="field-body">
-                                <div class="fields">
-
+                                <div class="field">
                                     <div class="select mb-1" style="width:100%">
                                         <select asp-for="Zona" asp-items="ViewBag.Zonas" class="form-control"
                                             style="width:100%">
                                         </select>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">Tipo</label></div>
+                            <div class="field-body">
+                                <div class="field">
                                     <div class="select mb-1" style="width:100%">
                                         <select asp-for="TipoTecnico" asp-items="ViewBag.TipoTecnico"
                                             class="form-control" style="width:100%">
                                         </select>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">Utilizador NextCloud</label></div>
+                            <div class="field-body">
+                                <div class="field">
                                     <div class="select mb-1" style="width:100%">
                                         <select asp-for="ChatToken" asp-items="ViewBag.Chats" class="form-control"
                                             style="width:100%">
                                         </select>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal"><label class="label">Notificação Automática</label></div>
+                            <div class="field-body">
+                                <div class="field">
                                     <div class="select mb-1" style="width:100%">
                                         <select asp-for="NotificacaoAutomatica" asp-items="ViewBag.Notificacoes"
                                             class="form-control" style="width:100%">
@@ -515,7 +545,7 @@
 <script>
     function copiarTexto(id) {
 
-       notify('Texto copiado com sucesso!');
+        notify('Texto copiado com sucesso!');
         // text area method
         let textArea = document.createElement("textarea");
         textArea.value = document.getElementById(id).value;
