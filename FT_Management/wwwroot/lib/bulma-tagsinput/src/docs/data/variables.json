@@ -1,0 +1,12 @@
+[
+    {
+        "name": "$tagsinput-selected-background-color",
+        "description": "",
+        "value": "$primary"
+    },
+    {
+        "name": "$tagsinput-duplicate-animation",
+        "description": "",
+        "value": "blinker .75s linear infinite"
+    }
+]

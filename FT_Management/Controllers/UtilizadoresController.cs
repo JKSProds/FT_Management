@@ -355,6 +355,16 @@ namespace FT_Management.Controllers
             return Content("Ok");
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AtualizarPermissoes(int id, string[] perms)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return Content("NOk");
+        }
+
+
 
         [HttpPost]
         [Authorize(Roles = "Admin")]

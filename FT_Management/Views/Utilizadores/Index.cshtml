@@ -141,6 +141,12 @@ else
                                                     model.Dev)</span>
                                                         </label>
                                                     </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <button class="button is-success is-fullwidth"
+                                                            onclick="AbrirPermissoes(@item.Id)"><i
+                                                                class="fa-solid fa-key"></i></button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -166,6 +172,7 @@ else
 }
 
 <input class="input" type="hidden" id="hiddenIdUtilizador" />
+
 <div id="modalApagarUtilizador" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -219,7 +226,84 @@ else
     </div>
 </div>
 
+<div class="modal" id="modalPermissoes">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title"><input type="tags" id="txtPermissoes" class="input m-auto"></p>
+        </header>
+        <section class="modal-card-body" style="display:none;">
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-success is-large is-fullwidth"
+                onclick="AtualizarPermissoesUtilizador();" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>Atualizar Permissões</span>
+            </button>
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalPermissoes').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
 <script>
+    BulmaTagsInput.attach('input[data-type="tags"], input[type="tags"], select[data-type="tags"], select[type="tags"]', {
+        allowDuplicates: false,
+        caseSensitive: false,
+        clearSelectionOnTyping: false,
+        closeDropdownOnItemSelect: true,
+        delimiter: ',',
+        freeInput: false,
+        highlightDuplicate: true,
+        highlightMatchesString: true,
+        itemValue: undefined,
+        itemText: undefined,
+        maxTags: undefined,
+        maxChars: undefined,
+        minChars: 1,
+        noResultsLabel: 'No results found',
+        placeholder: 'Por favor insira a permissão...',
+        removable: true,
+        searchMinChars: 1,
+        searchOn: 'text',
+        selectable: true,
+        source: ["Admin", "Master", "User"],
+        tagClass: 'is-rounded',
+        trim: true
+    });
+
+    function AbrirPermissoes(id) {
+        document.getElementById('hiddenIdUtilizador').value = id;
+        Bulma('#modalPermissoes').modal().open();
+    }
+
+    function AtualizarPermissoesUtilizador() {
+        id = document.getElementById("hiddenIdUtilizador").value;
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/AtualizarPermissoes/" + id,
+            data: { perms: document.getElementById('txtPermissoes').BulmaTagsInput().items },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "Ok") {
+                        notify('Permissões do Utilizador atualizadas com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                    Bulma('#modalPermissoes').modal().close();
+                });
+            }
+        });
+    }
+
     function AtualizarEnableUtilizador(id) {
         $.ajax({
             type: "POST",
