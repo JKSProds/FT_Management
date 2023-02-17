@@ -441,7 +441,7 @@ namespace FT_Management.Models
             return true;
         }
 
-        public static bool EnviarEmailFechoDossier(Utilizador u, Dossier d)
+        public static bool EnviarEmailDossier(Utilizador u, Dossier d)
         {
             string Assunto = d.SerieNome + " Nº " + d.IdDossier + " - " + d.Tecnico.NomeCompleto;
             string Mensagem = "Foi criado um novo dossier pelo utilizador " + u.NomeCompleto + "!<br><br><b>Dados adicionais:</b><br>Cliente: " + d.Cliente.NomeCliente + "<br>Equipamento: " + d.FolhaObra.EquipamentoServico.NumeroSerieEquipamento + "<br>Nº da Marcação: " + d.Marcacao.IdMarcacao + "<br>Nº da Folha de Obra: " + d.FolhaObra.IdFolhaObra + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + d.NomeDossier + ": " + d.IdDossier + "<br>Link: " + d.GetUrl + "<br><br>";

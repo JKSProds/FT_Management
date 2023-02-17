@@ -201,20 +201,16 @@ else
                 </table>
             </div>
         </div>
-        @if (!Model.Fechado)
-        {
-            <hr>
-            <p class="control">
-                <a class="button is-success is-fullwidth is-large" type="button"
-                    href='~/Dossiers/FecharDossier/@Model.StampDossier?ReturnUrl=@ViewData["ReturnUrl"]'>
-                    <span class="icon">
-                        <i class="fa-solid fa-check"></i>
-                    </span>
-                    <span>Fechar Dossier</span>
-                </a>
-            </p>
-
-        }
+        <hr>
+        <p class="control">
+            <a class="button is-info is-fullwidth is-large" type="button"
+                href='~/Dossiers/FecharDossier/@Model.StampDossier?ReturnUrl=@ViewData["ReturnUrl"]'>
+                <span class="icon">
+                    <i class="fa-solid fa-circle-chevron-left"></i>
+                </span>
+                <span>Voltar</span>
+            </a>
+        </p>
     </div>
 }
 

@@ -77,6 +77,8 @@ namespace FT_Management.Controllers
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
             if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
 
+            MailContext.EnviarEmailDossier(u, d);
+
             //Criação de linhas por defeito
             if (load == 1)
             {
@@ -110,6 +112,8 @@ namespace FT_Management.Controllers
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = phccontext.ObterDossier(id);
+            MailContext.EnviarEmailDossier(u, d);
+
             Linha_Dossier l = new Linha_Dossier()
             {
                 Stamp_Dossier = id,
@@ -134,16 +138,6 @@ namespace FT_Management.Controllers
 
         public ActionResult FecharDossier(string id, string ReturnUrl)
         {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            Dossier d = phccontext.ObterDossier(id);
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
-
-            MailContext.EnviarEmailFechoDossier(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), d);
-
             if (ReturnUrl != "" && ReturnUrl != null)
             {
                 return Redirect(ReturnUrl);
