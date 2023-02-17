@@ -410,6 +410,26 @@ namespace FT_Management.Models
 
             return res.OrderBy(v => v.Inicio_Viagem).ToList();
         }
+
+        public List<string> ObterPermissoes()
+        {
+            List<string> res = new List<string>();
+            string sqlQuery = "SELECT * FROM sys_permissoes;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    res.Add(result["Nome"] + "_View");
+                    res.Add(result["Nome"] + "_Edit");
+                    res.Add(result["Nome"] + "_Admin");
+                }
+            }
+
+            return res;
+        }
+
         #endregion
 
         //PARAMETROS

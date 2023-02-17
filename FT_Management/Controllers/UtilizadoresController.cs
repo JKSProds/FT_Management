@@ -364,7 +364,13 @@ namespace FT_Management.Controllers
             return Content("NOk");
         }
 
+        [Authorize(Roles = "Admin")]
+        public JsonResult ObterPermissoes()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            return Json(context.ObterPermissoes());
+        }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
