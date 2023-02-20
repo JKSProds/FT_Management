@@ -1171,9 +1171,9 @@ namespace FT_Management.Models
         {
             return ObterPecas("select pa.nopat, bi.ref, bi.design, bi.qtt, (SELECT TOP 1 CONCAT(obrano, ' - AT ', atcodeid) from V_DOCS_GLOBAL WHERE ar2mazem=bi.armazem and dataobra<bi.dataobra and bi.ref not like '%SRV%' order by dataobra desc) as guiatransporte from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and pa.nopat=" + IdFolhaObra + " order by ref;");
         }
-        public List<Movimentos> ObterPecasGuiaTransporte(string GuiaTransporte, int IdArmazem)
+        public List<Movimentos> ObterPecasGuiaTransporte(string GuiaTransporte, Utilizador u)
         {
-            return ObterListaMovimentos("select CONCAT(V_DOCS_GLOBAL.obrano, ' - AT ', V_DOCS_GLOBAL.atcodeid) as guiatransporte, * from V_DOCS_GLOBAL, pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!='' and ref not like '%SRV%' and ref not like '%IMO%' and ref not like '%PAT%' and bo.ndos=49 and bi.armazem=" + IdArmazem + " and V_DOCS_GLOBAL.ar2mazem=bi.armazem and V_DOCS_GLOBAL.dataobra<=bi.dataobra and V_DOCS_GLOBAL.obrano like '%" + GuiaTransporte + "%' order by ref;");
+            return ObterListaMovimentos("select CONCAT(V_DOCS_GLOBAL.obrano, ' - AT ', V_DOCS_GLOBAL.atcodeid) as guiatransporte, * from V_DOCS_GLOBAL, pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!='' and ref not like '%SRV%' and ref not like '%IMO%' and ref not like '%PAT%' and bo.ndos=49 and bi.armazem=" + u.IdArmazem + " and V_DOCS_GLOBAL.ar2mazem=bi.armazem and V_DOCS_GLOBAL.dataobra<=bi.ousrdata and pa.tecnico=" + u.IdPHC + " and V_DOCS_GLOBAL.obrano like '%" + GuiaTransporte + "%' order by ref;");
         }
         public List<String> ObterGuiasTransporte(int IdArmazem)
         {

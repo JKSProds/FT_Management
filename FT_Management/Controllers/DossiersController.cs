@@ -64,6 +64,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == armazem).DefaultIfEmpty().First();
             Dossier d = phccontext.ObterDossierAberto(u).Where(d => !d.Fechado).DefaultIfEmpty(new Dossier()).Last();
 
             if (d.StampDossier == null)
@@ -84,7 +85,7 @@ namespace FT_Management.Controllers
             if (load == 1)
             {
                 List<Linha_Dossier> Linhas = new List<Linha_Dossier>();
-                foreach (Movimentos m in phccontext.ObterPecasGuiaTransporte(id.Replace("|", "/"), armazem))
+                foreach (Movimentos m in phccontext.ObterPecasGuiaTransporte(id.Replace("|", "/"), t))
                 {
                     if (Linhas.Where(l => l.Referencia == m.RefProduto).Count() == 0)
                     {
