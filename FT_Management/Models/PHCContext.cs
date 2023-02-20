@@ -952,10 +952,10 @@ namespace FT_Management.Models
                             LstFolhaObra.Last().Piquete = result.IsDBNull("piquete") ? false : result["piquete"].ToString().Trim() == "True";
 
                             LstFolhaObra.Last().IntervencaosServico = ObterIntervencoes(int.Parse(result["nopat"].ToString().Trim()));
-                            if (LstFolhaObra.Last().IntervencaosServico.Count() == 1) LstFolhaObra.Last().RelatorioServico = LstFolhaObra.Last().IntervencaosServico.First().RelatorioServico;
-                            if (LstFolhaObra.Last().IntervencaosServico.Count() > 1)
+                            if (LstFolhaObra.Last().IntervencaosServico.GroupBy(i => i.RelatorioServico).Select(i => i.FirstOrDefault()).Count() == 1) LstFolhaObra.Last().RelatorioServico = LstFolhaObra.Last().IntervencaosServico.First().RelatorioServico;
+                            if (LstFolhaObra.Last().IntervencaosServico.GroupBy(i => i.RelatorioServico).Select(i => i.FirstOrDefault()).Count() > 1)
                             {
-                                foreach (var item in LstFolhaObra.Last().IntervencaosServico)
+                                foreach (var item in LstFolhaObra.Last().IntervencaosServico.GroupBy(i => i.RelatorioServico).Select(i => i.FirstOrDefault()))
                                 {
                                     LstFolhaObra.Last().RelatorioServico += item.DataServiço.ToShortDateString() + ": " + item.HoraInicio.ToShortTimeString() + " -> " + item.HoraFim.ToShortTimeString() + " - " + item.RelatorioServico + "\r\n";
                                 }
