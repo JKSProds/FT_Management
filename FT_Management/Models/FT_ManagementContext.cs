@@ -2602,9 +2602,24 @@ namespace FT_Management.Models
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
-            pdfFormFields.SetField("ASSISTÊNCIA TÉCNICA N", folhaobra.IdFolhaObra.ToString());
-            pdfFormFields.SetField("Referencia", folhaobra.ReferenciaServico);
-
+            pdfFormFields.SetFieldProperty("designacao", "textsize", 6f, null);
+            pdfFormFields.SetField("at", folhaobra.IdAT.ToString());
+            pdfFormFields.SetField("data", folhaobra.DataServico.ToShortDateString());
+            pdfFormFields.SetField("designacao", folhaobra.EquipamentoServico.DesignacaoEquipamento);
+            pdfFormFields.SetField("marca", folhaobra.EquipamentoServico.MarcaEquipamento);
+            pdfFormFields.SetField("modelo", folhaobra.EquipamentoServico.ModeloEquipamento);
+            pdfFormFields.SetField("serie", folhaobra.EquipamentoServico.NumeroSerieEquipamento);
+            pdfFormFields.SetField("estado", folhaobra.EstadoEquipamento);
+            pdfFormFields.SetField("nome", folhaobra.ClienteServico.NomeCliente);
+            pdfFormFields.SetField("morada", folhaobra.ClienteServico.MoradaCliente);
+            pdfFormFields.SetField("contribuinte", folhaobra.ClienteServico.NumeroContribuinteCliente);
+            pdfFormFields.SetField("cliente", folhaobra.ClienteServico.IdCliente.ToString());
+            pdfFormFields.SetField("loja", folhaobra.ClienteServico.IdLoja.ToString());
+            pdfFormFields.SetField("relatório", folhaobra.RelatorioServico);
+            pdfFormFields.SetField("referencia", folhaobra.ReferenciaServico);
+            pdfFormFields.SetField("tecnico", folhaobra.Utilizador.NomeCompleto);
+            pdfFormFields.SetField("conferido", folhaobra.ConferidoPor);
+            pdfFormFields.SetField("guia", folhaobra.GuiaTransporteAtual);
 
             pdfStamper.FormFlattening = true;
             pdfStamper.SetFullCompression();
