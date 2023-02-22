@@ -52,7 +52,7 @@ namespace FT_Management.Controllers
                 EditadoPor = u.NomeCompleto
             };
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
 

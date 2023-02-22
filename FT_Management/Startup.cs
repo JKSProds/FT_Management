@@ -100,9 +100,8 @@ namespace FT_Management
                 cookieOptions.AccessDeniedPath = "/Home/AcessoNegado";
             });
 
-            services.AddDataProtection().SetApplicationName("FT_Management");
-
 #if !DEBUG
+            services.AddDataProtection().SetApplicationName("FT_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));
                  services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
 #endif
         }
@@ -115,17 +114,14 @@ namespace FT_Management
 
             CultureInfo.DefaultThreadCurrentCulture = customCulture;
 
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || Environment.GetEnvironmentVariable("DEV") == "1")
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                //app.UseExceptionHandler("/Home/Error");
-                //// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseExceptionHandler("/Home/Error");
                 //app.UseHsts();
-                app.UseDeveloperExceptionPage();
-
             }
 
             app.UseAuthentication();
