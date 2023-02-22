@@ -96,7 +96,7 @@ namespace FT_Management.Controllers
                 {
                     if (Linhas.Where(l => l.Referencia == m.RefProduto).Count() == 0)
                     {
-                        Linhas.Add(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = m.RefProduto, Designacao = m.Designacao, Quantidade = m.Quantidade, CriadoPor = u.NomeCompleto });
+                        Linhas.Add(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = m.RefProduto, Designacao = m.Designacao, Quantidade = m.Quantidade, CriadoPor = u.Iniciais });
                     }
                     else
                     {
