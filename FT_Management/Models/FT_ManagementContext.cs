@@ -2602,6 +2602,25 @@ namespace FT_Management.Models
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
+            pdfFormFields.SetField("ASSISTÊNCIA TÉCNICA N", folhaobra.IdFolhaObra.ToString());
+            pdfFormFields.SetField("Referencia", folhaobra.ReferenciaServico);
+
+
+            pdfStamper.FormFlattening = true;
+            pdfStamper.SetFullCompression();
+            pdfStamper.Close();
+
+            return outputPdfStream;
+
+        }
+        public MemoryStream PreencherFormularioFolhaObra2(FolhaObra folhaobra)
+        {
+            string pdfTemplate = AppDomain.CurrentDomain.BaseDirectory + "FT_FolhaObra_OLD.pdf";
+            var outputPdfStream = new MemoryStream();
+            PdfReader pdfReader = new PdfReader(pdfTemplate);
+            PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
+            AcroFields pdfFormFields = pdfStamper.AcroFields;
+
             //if (folhaobra.RubricaCliente != null)
             //{
             //    var fldPosition = pdfFormFields.GetFieldPositions("assinatura");
