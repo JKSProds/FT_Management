@@ -72,9 +72,10 @@ namespace FT_Management.Controllers
 
                 if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) phccontext.AtualizarClienteEquipamento(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
 
-                Marcacao m = phccontext.ObterMarcacao(fo.IdMarcacao);
+                Marcacao m = fo.Marcacao;
                 m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-                if (fo.FecharMarcacao) m.EstadoMarcacaoDesc = "Finalizado";
+                int Estado = fo.EstadoFolhaObra;
+                if (fo.FecharMarcacao && fo.EstadoFolhaObra == 1) m.EstadoMarcacaoDesc = "Finalizado";
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
                 if (fo.EstadoFolhaObra == 4) fo.EstadoFolhaObra = 2;
@@ -82,10 +83,12 @@ namespace FT_Management.Controllers
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)
                 {
-                    fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
-                    fo.Marcacao = m;
                     phccontext.FecharFolhaObra(fo);
                     phccontext.AtualizaMarcacao(m);
+                    fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
+
+                    if (Estado == 2) return RedirectToAction("CriarDossier", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
+                    if (Estado == 3) return RedirectToAction("CriarDossier", "Dossiers", new { id = fo.StampFO, serie = 97, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
 
                     return RedirectToAction("ListaPedidos", "Pedidos", new { IdTecnico = fo.Utilizador.IdPHC });
                 }

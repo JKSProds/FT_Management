@@ -116,23 +116,9 @@
             success: function (result) {
                 $(function () {
                     if (result == "1") {
-                        bulmaToast.toast({
-                            message: 'Atualizado estado do buzzer com sucesso! This endpoint should not be called more than once every 5 minutes to prevent hardware failures.',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 15000
-                        })
+                        notify('Atualizado estado do buzzer com sucesso! This endpoint should not be called more than once every 5 minutes to prevent hardware failures.');
                     } else {
-                        bulmaToast.toast({
-                            message: 'Erro ao atualizar o estado do buzzer!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Erro ao atualizar o estado do buzzer!');
                     }
                     document.getElementById('chk_Buzzer_' + matricula).disabled = false;
                 });

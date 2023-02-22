@@ -426,7 +426,6 @@
             dataType: "json", // type of data you're expecting from response
             success: function (json) {
                 var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
-                console.log(json);
                 var existeFolhasObra = false;
                 for (var i = 0; i < json.json.length; i++) {
                     var obj = json.json[i];

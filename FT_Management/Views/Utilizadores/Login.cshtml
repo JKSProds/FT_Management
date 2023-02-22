@@ -258,22 +258,20 @@
             type: "GET",
             success: function (data) {
                 if (data) {
-                    console.log(data);
                     document.getElementById('frm2FA').hidden = false;
                     document.getElementById('frmLogin').hidden = true;
                     setTimeout(function () {
                         document.getElementById('first').focus();
                     });
                 } else {
-                    console.log(data);
                     document.getElementById('form').submit();
                 }
             },
             error: function (data) {
-                console.log(data);
+                notifyError('Ocorre um erro ao verificar o 2FA do utilizador!');
             },
             failure: function (data) {
-                console.log(data);
+                notifyError('Ocorre um erro ao verificar o 2FA do utilizador!');
             }
         });
 

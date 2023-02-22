@@ -358,15 +358,7 @@ else
 
     function AdicionarFerias() {
         if (document.getElementById('txtDataInicio').value.split('-')[0] == '') {
-            bulmaToast.toast({
-                message: 'Tem de escolher a data de inicio e fim!',
-                type: 'is-danger',
-                closeOnClick: true,
-                pauseOnHover: true,
-                opacity: 0.8,
-                duration: 5000,
-                position: 'top-center'
-            })
+            notifyError('Tem de escolher a data de inicio e fim!');
         } else {
             document.getElementById("btnAdicionarFerias").classList.add("is-loading");
             var json = {
@@ -383,14 +375,7 @@ else
             if (Diff >= DiasMarcados) {
                 document.getElementById("btnAdicionarFerias").classList.remove("is-loading");
                 $(function () {
-                    bulmaToast.toast({
-                        message: 'Dias escolhidos excedem dias disponiveis!',
-                        type: 'is-danger',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000
-                    })
+                    notifyError('Dias escolhidos excedem dias disponiveis!');
                 });
             } else {
                 $.ajax({

@@ -5,7 +5,6 @@
 }
 
 
-
 <div class="container">
     <div class="columns">
         <div class="column">
@@ -87,24 +86,74 @@ else
                                 {
                                     <td class="is-actions-cell"
                                         style="@(!this.User.IsInRole("Master") && @item.Admin ? "opacity:0.2;" : "")">
-                                        <label class="switch is-rounded is-small">
-                                            <input type="checkbox" id="chkEnable_@item.Id" checked="@item.Enable"
-                                                onchange="AtualizarEnableUtilizador(@item.Id)">
-                                            <span class="check is-info"></span>
-                                            <span class="control-label">@Html.DisplayNameFor(model => model.Enable)</span>
-                                        </label>
-                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
-                                            class="switch is-rounded is-small">
-                                            <input type="checkbox" id="chkAdmin_@item.Id" checked="@item.Admin"
-                                                onchange="AtualizarAdminUtilizador(@item.Id)">
-                                            <span class="check is-primary"></span>
-                                            <span class="control-label">@Html.DisplayNameFor(model => model.Admin)</span>
-                                        </label>
-                                        <a class="button is-warning is-small" href="~/Utilizadores/Logs/@item.Id"><i
+
+                                        <div class="dropdown">
+                                            <div class="dropdown-trigger">
+                                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                                                    <span>Mais Opções</span>
+                                                    <span class="icon is-small">
+                                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                                <div class="dropdown-content">
+                                                    <div class="dropdown-item">
+                                                        <label class="switch is-rounded">
+                                                            <input type="checkbox" id="chkEnable_@item.Id" checked="@item.Enable"
+                                                                onchange="AtualizarEnableUtilizador(@item.Id)">
+                                                            <span class="check is-info"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.Enable)</span>
+                                                        </label>
+                                                    </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                                            class="switch is-rounded">
+                                                            <input type="checkbox" id="chkAdmin_@item.Id" checked="@item.Admin"
+                                                                onchange="AtualizarAdminUtilizador(@item.Id)">
+                                                            <span class="check is-primary"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.Admin)</span>
+                                                        </label>
+                                                    </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                                            class="switch is-rounded">
+                                                            <input type="checkbox" id="chkAcessos_@item.Id" checked="@item.Acessos"
+                                                                onchange="AtualizarAcessosUtilizador(@item.Id)">
+                                                            <span class="check is-warning"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.Acessos)</span>
+                                                        </label>
+                                                    </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                                            class="switch is-rounded">
+                                                            <input type="checkbox" id="chkDev_@item.Id" checked="@item.Dev"
+                                                                onchange="AtualizarDevUtilizador(@item.Id)">
+                                                            <span class="check is-danger"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.Dev)</span>
+                                                        </label>
+                                                    </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <button class="button is-success is-fullwidth"
+                                                            onclick="AbrirPermissoes(@item.Id)"><i
+                                                                class="fa-solid fa-key"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a class="button is-warning" href="~/Utilizadores/Logs/@item.Id"><i
                                                 class="fas fa-eye"></i></a>
-                                        <button class="button is-danger is-outlined is-small"
-                                            onclick="ConfirmResetSenha(@item.Id)"><i class="fas fa-unlock"></i></button>
-                                        <button class="button is-danger is-small" onclick="ConfirmApagarUtilizador(@item.Id)"><i
+                                        <button class="button is-danger is-outlined" onclick="ConfirmResetSenha(@item.Id)"><i
+                                                class="fas fa-unlock"></i></button>
+                                        <button class="button is-danger" onclick="ConfirmApagarUtilizador(@item.Id)"><i
                                                 class="fas fa-trash"></i></button>
                                     </td>
                                 }
@@ -122,6 +171,7 @@ else
 }
 
 <input class="input" type="hidden" id="hiddenIdUtilizador" />
+
 <div id="modalApagarUtilizador" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -175,7 +225,97 @@ else
     </div>
 </div>
 
+<div class="modal" id="modalPermissoes">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title" style="max-width:100%"><input type="tags" id="txtPermissoes" class="input"></p>
+        </header>
+        <section class="modal-card-body" style="display:none;">
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-success is-large is-fullwidth"
+                onclick="AtualizarPermissoesUtilizador();" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>Atualizar</span>
+            </button>
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalPermissoes').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
 <script>
+    BulmaTagsInput.attach('input[data-type="tags"], input[type="tags"], select[data-type="tags"], select[type="tags"]', {
+        allowDuplicates: false,
+        caseSensitive: false,
+        clearSelectionOnTyping: false,
+        closeDropdownOnItemSelect: true,
+        delimiter: ',',
+        freeInput: false,
+        highlightDuplicate: true,
+        highlightMatchesString: true,
+        itemValue: undefined,
+        itemText: undefined,
+        maxTags: undefined,
+        maxChars: undefined,
+        minChars: 1,
+        noResultsLabel: 'Não foram encontrados valores!',
+        placeholder: '',
+        removable: true,
+        searchMinChars: 1,
+        searchOn: 'text',
+        selectable: true,
+        source: [""],
+        tagClass: 'is-rounded is-info',
+        trim: true
+    });
+
+    ObterPermissoes();
+    function ObterPermissoes() {
+        $.ajax({
+            type: "GET",
+            url: "/Utilizadores/ObterPermissoes",
+            traditional: true,
+            success: function (result) {
+                console.log(result);
+                document.getElementById('txtPermissoes').BulmaTagsInput().options.source = result;
+            }
+        });
+    }
+
+    function AbrirPermissoes(id) {
+        document.getElementById('hiddenIdUtilizador').value = id;
+        Bulma('#modalPermissoes').modal().open();
+    }
+
+    function AtualizarPermissoesUtilizador() {
+        id = document.getElementById("hiddenIdUtilizador").value;
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/AtualizarPermissoes/" + id,
+            data: { perms: document.getElementById('txtPermissoes').BulmaTagsInput().items },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "Ok") {
+                        notify('Permissões do Utilizador atualizadas com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                    Bulma('#modalPermissoes').modal().close();
+                });
+            }
+        });
+    }
+
     function AtualizarEnableUtilizador(id) {
         $.ajax({
             type: "POST",
@@ -185,23 +325,9 @@ else
             success: function (result) {
                 $(function () {
                     if (result == "Ok") {
-                        bulmaToast.toast({
-                            message: 'Utilizador atualizado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notify('Valor do Estado do Utilizador atualizado com sucesso!');
                     } else {
-                        bulmaToast.toast({
-                            message: 'Erro ao atualizar o utilizador!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
                     }
                 });
             }
@@ -217,23 +343,45 @@ else
             success: function (result) {
                 $(function () {
                     if (result == "Ok") {
-                        bulmaToast.toast({
-                            message: 'Utilizador atualizado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notify('Valor de Admin do Utilizador atualizado com sucesso!');
                     } else {
-                        bulmaToast.toast({
-                            message: 'Erro ao atualizar o utilizador!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                });
+            }
+        });
+    }
+
+    function AtualizarAcessosUtilizador(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/AlterarAcessos/" + id,
+            data: { admin: document.getElementById('chkAcessos_' + id).checked },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "Ok") {
+                        notify('Valor de acessos do utilizador atualizado com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                });
+            }
+        });
+    }
+
+    function AtualizarDevUtilizador(id) {
+        $.ajax({
+            type: "POST",
+            url: "/Utilizadores/AlterarDev/" + id,
+            data: { dev: document.getElementById('chkDev_' + id).checked },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "Ok") {
+                        notify('Valor de Developer do utilizador atualizado com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
                     }
                 });
             }
@@ -259,23 +407,9 @@ else
                 $(function () {
                     Bulma('#modalResetSenha').modal().close();
                     if (result == "Ok") {
-                        bulmaToast.toast({
-                            message: 'Senha alterada com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notify('Senha alterada com sucesso!');
                     } else {
-                        bulmaToast.toast({
-                            message: 'Erro ao alterar a senha!',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000
-                        })
+                        notifyError('Ocorreu um erro ao alterar a senha do utilizador!');
                     }
                 });
             }

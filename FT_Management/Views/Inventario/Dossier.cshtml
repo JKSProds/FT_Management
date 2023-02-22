@@ -369,7 +369,6 @@ else{
                     document.getElementById('txtHeaderSerieModal').innerHTML = data[0].ref_linha + " - " + data[0].nome_Linha;
                     var html = "<table id='table-" + id + "' class='table is-hoverable' style='width:100%;'><tr><th>Nº de Série</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
                     data.forEach(obj => {
-                        console.log(obj);
                         html += "<tr id='linha_serie_" + obj.bomA_STAMP + "'><td>" + obj.numSerie + "</td><td>" + new Date(obj.criadoA).toLocaleString() + "</td><td>" + obj.criadoPor + "</td><td><a id='" + obj.bomA_STAMP + "' class='button is-danger'><i id='" + obj.bomA_STAMP + "' class='fas fa-trash-can'></i></a></td></tr>";
                     });
                     html += "</table>";
@@ -405,7 +404,6 @@ else{
             type: "POST",
             success: function (data) {
                 if (data != '') {
-                    //console.log(data);
                     document.getElementById('txtRef').value = data.ref_linha;
                     document.getElementById('txtDesignacao').value = data.nome_Linha;
                     document.getElementById('btnSearchRef').disabled = true;
@@ -516,7 +514,6 @@ else{
             type: "POST",
             success: function (data) {
                 if (data.ref_Produto != null) {
-                    //console.log(data);
                     document.getElementById('txtDesignacao').value = data.designacao_Produto;
                     document.getElementById('btnSearchRef').disabled = true;
                     document.getElementById('btnSearchRef').classList.remove("is-loading");
@@ -552,7 +549,6 @@ else{
             type: "POST",
             success: function (data) {
                 if (data[0] == "1") {
-                    //console.log(data);
                     document.getElementById('txtHiddenStampLinha').value = data[3];
                     document.getElementById('btnAdicionarLinha').disabled = true;
                     document.getElementById('btnAdicionarLinha').classList.remove("is-loading");
@@ -614,7 +610,6 @@ else{
             type: "POST",
             success: function (data) {
                 if (data[0] == "1") {
-                    //console.log(data);
                     document.getElementById('txtNumeroAnterior').value = document.getElementById('txtNumeroSerie').value;
                     document.getElementById('txtNumeroSerie').value = '';
                     document.getElementById('btnAdicionarNumeroSerie').classList.remove("is-loading");
@@ -642,29 +637,6 @@ else{
                 document.getElementById('txtNumeroSerie').disabled = false;
                 document.getElementById('txtNumeroSerie').focus();
             }
-        });
-    }
-
-    function notifyError(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-danger',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
-    function notify(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
         });
     }
 

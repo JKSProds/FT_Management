@@ -174,10 +174,10 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     }
                 });
             },
@@ -186,7 +186,7 @@
                 $("#txtIdLoja").val(i.item.val2);
             },
             minLength: 1
-        });
+        }).css('z-index', 10);
     });
 
 </script>

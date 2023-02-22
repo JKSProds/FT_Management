@@ -62,8 +62,8 @@ else
                                             @item.ArmazemNome</td>
                                         <td class="is-actions-cell">
                                             <a class="button is-large is-success is-rounded is-pulled-right" style="width:100%"
-                                        onclick="VerDossiersInventario('@item.ArmazemId')"><span
-                                            class="icon is-small"><i class="fa-solid fa-eye"></i></span></a>
+                                                onclick="VerDossiersInventario('@item.ArmazemId')"><span
+                                                    class="icon is-small"><i class="fa-solid fa-eye"></i></span></a>
                                         </td>
                                     </tr>
                                 }
@@ -126,38 +126,14 @@ else
                 if (data[0] == "1") {
                     window.location.href = data[2];
                 } else {
-                    bulmaToast.toast({
-                        message: data[1],
-                        type: 'is-danger',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000,
-                        position: 'top-center'
-                    });
+                    notifyError(data[1]);
                 }
             },
             error: function (response) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao criar um novo dossier!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000,
-                    position: 'top-center'
-                });
+                notifyError('Ocorreu um erro ao criar um novo dossier!');
             },
             failure: function (response) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao criar um novo dossier!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000,
-                    position: 'top-center'
-                });
+                notifyError('Ocorreu um erro ao criar um novo dossier!');
             }
         });
         Bulma('#modalConfirmNovoDossier').modal().close();
@@ -179,7 +155,6 @@ else
                 } else {
                     var html = "<table class='table is-hoverable' style='width:100%;'><tr><th>Nº do Dossier</th><th>Criado a:</th><th>Criado por:</th><th></th></tr>";
                     data.forEach(obj => {
-                        //console.log(obj);
                         html += "<tr><td>" + obj.idPicking + "</td><td>" + new Date(obj.dataDossier).toLocaleDateString() + "</td><td>" + obj.editadoPor + "</td><td><a class='button is-large is-success is-rounded is-pulled-right' style='width:100%' href='/Inventario/Dossier/" + obj.picking_Stamp + "'><span class='icon is-small'><i class='fa-solid fa-eye'></i></span></a> </td></tr>";
                     });
                     html += "</table>";
@@ -189,41 +164,16 @@ else
                 Bulma('#modalDossiersInventario').modal().open();
             },
             error: function (response) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao obter os dossiers associados a este armazém!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000,
-                    position: 'top-center'
-                });
+                notifyError('Ocorreu um erro ao obter os dossiers associados a este armazém!');
             },
             failure: function (response) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao obter os dossiers associados a este armazém!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000,
-                    position: 'top-center'
-                });
+                notifyError('Ocorreu um erro ao obter os dossiers associados a este armazém!');
             }
         });
     }
     function copiarTexto(id) {
 
-        bulmaToast.toast({
-            message: 'Texto copiado com sucesso!',
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        })
-
+        notify('Texto copiado com sucesso!');
         // text area method
         let textArea = document.createElement("textarea");
         textArea.value = document.getElementById(id).value;

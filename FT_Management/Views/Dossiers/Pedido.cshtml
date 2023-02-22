@@ -23,88 +23,107 @@
         <div class="column is-8 is-right my-auto">
             <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                 <p class="control has-icons-left">
-                    <input type="text" class="input" asp-for="Cliente.NomeCliente" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fa-solid fa-arrow-down-a-z"></i>
-                    </span>
-                </p>
-                <p class="control has-icons-left">
                     <input type="date" class="input" asp-for="DataDossier" readonly>
                     <span class="icon is-small is-left">
                         <i class="fa-solid fa-calendar-day"></i>
                     </span>
                 </p>
-                <p class="control has-icons-left">
-                    <input type="text" class="input" asp-for="Referencia" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fa-solid fa-arrow-down-a-z"></i>
-                    </span>
-                </p>
+
                 <p class="control has-icons-left">
                     <input type="text" class="input" asp-for="Tecnico.NomeCompleto" readonly>
                     <span class="icon is-small is-left">
                         <i class="fa-solid fa-user"></i>
                     </span>
                 </p>
-                <p class="control has-addons has-icons-left">
-                    <input type="text" class="input" asp-for="Marcacao.IdMarcacao" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </span>
+                @if (Model.Serie != 36)
+                {
+                    <p class="control has-icons-left">
+                        <input type="text" class="input" asp-for="Cliente.NomeCliente" readonly>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-arrow-down-a-z"></i>
+                        </span>
+                    </p>
+                    <p class="control has-addons has-icons-left" style="width:120px">
+                        <input type="text" class="input" asp-for="Marcacao.IdMarcacao" readonly>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </span>
 
-                <div class="control">
-                    <a class="button is-info" href="~/Pedidos/Pedido/@Model.Marcacao.IdMarcacao">
-                        <i class="fa-solid fa-square-up-right"></i>
-                    </a>
-                </div>
-                </p>
-                <p class="control has-addons has-icons-left">
-                    <input type="text" class="input" asp-for="FolhaObra.IdFolhaObra" readonly>
-                    <span class="icon is-small is-left">
-                        <i class="fa-solid fa-file-alt"></i>
-                    </span>
+                    <div class="control">
+                        <a class="button is-info" href="~/Pedidos/Pedido/@Model.Marcacao.IdMarcacao">
+                            <i class="fa-solid fa-square-up-right"></i>
+                        </a>
+                    </div>
+                    </p>
+                    <p class="control has-addons has-icons-left" style="width:120px">
+                        <input type="text" class="input" asp-for="FolhaObra.IdFolhaObra" readonly>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-file-alt"></i>
+                        </span>
 
-                <div class="control">
-                    <a class="button is-info" href="~/FolhasObra/Detalhes/@Model.FolhaObra.IdFolhaObra">
-                        <i class="fa-solid fa-square-up-right"></i>
-                    </a>
-                </div>
-                </p>
+                    <div class="control">
+                        <a class="button is-info" href="~/FolhasObra/Detalhes/@Model.FolhaObra.IdFolhaObra">
+                            <i class="fa-solid fa-square-up-right"></i>
+                        </a>
+                    </div>
+                    </p>
+                    <p class="control has-addons has-icons-left">
+                        <input type="text" class="input" asp-for="FolhaObra.EquipamentoServico.NumeroSerieEquipamento"
+                            readonly>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-computer"></i>
+                        </span>
+
+                    <div class="control">
+                        <a class="button is-info"
+                            href="~/Equipamentos/Detalhes/@Model.FolhaObra.EquipamentoServico.EquipamentoStamp">
+                            <i class="fa-solid fa-square-up-right"></i>
+                        </a>
+                    </div>
+                    </p>
+                }
+
+
+
             </div>
             <div class="buttons is-right">
-                <p class="control">
-                    <button class="button is-primary is-info" onclick="Bulma('#modalAdicionarPeca').modal().open();"
-                        type="button">
-                        <span class="icon">
-                            <i class="fas fa-plus fa-lg"></i>
-                        </span>
-                        <span>Adicionar Referência</span>
-                    </button>
-                </p>
-                <p class="control">
-                    <button type="button" class="button is-info is-outlined">
-                        <span class="icon">
-                            <i class="fa-solid fa-square-plus"></i>
-                        </span>
-                        <span>Adicionar Linha</span>
-                    </button>
-                </p>
-                <p class="control">
-                    <button class="button is-success" type="button">
-                        <span class="icon">
-                            <i class="fa-solid fa-table-list"></i>
-                        </span>
-                        <span>Lista de Referências</span>
-                    </button>
-                </p>
-                <p class="control">
-                    <button class="button is-warning" type="button">
-                        <span class="icon">
-                            <i class="fa-solid fa-link"></i>
-                        </span>
-                        <span>Anexos</span>
-                    </button>
-                </p>
+                @if (!Model.Fechado)
+                {
+                    <p class="control">
+                        <button class="button is-primary is-info" onclick="Bulma('#modalAdicionarPeca').modal().open();"
+                            type="button">
+                            <span class="icon">
+                                <i class="fas fa-plus fa-lg"></i>
+                            </span>
+                            <span>Adicionar Referência</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button type="button" class="button is-info is-outlined"
+                            onclick="Bulma('#modalAdicionarLinha').modal().open();">
+                            <span class="icon">
+                                <i class="fa-solid fa-square-plus"></i>
+                            </span>
+                            <span>Adicionar Linha</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button class="button is-success is-outlined" disabled type="button">
+                            <span class="icon">
+                                <i class="fa-solid fa-table-list"></i>
+                            </span>
+                            <span>Lista de Referências</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button class="button is-warning" disabled type="button">
+                            <span class="icon">
+                                <i class="fa-solid fa-link"></i>
+                            </span>
+                            <span>Anexos</span>
+                        </button>
+                    </p>
+                }
             </div>
         </div>
     </div>
@@ -120,68 +139,87 @@
 else
 {
     <div class="container">
-    @foreach (var item in Model.Linhas)
-        {
-            <p class="control mx-2 my-2">
-                <input type="text" class="input" value="@item.Designacao" readonly>
-            </p>
-        }
+    <div class="b-table">
+        <div class="table-wrapper has-mobile-cards">
+            <table class="table is-hoverable is-fullwidth" id="tblReferencias">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Referencia)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Designacao)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Linhas.First().Quantidade)
+                        </th>
+                        <th>
 
-        @if (Model.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
-        {
-            <div class="b-table">
-                <div class="table-wrapper has-mobile-cards">
-                    <table class="table is-hoverable is-fullwidth">
-                        <thead>
-                            <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Linhas.First().Referencia)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Linhas.First().Designacao)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Linhas.First().Quantidade)
-                                </th>
-                                <th>
-
-                                </th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
+                        {
+                            <tr id="@item.Stamp_Linha">
+                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Referencia)">
+                                    <span>@item.Referencia</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
+                                    @Html.DisplayFor(modelItem => item.Designacao)
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)">
+                                    @Html.DisplayFor(modelItem => item.Quantidade)
+                                </td>
+                                <td class="is-actions-cell">
+                                    @if (!Model.Fechado)
+                                    {
+                                        <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
+                                            onclick="RemoverLinha('@item.Stamp_Linha')">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </span>
+                                        </button>
+                                    }
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
-                            {
-                                <tr>
-                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Referencia)">
-                                        <span>@item.Referencia</span>
-                                    </td>
-                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
-                                        @Html.DisplayFor(modelItem => item.Designacao)
-                                    </td>
-                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)">
-                                        @Html.DisplayFor(modelItem => item.Quantidade)
-                                    </td>
-
-                                    <td class="is-actions-cell">
-
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                        @foreach (var item in Model.Linhas.Where(l =>
+                       string.IsNullOrEmpty(l.Referencia.Trim())).Skip((Model.Serie == 96 || Model.Serie == 97 ? 3 : 0)))
+                        {
+                            <tr id="@item.Stamp_Linha">
+                                <td colspan="3" data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
+                                    <span>@item.Designacao</span>
+                                </td>
+                                <td class="is-actions-cell">
+                                    @if (!Model.Fechado)
+                                    {
+                                        <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
+                                            onclick="RemoverLinha('@item.Stamp_Linha')">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </span>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-
-        }
-        else
-        {
-            <div class="container">
-                <br />
-                <button class="button is-danger is-fullwidth" disabled>Não foram encontradas referências!</button>
-            </div>
-        }
+        </div>
     </div>
 }
+<hr>
+<p class="control">
+    <a class="button is-info is-fullwidth is-large" type="button"
+        href='~/Dossiers/FecharDossier/@Model.StampDossier?ReturnUrl=@ViewData["ReturnUrl"]'>
+        <span class="icon">
+            <i class="fa-solid fa-circle-chevron-left"></i>
+        </span>
+        <span>Voltar</span>
+    </a>
+</p>
 
 
 <div id="modalPecas" class="modal">
@@ -212,7 +250,7 @@ else
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title">Peças</p>
+            <p class="modal-card-title">Adicionar Referência</p>
             <button type="button" class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
@@ -220,11 +258,8 @@ else
                 <div class="field ">
                     <div class="field has-addons">
                         <div class="control" style="width:100%">
-                            <p class="control has-icons-left">
+                            <p class="control">
                                 <input type="text" class="input" id="txtPecas">
-                                <span class="icon is-small is-left">
-                                    <i class="fa-solid fa-gears"></i>
-                                </span>
                             </p>
                         </div>
                         <div class="field has-addons">
@@ -255,12 +290,12 @@ else
         </section>
         <footer class="modal-card-foot">
             <button class="button is-info is-fullwidth is-large" type="button"
-                onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
+                onclick="AdicionarPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
                 disabled id="btnAdicionarPeca">
                 <span class="icon">
                     <i class="fa-solid fa-check"></i>
                 </span>
-                <span>Adicionar Peça</span>
+                <span>Adicionar</span>
             </button>
             <button type="button" class="button is-large is-fullwidth is-danger"
                 onclick="Bulma('#modalAdicionarPeca').modal().close();" href="javascript:;">
@@ -273,21 +308,145 @@ else
     </div>
 </div>
 
+
+<div id="modalAdicionarLinha" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Adicionar Linha</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <div class="field ">
+                    <div class="field has-addons">
+                        <div class="control" style="width:100%">
+                            <p class="control has-icons-left">
+                                <input type="text" class="input" id="txtLinha">
+                                <span class="icon is-small is-left">
+                                    <i class="fa-solid fa-gears"></i>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-info is-fullwidth is-large" type="button" id="btnAdicionarLinha"
+                onclick="AdicionarLinha(document.getElementById('txtLinha').value)">
+                <span class="icon">
+                    <i class="fa-solid fa-check"></i>
+                </span>
+                <span>Adicionar</span>
+            </button>
+            <button type="button" class="button is-large is-fullwidth is-danger"
+                onclick="Bulma('#modalAdicionarLinha').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
 <script>
-    function ObterPeca(stamp, qtd) {
-        if (stamp !== "" && qtd > 0) {
+    function RemoverLinha(id) {
+        document.getElementById("btn_" + id).classList.add("is-loading");
+        $.ajax({
+            url: '/Dossiers/RemoverLinha',
+            data: { "id": id },
+            type: "POST",
+            success: function (response) {
+                if (response[0] == 1) {
+                    notify("Linha removida com sucesso!");
+                    var row = document.getElementById(id);
+                    row.parentNode.removeChild(row);
+                    if (document.getElementById('tblReferencias').rows.length < 2) window.location.reload();
+                } else {
+                    notifyError(response[1]);
+                    document.getElementById("btn_" + id).classList.remove("is-loading");
+                }
+
+            },
+            error: function (response) {
+                notifyError(response);
+            },
+            failure: function (response) {
+                notifyError(response);
+            }
+        });
+    }
+
+    function AdicionarPeca(stamp, qtd) {
+        if (stamp != "" && qtd > 0) {
+            document.getElementById("btnAdicionarPeca").classList.add("is-loading");
             $.ajax({
                 url: '/Produtos/ObterPeca/' + stamp,
                 type: "POST",
                 success: function (response) {
-                    console.log(response);
-
+                    $.ajax({
+                        url: '/Dossiers/CriarLinha/@Model.StampDossier',
+                        data: { "referencia": response.ref_Produto, "design": response.designacao_Produto, "qtd": qtd },
+                        type: "POST",
+                        success: function (response) {
+                            if (response.quantidade == 0) {
+                                notifyError("Ocorreu um erro ao adicionar a referência!");
+                            } else {
+                                if (document.getElementById('tblReferencias') == null) window.location.reload();
+                                var row = document.getElementById('tblReferencias').getElementsByTagName('tbody')[0].insertRow();
+                                row.id = response.stamp_Linha;
+                                row.innerHTML = "<td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Referencia)'>" + response.referencia + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td data-label='@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)'>" + response.quantidade + "</td><td  class='is-actions-cell'><button id='btn_" + response.stamp_Linha + "' class='button is-danger is-fullwidth is-large' onclick='RemoverLinha(\"" + response.stamp_Linha + "\")'><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>";
+                                Bulma('#modalAdicionarPeca').modal().close();
+                                $("#txtStampPeca").val("");
+                                $("#txtPecas").val("");
+                                $("#txtQtd").val("1");
+                                document.getElementById("btnAdicionarPeca").disabled = true;
+                                notify("Referência adicionada com sucesso!");
+                            }
+                            document.getElementById("btnAdicionarPeca").classList.remove("is-loading");
+                        },
+                        error: function (response) {
+                            notifyError(response);
+                        },
+                        failure: function (response) {
+                            notifyError(response);
+                        }
+                    });
                 },
                 error: function (response) {
-                    notifyError(response.responseText);
+                    notifyError(response);
                 },
                 failure: function (response) {
-                    notifyError(response.responseText);
+                    notifyError(response);
+                }
+            });
+        }
+    }
+
+    function AdicionarLinha(linha) {
+        if (linha != "") {
+            document.getElementById("btnAdicionarLinha").classList.add("is-loading");
+            $.ajax({
+                url: '/Dossiers/CriarLinha/@Model.StampDossier',
+                data: { "design": linha },
+                type: "POST",
+                success: function (response) {
+                    if (document.getElementById('tblReferencias') == null) window.location.reload();
+                    var row = document.getElementById('tblReferencias').getElementsByTagName('tbody')[0].insertRow();
+                    row.id = response.stamp_Linha;
+                    row.innerHTML = "<td colspan='3' data-label='@Html.DisplayNameFor(model => model.Linhas.First().Designacao)'>" + response.designacao + "</td><td  class='is-actions-cell'><button id='btn_" + response.stamp_Linha + "' class='button is-danger is-fullwidth is-large' onclick='RemoverLinha(\"" + response.stamp_Linha + "\")'><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>";
+                    Bulma('#modalAdicionarLinha').modal().close();
+                    $("#txtLinha").val("");
+                    notify("Linha adicionada com sucesso!");
+                    document.getElementById("btnAdicionarLinha").classList.remove("is-loading");
+                },
+                error: function (response) {
+                    notifyError(response);
+                },
+                failure: function (response) {
+                    notifyError(response);
                 }
             });
         }
@@ -310,10 +469,10 @@ else
                         }))
                     },
                     error: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter as peças!');
                     },
                     failure: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter as peças!');
                     }
                 });
             },
@@ -323,29 +482,7 @@ else
                 notify("Peça " + i.item.label + " selecionada com sucesso!");
             },
             minLength: 1
-        }).css('z-index', 100);
+        }).css('z-index', 40);
     });
 
-    function notifyError(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-danger',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
-    function notify(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
 </script>

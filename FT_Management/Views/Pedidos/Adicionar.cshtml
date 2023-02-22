@@ -56,20 +56,20 @@
             <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
             <div class="steps-actions">
                 <div class="steps-action">
-                    <a href="#" data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-light">
+                    <button data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-danger" type="button">
                         <span class="icon">
                             <i class="fas fa-arrow-left"></i>
                         </span>
                         <span>Anterior</span>
-                    </a>
+                    </button>
                 </div>
                 <div class="steps-action">
-                    <a href="#" data-nav="next" id="stepsNext" class="is-fullwidth button is-light">
+                    <button data-nav="next" id="stepsNext" class="is-fullwidth button is-success" type="button">
                         <span class="icon">
                             <i class="fas fa-arrow-right"></i>
                         </span>
                         <span>Próximo</span>
-                    </a>
+                    </button>
                 </div>
             </div>
             <div class="steps-content">
@@ -445,10 +445,10 @@
                 $("#txtQuemPediuTelefone").val(response.quemPediuTelefone)
             },
             error: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter o responsável!")
             },
             failure: function (response) {
-                alert(response.responseText);
+                notifyError("Ocorreu um erro ao obter o responsável!")
             }
         });
     }
@@ -496,10 +496,10 @@
                         }))
                     },
                     error: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     },
                     failure: function (response) {
-                        alert(response.responseText);
+                        notifyError("Ocorreu um erro ao obter o cliente!");
                     }
                 });
             },
@@ -509,6 +509,6 @@
                 CarregarDadosResponsavel();
             },
             minLength: 1
-        });
+        }).css('z-index', 10);
     });
 </script>

@@ -1,5 +1,4 @@
-﻿
-@model FT_Management.Models.Utilizador
+﻿@model FT_Management.Models.Utilizador
 
 @{
     ViewData["Title"] = "Marcacoes";
@@ -22,21 +21,24 @@
 <hr />
 
 <div id='calendar-container' class="mx2">
-  <div id="menu">
-      <span id="menu-navi">
-        <button type="button" class="button is-rounded is-info is-outlined move-today" data-action="move-today">Hoje</button>
-                <button type="button" class="button is-rounded is-outlined is-primary " data-action="change-view">Modo</button>
-        <button type="button" class="button is-rounded  move-day" data-action="move-prev">
-          <i class="fa-solid fa-arrow-left" data-action="move-prev"></i>
-        </button>
-        <button type="button" class="button is-rounded move-day" data-action="move-next">
-          <i class="fa-solid fa-arrow-right" data-action="move-next"></i>
-        </button>
-      </span>
-      <span id="renderRange" class="render-range subtitle"></span>
+    <div id="menu">
+        <span id="menu-navi">
+            <button type="button" class="button is-rounded is-info is-outlined move-today"
+                data-action="move-today">Hoje</button>
+            <button type="button" class="button is-rounded is-outlined is-primary "
+                data-action="change-view">Modo</button>
+            <button type="button" class="button is-rounded  move-day" data-action="move-prev">
+                <i class="fa-solid fa-arrow-left" data-action="move-prev"></i>
+            </button>
+            <button type="button" class="button is-rounded move-day" data-action="move-next">
+                <i class="fa-solid fa-arrow-right" data-action="move-next"></i>
+            </button>
+        </span>
+        <span id="renderRange" class="render-range subtitle"></span>
     </div>
     &nbsp;
-    <div id="calendar" style="height: 1500px;"></div></div>
+    <div id="calendar" style="height: 1500px;"></div>
+</div>
 
 <script>
 
@@ -47,88 +49,81 @@
     }
     var Calendar = tui.Calendar;
 
-     // register templates
-  var templates = {
-    popupDetailDate: function(isAllDay, start, end) {
-    return ('<b>Data: ' + new Date(start).toLocaleDateString("pt-PT"));
-    },
-    popupDetailUser: function(schedule) {
-      return '<b>Técnico : ' + schedule.attendees;
-    },
-    popupDetailState: function(schedule) {
-      return '<b>Estado : ' + schedule.state || 'Busy';
-    },
-    popupDetailBody: function(schedule) {
-      return '<b>Resumo : ' + schedule.body;
-    },
-    popupEdit: function() {
-      return '<b>Ver';
-    },
-    popupDetailLocation: function(schedule) {
-      return '<b>Local : ' + schedule.location;
-    },
+    // register templates
+    var templates = {
+        popupDetailDate: function (isAllDay, start, end) {
+            return ('<b>Data: ' + new Date(start).toLocaleDateString("pt-PT"));
+        },
+        popupDetailUser: function (schedule) {
+            return '<b>Técnico : ' + schedule.attendees;
+        },
+        popupDetailState: function (schedule) {
+            return '<b>Estado : ' + schedule.state || 'Busy';
+        },
+        popupDetailBody: function (schedule) {
+            return '<b>Resumo : ' + schedule.body;
+        },
+        popupEdit: function () {
+            return '<b>Ver';
+        },
+        popupDetailLocation: function (schedule) {
+            return '<b>Local : ' + schedule.location;
+        },
     };
 
     var calendar = new Calendar('#calendar', {
-      defaultView: isMobile ? 'day' : 'week',
-     template: templates,
+        defaultView: isMobile ? 'day' : 'week',
+        template: templates,
         useDetailPopup: true,
-     disableClick: true,
-     disableDblClick: true,
-     scheduleView: true,
-     taskView: false,
+        disableClick: true,
+        disableDblClick: true,
+        scheduleView: true,
+        taskView: false,
         week: {
             startDayOfWeek: 1,
-        daynames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
-     },
-     month: {
-        daynames: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
-     }
+            daynames: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
+        },
+        month: {
+            daynames: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+        }
     });
 
     calendar.on({
-    'beforeUpdateSchedule': function(e) {
-        if(e.changes != null){
-             $.ajax({
+        'beforeUpdateSchedule': function (e) {
+            if (e.changes != null) {
+                $.ajax({
                     type: "POST",
                     url: "/Visitas/AlteracaoCalendario",
                     data: { data: info.event.start.toISOString(), id: info.event.id },
                     traditional: false,
                     success: function (result) {
-                    $(function () {
-                        bulmaToast.toast({
-                          message: 'Agendamento atualizado com sucesso!',
-                          type: 'is-success',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
-                        })
-                    });
+                        $(function () {
+                            notify('Agendamento atualizado com sucesso!');
+                        });
                     }
                 });
-        }else{
-       window.open(e.schedule.raw);
-       }
-    }
-});
+            } else {
+                window.open(e.schedule.raw);
+            }
+        }
+    });
 
     setEventListener();
     setRenderRangeText();
     obterEventos();
 
     function obterEventos() {
-         $.ajax({
-        type: "POST",
-        url: "/Visitas/ObterVisitas",
-        data: {start: calendar.getDateRangeStart().toUTCString(), end: calendar.getDateRangeEnd().toUTCString()},
-        traditional: true,
-        success: function (result) {
-            calendar.clear();
-            calendar.createSchedules(result);
-            calendar.render();
-        }
-    });
+        $.ajax({
+            type: "POST",
+            url: "/Visitas/ObterVisitas",
+            data: { start: calendar.getDateRangeStart().toUTCString(), end: calendar.getDateRangeEnd().toUTCString() },
+            traditional: true,
+            success: function (result) {
+                calendar.clear();
+                calendar.createSchedules(result);
+                calendar.render();
+            }
+        });
     }
 
     function setRenderRangeText() {
@@ -155,7 +150,7 @@
     function setEventListener() {
         $('#menu-navi').on('click', onClickNavi);
     }
-      function onClickNavi(e) {
+    function onClickNavi(e) {
         var action = getDataAction(e.target);
 
         switch (action) {
@@ -169,11 +164,11 @@
                 calendar.today();
                 break;
             case 'change-view':
-               if (calendar.getViewName() == "day") {
+                if (calendar.getViewName() == "day") {
                     calendar.changeView("week", true)
-                }else if (calendar.getViewName() == "week"){
+                } else if (calendar.getViewName() == "week") {
                     calendar.changeView("month", true)
-                }else{
+                } else {
                     calendar.changeView("day", true)
                 }
                 calendar.today();
@@ -183,7 +178,7 @@
         }
         setRenderRangeText();
         obterEventos();
-       
+
     }
 
 </script>

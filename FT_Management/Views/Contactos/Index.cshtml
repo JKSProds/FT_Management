@@ -29,7 +29,8 @@
             <div class="column">
                 <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Filtro" id="txtFiltro" name="filter" value="@ViewData["filter"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Filtro" id="txtFiltro" name="filter"
+                            value="@ViewData["filter"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
@@ -37,7 +38,7 @@
                     <p class="control has-icons-left">
                         <span class="select">
                             <select class="select" id="lstarea" style="height: auto" onchange="filtrar()"
-                                    asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text", @ViewData["area"]))">
+                                asp-items="@(new SelectList(@ViewBag.AreasNegocio, "Value", "Text", @ViewData["area"]))">
                             </select>
                         </span>
                         <span class="icon is-small is-left">
@@ -47,7 +48,7 @@
                     <p class="control has-icons-left">
                         <span class="select">
                             <select class="select" id="idcomercial" style="height: auto" onchange="filtrar()"
-                                    asp-items="@(new SelectList(@ViewBag.ListaComerciais, "Id", "NomeCompleto", @ViewData["idcomercial"]))">
+                                asp-items="@(new SelectList(@ViewBag.ListaComerciais, "Id", "NomeCompleto", @ViewData["idcomercial"]))">
                             </select>
                         </span>
                         <span class="icon is-small is-left">
@@ -73,7 +74,8 @@
                         </button>
                     </p>
                     <p class="control">
-                        <button class="button is-primary is-info" type="button" onclick="window.location.href = '/Contactos/Adicionar'">
+                        <button class="button is-primary is-info" type="button"
+                            onclick="window.location.href = '/Contactos/Adicionar'">
                             <span class="icon">
                                 <i class="fas fa-plus fa-lg"></i>
                             </span>
@@ -95,124 +97,138 @@
     else
     {
         <div class="b-table">
-        <div class="table-wrapper has-mobile-cards">
-        <table class="table is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().NomeContacto)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().PessoaContacto)
-                    </th>
-                    <th class="is-hidden-touch">
-                        @Html.DisplayNameFor(model => model.FirstOrDefault().Comercial.NomeCompleto)
-                    </th>
-                    <th class="is-hidden-touch"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr class="@(!item.ValidadoPorAdmin ? "has-background-danger-light" : "")" >
-                        <td onclick="MostrarInfoContacto(@item.IdContacto)" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeContacto)">
-                            <span>@item.NomeContacto</span>
-                        </td>
-                        <td onclick="MostrarInfoContacto(@item.IdContacto)" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().PessoaContacto)">
-                            <span>@item.PessoaContacto</span>
-                        </td>
-                        <td onclick="MostrarInfoContacto(@item.IdContacto)" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Comercial.NomeCompleto)">
-                            <span>@item.Comercial.NomeCompleto</span>
-                        </td>
+            <div class="table-wrapper has-mobile-cards">
+                <table class="table is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().NomeContacto)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().PessoaContacto)
+                            </th>
+                            <th class="is-hidden-touch">
+                                @Html.DisplayNameFor(model => model.FirstOrDefault().Comercial.NomeCompleto)
+                            </th>
+                            <th class="is-hidden-touch"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="@(!item.ValidadoPorAdmin ? "has-background-danger-light" : "")">
+                                <td onclick="MostrarInfoContacto(@item.IdContacto)"
+                                    data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeContacto)">
+                                    <span>@item.NomeContacto</span>
+                                </td>
+                                <td onclick="MostrarInfoContacto(@item.IdContacto)"
+                                    data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().PessoaContacto)">
+                                    <span>@item.PessoaContacto</span>
+                                </td>
+                                <td onclick="MostrarInfoContacto(@item.IdContacto)"
+                                    data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Comercial.NomeCompleto)">
+                                    <span>@item.Comercial.NomeCompleto</span>
+                                </td>
 
-                        <td class="is-actions-cell">
-                            <div class="buttons is-pulled-right is-flex-wrap-nowrap">
-                                <a class="button is-info" @(item.TelefoneContacto.Length < 9 ? "disabled" : "") href="tel:@item.TelefoneContacto"><i class="fas fa-phone"></i></a>
-                                <a class="button is-warning " href="@item.URL" target="_blank"><i class="fas fa-paperclip"></i></a>
-                                <a class="button is-primary" @(item.EmailContacto.Length < 1 ? "disabled" : "") href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left" style="margin-top:5px"></i></a>
-                                <a class="button is-primary is-outlined" @(item.MoradaContacto.Length < 1 ? "disabled" : "") href="@Utilizador.ObterLinkMapa(new Cliente() {MoradaCliente = item.MoradaContacto}, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow"></i></a>
-                                @if (this.User.IsInRole("Admin"))
-                                {
-                                    <a class="button is-danger" onclick="ConfirmApagarContacto(@item.IdContacto)" href="javascript:;"><i class="fas fa-trash"></i></a>
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                                <td class="is-actions-cell">
+                                    <div class="buttons is-pulled-right is-flex-wrap-nowrap">
+                                        <a class="button is-info" @(item.TelefoneContacto.Length < 9 ? "disabled" : "")
+                                            href="tel:@item.TelefoneContacto"><i class="fas fa-phone"></i></a>
+                                        <a class="button is-warning " href="@item.URL" target="_blank"><i
+                                                class="fas fa-paperclip"></i></a>
+                                        <a class="button is-primary" @(item.EmailContacto.Length < 1 ? "disabled" : "")
+                                            href="mailto:@item.EmailContacto"><i class="fas fa-envelope float-left"
+                                                style="margin-top:5px"></i></a>
+                                        <a class="button is-primary is-outlined" @(item.MoradaContacto.Length < 1 ? "disabled" :
+                                    "")
+                                            href="@Utilizador.ObterLinkMapa(new Cliente() {MoradaCliente = item.MoradaContacto}, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i
+                                                class="fas fa-location-arrow"></i></a>
+                                        @if (this.User.IsInRole("Admin"))
+                                        {
+                                            <a class="button is-danger" onclick="ConfirmApagarContacto(@item.IdContacto)"
+                                                href="javascript:;"><i class="fas fa-trash"></i></a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-        </div>
-        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Contactos", new { page, filter = @ViewData["filter"], area = @ViewData["area"], idcomercial = @ViewData["idcomercial"] }))
+        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Contactos", new { page, filter =
+    @ViewData["filter"], area = @ViewData["area"], idcomercial = @ViewData["idcomercial"] }))
 
     }
 </div>
 @if (this.User.IsInRole("Admin"))
 {
     <div id="modalApagarContacto" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">
-                    <span class="icon">
-                        <i class="fas fa-circle-minus"></i>
-                    </span>
-                    <span>Apagar Contacto</span>
-                </p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <p>Tem a certeza que deseja apagar este contacto? <b>Esta ação é irreversivel!</b></p>
-            </section>
-            <footer class="modal-card-foot">
-                <button type="button" class="button is-danger" onclick="ApagarContacto()" href="javascript:;">
-                    <span class="icon">
-                        <i class="fas fa-trash"></i>
-                    </span>
-                    <span>Apagar</span>
-                </button>
-            </footer>
-        </div>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-circle-minus"></i>
+                </span>
+                <span>Apagar Contacto</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Tem a certeza que deseja apagar este contacto? <b>Esta ação é irreversivel!</b></p>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-danger" onclick="ApagarContacto()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span>Apagar</span>
+            </button>
+        </footer>
     </div>
+</div>
 
     <div id="modalAssociarComercial" class="modal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">
-                    <span class="icon">
-                        <i class="fas fa-check-circle"></i>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                <span>Associar Comercial ao Contacto</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <label>Deseja a associar este contacto a qual comercial?</label>
+                <p class="control has-icons-left">
+                    @{
+                            var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;
+                        }
+                    <span class="select" style="width:100%">
+                        <select class="select" style="width:100%" id="lstcomerciais"
+                            asp-items="@(new SelectList(@ViewBag.Comerciais, "Id", "NomeCompleto"))">
+                        </select>
                     </span>
-                    <span>Associar Comercial ao Contacto</span>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-user"></i>
+                    </span>
                 </p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <div class="field">
-                    <label>Deseja a associar este contacto a qual comercial?</label>
-                    <p class="control has-icons-left">
-                        @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
-                        <span class="select" style="width:100%">
-                            <select class="select" style="width:100%" id="lstcomerciais"
-                                    asp-items="@(new SelectList(@ViewBag.Comerciais, "Id", "NomeCompleto"))">
-                            </select>
-                        </span>
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-user"></i>
-                        </span>
-                    </p>
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button type="button" class="button is-info" onclick="AssociarComercialConfirm()" href="javascript:;">
-                    <span class="icon">
-                        <i class="fas fa-check"></i>
-                    </span>
-                    <span>Associar</span>
-                </button>
-            </footer>
-        </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info" onclick="AssociarComercialConfirm()" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span>Associar</span>
+            </button>
+        </footer>
     </div>
+</div>
 }
 
 <div id="modalContacto" class="modal">
@@ -301,13 +317,14 @@
 
     function AssociarComercial() {
         var modal = Bulma('#modalAssociarComercial').modal();
-        modal.open();    }
+        modal.open();
+    }
 
     function AssociarComercialConfirm() {
-        //alert(document.getElementById('lstcomerciais').value);
+
         var lstComerciais = document.getElementById("lstcomerciais");
         var txtComercial = lstComerciais.options[lstComerciais.selectedIndex].innerHTML;
-        //alert(txtComercial);
+
 
         var json = {
             idcontacto: document.getElementById('hiddenIdContacto').value,
@@ -349,15 +366,8 @@
                 });
             },
             error: function () {
-               Bulma('#modalContacto').modal().close();
-                        bulmaToast.toast({
-                          message: 'Não foi encontrado um cliente com o mesmo NIF!',
-                          type: 'is-danger',
-                          closeOnClick: true,
-                          pauseOnHover: true,
-                          opacity: 0.8,
-                          duration: 5000
-                        })
+                Bulma('#modalContacto').modal().close();
+                notifyError('Não foi encontrado um cliente com o mesmo NIF!');
             }
         });
     }

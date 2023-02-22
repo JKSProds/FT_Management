@@ -1,0 +1,25 @@
+baseURL = "https://bulma-tagsinput.netlify.app/"
+languageCode = "en-us"
+title = "BulmaTagsInput"
+theme = "creativebulma"
+
+[markup]
+  [markup.highlight]
+    style = "manni"
+
+[params]
+  version = "1.0"
+
+[menu]
+
+  [[menu.main]]
+    identifier = "get-started"
+    name = "Get started"
+    url = "/get-started/"
+    weight = 10
+  
+  [[menu.main]]
+    identifier = "how-to"
+    name = "How-To"
+    url = "#"
+    weight = 20

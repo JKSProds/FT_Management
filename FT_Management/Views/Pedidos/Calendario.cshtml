@@ -169,37 +169,13 @@ else
                     traditional: true,
                     success: function (result) {
                         info.event.setExtendedProp("dueDateClass", dataDestino);
-                        bulmaToast.toast({
-                            message: 'Agendamento atualizado com sucesso!',
-                            type: 'is-success',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        })
+                        notify('Agendamento atualizado com sucesso!');
                     },
                     error: function (response) {
-                        bulmaToast.toast({
-                            message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        })
+                        notifyError('Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.');
                     },
                     failure: function (response) {
-                        bulmaToast.toast({
-                            message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
-                            type: 'is-danger',
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            opacity: 0.8,
-                            duration: 5000,
-                            position: 'top-center'
-                        })
+                        notifyError('Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.');
                     }
                 });
             }
@@ -276,7 +252,6 @@ else
                             ObterMarcacao(info.event.extendedProps.idMarcacao);
                         },
                         eventDrop: function (info) {
-                            //console.log(info);
                             id = info.event.extendedProps.idMarcacao;
                             tecOriginal = info.event.extendedProps.idTecnico;
                             dataOriginal = info.event.extendedProps.dueDateClass;
@@ -290,43 +265,17 @@ else
                                 traditional: true,
                                 success: function (result) {
                                     info.event.setExtendedProp("dueDateClass", dataDestino);
-                                    bulmaToast.toast({
-                                        message: 'Agendamento atualizado com sucesso!',
-                                        type: 'is-success',
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        opacity: 0.8,
-                                        duration: 5000,
-                                        position: 'top-center'
-                                    })
+                                    notify('Agendamento atualizado com sucesso!');
                                 },
                                 error: function (response) {
-                                    bulmaToast.toast({
-                                        message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
-                                        type: 'is-danger',
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        opacity: 0.8,
-                                        duration: 5000,
-                                        position: 'top-center'
-                                    })
+                                    notifyError('Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.');
                                 },
                                 failure: function (response) {
-                                    bulmaToast.toast({
-                                        message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
-                                        type: 'is-danger',
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        opacity: 0.8,
-                                        duration: 5000,
-                                        position: 'top-center'
-                                    })
+                                    notifyError('Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.');
                                 }
                             });
                         },
                         eventReceive: function (info) {
-                            //console.log(info);
-
                             id = info.event.extendedProps.idMarcacao;
                             tecOriginal = info.event.extendedProps.idTecnico;
                             dataOriginal = info.event.extendedProps.dueDateClass;
@@ -341,37 +290,13 @@ else
                                 success: function (result) {
                                     info.event.setExtendedProp("dueDateClass", dataDestino);
                                     info.event.setExtendedProp("idTecnico", tecDestino);
-                                    bulmaToast.toast({
-                                        message: 'Agendamento atualizado com sucesso!',
-                                        type: 'is-success',
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        opacity: 0.8,
-                                        duration: 5000,
-                                        position: 'top-center'
-                                    })
+                                    notify('Agendamento atualizado com sucesso!');
                                 },
                                 error: function (response) {
-                                    bulmaToast.toast({
-                                        message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
-                                        type: 'is-danger',
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        opacity: 0.8,
-                                        duration: 5000,
-                                        position: 'top-center'
-                                    })
+                                    notifyError('Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.');
                                 },
                                 failure: function (response) {
-                                    bulmaToast.toast({
-                                        message: 'Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.',
-                                        type: 'is-danger',
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        opacity: 0.8,
-                                        duration: 5000,
-                                        position: 'top-center'
-                                    })
+                                    notifyError('Ocorreu um erro ao atualizar a marcação! Por favor tente novamente mais tarde.');
                                 }
                             });
                         }
@@ -404,7 +329,6 @@ else
                         document.getElementById('txtHeader').text = srcCalendar.view.title;
                     });
                     document.getElementById('mode').addEventListener('click', function () {
-                        console.log(srcCalendar);
                         view = srcCalendar.view.type;
                         if (view == "dayGridWeek") srcCalendar.changeView("dayGridMonth");
                         if (view == "dayGridMonth") srcCalendar.changeView("dayGridDay");
@@ -420,7 +344,6 @@ else
                             url: '/Pedidos/ObterMarcacao/' + id,
                             type: "GET",
                             success: function (response) {
-                                //console.log(response);
                                 document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function (elem) {
                                     return new Date(elem).toLocaleDateString();
                                 }).join(" | ");
@@ -440,10 +363,10 @@ else
 
                             },
                             error: function (response) {
-                                console.log(response.responseText);
+                                notifyError("Ocorreu um erro ao obter a marcação!");
                             },
                             failure: function (response) {
-                                console.log(response.responseText);
+                                notifyError("Ocorreu um erro ao obter a marcação!");
                             }
                         });
                     }
@@ -453,16 +376,15 @@ else
                     url: '/Pedidos/ObterPercentagemTecnico/' + @u.IdPHC,
                     type: "GET",
                     success: function (response) {
-                        //console.log(response);
                         document.getElementById('pb_@u.Id').max = response[0];
                         document.getElementById('pb_@u.Id').value = response[1];
                         document.getElementById('pbval_@u.Id').setAttribute('data-text', response[1] + '/' + response[0])
                     },
                     error: function (response) {
-                        console.log(response.responseText);
+                        notifyError("Ocorreu um erro ao obter a percentagem de assistências do tecnico!");
                     },
                     failure: function (response) {
-                        console.log(response.responseText);
+                        notifyError("Ocorreu um erro ao obter a percentagem de assistências do tecnico!");
                     }
                 });
 
@@ -544,16 +466,7 @@ else
 <script>
     function copiarTexto(id) {
 
-        bulmaToast.toast({
-            message: 'Texto copiado com sucesso!',
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        })
-
+        notify('Texto copiado com sucesso!');
         // text area method
         let textArea = document.createElement("textarea");
         textArea.value = document.getElementById(id).value;

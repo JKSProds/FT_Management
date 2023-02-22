@@ -92,21 +92,21 @@
             <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
             <div class="steps-actions">
                 <div class="steps-action">
-                    <a href="#" data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-light">
+                    <button data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-danger" type="button">
                         <span class="icon">
                             <i class="fas fa-arrow-left"></i>
                         </span>
                         <span>Anterior</span>
-                    </a>
+                    </button>
                 </div>
                 <div class="steps-action">
-                    <a href="#" data-nav="next" id="stepsNext" onclick="resizeCanvas();"
-                        class="is-fullwidth button is-light">
+                    <button data-nav="next" id="stepsNext" onclick="resizeCanvas();"
+                        class="is-fullwidth button is-success" type="button">
                         <span class="icon">
                             <i class="fas fa-arrow-right"></i>
                         </span>
                         <span>Próximo</span>
-                    </a>
+                    </button>
                 </div>
             </div>
             <div class="steps-content">
@@ -770,9 +770,6 @@
             if (id == 5) {
                 resizeCanvas();
             }
-        },
-        onError: error => {
-            console.log(error);
         }
     });
 
@@ -1011,10 +1008,10 @@
                         }))
                     },
                     error: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter as peças do utilizador!');
                     },
                     failure: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter as peças do utilizador!');
                     }
                 });
             },
@@ -1024,7 +1021,7 @@
                 notify("Peça " + i.item.label + " selecionada com sucesso!");
             },
             minLength: 1
-        });
+        }).css('z-index', 10);
     });
 
     function CarregarPecasStock() {
@@ -1041,10 +1038,10 @@
                 $('#modalPecas').find('.modal-body').html(html);
             },
             error: function (response) {
-                notifyError(response.responseText);
+                notifyError('Ocorreu um erro ao carregar as peças do utilizador!');
             },
             failure: function (response) {
-                notifyError(response.responseText);
+                notifyError('Ocorreu um erro ao carregar as peças do utilizador!');
             }
         });
     }
@@ -1062,15 +1059,14 @@
                 url: '/Produtos/ObterPeca/' + stamp,
                 type: "POST",
                 success: function (response) {
-                    //console.log(response);
                     AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
                     LimparPecas();
                 },
                 error: function (response) {
-                    notifyError(response.responseText);
+                    notifyError('Ocorreu um erro ao obter a informação da peça!');
                 },
                 failure: function (response) {
-                    notifyError(response.responseText);
+                    notifyError('Ocorreu um erro ao obter a informação da peça!');
                 }
             });
         }
@@ -1102,10 +1098,10 @@
                         }))
                     },
                     error: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter o cliente!');
                     },
                     failure: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter o cliente!');
                     }
                 });
             },
@@ -1115,7 +1111,7 @@
                 notify("Cliente " + i.item.label + " selecionado com sucesso!");
             },
             minLength: 1
-        });
+        }).css('z-index', 10);
     });
 
     //EQUIPAMENTOS
@@ -1135,10 +1131,10 @@
                         }))
                     },
                     error: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter os equipamentos!');
                     },
                     failure: function (response) {
-                        notifyError(response.responseText);
+                        notifyError('Ocorreu um erro ao obter os equipamentos!');
                     }
                 });
             },
@@ -1148,7 +1144,7 @@
                 notify("Equipamento " + i.item.label + " selecionado com sucesso!");
             },
             minLength: 1
-        });
+        }).css('z-index', 10);
     });
 
     function LimparEquipamento() {
@@ -1183,10 +1179,10 @@
                 notify("Obtidos com sucesso os equipamentos associados a este cliente!");
             },
             error: function (response) {
-                notifyError(response.responseText);
+                notifyError('Ocorreu um erro ao obter os equipamentos do cliente!');
             },
             failure: function (response) {
-                notifyError(response.responseText);
+                notifyError('Ocorreu um erro ao obter os equipamentos do cliente!');
             }
         });
     }
@@ -1201,7 +1197,7 @@
             dataType: "json", // type of data you're expecting from response
             success: function (json) {
                 var html = "<table class=\"table table-hover\" <thead><tr><th style=\"width: 110px\">Data</th><th>Técnico</th><th>Relatório</th></tr></thead><tbody>";
-                console.log(json);
+
                 var existeFolhasObra = false;
                 for (var i = 0; i < json.json.length; i++) {
                     var obj = json.json[i];
@@ -1234,31 +1230,9 @@
                 notify("Obtido com sucesso as intervenções associadas ao equipamento selecionado!");
             },
             error: function (error) {
-                notifyError(response.responseText);
+                notifyError('Ocorreu um erro ao obter as intervenções associadas ao equipamento selecionado!');
             }
         });
     }
 
-    function notifyError(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-danger',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
-    function notify(mensagem) {
-        bulmaToast.toast({
-            message: mensagem,
-            type: 'is-success',
-            closeOnClick: true,
-            pauseOnHover: true,
-            opacity: 0.8,
-            duration: 5000,
-            position: 'top-center'
-        });
-    }
 </script>

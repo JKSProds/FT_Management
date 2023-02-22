@@ -79,7 +79,7 @@ public class CronJobSaida : IJob
             FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
             List<Acesso> LstAcessos = new List<Acesso>();
 
-            foreach (Utilizador u in dbContext.ObterListaUtilizadores(true, false).Where(u => u.AcessoAtivo))
+            foreach (Utilizador u in dbContext.ObterListaUtilizadores(true, false).Where(u => u.AcessoAtivo && u.Acessos))
             {
                 LstAcessos.Add(new Acesso()
                 {

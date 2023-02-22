@@ -36,7 +36,7 @@ namespace FT_Management.Controllers
             if (IdUtilizador == 0) return Forbid();
 
             ViewData["API"] = Api;
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false);
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
             List<Ferias> LstFerias = context.ObterListaFerias(DateTime.Parse(DateTime.Now.ToLongDateString() + " 00:00:00"), DateTime.Parse(DateTime.Now.ToLongDateString() + " 23:59:59"));
             foreach (Ferias f in LstFerias)
             {

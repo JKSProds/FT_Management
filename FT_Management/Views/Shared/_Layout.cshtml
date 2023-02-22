@@ -38,12 +38,15 @@
     <script type="module" src='~/lib/fullcalendar/interaction/main.js'></script>
     <script type="module" src='~/lib/fullcalendar/daygrid/main.js'></script>
 
+    @*MAPAS*@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
         integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
-
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
         integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 
+    @*TAGS*@
+    <link rel="stylesheet" href="~/lib/bulma-tagsinput/dist/css/bulma-tagsinput.min.css" />
+    <script src="~/lib/bulma-tagsinput/dist/js/bulma-tagsinput.min.js"></script>
 
     <style>
         .navbar-item img {
@@ -80,7 +83,8 @@
 
 <body>
     <header>
-        <nav class='navbar @(Environment.GetEnvironmentVariable("DEV") == "1" ? "is-warning" : "is-light")  has-shadow' role="navigation" aria-label="main navigation">
+        <nav class='navbar @(Environment.GetEnvironmentVariable("DEV") == "1" ? "is-warning" : "is-light")  has-shadow'
+            role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
                     <img src="~/img/ft_logo.png" width="50" height="28">
@@ -169,6 +173,14 @@
                                             <i class="fa-solid fa-dolly"></i>
                                         </span>
                                         <span>Inventário</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Dossiers">
+                                        <span class="icon">
+                                            <i class="fas fa-file-alt"></i>
+                                        </span>
+                                        <span>Dossiers</span>
                                     </a>
                                 </p>
                             </div>
@@ -352,10 +364,10 @@
                                             <span>Utilizadores</span>
                                         </a>
                                     </div>
-                                     <div class="navbar-item">
+                                    <div class="navbar-item">
                                         <a class="button is-danger is-fullwidth" href="~/Home/Restart">
                                             <span class="icon">
-                                               <i class="fa-solid fa-power-off"></i>
+                                                <i class="fa-solid fa-power-off"></i>
                                             </span>
                                             <span>Reiniciar</span>
                                         </a>
@@ -396,7 +408,7 @@
             </div>
         </nav>
     </header>
-    <div class="container-fluid is-fullheight mx-1" style="height:90vh;margin-bottom: 70px">
+    <div class="container-fluid is-fullheight mx-1">
         <main role="main">
             &nbsp;
             @RenderBody()
@@ -419,12 +431,16 @@
             </footer>
         </div>
     </div>
+    <br />
+    <br />
+    <br />
+    <br />
     <footer class="footer" style="padding:0px">
         <div class="content has-text-centered">
             <p>
-                &nbsp;
-                <strong>Jorge Monteiro</strong> (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ? "_DEV" : ""))
-                
+                <strong>Jorge Monteiro</strong>
+                (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ?
+                "_DEV" : ""))
             </p>
         </div>
     </footer>
@@ -450,36 +466,38 @@
             data: { "obs": document.getElementById('txtObs').value, "file": base64 },
             success: function (data) {
                 if (data == "Ok") {
-                    bulmaToast.toast({
-                        message: 'Sugestão enviada com sucesso!',
-                        type: 'is-success',
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        opacity: 0.8,
-                        duration: 5000
-                    });
+                    notify('Sugestão enviada com sucesso!');
                 }
             },
             error: function (data) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000
-                });
+                notifyError('Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!');
             },
             failure: function (data) {
-                bulmaToast.toast({
-                    message: 'Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!',
-                    type: 'is-danger',
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    opacity: 0.8,
-                    duration: 5000
-                });
+                notifyError('Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!');
             }
+        });
+    }
+
+    function notifyError(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-danger',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
+        });
+    }
+    function notify(mensagem) {
+        bulmaToast.toast({
+            message: mensagem,
+            type: 'is-success',
+            closeOnClick: true,
+            pauseOnHover: true,
+            opacity: 0.8,
+            duration: 5000,
+            position: 'top-center'
         });
     }
 </script>
