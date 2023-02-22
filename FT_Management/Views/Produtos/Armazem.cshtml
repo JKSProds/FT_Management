@@ -5,6 +5,8 @@
 }
 
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
+\<div class="pageloader is-success" id="pageloader2"><span class="title">A gerar a guia global! Por favor aguarde
+        ...</span></div>
 <div class="container">
     <div class="columns">
         <div class="column">
@@ -198,7 +200,7 @@ else
     document.getElementById("lstguias").value = document.getElementById("hiddenSelectedGT").value;
 
     function GerarGuiaGlobal(id) {
-        document.getElementById('pageloader').classList.add('is-active');
+        document.getElementById('pageloader2').classList.add('is-active');
         Bulma('#modalGerarGuiaGlobal').modal().close();
         $.ajax({
             url: '/Produtos/GerarGuiaGlobal/' + id,
@@ -209,15 +211,15 @@ else
                 } else {
                     notifyError("Ocorreu um erro ao gerar a sua guia. Por favor tente novamente! " + response[1]);
                 }
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('pageloader2').classList.remove('is-active');
             },
             error: function (response) {
                 notifyError(response);
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('pageloader2').classList.remove('is-active');
             },
             failure: function (response) {
                 notifyError(response);
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('pageloader2').classList.remove('is-active');
             }
         });
     }
