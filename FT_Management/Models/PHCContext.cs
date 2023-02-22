@@ -2403,7 +2403,7 @@ namespace FT_Management.Models
 
                 SqlCommand command = new SqlCommand("WEB_Picking_Fecha", conn)
                 {
-                    CommandTimeout = TIMEOUT,
+                    CommandTimeout = 120,
                     CommandType = CommandType.StoredProcedure
                 };
 
