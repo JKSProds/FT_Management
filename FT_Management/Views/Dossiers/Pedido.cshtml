@@ -172,12 +172,15 @@ else
                                     @Html.DisplayFor(modelItem => item.Quantidade)
                                 </td>
                                 <td class="is-actions-cell">
-                                    <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
-                                        onclick="RemoverLinha('@item.Stamp_Linha')">
-                                        <span class="icon">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </span>
-                                    </button>
+                                    @if (!Model.Fechado)
+                                    {
+                                        <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
+                                            onclick="RemoverLinha('@item.Stamp_Linha')">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </span>
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -189,12 +192,15 @@ else
                                     <span>@item.Designacao</span>
                                 </td>
                                 <td class="is-actions-cell">
-                                    <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
-                                        onclick="RemoverLinha('@item.Stamp_Linha')">
-                                        <span class="icon">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </span>
-                                    </button>
+                                    @if (!Model.Fechado)
+                                    {
+                                        <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
+                                            onclick="RemoverLinha('@item.Stamp_Linha')">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </span>
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }

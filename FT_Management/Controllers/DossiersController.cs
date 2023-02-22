@@ -26,7 +26,13 @@ namespace FT_Management.Controllers
         public ActionResult Pedido(string id, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = phccontext.ObterDossier(id);
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
+
             ViewData["ReturnUrl"] = ReturnUrl;
             return View(d);
         }
@@ -111,21 +117,27 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            List<string> res = new List<string>();
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = phccontext.ObterDossier(id);
-
-            Linha_Dossier l = new Linha_Dossier()
-            {
-                Stamp_Dossier = id,
-                Referencia = string.IsNullOrEmpty(referencia) ? "" : referencia,
-                Designacao = design,
-                Quantidade = qtd,
-                CriadoPor = u.NomeCompleto
-            };
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Json("");
+            if (d.Fechado) return Json("");
 
-            List<string> res = phccontext.CriarLinhaDossier(l);
+            for (int i = 0; i < design.Length; i += 60)
+            {
+                string s = i + 60 > design.Length ? design.Substring(i, design.Length - i) : design.Substring(i, 60);
+                Linha_Dossier l = new Linha_Dossier()
+                {
+                    Stamp_Dossier = id,
+                    Referencia = string.IsNullOrEmpty(referencia) ? "" : referencia,
+                    Designacao = s,
+                    Quantidade = qtd,
+                    CriadoPor = u.NomeCompleto
+                };
+                res = phccontext.CriarLinhaDossier(l);
+            }
+
             return Json(int.Parse(res[0].ToString()) > 0 ? phccontext.ObterLinhaDossier(res[3].ToString()) : new Linha_Dossier());
         }
 
@@ -134,6 +146,10 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Linha_Dossier l = phccontext.ObterLinhaDossier(id);
+            Dossier d = phccontext.ObterDossier(l.Stamp_Dossier);
+
+            if (d.Fechado) return Json("");
+
             return Json(phccontext.ApagarLinhaDossier(l.Stamp_Dossier, l.Stamp_Linha));
         }
 
