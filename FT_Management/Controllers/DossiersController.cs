@@ -49,12 +49,13 @@ namespace FT_Management.Controllers
                 Serie = serie,
                 FolhaObra = fo,
                 Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao),
-                EditadoPor = u.NomeCompleto
+                EditadoPor = u.Iniciais
             };
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
+            MailContext.EnviarEmailPedidoTransferencia(u, d);
 
             //Criação de linhas por defeito
             phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Designacao = "Pedido de Assistência Técnica N.º " + fo.IdFolhaObra, CriadoPor = d.EditadoPor });
@@ -80,7 +81,7 @@ namespace FT_Management.Controllers
                     Serie = 36,
                     Marcacao = new Marcacao(),
                     FolhaObra = new FolhaObra(),
-                    EditadoPor = u.NomeCompleto
+                    EditadoPor = u.Iniciais
                 };
                 d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
                 d = phccontext.ObterDossier(d.StampDossier);
@@ -133,7 +134,7 @@ namespace FT_Management.Controllers
                     Referencia = string.IsNullOrEmpty(referencia) ? "" : referencia,
                     Designacao = s,
                     Quantidade = qtd,
-                    CriadoPor = u.NomeCompleto
+                    CriadoPor = u.Iniciais
                 };
                 res = phccontext.CriarLinhaDossier(l);
             }
