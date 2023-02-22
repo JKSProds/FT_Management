@@ -993,7 +993,7 @@ namespace FT_Management.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel ler os PAT's do PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel ler os PAT's do PHC!|" + LstFolhaObra.Last().IdFolhaObra + "|\r\n(Exception: " + ex.Message + ")");
             }
 
             return LstFolhaObra;
