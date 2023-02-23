@@ -782,7 +782,10 @@
     });
 
     var canvas = document.getElementById('signature-pad');
-    signaturePad = new SignaturePad(canvas);
+    signaturePad = new SignaturePad(canvas, {
+        minWidth: 0.5,
+        maxWidth: 1
+    });
 
     document.getElementById('btnDesfazerRubrica').addEventListener('click', function () {
         var data = signaturePad.toData();
