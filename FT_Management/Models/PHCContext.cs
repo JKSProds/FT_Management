@@ -881,13 +881,14 @@ namespace FT_Management.Models
             FolhaObra foNova = ObterFolhaObra(fo.StampFO);
             if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
             {
-                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(foNova).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, foNova, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(foNova).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
             }
             else
             {
-                ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
+                ChatContext.EnviarNotificacaoFolhaObraTecnico(foNova, fo.Utilizador);
             }
-            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0) MailContext.EnviarEmailMarcacaoResolvidaPD(fo, fo.Marcacao);
+            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar) MailContext.EnviarEmailMarcacaoResolvidaPD(foNova, fo.Marcacao);
+            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoEncaminhadaPD(foNova, fo.Marcacao);
             return true;
         }
 
