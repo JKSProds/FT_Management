@@ -592,6 +592,16 @@
                     <span class="check is-info"></span>
                     <span class="control-label">Fechar Pedido?</span>
                 </label>
+                <label class="switch is-rounded">
+                    <input type="checkbox" id="chkEncaminhar">
+                    <span class="check is-info"></span>
+                    <span class="control-label">Encaminhar Pedido?</span>
+                </label>
+                <label class="switch is-rounded">
+                    <input type="checkbox" id="chkReagendar">
+                    <span class="check is-info"></span>
+                    <span class="control-label">Reagendar Pedido?</span>
+                </label>
             </div>
         </section>
         <footer class="modal-card-foot">
@@ -649,13 +659,17 @@
     });
 
     function AdicionarComentario() {
-
+        if (document.getElementById("txtComentario").value.length == 0) {
+            notifyError("Por favor preencha um comentario...")
+        }else{
         document.getElementById("btnConfirmAddComentario").classList.add("is-loading");
 
         var json = {
             id: document.getElementById("hiddenIdMarcacao").value,
             comentario: document.getElementById("txtComentario").value,
             fechar: document.getElementById('chkFechar').checked ? 1 : 0,
+            encaminhar: document.getElementById('chkEncaminhar').checked ? 1 : 0,
+            reagendar: document.getElementById('chkReagendar').checked ? 1 : 0
         };
 
         $.ajax({
@@ -669,6 +683,7 @@
                 });
             }
         });
+        }
     }
 
     function ConfirmEnviarEmail(IdFolhaObra) {

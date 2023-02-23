@@ -182,7 +182,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpPost]
-        public JsonResult AdicionarComentario(int id, string comentario, int fechar)
+        public JsonResult AdicionarComentario(int id, string comentario, int fechar, int encaminhar, int reagendar)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -206,10 +206,24 @@ namespace FT_Management.Controllers
                 m.JustificacaoFecho = comentario;
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
-                phccontext.AtualizaMarcacao(m);
                 if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoResolvidaPD(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoResolvidaSONAE(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+            }
+            else if (encaminhar == 1)
+            {
+                m.JustificacaoFecho = comentario;
+                m.EstadoMarcacaoDesc = "Finalizado";
+                m.Utilizador = c.Utilizador;
+                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoEncaminhadaPD(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoEncaminhadaSONAE(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+            }
+            else if (reagendar == 1)
+            {
+                m.EstadoMarcacaoDesc = "Reagendado";
+                m.Utilizador = c.Utilizador;
             }
 
+            phccontext.AtualizaMarcacao(m);
             return Json(new { json = res });
         }
 
