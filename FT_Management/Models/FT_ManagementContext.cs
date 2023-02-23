@@ -2830,6 +2830,7 @@ namespace FT_Management.Models
                         Obs = result["Observacoes"],
                         ValidadeCodigo = result["ValidadeCodigo"],
                         utilizador = this.ObterUtilizador(int.Parse(result["Utilizador"])),
+                        ValidadoPor = this.ObterUtilizador(int.Parse(result["ValidadoPor"]))
                     };
                 }
             }

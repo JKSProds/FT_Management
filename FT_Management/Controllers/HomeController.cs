@@ -39,14 +39,14 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.AtualizarCodigo(id, 1, int.Parse(this.User.Claims.First().Value));
-            return RedirectToAction("ValidarCodigo", id);
+            return RedirectToAction("ValidarCodigo", "Home", new { id = id });
         }
         [Authorize(Roles = "Admin")]
         public IActionResult RejeitarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             context.AtualizarCodigo(id, 1, int.Parse(this.User.Claims.First().Value));
-            return RedirectToAction("ValidarCodigo", id);
+            return RedirectToAction("ValidarCodigo", "Home", new { id = id });
         }
         public IActionResult AcessoNegado()
         {
