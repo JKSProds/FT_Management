@@ -386,7 +386,7 @@ namespace FT_Management.Models
         public List<Viagem> ObterViagens(string Matricula, string DataViagens)
         {
             List<Viagem> res = new List<Viagem>();
-            string sqlQuery = "SELECT * FROM dat_viaturas_viagens where matricula_viatura='" + Matricula + "' and inicio_viagem>='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 00:00:00' and fim_viagem<='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 23:59:59';";
+            string sqlQuery = "SELECT * FROM dat_viaturas_viagens where matricula_viatura='" + Matricula + "' and inicio_viagem>='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 00:00:00' and fim_viagem<='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 23:59:59' and fim_kms > 0;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -2602,112 +2602,65 @@ namespace FT_Management.Models
             PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
             AcroFields pdfFormFields = pdfStamper.AcroFields;
 
-            //if (folhaobra.RubricaCliente != null)
-            //{
-            //    var fldPosition = pdfFormFields.GetFieldPositions("assinatura");
-            //    Rectangle rectangle = new Rectangle((int)fldPosition[1], (int)fldPosition[2] - 7, (int)fldPosition[3], 30);
-            //    folhaobra.RubricaCliente = folhaobra.RubricaCliente.Replace("data:image/png;base64,", "").Trim();
-
-            //    if ((folhaobra.RubricaCliente.Length % 4 == 0) && Regex.IsMatch(folhaobra.RubricaCliente, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None))
-            //    {
-            //        byte[] imageBytes = Convert.FromBase64String(folhaobra.RubricaCliente);
-
-            //        iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
-
-            //        image.ScaleToFit(rectangle.Width, rectangle.Height);
-            //        image.SetAbsolutePosition(rectangle.Left + 2, rectangle.Top - 2);
-
-            //        pdfStamper.GetOverContent((int)fldPosition[0]).AddImage(image);
-
-            //    }
-            //}
-
-            pdfFormFields.SetField("IdFolhaObra", folhaobra.IdAT);
+            pdfFormFields.SetField("At", folhaobra.IdAT.ToString());
+            pdfFormFields.SetField("Pat", folhaobra.IdFolhaObra.ToString());
             pdfFormFields.SetField("Marcação", folhaobra.IdMarcacao.ToString());
-            pdfFormFields.SetField("Registado", folhaobra.IntervencaosServico.Last().NomeTecnico);
-            if (folhaobra.AssistenciaRemota)
-            {
-                pdfFormFields.SetFieldProperty("Remoto", "textsize", 26f, null);
-                pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
-                pdfFormFields.SetField("Remoto", "REMOTO");
-            }
-            else if ((folhaobra.DataServico.DayOfWeek == DayOfWeek.Sunday) || (folhaobra.DataServico.DayOfWeek == DayOfWeek.Saturday))
-            {
-                pdfFormFields.SetFieldProperty("Remoto", "textsize", 20f, null);
-                pdfFormFields.SetFieldProperty("Remoto", "textcolor", iTextSharp.text.BaseColor.Red, null);
-                pdfFormFields.SetField("Remoto", "FIM-DE-SEMANA");
-            }
-
-            if (folhaobra.PecasServico.Count() > 0 && folhaobra.GuiaTransporteAtual != "GT" + folhaobra.DataServico.Year + "BO91/" && folhaobra.GuiaTransporteAtual != string.Empty) pdfFormFields.SetField("GT", "Peça(s) retirada(s) da " + folhaobra.GuiaTransporteAtual);
-
-            //Equipamento
-            pdfFormFields.SetField("Designação", folhaobra.EquipamentoServico.DesignacaoEquipamento);
+            pdfFormFields.SetField("Data", folhaobra.DataServico.ToShortDateString());
             pdfFormFields.SetField("Marca", folhaobra.EquipamentoServico.MarcaEquipamento);
-            pdfFormFields.SetField("Mod", folhaobra.EquipamentoServico.ModeloEquipamento);
-            pdfFormFields.SetField("NºSerie", folhaobra.EquipamentoServico.NumeroSerieEquipamento);
-            pdfFormFields.SetField(string.IsNullOrEmpty(folhaobra.EstadoEquipamento) ? "" : folhaobra.EstadoEquipamento, "On");
-            pdfFormFields.SetField("RGPD", "Yes");
-
-            //Cliente
-            pdfFormFields.SetField("Referencia", folhaobra.ReferenciaServico);
-            pdfFormFields.SetField("Cliente", folhaobra.ClienteServico.NomeCliente);
+            pdfFormFields.SetField("Modelo", folhaobra.EquipamentoServico.ModeloEquipamento);
+            pdfFormFields.SetField("Serie", folhaobra.EquipamentoServico.NumeroSerieEquipamento);
+            pdfFormFields.SetField("Nome", folhaobra.ClienteServico.NomeCliente);
+            pdfFormFields.SetField("Morada", folhaobra.ClienteServico.MoradaCliente);
             pdfFormFields.SetField("Contribuinte", folhaobra.ClienteServico.NumeroContribuinteCliente);
+            pdfFormFields.SetField("ID", folhaobra.ClienteServico.IdCliente.ToString() + " / " + folhaobra.ClienteServico.IdLoja.ToString());
+            pdfFormFields.SetField("Relatório", folhaobra.RelatorioServico);
+            pdfFormFields.SetField("Referencia", folhaobra.ReferenciaServico);
+            pdfFormFields.SetField("Tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
+            pdfFormFields.SetField("Cliente", folhaobra.ConferidoPor);
+            pdfFormFields.SetField("Guia", folhaobra.GuiaTransporteAtual);
+            pdfFormFields.SetField("Obs", (folhaobra.AssistenciaRemota ? "REMOTO " : "") + (folhaobra.Piquete ? "PIQUETE " : "") + (folhaobra.Instalação ? "INSTALAÇÃO " : ""));
 
-            //Assistencia
-            pdfFormFields.SetField("trabalho efectuado", folhaobra.RelatorioServico);
-            pdfFormFields.SetField("SituacoesPendentes", folhaobra.SituacoesPendentes);
-            if (folhaobra.IntervencaosServico.Count > 0)
+            //Mao de Obra
+            int i = 1;
+            foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
             {
-                //Mao de Obra
-                int i = 1;
-                foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
-                {
-                    pdfFormFields.SetField("DataRow" + i, intervencao.DataServiço.ToString("dd/MM"));
-                    pdfFormFields.SetField("TécnicoRow" + i, intervencao.NomeTecnico);
-                    pdfFormFields.SetField("InícioRow" + i, intervencao.HoraInicio.ToString("HH:mm"));
-                    pdfFormFields.SetField("FimRow" + i, intervencao.HoraFim.ToString("HH:mm"));
+                pdfFormFields.SetField("Data_" + i, intervencao.DataServiço.ToString("dd/MM/yy"));
+                pdfFormFields.SetField("Tec_" + i, intervencao.NomeTecnico);
+                pdfFormFields.SetField("Inicio_" + i, intervencao.HoraInicio.ToString("HH:mm"));
+                pdfFormFields.SetField("Fim_" + i, intervencao.HoraFim.ToString("HH:mm"));
 
-                    var ts = new TimeSpan(intervencao.HoraFim.Hour - intervencao.HoraInicio.Hour, intervencao.HoraFim.Minute - intervencao.HoraInicio.Minute, 00);
-                    ts = TimeSpan.FromMinutes(15 * Math.Ceiling(ts.TotalMinutes / 15));
-
-                    pdfFormFields.SetField("HorasRow" + i, ts.Hours.ToString() + "." + (ts.Minutes * 100) / 60);
-                    i++;
-                    if (i == 9) break;
-                }
-
-                pdfFormFields.SetField("DataConclusao", folhaobra.IntervencaosServico.Last().DataServiço.ToString("dd/MM/yyyy"));
-                pdfFormFields.SetField("o tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
+                i++;
+                if (i == 14) break;
             }
 
-            pdfFormFields.SetFieldProperty("Text5", "textsize", 9f, null);
-            pdfFormFields.SetField("Text5", folhaobra.DataServico.ToString("dd/MM/yyyy"));
-
-            if (folhaobra.PecasServico.Count > 0)
+            //Peças
+            int p = 1;
+            foreach (Produto pecas in folhaobra.PecasServico)
             {
-
-                //Peças
-                int p = 1;
-                foreach (Produto pecas in folhaobra.PecasServico)
+                pdfFormFields.SetField("Ref_" + p, pecas.Ref_Produto);
+                if (pecas.Designacao_Produto.Length > 50)
                 {
-                    pdfFormFields.SetFieldProperty("ReferênciaRow" + p, "textsize", 6f, null);
-                    pdfFormFields.SetField("ReferênciaRow" + p, pecas.Ref_Produto);
-                    pdfFormFields.SetFieldProperty("DesignaçãoRow" + p, "textsize", 6f, null);
-                    if (pecas.Designacao_Produto.Length > 50)
-                    {
-                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto.Substring(0, 50));
-                    }
-                    else
-                    {
-                        pdfFormFields.SetField("DesignaçãoRow" + p, pecas.Designacao_Produto);
-                    }
-                    pdfFormFields.SetFieldProperty("QuantRow" + p, "textsize", 6f, null);
-                    pdfFormFields.SetField("QuantRow" + p, pecas.Stock_Fisico.ToString() + " " + pecas.TipoUn.ToString()); ;
-                    p++;
-                    if (p == 10) break;
+                    pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto.Substring(0, 50));
                 }
+                else
+                {
+                    pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto);
+                }
+                pdfFormFields.SetField("Qtd_" + p, pecas.Stock_Fisico.ToString() + " " + pecas.TipoUn.ToString());
+
+                p++;
+                if (p == 20) break;
             }
-            if (folhaobra.ConferidoPor == string.Empty) folhaobra.ConferidoPor = folhaobra.ClienteServico.PessoaContatoCliente;
-            pdfFormFields.SetField("o cliente", folhaobra.ConferidoPor);
+
+            if (!string.IsNullOrEmpty(folhaobra.RubricaCliente))
+            {
+                PushbuttonField ad = pdfFormFields.GetNewPushbuttonFromField("Signature");
+                ad.Layout = PushbuttonField.LAYOUT_ICON_ONLY;
+                ad.BorderColor = iTextSharp.text.BaseColor.White;
+                ad.ProportionalIcon = true;
+                ad.Image = iTextSharp.text.Image.GetInstance(Convert.FromBase64String(folhaobra.RubricaCliente));
+                pdfFormFields.ReplacePushbuttonField("Signature", ad.Field);
+            }
 
             pdfStamper.FormFlattening = true;
             pdfStamper.SetFullCompression();
@@ -2716,6 +2669,7 @@ namespace FT_Management.Models
             return outputPdfStream;
 
         }
+
         public MemoryStream BitMapToMemoryStream(string filePath, int w, int h)
         {
             var ms = new MemoryStream();
@@ -2832,10 +2786,10 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        public void AtualizarCodigo(string stamp, int estado)
+        public void AtualizarCodigo(string stamp, int estado, int utilizador)
         {
 
-            string sql = "UPDATE dat_codigos set EstadoCodigo=" + estado + " WHERE CodigoValidacao='" + stamp + "';";
+            string sql = "UPDATE dat_codigos set EstadoCodigo=" + estado + ", ValidadoPor=" + utilizador + " WHERE CodigoValidacao='" + stamp + "';";
 
             Database db = ConnectionString;
 
@@ -2862,7 +2816,7 @@ namespace FT_Management.Models
         public Codigo ObterCodigo(string stamp)
         {
             Codigo c = new Codigo();
-            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "' and EstadoCodigo=0;";
+            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -2876,6 +2830,7 @@ namespace FT_Management.Models
                         Obs = result["Observacoes"],
                         ValidadeCodigo = result["ValidadeCodigo"],
                         utilizador = this.ObterUtilizador(int.Parse(result["Utilizador"])),
+                        ValidadoPor = this.ObterUtilizador(int.Parse(result["ValidadoPor"]))
                     };
                 }
             }

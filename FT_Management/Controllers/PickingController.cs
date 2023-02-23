@@ -43,15 +43,15 @@ namespace FT_Management.Controllers
 
             if (string.IsNullOrEmpty(pi_stamp))
             {
-                pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
-                context.AdicionarLog(u.Id, "Criado um picking novo com sucesso! - Encomenda Nº " + e.Id  + ", " + e.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
+                pi_stamp = phccontext.CriarPicking(id, u.Iniciais);
+                context.AdicionarLog(u.Id, "Criado um picking novo com sucesso! - Encomenda Nº " + e.Id + ", " + e.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
 
             }
             Picking p = phccontext.ObterPicking(pi_stamp);
 
-            if (p.IdPicking == 0) 
+            if (p.IdPicking == 0)
             {
-                pi_stamp = phccontext.CriarPicking(id, u.NomeCompleto);
+                pi_stamp = phccontext.CriarPicking(id, u.Iniciais);
                 context.AdicionarLog(u.Id, "Criado um picking novo com sucesso! - Encomenda Nº " + e.Id + ", " + e.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
 
                 p = phccontext.ObterPicking(pi_stamp);
@@ -66,7 +66,7 @@ namespace FT_Management.Controllers
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Picking p = phccontext.ObterPicking(id);
-            p.EditadoPor = u.NomeCompleto;
+            p.EditadoPor = u.Iniciais;
             p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p.Picking_Stamp) + "</b>";
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 

@@ -68,7 +68,7 @@ namespace FT_Management.Models
         public string TipoFolhaObra { get; set; }
         [Display(Name = "Em Garantia")]
         public bool EmGarantia { get; set; }
-        [Display(Name = "Avisar Cliente")]
+        [Display(Name = "Encaminhar Pedido")]
         public bool Avisar { get; set; }
         [Display(Name = "Recolher para Oficina")]
         public bool RecolhaOficina { get; set; }

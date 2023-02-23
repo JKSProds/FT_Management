@@ -127,6 +127,13 @@
                                             </span>
                                         </p>
                                     </div>
+                                    <div class="control">
+                                        <label class="mx-1 switch is-large is-outlined" style="height:40px">
+                                            <input type="checkbox" id="chkDesbloquearEquipamentos"
+                                                onchange="DesbloquearEquipamentos();">
+                                            <span class="check is-success"></span>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="field">
                                     <div class="control buttons">
@@ -151,13 +158,6 @@
                                             </span>
                                             <span>Visualizar Equipamentos do Cliente</span>
                                         </button>
-                                        <button type="button" class="button is-warning is-fullwidth"
-                                            onclick="DesbloquearEquipamentos();">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                            </span>
-                                            <span>Pesquisar Todos os Equipamentos</span>
-                                        </button>
                                     </div>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
@@ -168,6 +168,13 @@
                 </div>
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
+                        <div class="column is-4">
+                            <label asp-for="ListaIntervencoes"></label>
+                            <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
+                            <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
+                            </div>
+                            <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
+                        </div>
                         <div class="column is-4">
                             <div class="field">
                                 <div class="control">
@@ -203,8 +210,7 @@
                                         value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
                                 </div>
                             </div>
-                            <button type="button" onclick="AdicionarIntervencao()"
-                                class="button is-info is-outlined is-fullwidth">
+                            <button type="button" onclick="AdicionarIntervencao()" class="button is-info is-fullwidth">
                                 <span class="icon">
                                     <i class="fas fa-plus"></i>
                                 </span>
@@ -212,13 +218,7 @@
                             </button>
 
                         </div>
-                        <div class="column is-4">
-                            <label asp-for="ListaIntervencoes"></label>
-                            <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
-                            <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
-                            </div>
-                            <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
-                        </div>
+
                     </div>
                 </div>
                 <div class="step-content">
@@ -405,7 +405,7 @@
                                     style="width:100%;border:2px solid #000000;"></canvas>
                             </div>
                             <br />
-                            <button class="button is-info" type="button" id="btnDesfazerRubrica">Desfazer</button>
+                            <button class="button is-warning" type="button" id="btnDesfazerRubrica">Desfazer</button>
                             <button class="button is-danger" type="button"
                                 onclick="signaturePad.clear();">Limpar</button>
                         </div>
@@ -782,7 +782,10 @@
     });
 
     var canvas = document.getElementById('signature-pad');
-    signaturePad = new SignaturePad(canvas);
+    signaturePad = new SignaturePad(canvas, {
+        minWidth: 0.5,
+        maxWidth: 1
+    });
 
     document.getElementById('btnDesfazerRubrica').addEventListener('click', function () {
         var data = signaturePad.toData();

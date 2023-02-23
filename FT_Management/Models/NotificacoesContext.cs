@@ -395,6 +395,38 @@ namespace FT_Management.Models
 
             return true;
         }
+        public static bool EnviarEmailMarcacaoEncaminhadaPD(FolhaObra fo, Marcacao m)
+        {
+            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem" && fo.ReferenciaServico.StartsWith("58"))
+            {
+                string Assunto = "[Ticket#" + fo.ReferenciaServico + "] Encaminhar";
+                EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
+            }
+
+            return true;
+        }
+
+        public static bool EnviarEmailMarcacaoResolvidaSONAE(FolhaObra fo, Marcacao m)
+        {
+            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
+            {
+                string Assunto = "[" + fo.ReferenciaServico + "] Resolvido";
+                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
+            }
+
+            return true;
+        }
+
+        public static bool EnviarEmailMarcacaoEncaminhadaSONAE(FolhaObra fo, Marcacao m)
+        {
+            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
+            {
+                string Assunto = "[" + fo.ReferenciaServico + "] Encaminhar";
+                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
+            }
+
+            return true;
+        }
 
         public static bool EnviarEmailPropostaComercial(Utilizador u, Visita v, Proposta p)
         {

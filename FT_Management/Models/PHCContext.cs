@@ -881,13 +881,20 @@ namespace FT_Management.Models
             FolhaObra foNova = ObterFolhaObra(fo.StampFO);
             if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
             {
-                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(foNova).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, foNova, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(foNova).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
             }
             else
             {
-                ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
+                ChatContext.EnviarNotificacaoFolhaObraTecnico(foNova, fo.Utilizador);
             }
-            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0) MailContext.EnviarEmailMarcacaoResolvidaPD(fo, fo.Marcacao);
+
+            //PD
+            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar) MailContext.EnviarEmailMarcacaoResolvidaPD(foNova, fo.Marcacao);
+            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoEncaminhadaPD(foNova, fo.Marcacao);
+
+            //SONAE
+            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar) MailContext.EnviarEmailMarcacaoResolvidaSONAE(foNova, fo.Marcacao);
+            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoEncaminhadaSONAE(foNova, fo.Marcacao);
             return true;
         }
 
@@ -895,7 +902,7 @@ namespace FT_Management.Models
         {
             string res = "";
             if (fo.EquipamentoServico.EquipamentoStamp == null) res += "Não foi selecionado um equipamento!\r\n";
-            if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
+            if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
             if (fo.IntervencaosServico.Count() == 0) res += "Não foram adicionadas intervenções!";
             if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
             if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";
@@ -1025,7 +1032,7 @@ namespace FT_Management.Models
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data, Cliente c)
         {
-            return ObterFolhasObra("select * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' and pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by nopat;", true, true, true, false, true);
+            return ObterFolhasObra("select (select TOP 1 obrano from bo where orinopat=pa.nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' and pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by nopat;", true, true, true, false, true);
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
