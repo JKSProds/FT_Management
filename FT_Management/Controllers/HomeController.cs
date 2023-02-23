@@ -38,15 +38,15 @@ namespace FT_Management.Controllers
         public IActionResult AprovarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            context.AtualizarCodigo(id, 1);
-            return RedirectToAction("Index");
+            context.AtualizarCodigo(id, 1, int.Parse(this.User.Claims.First().Value));
+            return RedirectToAction("ValidarCodigo", id);
         }
         [Authorize(Roles = "Admin")]
         public IActionResult RejeitarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            context.AtualizarCodigo(id, 2);
-            return RedirectToAction("Index");
+            context.AtualizarCodigo(id, 1, int.Parse(this.User.Claims.First().Value));
+            return RedirectToAction("ValidarCodigo", id);
         }
         public IActionResult AcessoNegado()
         {

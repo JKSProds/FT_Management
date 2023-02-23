@@ -2786,10 +2786,10 @@ namespace FT_Management.Models
             db.Execute(sql);
             db.Connection.Close();
         }
-        public void AtualizarCodigo(string stamp, int estado)
+        public void AtualizarCodigo(string stamp, int estado, int utilizador)
         {
 
-            string sql = "UPDATE dat_codigos set EstadoCodigo=" + estado + " WHERE CodigoValidacao='" + stamp + "';";
+            string sql = "UPDATE dat_codigos set EstadoCodigo=" + estado + ", ValidadoPor=" + utilizador + " WHERE CodigoValidacao='" + stamp + "';";
 
             Database db = ConnectionString;
 
@@ -2816,7 +2816,7 @@ namespace FT_Management.Models
         public Codigo ObterCodigo(string stamp)
         {
             Codigo c = new Codigo();
-            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "' and EstadoCodigo=0;";
+            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "';";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
