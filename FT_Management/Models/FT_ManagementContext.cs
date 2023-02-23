@@ -386,7 +386,7 @@ namespace FT_Management.Models
         public List<Viagem> ObterViagens(string Matricula, string DataViagens)
         {
             List<Viagem> res = new List<Viagem>();
-            string sqlQuery = "SELECT * FROM dat_viaturas_viagens where matricula_viatura='" + Matricula + "' and inicio_viagem>='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 00:00:00' and fim_viagem<='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 23:59:59';";
+            string sqlQuery = "SELECT * FROM dat_viaturas_viagens where matricula_viatura='" + Matricula + "' and inicio_viagem>='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 00:00:00' and fim_viagem<='" + DateTime.Parse(DataViagens).ToString("yyyy-MM-dd") + " 23:59:59' and fim_kms > 0;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))

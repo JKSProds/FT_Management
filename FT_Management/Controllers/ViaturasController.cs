@@ -95,7 +95,9 @@ namespace FT_Management.Controllers
             ViewData["Data"] = Data;
             ViewData["Matricula"] = id;
 
-            return View(context.ObterViagens(id, Data));
+            List<Viagem> LstViagens = context.ObterViagens(id, Data);
+
+            return View(LstViagens);
         }
 
         [HttpGet]
