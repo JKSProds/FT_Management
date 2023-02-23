@@ -55,6 +55,7 @@ namespace FT_Management.Controllers
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
+            d = phccontext.ObterDossier(d.StampDossier);
             MailContext.EnviarEmailPedidoTransferencia(u, d);
 
             //Criação de linhas por defeito
