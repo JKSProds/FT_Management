@@ -2618,6 +2618,7 @@ namespace FT_Management.Models
             pdfFormFields.SetField("Tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
             pdfFormFields.SetField("Cliente", folhaobra.ConferidoPor);
             pdfFormFields.SetField("Guia", folhaobra.GuiaTransporteAtual);
+            pdfFormFields.SetField("Obs", (folhaobra.AssistenciaRemota ? "REMOTO " : "") + (folhaobra.Piquete ? "PIQUETE " : "") + (folhaobra.Instalação ? "INSTALAÇÃO " : ""));
 
             //Mao de Obra
             int i = 1;
