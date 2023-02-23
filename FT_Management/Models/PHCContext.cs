@@ -887,8 +887,14 @@ namespace FT_Management.Models
             {
                 ChatContext.EnviarNotificacaoFolhaObraTecnico(foNova, fo.Utilizador);
             }
+
+            //PD
             if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar) MailContext.EnviarEmailMarcacaoResolvidaPD(foNova, fo.Marcacao);
             if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoEncaminhadaPD(foNova, fo.Marcacao);
+
+            //SONAE
+            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar) MailContext.EnviarEmailMarcacaoResolvidaSONAE(foNova, fo.Marcacao);
+            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoEncaminhadaSONAE(foNova, fo.Marcacao);
             return true;
         }
 

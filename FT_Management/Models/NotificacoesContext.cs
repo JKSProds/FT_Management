@@ -405,6 +405,29 @@ namespace FT_Management.Models
 
             return true;
         }
+
+        public static bool EnviarEmailMarcacaoResolvidaSONAE(FolhaObra fo, Marcacao m)
+        {
+            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
+            {
+                string Assunto = "[" + fo.ReferenciaServico + "] Resolvido";
+                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
+            }
+
+            return true;
+        }
+
+        public static bool EnviarEmailMarcacaoEncaminhadaSONAE(FolhaObra fo, Marcacao m)
+        {
+            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
+            {
+                string Assunto = "[" + fo.ReferenciaServico + "] Encaminhar";
+                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
+            }
+
+            return true;
+        }
+
         public static bool EnviarEmailPropostaComercial(Utilizador u, Visita v, Proposta p)
         {
             string Assunto = "Nova Proposta - Cliente - " + v.Cliente.NomeCliente;
