@@ -14,7 +14,6 @@ namespace FT_Management.Models
         {
             try
             {
-                System.Console.WriteLine("A criar ficheiro na pasta: " + Caminho + " (" + ficheiro.FileName + "|" + ficheiro.Length + ")!");
                 using (Stream fileStream = new FileStream(Caminho, FileMode.Create))
                 {
                     ficheiro.CopyTo(fileStream);

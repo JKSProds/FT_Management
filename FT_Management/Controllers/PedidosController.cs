@@ -189,8 +189,6 @@ namespace FT_Management.Controllers
 
             Marcacao m = phccontext.ObterMarcacao(id);
 
-            Console.WriteLine("A adicionar comentário!");
-
             Comentario c = new Comentario()
             {
                 Descricao = comentario,

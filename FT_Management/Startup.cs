@@ -82,10 +82,6 @@ namespace FT_Management
                         cronExpression: FT_ManagementContext.ObterParam("DataSaidaAutomatica", Configuration.GetConnectionString("DefaultConnection"))));
                 }
             }
-            else
-            {
-                Console.WriteLine("CronJobs desativados...");
-            }
 
             services.AddHostedService<QuartzHostedService>();
 
@@ -141,17 +137,17 @@ namespace FT_Management
 
             appLifetime.ApplicationStarted.Register(() =>
             {
-                Console.WriteLine("FT_Management started.");
+                Console.WriteLine("Iniciada a aplicação!");
             });
 
             appLifetime.ApplicationStopping.Register(() =>
             {
-                Console.WriteLine("FT_Management is stopping...");
+                Console.WriteLine("A aplicação está a parar...");
             });
 
             appLifetime.ApplicationStopped.Register(() =>
             {
-                Console.WriteLine("FT_Management stopped.");
+                Console.WriteLine("A aplicação parou!");
             });
 
         }

@@ -1354,7 +1354,6 @@ namespace FT_Management.Models
                 db.Connection.Close();
 
                 j += max;
-                //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
             }
         }
         public void CriarFeriados(List<Feriado> LstFeriados)
@@ -2866,7 +2865,6 @@ namespace FT_Management.Models
         //        db.Connection.Close();
 
         //        j += max;
-        //        //Console.WriteLine("A ler Marcacao: " + j + " de " + LstMarcacao.Count());
         //    }
         //}
         //public Produto ObterProduto(Produto p)

@@ -76,7 +76,7 @@ namespace FT_Management.Controllers
                 catch (Exception ex)
                 {
 
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("Ocorreu um erro ao tentar atualizar o buzzer da viatura. " + ex.Message);
                 }
             }
             else
