@@ -152,11 +152,8 @@ else
                         <footer class="card-footer">
                             <div class="container is-12">
                                 <div class="buttons has-addons">
-                                    @if(item.EstadoMarcacaoDesc == "Em Curso") {
-<a class="button is-danger is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.MarcacaoStamp }))'"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
-                                    }else if(item.EstadoMarcacaoDesc != "Finalizado" && item.EstadoMarcacaoDesc != "Cancelado"){
-<a class="button is-success is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
-                                    }
+                                        <a class="button is-danger is-outlined is-large card-footer-item @(item.EstadoMarcacaoDesc == "Em Curso" ? "" : "is-hidden")" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.MarcacaoStamp }))'" id="btnStop_@item.MarcacaoStamp"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
+                                        <a class="button is-success is-large card-footer-item @(item.EstadoMarcacaoDesc == "Em Curso" || item.EstadoMarcacaoDesc == "Finalizado" || item.EstadoMarcacaoDesc == "Cancelado"  ? "is-hidden" : "")" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
                                     @if (item.Cliente.ContactoValido)
                                     {
                                         <a class="button is-info is-large card-footer-item" href="tel:@item.Cliente.TelefoneCliente"><i class="fa-solid fa-phone" style="margin-top:5px"></i></a>
@@ -194,15 +191,15 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <div class="buttons" style="width:100%">
-            <button type="button" id="btnIniciarDeslocacao" class="button is-success is-large is-fullwidth" style="width:100%"
+            <div class="buttons is-centered" style="width:100%">
+            <button type="button" id="btnIniciarDeslocacao" class="button is-success is-large"
                 onclick="IniciarAssistencia(document.getElementById('txtStampMarcacao').value);" href="javascript:;">
                 <span class="icon">
                     <i class="fa-solid fa-car-side"></i>
                 </span>
                 <span>Iniciar Deslocação</span>
             </button>
-                        <button type="button" class="button is-info is-large is-fullwidth" style="width:100%"
+                        <button type="button" class="button is-info is-large"
                 onclick="location.href = '/FolhasObra/Adicionar/' + document.getElementById('txtStampMarcacao').value;" href="javascript:;">
                 <span class="icon">
                     <i class="fa-solid fa-file-circle-plus"></i>
@@ -235,11 +232,14 @@ else
                 $(function () {
                     if (result == "1") {
                        document.getElementById('btnDirecoes_' + stamp).click();
-                       window.location.reload();
+                       document.getElementById('btnStart_' + stamp).classList.add('is-hidden');
+                       document.getElementById('btnStop_' + stamp).classList.remove('is-hidden');
+                       notify("Marcação atualizada com sucesso!");
                     } else {
                         document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
                         notifyError('Ocorreu um erro ao iniciar a assistencia!');
                     }
+                    Bulma('#modalIniciarAssistencia').modal().close();
                     document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
                     document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');
                 });
