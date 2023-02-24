@@ -157,12 +157,12 @@ namespace FT_Management.Controllers
             List<string> LstGuias = phccontext.ObterGuiasTransporte(u.IdArmazem);
             if (string.IsNullOrEmpty(gt)) gt = LstGuias.First();
 
-            ViewData["IdArmazem"] = id;
             ViewData["Guias"] = new SelectList(LstGuias);
-            ViewData["Utilizador"] = u.NomeCompleto;
             ViewData["GT"] = gt;
 
-            return View(phccontext.ObterPecasGuiaTransporte(gt, u).OrderBy(m => m.DataMovimento));
+            Armazem a = phccontext.ObterArmazem(id);
+            a.LstMovimentos = phccontext.ObterPecasGuiaTransporte(gt, u).OrderBy(m => m.DataMovimento).ToList();
+            return View(a);
         }
 
 

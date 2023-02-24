@@ -13,6 +13,7 @@ namespace FT_Management.Models
         public int ArmazemId { get; set; }
         [Display(Name = "Nome do Armazém")]
         public string ArmazemNome { get; set; }
+        public List<Movimentos> LstMovimentos { get; set; }
 
         public Armazem()
         {

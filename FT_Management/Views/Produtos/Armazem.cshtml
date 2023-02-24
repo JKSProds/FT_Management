@@ -1,7 +1,7 @@
-﻿@model IEnumerable<FT_Management.Models.Movimentos>
+﻿@model Armazem
 
 @{
-    ViewData["Title"] = "Movimentos - " + ViewData["Utilizador"];
+    ViewData["Title"] = "Movimentos - " + Model.ArmazemNome;
 }
 
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
@@ -13,7 +13,7 @@
             <div class="tile">
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
-                        <p class="title"><b>@ViewData["Utilizador"]</b> - Armazém Nº @ViewData["IdArmazem"]</p>
+                        <p class="title"><b>@Model.ArmazemNome</b> - Armazém Nº @Model.ArmazemId</p>
                     </article>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                     </p>
                 </div>
                 <div class="buttons has-addons is-right">
-                    <a class="button is-info is-outlined" href="~/Produtos?Armazem=@ViewData["IdArmazem"]">
+                    <a class="button is-info is-outlined" href="~/Produtos?Armazem=@Model.ArmazemId">
                         <span class="icon">
                             <i class="fas  fa-dolly-flatbed"></i>
                         </span>
@@ -56,7 +56,7 @@
 <hr />
 
 
-@if (Model.Count() == 0)
+@if (Model.LstMovimentos.Count() == 0)
 {
     <br />
     <button class="button is-danger is-fullwidth is-disabled">Não foram encontrados movimentos!</button>
@@ -70,46 +70,46 @@ else
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.IdFolhaObra)
+                            @Html.DisplayNameFor(model => model.LstMovimentos.First().IdFolhaObra)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.NomeCliente)
+                            @Html.DisplayNameFor(model => model.LstMovimentos.First().NomeCliente)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.RefProduto)
+                            @Html.DisplayNameFor(model => model.LstMovimentos.First().RefProduto)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Designacao)
+                            @Html.DisplayNameFor(model => model.LstMovimentos.First().Designacao)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Quantidade)
+                            @Html.DisplayNameFor(model => model.LstMovimentos.First().Quantidade)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.DataMovimento)
+                            @Html.DisplayNameFor(model => model.LstMovimentos.First().DataMovimento)
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.LstMovimentos)
                         {
                             <tr style="width:auto"
                                 onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
-                                <td data-label="@Html.DisplayNameFor(model => model.IdFolhaObra)">
+                                <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().IdFolhaObra)">
                                     <span>@item.IdFolhaObra</span>
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.NomeCliente)">
+                                <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().NomeCliente)">
                                     <span>@item.NomeCliente</span>
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.RefProduto)">
+                                <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().RefProduto)">
                                     <span>@item.RefProduto</span>
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.Designacao)">
+                                <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().Designacao)">
                                     <span>@item.Designacao</span>
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.Quantidade)">
+                                <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().Quantidade)">
                                     <span>@item.Quantidade</span>
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.DataMovimento)">
+                                <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().DataMovimento)">
                                     <span>@item.DataMovimento</span>
                                 </td>
                             </tr>
@@ -132,12 +132,12 @@ else
         </header>
         <section class="modal-card-body">
             <div class="modal-body">
-                <p>Tem a certeza que deseja gerar uma guia global do Armazém Nº @ViewData["IdArmazem"]?</p>
+                <p>Tem a certeza que deseja gerar uma guia global do Armazém Nº @Model.ArmazemId?</p>
             </div>
         </section>
         <footer class="modal-card-foot">
             <button class="button is-info is-fullwidth is-large" type="button"
-                onclick="GerarGuiaGlobal(@ViewData["IdArmazem"])">
+                onclick="GerarGuiaGlobal(@Model.ArmazemId)">
                 <span class="icon">
                     <i class="fa-solid fa-file-export"></i>
                 </span>
@@ -158,13 +158,13 @@ else
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title">Novo Pedido de Transferências</p>
+            <p class="modal-card-title">Novo Pedido de Transferência</p>
             <button type="button" class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             <div class="modal-body">
                 <p>Tem a certeza que deseja gerar um documento de Pedido de Transferências para o Armazém Nº
-                    @ViewData["IdArmazem"]?</p>
+                    @Model.ArmazemId?</p>
             </div>
             &nbsp;
             <div class="form-check form-group col">
@@ -176,12 +176,14 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <a class="button is-info is-fullwidth" type="button" onclick="GerarTransferencia();" <span class="icon">
-                <i class="fa-solid fa-file-export"></i>
+            <a class="button is-info is-large is-fullwidth" type="button"
+                onclick="GerarTransferencia(@Model.ArmazemId);">
+                <span class="icon">
+                    <i class="fa-solid fa-file-export"></i>
                 </span>
                 <span>Novo Documento</span>
             </a>
-            <button type="button" class="button is-fullwidth is-danger"
+            <button type="button" class="button is-large is-fullwidth is-danger"
                 onclick="Bulma('#modalGerarPedidoTransferencia').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
@@ -224,12 +226,11 @@ else
         });
     }
 
-    function GerarTransferencia() {
+    function GerarTransferencia(armazem) {
         document.getElementById('pageloader').classList.add('is-active');
         Bulma('#modalGerarPedidoTransferencia').modal().close();
 
         var id = '@ViewData["GT"].ToString().Replace("/", "|")';
-        var armazem = '@ViewData["IdArmazem"]';
         var load = document.getElementById('chkPecas').checked ? 1 : 0;
 
         window.location.href = "/Dossiers/CriarDossierTransferencia/" + id + "?armazem=" + armazem + "&load=" + load;
