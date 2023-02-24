@@ -67,7 +67,7 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Picking p = phccontext.ObterPicking(id);
             p.EditadoPor = u.Iniciais;
-            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p.Picking_Stamp) + "</b>";
+            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p) + "</b>";
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 
             phccontext.FecharPicking(p);
@@ -87,7 +87,7 @@ namespace FT_Management.Controllers
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            return Content(phccontext.ValidarPicking(id));
+            return Content(phccontext.ValidarPicking(phccontext.ObterPicking(id)));
         }
 
         public JsonResult Validar(string stamp, Double qtd, string serie, string bomastamp)

@@ -2628,7 +2628,7 @@ namespace FT_Management.Models
 
             return res;
         }
-        public string ValidarPicking(string PI_STAMP)
+        public string ValidarPicking(Picking p)
         {
             string res = "";
             try
@@ -2638,19 +2638,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select completo from V_PICKING_CAB where PISTAMP = '" + PI_STAMP + "'", conn)
-                {
-                    CommandTimeout = TIMEOUT
-                };
-                using (SqlDataReader result = command.ExecuteReader())
-                {
-                    while (result.Read())
-                    {
-                        res = result[0].ToString() == "0" ? "Ainda falta validar referências!\r\n\r\n" : "";
-                    }
-                }
-
-                command = new SqlCommand("select SUM(o.qtt-o.qtt2) from bi o join bi b on o.bistamp = b.oobistamp	where b.bostamp = '" + PI_STAMP + "'", conn)
+                SqlCommand command = new SqlCommand("select SUM(o.qtt-o.qtt2) from bi o(NOLOCK) where o.bostamp='" + p.Encomenda.BO_STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -2665,7 +2653,7 @@ namespace FT_Management.Models
                     }
                 }
 
-                command = new SqlCommand("select a.ref, a.serie, a.armazem, b.noarm  from boma a(nolock) join ma b(nolock) on a.mastamp = b.mastamp where a.bostamp = '" + PI_STAMP + "' and a.armazem <> b.noarm", conn)
+                command = new SqlCommand("select a.ref, a.serie, a.armazem, b.noarm  from boma a(nolock) join ma b(nolock) on a.mastamp = b.mastamp where a.bostamp = '" + p.Picking_Stamp + "' and a.armazem <> b.noarm", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
