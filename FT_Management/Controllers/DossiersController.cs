@@ -34,7 +34,9 @@ namespace FT_Management.Controllers
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
             ViewData["ReturnUrl"] = ReturnUrl;
-            return View(d);
+
+            if (d.Serie == 96 || d.Serie == 97) return View(d);
+            return View("Transferencia", d);
         }
 
         public ActionResult CriarDossier(string id, int serie, string ReturnUrl)
