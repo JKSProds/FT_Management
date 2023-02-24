@@ -9,7 +9,31 @@ namespace FT_Management.Models
 {
     public class Marcacao
     {
-        public string EmojiEstado { get { return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") + (this.EstadoMarcacao == 4 || this.EstadoMarcacao == 9 || this.EstadoMarcacao == 10 ? "✅ " : this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " : this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " : this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : ""); } }
+        public string EmojiEstado
+        {
+            get
+            {
+                return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") +
+                (this.EstadoMarcacao == 4 || this.EstadoMarcacao == 9 || this.EstadoMarcacao == 10 ? "✅ " :
+                this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
+                this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
+                this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " :
+                this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " :
+                this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : "");
+            }
+        }
+
+        [Display(Name = "Cor")]
+        public string Cor
+        {
+            get
+            {
+                return this.EstadoMarcacaoDesc == "Finalizado" || this.EstadoMarcacaoDesc == "Cancelado" ? "#23d160" :
+                this.EstadoMarcacaoDesc == "Em Curso" || this.EstadoMarcacaoDesc == "Criado" ? "#ffdd57" :
+                this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc == "Agendado" ? "#ff3860" :
+                this.EstadoMarcacaoDesc == "Agendado" ? "" : "#ff3860";
+            }
+        }
         [Display(Name = "Num. da Marcação")]
         public int IdMarcacao { get; set; }
         [Display(Name = "Cliente")]
