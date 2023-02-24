@@ -200,22 +200,22 @@ namespace FT_Management.Controllers
             };
 
             bool res = phccontext.CriarComentarioMarcacao(c);
-
+            FolhaObra fo = new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador };
             if (fechar == 1)
             {
                 m.JustificacaoFecho = comentario;
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
-                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoResolvidaPD(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
-                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoResolvidaSONAE(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoPD(fo, m, 1);
+                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 1);
             }
             else if (encaminhar == 1)
             {
                 m.JustificacaoFecho = comentario;
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
-                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoEncaminhadaPD(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
-                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoEncaminhadaSONAE(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoPD(fo, m, 2);
+                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 2);
             }
             else if (reagendar == 1)
             {
