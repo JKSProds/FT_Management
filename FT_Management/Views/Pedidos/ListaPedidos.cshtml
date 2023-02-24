@@ -163,7 +163,7 @@ else
                                     }
                                     @if (item.Cliente.MoradaValida)
                                     {
-                                        <a class="button is-primary is-large card-footer-item" href="@Utilizador.ObterLinkMapa(item.Cliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                                        <a class="button is-primary is-large card-footer-item" id="btnDirecoes_@item.MarcacaoStamp" href="@Utilizador.ObterLinkMapa(item.Cliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
                                     }
                                     <a class="button is-info is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Print", "Pedidos", new {id = item.IdMarcacao }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
                                     <a class="button is-info is-large card-footer-item" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new {id = item.IdMarcacao }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
@@ -234,13 +234,14 @@ else
             success: function (result) {
                 $(function () {
                     if (result == "1") {
+                       document.getElementById('btnDirecoes_' + stamp).click();
                        window.location.reload();
                     } else {
                         document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
                         notifyError('Ocorreu um erro ao iniciar a assistencia!');
                     }
-        document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
-        document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');
+                    document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
+                    document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');
                 });
             }
         });
