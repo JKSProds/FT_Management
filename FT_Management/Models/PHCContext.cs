@@ -2326,7 +2326,7 @@ namespace FT_Management.Models
                                 Designacao_Produto = result["design"].ToString(),
                                 Stock_Fisico = result["Qtt_Separar"].ToString() == "0" ? double.Parse(result["Qtt_Envio"].ToString()) : double.Parse(result["Qtt_Separar"].ToString())
                             },
-                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) == 0
+                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) <= 0
                         });
                         //Console.WriteLine(result["Nome"] + " - " + result["Envio_Total"]);
                     }
