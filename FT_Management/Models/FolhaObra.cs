@@ -105,7 +105,7 @@ namespace FT_Management.Models
             this.DataServico = m.DataMarcacao;
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
-            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) ? m.QuemPediuEmail : m.Cliente.EmailCliente;
+            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
             this.TipoFolhaObra = m.TipoServico;
             return this;
