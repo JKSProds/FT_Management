@@ -173,6 +173,9 @@
                             <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
+                            <button id="btnZeroIntervencoes"
+                                class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>Sem
+                                Intervenções</button>
                             <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
                         </div>
                         <div class="column is-4">
@@ -313,6 +316,8 @@
                                 <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
                                 <div class="list has-visible-pointer-controls" id="divListaPecas">
                                 </div>
+                                <button id="btnZeroPecas" class="button is-danger my-1 is-large is-rounded is-fullwidth"
+                                    disabled>Sem Peças</button>
                             </div>
                         </div>
                     </div>
@@ -764,7 +769,6 @@
 }
 
 <script>
-    var AllEquipments = false;
     bulmaSteps.attach('.steps', {
         onShow: id => {
             if (id == 5) {
@@ -805,8 +809,11 @@
         if (canvas.width == 0) { canvas.width = canvas.offsetWidth; canvas.height = 200; }
 
         signaturePad.clear();
-        if (data.length > 0) { signaturePad.fromData(data) };
-        if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
+        if (data != null) {
+            signaturePad.fromData(data)
+        } else {
+            signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value);
+        }
     }
 
     window.onresize = function (event) {
@@ -842,11 +849,9 @@
     }
 
     function DesbloquearEquipamentos() {
-        if (AllEquipments) {
-            AllEquipments = false;
+        if (!chkDesbloquearEquipamentos.checked) {
             notify('Listagem de equipamentos bloqueada!');
         } else {
-            AllEquipments = true;
             notify('Listagem de equipamentos desbloqueada!');
         }
     }
@@ -947,12 +952,14 @@
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtData').bulmaCalendar.value() + " " + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
             notify("Intervenção adicionada com sucesso!");
         }
+        if (!document.getElementById("btnZeroIntervencoes").hidden && (document.getElementById('ListaIntervencoes').value)) document.getElementById("btnZeroIntervencoes").classList.add("is-hidden");
     }
 
     function RemoverIntervencao(data) {
         document.getElementById('lst-datas-' + data).remove();
         document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value.replace(data + ';', '');
         if (document.getElementById('ListaIntervencoes').value.slice(-1) != ";" && document.getElementById('ListaIntervencoes').value != "") document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value + ";";
+        if (!(document.getElementById('ListaIntervencoes').value)) document.getElementById("btnZeroIntervencoes").classList.remove("is-hidden");
         notify("Intervenção removida com sucesso!");
     }
 
@@ -976,6 +983,8 @@
         document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd};`;
         notify("Peça " + ref + " adicionada com sucesso!");
+
+        if (!document.getElementById("btnZeroPecas").hidden && (document.getElementById('ListaPecas').value)) document.getElementById("btnZeroPecas").classList.add("is-hidden");
     }
 
     function RemoverPeca(stamp) {
@@ -983,6 +992,8 @@
         document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(stamp + ';', '');
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
         notify("Peça removida com sucesso!");
+
+        if (!(document.getElementById('ListaPecas').value)) document.getElementById("btnZeroPecas").classList.remove("is-hidden");
     }
 
     function CarregarPecas() {
@@ -1080,7 +1091,6 @@
         document.getElementById('txtStampPeca').value = '';
         document.getElementById("btnAdicionarPeca").disabled = true;
         document.getElementById("txtQtd").value = '1';
-        notify('Peça limpa com sucesso!');
     }
 
     //CLIENTES
@@ -1123,7 +1133,7 @@
             source: function (request, response) {
                 $.ajax({
                     url: '/Equipamentos/ObterEquipamentos/',
-                    data: { "prefix": request.term, "no": (AllEquipments ? "0" : "@Model.ClienteServico.IdCliente"), "loja": (AllEquipments ? "0" : "@Model.ClienteServico.IdLoja") },
+                    data: { "prefix": request.term, "no": (chkDesbloquearEquipamentos.checked ? "0" : "@Model.ClienteServico.IdCliente"), "loja": (chkDesbloquearEquipamentos.checked ? "0" : "@Model.ClienteServico.IdLoja") },
                     type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
