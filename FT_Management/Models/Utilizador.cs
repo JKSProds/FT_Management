@@ -88,6 +88,14 @@ namespace FT_Management.Models
         public string SecondFactorImgUrl { get; set; }
         public string SecondFactorAuthCode { get; set; }
         public bool Ferias { get; set; }
+        public List<Marcacao> LstMarcacoes { get; set; }
+        public Marcacao MarcacaoCurso
+        {
+            get
+            {
+                return this.LstMarcacoes == null ? new Marcacao() : this.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Em Curso").DefaultIfEmpty(new Marcacao()).First();
+            }
+        }
         public Utilizador()
         {
             this.Id = 0;

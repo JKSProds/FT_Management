@@ -24,7 +24,7 @@ namespace FT_Management.Controllers
             return View(context.ObterViaturas());
         }
 
-        public ActionResult Tracking()
+        public ActionResult Mapa()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
