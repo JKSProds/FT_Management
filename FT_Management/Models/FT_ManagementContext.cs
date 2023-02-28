@@ -15,6 +15,7 @@ using PdfSharpCore.Drawing;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
 using Custom;
+using System.Net.Http;
 
 namespace FT_Management.Models
 {
@@ -1060,15 +1061,15 @@ namespace FT_Management.Models
             return LstFeriados;
 
         }
-        public void ObterFeriadosAPI(string ano)
+        public async void ObterFeriadosAPI(string ano)
         {
             List<Feriado> LstFeriados = new List<Feriado>();
 
             try
             {
-                using (WebClient wc = new WebClient())
+                using (HttpClient wc = new HttpClient())
                 {
-                    var json = wc.DownloadString("https://date.nager.at/api/v3/PublicHolidays/" + ano + "/PT");
+                    var json = await wc.GetStringAsync("https://date.nager.at/api/v3/PublicHolidays/" + ano + "/PT");
 
                     dynamic dynJson = JsonConvert.DeserializeObject(json);
                     foreach (var item in dynJson)
@@ -2006,12 +2007,12 @@ namespace FT_Management.Models
             string s = "";
             const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
-            using (RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider())
+            using (var rng = RandomNumberGenerator.Create())
             {
                 while (s.Length != length)
                 {
                     byte[] oneByte = new byte[1];
-                    provider.GetBytes(oneByte);
+                    rng.GetBytes(oneByte);
                     char character = (char)oneByte[0];
                     if (valid.Contains(character))
                     {

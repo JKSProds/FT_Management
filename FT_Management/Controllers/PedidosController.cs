@@ -269,7 +269,7 @@ namespace FT_Management.Controllers
                 string CaminhoFicheiro = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
                 if (!System.IO.File.Exists(CaminhoFicheiro)) return Forbid();
 
-                if (MimeTypes.TryGetMimeType(CaminhoFicheiro, out var mimeType))
+                if (new FileExtensionContentTypeProvider().TryGetContentType(CaminhoFicheiro, out var mimeType))
                 {
                     byte[] bytes = System.IO.File.ReadAllBytes(CaminhoFicheiro);
 
