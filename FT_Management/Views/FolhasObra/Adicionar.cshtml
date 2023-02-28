@@ -927,7 +927,8 @@
         document.getElementById('chkEnviarEmail').checked = valor;
         Bulma('#modalEnviarEmail').modal().close();
         document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
-        Bulma('#modalGuardarLocalizacao').modal().open();
+        //Bulma('#modalGuardarLocalizacao').modal().open();
+        Bulma('#modalFecharMarcacao').modal().open();
     }
     function GuardarLocalizacao(valor) {
         document.getElementById('chkGuardarLocalizacao').checked = valor;
