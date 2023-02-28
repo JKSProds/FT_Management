@@ -2401,6 +2401,7 @@ namespace FT_Management.Models
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
                     QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
                     QRCode qrCode = new QRCode(qrCodeData);
+
                     Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
                     gr.DrawImage(qrCodeImage, width - 200, y + 20, 200, 200);

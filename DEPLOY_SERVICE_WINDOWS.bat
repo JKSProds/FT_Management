@@ -1,1 +1,0 @@
-sc create FTManagement binPath= "C:\Users\Jorge Monteiro\Desktop\FT_Management\Release\FT_Management.exe --service" start=auto
