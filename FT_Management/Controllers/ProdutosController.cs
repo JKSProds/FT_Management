@@ -41,12 +41,12 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento));
         }
 
-        public virtual ActionResult Print(string id)
+        public virtual ActionResult Print(string id, int armazemid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            var file = context.DesenharEtiquetaProduto(phccontext.ObterProduto(id, 3)).ToArray();
+            var file = context.DesenharEtiquetaProduto(phccontext.ObterProduto(id, armazemid)).ToArray();
             var output = new MemoryStream();
             output.Write(file, 0, file.Length);
             output.Position = 0;
