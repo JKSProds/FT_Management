@@ -75,15 +75,18 @@
                         <span>Armazém</span>
                     </a>
                 </p>
-                <p class="control">
-                    <a class="button is-primary is-outlined" href="@Url.Action("ObterDirecaosDia", "Pedidos", new {IdTecnico = @ViewData["IdTecnico"], DataPedidos = DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd")})">
+                @if (Model.Count() > 0)
+                {
+                    <p class="control">
+                    <a class="button is-info" href="@Url.Action("ObterDirecaosDia", "Pedidos", new {id = @ViewData["IdTecnico"], DataPedidos = DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd")})">
                         <span class="icon">
                             <i class="fa-solid fa-map-location"></i>
                         </span>
                         <span>Direções</span>
                     </a>
                 </p>
-                </div>
+                }
+            </div>
 
         </div>
     </div>

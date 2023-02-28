@@ -344,20 +344,17 @@ namespace FT_Management.Controllers
             return Content("Sucesso");
         }
 
-        public IActionResult ObterDirecaosDia(int IdTecnico, DateTime DataPedidos)
+        public IActionResult ObterDirecaosDia(int id, DateTime DataPedidos)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(IdTecnico, DataPedidos);
-            //string url = "https://www.google.com/maps/dir/33.93729,-106.85761/33.91629,-106.866761/33.98729,-106.85861//@34.0593359,-106.7131944,11z"
-            string url = "https://www.google.com/maps/dir/";
-            url += ListaMarcacoes.First().Cliente.ObterMoradaDirecoes().Replace("/", " ");
-            ListaMarcacoes.RemoveAt(0);
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(id, DataPedidos);
+            string url = "https://www.google.com/maps/dir";
 
-            foreach (var item in ListaMarcacoes)
+            foreach (var item in ListaMarcacoes.GroupBy(c => c.Cliente).Select(X => X.First()))
             {
                 url += "/" + item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
             }
-            //url += "//@";
+
             return Redirect(new Uri(url).AbsoluteUri);
         }
 
