@@ -86,7 +86,7 @@ namespace FT_Management.Controllers
                     FolhaObra = new FolhaObra(),
                     EditadoPor = u.Iniciais
                 };
-                d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
+                //d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
                 d = phccontext.ObterDossier(d.StampDossier);
                 if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
                 MailContext.EnviarEmailPedidoTransferencia(u, d);

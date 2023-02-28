@@ -3198,8 +3198,7 @@ namespace FT_Management.Models
                             Serie = int.Parse(result["ndos"].ToString()),
                             Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
-                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
-                            //FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
+                            Tecnico = new Utilizador { NomeCompleto = result["tecnnm"].ToString() },//FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
                             //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
                             Estado = result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
@@ -3208,6 +3207,7 @@ namespace FT_Management.Models
                             //Linhas = ObterLinhasDossier(result["bostamp"].ToString().Trim()),
                             Fechado = result["fechada"].ToString() == "True"
                         });
+                        if (LstDossiers.Last().Serie != 36) LstDossiers.Last().Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First();
                     }
                 }
 
@@ -3250,7 +3250,7 @@ namespace FT_Management.Models
                             Serie = int.Parse(result["ndos"].ToString()),
                             Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
-                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            Tecnico = new Utilizador { NomeCompleto = result["tecnnm"].ToString() },
                             //FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
                             //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
                             Estado = result["u_estado"].ToString(),
@@ -3260,6 +3260,7 @@ namespace FT_Management.Models
                             //Linhas = ObterLinhasDossier(result["bostamp"].ToString().Trim()),
                             Fechado = result["fechada"].ToString() == "True"
                         });
+                        if (LstDossiers.Last().Serie != 36) LstDossiers.Last().Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First();
                     }
                 }
 
@@ -3302,9 +3303,9 @@ namespace FT_Management.Models
                             NomeDossier = result["nmdos"].ToString(),
                             IdDossier = int.Parse(result["obrano"].ToString()),
                             DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            Tecnico = new Utilizador { NomeCompleto = result["tecnnm"].ToString() },
                             Serie = int.Parse(result["ndos"].ToString()),
                             Referencia = result["obranome"].ToString(),
-                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
                             Estado = result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
@@ -3314,6 +3315,7 @@ namespace FT_Management.Models
                         };
                         if (d.Serie != 36)
                         {
+                            d.Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First();
                             d.Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString()));
                             d.FolhaObra = ObterFolhaObra(result["pastamp"].ToString());
                             d.Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString());
