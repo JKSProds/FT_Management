@@ -1,7 +1,4 @@
 ﻿@model IEnumerable<FT_Management.Models.Cliente>
-@using X.PagedList.Mvc.Core;
-@using X.PagedList;
-@using X.PagedList.Mvc.Bootstrap4.Core;
 
 @{
     ViewData["Title"] = "Clientes";
@@ -110,5 +107,3 @@
         </div>
     }
 </div>
-@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Clientes", new { page, Nome = @ViewData["Nome"] }))
-

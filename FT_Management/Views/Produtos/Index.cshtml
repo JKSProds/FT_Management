@@ -1,6 +1,4 @@
 ﻿@model IEnumerable<FT_Management.Models.Produto>
-@using X.PagedList.Mvc.Core;
-@using X.PagedList;
 
 @{
     ViewData["Title"] = "Listagem";
@@ -176,8 +174,6 @@ else
     </div>
     <br />
     <div class="container">
-    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Produtos", new { page, Ref = @ViewData["Ref"],
-    Desig = @ViewData["Desig"], Armazem = @ViewData["Armazem"] }))
 </div>
 }
 <script>
