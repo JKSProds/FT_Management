@@ -2671,6 +2671,35 @@ namespace FT_Management.Models
 
         }
 
+        public MemoryStream DesenharEtiquetaProduto(Produto p)
+        {
+            string pdfTemplate = AppDomain.CurrentDomain.BaseDirectory + "FT_Produto.pdf";
+            var outputPdfStream = new MemoryStream();
+            PdfReader pdfReader = new PdfReader(pdfTemplate);
+            PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
+            AcroFields pdfFormFields = pdfStamper.AcroFields;
+
+            pdfFormFields.SetField("Nome", p.Designacao_Produto);
+            pdfFormFields.SetField("Ref", p.Ref_Produto);
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(p.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
+            Base64QRCode qrCode = new Base64QRCode(qrCodeData);
+
+            PushbuttonField ad = pdfFormFields.GetNewPushbuttonFromField("Qr");
+            ad.Layout = PushbuttonField.LAYOUT_ICON_ONLY;
+            ad.BorderColor = iTextSharp.text.BaseColor.White;
+            ad.ProportionalIcon = true;
+            ad.Image = iTextSharp.text.Image.GetInstance(Convert.FromBase64String(qrCode.GetGraphic(20)));
+            pdfFormFields.ReplacePushbuttonField("Qr", ad.Field);
+
+            pdfStamper.FormFlattening = true;
+            pdfStamper.SetFullCompression();
+            pdfStamper.Close();
+
+            return outputPdfStream;
+        }
+
         public MemoryStream BitMapToMemoryStream(string filePath, int w, int h)
         {
             var ms = new MemoryStream();

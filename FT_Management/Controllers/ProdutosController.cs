@@ -41,6 +41,27 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterProdutos(Ref, Desig, Armazem, Fornecedor, TipoEquipamento));
         }
 
+        public virtual ActionResult Print(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            var file = context.DesenharEtiquetaProduto(phccontext.ObterProduto(id, 3)).ToArray();
+            var output = new MemoryStream();
+            output.Write(file, 0, file.Length);
+            output.Position = 0;
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "Produto_" + id + ".pdf",
+                Inline = true,
+                Size = file.Length
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+            return new FileContentResult(output.ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
+        }
+
         public ActionResult PrintQr(string id, int armazemid)
         {
             if (id == null)
