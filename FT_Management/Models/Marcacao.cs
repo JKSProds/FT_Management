@@ -29,9 +29,8 @@ namespace FT_Management.Models
             get
             {
                 return this.EstadoMarcacaoDesc == "Finalizado" || this.EstadoMarcacaoDesc == "Cancelado" ? "#23d160" :
-                this.EstadoMarcacaoDesc == "Em Curso" || this.EstadoMarcacaoDesc == "Criado" ? "#ffdd57" :
-                this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc == "Agendado" ? "#ff3860" :
-                this.EstadoMarcacaoDesc == "Agendado" ? "" : "#ff3860";
+                this.EstadoMarcacaoDesc != "Agendado" ? "#ffdd57" :
+                this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc == "Agendado" && this.DataMarcacao.ToShortDateString() != DateTime.Now.ToShortDateString() ? "#ff3860" : "";
             }
         }
         [Display(Name = "Num. da Marcação")]
