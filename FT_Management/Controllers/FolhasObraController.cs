@@ -144,11 +144,9 @@ namespace FT_Management.Controllers
             fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
             fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
             fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
-#if DEBUG
+            fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
+
             return Content(phccontext.ValidarFolhaObra(fo));
-#else
-                        return Content(phccontext.ValidarFolhaObra(fo));
-#endif
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]
