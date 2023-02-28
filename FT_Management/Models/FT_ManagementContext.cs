@@ -2681,6 +2681,7 @@ namespace FT_Management.Models
 
             pdfFormFields.SetField("Nome", p.Designacao_Produto);
             pdfFormFields.SetField("Ref", p.Ref_Produto);
+            pdfFormFields.SetField("Local", p.Pos_Stock);
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(p.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
