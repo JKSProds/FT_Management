@@ -108,14 +108,17 @@ else
             {
                 <div class="column is-6">
                     <div class="card">
-                        <header class="card-header" style="background:@item.Cor;">
+                        <header class="card-header card-toggle" style="background:@item.Cor;">
                             <button class="button mx-1 is-rounded my-auto @(item.PrioridadeMarcacao == "Normal" ? "is-info" : item.PrioridadeMarcacao == "Urgente" ? "is-warning" : "is-danger") "><p class="is-uppercase has-text-weight-bold @(item.Hora.Length==0 && item.Periodo.Length==0 ? "is-size-6" : "is-size-9")" style="line-height:1;">@item.DataMarcacao.Day.ToString() @item.DataMarcacao.ToString("MMM")<br />@(item.Hora.Length>0 ? item.Hora : item.Periodo)</p></button>
                             <p class="subtitle my-1 has-text-centered column">
                                 @item.EmojiEstado<b>@item.IdMarcacao</b> - @item.Cliente.NomeCliente
                             </p>
-                            <button class="card-header-icon card-toggle" style="text-align:right" aria-label="more options">
+                            <button class="card-header-icon" style="text-align:right" aria-label="more options">
                                 <span class="icon">
-                                    <i class="fas @(item.LstComentarios.Count() != 0 ? "fa-angles-down" : "fa-angle-down")" aria-hidden="true"></i>
+                                    @if (item.LstAnexos.Count() > 0) { <i class="fa-solid fa-paperclip"></i> }
+                                </span>
+                                <span class="icon">
+                                    <i class="fas @(item.LstComentarios.Count() > 0 ? "fa-comment-dots" : "fa-angle-down")" aria-hidden="true"></i>
                                 </span>
                             </button>
                         </header>
@@ -219,7 +222,7 @@ else
         let cardToggles = document.getElementsByClassName('card-toggle');
         for (let i = 0; i < cardToggles.length; i++) {
             cardToggles[i].addEventListener('click', e => {
-                e.currentTarget.parentElement.parentElement.childNodes[3].classList.toggle('is-hidden');
+                e.currentTarget.parentElement.childNodes[3].classList.toggle('is-hidden');
             });
         }
     });
