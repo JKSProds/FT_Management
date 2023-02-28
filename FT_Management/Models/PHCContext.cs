@@ -147,19 +147,11 @@ namespace FT_Management.Models
         }
         private string ObterProdutoImagem(Produto p)
         {
-            string res = ""; string img = FicheirosContext.ObterCaminhoProdutoImagem(p.Ref_Produto);
+            string img = FicheirosContext.ObterCaminhoProdutoImagem(p.Ref_Produto);
             if (!File.Exists(img)) img = "wwwroot/img/no_photo.png";
-            using (Image image = Image.FromFile(img))
-            {
-                using MemoryStream m = new MemoryStream();
-                image.Save(m, image.RawFormat);
-                byte[] imageBytes = m.ToArray();
+            byte[] imageBytes = File.ReadAllBytes(img);
 
-                // Convert byte[] to Base64 String
-                string base64String = Convert.ToBase64String(imageBytes);
-                res = base64String;
-            }
-            return res;
+            return Convert.ToBase64String(imageBytes); ;
         }
 
         public List<string> GerarGuiaGlobal(int IdArmazem)
@@ -982,10 +974,7 @@ namespace FT_Management.Models
                             string img = ObterRubrica(LstFolhaObra.Last().IdFolhaObra);
                             if (File.Exists(img))
                             {
-                                using Image image = Image.FromFile(img);
-                                using MemoryStream m = new MemoryStream();
-                                image.Save(m, image.RawFormat);
-                                byte[] imageBytes = m.ToArray();
+                                byte[] imageBytes = File.ReadAllBytes(img);
 
                                 // Convert byte[] to Base64 String
                                 string base64String = Convert.ToBase64String(imageBytes);

@@ -6,8 +6,8 @@ namespace FT_Management.Models
     public static class FicheirosContext
     {
 
-        private static string CaminhoServerAnexos = "/server/Assistencias_Tecnicas/";
-        private static string CaminhoImagensProduto = "/server/Imagens/EQUIPAMENTOS/";
+        private static string CaminhoServerAnexos = "S:\\Assistencias_Tecnicas\\";
+        private static string CaminhoImagensProduto = "S:\\Imagens\\EQUIPAMENTOS\\";
         private static string CaminhoImagensUtilizador = "S:\\Imagens\\UTILIZADORES\\";
 
         private static bool CriarFicheiro(string Caminho, IFormFile ficheiro)
@@ -44,9 +44,9 @@ namespace FT_Management.Models
         public static string FormatLinuxServer(string res)
         {
 #if DEBUG
-            return res;
+            return res.Replace("\\", "/").Replace("S:", "/Volumes/phc");
 #else
-return res.Replace("\\", "/").Replace("S:", "/server");
+            return res.Replace("\\", "/").Replace("S:", "/server");
 #endif
 
         }
@@ -65,7 +65,7 @@ return res.Replace("\\", "/").Replace("S:", "/server");
         }
         public static string ObterCaminhoProdutoImagem(string Ref_Produto)
         {
-            return CaminhoImagensProduto + Ref_Produto + ".jpg";
+            return FormatLinuxServer(CaminhoImagensProduto) + Ref_Produto + ".jpg";
         }
         public static string ObterCaminhoAssinatura(string res)
         {
@@ -80,7 +80,7 @@ return res.Replace("\\", "/").Replace("S:", "/server");
 
         public static void ObterImagensUtilizador()
         {
-#if !DEBUG 
+#if !DEBUG
             if (Directory.Exists(FormatLinuxServer(CaminhoImagensUtilizador)))
             {
                 CloneDirectory(FormatLinuxServer(CaminhoImagensUtilizador), FormatLinuxServer(Directory.GetCurrentDirectory() + "\\wwwroot\\img\\"));
