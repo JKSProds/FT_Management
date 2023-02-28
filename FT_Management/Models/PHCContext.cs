@@ -27,7 +27,6 @@ namespace FT_Management.Models
             {
                 cnn = new SqlConnection(connectionString);
                 cnn.Open();
-                FicheirosContext.ObterImagensUtilizador();
             }
             catch (Exception ex)
             {

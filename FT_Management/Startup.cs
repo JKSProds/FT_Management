@@ -83,6 +83,9 @@ namespace FT_Management
                 }
             }
 
+            //COPIAR IMAGENS UTILIZADOR
+            FicheirosContext.ObterImagensUtilizador();
+
             services.AddHostedService<QuartzHostedService>();
 
             services.Configure<CookiePolicyOptions>(options =>
