@@ -84,15 +84,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="column is-2">
-                            <div class="field">
-                                <label asp-for="Stock_Fisico" class="label"></label>
-                                <div class="control">
-                                    <input asp-for="Stock_Fisico" class="input" readonly />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="column is-2">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="Stock_PHC" class="label"></label>
                                 <div class="control">
@@ -141,9 +133,6 @@
                                     <th>
                                         @Html.DisplayNameFor(model => model.Armazem_ID)
                                     </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.Stock_Fisico)
-                                    </th>
                                     <th>@Html.DisplayNameFor(model => model.Stock_PHC)</th>
                                     <th>
                                         @Html.DisplayNameFor(model => model.Stock_Rec)
@@ -156,13 +145,9 @@
                             <tbody>
                                 @foreach (var item in LstProdutosArmazem)
                                 {
-                                    <tr onclick="location.href = '@(Url.Action("Editar", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID }))'">
+                                    <tr>
                                         <td data-label="@Html.DisplayNameFor(model => model.Armazem_ID)">
-                                            @Html.DropDownListFor(modelItem => item.Armazem_ID, (IEnumerable<SelectListItem>)ViewBag.Armazens, new { @class = "form-control", @disabled = "disabled" })
-
-                                        </td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.Stock_Fisico)">
-                                            @Html.DisplayFor(modelItem => item.Stock_Fisico)
+                                            @Html.DropDownListFor(modelItem => item.Armazem_ID, (IEnumerable<SelectListItem>)ViewBag.Armazens, new { @class = "button is-info", @disabled = "disabled" })
                                         </td>
                                         <td data-label="@Html.DisplayNameFor(model => model.Stock_PHC)">
                                             @Html.DisplayFor(modelItem => item.Stock_PHC)

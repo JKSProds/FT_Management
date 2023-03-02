@@ -153,16 +153,6 @@ else
                                         <a class="button is-warning"
                                             onclick="window.open('@Url.Action("Produto", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
                                                 class="fas fa-eye"></i></a>
-                                        @if (item.Serie)
-                                        {
-                                            <a class="button is-info" onclick="abrirModalSerie('@item.StampProduto')"><i
-                                                    class="fas fa-pencil"></i></a>
-                                        }
-                                        else
-                                        {
-                                            <a class="button is-info" onclick="abrirModalQtd('@item.StampProduto')"><i
-                                                    class="fas fa-pencil"></i></a>
-                                        }
                                     </div>
                                 </td>
                             </tr>
