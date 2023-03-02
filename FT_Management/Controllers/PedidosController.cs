@@ -198,7 +198,7 @@ namespace FT_Management.Controllers
             };
 
             bool res = phccontext.CriarComentarioMarcacao(c);
-            FolhaObra fo = new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador };
+            FolhaObra fo = new FolhaObra() { RelatorioServico = c.Descricao, ReferenciaServico = m.Referencia, Utilizador = c.Utilizador };
             if (fechar == 1)
             {
                 m.JustificacaoFecho = comentario;
