@@ -14,6 +14,8 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio")]
     public class PickingController : Controller
     {
+        //Obter todas as encomendas com base em alguns filtros
+        [HttpGet]
         public IActionResult Index(int IdEncomenda, int Tipo, string NomeCliente)
         {
             ViewData["IdEncomenda"] = (IdEncomenda == 0 ? "" : IdEncomenda.ToString());
@@ -21,7 +23,7 @@ namespace FT_Management.Controllers
             ViewData["Tipo"] = Tipo;
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Encomenda.Tipo.TODAS) && e.NItems > 0).ToList();
+            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Models.Encomenda.Tipo.TODAS) && e.NItems > 0).ToList();
 
             if (Tipo > 0) LstEncomendas = LstEncomendas.Where(e => e.NumDossier == Tipo).ToList();
             if (!string.IsNullOrEmpty(NomeCliente)) LstEncomendas = LstEncomendas.Where(e => e.NomeCliente.ToUpper().Contains(NomeCliente.ToUpper())).ToList();
@@ -30,7 +32,21 @@ namespace FT_Management.Controllers
             return View(LstEncomendas);
         }
 
-        public IActionResult Adicionar(string id)
+        //Obter uma encomenda em especifico
+        [HttpGet]
+        public JsonResult Encomenda(string stamp)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Encomenda e = phccontext.ObterEncomenda(stamp);
+            e.LinhasEncomenda = e.LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
+
+            return new JsonResult(e);
+        }
+
+        //Obter um picking
+        [HttpGet]
+        public IActionResult Picking(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -59,7 +75,10 @@ namespace FT_Management.Controllers
 
             return View(p);
         }
-        public ActionResult Fechar(string id, string obs, string armazem)
+
+        //Fechar um picking
+        [HttpDelete]
+        public ActionResult Picking(string id, string obs, string armazem)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -81,16 +100,18 @@ namespace FT_Management.Controllers
             return Content("Ok");
         }
 
-
-        [HttpPost]
-        public ActionResult ValidarPicking(string id)
+        //Validar o picking
+        [HttpGet]
+        public ActionResult Validar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return Content(phccontext.ValidarPicking(phccontext.ObterPicking(id)));
         }
 
-        public JsonResult Validar(string stamp, Double qtd, string serie, string bomastamp)
+        //Atualizar uma linha
+        [HttpPut]
+        public JsonResult Linha(string stamp, Double qtd, string serie, string bomastamp)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
@@ -114,14 +135,6 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking));
         }
 
-        public JsonResult ObterEncomenda(string stamp)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Encomenda e = phccontext.ObterEncomenda(stamp);
-            e.LinhasEncomenda = e.LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
-
-            return new JsonResult(e);
-        }
     }
 }
