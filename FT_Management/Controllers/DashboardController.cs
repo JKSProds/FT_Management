@@ -10,8 +10,9 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio")]
     public class DashboardController : Controller
     {
-
+        //Obter dashboard com todas as encomendas
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Encomendas(string Api)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -24,8 +25,9 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterEncomendas().Where(d => d.NumDossier != 2).Where(e => !e.Fornecido));
         }
 
-
+        //Obter dashboard com todos os utilizadores realizarem acesso
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Utilizadores(string Api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -44,7 +46,10 @@ namespace FT_Management.Controllers
             }
             return View(LstUtilizadores);
         }
+
+        //Obter dashboard das marcacoes pendentes
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Pendentes(string Api)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -56,7 +61,10 @@ namespace FT_Management.Controllers
 
             return View(phccontext.ObterMarcacoesPendentes());
         }
+
+        //Obter dashboard das marcacoes atuais e estados
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Marcacoes(string Api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
