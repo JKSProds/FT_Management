@@ -1,21 +1,4 @@
-﻿using System;
-using MySql.Simple;
-using System.Collections.Generic;
-using System.Linq;
-using OfficeOpenXml;
-using System.IO;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using QRCoder;
-using iTextSharp.text.pdf;
-using OfficeOpenXml.Style;
-using System.Net;
-using Newtonsoft.Json;
-using PdfSharpCore.Drawing;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http;
-using Custom;
-using System.Net.Http;
+﻿using Custom;
 
 namespace FT_Management.Models
 {

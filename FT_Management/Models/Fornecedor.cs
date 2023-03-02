@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class Fornecedor
     {
@@ -24,7 +19,7 @@ namespace FT_Management.Models
         public string PessoaContactoFornecedor { get; set; }
         [Display(Name = "Comentários")]
         public string Obs { get; set; }
-        public string CodigoIntermedio  { get; set; }
+        public string CodigoIntermedio { get; set; }
 
     }
 }

@@ -1,5 +1,3 @@
-using System;
-
 namespace FT_Management.Models
 {
     public class ErrorViewModel

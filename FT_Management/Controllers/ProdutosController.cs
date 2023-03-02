@@ -1,13 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using FT_Management.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize]
     public class ProdutosController : Controller

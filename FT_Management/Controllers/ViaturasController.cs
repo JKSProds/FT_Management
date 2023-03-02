@@ -1,14 +1,4 @@
-﻿using FT_Management.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Custom;
-using System.Linq;
+﻿using Custom;
 
 namespace FT_Management.Controllers
 {

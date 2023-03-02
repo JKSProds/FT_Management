@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.IO;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public static class FicheirosContext
     {

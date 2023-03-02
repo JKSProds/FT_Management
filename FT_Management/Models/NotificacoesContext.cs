@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Net.Http;
-using Custom;
-using System.Text;
-using System.IO;
-using System.Xml;
+﻿using Custom;
 
 namespace FT_Management.Models
 {

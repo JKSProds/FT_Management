@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio")]
     public class DashboardController : Controller

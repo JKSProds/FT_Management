@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class Encomenda
     {
@@ -20,7 +14,7 @@ namespace FT_Management.Models
         public string NomeCliente { get; set; }
         [Display(Name = "Dias")]
         public DateTime DataEnvio { get; set; }
-        public DateTime Data { get { return (Total ? this.DataEnvio : ((this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900 && !e.Fornecido).Count() > 0) ? this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900 && !e.Fornecido).First().DataEnvio : this.DataEnvio) ); } }
+        public DateTime Data { get { return (Total ? this.DataEnvio : ((this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900 && !e.Fornecido).Count() > 0) ? this.LinhasEncomenda.Where(e => e.DataEnvio.Year > 1900 && !e.Fornecido).First().DataEnvio : this.DataEnvio)); } }
         [Display(Name = "Data")]
         public DateTime DataDossier { get; set; }
         [Display(Name = "Linhas")]
@@ -41,8 +35,9 @@ namespace FT_Management.Models
                 if (DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && tipo == Tipo.HOJE) return true;
                 if (DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() && tipo == Tipo.AMANHA) return true;
                 if (DataEnvio >= DateTime.Now.AddDays(1) && tipo == Tipo.FUTURO) return true;
-                if (DataEnvio.Year > 1900 && tipo == Tipo.TODAS) return true; 
-            } else
+                if (DataEnvio.Year > 1900 && tipo == Tipo.TODAS) return true;
+            }
+            else
             {
                 if (LinhasEncomenda.Where(l => l.DataEnvio <= DateTime.Now.AddDays(-1) && DataEnvio.Year > 1900 && tipo == Tipo.ATRASO).Count() > 0) return true;
                 if (LinhasEncomenda.Where(l => l.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && tipo == Tipo.HOJE).Count() > 0) return true;

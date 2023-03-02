@@ -1,17 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using FT_Management.Models;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.WindowsServices;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace FT_Management
 {
@@ -19,16 +7,127 @@ namespace FT_Management
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var builder = WebApplication.CreateBuilder(args);
 
-        }
+            //Serviços
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddMvc();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+            builder.Services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(builder.Configuration.GetConnectionString("DefaultConnection"), builder.Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
+            builder.Services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(builder.Configuration.GetConnectionString("PHCConnection"), builder.Configuration.GetConnectionString("DefaultConnection"))));
+
+            // Add Quartz builder.Services
+            builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
+            {
+                if (FT_ManagementContext.ObterParam("EnvioEmailFerias", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
                 {
-                    //webBuilder.UseSetting("https_port", "443");
-                    webBuilder.UseStartup<Startup>();
-                });
+                    // Add our job
+                    builder.Services.AddSingleton<CronJobFerias>();
+                    builder.Services.AddSingleton(new JobSchedule(
+                        jobType: typeof(CronJobFerias),
+                        cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailFerias", builder.Configuration.GetConnectionString("DefaultConnection"))));
+                }
+
+                if (FT_ManagementContext.ObterParam("EnvioEmailAgendamentoComercial", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
+                {
+                    builder.Services.AddSingleton<CronJobAgendamentoCRM>();
+                    builder.Services.AddSingleton(new JobSchedule(
+                        jobType: typeof(CronJobAgendamentoCRM),
+                        cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAgendamentoComercial", builder.Configuration.GetConnectionString("DefaultConnection"))));
+                }
+
+
+                if (FT_ManagementContext.ObterParam("EnvioEmailAniversario", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
+                {
+                    builder.Services.AddSingleton<CronJobAniversario>();
+                    builder.Services.AddSingleton(new JobSchedule(
+                        jobType: typeof(CronJobAniversario),
+                        cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAniversario", builder.Configuration.GetConnectionString("DefaultConnection"))));
+                }
+
+                if (FT_ManagementContext.ObterParam("SaidaAutomatica", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
+                {
+                    builder.Services.AddSingleton<CronJobSaida>();
+                    builder.Services.AddSingleton(new JobSchedule(
+                        jobType: typeof(CronJobSaida),
+                        cronExpression: FT_ManagementContext.ObterParam("DataSaidaAutomatica", builder.Configuration.GetConnectionString("DefaultConnection"))));
+                }
+            }
+
+            //COPIAR IMAGENS UTILIZADOR
+            FicheirosContext.ObterImagensUtilizador();
+
+            builder.Services.AddHostedService<QuartzHostedService>();
+
+            builder.Services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            });
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(cookieOptions =>
+            {
+                cookieOptions.LoginPath = "/Utilizadores/Login";
+                cookieOptions.AccessDeniedPath = "/Home/AcessoNegado";
+            });
+
+#if !DEBUG
+            builder.Services.AddDataProtection().SetApplicationName("FT_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));
+                 builder.Services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
+#endif
+
+            var app = builder.Build();
+
+            System.Globalization.CultureInfo customCulture = new CultureInfo("pt-PT");
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+            CultureInfo.DefaultThreadCurrentCulture = customCulture;
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                //app.UseHsts();
+            }
+
+            app.UseAuthentication();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+
+
+            app.Lifetime.ApplicationStarted.Register(() =>
+            {
+                Console.WriteLine("Iniciada a aplicação!");
+            });
+
+            app.Lifetime.ApplicationStopping.Register(() =>
+            {
+                Console.WriteLine("A aplicação está a parar...");
+            });
+
+            app.Lifetime.ApplicationStopped.Register(() =>
+            {
+                Console.WriteLine("A aplicação parou!");
+            });
+
+            app.Run();
+        }
     }
 }

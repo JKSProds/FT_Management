@@ -1,15 +1,4 @@
-﻿using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net.Mail;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio")]
     public class PickingController : Controller

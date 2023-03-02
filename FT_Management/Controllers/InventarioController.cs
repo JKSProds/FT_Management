@@ -1,10 +1,4 @@
-﻿using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio")]
     public class InventarioController : Controller

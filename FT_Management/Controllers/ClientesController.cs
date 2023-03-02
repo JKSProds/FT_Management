@@ -1,8 +1,4 @@
-﻿using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio, Comercial")]
     public class ClientesController : Controller

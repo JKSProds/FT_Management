@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public enum TipoFicheiro
     {
@@ -28,7 +24,7 @@ namespace FT_Management.Models
         public bool AnexoPeca { get; set; }
         public string RefPeca { get; set; }
         public bool AnexoEmail { get; set; }
-        
+
         [Display(Name = "Criado por")]
         public string NomeUtilizador { get; set; }
         [Display(Name = "Criado em")]

@@ -1,17 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Quartz;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Quartz.Spi;
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
-using FT_Management.Models;
-using System.IO;
-using Microsoft.Extensions.Configuration;
-using Custom;
-using System.Linq;
+﻿using Microsoft.Extensions.Configuration;
 
 [DisallowConcurrentExecution]
 public class CronJobFerias : IJob

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class Log
     {
@@ -20,6 +14,6 @@ namespace FT_Management.Models
         public int Tipo { get; set; }
         [Display(Name = "Data")]
         public DateTime Data { get; set; }
-        
+
     }
 }

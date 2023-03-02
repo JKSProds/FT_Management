@@ -1,13 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using FT_Management.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-
 namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio, Tech, Comercial")]

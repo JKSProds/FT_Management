@@ -1,15 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FT_Management.Models;
-using Custom;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.IO;
-using WebDav;
-using System.Net;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Custom;
 
 namespace FT_Management.Controllers
 {

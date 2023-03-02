@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class FeriasUtilizador
     {

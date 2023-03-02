@@ -1,17 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net.Mail;
-using FT_Management.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Custom;
-using Microsoft.AspNetCore.Authorization;
-using System.Drawing;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class FolhasObraController : Controller

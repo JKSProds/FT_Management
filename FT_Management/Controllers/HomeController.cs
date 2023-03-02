@@ -1,18 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using FT_Management.Models;
-using System.Text.Json;
-using System.Dynamic;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Hosting;
-using System.IO;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     public class HomeController : Controller
     {
