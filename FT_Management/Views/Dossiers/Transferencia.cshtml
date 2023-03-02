@@ -163,7 +163,7 @@ else
 <hr>
 <p class="control">
     <a class="button is-info is-fullwidth is-large" type="button"
-        href='~/Dossiers/FecharDossier/@Model.StampDossier?ReturnUrl=@ViewData["ReturnUrl"]'>
+        href='@ViewData["ReturnUrl"]'>
         <span class="icon">
             <i class="fa-solid fa-circle-chevron-left"></i>
         </span>
@@ -305,9 +305,9 @@ else
     function RemoverLinha(id) {
         document.getElementById("btn_" + id).classList.add("is-loading");
         $.ajax({
-            url: '/Dossiers/RemoverLinha',
+            url: '/Dossiers/Linha',
             data: { "id": id },
-            type: "POST",
+            type: "DELETE",
             success: function (response) {
                 if (response[0] == 1) {
                     notify("Linha removida com sucesso!");
@@ -337,7 +337,7 @@ else
                 type: "POST",
                 success: function (response) {
                     $.ajax({
-                        url: '/Dossiers/CriarLinha/@Model.StampDossier',
+                        url: '/Dossiers/Linha/@Model.StampDossier',
                         data: { "referencia": response.ref_Produto, "design": response.designacao_Produto, "qtd": qtd },
                         type: "POST",
                         success: function (response) {
@@ -379,7 +379,7 @@ else
         if (linha != "") {
             document.getElementById("btnAdicionarLinha").classList.add("is-loading");
             $.ajax({
-                url: '/Dossiers/CriarLinha/@Model.StampDossier',
+                url: '/Dossiers/Linha/@Model.StampDossier',
                 data: { "design": linha },
                 type: "POST",
                 success: function (response) {

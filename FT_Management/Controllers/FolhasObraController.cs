@@ -91,8 +91,8 @@ namespace FT_Management.Controllers
                     phccontext.AtualizaMarcacao(m);
                     fo = phccontext.ObterFolhaObra(int.Parse(res[1]));
 
-                    if (Estado == 2) return RedirectToAction("CriarDossier", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
-                    if (Estado == 3) return RedirectToAction("CriarDossier", "Dossiers", new { id = fo.StampFO, serie = 97, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
+                    if (Estado == 2) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
+                    if (Estado == 3) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 97, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
 
                     return RedirectToAction("ListaPedidos", "Pedidos", new { IdTecnico = fo.Utilizador.IdPHC });
                 }

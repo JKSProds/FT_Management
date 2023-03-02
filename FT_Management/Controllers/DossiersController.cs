@@ -11,6 +11,8 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class DossiersController : Controller
     {
+        //Obter todos os dossiers de uma data especifica
+        [HttpGet]
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Index(string Data)
         {
@@ -22,8 +24,9 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterDossiers(DateTime.Parse(Data)));
         }
 
-
-        public ActionResult Pedido(string id, string ReturnUrl)
+        //Obter um dossier em especifico
+        [HttpGet]
+        public ActionResult Dossier(string id, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -35,11 +38,13 @@ namespace FT_Management.Controllers
 
             ViewData["ReturnUrl"] = ReturnUrl;
 
-            if (d.Serie == 96 || d.Serie == 97) return View(d);
+            if (d.Serie == 96 || d.Serie == 97) return View("Pedido", d);
             return View("Transferencia", d);
         }
 
-        public ActionResult CriarDossier(string id, int serie, string ReturnUrl)
+        //Criar um pedido de dossier
+        [HttpGet]
+        public ActionResult Pedido(string id, int serie, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -51,7 +56,8 @@ namespace FT_Management.Controllers
                 Serie = serie,
                 FolhaObra = fo,
                 Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao),
-                EditadoPor = u.Iniciais
+                EditadoPor = u.Iniciais,
+                Tecnico = u
             };
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
@@ -65,17 +71,19 @@ namespace FT_Management.Controllers
             phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Designacao = "Reparação de " + fo.EquipamentoServico.TipoEquipamento, CriadoPor = d.EditadoPor });
             phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Designacao = fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, CriadoPor = d.EditadoPor });
 
-            return RedirectToAction("Pedido", new { id = d.StampDossier, ReturnUrl = ReturnUrl });
+            return RedirectToAction("Dossier", new { id = d.StampDossier, ReturnUrl = ReturnUrl });
         }
 
-        public ActionResult CriarDossierTransferencia(string id, int armazem, int load)
+        //Criar um documento de transferencia
+        [HttpGet]
+        public ActionResult Transferencia(string id, int armazem, int load)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Utilizador t = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == armazem).DefaultIfEmpty().First();
-            Dossier d = phccontext.ObterDossierAberto(u).Where(d => !d.Fechado).DefaultIfEmpty(new Dossier()).Last();
+            Dossier d = phccontext.ObterDossierAberto(u).DefaultIfEmpty(new Dossier()).Last();
 
             if (d.StampDossier == null)
             {
@@ -84,9 +92,10 @@ namespace FT_Management.Controllers
                     Serie = 36,
                     Marcacao = new Marcacao(),
                     FolhaObra = new FolhaObra(),
-                    EditadoPor = u.Iniciais
+                    EditadoPor = u.Iniciais,
+                    Tecnico = t
                 };
-                //d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
+                d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
                 d = phccontext.ObterDossier(d.StampDossier);
                 if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
                 MailContext.EnviarEmailPedidoTransferencia(u, d);
@@ -113,11 +122,12 @@ namespace FT_Management.Controllers
                 }
 
             }
-            return RedirectToAction("Pedido", new { id = d.StampDossier, ReturnUrl = "/Produtos/Armazem/" + armazem });
+            return RedirectToAction("Dossier", new { id = d.StampDossier, ReturnUrl = "/Produtos/Armazem/" + armazem });
         }
 
-
-        public JsonResult CriarLinha(string id, string referencia, string design, double qtd)
+        //Adicionar uma linha ao dossier
+        [HttpPost]
+        public JsonResult Linha(string id, string referencia, string design, double qtd)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -145,7 +155,9 @@ namespace FT_Management.Controllers
             return Json(int.Parse(res[0].ToString()) > 0 ? phccontext.ObterLinhaDossier(res[3].ToString()) : new Linha_Dossier());
         }
 
-        public JsonResult RemoverLinha(string id)
+        //Apagar uma linha do dossier
+        [HttpDelete]
+        public JsonResult Linha(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
@@ -157,14 +169,6 @@ namespace FT_Management.Controllers
             return Json(phccontext.ApagarLinhaDossier(l.Stamp_Dossier, l.Stamp_Linha));
         }
 
-        public ActionResult FecharDossier(string id, string ReturnUrl)
-        {
-            if (ReturnUrl != "" && ReturnUrl != null)
-            {
-                return Redirect(ReturnUrl);
-            }
 
-            return RedirectToAction("Index", "Dossiers");
-        }
     }
 }

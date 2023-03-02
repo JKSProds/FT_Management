@@ -30,7 +30,7 @@ namespace FT_Management.Models
         public string EditadoPor { get; set; }
         public List<Linha_Dossier> Linhas { get; set; }
         public bool Fechado { get; set; }
-        public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Pedido/" + StampDossier; } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Dossier/" + StampDossier; } }
 
         public void DefinirSerie(TipoDossier tp)
         {
