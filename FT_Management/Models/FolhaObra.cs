@@ -61,7 +61,7 @@ namespace FT_Management.Models
         [Display(Name = "Rúbrica")]
         public string RubricaCliente { get; set; }
         public bool Piquete { get; set; }
-        public string GetUrl { get { return "http://webapp.food-tech.pt/FolhasObra/Detalhes/" + IdFolhaObra; } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/FolhasObra/FolhaObra/" + IdFolhaObra; } }
         [Display(Name = "Estado do Serviço")]
         public int EstadoFolhaObra { get; set; }
         [Display(Name = "Tipo de Serviço")]

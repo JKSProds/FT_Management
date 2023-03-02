@@ -28,7 +28,7 @@
     }
 </style>
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
-<form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
+<form asp-action="FolhaObra" method="POST" name="frmAdicionar" id="frmAdicionar">
     <div class="container">
         <div class="columns is-mobile is-centered">
             <div class="column is-12">
@@ -828,7 +828,7 @@
         notify("A validar folha de obra ...");
         $.ajax({
             type: "POST",
-            url: "/FolhasObra/ValidarFolhaObra",
+            url: "/FolhasObra/Validar",
             data: $("#frmAdicionar").serialize(),
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
@@ -1226,7 +1226,7 @@
                     if (month < 10) {
                         month = '0' + month;
                     }
-                    html += "<tr onclick=\"location.href = '/FolhasObra/Detalhes/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
+                    html += "<tr onclick=\"location.href = '/FolhasObra/FolhaObra/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
                     existeFolhasObra = true;
                 }
                 html += "</tbody></table>"

@@ -395,7 +395,7 @@ namespace FT_Management.Controllers
 
                 foreach (var item in m.LstFolhasObra)
                 {
-                    res += "<tr><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
+                    res += "<tr><td onclick=\"location.href = '/FolhasObra/FolhaObra/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/FolhaObra/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/FolhaObra/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
                 }
 
                 res += "</tbody></table>";

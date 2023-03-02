@@ -447,7 +447,7 @@
                         month = '0' + month;
                     }
                     if (obj.idFolhaObra != document.getElementById("txtIdFolhaObra").value) {
-                        html += "<tr onclick=\"location.href = '/FolhasObra/Detalhes/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
+                        html += "<tr onclick=\"location.href = '/FolhasObra/FolhaObra/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
                         existeFolhasObra = true;
                     }
                 }

@@ -93,7 +93,7 @@ else
                     @foreach (var item in Model.LstMovimentos)
                         {
                             <tr style="width:auto"
-                                onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                 <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().IdFolhaObra)">
                                     <span>@item.IdFolhaObra</span>
                                 </td>
