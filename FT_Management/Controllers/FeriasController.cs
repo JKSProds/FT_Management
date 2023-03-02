@@ -18,10 +18,11 @@ namespace FT_Management.Controllers
     [Authorize]
     public class FeriasController : Controller
     {
+        //Obter todos os utilizadores ou redirecionar para as ferias do utilziador em especifico
         [HttpGet]
         public ActionResult Index()
         {
-            if (!User.IsInRole("Admin") && !User.IsInRole("Escritorio"))
+            if (!User.IsInRole("Admin"))
             {
                 return RedirectToAction("Utilizador", new { id = int.Parse(this.User.Claims.First().Value) });
             }
@@ -32,7 +33,7 @@ namespace FT_Management.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin, Escritorio")]
+        [Authorize(Roles = "Admin")]
         public virtual ActionResult Ferias()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -57,9 +58,12 @@ namespace FT_Management.Controllers
             return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
+        //Criar ferias com base no utilizador e nada data, saltando feriados e fins de semanas 
         [HttpPost]
         public void Ferias(string datainicio, string datafim, int idutilizador)
         {
+            if (idutilizador != int.Parse(this.User.Claims.First().Value.ToString()) && !this.User.IsInRole("Admin")) return Forbid();
+
             DateTime dataInicio = DateTime.Parse(datainicio);
             DateTime dataFim = DateTime.Parse(datafim);
             DateTime dataAtual = DateTime.Parse(datainicio);
@@ -117,6 +121,7 @@ namespace FT_Management.Controllers
             context.CriarFerias(LstFerias);
         }
 
+        //Apagar um registo de ferias
         [Authorize(Roles = "Admin, Tech, Escritorio")]
         [HttpDelete]
         public ContentResult Ferias(string id, string obs)
@@ -133,6 +138,7 @@ namespace FT_Management.Controllers
             return Content("1");
         }
 
+        //Obter ferias do utilizador em especifico
         [HttpGet]
         public ActionResult Utilizador(int id)
         {
@@ -152,6 +158,7 @@ namespace FT_Management.Controllers
             return View(context.ObterListaFeriasUtilizador(id));
         }
 
+        //Validar ferias de um utilizador em especifico
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult Validar(string id, string obs)
@@ -175,7 +182,9 @@ namespace FT_Management.Controllers
             return RedirectToAction("Utilizador", new { IdUtilizador = ferias.IdUtilizador });
         }
 
+        //Alterar dias de férias de um utilizador em especifico
         [Authorize(Roles = "Admin")]
+        [HttpPut]
         public void Dias(string ano, string idutilizador, string dias)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -183,13 +192,14 @@ namespace FT_Management.Controllers
             context.CriarFeriasUtilizador(int.Parse(idutilizador), ano, int.Parse(dias));
         }
 
-
-
+        //Obter o calendario
+        [HttpGet]
         public ActionResult CalendarioView()
         {
             return View("Calendario");
         }
 
+        //Obter o calendario ICS
         [AllowAnonymous]
         [HttpGet]
         public virtual ActionResult Calendario(string ApiKey)
@@ -239,6 +249,7 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
+        //Obter eventos de ferias para calendario
         [HttpGet]
         public JsonResult EventosFerias(DateTime start, DateTime end)
         {
