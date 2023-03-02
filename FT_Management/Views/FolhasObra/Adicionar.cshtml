@@ -1008,9 +1008,9 @@
         $("#txtPecas").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Produtos/ObterPecasUtilizador/',
+                    url: '/Produtos/Pecas/',
                     data: { "filter": request.term },
-                    type: "POST",
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
@@ -1038,8 +1038,8 @@
 
     function CarregarPecasStock() {
         $.ajax({
-            url: '/Produtos/ObterPecasUtilizador/',
-            type: "POST",
+            url: '/Produtos/Pecas/',
+            type: "GET",
             success: function (response) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th style=\"width: 110px\">Referência</th><th>Designação</th><th>Quantidade</th><th></th></tr></thead><tbody>";
                 $(response).each(function () {
@@ -1068,8 +1068,8 @@
     function ObterPeca(stamp, qtd) {
         if (stamp !== "" && qtd > 0) {
             $.ajax({
-                url: '/Produtos/ObterPeca/' + stamp,
-                type: "POST",
+                url: '/Produtos/Peca/' + stamp,
+                type: "GET",
                 success: function (response) {
                     AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
                     LimparPecas();

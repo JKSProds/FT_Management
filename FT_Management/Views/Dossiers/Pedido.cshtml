@@ -378,8 +378,8 @@ else
         if (stamp != "" && qtd > 0) {
             document.getElementById("btnAdicionarPeca").classList.add("is-loading");
             $.ajax({
-                url: '/Produtos/ObterPeca/' + stamp,
-                type: "POST",
+                url: '/Produtos/Peca/' + stamp,
+                type: "GET",
                 success: function (response) {
                     $.ajax({
                         url: '/Dossiers/Linha/@Model.StampDossier',
@@ -451,9 +451,9 @@ else
         $("#txtPecas").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Produtos/ObterPecas/',
-                    data: { "filter": request.term },
-                    type: "POST",
+                    url: '/Produtos/Pecas/',
+                    data: { "filter": request.term, "armazem": 3 },
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
 

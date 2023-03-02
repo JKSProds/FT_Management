@@ -510,9 +510,9 @@
     function PreencherRef(id) {
         document.getElementById('btnSearchRef').classList.add("is-loading");
         $.ajax({
-            url: '/Produtos/ObterPecaRef/',
-            data: { "id": id },
-            type: "POST",
+            url: '/Produtos/Peca/',
+            data: { "ref_produto": id },
+            type: "GET",
             success: function (data) {
                 if (data.ref_Produto != null) {
                     document.getElementById('txtDesignacao').value = data.designacao_Produto;

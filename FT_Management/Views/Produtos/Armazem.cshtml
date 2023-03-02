@@ -205,7 +205,7 @@ else
         document.getElementById('pageloader2').classList.add('is-active');
         Bulma('#modalGerarGuiaGlobal').modal().close();
         $.ajax({
-            url: '/Produtos/GerarGuiaGlobal/' + id,
+            url: '/Produtos/GuiaGlobal/' + id,
             type: "POST",
             success: function (response) {
                 if (response[0] == 1) {

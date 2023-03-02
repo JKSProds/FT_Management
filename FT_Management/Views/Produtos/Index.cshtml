@@ -142,16 +142,16 @@ else
                                 <td style="min-width: 240px" class="is-actions-cell">
                                     <div class="buttons">
                                         <a class="button is-outlined is-primary is-small printpeq"
-                                            onclick="window.open('@Url.Action("PrintPeq", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
+                                            onclick="window.open('@Url.Action("EtiquetaPequena", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
                                                 class="fa-solid fa-qrcode"></i></a>
                                         <a class="button is-outlined is-normal is-primary printqr"
-                                            onclick="window.open('@Url.Action("Print", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
+                                            onclick="window.open('@Url.Action("Etiqueta", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
                                                 class="fa-solid fa-qrcode"></i></a>
                                         <a class="button is-outlined is-primary"
-                                            onclick="window.open('@Url.Action("PrintPeqMulti", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
+                                            onclick="window.open('@Url.Action("EtiquetaMultipla", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
                                                 class="fas fa-notes-medical"> x8</i></a>
                                         <a class="button is-warning"
-                                            onclick="window.open('@Url.Action("Detalhes", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
+                                            onclick="window.open('@Url.Action("Produto", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
                                                 class="fas fa-eye"></i></a>
                                         @if (item.Serie)
                                         {

@@ -162,8 +162,7 @@ else
 }
 <hr>
 <p class="control">
-    <a class="button is-info is-fullwidth is-large" type="button"
-        href='@ViewData["ReturnUrl"]'>
+    <a class="button is-info is-fullwidth is-large" type="button" href='@ViewData["ReturnUrl"]'>
         <span class="icon">
             <i class="fa-solid fa-circle-chevron-left"></i>
         </span>
@@ -333,8 +332,8 @@ else
         if (stamp != "" && qtd > 0) {
             document.getElementById("btnAdicionarPeca").classList.add("is-loading");
             $.ajax({
-                url: '/Produtos/ObterPeca/' + stamp,
-                type: "POST",
+                url: '/Produtos/Peca/' + stamp,
+                type: "GET",
                 success: function (response) {
                     $.ajax({
                         url: '/Dossiers/Linha/@Model.StampDossier',
@@ -406,9 +405,9 @@ else
         $("#txtPecas").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Produtos/ObterPecas/',
-                    data: { "filter": request.term },
-                    type: "POST",
+                    url: '/Produtos/Pecas/',
+                    data: { "filter": request.term, "armazem": 3 },
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
 
