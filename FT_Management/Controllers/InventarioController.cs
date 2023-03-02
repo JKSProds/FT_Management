@@ -9,6 +9,7 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio")]
     public class InventarioController : Controller
     {
+        //Obter todos os armazens
         [HttpGet]
         public ActionResult Index()
         {
@@ -17,6 +18,7 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterArmazensFixos());
         }
 
+        //Obter todos os dossiers associados ao um armazem
         [HttpGet]
         public JsonResult Dossiers(int id)
         {
@@ -25,6 +27,7 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.ObterInventarios(id));
         }
 
+        //Obter as linhas de um dossier filtrando pela referencia
         [HttpGet]
         public ActionResult Dossier(string id, string referencia)
         {
@@ -39,6 +42,7 @@ namespace FT_Management.Controllers
             return View(p);
         }
 
+        //Criar um dossier de inventario se o mesmo nao existir
         [HttpPost]
         public JsonResult Dossier(int id)
         {
@@ -50,6 +54,7 @@ namespace FT_Management.Controllers
             return new JsonResult(res);
         }
 
+        //Fechar o dossier para previnir alterações futuras
         [HttpDelete]
         public JsonResult Dossier(string id)
         {
@@ -58,6 +63,16 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.FecharInventario(new Picking() { Picking_Stamp = id, EditadoPor = this.User.ObterNomeCompleto() }));
         }
 
+        //Obter linha baseado no stamp
+        [HttpGet]
+        public JsonResult Linha(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return new JsonResult(phccontext.ObterLinhaInventario(id));
+        }
+
+        //Criar linha nova
         [HttpPost]
         public JsonResult Linha(string stamp, string ref_produto, double qtd)
         {
@@ -74,14 +89,8 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.CriarLinhaInventario(l));
         }
 
-        [HttpGet]
-        public JsonResult Linha(string id)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return new JsonResult(phccontext.ObterLinhaInventario(id));
-        }
-
+        //Apagar linha
+        [HttpDelete]
         public JsonResult Linha(string stamp, string stamp_linha)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -89,6 +98,16 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.ApagarLinhaInventario(new Ref_Linha_Picking() { BOMA_STAMP = stamp, Picking_Linha_Stamp = stamp_linha }));
         }
 
+        //Obter todos os numeros de serie associados a uma linha
+        [HttpGet]
+        public JsonResult Serie(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return new JsonResult(phccontext.ObterSerieLinhaInventario(id).OrderBy(s => s.CriadoA).ToList());
+        }
+
+        //Criar numeros de serie associados a uma linha
         [HttpPost]
         public JsonResult Serie(string stamp, string stamp_linha, string serie)
         {
@@ -105,14 +124,7 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.CriarSerieLinhaInventario(l));
         }
 
-        [HttpGet]
-        public JsonResult Serie(string id)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return new JsonResult(phccontext.ObterSerieLinhaInventario(id).OrderBy(s => s.CriadoA).ToList());
-        }
-
+        //Apagar numeros de serie baseado no stamp de numero de serie
         [HttpDelete]
         public JsonResult ApagarSerie(string stamp, string stamp_boma, string stamp_linha)
         {
