@@ -504,14 +504,14 @@
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-            <p>Tem a certeza que deseja enviar um email para o cliente com os dados de login da plataforma?</p>
+            <p>Tem a certeza que deseja enviar um email para o cliente com os dados de login da WebApp?</p>
             <div class="field" style="width:100%">
                 <div class="control"><input type="email" class="input" id="txtEmailCliente" value="@Model.EmailCliente">
                 </div>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button id="btnEnviarEmailCliente" type="button" class="button is-info"
+            <button id="btnEnviarEmailCliente" type="button" class="button is-info is-large is-fullwidth"
                 onclick="EnviarEmailCliente(@Model.IdCliente, @Model.IdLoja, document.getElementById('txtEmailCliente').value)"
                 href="javascript:;">
                 <span class="icon">
@@ -535,7 +535,7 @@
             success: function (result) {
                 $(function () {
                     document.getElementById("btnEnviarEmailCliente").classList.remove("is-loading");
-                    if (result == "Sucesso") {
+                    if (result == "1") {
                         notify('Email enviado com sucesso!')
                     } else {
                         notifyError('Ocorreu um erro ao enviar o email com a senha do cliente!')
