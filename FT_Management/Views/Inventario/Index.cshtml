@@ -119,7 +119,7 @@ else
 <script>
     function CriarDossier(id) {
         $.ajax({
-            url: '/Inventario/CriarDossier/',
+            url: '/Inventario/Dossier/',
             data: { "id": id },
             type: "POST",
             success: function (data) {
@@ -144,7 +144,7 @@ else
         document.getElementById('txtHiddenNumArmazem').value = id;
 
         $.ajax({
-            url: '/Inventario/ObterDossiers/',
+            url: '/Inventario/Dossiers/',
             data: { "id": id },
             type: "GET",
             success: function (data) {

@@ -156,6 +156,14 @@ namespace FT_Management.Controllers
             //return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
             return Json(phccontext.ObterProdutoStamp(id));
         }
+        [HttpPost]
+        public JsonResult ObterPecaRef(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            //return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
+            return Json(phccontext.ObterProduto(id));
+        }
         public JsonResult ObterDetalhes(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
