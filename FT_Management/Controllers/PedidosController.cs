@@ -96,6 +96,7 @@ namespace FT_Management.Controllers
             {
                 m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
                 m.Tecnico = new Utilizador();
+                m.EstadoMarcacaoDesc = "Criado";
             }
 
             m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
@@ -569,8 +570,8 @@ namespace FT_Management.Controllers
             if (LstMarcacoesCriadas.Count > 0)
             {
                 List<Marcacao> LstMarcacoesFiltro = new List<Marcacao>();
-                int nPerDay = LstMarcacoesCriadas.Count() / 6 == 0 ? 1 : LstMarcacoesCriadas.Count() / 6;
-                for (int i = 0; i < 7; i++)
+                int nPerDay = LstMarcacoesCriadas.Count() / 5 == 0 ? 1 : LstMarcacoesCriadas.Count() / 5;
+                for (int i = 0; i < 6; i++)
                 {
                     LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i - (int)DateTime.Now.DayOfWeek + 1); return c; }).ToList());
                 }
