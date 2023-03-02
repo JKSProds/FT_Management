@@ -17,6 +17,7 @@ namespace FT_Management.Models
                 (this.EstadoMarcacao == 4 || this.EstadoMarcacao == 9 || this.EstadoMarcacao == 10 ? "✅ " :
                 this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
                 this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
+                this.EstadoMarcacaoDesc == "Reagendar" ? "📆 " :
                 this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " :
                 this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " :
                 this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : "");

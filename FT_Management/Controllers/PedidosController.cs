@@ -217,7 +217,7 @@ namespace FT_Management.Controllers
             }
             else if (reagendar == 1)
             {
-                m.EstadoMarcacaoDesc = "Reagendado";
+                m.EstadoMarcacaoDesc = "Reagendar";
                 m.Utilizador = c.Utilizador;
             }
 
