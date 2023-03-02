@@ -15,25 +15,52 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio")]
     public class ViaturasController : Controller
     {
-
+        //Obtem todas as viaturas numa pagina web
+        [HttpGet]
         public ActionResult Index()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-
             return View(context.ObterViaturas());
         }
 
+        //Obtem o mapa com as viaturas
+        [HttpGet]
         public ActionResult Mapa()
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-
             return View();
         }
 
+        //Obtem uma viatura em especifico com viagens num dia em especifico
+        [HttpGet]
+        public ActionResult Viatura(string id, string Data)
+        {
+            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            ViewData["Data"] = Data;
+            ViewData["Matricula"] = id;
+
+            List<Viagem> LstViagens = context.ObterViagens(id, Data);
+
+            return View(LstViagens);
+        }
+
+        //Obtem todas as viaturas em formato json
+        [HttpGet]
+        [Authorize(Roles = "Admin, Escritorio")]
+        public List<Viatura> Viaturas(string API_KEY)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return context.ObterViaturas();
+        }
+
+        //Atualiza o buzzer de uma viatura em especifico
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> AtualizarBuzzer(string id, bool buzzer)
+        [HttpPut]
+        public async Task<ActionResult> Buzzer(string id, bool buzzer)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
@@ -86,28 +113,9 @@ namespace FT_Management.Controllers
             return Content("0");
         }
 
-        public ActionResult Viagens(string id, string Data)
-        {
-            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
 
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            ViewData["Data"] = Data;
-            ViewData["Matricula"] = id;
 
-            List<Viagem> LstViagens = context.ObterViagens(id, Data);
-
-            return View(LstViagens);
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "Admin, Escritorio")]
-        public List<Viatura> ObterViaturas(string API_KEY)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            return context.ObterViaturas();
-        }
     }
 
 }

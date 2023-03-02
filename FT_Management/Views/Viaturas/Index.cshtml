@@ -92,7 +92,7 @@
                                         <span class="check is-primary"></span>
                                         <span class="control-label">@Html.DisplayNameFor(model => model.Buzzer)</span>
                                     </label>
-                                    <a class="button is-warning" href="~/Viaturas/Viagens/@item.Matricula"><i
+                                    <a class="button is-warning" href="~/Viaturas/Viatura/@item.Matricula"><i
                                             class="fas fa-eye"></i></a>
                                     <a class="button is-info" href="@item.GetUrl"><i class="fa-solid fa-location-arrow"></i></a>
                                 </td>
@@ -109,8 +109,8 @@
     function AtualizarBuzzer(matricula) {
         document.getElementById('chk_Buzzer_' + matricula).disabled = true;
         $.ajax({
-            type: "POST",
-            url: "/Viaturas/AtualizarBuzzer/" + matricula,
+            type: "PUT",
+            url: "/Viaturas/Buzzer/" + matricula,
             data: { buzzer: document.getElementById('chk_Buzzer_' + matricula).checked },
             traditional: true,
             success: function (result) {

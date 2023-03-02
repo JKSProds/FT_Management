@@ -46,7 +46,7 @@
     });
 
     $.ajax({
-        url: '/Viaturas/ObterViaturas/',
+        url: '/Viaturas/Viaturas/',
         type: "GET",
         success: function (data) {
             data.forEach((element) => {
@@ -58,7 +58,7 @@
             notifyError('Ocorre um erro ao obter as viaturas!');
         },
         failure: function (data) {
-           notifyError('Ocorre um erro ao obter as viaturas!');
+            notifyError('Ocorre um erro ao obter as viaturas!');
         }
     });
 
