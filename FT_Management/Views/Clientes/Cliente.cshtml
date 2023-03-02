@@ -142,7 +142,7 @@
                                         <input class="input" type="text" readonly asp-for="EmailCliente">
                                     </div>
                                     <a href="mailto:@Model.EmailCliente" target="_blank" class="button is-info"
-                                        @(Model.EmailCliente.Length < 5 ? "disabled" : "")><i
+                                    @(Model.EmailCliente.Length < 5 ? "disabled" : "")><i
                                             class="fas fa-envelope"></i></a>
                                 </div>
                             </div>
@@ -204,20 +204,20 @@
                                                 {
                                                     <tr>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().IdMarcacao)"
-                                                    onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                             <span>@item.IdMarcacao</span>
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().DataMarcacao)"
-                                                    onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                             <span>@item.DataMarcacao.ToShortDateString()</span>
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().Utilizador)"
-                                                    onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                             @Html.DisplayFor(modelItem => item.Tecnico.NomeCompleto)
 
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Marcacoes.FirstOrDefault().EstadoMarcacaoDesc)"
-                                                    onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Pedido", "Pedidos",  new { id = item.IdMarcacao, IdTecnico = item.IdTecnico, target="_blank" }))')">
                                                             @Html.DisplayFor(modelItem => item.EstadoMarcacaoDesc)
                                                         </td>
                                                     </tr>
@@ -267,11 +267,11 @@
                                                 {
                                                     <tr>
                                                         <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().IdFolhaObra)"
-                                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                             <span>@item.IdFolhaObra</span>
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.MarcaEquipamento)"
-                                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                             @Html.DisplayFor(modelItem =>
                                                     item.EquipamentoServico.MarcaEquipamento) -
                                                             @Html.DisplayFor(modelItem =>
@@ -279,18 +279,18 @@
 
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.NumeroSerieEquipamento)"
-                                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                             @Html.DisplayFor(modelItem =>
                                                     item.EquipamentoServico.NumeroSerieEquipamento)
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().DataServico)"
-                                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                             <span>@item.DataServico.ToShortDateString()</span>
                                                         </td>
                                                         <td class="is-actions-cell">
                                                             <a class="button is-outlined is-fullwidth is-primary"
-                                                        onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i
-                                                            class="fas fa-print" style="font-size:20px"></i></a>
+                                                                onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i
+                                                                    class="fas fa-print" style="font-size:20px"></i></a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -339,20 +339,20 @@
                                                 {
                                                     <tr>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().IdVisita)"
-                                                    onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                                             <span>@item.IdVisita</span>
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().DataVisita)"
-                                                    onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                                             <span>@item.DataVisita.ToShortDateString()</span>
 
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().ObsVisita)"
-                                                    onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                                             <span>@item.ObsVisita</span>
                                                         </td>
                                                         <td data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().EstadoVisita)"
-                                                    onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
+                                                            onclick="window.open('@(Url.Action("Visita", "Visitas", new { idVisita = item.IdVisita, ReturnUrl = "~/Clientes/Cliente/?IdCliente=" + Model.IdCliente + "&IdLoja=" + Model.IdLoja,  target="_blank" }))')">
                                                             <span>@item.EstadoVisita</span>
                                                         </td>
                                                     </tr>
@@ -404,26 +404,26 @@
                                                     {
                                                         <tr>
                                                             <td
-                                                    data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().IdProposta)">
+                                                                data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().IdProposta)">
                                                                 <span>@item.IdProposta</span>
                                                             </td>
                                                             <td
-                                                    data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().DataProposta)">
+                                                                data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().DataProposta)">
                                                                 <span>@item.DataProposta.ToShortDateString()</span>
 
                                                             </td>
                                                             <td
-                                                    data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().ValorProposta)">
+                                                                data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().ValorProposta)">
                                                                 <span>@item.ValorProposta €</span>
                                                             </td>
                                                             <td
-                                                    data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().EstadoProposta)">
+                                                                data-label="@Html.DisplayNameFor(model => model.Visitas.FirstOrDefault().Propostas.FirstOrDefault().EstadoProposta)">
                                                                 <span>@item.EstadoProposta</span>
                                                             </td>
                                                             <td class="is-actions-cell">
                                                                 <a class="button is-outlined is-fullwidth is-primary"
-                                                        onclick="@item.UrlProposta"><i class="fas fa-print"
-                                                            style="font-size:20px"></i></a>
+                                                                    onclick="@item.UrlProposta"><i class="fas fa-print"
+                                                                        style="font-size:20px"></i></a>
                                                             </td>
                                                         </tr>
                                                     }
@@ -467,18 +467,18 @@
                                                 @foreach (var item in Model.Equipamentos)
                                                 {
                                                     <tr
-                                                onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
+                                                        onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
                                                         <td
-                                                    data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().MarcaEquipamento)">
+                                                            data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().MarcaEquipamento)">
                                                             <span>@item.MarcaEquipamento</span>
 
                                                         </td>
                                                         <td
-                                                    data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().ModeloEquipamento)">
+                                                            data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().ModeloEquipamento)">
                                                             <span>@item.ModeloEquipamento</span>
                                                         </td>
                                                         <td
-                                                    data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().NumeroSerieEquipamento)">
+                                                            data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().NumeroSerieEquipamento)">
                                                             <span>@item.NumeroSerieEquipamento</span>
                                                         </td>
                                                     </tr>
@@ -530,13 +530,13 @@
 
         $.ajax({
             type: "POST",
-            url: "/Clientes/EmailSenhaCliente/" + id + "?loja=" + loja + "&email=" + email,
+            url: "/Clientes/EmailSenha/" + id + "?loja=" + loja + "&email=" + email,
             traditional: true,
             success: function (result) {
                 $(function () {
                     document.getElementById("btnEnviarEmailCliente").classList.remove("is-loading");
                     if (result == "Sucesso") {
-                    notify('Email enviado com sucesso!')
+                        notify('Email enviado com sucesso!')
                     } else {
                         notifyError('Ocorreu um erro ao enviar o email com a senha do cliente!')
                     }
@@ -550,7 +550,7 @@
     function GerarSenha(stamp) {
         $.ajax({
             type: "POST",
-            url: "/Clientes/GerarSenha/" + stamp,
+            url: "/Clientes/Senha/" + stamp,
             traditional: true,
             success: function (result) {
                 if (result != "") {

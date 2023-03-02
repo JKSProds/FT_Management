@@ -368,7 +368,7 @@ namespace FT_Management.Models
         {
             if (filtrar)
             {
-                return ObterClientes("SELECT cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, (select TOP 1 emailfo from u_clresp where cl.clstamp=u_clresp.clstamp) as emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl where cl.nome like '%" + filtro + "%' and no is not null order by no, estab;", false, false, false, false);
+                return ObterClientes("SELECT TOP 100 cl.clstamp, no, estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, (select TOP 1 emailfo from u_clresp where cl.clstamp=u_clresp.clstamp) as emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl where cl.nome like '%" + filtro + "%' and no is not null order by no, estab;", false, false, false, false);
             }
             return new List<Cliente>() { new Cliente() { } };
         }

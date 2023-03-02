@@ -483,9 +483,9 @@
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Clientes/ObterClientes/',
+                    url: '/Clientes/Clientes/',
                     data: { "prefix": request.term },
-                    type: "POST",
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
