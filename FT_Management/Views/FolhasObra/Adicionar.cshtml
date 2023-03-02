@@ -1130,7 +1130,7 @@
         $("#txtEquipamento").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Equipamentos/ObterEquipamentos/',
+                    url: '/Equipamentos/Equipamentos/',
                     data: { "prefix": request.term, "no": (chkDesbloquearEquipamentos.checked ? "0" : "@Model.ClienteServico.IdCliente"), "loja": (chkDesbloquearEquipamentos.checked ? "0" : "@Model.ClienteServico.IdLoja") },
                     type: "GET",
                     success: function (data) {
@@ -1176,7 +1176,7 @@
 
     function ObterEquipamentosCliente() {
         $.ajax({
-            url: '/Equipamentos/ObterEquipamentos/',
+            url: '/Equipamentos/Equipamentos/',
             data: { "prefix": "", "no": "@Model.ClienteServico.IdCliente", "loja": "@Model.ClienteServico.IdLoja" },
             type: "GET",
             success: function (data) {
@@ -1202,7 +1202,7 @@
         var Stamp = document.getElementById('txtEquipamentoStamp').value;
 
         $.ajax({
-            url: "/Equipamentos/ObterHistorico",
+            url: "/Equipamentos/Historico",
             type: "GET",
             data: "id=" + Stamp,
             dataType: "json", // type of data you're expecting from response

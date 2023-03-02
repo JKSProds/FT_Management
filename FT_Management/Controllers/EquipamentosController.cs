@@ -13,7 +13,8 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio, Tech, Comercial")]
     public class EquipamentosController : Controller
     {
-
+        //Obter lista de equipamentos com filtro do numero de serie
+        [HttpGet]
         public IActionResult Index(string Serie)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -24,22 +25,18 @@ namespace FT_Management.Controllers
             return View(phccontext.ObterEquipamentosSerie(Serie));
         }
 
-        public IActionResult Detalhes(string id)
+        //Obter um equipamento em especifico com base num stamp
+        [HttpGet]
+        public IActionResult Equipamento(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             return View(phccontext.ObterEquipamento(id));
         }
 
-        public JsonResult ObterHistorico(string id)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            return Json(new { json = phccontext.ObterHistorico(id) });
-        }
-
+        //Obter todos os equipamento com base num filtro
         [HttpGet]
-        public JsonResult ObterEquipamentos(int no, int loja, string prefix)
+        public JsonResult Equipamentos(int no, int loja, string prefix)
         {
             if (string.IsNullOrEmpty(prefix)) prefix = "";
 
@@ -49,8 +46,18 @@ namespace FT_Management.Controllers
             return Json(phccontext.ObterEquipamentos(new Cliente() { IdCliente = no, IdLoja = loja }).Where(e => e.NumeroSerieEquipamento.ToLower().Contains(prefix.ToLower())).OrderBy(e => e.NumeroSerieEquipamento).ToList());
         }
 
+        //Obter historico de um equipamento em especifico
+        [HttpGet]
+        public JsonResult Historico(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(new { json = phccontext.ObterHistorico(id) });
+        }
+
+        //Criar Codigo para atualizar cliente
         [HttpPost]
-        public ActionResult CriarCodigo(string id, string equipamento, string cliente)
+        public ActionResult Codigo(string id, string equipamento, string cliente)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -60,7 +67,7 @@ namespace FT_Management.Controllers
 
             if (this.User.IsInRole("Admin"))
             {
-                AssociarCliente(e.EquipamentoStamp, cl.ClienteStamp, "");
+                Cliente(e.EquipamentoStamp, cl.ClienteStamp, "");
                 return Content("Refresh");
             }
             else
@@ -83,8 +90,10 @@ namespace FT_Management.Controllers
 
             return Content("OK");
         }
+
+        //Associar cliente ao um equipamento
         [HttpPost]
-        public ActionResult AssociarCliente(string id, string stamp, string codigo)
+        public ActionResult Cliente(string id, string stamp, string codigo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
