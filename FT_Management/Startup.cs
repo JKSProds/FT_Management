@@ -46,7 +46,7 @@ namespace FT_Management
             services.AddSingleton<IJobFactory, SingletonJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            if (Environment.GetEnvironmentVariable("DEV") != "1")
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
             {
                 if (FT_ManagementContext.ObterParam("EnvioEmailFerias", Configuration.GetConnectionString("DefaultConnection")) == "1")
                 {
@@ -113,7 +113,7 @@ namespace FT_Management
 
             CultureInfo.DefaultThreadCurrentCulture = customCulture;
 
-            if (env.IsDevelopment() || Environment.GetEnvironmentVariable("DEV") == "1")
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
