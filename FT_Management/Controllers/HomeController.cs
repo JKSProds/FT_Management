@@ -45,7 +45,7 @@ namespace FT_Management.Controllers
         public IActionResult RejeitarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            context.AtualizarCodigo(id, 1, int.Parse(this.User.Claims.First().Value));
+            context.AtualizarCodigo(id, 2, int.Parse(this.User.Claims.First().Value));
             return RedirectToAction("ValidarCodigo", "Home", new { id = id });
         }
         public IActionResult AcessoNegado()
