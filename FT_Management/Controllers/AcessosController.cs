@@ -11,6 +11,7 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio")]
     public class AcessosController : Controller
     {
+        //Obter todos os acessos de uma data em especifico
         [HttpGet]
         public ActionResult Index(string Data)
         {
@@ -24,6 +25,8 @@ namespace FT_Management.Controllers
             ViewData["Data"] = Data;
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
         }
+
+        //Obter ultimo acesso de um utilizador em especifico
         [HttpGet]
         public JsonResult Acesso(string api, int id)
         {
@@ -38,6 +41,7 @@ namespace FT_Management.Controllers
             return Json(context.ObterUltimoAcesso(u.Id));
         }
 
+        //Criar um acesso
         [HttpPost]
         public JsonResult Acesso(string api, int id, int tipo, int pin)
         {
@@ -72,6 +76,7 @@ namespace FT_Management.Controllers
             return Json(res);
         }
 
+        //Obter todos os acessos em formato xls de uma data em especifico
         [HttpGet]
         public virtual ActionResult Acessos(string data)
         {
@@ -95,6 +100,7 @@ namespace FT_Management.Controllers
             return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
+        //Apagar um acesso em especifico
         [HttpDelete]
         public JsonResult Acesso(string id)
         {
