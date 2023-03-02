@@ -19,70 +19,25 @@ namespace FT_Management.Controllers
 {
     public class UtilizadoresController : Controller
     {
+        //Obter todos os utilizadores
         [Authorize(Roles = "Admin")]
+        [HttpGet]
         public IActionResult Index()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             return View(context.ObterListaUtilizadores(false, false));
         }
-        public IActionResult Login(string nome, string password, string ReturnUrl)
-        {
-            Utilizador utilizador = new Utilizador { NomeUtilizador = nome, Password = password };
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            if (nome != null && password != null)
-            {
-
-                List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
-
-                if (LstUtilizadores.Count == 0) ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
-
-                foreach (var user in LstUtilizadores)
-                {
-                    var passwordHasher = new PasswordHasher<string>();
-                    if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
-                    {
-                        if (Environment.GetEnvironmentVariable("DEV") == "1" && !user.Dev) return Forbid();
-                        var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.Id.ToString()),
-                        new Claim(ClaimTypes.GivenName, user.NomeCompleto),
-                        new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
-                        new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
-                        new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
-                        new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
-                        new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
-
-                    };
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-                        context.AdicionarLog(user.Id, "LOGIN SUCESSO", 4);
-
-                        if (ReturnUrl != "" && ReturnUrl != null)
-                        {
-                            Response.Redirect(ReturnUrl, true);
-                        }
-                        else
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Password errada!");
-                        context.AdicionarLog(user.Id, "LOGIN SEM SUCESSO", 4);
-                    }
-                }
-            }
-            return View();
-        }
+        //Obtem view para login
         [HttpGet]
         public IActionResult Login(string ReturnUrl)
         {
             ViewData["ReturnUrl"] = ReturnUrl;
             return View();
         }
+
+        //Efetua o login do utilizador com 2FA
         [HttpPost]
         public async Task<IActionResult> Login(Utilizador utilizador, string ReturnUrl, int first, int second, int third, int fourth, int fifth, int sixth)
         {
@@ -175,36 +130,14 @@ namespace FT_Management.Controllers
             return View();
         }
 
-        [HttpGet]
-        public bool Check2FA(string id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            return !string.IsNullOrEmpty(context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == id).DefaultIfEmpty(new Utilizador()).First().SecondFactorAuthStamp);
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult Logs(int id, string Data)
-        {
-            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewData["Data"] = Data;
-
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            ViewData["NomeUtilizador"] = context.ObterUtilizador(id).NomeUtilizador;
-
-            return View(context.ObterListaLogs(id).Where(l => l.Data > DateTime.Parse(Data) && l.Data < DateTime.Parse(Data).AddDays(1)));
-        }
-
+        //Obtem um utilizador em especifico
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
-        public IActionResult Editar(int id)
+        [HttpGet]
+        public IActionResult Utilizador(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
             if (!User.IsInRole("Admin") && id != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("Editar", new { id = int.Parse(this.User.Claims.First().Value) });
-
-            List<Viatura> LstViaturas = context.ObterViaturas();
-            LstViaturas.Insert(0, new Viatura() { Matricula = "N/D" });
-            ViewBag.Viaturas = LstViaturas.Select(l => new SelectListItem() { Value = l.Matricula, Text = l.Matricula });
 
             List<Zona> LstZonas = context.ObterZonas();
             LstZonas.Insert(0, new Zona() { Id = 0, Valor = "N/D" });
@@ -222,103 +155,86 @@ namespace FT_Management.Controllers
             ViewBag.Notificacoes = LstNotificacoes.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
 
             Utilizador u = context.ObterUtilizador(id);
-            if (string.IsNullOrEmpty(u.SecondFactorAuthStamp))
-            {
-                String stamp = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
+#if !DEBUG
+                if (string.IsNullOrEmpty(u.SecondFactorAuthStamp))
+                {
+                    String stamp = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
 
-                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-                SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", u.NomeUtilizador, stamp, false, 3);
+                    TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                    SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", u.NomeUtilizador, stamp, false, 3);
 
-                u.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
-                u.SecondFactorAuthCode = setupInfo.ManualEntryKey;
-                ViewData["2FASTAMP"] = stamp;
-            }
+                    u.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
+                    u.SecondFactorAuthCode = setupInfo.ManualEntryKey;
+                    ViewData["2FASTAMP"] = stamp;
+                }
+#endif
             return View(u);
         }
+
+        //Atualiza um utilizador em especifico
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
-        public IActionResult AtualizarUtilizador(int id, Utilizador utilizador)
+        [HttpPut]
+        public ContentResult Utilizador(int id, Utilizador utilizador, int enable, int acessos, int dev, int admin, int api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(id);
+            if ((u.Admin & !this.User.IsInRole("Master")) && u.Id != int.Parse(this.User.Claims.First().Value.ToString())) return Content("");
 
-            u.Pin = utilizador.Pin;
-            u.Iniciais = utilizador.Iniciais;
-            u.CorCalendario = utilizador.CorCalendario;
-            u.TipoMapa = utilizador.TipoMapa;
-            u.Telemovel = utilizador.Telemovel;
-            u.DataNascimento = utilizador.DataNascimento;
-            u.TipoTecnico = utilizador.TipoTecnico;
-            u.Zona = utilizador.Zona;
-            u.ChatToken = utilizador.ChatToken;
-            u.NotificacaoAutomatica = utilizador.NotificacaoAutomatica;
-
-            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
-            context.NovoUtilizador(u);
-
-            return RedirectToAction("Editar", new { id = u.Id });
-        }
-        [HttpPost]
-        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
-        public IActionResult Atualizar2FA(int id, string code, string stamp)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
-            u.SecondFactorAuthStamp = "";
-
-            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-            if (tfa.ValidateTwoFactorPIN(stamp, code))
+            if (utilizador.TipoMapa > 0)
             {
-                u.SecondFactorAuthStamp = stamp;
-                if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
-                context.NovoUtilizador(u);
+                u.Pin = utilizador.Pin == null ? "" : utilizador.Pin;
+                u.Iniciais = utilizador.Iniciais == null ? "" : utilizador.Iniciais;
+                u.CorCalendario = utilizador.CorCalendario == null ? "" : utilizador.CorCalendario;
+                u.TipoMapa = utilizador.TipoMapa;
+                u.Telemovel = utilizador.Telemovel == null ? "" : utilizador.Telemovel;
+                u.DataNascimento = utilizador.DataNascimento;
+                u.TipoTecnico = utilizador.TipoTecnico;
+                u.Zona = utilizador.Zona;
+                u.ChatToken = utilizador.ChatToken == null ? "" : utilizador.ChatToken;
+                u.NotificacaoAutomatica = utilizador.NotificacaoAutomatica;
             }
 
-            return RedirectToAction("Editar", new { id = u.Id });
-        }
-        [HttpPost]
-        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
-        public IActionResult Remover2FA(int id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
+            if (enable > 0) u.Enable = enable == 1;
+            if (acessos > 0) u.Acessos = acessos == 1;
+            if (dev > 0) u.Dev = dev == 1;
+            if (admin > 0) u.Admin = admin == 1;
 
-            u.SecondFactorAuthStamp = "";
+            if (api == 1) return Content(context.NovaApiKey(u));
 
+            context.NovoUtilizador(u);
             if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
-            context.NovoUtilizador(u);
 
-            return RedirectToAction("Editar", new { id = u.Id });
+            return Content("1");
         }
-        [HttpPost]
-        public IActionResult AtualizarImagem(int id, IFormFile file)
+
+        //Apaga um utilizador em especifico
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        public ContentResult Utilizador(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(id));
 
-            if (file.Length > 0)
-            {
-                FicheirosContext.CriarImagemUtilizador(file, u.NomeUtilizador);
-            }
+            if (!u.Admin || this.User.IsInRole("Master")) context.ApagarUtilizador(u);
 
-            u.ImgUtilizador = "/img/" + u.NomeUtilizador + "/" + file.FileName;
-
-            context.NovoUtilizador(u);
-            FicheirosContext.ObterImagensUtilizador();
-
-            return RedirectToAction("Logout");
+            return Content("1");
         }
+
+        //Atualizar senha do utilizador
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
-        public IActionResult AtualizarSenha(int id, string password_current, string password, string password_confirmation)
+        [HttpPut]
+        public ContentResult Senha(int id, string password_current, string password, string password_confirmation)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(id);
+            string res = "";
 
-            if (password != password_confirmation) ModelState.AddModelError("", "Passwords não condizem");
-            if (password.Length < 8) ModelState.AddModelError("", "Password demasiado pequena! Tem de ter pelo menos 8 digitos!");
-            if (!password.Any(char.IsUpper)) ModelState.AddModelError("", "Tem de ter pelo menos uma letra maiscula!");
-            if (!password.Any(char.IsNumber)) ModelState.AddModelError("", "Tem de ter pelo menos um número");
+            if (password != password_confirmation) res += "Passwords não condizem\r\n";
+            if (password.Length < 8) res += "Password demasiado pequena! Tem de ter pelo menos 8 digitos!\r\n";
+            if (!password.Any(char.IsUpper)) res += "Tem de ter pelo menos uma letra maiscula!\r\n";
+            if (!password.Any(char.IsNumber)) res += "Tem de ter pelo menos um número\r\n";
 
-            if (ModelState.IsValid)
+            if (res == "")
             {
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, u.Password, password_current) == PasswordVerificationResult.Success)
@@ -328,115 +244,17 @@ namespace FT_Management.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Password atual incorreta!");
-                    return View("Editar", u);
+                    res += "Password atual incorreta!\r\n";
                 }
             }
-            else
-            {
-                return View("Editar", u);
-            }
 
-            return RedirectToAction("Logout");
+            return Content(res);
         }
 
-        [HttpPost]
+        //Remove a senha do utilizador e coloca outra
+        [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public IActionResult AlterarEstado(int id, bool estado)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            Utilizador u = context.ObterUtilizador(id);
-
-            if (!u.Admin || this.User.IsInRole("Master")) u.Enable = estado;
-
-            context.NovoUtilizador(u);
-
-            return Content("Ok");
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AtualizarPermissoes(int id, string[] perms)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            return Content("NOk");
-        }
-
-        [Authorize(Roles = "Admin")]
-        public JsonResult ObterPermissoes()
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            return Json(context.ObterPermissoes());
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult Apagar(int id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
-
-            if (!u.Admin || this.User.IsInRole("Master")) context.ApagarUtilizador(u);
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AlterarAdmin(int id, bool admin)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            Utilizador u = context.ObterUtilizador(id);
-            if (this.User.IsInRole("Master")) u.Admin = admin;
-
-            context.NovoUtilizador(u);
-
-            return Content("Ok");
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AlterarAcessos(int id, bool acessos)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            Utilizador u = context.ObterUtilizador(id);
-            if (this.User.IsInRole("Master")) u.Acessos = acessos;
-
-            context.NovoUtilizador(u);
-
-            return Content("Ok");
-        }
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AlterarDev(int id, bool dev)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-
-            Utilizador u = context.ObterUtilizador(id);
-            if (this.User.IsInRole("Master")) u.Dev = dev;
-
-            context.NovoUtilizador(u);
-
-            return Content("Ok");
-        }
-        public IActionResult GerarApiKey(int id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            if (!this.User.IsInRole("Admin")) id = int.Parse(this.User.Claims.First().Value.ToString());
-
-            Utilizador u = context.ObterUtilizador(id);
-            if ((u.Admin & !this.User.IsInRole("Master")) && u.Id != int.Parse(this.User.Claims.First().Value.ToString())) return Content("");
-            return Content(context.NovaApiKey(u));
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult ResetSenha(int id, string senha)
+        public IActionResult Senha(int id, string senha)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var passwordHasher = new PasswordHasher<string>();
@@ -453,13 +271,105 @@ namespace FT_Management.Controllers
             return Content("Ok");
         }
 
-        public JsonResult NovaSugestao(string Obs, string file)
+        //Obtem o 2FA
+        [HttpGet]
+        public bool SecondFA(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            MailContext.EnviarEmailSugestao(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), Obs, new System.Net.Mail.Attachment(new MemoryStream(Convert.FromBase64String(file.Split(',').Last())), "PrintScreen_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".png"));
-            return Json("Ok");
+            return !string.IsNullOrEmpty(context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == id).DefaultIfEmpty(new Utilizador()).First().SecondFactorAuthStamp);
         }
+
+        //Atualiza o 2FA
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        [HttpPost]
+        public IActionResult SecondFA(int id, string code, string stamp)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+            u.SecondFactorAuthStamp = "";
+
+            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+            if (tfa.ValidateTwoFactorPIN(stamp, code))
+            {
+                u.SecondFactorAuthStamp = stamp;
+                if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+                context.NovoUtilizador(u);
+            }
+
+            return RedirectToAction("Editar", new { id = u.Id });
+        }
+
+        //Remove o 2 FA
+        [HttpDelete]
+        [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
+        public IActionResult SecondFA(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+
+            u.SecondFactorAuthStamp = "";
+
+            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+            context.NovoUtilizador(u);
+
+            return RedirectToAction("Editar", new { id = u.Id });
+        }
+
+        //Atualiza a imagem do utilizador
+        [HttpPut]
+        public IActionResult Imagem(int id, IFormFile file)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(id);
+
+            if (file.Length > 0)
+            {
+                FicheirosContext.CriarImagemUtilizador(file, u.NomeUtilizador);
+            }
+
+            u.ImgUtilizador = "/img/" + u.NomeUtilizador + "/" + file.FileName;
+
+            context.NovoUtilizador(u);
+            FicheirosContext.ObterImagensUtilizador();
+
+            return RedirectToAction("Logout");
+        }
+
+        //Obtem as permissoes todas
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public JsonResult Permissoes()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return Json(context.ObterPermissoes());
+        }
+
+        //Atualiza as permissoes do user
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Permissoes(int id, string[] perms)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            return Content("0");
+        }
+
+        //Obtem os logs do utilziador numa data em especifico
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Logs(int id, string Data)
+        {
+            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
+            ViewData["Data"] = Data;
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewData["NomeUtilizador"] = context.ObterUtilizador(id).NomeUtilizador;
+
+            return View(context.ObterListaLogs(id).Where(l => l.Data > DateTime.Parse(Data) && l.Data < DateTime.Parse(Data).AddDays(1)));
+        }
+
 
         public async Task<IActionResult> Logout()
         {

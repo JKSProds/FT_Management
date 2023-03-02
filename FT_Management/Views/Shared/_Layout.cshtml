@@ -342,7 +342,7 @@
                                 @if (!User.IsInRole("Cliente"))
                                 {
                                     <div class="navbar-item">
-                                        <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Editar">
+                                        <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Utilizador">
                                             <span class="icon">
                                                 <i class="fas fa-user"></i>
                                             </span>
@@ -485,7 +485,7 @@
     function EnviarSugestao(base64) {
 
         $.ajax({
-            url: '/Utilizadores/NovaSugestao',
+            url: '/Home/Sugestao',
             type: "POST",
             data: { "obs": document.getElementById('txtObs').value, "file": base64 },
             success: function (data) {

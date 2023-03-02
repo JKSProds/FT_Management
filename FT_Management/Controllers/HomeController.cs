@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Dynamic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace FT_Management.Controllers
 {
@@ -73,6 +74,15 @@ namespace FT_Management.Controllers
         {
             applicationLifetime.StopApplication();
             return View();
+        }
+
+        [HttpPost]
+        public JsonResult Sugestao(string Obs, string file)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            MailContext.EnviarEmailSugestao(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), Obs, new System.Net.Mail.Attachment(new MemoryStream(Convert.FromBase64String(file.Split(',').Last())), "PrintScreen_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".png"));
+            return Json("Ok");
         }
     }
 }

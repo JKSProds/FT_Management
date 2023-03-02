@@ -148,7 +148,7 @@
                     <hr>
                     @if (string.IsNullOrEmpty(Model.SecondFactorAuthStamp))
                     {
-                        <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="Atualizar2FA"
+                        <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="SecondFA"
                         asp-route-id="@Model.Id">
                             <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
                             <input hidden value=@ViewData["2FASTAMP"] name="stamp">
@@ -185,7 +185,7 @@
                     }
                     else
                     {
-                        <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="Remover2FA"
+                        <form method="DELETE" style="width:100%" asp-controller="Utilizadores" asp-action="SecondFA"
                         asp-route-id="@Model.Id">
                             <button type="submit" class="button is-danger is-large is-fullwidth">
                                 <span> Remover </span>
@@ -275,7 +275,7 @@
                                     <img class="is-rounded" src="@Model.ImgUtilizador" alt="user_image">
                                 </figure>
                                 <div class="form-group">
-                                    <form action="/Utilizadores/AtualizarImagem/@Model.Id" class="dropzone"
+                                    <form action="/Utilizadores/Imagem/@Model.Id" method="PUT" class="dropzone"
                                         id="dropImage">
                                         <div class="dz-message needsclick">
                                             Largue uma imagem aqui para fazer o upload
@@ -285,8 +285,8 @@
                             </div>
                         </div>
                     </div>
-                    <form method="post" style="width:100%" asp-controller="Utilizadores"
-                        asp-action="AtualizarUtilizador">
+                    <form method="put" style="width:100%" id="frmUtilizador" asp-controller="Utilizadores"
+                        asp-action="Utilizador">
                         <input type="hidden" class="input" asp-for="Id" name="id">
                         <div class="field is-horizontal">
                             <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
@@ -451,7 +451,8 @@
                                         <div class="field-body">
                                             <div class="field is-grouped">
                                                 <div class="control" style="width:100%">
-                                                    <button type="submit" class="button is-info is-fullwidth is-large"
+                                                    <button type="button" onclick="AtualizarUtilizador()"
+                                                        class="button is-info is-fullwidth is-large"
                                                         control-id="ControlID-17">
                                                         <span> Atualizar </span>
                                                     </button>
@@ -473,7 +474,7 @@
             </p>
         </header>
         <div class="card-content">
-            <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="AtualizarSenha">
+            <form method="put" style="width:100%" asp-controller="Utilizadores" asp-action="Senha" id="frmSenha">
                 <input type="hidden" class="input" asp-for="Id" name="id">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal"><label class="label">Senha Atual</label></div>
@@ -530,7 +531,8 @@
                     <div class="field-body">
                         <div class="field">
                             <div class="control">
-                                <button type="submit" class="button is-info" control-id="ControlID-22">
+                                <button type="button" onclick="ResetSenha();" class="button is-info"
+                                    control-id="ControlID-22">
                                     <span> Atualizar </span>
                                 </button>
                             </div>
@@ -564,11 +566,49 @@
 
     }
 
+    function ResetSenha() {
+        $.ajax({
+            type: "PUT",
+            url: "/Utilizadores/Senha",
+            data: $("#frmSenha").serialize(),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                $(function () {
+                    if (result == "") {
+                        window.location.reload();
+                        
+                    } else {
+                        notifyError(result);
+                    }
+                });
+            }
+        });
+    }
+
+    function AtualizarUtilizador() {
+        $.ajax({
+            type: "PUT",
+            url: "/Utilizadores/Utilizador",
+            data: $("#frmUtilizador").serialize(),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                $(function () {
+                    if (result == "1") {
+                        notify("Utilizador atualizado com sucesso!");
+                        window.location.reload();
+                    } else {
+                        notifyError("Erro ao atualizar o utilizador");
+                    }
+                });
+            }
+        });
+    }
 
     function GerarApiKey() {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/GerarApiKey/" + document.getElementById("txtHiddenIdUtilizador").value,
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + document.getElementById("txtHiddenIdUtilizador").value,
+            data: { api: 1 },
             traditional: true,
             success: function (result) {
                 if (result != "") {

@@ -67,19 +67,19 @@ else
                                     </div>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.Id)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>#@item.Id</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.NomeCompleto)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>@item.NomeCompleto</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.EmailUtilizador)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>@item.EmailUtilizador</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.UltimoAcesso)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                                    onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>@item.UltimoAcesso</span>
                                 </td>
                                 @if (this.User.IsInRole("Master") || !item.Admin)
@@ -282,10 +282,9 @@ else
     function ObterPermissoes() {
         $.ajax({
             type: "GET",
-            url: "/Utilizadores/ObterPermissoes",
+            url: "/Utilizadores/Permissoes",
             traditional: true,
             success: function (result) {
-                console.log(result);
                 document.getElementById('txtPermissoes').BulmaTagsInput().options.source = result;
             }
         });
@@ -299,16 +298,16 @@ else
     function AtualizarPermissoesUtilizador() {
         id = document.getElementById("hiddenIdUtilizador").value;
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AtualizarPermissoes/" + id,
+            type: "PUT",
+            url: "/Utilizadores/Permissoes/" + id,
             data: { perms: document.getElementById('txtPermissoes').BulmaTagsInput().items },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Permissões do Utilizador atualizadas com sucesso!');
                     } else {
-                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                        notifyError('Ocorreu um erro ao atualizar as permissões do utilizador!');
                     }
                     Bulma('#modalPermissoes').modal().close();
                 });
@@ -318,13 +317,13 @@ else
 
     function AtualizarEnableUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarEstado/" + id,
-            data: { estado: document.getElementById('chkEnable_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { enable: document.getElementById('chkEnable_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor do Estado do Utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -336,13 +335,13 @@ else
 
     function AtualizarAdminUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarAdmin/" + id,
-            data: { admin: document.getElementById('chkAdmin_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { admin: document.getElementById('chkAdmin_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor de Admin do Utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -354,13 +353,13 @@ else
 
     function AtualizarAcessosUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarAcessos/" + id,
-            data: { admin: document.getElementById('chkAcessos_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { acessos: document.getElementById('chkAcessos_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor de acessos do utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -372,13 +371,13 @@ else
 
     function AtualizarDevUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarDev/" + id,
-            data: { dev: document.getElementById('chkDev_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { dev: document.getElementById('chkDev_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor de Developer do utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -399,8 +398,8 @@ else
 
     function ResetSenha() {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/ResetSenha/" + document.getElementById("hiddenIdUtilizador").value,
+            type: "DELETE",
+            url: "/Utilizadores/Senha/" + document.getElementById("hiddenIdUtilizador").value,
             data: { senha: document.getElementById("txtResetSenha").value },
             traditional: true,
             success: function (result) {
@@ -418,11 +417,11 @@ else
 
     function ApagarUtilizador() {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/Apagar/" + document.getElementById("hiddenIdUtilizador").value,
+            type: "DELETE",
+            url: "/Utilizadores/Utilizador/" + document.getElementById("hiddenIdUtilizador").value,
             traditional: true,
             success: function (result) {
-                window.location.reload();
+                if (result == "1") window.location.reload();
             }
         });
     }
