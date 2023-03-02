@@ -60,9 +60,9 @@ namespace FT_Management.Controllers
 
         //Criar ferias com base no utilizador e nada data, saltando feriados e fins de semanas 
         [HttpPost]
-        public void Ferias(string datainicio, string datafim, int idutilizador)
+        public ContentResult Ferias(string datainicio, string datafim, int idutilizador)
         {
-            if (idutilizador != int.Parse(this.User.Claims.First().Value.ToString()) && !this.User.IsInRole("Admin")) return Forbid();
+            if (idutilizador != int.Parse(this.User.Claims.First().Value.ToString()) && !this.User.IsInRole("Admin")) return Content("0");
 
             DateTime dataInicio = DateTime.Parse(datainicio);
             DateTime dataFim = DateTime.Parse(datafim);
@@ -119,6 +119,8 @@ namespace FT_Management.Controllers
             } while (dataAtual <= dataFim);
 
             context.CriarFerias(LstFerias);
+
+            return Content("1");
         }
 
         //Apagar um registo de ferias

@@ -385,7 +385,11 @@ else
                     traditional: true,
                     success: function (result) {
                         $(function () {
-                            window.location.reload();
+                            if (result == "1") {
+                                window.location.reload();
+                            } else {
+                                notifyError("Ocorreu um erro ao adicionar as ferias!");
+                            }
                         });
                     }
                 });
