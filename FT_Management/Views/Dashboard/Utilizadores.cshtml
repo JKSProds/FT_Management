@@ -190,7 +190,7 @@
   function RegistarEntrada() {
     $.ajax({
       type: "POST",
-      url: "/Acessos/Adicionar",
+      url: "/Acessos/Acesso",
       data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "1", "pin": document.getElementById('txtInputPin').value },
       success: function (result) {
         $(function () {
@@ -213,7 +213,7 @@
   function RegistarSaida() {
     $.ajax({
       type: "POST",
-      url: "/Acessos/Adicionar",
+      url: "/Acessos/Acesso",
       data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "2", "pin": document.getElementById('txtInputPin').value },
       success: function (result) {
         $(function () {
@@ -237,7 +237,7 @@
   function EstadoAtual() {
     $.ajax({
       type: "GET",
-      url: "/Acessos/Obter/" + document.getElementById('txtUtilizadorSelecionado').value,
+      url: "/Acessos/Acesso/" + document.getElementById('txtUtilizadorSelecionado').value,
       data: { "api": '@ViewData["API"]' },
       success: function (result) {
         $(function () {

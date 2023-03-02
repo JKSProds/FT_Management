@@ -11,6 +11,7 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio")]
     public class AcessosController : Controller
     {
+        [HttpGet]
         public ActionResult Index(string Data)
         {
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
@@ -23,8 +24,8 @@ namespace FT_Management.Controllers
             ViewData["Data"] = Data;
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
         }
-        [AllowAnonymous]
-        public JsonResult Obter(string api, int id)
+        [HttpGet]
+        public JsonResult Acesso(string api, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -37,8 +38,8 @@ namespace FT_Management.Controllers
             return Json(context.ObterUltimoAcesso(u.Id));
         }
 
-        [AllowAnonymous]
-        public JsonResult Adicionar(string api, int id, int tipo, int pin)
+        [HttpPost]
+        public JsonResult Acesso(string api, int id, int tipo, int pin)
         {
             List<string> res = new List<string>() { "0", "Erro" };
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -71,7 +72,8 @@ namespace FT_Management.Controllers
             return Json(res);
         }
 
-        public virtual ActionResult ExportarListagemAcessos(string data)
+        [HttpGet]
+        public virtual ActionResult Acessos(string data)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
@@ -93,13 +95,14 @@ namespace FT_Management.Controllers
             return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
-        public ActionResult Apagar(string id)
+        [HttpDelete]
+        public JsonResult Acesso(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             context.ApagarAcesso(int.Parse(id));
 
-            return RedirectToAction("Index");
+            return Json("1");
         }
     }
 }
