@@ -113,6 +113,7 @@ namespace FT_Management
 
             app.Lifetime.ApplicationStarted.Register(() =>
             {
+                app.Logger.LogDebug("MODO DEBUG ATIVO");
                 Console.WriteLine("Iniciada a aplicação!");
             });
 
