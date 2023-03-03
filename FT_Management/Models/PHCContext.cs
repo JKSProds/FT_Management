@@ -606,7 +606,7 @@
         //EM DESENVOLVIMENTO
         public List<string> CriarFolhaObra(FolhaObra fo)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -663,13 +663,14 @@
                         }
                     }
 
-
                     //GERAR AT
                     res = CriarAT(fo);
 
                     //Obter Folha de Obra
                     fo = ObterFolhaObra(fo.StampFO);
-                    res[1] = fo.IdFolhaObra.ToString();
+                    res[1] = fo.IdAT;
+                    res[3] = fo.IdFolhaObra.ToString();
+
                     FT_ManagementContext.AdicionarLog(fo.Utilizador.Id, "Folha de Obra criada com sucesso! - Nº " + fo.IdFolhaObra.ToString() + ", " + fo.ClienteServico.NomeCliente + " pelo utilizador " + fo.Utilizador.NomeCompleto, 5);
                 }
                 else
@@ -688,7 +689,7 @@
 
         public List<string> CriarIntervencao(Intervencao i, FolhaObra fo)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -732,7 +733,7 @@
         }
         public List<string> CriarPecaIntervencao(Produto p, Intervencao i, FolhaObra fo)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -808,7 +809,7 @@
         }
         public List<string> CriarAT(FolhaObra fo)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);

@@ -90,15 +90,17 @@
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
                 if (fo.EstadoFolhaObra == 4)
                 {
-                    m.EstadoMarcacaoDesc = "Reagendado";
+                    m.EstadoMarcacaoDesc = "Reagendar";
                     fo.EstadoFolhaObra = 2;
                 }
 
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)
                 {
+                    fo.IdAT = res[1].ToString();
                     fo.StampFO = res[2].ToString();
-                    fo.IdFolhaObra = int.Parse(res[1]);
+                    fo.IdFolhaObra = int.Parse(res[3]);
+                    fo.RubricaCliente = fo.RubricaCliente.Split(",").Last();
 
                     phccontext.AtualizaMarcacao(m);
                     phccontext.FecharFolhaObra(fo);

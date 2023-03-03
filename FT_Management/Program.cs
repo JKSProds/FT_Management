@@ -114,7 +114,7 @@ namespace FT_Management
 
             app.Lifetime.ApplicationStarted.Register(() =>
             {
-                app.Logger.LogInformation("WebApp Iniciada. Versão: {1}. Aplicação desenvolvida por {2} - {3}", app.GetType().Assembly.GetName().Version.ToString(), "Jorge Monteiro", "JKSProds - Software");
+                app.Logger.LogInformation("WebApp Iniciada. .NET: {1}. Aplicação desenvolvida por {2} - {3}", app.GetType().Assembly.GetName().Version.ToString(), "Jorge Monteiro", "JKSProds - Software");
             });
 
             app.Lifetime.ApplicationStopping.Register(() =>
