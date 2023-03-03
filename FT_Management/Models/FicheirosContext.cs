@@ -6,6 +6,7 @@
         private static string CaminhoServerAnexos = "S:\\Assistencias_Tecnicas\\";
         private static string CaminhoImagensProduto = "S:\\Imagens\\EQUIPAMENTOS\\";
         private static string CaminhoImagensUtilizador = "S:\\Imagens\\UTILIZADORES\\";
+        private static string CaminhoTemporario = "S:\\WebApp\\";
 
         private static bool CriarFicheiro(string Caminho, IFormFile ficheiro)
         {
@@ -75,15 +76,22 @@
             return CriarFicheiro(FormatLinuxServer(FullPath + ficheiro.FileName), ficheiro);
         }
 
-        public static void ObterImagensUtilizador()
+        public static void GestaoFicheiros(bool ImagensUtilizador, bool Temp)
         {
 #if !DEBUG
-            if (Directory.Exists(FormatLinuxServer(CaminhoImagensUtilizador)))
+            if (Directory.Exists(FormatLinuxServer(CaminhoImagensUtilizador)) && ImagensUtilizador)
             {
                 CloneDirectory(FormatLinuxServer(CaminhoImagensUtilizador), FormatLinuxServer(Directory.GetCurrentDirectory() + "\\wwwroot\\img\\"));
             }
-              
 #endif
+
+            if (Directory.Exists(FormatLinuxServer(CaminhoTemporario)) && Temp)
+            {
+                foreach (FileInfo file in new DirectoryInfo(FormatLinuxServer(CaminhoTemporario)).EnumerateFiles())
+                {
+                    file.Delete();
+                }
+            }
         }
 
         private static void CloneDirectory(string root, string dest)
@@ -103,6 +111,25 @@
             {
                 File.Copy(file, Path.Combine(dest, Path.GetFileName(file)));
             }
+        }
+
+        private static void MoveFile(string source, string dest)
+        {
+            File.Move(source, dest);
+        }
+
+        public static string CriarFicheiroTemporario(string nome, IFormFile ficheiro)
+        {
+            string res = FormatLinuxServer(CaminhoTemporario + nome);
+            return CriarFicheiro(res, ficheiro) ? nome : "";
+        }
+        public static bool ExisteFicheiroTemporario(string nome)
+        {
+            return File.Exists(FormatLinuxServer(CaminhoTemporario + nome));
+        }
+        public static void MoverFicheiroTemporario(string source, string dest)
+        {
+            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source)) MoveFile(FormatLinuxServer(CaminhoTemporario + source), FormatLinuxServer(dest));
         }
     }
 }

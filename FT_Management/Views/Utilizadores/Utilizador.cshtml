@@ -162,7 +162,7 @@
                                 <div class="field-body">
                                     <div class="field">
                                         <div class="control"><input class="input" readonly
-                                                value="@Model.SecondFactorAuthCode">
+                                            value="@Model.SecondFactorAuthCode">
                                         </div>
                                     </div>
                                 </div>
@@ -172,7 +172,7 @@
                                 <div class="field-body">
                                     <div class="field">
                                         <div class="control"><input class="input" placeholder="Código" type="tel"
-                                                name="code">
+                                            name="code">
                                         </div>
                                     </div>
                                 </div>
@@ -275,7 +275,7 @@
                                     <img class="is-rounded" src="@Model.ImgUtilizador" alt="user_image">
                                 </figure>
                                 <div class="form-group">
-                                    <form action="/Utilizadores/Imagem/@Model.Id" method="PUT" class="dropzone"
+                                    <form action="/Utilizadores/Imagem/@Model.Id" method="POST" class="dropzone"
                                         id="dropImage">
                                         <div class="dz-message needsclick">
                                             Largue uma imagem aqui para fazer o upload
@@ -576,7 +576,7 @@
                 $(function () {
                     if (result == "") {
                         window.location.reload();
-                        
+
                     } else {
                         notifyError(result);
                     }

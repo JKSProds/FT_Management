@@ -74,6 +74,7 @@
         public bool FecharMarcacao { get; set; }
         public double ValorTotal { get { return PecasServico.Sum(p => p.Valor * p.Stock_Fisico); } }
         public double KmsDeslocacao { get; set; }
+        public string FicheirosAnexo { get; set; }
 
         public FolhaObra()
         {

@@ -57,8 +57,8 @@ namespace FT_Management
                 }
             }
 
-            //COPIAR IMAGENS UTILIZADOR
-            FicheirosContext.ObterImagensUtilizador();
+            //COPIAR IMAGENS UTILIZADOR && APAGAR FILES DA PASTE TEMPORARIA
+            FicheirosContext.GestaoFicheiros(true, true);
 
             builder.Services.AddHostedService<QuartzHostedService>();
 

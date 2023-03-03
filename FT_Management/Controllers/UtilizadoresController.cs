@@ -300,7 +300,7 @@
         }
 
         //Atualiza a imagem do utilizador
-        [HttpPut]
+        [HttpPost]
         public IActionResult Imagem(int id, IFormFile file)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -314,7 +314,7 @@
             u.ImgUtilizador = "/img/" + u.NomeUtilizador + "/" + file.FileName;
 
             context.NovoUtilizador(u);
-            FicheirosContext.ObterImagensUtilizador();
+            FicheirosContext.GestaoFicheiros(true, false);
 
             return RedirectToAction("Logout");
         }

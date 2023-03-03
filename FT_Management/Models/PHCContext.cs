@@ -845,8 +845,6 @@
                 res[2] = result[2].ToString();
 
                 conn.Close();
-
-                return res;
             }
 
             catch (Exception ex)
@@ -855,6 +853,29 @@
             }
             return res;
 
+        }
+
+        public List<string> CriarAnexosFolhaObra(FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            foreach (string f in fo.FicheirosAnexo.Split(";"))
+            {
+                if (FicheirosContext.ExisteFicheiroTemporario(f))
+                {
+                    Anexo a = new Anexo()
+                    {
+                        Ecra = "BO",
+                        Serie = 49,
+                        Stamp_Origem = fo.StampFO,
+                        Resumo = "Anexo da WebApp",
+                        Nome = f,
+                        Utilizador = fo.Utilizador
+                    };
+                    res = this.CriarAnexo(a);
+                    FicheirosContext.MoverFicheiroTemporario(f, res[3]);
+                }
+            }
+            return res;
         }
         public bool FecharFolhaObra(FolhaObra fo)
         {
@@ -3528,7 +3549,46 @@
             return res;
         }
 
+        public List<string> CriarAnexo(Anexo a)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
 
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("WEB_Anexo_Gera_PHC", conn)
+                {
+                    CommandTimeout = TIMEOUT,
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@ECRA", a.Ecra));
+                command.Parameters.Add(new SqlParameter("@NDOC", a.Serie));
+                command.Parameters.Add(new SqlParameter("@STAMP_ORIGEM", a.Stamp_Origem));
+                command.Parameters.Add(new SqlParameter("@RESUMO", a.Resumo));
+                command.Parameters.Add(new SqlParameter("@NOME_FICHEIRO", a.Nome));
+                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", a.Utilizador.Iniciais));
+
+                using SqlDataReader result = command.ExecuteReader();
+                result.Read();
+
+                res[0] = result[0].ToString();
+                res[1] = result[1].ToString();
+                res[2] = result[2].ToString();
+                res[3] = result[3].ToString();
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel adicionar o anexo da folha de obra ao PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
         #endregion
     }
 }

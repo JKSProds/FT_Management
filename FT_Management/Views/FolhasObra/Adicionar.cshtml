@@ -402,6 +402,15 @@
                                 </div>
                                 <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
                             </div>
+                            <p class="control">
+                                <button type="button" class="button is-primary is-pulled-right is-fullwidth"
+                                    onclick="Bulma('#modalAdicionarAnexo').modal().open();">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                    <span>Adicionar Anexo</span>
+                                </button>
+                            </p>
                         </div>
 
                         <div class="column is-6">
@@ -414,13 +423,7 @@
                             <button class="button is-danger" type="button"
                                 onclick="signaturePad.clear();">Limpar</button>
                         </div>
-                        <div class="form-group">
-                            <form action="/Dossiers/Anexo" method="PUT" class="dropzone" id="dropImage">
-                                <div class="dz-message needsclick">
-                                    Largue um anexo aqui para fazer o upload
-                                </div>
-                            </form>
-                        </div>
+
                         &nbsp;
                         <button type="button" onclick="ValidarFolhaObra()" class="button is-info is-large is-fullwidth">
                             <span class="icon">
@@ -435,6 +438,7 @@
     </div>
     <div style="display: none;">
         <div class="columns is-multiline mx-1 ">
+            <input type="text" class="input" asp-for="FicheirosAnexo" id="Ficheiros">
             <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
             <div class="column is-12">
                 <div class="field">
@@ -533,6 +537,27 @@
     </div>
 
 </form>
+
+
+<div id="modalAdicionarAnexo" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Adicionar Anexo</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <form action="/Dossiers/Anexo" method="POST" class="dropzone" id="dropAnexo">
+                </form>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
+                href="javascript:;">Fechar</button>
+        </footer>
+    </div>
+</div>
 
 <div class="modal" id="modalDeslocacao">
     <div class="modal-background"></div>
@@ -791,6 +816,16 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             if (!($target.classList.contains('is-active'))) clearInterval(interval);
         });
     });
+
+
+    Dropzone.options.dropAnexo = { // camelized version of the `id`
+        paramName: "file", // The name that will be used to transfer the file
+        maxFilesize: 10, // MB
+        success: function (file) {
+            document.getElementById('Ficheiros').value += file.xhr.response.replace('"', '').replace('"', '') + ";";
+            console.log(document.getElementById('Ficheiros').value);
+        }
+    };
 
     var canvas = document.getElementById('signature-pad');
     signaturePad = new SignaturePad(canvas, {

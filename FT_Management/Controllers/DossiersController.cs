@@ -162,12 +162,17 @@
         }
 
         //Adiciona um anexo
-        [HttpPut]
-        public JsonResult Anexo(string id, string ecra, string serie, string resumo, string ficheiro)
+        [HttpPost]
+        public JsonResult Anexo(string id, string ecra, string serie, string resumo, IFormFile file)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
+            if (string.IsNullOrEmpty(id))
+            {
+                return Json(FicheirosContext.CriarFicheiroTemporario(u.Iniciais + "_" + DateTime.Now.Ticks + (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : ""), file));
+            }
 
             return Json("");
         }
