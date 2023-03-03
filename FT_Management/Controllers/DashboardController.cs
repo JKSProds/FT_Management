@@ -24,7 +24,7 @@
 
             Utilizador u = context.ObterUtilizador(IdUtilizador);
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter dashboard das encomendas.", u.NomeCompleto, u.Id);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das encomendas.", u.NomeCompleto, u.Id);
 
             return View(phccontext.ObterEncomendas().Where(d => d.NumDossier != 2).Where(e => !e.Fornecido));
         }
@@ -43,7 +43,7 @@
 
             Utilizador u = context.ObterUtilizador(IdUtilizador);
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter dashboard dos Utilizadores.", u.NomeCompleto, u.Id);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard dos Utilizadores.", u.NomeCompleto, u.Id);
 
             ViewData["API"] = Api;
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
@@ -69,7 +69,7 @@
 
             Utilizador u = context.ObterUtilizador(IdUtilizador);
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter dashboard dos pendentes.", u.NomeCompleto, u.Id);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard dos pendentes.", u.NomeCompleto, u.Id);
 
             return View(phccontext.ObterMarcacoesPendentes());
         }
@@ -88,7 +88,7 @@
 
             Utilizador u = context.ObterUtilizador(IdUtilizador);
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter dashboard das Marcacoes.", u.NomeCompleto, u.Id);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das Marcacoes.", u.NomeCompleto, u.Id);
 
             List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(true, true);
             List<Marcacao> LstMarcacao = phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now);

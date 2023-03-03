@@ -20,7 +20,7 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter todos os acessos do seguinte dia: {3}", u.NomeCompleto, u.Id, Data);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os acessos do seguinte dia: {3}", u.NomeCompleto, u.Id, Data);
             context.AdicionarLog(u.Id, "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
@@ -89,7 +89,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1}({2}) a gerar uma Mapa de Presenças para a seguinte data: {3}", u.NomeCompleto, u.Id, data);
+            _logger.LogDebug("Utilizador {1} [{2}] a gerar uma Mapa de Presenças para a seguinte data: {3}", u.NomeCompleto, u.Id, data);
 
             var file = context.GerarMapaPresencas(DateTime.Parse(data));
             var output = new MemoryStream();
@@ -116,7 +116,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1}({2}) a apagar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
 
             context.ApagarAcesso(int.Parse(id));
 

@@ -23,7 +23,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter todos os dossiers da seguinte data: {3}", u.NomeCompleto, u.Id, Data);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os dossiers da seguinte data: {3}", u.NomeCompleto, u.Id, Data);
 
             return View(phccontext.ObterDossiers(DateTime.Parse(Data)));
         }
@@ -40,7 +40,7 @@
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter um dossier em especifico: Id - {3}, Cliente - {4}, Serie - {5}", u.NomeCompleto, u.Id, d.IdDossier, d.Cliente.NomeCliente, d.NomeDossier);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter um dossier em especifico: Id - {3}, Cliente - {4}, Serie - {5}", u.NomeCompleto, u.Id, d.IdDossier, d.Cliente.NomeCliente, d.NomeDossier);
 
             ViewData["ReturnUrl"] = ReturnUrl;
 
@@ -68,7 +68,7 @@
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
 
-            _logger.LogDebug("Utilizador {1}({2}) a criar um dossier novo: Id FO - {3}, Id Marcacao - {4}, Cliente - {5}, Serie - {6}", u.NomeCompleto, u.Id, fo.IdFolhaObra, fo.Marcacao.IdMarcacao, fo.ClienteServico.NomeCliente, serie);
+            _logger.LogDebug("Utilizador {1} [{2}] a criar um dossier novo: Id FO - {3}, Id Marcacao - {4}, Cliente - {5}, Serie - {6}", u.NomeCompleto, u.Id, fo.IdFolhaObra, fo.Marcacao.IdMarcacao, fo.ClienteServico.NomeCliente, serie);
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
             d = phccontext.ObterDossier(d.StampDossier);
@@ -106,7 +106,7 @@
                 d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
                 d = phccontext.ObterDossier(d.StampDossier);
                 if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
-                _logger.LogDebug("Utilizador {1}({2}) a criar um pedido de transferencia novo: Id Tecnico - {3}, Serie - {4}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.Serie);
+                _logger.LogDebug("Utilizador {1} [{2}] a criar um pedido de transferencia novo: Id Tecnico - {3}, Serie - {4}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.Serie);
 
                 MailContext.EnviarEmailPedidoTransferencia(u, d);
             }
@@ -160,7 +160,7 @@
                     CriadoPor = u.Iniciais
                 };
                 res = phccontext.CriarLinhaDossier(l);
-                _logger.LogDebug("Utilizador {1}({2}) a criar uma linha nova ao dossier: Id - {3}, Serie - {4}, Ref - {5}, Qtd - {6}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.NomeDossier, l.Referencia, l.Quantidade);
+                _logger.LogDebug("Utilizador {1} [{2}] a criar uma linha nova ao dossier: Id - {3}, Serie - {4}, Ref - {5}, Qtd - {6}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.NomeDossier, l.Referencia, l.Quantidade);
             }
 
             return Json(int.Parse(res[0].ToString()) > 0 ? phccontext.ObterLinhaDossier(res[3].ToString()) : new Linha_Dossier());
@@ -179,7 +179,7 @@
 
             if (d.Fechado) return Json("");
 
-            _logger.LogDebug("Utilizador {1}({2}) a apagar uma linha do dossier: Id - {3}, Serie - {4}, Ref - {5}, Qtd - {6}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.NomeDossier, l.Referencia, l.Quantidade);
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do dossier: Id - {3}, Serie - {4}, Ref - {5}, Qtd - {6}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.NomeDossier, l.Referencia, l.Quantidade);
 
             return Json(phccontext.ApagarLinhaDossier(l.Stamp_Dossier, l.Stamp_Linha));
         }
@@ -195,7 +195,7 @@
             if (string.IsNullOrEmpty(id))
             {
                 string nome = u.Iniciais + "_" + DateTime.Now.Ticks + (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
-                _logger.LogDebug("Utilizador {1}({2}) a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
+                _logger.LogDebug("Utilizador {1} [{2}] a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
                 return Json(FicheirosContext.CriarFicheiroTemporario(nome, file));
             }
 

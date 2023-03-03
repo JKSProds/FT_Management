@@ -20,7 +20,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter todos os cliente com base no seguinte filtro: {3}", u.NomeCompleto, u.Id, Nome);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os cliente com base no seguinte filtro: {3}", u.NomeCompleto, u.Id, Nome);
 
             ViewData["Nome"] = Nome;
 
@@ -37,7 +37,7 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Cliente c = phccontext.ObterCliente(IdCliente, IdLoja);
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter os dados do seguinte cliente: ID - {3}, Estab - {4}, Nome - {5}", u.NomeCompleto, u.Id, c.IdCliente, c.IdLoja, c.NomeCliente);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter os dados do seguinte cliente: ID - {3}, Estab - {4}, Nome - {5}", u.NomeCompleto, u.Id, c.IdCliente, c.IdLoja, c.NomeCliente);
 
             return View(c);
         }
@@ -52,7 +52,7 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             if (prefix is null) prefix = "";
 
-            _logger.LogDebug("Utilizador {1}({2}) a obter todos os clientes com base no seguinte filtro: {3}", u.NomeCompleto, u.Id, prefix);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os clientes com base no seguinte filtro: {3}", u.NomeCompleto, u.Id, prefix);
 
             return Json(phccontext.ObterClientes(prefix, true));
         }
@@ -67,7 +67,7 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Cliente c = phccontext.ObterClienteSimples(id);
 
-            _logger.LogDebug("Utilizador {1}({2}) a criar uma senha para o seguinte cliente: ID - {3}, Estab - {4}, Nome - {5}", u.NomeCompleto, u.Id, c.IdCliente, c.IdLoja, c.NomeCliente);
+            _logger.LogDebug("Utilizador {1} [{2}] a criar uma senha para o seguinte cliente: ID - {3}, Estab - {4}, Nome - {5}", u.NomeCompleto, u.Id, c.IdCliente, c.IdLoja, c.NomeCliente);
 
             return Content(context.CriarSenhaCliente(id).ToString());
         }
@@ -82,7 +82,7 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Cliente c = phccontext.ObterClienteSimples(id, loja);
 
-            _logger.LogDebug("Utilizador {1}({2}) a enviar um email com a senha para o seguinte cliente: ID - {3}, Estab - {4}, Nome - {5}", u.NomeCompleto, u.Id, c.IdCliente, c.IdLoja, c.NomeCliente);
+            _logger.LogDebug("Utilizador {1} [{2}] a enviar um email com a senha para o seguinte cliente: ID - {3}, Estab - {4}, Nome - {5}", u.NomeCompleto, u.Id, c.IdCliente, c.IdLoja, c.NomeCliente);
 
             return Content(MailContext.EnviarEmailSenhaCliente(email, c) ? "1" : "");
         }
