@@ -19,6 +19,11 @@
             ViewData["Tipo"] = Tipo;
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as encomendas com base num filtro: Id - {3}, Tipo - {4}, Nome - {5}.", u.NomeCompleto, u.Id, IdEncomenda, Tipo, NomeCliente);
+
             List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Models.Encomenda.Tipo.TODAS) && e.NItems > 0).ToList();
 
             if (Tipo > 0) LstEncomendas = LstEncomendas.Where(e => e.NumDossier == Tipo).ToList();
@@ -33,9 +38,13 @@
         public JsonResult Encomenda(string stamp)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             Encomenda e = phccontext.ObterEncomenda(stamp);
             e.LinhasEncomenda = e.LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma encomenda em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, e.Id, e.BO_STAMP, e.PI_STAMP);
 
             return new JsonResult(e);
         }
@@ -69,6 +78,8 @@
                 p = phccontext.ObterPicking(pi_stamp);
             }
 
+            _logger.LogDebug("Utilizador {1} [{2}] a obter um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, e.BO_STAMP, p.Picking_Stamp);
+
             return View(p);
         }
 
@@ -81,6 +92,9 @@
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Picking p = phccontext.ObterPicking(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a fechar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
+
             p.EditadoPor = u.Iniciais;
             p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p) + "</b>";
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
@@ -101,8 +115,14 @@
         public ActionResult Validar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return Content(phccontext.ValidarPicking(phccontext.ObterPicking(id)));
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Picking p = phccontext.ObterPicking(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a validar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
+
+            return Content(phccontext.ValidarPicking(p));
         }
 
         //Atualizar uma linha
@@ -110,13 +130,18 @@
         public JsonResult Linha(string stamp, Double qtd, string serie, string bomastamp)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar uma linha de um picking em especifico: Stamp - {3}, Qtd - {4}, Serie - {5}, BOMA STAMP - {6}.", u.NomeCompleto, u.Id, stamp, qtd, serie, bomastamp);
 
             Linha_Picking linha_picking = new Linha_Picking()
             {
                 Picking_Linha_Stamp = stamp,
                 Qtd_Linha = qtd,
                 Lista_Ref = new List<Ref_Linha_Picking>(),
-                EditadoPor = this.User.ObterNomeCompleto()
+                EditadoPor = u.NomeCompleto
             };
             if (serie != null || bomastamp != null)
             {
