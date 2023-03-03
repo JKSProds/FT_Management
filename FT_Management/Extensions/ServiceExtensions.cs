@@ -18,11 +18,11 @@ namespace FT_Management
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
+                        string e = Guid.NewGuid().ToString();
                         _logger.LogError(new EventId(), contextFeature.Error.Message, null);
-                        MailContext.EnviarEmailError(dbContext.ObterUtilizador(int.Parse(_httpContextAccessor.HttpContext.User.Claims.First().Value)), contextFeature.Error.Message + "\r\n\r\n" + contextFeature.Error.StackTrace.ToString());
+                        MailContext.EnviarEmailError(dbContext.ObterUtilizador(int.Parse(_httpContextAccessor.HttpContext.User.Claims.First().Value)), e, contextFeature.Error.Message + "<br><br>" + contextFeature.Error.StackTrace.ToString());
 
-
-                        context.Response.Redirect("/Home/Error", true);
+                        context.Response.Redirect("/Home/Error/" + e, true);
                         await context.Response.WriteAsync(new Error
                         {
                             StatusCode = context.Response.StatusCode,

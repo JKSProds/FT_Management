@@ -487,9 +487,9 @@ namespace FT_Management.Models
             return true;
         }
 
-        public static bool EnviarEmailError(Utilizador u, string Mensagem)
+        public static bool EnviarEmailError(Utilizador u, string id, string Mensagem)
         {
-            string Assunto = "Error - " + u.NomeCompleto;
+            string Assunto = "Error - " + u.NomeCompleto + " [" + id + "]";
 
             EnviarMail("jmonteiro@food-tech.pt", Assunto, Mensagem, null, new List<string>());
 

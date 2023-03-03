@@ -23,9 +23,9 @@
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(string id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel { RequestId = !string.IsNullOrEmpty(id) ? id : Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         [Authorize(Roles = "Admin")]
