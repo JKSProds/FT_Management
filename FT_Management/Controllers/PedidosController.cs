@@ -219,7 +219,7 @@ namespace FT_Management.Controllers
             //{
             if (file.Length > 0)
             {
-                Anexo a = new Anexo()
+                MarcacaoAnexo a = new MarcacaoAnexo()
                 {
                     MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
                     IdMarcacao = id,
@@ -249,7 +249,7 @@ namespace FT_Management.Controllers
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-                Anexo a = phccontext.ObterAnexo(id);
+                MarcacaoAnexo a = phccontext.ObterAnexo(id);
                 string CaminhoFicheiro = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
                 if (!System.IO.File.Exists(CaminhoFicheiro)) return Forbid();
 
@@ -271,7 +271,7 @@ namespace FT_Management.Controllers
 
             if (id != null)
             {
-                Anexo a = phccontext.ObterAnexo(id);
+                MarcacaoAnexo a = phccontext.ObterAnexo(id);
                 phccontext.ApagarAnexoMarcacao(a);
                 FicheirosContext.ApagarAnexoMarcacao(a);
                 return RedirectToAction("Pedido", "Pedidos", new { id = phccontext.ObterMarcacao(a.IdMarcacao).IdMarcacao });

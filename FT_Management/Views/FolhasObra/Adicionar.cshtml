@@ -414,6 +414,13 @@
                             <button class="button is-danger" type="button"
                                 onclick="signaturePad.clear();">Limpar</button>
                         </div>
+                        <div class="form-group">
+                            <form action="/Dossiers/Anexo" method="PUT" class="dropzone" id="dropImage">
+                                <div class="dz-message needsclick">
+                                    Largue um anexo aqui para fazer o upload
+                                </div>
+                            </form>
+                        </div>
                         &nbsp;
                         <button type="button" onclick="ValidarFolhaObra()" class="button is-info is-large is-fullwidth">
                             <span class="icon">
@@ -763,9 +770,9 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+@{
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }
 
 <script>

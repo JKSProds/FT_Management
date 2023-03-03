@@ -783,7 +783,7 @@
                 byte[] bytes = Convert.FromBase64String(fo.RubricaCliente.Split(",").Last());
                 MemoryStream stream = new MemoryStream(bytes);
 
-                Anexo a = new Anexo()
+                MarcacaoAnexo a = new MarcacaoAnexo()
                 {
                     MarcacaoStamp = fo.Marcacao.MarcacaoStamp,
                     IdMarcacao = fo.Marcacao.IdMarcacao,
@@ -1374,7 +1374,7 @@
             }
             return res;
         }
-        public string CriarAnexoMarcacao(Anexo a)
+        public string CriarAnexoMarcacao(MarcacaoAnexo a)
         {
             try
             {
@@ -1414,7 +1414,7 @@
             }
             return "";
         }
-        public bool ApagarAnexoMarcacao(Anexo a)
+        public bool ApagarAnexoMarcacao(MarcacaoAnexo a)
         {
             try
             {
@@ -1444,9 +1444,9 @@
             }
             return false;
         }
-        public List<Anexo> ObterAnexos(Marcacao m)
+        public List<MarcacaoAnexo> ObterAnexos(Marcacao m)
         {
-            List<Anexo> LstAnexos = new List<Anexo>();
+            List<MarcacaoAnexo> LstAnexos = new List<MarcacaoAnexo>();
 
             try
             {
@@ -1461,7 +1461,7 @@
                 using SqlDataReader result = command.ExecuteReader();
                 while (result.Read())
                 {
-                    LstAnexos.Add(new Anexo()
+                    LstAnexos.Add(new MarcacaoAnexo()
                     {
                         AnexoStamp = result["u_anexos_marstamp"].ToString(),
                         MarcacaoStamp = result["u_marcacaostamp"].ToString(),
@@ -1487,9 +1487,9 @@
             }
             return LstAnexos;
         }
-        public Anexo ObterAnexo(string AnexoStamp)
+        public MarcacaoAnexo ObterAnexo(string AnexoStamp)
         {
-            List<Anexo> LstAnexos = new List<Anexo>();
+            List<MarcacaoAnexo> LstAnexos = new List<MarcacaoAnexo>();
 
             try
             {
@@ -1504,7 +1504,7 @@
                 using SqlDataReader result = command.ExecuteReader();
                 while (result.Read())
                 {
-                    LstAnexos.Add(new Anexo()
+                    LstAnexos.Add(new MarcacaoAnexo()
                     {
                         AnexoStamp = result["u_anexos_marstamp"].ToString(),
                         MarcacaoStamp = result["u_marcacaostamp"].ToString(),
@@ -1529,11 +1529,11 @@
                 Console.WriteLine("Não foi possivel ler os anexos da marcacao do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return new Anexo();
+            return new MarcacaoAnexo();
         }
-        public List<Anexo> ObterAnexos()
+        public List<MarcacaoAnexo> ObterAnexos()
         {
-            List<Anexo> LstAnexos = new List<Anexo>();
+            List<MarcacaoAnexo> LstAnexos = new List<MarcacaoAnexo>();
 
             try
             {
@@ -1548,7 +1548,7 @@
                 using SqlDataReader result = command.ExecuteReader();
                 while (result.Read())
                 {
-                    LstAnexos.Add(new Anexo()
+                    LstAnexos.Add(new MarcacaoAnexo()
                     {
                         AnexoStamp = result["u_anexos_marstamp"].ToString(),
                         MarcacaoStamp = result["u_marcacaostamp"].ToString(),
@@ -3527,6 +3527,8 @@
 
             return res;
         }
+
+
         #endregion
     }
 }

@@ -161,6 +161,15 @@
             return Json(phccontext.ApagarLinhaDossier(l.Stamp_Dossier, l.Stamp_Linha));
         }
 
+        //Adiciona um anexo
+        [HttpPut]
+        public JsonResult Anexo(string id, string ecra, string serie, string resumo, string ficheiro)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+
+            return Json("");
+        }
     }
 }

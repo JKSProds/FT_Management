@@ -111,7 +111,6 @@ namespace FT_Management
             });
 
 
-
             app.Lifetime.ApplicationStarted.Register(() =>
             {
                 Console.WriteLine("Iniciada a aplicação!");

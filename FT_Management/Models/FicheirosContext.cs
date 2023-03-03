@@ -48,15 +48,15 @@
 
         }
 
-        public static bool CriarAnexoMarcacao(Anexo a, IFormFile ficheiro)
+        public static bool CriarAnexoMarcacao(MarcacaoAnexo a, IFormFile ficheiro)
         {
             return CriarFicheiro(FormatLinuxServer(a.NomeFicheiro), ficheiro);
         }
-        public static bool CriarAnexoAssinatura(Anexo a, IFormFile ficheiro)
+        public static bool CriarAnexoAssinatura(MarcacaoAnexo a, IFormFile ficheiro)
         {
             return CriarFicheiro(FormatLinuxServer(CaminhoServerAnexos + a.NomeFicheiro), ficheiro);
         }
-        public static bool ApagarAnexoMarcacao(Anexo a)
+        public static bool ApagarAnexoMarcacao(MarcacaoAnexo a)
         {
             return ApagarFicheiro(FormatLinuxServer(a.NomeFicheiro));
         }
