@@ -133,7 +133,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a obter informação de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter informação de um utilizador em especifico: {3}", u.NomeCompleto, u.Id, id);
 
             if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
             if (!User.IsInRole("Admin") && id != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("Editar", new { id = int.Parse(this.User.Claims.First().Value) });
