@@ -142,7 +142,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do inventario: STAMP - {3}.", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma linha de serie do inventario: STAMP - {3}.", u.NomeCompleto, u.Id, id);
 
             return new JsonResult(phccontext.ObterSerieLinhaInventario(id).OrderBy(s => s.CriadoA).ToList());
         }
@@ -155,7 +155,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do inventario: STAMP - {3}, LINHA - {4}, SERIE - {5}.", u.NomeCompleto, u.Id, stamp, stamp_linha, serie);
+            _logger.LogDebug("Utilizador {1} [{2}] a criar uma linha de serie no inventario: STAMP - {3}, LINHA - {4}, SERIE - {5}.", u.NomeCompleto, u.Id, stamp, stamp_linha, serie);
 
             Ref_Linha_Picking l = new Ref_Linha_Picking()
             {
@@ -176,7 +176,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do inventario: STAMP - {3}, BOMA - {4}, STAMP LINHA - {5}.", u.NomeCompleto, u.Id, stamp, stamp_boma, stamp_linha);
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha de serie do inventario: STAMP - {3}, BOMA - {4}, STAMP LINHA - {5}.", u.NomeCompleto, u.Id, stamp, stamp_boma, stamp_linha);
 
             return new JsonResult(phccontext.ApagarLinhaSerieInventario(stamp, new Ref_Linha_Picking() { BOMA_STAMP = stamp_boma, Picking_Linha_Stamp = stamp_linha, CriadoPor = this.User.ObterNomeCompleto() }));
         }
