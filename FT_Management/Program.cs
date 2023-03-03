@@ -110,21 +110,21 @@ namespace FT_Management
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            app.Logger.LogDebug("Modo de DEBUG Ativo. Este modo irá gerar mais mensagens de informação!");
 
             app.Lifetime.ApplicationStarted.Register(() =>
             {
-                app.Logger.LogDebug("MODO DEBUG ATIVO");
-                Console.WriteLine("Iniciada a aplicação!");
+                app.Logger.LogInformation("WebApp Iniciada. Versão: {1}. Aplicação desenvolvida por {2} - {3}", app.GetType().Assembly.GetName().Version.ToString(), "Jorge Monteiro", "JKSProds - Software");
             });
 
             app.Lifetime.ApplicationStopping.Register(() =>
             {
-                Console.WriteLine("A aplicação está a parar...");
+                app.Logger.LogDebug("WebApp a parar todos os serviços ...");
             });
 
             app.Lifetime.ApplicationStopped.Register(() =>
             {
-                Console.WriteLine("A aplicação parou!");
+                app.Logger.LogInformation("WebApp parada com sucesso!");
             });
 
             app.Run();
