@@ -3,6 +3,13 @@
     [Authorize]
     public class ProdutosController : Controller
     {
+        private readonly ILogger<ProdutosController> _logger;
+
+        public ProdutosController(ILogger<ProdutosController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter todas as referencias baseadas num filtro
         [HttpGet]
         public ActionResult Index(string Ref, string Desig, int Armazem, int Fornecedor, string TipoEquipamento)

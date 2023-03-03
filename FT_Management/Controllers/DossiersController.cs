@@ -3,6 +3,13 @@
     [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class DossiersController : Controller
     {
+        private readonly ILogger<DossiersController> _logger;
+
+        public DossiersController(ILogger<DossiersController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter todos os dossiers de uma data especifica
         [HttpGet]
         [Authorize(Roles = "Admin, Escritorio")]

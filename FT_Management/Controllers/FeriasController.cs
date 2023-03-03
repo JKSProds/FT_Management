@@ -9,6 +9,13 @@ namespace FT_Management.Controllers
     [Authorize]
     public class FeriasController : Controller
     {
+        private readonly ILogger<FeriasController> _logger;
+
+        public FeriasController(ILogger<FeriasController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter todos os utilizadores ou redirecionar para as ferias do utilziador em especifico
         [HttpGet]
         public ActionResult Index()

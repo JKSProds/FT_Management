@@ -3,6 +3,13 @@
     [Authorize(Roles = "Admin, Escritorio")]
     public class InventarioController : Controller
     {
+        private readonly ILogger<InventarioController> _logger;
+
+        public InventarioController(ILogger<InventarioController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter todos os armazens
         [HttpGet]
         public ActionResult Index()

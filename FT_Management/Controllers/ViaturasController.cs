@@ -5,6 +5,13 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio")]
     public class ViaturasController : Controller
     {
+        private readonly ILogger<ViaturasController> _logger;
+
+        public ViaturasController(ILogger<ViaturasController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obtem todas as viaturas numa pagina web
         [HttpGet]
         public ActionResult Index()

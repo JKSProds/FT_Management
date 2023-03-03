@@ -3,6 +3,13 @@
     [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class FolhasObraController : Controller
     {
+        private readonly ILogger<FolhasObraController> _logger;
+
+        public FolhasObraController(ILogger<FolhasObraController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter todas as folhas de obra com base numa data
         [HttpGet]
         public ActionResult Index(string DataFolhasObra)

@@ -3,6 +3,13 @@
     [Authorize(Roles = "Admin, Escritorio")]
     public class PickingController : Controller
     {
+        private readonly ILogger<PickingController> _logger;
+
+        public PickingController(ILogger<PickingController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter todas as encomendas com base em alguns filtros
         [HttpGet]
         public IActionResult Index(int IdEncomenda, int Tipo, string NomeCliente)

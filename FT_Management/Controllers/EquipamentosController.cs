@@ -3,6 +3,13 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin, Escritorio, Tech, Comercial")]
     public class EquipamentosController : Controller
     {
+        private readonly ILogger<EquipamentosController> _logger;
+
+        public EquipamentosController(ILogger<EquipamentosController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter lista de equipamentos com filtro do numero de serie
         [HttpGet]
         public IActionResult Index(string Serie)

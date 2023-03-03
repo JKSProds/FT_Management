@@ -2,6 +2,13 @@
 {
     public class UtilizadoresController : Controller
     {
+        private readonly ILogger<UtilizadoresController> _logger;
+
+        public UtilizadoresController(ILogger<UtilizadoresController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter todos os utilizadores
         [Authorize(Roles = "Admin")]
         [HttpGet]
