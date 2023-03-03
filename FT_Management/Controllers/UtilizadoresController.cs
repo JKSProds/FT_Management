@@ -218,7 +218,7 @@
             Utilizador t = context.ObterUtilizador(int.Parse(id));
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a apagar a informação de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar a informação de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
             if (!t.Admin || this.User.IsInRole("Master")) context.ApagarUtilizador(t);
 
@@ -234,7 +234,7 @@
             Utilizador t = context.ObterUtilizador(id);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a alterar a senha de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a alterar a senha de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
             string res = "";
 
@@ -271,7 +271,7 @@
             Utilizador t = context.ObterUtilizador(id);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a eliminar a senha de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a eliminar a senha de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
             if (!t.Admin || this.User.IsInRole("Master"))
             {
@@ -302,7 +302,7 @@
             Utilizador t = context.ObterUtilizador(id);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a atualizar o 2FA de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar o 2FA de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
             t.SecondFactorAuthStamp = "";
 
@@ -326,7 +326,7 @@
             Utilizador t = context.ObterUtilizador(id);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a remover o 2FA de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a remover o 2FA de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
             t.SecondFactorAuthStamp = "";
 
@@ -344,7 +344,7 @@
             Utilizador t = context.ObterUtilizador(id);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a atualizar a imagem de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar a imagem de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
 
             if (file.Length > 0)
@@ -378,7 +378,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a atualizar as permissoes de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar as permissoes de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
             return Content("0");
         }
@@ -394,7 +394,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] obter os logs de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+            _logger.LogDebug("Utilizador {1} [{2}] obter os logs de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
             ViewData["NomeUtilizador"] = context.ObterUtilizador(id).NomeUtilizador;
 

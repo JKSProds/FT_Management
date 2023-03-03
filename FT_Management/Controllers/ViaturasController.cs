@@ -17,6 +17,9 @@ namespace FT_Management.Controllers
         public ActionResult Index()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as viaturas.", u.NomeCompleto, u.Id);
 
             return View(context.ObterViaturas());
         }
@@ -35,6 +38,9 @@ namespace FT_Management.Controllers
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter a informação de uma viatura em especifico: Matricula - {3}, Data - {4}.", u.NomeCompleto, u.Id, id, Data);
 
             ViewData["Data"] = Data;
             ViewData["Matricula"] = id;
@@ -50,6 +56,9 @@ namespace FT_Management.Controllers
         public List<Viatura> Viaturas(string API_KEY)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as viaturas em formato JSON para o mapa.", u.NomeCompleto, u.Id);
 
             return context.ObterViaturas();
         }
@@ -62,6 +71,9 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Viatura v = context.ObterViatura(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar o buzzer de uma viatura em especifico: Matricula - {3}, Buzzer - {4}", u.NomeCompleto, u.Id, id, buzzer);
 
             if (v.Buzzer != buzzer)
             {
@@ -109,9 +121,6 @@ namespace FT_Management.Controllers
             }
             return Content("0");
         }
-
-
-
 
     }
 
