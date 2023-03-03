@@ -291,7 +291,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a obter ventos de ferias.", u.NomeCompleto, u.Id);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter eventos de ferias.", u.NomeCompleto, u.Id);
 
             return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end), context.ObterListaFeriados(start.Year.ToString())).ToList());
         }

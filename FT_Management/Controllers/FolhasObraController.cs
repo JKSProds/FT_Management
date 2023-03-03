@@ -17,6 +17,10 @@
             if (DataFolhasObra == null || DataFolhasObra == string.Empty) DataFolhasObra = DateTime.Now.ToString("dd-MM-yyyy");
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a todas das folhas de obra com a seguinte data: {3}.", u.NomeCompleto, u.Id, DataFolhasObra);
 
             ViewData["DataFolhasObra"] = DataFolhasObra;
 
@@ -30,13 +34,19 @@
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Marcacao m = phccontext.ObterMarcacao(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a adicionar uma folha de obra nova do cliente: {3}.", u.NomeCompleto, u.Id, m.Cliente.NomeCliente);
+
             List<FolhaObra> LstFolhasObra = phccontext.ObterFolhasObra(DateTime.Now, m.Cliente);
 
             if (m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado") return Forbid();
 
             FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(m);
-            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            fo.Utilizador = u;
+
             fo.PreencherViagem(context.ObterViagens(fo.Utilizador.Viatura.Matricula, DateTime.Now.ToShortDateString()).Where(v => v.Fim_Viagem.Year > 1).DefaultIfEmpty(new Viagem() { Fim_Viagem = fo.IntervencaosServico.First().HoraInicio, Distancia_Viagem = "0" }).Last());
             if (LstFolhasObra.Count() > 0)
             {
@@ -57,11 +67,13 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FolhaObra fo = phccontext.ObterFolhaObra(Id);
 
-            Utilizador user = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
 
-            ViewData["SelectedTecnico"] = user.NomeCompleto;
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma folha de obra em especifico: Id - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}.", u.NomeCompleto, u.Id, fo.IdFolhaObra, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto);
+
+            ViewData["SelectedTecnico"] = u.NomeCompleto;
             ViewData["Tecnicos"] = context.ObterListaTecnicos(false, false);
 
             return View(fo);
@@ -91,6 +103,9 @@
 
                 Marcacao m = fo.Marcacao;
                 m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+                _logger.LogDebug("Utilizador {1} [{2}] a criar uma nova folha de obra: Id Marcacao - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}, N. Int - {7}, N. Pecas {8}, Estado - {9}.", fo.Utilizador.NomeCompleto, fo.Utilizador.Id, m.IdMarcacao, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto, fo.IntervencaosServico.Count(), fo.PecasServico.Count(), fo.EstadoFolhaObra);
+
                 int Estado = fo.EstadoFolhaObra;
                 if (fo.FecharMarcacao && fo.EstadoFolhaObra == 1) m.EstadoMarcacaoDesc = "Finalizado";
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
@@ -144,6 +159,8 @@
             fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
+            _logger.LogDebug("Utilizador {1} [{2}] a validar uma nova folha de obra: Id Marcacao - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}, N. Int - {7}, N. Pecas {8}, Estado - {9}.", fo.Utilizador.NomeCompleto, fo.Utilizador.Id, fo.Marcacao.IdMarcacao, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto, fo.IntervencaosServico.Count(), fo.PecasServico.Count(), fo.EstadoFolhaObra);
+
             return Content(phccontext.ValidarFolhaObra(fo));
         }
 
@@ -152,8 +169,13 @@
         public JsonResult Email(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            FolhaObra fo = phccontext.ObterFolhaObra(id);
 
-            return Json(phccontext.ObterFolhaObra(id).ClienteServico.EmailCliente);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter o email associado a um cliente: Cliente - {3}, Email - {4}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.ClienteServico.EmailCliente);
+
+            return Json(fo.ClienteServico.EmailCliente);
         }
 
         //Enviar o email da folha de obra
@@ -163,8 +185,11 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FolhaObra fo = phccontext.ObterFolhaObra(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == u.IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
+            _logger.LogDebug("Utilizador {1} [{2}] a enviar o email com uma folha de obra a um cliente: Cliente - {3}, Email - {4}, Id FO - {5}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.ClienteServico.EmailCliente, fo.IdFolhaObra);
 
             if (MailContext.EnviarEmailFolhaObra(emailDestino, fo, new Attachment((new MemoryStream(context.PreencherFormularioFolhaObra(fo).ToArray())), "FO" + id + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf))) return Content("Sucesso");
 
@@ -183,10 +208,12 @@
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             FolhaObra fo = phccontext.ObterFolhaObra(int.Parse(id));
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == u.IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta de uma folha de obra: Cliente - {3}, Id FO - {4}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.IdFolhaObra);
 
             var filePath = Path.GetTempFileName();
             context.DesenharEtiquetaFolhaObra(fo).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
@@ -201,8 +228,11 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FolhaObra fo = phccontext.ObterFolhaObra(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == u.IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir o documento A4 de uma folha de obra: Cliente - {3}, Id FO - {4}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.IdFolhaObra);
 
             var file = context.PreencherFormularioFolhaObra(fo).ToArray();
             var output = new MemoryStream();
@@ -229,8 +259,11 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FolhaObra fo = phccontext.ObterFolhaObra(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == u.IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir o ticket com as peças utilizadas de uma folha de obra: Cliente - {3}, Id FO - {4}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.IdFolhaObra);
 
             var filePath = Path.GetTempFileName();
             Bitmap bm = context.DesenharFolhaObraSimples(fo);
@@ -251,18 +284,23 @@
         public ActionResult CriarCodigo(string id, string obs)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
             Codigo c = new Codigo()
             {
                 Stamp = id,
                 Estado = 0,
                 ValidadeCodigo = DateTime.Now.AddMinutes(10),
-                utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)),
+                utilizador = u,
                 Obs = obs
             };
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar um codigo para validar uma folha de obra: Codigo - {3}, Validade - {4}.", u.NomeCompleto, u.Id, c.Stamp, c.ValidadeCodigo.ToShortTimeString());
+
             context.CriarCodigo(c);
-            foreach (var u in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
+            foreach (var utilizador in context.ObterListaUtilizadores(false, false).Where(u => u.Admin))
             {
-                ChatContext.EnviarNotificacaoCodigo(c, u);
+                ChatContext.EnviarNotificacaoCodigo(c, utilizador);
             }
             return Content("OK");
         }
@@ -272,6 +310,10 @@
         public ActionResult ValidarCodigo(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a tentar validar o codigo de uma folha de obra: Codigo - {3}.", u.NomeCompleto, u.Id, id);
+
             return Content(context.ValidarCodigo(id).ToString());
         }
 
