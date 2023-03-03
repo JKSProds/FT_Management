@@ -913,6 +913,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById('pb_timer').value = time;
         time--;
         if (seconds % 10 === 0) ValidarCodigo(stamp_codigo);
+        if (time <= 0) { clearInterval(interval); Bulma('#modalAguardarValidacao').modal().close(); notifyError("Por favor tente novamente. Excedeu o tempo limite para aprovação do código!"); };
     }
 
     function CriarCodigo(stamp) {
@@ -950,6 +951,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         time = 5 * 60;
         interval = setInterval(AtualizarTimer, 1000);
         document.getElementById('pb_timer').max = time;
+        AtualizarTimer();
 
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalAguardarValidacao').modal().open();
