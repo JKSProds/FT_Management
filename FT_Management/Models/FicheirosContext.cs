@@ -83,7 +83,6 @@
             {
                 CloneDirectory(FormatLinuxServer(CaminhoImagensUtilizador), FormatLinuxServer(Directory.GetCurrentDirectory() + "\\wwwroot\\img\\"));
             }
-#endif
 
             if (Directory.Exists(FormatLinuxServer(CaminhoTemporario)) && Temp)
             {
@@ -92,6 +91,8 @@
                     file.Delete();
                 }
             }
+#endif
+
         }
 
         private static void CloneDirectory(string root, string dest)
@@ -129,7 +130,7 @@
         }
         public static void MoverFicheiroTemporario(string source, string dest)
         {
-            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source)) MoveFile(FormatLinuxServer(CaminhoTemporario + source), FormatLinuxServer(dest));
+            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source)) MoveFile(FormatLinuxServer(CaminhoTemporario + source), FormatLinuxServer(dest + source));
         }
     }
 }

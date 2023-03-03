@@ -12,6 +12,7 @@
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/FT_Management/bin/Debug/net6.0/FT_Management.dll",
             "args": [],
+            "requireExactSource": false,
             "cwd": "${workspaceFolder}/FT_Management",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser

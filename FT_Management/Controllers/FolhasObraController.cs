@@ -100,9 +100,9 @@
                     fo.StampFO = res[2].ToString();
                     fo.IdFolhaObra = int.Parse(res[1]);
 
-                    phccontext.CriarAnexosFolhaObra(fo);
-                    phccontext.FecharFolhaObra(fo);
                     phccontext.AtualizaMarcacao(m);
+                    phccontext.FecharFolhaObra(fo);
+                    phccontext.CriarAnexosFolhaObra(fo);
                     fo = phccontext.ObterFolhaObra(fo.IdFolhaObra);
 
                     if (Estado == 2) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });

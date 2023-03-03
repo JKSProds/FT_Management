@@ -857,7 +857,10 @@
 
         public List<string> CriarAnexosFolhaObra(FolhaObra fo)
         {
+
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            if (string.IsNullOrEmpty(fo.FicheirosAnexo)) return res;
+
             foreach (string f in fo.FicheirosAnexo.Split(";"))
             {
                 if (FicheirosContext.ExisteFicheiroTemporario(f))
@@ -872,21 +875,20 @@
                         Utilizador = fo.Utilizador
                     };
                     res = this.CriarAnexo(a);
-                    FicheirosContext.MoverFicheiroTemporario(f, res[3]);
+                    if (int.Parse(res[0]) > 0) FicheirosContext.MoverFicheiroTemporario(f, res[3]);
                 }
             }
             return res;
         }
         public bool FecharFolhaObra(FolhaObra fo)
         {
-            FolhaObra foNova = ObterFolhaObra(fo.StampFO);
             if (fo.EnviarEmail && !string.IsNullOrEmpty(fo.EmailCliente))
             {
-                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, foNova, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(foNova).ToArray())), "FO_" + foNova.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
             }
             else
             {
-                ChatContext.EnviarNotificacaoFolhaObraTecnico(foNova, fo.Utilizador);
+                ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
             }
 
             //PD
