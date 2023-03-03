@@ -19,7 +19,7 @@ namespace FT_Management
                     if (contextFeature != null)
                     {
                         _logger.LogError(new EventId(), contextFeature.Error.Message, null);
-                        MailContext.EnviarEmailError(dbContext.ObterUtilizador(int.Parse(_httpContextAccessor.HttpContext.User.Claims.First().Value)), contextFeature.Error.Message);
+                        MailContext.EnviarEmailError(dbContext.ObterUtilizador(int.Parse(_httpContextAccessor.HttpContext.User.Claims.First().Value)), contextFeature.Error.Message + "\r\n\r\n" + contextFeature.Error.StackTrace.ToString());
 
 
                         context.Response.Redirect("/Home/Error", true);
