@@ -73,6 +73,8 @@ namespace FT_Management
                 cookieOptions.AccessDeniedPath = "/Home/AcessoNegado";
             });
 
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 #if !DEBUG
             builder.Services.AddDataProtection().SetApplicationName("FT_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));
                  builder.Services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
@@ -92,13 +94,13 @@ namespace FT_Management
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                //app.UseHsts();
             }
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.ConfigureExceptionHandler(app.Logger, app.Services.GetRequiredService<IHttpContextAccessor>());
             app.UseRouting();
 
             app.UseAuthorization();

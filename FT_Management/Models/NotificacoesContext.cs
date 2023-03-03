@@ -486,5 +486,14 @@ namespace FT_Management.Models
 
             return true;
         }
+
+        public static bool EnviarEmailError(Utilizador u, string Mensagem)
+        {
+            string Assunto = "Error - " + u.NomeCompleto;
+
+            EnviarMail("jmonteiro@food-tech.pt", Assunto, Mensagem, null, new List<string>());
+
+            return true;
+        }
     }
 }
