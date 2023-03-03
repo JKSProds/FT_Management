@@ -15,6 +15,9 @@
         public IActionResult Index()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma listagem de acesso de todos os utilizadores.", u.NomeCompleto, u.Id);
 
             return View(context.ObterListaUtilizadores(false, false));
         }
@@ -75,6 +78,8 @@
                 {
                     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" && !user.Dev) return Forbid();
 
+                    _logger.LogDebug("Utilizador {1} [{2}] a realizar um login.", user.NomeCompleto, user.Id);
+
                     TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
                     string res = first > 9 ? first.ToString() : first.ToString() + second.ToString() + third.ToString() + fourth.ToString() + fifth.ToString() + sixth.ToString();
                     if (string.IsNullOrEmpty(user.SecondFactorAuthStamp) || tfa.ValidateTwoFactorPIN(user.SecondFactorAuthStamp, res))
@@ -126,6 +131,10 @@
         public IActionResult Utilizador(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter informação de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+
             if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
             if (!User.IsInRole("Admin") && id != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("Editar", new { id = int.Parse(this.User.Claims.First().Value) });
 
@@ -144,21 +153,21 @@
             List<KeyValuePair<int, string>> LstNotificacoes = new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(0, "Desativado"), new KeyValuePair<int, string>(1, "Email"), new KeyValuePair<int, string>(2, "Nextcloud"), new KeyValuePair<int, string>(3, "Ambos") };
             ViewBag.Notificacoes = LstNotificacoes.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
 
-            Utilizador u = context.ObterUtilizador(id);
+            Utilizador t = context.ObterUtilizador(id);
 #if !DEBUG
-                if (string.IsNullOrEmpty(u.SecondFactorAuthStamp))
+                if (string.IsNullOrEmpty(t.SecondFactorAuthStamp))
                 {
                     String stamp = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
 
                     TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-                    SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", u.NomeUtilizador, stamp, false, 3);
+                    SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", t.NomeUtilizador, stamp, false, 3);
 
-                    u.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
-                    u.SecondFactorAuthCode = setupInfo.ManualEntryKey;
+                    t.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
+                    t.SecondFactorAuthCode = setupInfo.ManualEntryKey;
                     ViewData["2FASTAMP"] = stamp;
                 }
 #endif
-            return View(u);
+            return View(t);
         }
 
         //Atualiza um utilizador em especifico
@@ -167,32 +176,35 @@
         public ContentResult Utilizador(int id, Utilizador utilizador, int enable, int acessos, int dev, int admin, int api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
-            if ((u.Admin & !this.User.IsInRole("Master")) && u.Id != int.Parse(this.User.Claims.First().Value.ToString())) return Content("");
+            Utilizador t = context.ObterUtilizador(id);
+            if ((t.Admin & !this.User.IsInRole("Master")) && t.Id != int.Parse(this.User.Claims.First().Value.ToString())) return Content("");
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar a informação de um utilizador em especifico: Id - {3}, Enabled - {4}, Acessos - {5}, Dev - {6}, Admin - {7}, Api - {8}, .", u.NomeCompleto, u.Id, id, enable, acessos, dev, admin, api);
 
             if (utilizador.TipoMapa > 0)
             {
-                u.Pin = utilizador.Pin == null ? "" : utilizador.Pin;
-                u.Iniciais = utilizador.Iniciais == null ? "" : utilizador.Iniciais;
-                u.CorCalendario = utilizador.CorCalendario == null ? "" : utilizador.CorCalendario;
-                u.TipoMapa = utilizador.TipoMapa;
-                u.Telemovel = utilizador.Telemovel == null ? "" : utilizador.Telemovel;
-                u.DataNascimento = utilizador.DataNascimento;
-                u.TipoTecnico = utilizador.TipoTecnico;
-                u.Zona = utilizador.Zona;
-                u.ChatToken = utilizador.ChatToken == null ? "" : utilizador.ChatToken;
-                u.NotificacaoAutomatica = utilizador.NotificacaoAutomatica;
+                t.Pin = utilizador.Pin == null ? "" : utilizador.Pin;
+                t.Iniciais = utilizador.Iniciais == null ? "" : utilizador.Iniciais;
+                t.CorCalendario = utilizador.CorCalendario == null ? "" : utilizador.CorCalendario;
+                t.TipoMapa = utilizador.TipoMapa;
+                t.Telemovel = utilizador.Telemovel == null ? "" : utilizador.Telemovel;
+                t.DataNascimento = utilizador.DataNascimento;
+                t.TipoTecnico = utilizador.TipoTecnico;
+                t.Zona = utilizador.Zona;
+                t.ChatToken = utilizador.ChatToken == null ? "" : utilizador.ChatToken;
+                t.NotificacaoAutomatica = utilizador.NotificacaoAutomatica;
             }
 
-            if (enable > 0) u.Enable = enable == 1;
-            if (acessos > 0) u.Acessos = acessos == 1;
-            if (dev > 0) u.Dev = dev == 1;
-            if (admin > 0) u.Admin = admin == 1;
+            if (enable > 0) t.Enable = enable == 1;
+            if (acessos > 0) t.Acessos = acessos == 1;
+            if (dev > 0) t.Dev = dev == 1;
+            if (admin > 0) t.Admin = admin == 1;
 
-            if (api == 1) return Content(context.NovaApiKey(u));
+            if (api == 1) return Content(context.NovaApiKey(t));
 
-            context.NovoUtilizador(u);
-            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+            context.NovoUtilizador(t);
+            if (!string.IsNullOrEmpty(t.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", t);
 
             return Content("1");
         }
@@ -203,9 +215,12 @@
         public ContentResult Utilizador(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(int.Parse(id));
+            Utilizador t = context.ObterUtilizador(int.Parse(id));
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            if (!u.Admin || this.User.IsInRole("Master")) context.ApagarUtilizador(u);
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar a informação de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+
+            if (!t.Admin || this.User.IsInRole("Master")) context.ApagarUtilizador(t);
 
             return Content("1");
         }
@@ -216,7 +231,11 @@
         public ContentResult Senha(int id, string password_current, string password, string password_confirmation)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
+            Utilizador t = context.ObterUtilizador(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a alterar a senha de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+
             string res = "";
 
             if (password != password_confirmation) res += "Passwords não condizem\r\n";
@@ -229,8 +248,8 @@
                 var passwordHasher = new PasswordHasher<string>();
                 if (passwordHasher.VerifyHashedPassword(null, u.Password, password_current) == PasswordVerificationResult.Success)
                 {
-                    u.Password = passwordHasher.HashPassword(null, password);
-                    context.NovoUtilizador(u);
+                    t.Password = passwordHasher.HashPassword(null, password);
+                    context.NovoUtilizador(t);
                 }
                 else
                 {
@@ -249,14 +268,18 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             var passwordHasher = new PasswordHasher<string>();
             if (string.IsNullOrEmpty(senha)) return Content("Nok");
-            Utilizador u = context.ObterUtilizador(id);
-            if (!u.Admin || this.User.IsInRole("Master"))
+            Utilizador t = context.ObterUtilizador(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a eliminar a senha de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+
+            if (!t.Admin || this.User.IsInRole("Master"))
             {
-                u.Password = passwordHasher.HashPassword(null, senha);
-                u.SecondFactorAuthStamp = "";
+                t.Password = passwordHasher.HashPassword(null, senha);
+                t.SecondFactorAuthStamp = "";
             }
 
-            context.NovoUtilizador(u);
+            context.NovoUtilizador(t);
 
             return Content("Ok");
         }
@@ -276,18 +299,22 @@
         public IActionResult SecondFA(int id, string code, string stamp)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
-            u.SecondFactorAuthStamp = "";
+            Utilizador t = context.ObterUtilizador(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar o 2FA de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+
+            t.SecondFactorAuthStamp = "";
 
             TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
             if (tfa.ValidateTwoFactorPIN(stamp, code))
             {
-                u.SecondFactorAuthStamp = stamp;
-                if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
-                context.NovoUtilizador(u);
+                t.SecondFactorAuthStamp = stamp;
+                if (!string.IsNullOrEmpty(t.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+                context.NovoUtilizador(t);
             }
 
-            return RedirectToAction("Editar", new { id = u.Id });
+            return RedirectToAction("Editar", new { id = t.Id });
         }
 
         //Remove o 2 FA
@@ -296,14 +323,17 @@
         public IActionResult SecondFA(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
+            Utilizador t = context.ObterUtilizador(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            u.SecondFactorAuthStamp = "";
+            _logger.LogDebug("Utilizador {1} [{2}] a remover o 2FA de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
 
-            if (!string.IsNullOrEmpty(u.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
-            context.NovoUtilizador(u);
+            t.SecondFactorAuthStamp = "";
 
-            return RedirectToAction("Editar", new { id = u.Id });
+            if (!string.IsNullOrEmpty(t.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
+            context.NovoUtilizador(t);
+
+            return RedirectToAction("Editar", new { id = t.Id });
         }
 
         //Atualiza a imagem do utilizador
@@ -311,16 +341,20 @@
         public IActionResult Imagem(int id, IFormFile file)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(id);
+            Utilizador t = context.ObterUtilizador(id);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar a imagem de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+
 
             if (file.Length > 0)
             {
-                FicheirosContext.CriarImagemUtilizador(file, u.NomeUtilizador);
+                FicheirosContext.CriarImagemUtilizador(file, t.NomeUtilizador);
             }
 
-            u.ImgUtilizador = "/img/" + u.NomeUtilizador + "/" + file.FileName;
+            t.ImgUtilizador = "/img/" + t.NomeUtilizador + "/" + file.FileName;
 
-            context.NovoUtilizador(u);
+            context.NovoUtilizador(t);
             FicheirosContext.GestaoFicheiros(true, false);
 
             return RedirectToAction("Logout");
@@ -342,6 +376,9 @@
         public IActionResult Permissoes(int id, string[] perms)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar as permissoes de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
 
             return Content("0");
         }
@@ -355,6 +392,10 @@
             ViewData["Data"] = Data;
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] obter os logs de um utilizador em especifico: ", u.NomeCompleto, u.Id, id);
+
             ViewData["NomeUtilizador"] = context.ObterUtilizador(id).NomeUtilizador;
 
             return View(context.ObterListaLogs(id).Where(l => l.Data > DateTime.Parse(Data) && l.Data < DateTime.Parse(Data).AddDays(1)));
