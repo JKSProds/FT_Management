@@ -26,6 +26,9 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os utilizadores.", u.NomeCompleto, u.Id);
 
             return View(context.ObterListaUtilizadores(true, false));
         }
@@ -35,7 +38,10 @@ namespace FT_Management.Controllers
         public virtual ActionResult Ferias()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
             string id = context.ObterAnoAtivo();
+            _logger.LogDebug("Utilizador {1} [{2}] a gerar mapa de ferias do ano ativo: {3}.", u.NomeCompleto, u.Id, id);
 
             var file = context.GerarMapaFerias(id);
             var output = new MemoryStream();
@@ -60,12 +66,18 @@ namespace FT_Management.Controllers
         [HttpPost]
         public ContentResult Ferias(string datainicio, string datafim, int idutilizador)
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (idutilizador != int.Parse(this.User.Claims.First().Value.ToString()) && !this.User.IsInRole("Admin")) return Content("0");
 
             DateTime dataInicio = DateTime.Parse(datainicio);
             DateTime dataFim = DateTime.Parse(datafim);
             DateTime dataAtual = DateTime.Parse(datainicio);
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterUtilizador(idutilizador);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar ferias para o utilizador: Nome - {3}, Data Inicio - {4}, Data Fim - {5}.", u.NomeCompleto, u.Id, t.NomeCompleto, dataInicio, dataFim);
+
             List<Ferias> LstFerias = new List<Ferias>();
             List<Ferias> LstFeriasExistentes = context.ObterListaFerias(idutilizador);
             List<Feriado> LstFeriados = context.ObterListaFeriados(DateTime.Parse(datainicio).Year.ToString());
@@ -131,6 +143,11 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Ferias ferias = context.ObterFerias(int.Parse(id));
 
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterUtilizador(ferias.IdUtilizador);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar um registo de ferias do utilizador: Nome - {3}, Data Inicio - {4}, Data Fim - {5}.", u.NomeCompleto, u.Id, t.NomeCompleto, ferias.DataInicio, ferias.DataFim);
+
             if (ferias.IdUtilizador == int.Parse(this.User.Claims.First().Value.ToString()) || this.User.IsInRole("Admin")) context.ApagarFerias(int.Parse(id));
 
             if (ferias.IdUtilizador != int.Parse(this.User.Claims.First().Value.ToString())) MailContext.EnviarEmailFeriasNaoAprovadas(context.ObterUtilizador(ferias.IdUtilizador), ferias);
@@ -151,6 +168,10 @@ namespace FT_Management.Controllers
             }
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterUtilizador(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter os registos de ferias do utilizador: Nome - {3}.", u.NomeCompleto, u.Id, t.NomeCompleto);
 
             ViewData["Ano"] = context.ObterAnoAtivo();
             ViewData["IdUtilizador"] = id;
@@ -166,15 +187,20 @@ namespace FT_Management.Controllers
             if (obs == null) obs = "";
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
             List<Ferias> LstFerias = new List<Ferias>();
 
             Ferias ferias = context.ObterFerias(int.Parse(id));
             ferias.Validado = true;
             ferias.Obs = obs;
-            ferias.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            ferias.Utilizador = u;
             ferias.ValidadoPor = ferias.Utilizador.Id;
             ferias.ValidadoPorNome = ferias.Utilizador.NomeCompleto;
             LstFerias.Add(ferias);
+
+            _logger.LogDebug("Utilizador {1} [{2}] validou um dos registos de ferias do utilizador: Nome - {3}.", u.NomeCompleto, u.Id, ferias.Utilizador.NomeCompleto);
+
             context.CriarFerias(LstFerias);
 
             MailContext.EnviarEmailFeriasAprovadas(context.ObterUtilizador(ferias.IdUtilizador), ferias);
@@ -188,6 +214,10 @@ namespace FT_Management.Controllers
         public void Dias(string ano, string idutilizador, string dias)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterUtilizador(int.Parse(idutilizador));
+
+            _logger.LogDebug("Utilizador {1} [{2}] atualizou o numero de dias das ferias do utilizador: Nome - {3}, Dias - {4}.", u.NomeCompleto, u.Id, t.NomeCompleto, dias);
 
             context.CriarFeriasUtilizador(int.Parse(idutilizador), ano, int.Parse(dias));
         }
@@ -209,6 +239,11 @@ namespace FT_Management.Controllers
 
             int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
             if (IdUtilizador == 0) return Forbid();
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterUtilizador(IdUtilizador);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a descarregar o calendario das ferias do Utilizador: Nome - {3}.", u.NomeCompleto, u.Id, t.NomeCompleto);
 
             List<Ferias> LstFerias = context.ObterListaFeriasValidadas();
 
@@ -254,6 +289,9 @@ namespace FT_Management.Controllers
         public JsonResult EventosFerias(DateTime start, DateTime end)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter ventos de ferias.", u.NomeCompleto, u.Id);
 
             return new JsonResult(context.ConverterFeriasEventos(context.ObterListaFerias(start, end), context.ObterListaFeriados(start.Year.ToString())).ToList());
         }
