@@ -15,6 +15,10 @@
         public ActionResult Index()
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os armazens.", u.NomeCompleto, u.Id);
 
             return View(phccontext.ObterArmazensFixos());
         }
@@ -24,6 +28,10 @@
         public JsonResult Dossiers(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os inventarios do armazém: {3}.", u.NomeCompleto, u.Id, id);
 
             return new JsonResult(phccontext.ObterInventarios(id));
         }
@@ -33,12 +41,16 @@
         public ActionResult Dossier(string id, string referencia)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             if (string.IsNullOrEmpty(referencia)) referencia = "";
             ViewData["Referencia"] = referencia;
 
             Picking p = phccontext.ObterInventario(id);
             p.Linhas = p.Linhas.Where(l => l.Ref_linha.Contains(referencia)).ToList();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter um dossier de inventario: Id - {3}.", u.NomeCompleto, u.Id, p.IdPicking);
 
             return View(p);
         }
@@ -48,6 +60,10 @@
         public JsonResult Dossier(int id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar um invetario novo para o armazém: {3}.", u.NomeCompleto, u.Id, id);
 
             List<string> res = phccontext.CriarInventario(id, this.User.ObterNomeCompleto());
             res[2] = (!string.IsNullOrEmpty(res[2])) ? "/Inventario/Dossier/" + res[2] : "";
@@ -60,8 +76,14 @@
         public JsonResult Dossier(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Picking i = phccontext.ObterInventario(id);
 
-            return new JsonResult(phccontext.FecharInventario(new Picking() { Picking_Stamp = id, EditadoPor = this.User.ObterNomeCompleto() }));
+            _logger.LogDebug("Utilizador {1} [{2}] a fechar um inventario: {3}.", u.NomeCompleto, u.Id, i.IdPicking);
+
+            i.EditadoPor = u.NomeCompleto;
+            return new JsonResult(phccontext.FecharInventario(i));
         }
 
         //Obter linha baseado no stamp
@@ -69,8 +91,13 @@
         public JsonResult Linha(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Linha_Picking l = phccontext.ObterLinhaInventario(id);
 
-            return new JsonResult(phccontext.ObterLinhaInventario(id));
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma linha do inventario: Ref - {3}, Qtd - {4},.", u.NomeCompleto, u.Id, l.Ref_linha, l.Qtd_Linha);
+
+            return new JsonResult(l);
         }
 
         //Criar linha nova
@@ -78,14 +105,18 @@
         public JsonResult Linha(string stamp, string ref_produto, double qtd)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             Linha_Picking l = new Linha_Picking()
             {
                 Picking_Linha_Stamp = stamp,
                 Ref_linha = ref_produto,
                 Qtd_Linha = qtd,
-                EditadoPor = this.User.ObterNomeCompleto()
+                EditadoPor = u.NomeCompleto
             };
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar uma linha novo no inventario: Ref - {3}, Qtd - {4},.", u.NomeCompleto, u.Id, l.Ref_linha, l.Qtd_Linha);
 
             return new JsonResult(phccontext.CriarLinhaInventario(l));
         }
@@ -95,6 +126,10 @@
         public JsonResult Linha(string stamp, string stamp_linha)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do inventario: STAMP - {3}, STAMP_LINHA - {4}.", u.NomeCompleto, u.Id, stamp, stamp_linha);
 
             return new JsonResult(phccontext.ApagarLinhaInventario(new Ref_Linha_Picking() { BOMA_STAMP = stamp, Picking_Linha_Stamp = stamp_linha }));
         }
@@ -104,6 +139,10 @@
         public JsonResult Serie(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do inventario: STAMP - {3}.", u.NomeCompleto, u.Id, id);
 
             return new JsonResult(phccontext.ObterSerieLinhaInventario(id).OrderBy(s => s.CriadoA).ToList());
         }
@@ -113,6 +152,10 @@
         public JsonResult Serie(string stamp, string stamp_linha, string serie)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do inventario: STAMP - {3}, LINHA - {4}, SERIE - {5}.", u.NomeCompleto, u.Id, stamp, stamp_linha, serie);
 
             Ref_Linha_Picking l = new Ref_Linha_Picking()
             {
@@ -130,6 +173,10 @@
         public JsonResult ApagarSerie(string stamp, string stamp_boma, string stamp_linha)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do inventario: STAMP - {3}, BOMA - {4}, STAMP LINHA - {5}.", u.NomeCompleto, u.Id, stamp, stamp_boma, stamp_linha);
 
             return new JsonResult(phccontext.ApagarLinhaSerieInventario(stamp, new Ref_Linha_Picking() { BOMA_STAMP = stamp_boma, Picking_Linha_Stamp = stamp_linha, CriadoPor = this.User.ObterNomeCompleto() }));
         }
