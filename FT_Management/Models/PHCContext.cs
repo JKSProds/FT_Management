@@ -947,6 +947,7 @@
                     {
                         LstFolhaObra.Add(new FolhaObra()
                         {
+                            IdAT = result["id_at"].ToString(),
                             StampFO = result["pastamp"].ToString(),
                             IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                             DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
@@ -995,7 +996,7 @@
                                 LstFolhaObra.Last().RubricaCliente = base64String;
                             }
 
-                            LstFolhaObra.Last().IdAT = result["id_at"].ToString();
+
                         }
                     }
                 }
@@ -1046,7 +1047,7 @@
         }
         public FolhaObra ObterFolhaObra(string STAMP)
         {
-            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", true);
+            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=pa.nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", true);
 
         }
         public FolhaObra ObterFolhaObraSimples(string STAMP)
