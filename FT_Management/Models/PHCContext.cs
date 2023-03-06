@@ -947,7 +947,6 @@
                     {
                         LstFolhaObra.Add(new FolhaObra()
                         {
-                            IdAT = result["id_at"].ToString(),
                             StampFO = result["pastamp"].ToString(),
                             IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                             DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
@@ -986,6 +985,7 @@
 
                         if (LoadRubrica)
                         {
+                            LstFolhaObra.Last().IdAT = result["id_at"].ToString();
                             string img = ObterRubrica(LstFolhaObra.Last().IdFolhaObra);
                             if (File.Exists(img))
                             {
