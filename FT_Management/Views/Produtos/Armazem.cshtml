@@ -93,7 +93,7 @@ else
                     @foreach (var item in Model.LstMovimentos)
                         {
                             <tr style="width:auto"
-                                onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                        onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                 <td data-label="@Html.DisplayNameFor(model => model.LstMovimentos.First().IdFolhaObra)">
                                     <span>@item.IdFolhaObra</span>
                                 </td>
@@ -145,6 +145,31 @@ else
             </button>
             <button type="button" class="button is-large is-fullwidth is-danger"
                 onclick="Bulma('#modalGerarGuiaGlobal').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div id="modalSucessoGuiaGlobal" class="modal">
+    <div class="modal-background has-background-success"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Guia Global</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p class="is-size-2 has-text-centered has-text-weight-bold">Foi gerada com sucesso a sua guia global.
+                    Por requisite a impressão/envio da sua guia!</p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-large is-fullwidth is-danger"
+                onclick="Bulma('#modalSucessoGuiaGlobal').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -209,7 +234,8 @@ else
             type: "POST",
             success: function (response) {
                 if (response[0] == 1) {
-                    notify("Guia gerada com sucesso! Por requisite a impressão/envio da sua guia! " + response[1])
+                    notify("Guia gerada com sucesso! Por requisite a impressão/envio da sua guia! " + response[1]);
+                    Bulma('#modalSucessoGuiaGlobal').modal().open();
                 } else {
                     notifyError("Ocorreu um erro ao gerar a sua guia. Por favor tente novamente! " + response[1]);
                 }
