@@ -13,7 +13,7 @@
         //Obter todos os dossiers de uma data especifica
         [HttpGet]
         [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Index(string Data, string Filtro, string Serie)
+        public ActionResult Index(string Data, string Filtro, int Serie)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -29,9 +29,9 @@
 
             List<KeyValuePair<int, string>> LstSeries = phccontext.ObterSeriesDossiers();
             LstSeries.Insert(0, new KeyValuePair<int, string>(0, "Todos"));
-            ViewBag.Series = LstSeries.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value, Selected = l.Key.ToString() == Serie });
+            ViewBag.Series = LstSeries.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value, Selected = l.Key == Serie });
 
-            return View(phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, int.Parse(Serie)));
+            return View(phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie));
         }
 
         //Obter um dossier em especifico
