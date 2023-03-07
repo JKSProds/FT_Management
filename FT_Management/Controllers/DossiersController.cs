@@ -13,19 +13,24 @@
         //Obter todos os dossiers de uma data especifica
         [HttpGet]
         [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Index(string Data)
+        public ActionResult Index(string Data, string Filtro, string Serie)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["Data"] = Data;
+            ViewData["Filtro"] = Filtro;
+            ViewData["Serie"] = Serie;
 
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-
             _logger.LogDebug("Utilizador {1} [{2}] a obter todos os dossiers da seguinte data: {3}", u.NomeCompleto, u.Id, Data);
 
-            return View(phccontext.ObterDossiers(DateTime.Parse(Data)));
+            List<KeyValuePair<int, string>> LstSeries = phccontext.ObterSeriesDossiers();
+            LstSeries.Insert(0, new KeyValuePair<int, string>(0, "Todos"));
+            ViewBag.Series = LstSeries.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value, Selected = l.Key.ToString() == Serie });
+
+            return View(phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, int.Parse(Serie)));
         }
 
         //Obter um dossier em especifico

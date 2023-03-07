@@ -3185,7 +3185,8 @@
 
         //Dossier Pedidos
         #region Dossier
-        public List<Dossier> ObterDossiers(DateTime Data)
+
+        public List<Dossier> ObterDossiers(string SQL_Query, bool LoadLinhas, bool LoadMarcacao, bool LoadFolhaObra)
         {
             List<Dossier> LstDossiers = new List<Dossier>();
 
@@ -3196,10 +3197,11 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where dataobra='" + Data.ToString("yyyy-MM-dd") + "' order by ndos", conn)
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
+
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     while (result.Read())
@@ -3210,18 +3212,19 @@
                             NomeDossier = result["nmdos"].ToString(),
                             IdDossier = int.Parse(result["obrano"].ToString()),
                             DataDossier = DateTime.Parse(result["dataobra"].ToString()),
+                            Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["ousrinis"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
                             Serie = int.Parse(result["ndos"].ToString()),
-                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
+                            Cliente = int.Parse(result["ndos"].ToString()) == 2 || int.Parse(result["ndos"].ToString()) == 10 || int.Parse(result["no"].ToString()) == 1 ? new Cliente() { NomeCliente = result["nome"].ToString() } : ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
-                            Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["inome"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
-                            //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
                             Estado = result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
                             EditadoPor = result["usrinis"].ToString(),
-                            //Linhas = ObterLinhasDossier(result["bostamp"].ToString().Trim()),
                             Fechado = result["fechada"].ToString() == "True"
                         });
+                        if (LoadFolhaObra) LstDossiers.Last().FolhaObra = ObterFolhaObra(result["pastamp"].ToString());
+                        if (LoadMarcacao) LstDossiers.Last().Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString());
+                        if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossier(LstDossiers.Last().StampDossier);
                     }
                 }
 
@@ -3234,119 +3237,23 @@
             }
 
             return LstDossiers;
+        }
+        public List<Dossier> ObterDossiers(DateTime Data, string Filtro, int Serie)
+        {
+            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where dataobra='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndos=" + Serie : "") + " AND (obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%') order by nmdos", false, false, false);
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
         {
-            List<Dossier> LstDossiers = new List<Dossier>();
-
-            try
-            {
-
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", conn)
-                {
-                    CommandTimeout = TIMEOUT
-                };
-                using (SqlDataReader result = command.ExecuteReader())
-                {
-                    while (result.Read())
-                    {
-                        LstDossiers.Add(new Dossier()
-                        {
-                            StampDossier = result["bostamp"].ToString().Trim(),
-                            NomeDossier = result["nmdos"].ToString(),
-                            IdDossier = int.Parse(result["obrano"].ToString()),
-                            DataDossier = DateTime.Parse(result["dataobra"].ToString()),
-                            Serie = int.Parse(result["ndos"].ToString()),
-                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
-                            Referencia = result["obranome"].ToString(),
-                            Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["inome"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
-                            //FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
-                            //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
-                            Estado = result["u_estado"].ToString(),
-                            Obs = result["obstab2"].ToString(),
-                            DataCriacao = DateTime.Parse(result["ousrdata"].ToString()),
-                            EditadoPor = result["usrinis"].ToString(),
-                            //Linhas = ObterLinhasDossier(result["bostamp"].ToString().Trim()),
-                            Fechado = result["fechada"].ToString() == "True"
-                        });
-                    }
-                }
-
-                conn.Close();
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
-            }
-
-            return LstDossiers;
+            return ObterDossiers("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", false, false, false);
         }
-
-
 
         public Dossier ObterDossier(string STAMP)
         {
-            Dossier d = new Dossier();
-
-            try
-            {
-
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "'", conn)
-                {
-                    CommandTimeout = TIMEOUT
-                };
-
-                using (SqlDataReader result = command.ExecuteReader())
-                {
-                    while (result.Read())
-                    {
-                        d = new Dossier()
-                        {
-                            StampDossier = result["bostamp"].ToString().Trim(),
-                            NomeDossier = result["nmdos"].ToString(),
-                            IdDossier = int.Parse(result["obrano"].ToString()),
-                            DataDossier = DateTime.Parse(result["dataobra"].ToString()),
-                            Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["inome"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
-                            Serie = int.Parse(result["ndos"].ToString()),
-                            Referencia = result["obranome"].ToString(),
-                            Estado = result["u_estado"].ToString(),
-                            Obs = result["obstab2"].ToString(),
-                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
-                            EditadoPor = result["usrinis"].ToString(),
-                            Linhas = ObterLinhasDossier(STAMP),
-                            Fechado = result["fechada"].ToString() == "True"
-                        };
-                        if (d.Serie != 36)
-                        {
-                            d.Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString()));
-                            d.FolhaObra = ObterFolhaObra(result["pastamp"].ToString());
-                            d.Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString());
-                        }
-                    }
-                }
-
-                conn.Close();
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
-            }
-
-            return d;
+            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "';", true, true, true).DefaultIfEmpty(new Dossier()).First();
         }
 
-        public List<Linha_Dossier> ObterLinhasDossier(string STAMP)
+        public List<Linha_Dossier> ObterLinhasDossier(string SQL_Query, bool LoadAll)
         {
             List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
 
@@ -3357,7 +3264,7 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '" + STAMP + "' order by lordem", conn)
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3391,51 +3298,14 @@
 
             return LstLinhasDossier;
         }
+        public List<Linha_Dossier> ObterLinhasDossier(string STAMP)
+        {
+            return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '" + STAMP + "' order by lordem", true);
+        }
 
         public Linha_Dossier ObterLinhaDossier(string STAMP)
         {
-            Linha_Dossier l = new Linha_Dossier();
-
-            try
-            {
-
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bistamp = '" + STAMP + "'", conn)
-                {
-                    CommandTimeout = TIMEOUT
-                };
-                using (SqlDataReader result = command.ExecuteReader())
-                {
-                    while (result.Read())
-                    {
-                        if (!string.IsNullOrEmpty(result["design"].ToString()))
-                        {
-                            l = new Linha_Dossier
-                            {
-                                Stamp_Dossier = result["bostamp"].ToString(),
-                                Stamp_Linha = result["bistamp"].ToString(),
-                                Referencia = result["ref"].ToString().Trim(),
-                                Designacao = result["design"].ToString().Trim(),
-                                Quantidade = Double.Parse(result["qtt"].ToString()),
-                                CriadoPor = result["ousrinis"].ToString()
-                            };
-                        }
-
-                    }
-                }
-
-                conn.Close();
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine("Não foi possivel obter a linha do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
-            }
-
-            return l;
+            return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bistamp = '" + STAMP + "'", true).DefaultIfEmpty(new Linha_Dossier()).First();
         }
 
         public List<string> CriarDossier(Dossier d)
@@ -3592,6 +3462,40 @@
             }
 
             return res;
+        }
+        public List<KeyValuePair<int, string>> ObterSeriesDossiers()
+        {
+            List<KeyValuePair<int, string>> LstSeries = new List<KeyValuePair<int, string>>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select ndos, nmdos from ts order by nmdos;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstSeries.Add(new KeyValuePair<int, string>(int.Parse(result["ndos"].ToString()), result["nmdos"].ToString()));
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel obter as series dos dossiers do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstSeries;
+
         }
         #endregion
     }
