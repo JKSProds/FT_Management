@@ -45,7 +45,8 @@
             ViewData["ReturnUrl"] = ReturnUrl;
 
             if (d.Serie == 96 || d.Serie == 97) return View("Pedido", d);
-            return View("Transferencia", d);
+            if (d.Serie == 36) return View("Transferencia", d);
+            return View("Dossier", d);
         }
 
         //Criar um pedido de dossier

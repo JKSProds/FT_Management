@@ -3196,7 +3196,7 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and dataobra='" + Data.ToString("yyyy-MM-dd") + "'", conn)
+                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where dataobra='" + Data.ToString("yyyy-MM-dd") + "' order by ndos", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3213,7 +3213,7 @@
                             Serie = int.Parse(result["ndos"].ToString()),
                             Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
-                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["inome"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
                             //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
                             Estado = result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
@@ -3264,7 +3264,7 @@
                             Serie = int.Parse(result["ndos"].ToString()),
                             Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
                             Referencia = result["obranome"].ToString(),
-                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["inome"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
                             //FolhaObra = ObterFolhaObra(result["pastamp"].ToString()),
                             //Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString()),
                             Estado = result["u_estado"].ToString(),
@@ -3301,7 +3301,7 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (96, 97, 36) and bostamp='" + STAMP + "'", conn)
+                SqlCommand command = new SqlCommand("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3316,7 +3316,7 @@
                             NomeDossier = result["nmdos"].ToString(),
                             IdDossier = int.Parse(result["obrano"].ToString()),
                             DataDossier = DateTime.Parse(result["dataobra"].ToString()),
-                            Tecnico = FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
+                            Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["inome"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
                             Serie = int.Parse(result["ndos"].ToString()),
                             Referencia = result["obranome"].ToString(),
                             Estado = result["u_estado"].ToString(),
@@ -3357,7 +3357,7 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where a.ndos in (96, 97, 36) and b.bostamp = '" + STAMP + "' order by bostamp", conn)
+                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '" + STAMP + "' order by lordem", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3403,7 +3403,7 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where a.ndos in (96, 97, 36) and b.bistamp = '" + STAMP + "'", conn)
+                SqlCommand command = new SqlCommand("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bistamp = '" + STAMP + "'", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };

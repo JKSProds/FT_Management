@@ -526,7 +526,7 @@
                     }
                 </li>
                 <li>
-                    @if (Model.LstAtividade.Where(a => a.Tipo == 96 || a.Tipo == 97).Count() == 0)
+                    @if (Model.LstAtividade.Count() == 0)
                     {
 
                         <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados dossier's!</button>
@@ -545,7 +545,7 @@
                                             <th></th>
                                     <tbody>
 
-                                                @foreach (var a in Model.LstAtividade.Where(a => a.Tipo == 96 || a.Tipo == 97))
+                                                @foreach (var a in Model.LstAtividade)
                                                 {
                                             <tr>
                                                 <td
@@ -556,14 +556,16 @@
                                                     <span>@a.Id</span></td>
                                                 <td
                                             data-label="@Html.DisplayNameFor(model => model.LstAtividade.First().Data)">
-                                                    <span>@a.Data.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
+                                                    <span>@a.Data.ToString("dd-MM-yyyy HH:mm")</span></td>
                                                     <td
                                             data-label="@Html.DisplayNameFor(model => model.LstAtividade.First().CriadoPor)">
                                                     <span>@a.CriadoPor</span></td>
                                                 <td class="is-actions-cell">
+                                                    @if (a.Tipo > 0) {
                                                     <a class="button is-primary is-outlined"
-                                                onclick="window.open('@Url.Action("Pedido", "Dossiers", new { id = @a.StampAtividade})')"><i
+                                                onclick="window.open('@Url.Action("Dossier", "Dossiers", new { id = @a.StampAtividade})')"><i
                                                     class="fas fa-eye" style="font-size:20px"></i></a>
+                                                    }
                                                 </td>
                                             </tr>
                                                 }
