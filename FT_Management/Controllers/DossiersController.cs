@@ -19,6 +19,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
+            if (string.IsNullOrEmpty(Filtro)) Filtro = "";
             ViewData["Data"] = Data;
             ViewData["Filtro"] = Filtro;
             ViewData["Serie"] = Serie;
