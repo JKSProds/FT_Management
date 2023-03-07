@@ -110,7 +110,7 @@
         }
         public List<Produto> ObterProdutos(string Referencia, string Designacao, int IdArmazem, int IdFornecedor, string TipoEquipamento)
         {
-            return ObterProdutos("SELECT TOP 100 ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%" + TipoEquipamento + "%' AND st.inactivo=0 order by sa.ref;");
+            return ObterProdutos("SELECT TOP 500 ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.ref like '%" + Referencia + "%' AND st.design like '%" + Designacao + "%' AND sa.armazem='" + IdArmazem + "' " + (IdFornecedor == 0 ? "" : " and fornec=" + IdFornecedor) + " and st.usr4 like '%" + TipoEquipamento + "%' AND st.inactivo=0 order by sa.ref;");
         }
         public List<Produto> ObterProdutosArmazem(string Referencia)
         {
