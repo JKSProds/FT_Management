@@ -144,7 +144,7 @@ namespace FT_Management.Controllers
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 
-            return View(fo);
+            return View("Adicionar", fo);
         }
 
         //Validar alguns paramentros da folha de obra antes de a criar
