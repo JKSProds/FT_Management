@@ -102,10 +102,7 @@
             phccontext.FecharPicking(p);
             context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
 
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiquetaPicking(p).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            MailContext.EnviarEmailFechoPicking(u, p, new Attachment(context.BitMapToMemoryStream(filePath, 810, 504), "Picking_" + p.IdPicking + ".pdf"));
+            MailContext.EnviarEmailFechoPicking(u, p, new Attachment(context.MemoryStreamToPDF(context.DesenharEtiquetaPicking(p), 801, 504), "Picking_" + p.IdPicking + ".pdf"));
 
             return Content("Ok");
         }

@@ -12,7 +12,6 @@ global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.Linq;
 global using System.Net.Http;
-global using System.Drawing;
 global using System.Drawing.Drawing2D;
 global using System.Net.Mail;
 global using System.Threading;

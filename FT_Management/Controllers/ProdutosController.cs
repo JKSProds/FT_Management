@@ -151,41 +151,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta normal: Id - {3}, Armazem {4}.", u.NomeCompleto, u.Id, id, armazemid);
 
-            var file = context.DesenharEtiquetaProduto(phccontext.ObterProduto(id, armazemid)).ToArray();
-            var output = new MemoryStream();
-            output.Write(file, 0, file.Length);
-            output.Position = 0;
-
-            var cd = new System.Net.Mime.ContentDisposition
-            {
-                FileName = "Produto_" + id + ".pdf",
-                Inline = true,
-                Size = file.Length
-
-            };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
-            return new FileContentResult(output.ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
-        }
-
-        //Imprimir etiqueta pequena
-        [HttpGet]
-        public ActionResult EtiquetaPequena(string id, int armazemid)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-
-            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta pequena: Id - {3}, Armazem {4}.", u.NomeCompleto, u.Id, id, armazemid);
-
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta80x25QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaProduto(phccontext.ObterProduto(id, armazemid)), 801, 504), "application/pdf");
         }
 
         //Imprimir multiplas etiquetas
@@ -203,10 +169,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta multipla: Id - {3}, Armazem {4}.", u.NomeCompleto, u.Id, id, armazemid);
 
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiqueta40x25QR(phccontext.ObterProduto(id, armazemid)).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaMultipla(phccontext.ObterProduto(id, armazemid)), 801, 504), "application/pdf");
         }
 
     }

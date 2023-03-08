@@ -1,4 +1,10 @@
 ﻿using Custom;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace FT_Management.Models
 {
@@ -1239,7 +1245,7 @@ namespace FT_Management.Models
                             {
                                 workSheet.Cells[y, j + 1].Value = "X";
                                 workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(LstFeriasUtilizador.First().Validado ? Color.LightGreen : Color.LightBlue);
+                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(LstFeriasUtilizador.First().Validado ? System.Drawing.Color.LightGreen : System.Drawing.Color.LightBlue);
                                 count += 1;
                             }
 
@@ -1247,14 +1253,14 @@ namespace FT_Management.Models
                             {
                                 workSheet.Cells[y, j + 1].Value = DataAtual.ToString("ddd").Substring(0, 1).ToUpper();
                                 workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(Color.Gray);
+                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Gray);
                             }
 
                             if (LstFeriados.Where(f => f.DataFeriado == DataAtual).Count() > 0)
                             {
                                 workSheet.Cells[y, j + 1].Value = "F";
                                 workSheet.Cells[y, j + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(Color.Gray);
+                                workSheet.Cells[y, j + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Gray);
 
                             }
                             workSheet.Cells[y, j + 1].Style.Border.BorderAround(ExcelBorderStyle.Medium);
@@ -1487,7 +1493,7 @@ namespace FT_Management.Models
                         {
                             workSheet.Cells[j, i + 1].Value = "FÉRIAS";
                             workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                            workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
+                            workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
                         }
                         else
                         if (!(dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday))
@@ -1496,10 +1502,10 @@ namespace FT_Management.Models
                             {
                                 workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
                                 workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
                                 workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
                                 workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
                             }
                             else
                             {
@@ -2047,536 +2053,574 @@ namespace FT_Management.Models
             }
             return LstEventos;
         }
-        public Bitmap DesenharEtiqueta80x50QR(Produto produto)
+
+        //NOT WORKING
+        /*       public Bitmap DesenharFolhaObraSimples(FolhaObra fo)
+              {
+
+                  int x = 0;
+                  int y = 0;
+                  int width = 1024;
+                  int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() * 140) * 2;
+
+                  Bitmap bm = new Bitmap(width, height);
+
+                  Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
+                  Font fontBody = new Font("Rubik", 22, FontStyle.Bold);
+                  Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
+
+                  string HeaderPagina = "Original";
+
+                  StringFormat format = new StringFormat
+                  {
+                      LineAlignment = StringAlignment.Center,
+                      Alignment = StringAlignment.Center
+                  };
+                  StringFormat formatRight = new StringFormat
+                  {
+                      LineAlignment = StringAlignment.Center,
+                      Alignment = StringAlignment.Far
+                  };
+                  StringFormat formatLeft = new StringFormat
+                  {
+                      LineAlignment = StringAlignment.Center,
+                      Alignment = StringAlignment.Near
+                  };
+
+                  Pen penB = new Pen(Color.Black, 5);
+                  Pen pen = new Pen(Color.Transparent, 5);
+
+                  using (Graphics gr = Graphics.FromImage(bm))
+                  {
+                      gr.Clear(Color.White);
+                      Rectangle rect = new Rectangle();
+
+                      gr.SmoothingMode = SmoothingMode.HighQuality;
+                      gr.CompositingQuality = CompositingQuality.HighQuality;
+                      gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                      for (int i = 0; i <= 1; i++)
+                      {
+                          if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+
+                          QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                          QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
+                          BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+                          Bitmap qrCodeImage = new Bitmap(new MemoryStream(qrCode.GetGraphic(20)));
+
+                          gr.DrawImage(qrCodeImage, width - 200, y + 20, 200, 200);
+
+                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                          gr.DrawString(HeaderPagina, fontBody, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                          gr.DrawString("Nº PAT: " + fo.IdFolhaObra, fontFooter, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                          gr.DrawString("Nº Assis. Técnica: " + fo.IdAT, fontFooter, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                          gr.DrawString("Nº Marcação: " + fo.IdMarcacao, fontFooter, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
+                          gr.DrawString("Data: " + fo.DataServico.ToShortDateString(), fontFooter, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 60;
+                          rect = new Rectangle(x + 10, y + 20, 400, 240);
+                          gr.DrawRectangle(penB, rect);
+
+                          rect = new Rectangle(x + 410, y + 20, width - 420, 240);
+                          gr.DrawRectangle(penB, rect);
+
+                          rect = new Rectangle(x + 10, y + 20, 400, 40);
+                          gr.DrawString("Subic, Lda", fontFooter, Brushes.Black, rect, format);
+                          gr.DrawRectangle(pen, rect);
+
+                          rect = new Rectangle(x + 410, y + 20, width - 420, 40);
+                          gr.DrawString("Dados do Cliente:", fontFooter, Brushes.Black, rect, formatLeft);
+                          gr.DrawString("Estab: " + fo.ClienteServico.IdCliente + " Loja: " + fo.ClienteServico.IdLoja, fontFooter, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+                          rect = new Rectangle(x + 10, y + 20, 400, 40);
+                          gr.DrawString("NIF: 515 609 013", fontFooter, Brushes.Black, rect, format);
+                          gr.DrawRectangle(pen, rect);
+
+                          rect = new Rectangle(x + 410, y + 20, width - 420, 80);
+                          gr.DrawString("Nome: " + fo.ClienteServico.NomeCliente, fontFooter, Brushes.Black, rect, formatLeft);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+
+                          rect = new Rectangle(x + 10, y + 20, 400, 160);
+                          gr.DrawString("Morada: Rua Engenheiro Sabino Marques, 144, 4470-605 Maia", fontFooter, Brushes.Black, rect, format);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+                          rect = new Rectangle(x + 410, y + 20, width - 420, 80);
+                          gr.DrawString("Morada: " + fo.ClienteServico.MoradaCliente, fontFooter, Brushes.Black, rect, formatLeft);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 80;
+                          rect = new Rectangle(x + 410, y + 20, width - 420, 40);
+                          gr.DrawString("NIF: " + fo.ClienteServico.NumeroContribuinteCliente, fontFooter, Brushes.Black, rect, formatLeft);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 60;
+
+                          rect = new Rectangle(x + 10, y + 20, width - 20, 80);
+                          gr.DrawRectangle(penB, rect);
+
+                          rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                          gr.DrawString("Equipamento", fontFooter, Brushes.Black, rect, format);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 40;
+                          rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                          gr.DrawString("Marca: " + fo.EquipamentoServico.MarcaEquipamento, fontFooter, Brushes.Black, rect, formatLeft);
+                          gr.DrawString("Modelo: " + fo.EquipamentoServico.ModeloEquipamento, fontFooter, Brushes.Black, rect, format);
+                          gr.DrawString("N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, fontFooter, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(pen, rect);
+
+                          y += 60;
+                          rect = new Rectangle(x + 10, y + 20, width - 20, 60);
+                          if (fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() > 0)
+                          {
+                              gr.DrawString("Peças retiradas da: " + fo.GuiaTransporteAtual, fontBody, Brushes.Black, rect, format);
+                          }
+                          else
+                          {
+                              gr.DrawString("Não foram retiradas nenhumas peças nesta assistência!", fontBody, Brushes.Black, rect, format);
+                          }
+
+                          y += 20;
+                          gr.DrawRectangle(penB, rect);
+
+                          foreach (var peca in fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")))
+                          {
+                              y += 60;
+                              rect = new Rectangle(x + 10, y + 20, width - 20, 120);
+                              gr.DrawRectangle(penB, rect);
+
+                              rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                              gr.DrawString("Referência: " + peca.Ref_Produto, fontFooter, Brushes.Black, rect, formatLeft);
+                              gr.DrawRectangle(pen, rect);
+                              y += 40;
+                              rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                              gr.DrawString("Designação: " + peca.Designacao_Produto, fontFooter, Brushes.Black, rect, formatLeft);
+                              gr.DrawRectangle(pen, rect);
+                              y += 40;
+                              rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                              gr.DrawString("Qtd: " + peca.Stock_Fisico + " " + peca.TipoUn, fontFooter, Brushes.Black, rect, formatLeft);
+                              gr.DrawRectangle(pen, rect);
+                          }
+
+                          y += 60;
+                          rect = new Rectangle(x + 10, y + 20, width - 20, 40);
+                          gr.DrawString("Cliente: " + fo.ConferidoPor, fontFooter, Brushes.Black, rect, formatLeft);
+                          gr.DrawString("Técnico: " + fo.IntervencaosServico.First().NomeTecnico, fontFooter, Brushes.Black, rect, formatRight);
+                          gr.DrawRectangle(penB, rect);
+
+                          y += 150;
+                          penB.DashStyle = DashStyle.Dash;
+                          gr.DrawLine(penB, new Point(0, y), new Point(width, y));
+                          penB.DashStyle = DashStyle.Solid;
+
+                          y += 80;
+                          HeaderPagina = "Duplicado";
+                      }
+
+                  }
+                  return bm;
+              } */
+
+        public MemoryStream DesenharEtiquetaMarcacao(Marcacao marcacao)
         {
-
-            int x = 0;
-            int y = 0;
-            int width = 1024;
-            int height = 641;
-
-            Bitmap bm = new Bitmap(width, height);
-
-            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
-            Font fontBody = new Font("Tahoma", 40, FontStyle.Regular);
-            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
-            Font fontBold = new Font("Rubik", 28, FontStyle.Bold);
-
-            StringFormat format = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-
-
-
-            using (Graphics gr = Graphics.FromImage(bm))
-            {
-                gr.Clear(Color.White);
-
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                x = 50;
-                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 280, 165); }
-
-                y += 30;
-                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
-
-                x = 10;
-                y += 165;
-
-                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
-
-                y += 250;
-                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 200, 80), format);
-
-                y += 95;
-
-                QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
-                QRCode qrCode = new QRCode(qrCodeData);
-                Bitmap qrCodeImage = qrCode.GetGraphic(20);
-
-                gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
-
-                x += 40;
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 35), format);
-
-                if (produto.Pos_Stock.Trim().Length > 0)
-                {
-                    gr.DrawString(produto.Pos_Stock, fontBold, Brushes.Black, new Rectangle(width - 185, height - 235, 150, 35), format);
-                    gr.DrawRectangle(new Pen(Color.Black, 5), new Rectangle(width - 190, height - 240, 140, 40));
-                }
-            }
-
-            return bm;
-        }
-        public Bitmap DesenharEtiqueta40x25QR(Produto produto)
-        {
-
-            int x = 0;
-            int y = 0;
-            int width = 1024;
-            int height = 641;
-
-            Bitmap bm = new Bitmap(width, height);
-
-            Font fontHeader = new Font("Rubik", 30, FontStyle.Bold);
-            Font fontBody = new Font("Tahoma", 40, FontStyle.Regular);
-            Font fontFooter = new Font("Rubik", 16, FontStyle.Regular);
-            Font fontBold = new Font("Rubik", 28, FontStyle.Bold);
-
-            StringFormat format = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-            using (Graphics gr = Graphics.FromImage(bm))
-            {
-                gr.Clear(Color.White);
-
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                for (int i = 0; i < 4; i++)
-                {
-                    y += 50;
-                    for (int j = 0; j < 4; j++)
-                    {
-                        //x +=20;
-                        //if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 84, 50); }
-
-                        QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
-                        QRCode qrCode = new QRCode(qrCodeData);
-                        Bitmap qrCodeImage = qrCode.GetGraphic(20);
-
-                        gr.DrawImage(qrCodeImage, x, y, 100, 100);
-
-                        x += 100;
-                        gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width / 2 - 100, 50), format);
-
-                        gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y + 60, width / 2 - 100, 35), format);
-
-
-                        x = width / 2;
-
-                    }
-                    x = 0;
-                    y += 100;
-                }
-            }
-
-            return bm;
-        }
-        public Bitmap DesenharEtiqueta80x25QR(Produto produto)
-        {
+            var stream = new System.IO.MemoryStream();
 
             int x = 10;
             int y = 0;
             int width = 1024;
-            int height = 320;
-
-            Bitmap bm = new Bitmap(width, 641);
-
-            Font fontHeader = new Font("Rubik", 40, FontStyle.Bold);
-            Font fontBody = new Font("Tahoma", 34, FontStyle.Bold);
-            Font fontFooter = new Font("Rubik", 16, FontStyle.Regular);
-
-            StringFormat format = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-
-            using (Graphics gr = Graphics.FromImage(bm))
-            {
-                gr.Clear(Color.White);
-
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x + 10, height - 130, 200, 120); }
-
-
-                y += 10;
-
-                gr.DrawString(produto.Designacao_Produto, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
-
-                y += 200;
-                gr.DrawString(produto.Ref_Produto, fontHeader, new SolidBrush(Color.Black), new RectangleF(x + 220, y, width - (x * 2) - 420, 80), format);
-
-                y += 70;
-
-                QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                QRCodeData qrCodeData = qrGenerator.CreateQrCode(produto.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
-                QRCode qrCode = new QRCode(qrCodeData);
-                Bitmap qrCodeImage = qrCode.GetGraphic(20);
-
-                gr.DrawImage(qrCodeImage, width - 210, height - 150, 150, 150);
-
-                if (produto.Pos_Stock.Length > 0)
-                {
-                    gr.DrawString(produto.Pos_Stock, fontFooter, Brushes.Black, new Rectangle(width - 190, height - 160, 110, 20), format);
-                    gr.DrawRectangle(new Pen(Color.Black, 5), new Rectangle(width - 190, height - 165, 110, 30));
-
-                }
-
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2), 30), format);
-
-            }
-
-            return bm;
-        }
-        public Bitmap DesenharEtiquetaMarcacao(Marcacao marcacao)
-        {
-
-            int x = 0;
-            int y = 0;
-            int width = 1024;
             int height = 641;
 
-            Bitmap bm = new Bitmap(width, height);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
 
-            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
-            Font fontBody = new Font("Tahoma", 40, FontStyle.Regular);
-            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
-
-            StringFormat format = new StringFormat
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
             {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-
-            using (Graphics gr = Graphics.FromImage(bm))
-            {
-                gr.Clear(Color.White);
-
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
-
-                y += 65;
-                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
-
-                x = 10;
-                y += 165;
-
-                gr.DrawString(marcacao.Cliente.NomeCliente + "\r\n(" + marcacao.EstadoMarcacaoDesc + ")", fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
-
-                y += 250;
-                gr.DrawString(marcacao.IdMarcacao.ToString(), fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 200, 80), format);
-
-                y += 95;
-
-                QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                QRCodeData qrCodeData = qrGenerator.CreateQrCode(marcacao.GetUrl.ToString(), QRCodeGenerator.ECCLevel.Q);
-                QRCode qrCode = new QRCode(qrCodeData);
-                Bitmap qrCodeImage = qrCode.GetGraphic(20);
-
-                gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
-
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
-
-            }
-
-            return bm;
-        }
-        public Bitmap DesenharEtiquetaPicking(Picking p)
-        {
-
-            int x = 0;
-            int y = 0;
-            int width = 1024;
-            int height = 641;
-
-            Bitmap bm = new Bitmap(width, height);
-
-            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
-            Font fontBody = new Font("Tahoma", 30, FontStyle.Bold);
-            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
-
-            StringFormat format = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-
-            using (Graphics gr = Graphics.FromImage(bm))
-            {
-                gr.Clear(Color.White);
-
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
-
-                y += 65;
-                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
-
-                x = 10;
-                y += 165;
-
-                gr.DrawString("Cliente: " + p.Encomenda.NomeCliente + "\r\n\r\nEncomenda: " + p.Encomenda.Id + "\r\nData: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"), fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
-
-                y += 350;
-
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
-
-            }
-
-            return bm;
-        }
-        public Bitmap DesenharFolhaObraSimples(FolhaObra fo)
-        {
-
-            int x = 0;
-            int y = 0;
-            int width = 1024;
-            int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() * 140) * 2;
-
-            Bitmap bm = new Bitmap(width, height);
-
-            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
-            Font fontBody = new Font("Rubik", 22, FontStyle.Bold);
-            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
-
-            string HeaderPagina = "Original";
-
-            StringFormat format = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
-            StringFormat formatRight = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Far
-            };
-            StringFormat formatLeft = new StringFormat
-            {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Near
-            };
-
-            Pen penB = new Pen(Color.Black, 5);
-            Pen pen = new Pen(Color.Transparent, 5);
-
-            using (Graphics gr = Graphics.FromImage(bm))
-            {
-                gr.Clear(Color.White);
-                Rectangle rect = new Rectangle();
-
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                for (int i = 0; i <= 1; i++)
+                image.Mutate(imageContext =>
                 {
-                    if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+                    imageContext.BackgroundColor(Color.White);
+
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png");
+                    img.Mutate(x => x.Resize(700, 158));
+                    imageContext.DrawImage(img, new Point(x, y), 1);
 
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
-                    QRCode qrCode = new QRCode(qrCodeData);
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(marcacao.GetUrl.ToString(), QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
-                    Bitmap qrCodeImage = qrCode.GetGraphic(20);
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(180, 180));
+                    imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
 
-                    gr.DrawImage(qrCodeImage, width - 200, y + 20, 200, 200);
+                    y += 170;
 
-                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                    gr.DrawString(HeaderPagina, fontBody, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                    gr.DrawString("Nº PAT: " + fo.IdFolhaObra, fontFooter, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                    gr.DrawString("Nº Assis. Técnica: " + fo.IdAT, fontFooter, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                    gr.DrawString("Nº Marcação: " + fo.IdMarcacao, fontFooter, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-                    rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                    gr.DrawString("Data: " + fo.DataServico.ToShortDateString(), fontFooter, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 60;
-                    rect = new Rectangle(x + 10, y + 20, 400, 240);
-                    gr.DrawRectangle(penB, rect);
-
-                    rect = new Rectangle(x + 410, y + 20, width - 420, 240);
-                    gr.DrawRectangle(penB, rect);
-
-                    rect = new Rectangle(x + 10, y + 20, 400, 40);
-                    gr.DrawString("Subic, Lda", fontFooter, Brushes.Black, rect, format);
-                    gr.DrawRectangle(pen, rect);
-
-                    rect = new Rectangle(x + 410, y + 20, width - 420, 40);
-                    gr.DrawString("Dados do Cliente:", fontFooter, Brushes.Black, rect, formatLeft);
-                    gr.DrawString("Estab: " + fo.ClienteServico.IdCliente + " Loja: " + fo.ClienteServico.IdLoja, fontFooter, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-                    rect = new Rectangle(x + 10, y + 20, 400, 40);
-                    gr.DrawString("NIF: 515 609 013", fontFooter, Brushes.Black, rect, format);
-                    gr.DrawRectangle(pen, rect);
-
-                    rect = new Rectangle(x + 410, y + 20, width - 420, 80);
-                    gr.DrawString("Nome: " + fo.ClienteServico.NomeCliente, fontFooter, Brushes.Black, rect, formatLeft);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-
-                    rect = new Rectangle(x + 10, y + 20, 400, 160);
-                    gr.DrawString("Morada: Rua Engenheiro Sabino Marques, 144, 4470-605 Maia", fontFooter, Brushes.Black, rect, format);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-                    rect = new Rectangle(x + 410, y + 20, width - 420, 80);
-                    gr.DrawString("Morada: " + fo.ClienteServico.MoradaCliente, fontFooter, Brushes.Black, rect, formatLeft);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 80;
-                    rect = new Rectangle(x + 410, y + 20, width - 420, 40);
-                    gr.DrawString("NIF: " + fo.ClienteServico.NumeroContribuinteCliente, fontFooter, Brushes.Black, rect, formatLeft);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 60;
-
-                    rect = new Rectangle(x + 10, y + 20, width - 20, 80);
-                    gr.DrawRectangle(penB, rect);
-
-                    rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                    gr.DrawString("Equipamento", fontFooter, Brushes.Black, rect, format);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 40;
-                    rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                    gr.DrawString("Marca: " + fo.EquipamentoServico.MarcaEquipamento, fontFooter, Brushes.Black, rect, formatLeft);
-                    gr.DrawString("Modelo: " + fo.EquipamentoServico.ModeloEquipamento, fontFooter, Brushes.Black, rect, format);
-                    gr.DrawString("N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, fontFooter, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(pen, rect);
-
-                    y += 60;
-                    rect = new Rectangle(x + 10, y + 20, width - 20, 60);
-                    if (fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() > 0)
+                    imageContext.DrawText(new TextOptions(fontBody)
                     {
-                        gr.DrawString("Peças retiradas da: " + fo.GuiaTransporteAtual, fontBody, Brushes.Black, rect, format);
-                    }
-                    else
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width
+                    }, marcacao.Cliente.NomeCliente + "\r\n(" + marcacao.EstadoMarcacaoDesc + ")", Color.Black);
+
+                    y += 290;
+                    imageContext.DrawText(new TextOptions(fontHeader)
                     {
-                        gr.DrawString("Não foram retiradas nenhumas peças nesta assistência!", fontBody, Brushes.Black, rect, format);
-                    }
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, marcacao.IdMarcacao.ToString(), Color.Black);
 
-                    y += 20;
-                    gr.DrawRectangle(penB, rect);
+                    var r = new RectangularPolygon(width / 2 / 2, y, width / 2, 120);
+                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
 
-                    foreach (var peca in fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")))
+                    y += 130;
+                    imageContext.DrawText(new TextOptions(fontFooter)
                     {
-                        y += 60;
-                        rect = new Rectangle(x + 10, y + 20, width - 20, 120);
-                        gr.DrawRectangle(penB, rect);
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, "geral@food-tech.pt", Color.Black);
+                });
 
-                        rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                        gr.DrawString("Referência: " + peca.Ref_Produto, fontFooter, Brushes.Black, rect, formatLeft);
-                        gr.DrawRectangle(pen, rect);
-                        y += 40;
-                        rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                        gr.DrawString("Designação: " + peca.Designacao_Produto, fontFooter, Brushes.Black, rect, formatLeft);
-                        gr.DrawRectangle(pen, rect);
-                        y += 40;
-                        rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                        gr.DrawString("Qtd: " + peca.Stock_Fisico + " " + peca.TipoUn, fontFooter, Brushes.Black, rect, formatLeft);
-                        gr.DrawRectangle(pen, rect);
-                    }
-
-                    y += 60;
-                    rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                    gr.DrawString("Cliente: " + fo.ConferidoPor, fontFooter, Brushes.Black, rect, formatLeft);
-                    gr.DrawString("Técnico: " + fo.IntervencaosServico.First().NomeTecnico, fontFooter, Brushes.Black, rect, formatRight);
-                    gr.DrawRectangle(penB, rect);
-
-                    y += 150;
-                    penB.DashStyle = DashStyle.Dash;
-                    gr.DrawLine(penB, new Point(0, y), new Point(width, y));
-                    penB.DashStyle = DashStyle.Solid;
-
-                    y += 80;
-                    HeaderPagina = "Duplicado";
-                }
-
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
             }
-            return bm;
-        }
-        public Bitmap DesenharEtiquetaFolhaObra(FolhaObra fo)
-        {
 
-            int x = 0;
+            return stream;
+        }
+
+        public MemoryStream DesenharEtiquetaFolhaObra(FolhaObra fo)
+        {
+            var stream = new System.IO.MemoryStream();
+
+            int x = 10;
             int y = 0;
             int width = 1024;
             int height = 641;
 
-            Bitmap bm = new Bitmap(width, height);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
 
-            Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
-            Font fontBody = new Font("Tahoma", 22, FontStyle.Regular);
-            Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
-
-            StringFormat format = new StringFormat
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
             {
-                LineAlignment = StringAlignment.Center,
-                Alignment = StringAlignment.Center
-            };
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
 
-            using (Graphics gr = Graphics.FromImage(bm))
-            {
-                gr.Clear(Color.White);
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png");
+                    img.Mutate(x => x.Resize(700, 158));
+                    imageContext.DrawImage(img, new Point(x, y), 1);
 
-                gr.SmoothingMode = SmoothingMode.HighQuality;
-                gr.CompositingQuality = CompositingQuality.HighQuality;
-                gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl.ToString(), QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
-                if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(180, 180));
+                    imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
 
-                y += 65;
-                gr.DrawString("Food-Tech", fontHeader, Brushes.Black, x + 400, y);
+                    y += 170;
 
-                x = 10;
-                y += 165;
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width
+                    }, fo.ClienteServico.NomeCliente + "\r\n " + fo.EquipamentoServico.MarcaEquipamento.Trim() + " " + fo.EquipamentoServico.ModeloEquipamento.Trim() + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")", Color.Black);
 
-                gr.DrawString(fo.ClienteServico.NomeCliente + " (N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento + ")\r\n " + fo.RelatorioServico, fontBody, Brushes.Black, new Rectangle(x, y, width - (x * 2), 200), format);
+                    y += 290;
+                    imageContext.DrawText(new TextOptions(fontHeader)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, fo.IdFolhaObra.ToString(), Color.Black);
 
-                y += 250;
-                gr.DrawString("FO Nº " + fo.IdFolhaObra.ToString(), fontHeader, new SolidBrush(Color.Black), new RectangleF(x, y, width - (x * 2) - 200, 80), format);
+                    var r = new RectangularPolygon(width / 2 / 2, y, width / 2, 120);
+                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
 
-                y += 95;
+                    y += 130;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, "geral@food-tech.pt", Color.Black);
+                });
 
-                QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl.ToString(), QRCodeGenerator.ECCLevel.Q);
-                QRCode qrCode = new QRCode(qrCodeData);
-                Bitmap qrCodeImage = qrCode.GetGraphic(20);
-
-                gr.DrawImage(qrCodeImage, width - 220, height - 220, 200, 200);
-
-                gr.DrawString("geral@food-tech.pt", fontFooter, Brushes.Black, new Rectangle(x, y, width - (x * 2) - 200, 30), format);
-
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
             }
 
-            return bm;
+            return stream;
+        }
+
+        public MemoryStream DesenharEtiquetaPicking(Picking pi)
+        {
+            var stream = new System.IO.MemoryStream();
+
+            int x = 10;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
+
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
+
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png");
+                    img.Mutate(x => x.Resize(700, 158));
+                    imageContext.DrawImage(img, new Point(x, y), 1);
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(pi.GetUrl.ToString(), QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(180, 180));
+                    imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
+
+                    y += 170;
+
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width
+                    }, "Cliente: " + pi.Encomenda.NomeCliente.Trim() + "\r\nData: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"), Color.Black);
+
+                    y += 290;
+                    imageContext.DrawText(new TextOptions(fontHeader)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, pi.Encomenda.Id.ToString(), Color.Black);
+
+                    var r = new RectangularPolygon(width / 2 / 2, y, width / 2, 120);
+                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
+
+                    y += 130;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, "geral@food-tech.pt", Color.Black);
+                });
+
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
+            }
+
+            return stream;
+        }
+
+        public MemoryStream DesenharEtiquetaProduto(Produto p)
+        {
+            var stream = new System.IO.MemoryStream();
+
+            int x = 10;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 90);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 80);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
+
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
+
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png");
+                    img.Mutate(x => x.Resize(700, 158));
+                    imageContext.DrawImage(img, new Point(x, y), 1);
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(p.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(180, 180));
+                    imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
+
+                    y += 170;
+
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        TextAlignment = TextAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width,
+                    }, p.Designacao_Produto.Trim(), Color.Black);
+
+                    y += 300;
+                    imageContext.DrawText(new TextOptions(fontHeader)
+                    {
+                        Origin = new System.Numerics.Vector2(x + 20, y),
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }, p.Ref_Produto, Color.Black);
+
+                    var r = new RectangularPolygon(10, y, width - 300, 100);
+                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
+
+                    imageContext.DrawText(new TextOptions(fontHeader)
+                    {
+                        Origin = new System.Numerics.Vector2(width - 270, y),
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    }, p.Pos_Stock, Color.Black);
+
+                    var r2 = new RectangularPolygon(width - 280, y, 260, 100);
+                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r2, 50));
+
+                    y += 110;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, "geral@food-tech.pt", Color.Black);
+                });
+
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
+            }
+
+            return stream;
+        }
+
+        public MemoryStream DesenharEtiquetaMultipla(Produto p)
+        {
+            var stream = new System.IO.MemoryStream();
+
+            int x = 100;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 50);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 80);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 30);
+
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        y += 50;
+                        for (int j = 0; j < 4; j++)
+                        {
+                            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                            QRCodeData qrCodeData = qrGenerator.CreateQrCode(p.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
+                            BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+
+                            var qr = Image.Load(qrCode.GetGraphic(20));
+                            qr.Mutate(x => x.Resize(100, 100));
+                            imageContext.DrawImage(qr, new Point(x + 300, y), 1);
+
+                            x += 100;
+                            imageContext.DrawText(new TextOptions(fontHeader)
+                            {
+                                Origin = new System.Numerics.Vector2(x, y),
+                                WrappingLength = width / 2,
+                                HorizontalAlignment = HorizontalAlignment.Center
+                            }, p.Ref_Produto, Color.Black);
+
+                            imageContext.DrawText(new TextOptions(fontFooter)
+                            {
+                                TextAlignment = TextAlignment.Center,
+                                Origin = new System.Numerics.Vector2(x, y + 60),
+                                WrappingLength = width / 2 - 100,
+                                HorizontalAlignment = HorizontalAlignment.Center
+                            }, "geral@food-tech.pt", Color.Black);
+
+                            x = width / 2 + 100;
+
+                        }
+                        x = 100;
+                        y += 100;
+                    }
+                });
+
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
+            }
+
+            return stream;
+        }
+
+        private static IPath ApplyRoundCorners(RectangularPolygon rectangularPolygon, float radius)
+        {
+            var squareSize = new SizeF(radius, radius);
+            var ellipseSize = new SizeF(radius * 2, radius * 2);
+            var offsets = new[]
+            {
+        (0, 0),
+        (1, 0),
+        (0, 1),
+        (1, 1),
+    };
+            var holes = offsets.Select(
+                offset =>
+                {
+                    var squarePos = new PointF(
+                        offset.Item1 == 0 ? rectangularPolygon.Left : rectangularPolygon.Right - radius,
+                        offset.Item2 == 0 ? rectangularPolygon.Top : rectangularPolygon.Bottom - radius
+                    );
+                    var circlePos = new PointF(
+                        offset.Item1 == 0 ? rectangularPolygon.Left + radius : rectangularPolygon.Right - radius,
+                        offset.Item2 == 0 ? rectangularPolygon.Top + radius : rectangularPolygon.Bottom - radius
+                    );
+                    return new RectangularPolygon(squarePos, squareSize)
+                        .Clip(new EllipsePolygon(circlePos, ellipseSize));
+                }
+            );
+            return rectangularPolygon.Clip(holes);
         }
         public MemoryStream PreencherFormularioFolhaObra(FolhaObra folhaobra)
         {
@@ -2654,36 +2698,6 @@ namespace FT_Management.Models
 
         }
 
-        public MemoryStream DesenharEtiquetaProduto(Produto p)
-        {
-            string pdfTemplate = AppDomain.CurrentDomain.BaseDirectory + "FT_Produto.pdf";
-            var outputPdfStream = new MemoryStream();
-            PdfReader pdfReader = new PdfReader(pdfTemplate);
-            PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
-            AcroFields pdfFormFields = pdfStamper.AcroFields;
-
-            pdfFormFields.SetField("Nome", p.Designacao_Produto);
-            pdfFormFields.SetField("Ref", p.Ref_Produto);
-            pdfFormFields.SetField("Local", p.Pos_Stock);
-
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(p.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
-            Base64QRCode qrCode = new Base64QRCode(qrCodeData);
-
-            PushbuttonField ad = pdfFormFields.GetNewPushbuttonFromField("Qr");
-            ad.Layout = PushbuttonField.LAYOUT_ICON_ONLY;
-            ad.BorderColor = iTextSharp.text.BaseColor.White;
-            ad.ProportionalIcon = true;
-            ad.Image = iTextSharp.text.Image.GetInstance(Convert.FromBase64String(qrCode.GetGraphic(20)));
-            pdfFormFields.ReplacePushbuttonField("Qr", ad.Field);
-
-            pdfStamper.FormFlattening = true;
-            pdfStamper.SetFullCompression();
-            pdfStamper.Close();
-
-            return outputPdfStream;
-        }
-
         public MemoryStream BitMapToMemoryStream(string filePath, int w, int h)
         {
             var ms = new MemoryStream();
@@ -2707,6 +2721,30 @@ namespace FT_Management.Models
             doc.Save(ms, false);
 
             System.IO.File.Delete(filePath);
+
+            return ms;
+        }
+        public MemoryStream MemoryStreamToPDF(MemoryStream stream, int w, int h)
+        {
+            var ms = new MemoryStream();
+
+            PdfSharpCore.Pdf.PdfDocument doc = new PdfSharpCore.Pdf.PdfDocument();
+            PdfSharpCore.Pdf.PdfPage page = new PdfSharpCore.Pdf.PdfPage
+            {
+                Width = w,
+                Height = h
+            };
+
+            XImage img = XImage.FromStream(() => stream);
+            img.Interpolate = false;
+
+            doc.Pages.Add(page);
+
+            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
+            XRect box = new XRect(0, 0, w, h);
+            xgr.DrawImage(img, box);
+
+            doc.Save(ms, false);
 
             return ms;
         }

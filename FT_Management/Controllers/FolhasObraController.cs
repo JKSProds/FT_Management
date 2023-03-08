@@ -1,4 +1,6 @@
-﻿namespace FT_Management.Controllers
+﻿using System.Drawing;
+
+namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class FolhasObraController : Controller
@@ -215,10 +217,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta de uma folha de obra: Cliente - {3}, Id FO - {4}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.IdFolhaObra);
 
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiquetaFolhaObra(fo).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaFolhaObra(fo), 801, 504), "application/pdf");
         }
 
         //Imprimir Documento A4
@@ -256,27 +255,7 @@
         [HttpGet]
         public virtual ActionResult Ticket(int id)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            FolhaObra fo = phccontext.ObterFolhaObra(id);
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == u.IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
-
-            _logger.LogDebug("Utilizador {1} [{2}] a imprimir o ticket com as peças utilizadas de uma folha de obra: Cliente - {3}, Id FO - {4}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.IdFolhaObra);
-
-            var filePath = Path.GetTempFileName();
-            Bitmap bm = context.DesenharFolhaObraSimples(fo);
-            bm.Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            var cd = new System.Net.Mime.ContentDisposition
-            {
-                FileName = "TicketFO_" + id + ".pdf",
-                Inline = false,
-                CreationDate = DateTime.Now
-            };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
-            return new FileContentResult(context.BitMapToMemoryStream(filePath, bm.Width, bm.Height).ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
+            return Content("NOT WORKING");
         }
 
         //Criar codigo da folha de obra
