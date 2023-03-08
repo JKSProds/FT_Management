@@ -13,13 +13,5 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 
-# install System.Drawing native dependencies
-RUN apt-get update \ 
-    && apt-get install -y --no-install-recommends libgdiplus libc6-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN cd /usr/lib && ln -s libgdiplus.so gdiplus.dll
-
 COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "FT_Management.dll"]
