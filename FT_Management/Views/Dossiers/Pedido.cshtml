@@ -112,7 +112,8 @@
                         </button>
                     </p>
                     <p class="control">
-                        <button class="button is-warning" disabled type="button">
+                        <button class="button is-warning" onclick="Bulma('#modalAdicionarAnexo').modal().open();"
+                        type="button">
                             <span class="icon">
                                 <i class="fa-solid fa-link"></i>
                             </span>
@@ -216,6 +217,32 @@ else
     </a>
 </p>
 
+<div id="modalAdicionarAnexo" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Adicionar Anexo</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <form action="/Dossiers/Anexo" method="POST" class="dropzone">
+                    <input type="hidden" name="ecra" value="BO">
+                    <input type="hidden" name="serie" value="@Model.Serie">
+                    <input type="hidden" name="id" value="@Model.StampDossier">
+                    <input type="hidden" name="resumo" value="Anexo da WebApp">
+                    <div class="dz-message needsclick">
+                        Largue vários anexos aqui para fazer o upload
+                    </div>
+                </form>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
+                href="javascript:;">Fechar</button>
+        </footer>
+    </div>
+</div>
 
 <div id="modalPecas" class="modal">
     <div class="modal-background"></div>

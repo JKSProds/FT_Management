@@ -8,6 +8,18 @@
         private static string CaminhoImagensUtilizador = "S:\\Imagens\\UTILIZADORES\\";
         private static string CaminhoTemporario = "S:\\WebApp\\";
 
+        private static bool CriarPasta(string Caminho)
+        {
+            try
+            {
+                if (!Directory.Exists(Caminho)) Directory.CreateDirectory(Caminho);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
         private static bool CriarFicheiro(string Caminho, IFormFile ficheiro)
         {
             try
@@ -55,6 +67,7 @@
         }
         public static bool CriarAnexoAssinatura(MarcacaoAnexo a, IFormFile ficheiro)
         {
+            CriarPasta(FormatLinuxServer(CaminhoServerAnexos));
             return CriarFicheiro(FormatLinuxServer(CaminhoServerAnexos + a.NomeFicheiro), ficheiro);
         }
         public static bool ApagarAnexoMarcacao(MarcacaoAnexo a)
@@ -72,7 +85,7 @@
         public static bool CriarImagemUtilizador(IFormFile ficheiro, string NomeUtilizador)
         {
             string FullPath = CaminhoImagensUtilizador + NomeUtilizador + "\\";
-            if (!Directory.Exists(FormatLinuxServer(FullPath))) Directory.CreateDirectory(FormatLinuxServer(FullPath));
+            CriarPasta(FormatLinuxServer(FullPath));
             return CriarFicheiro(FormatLinuxServer(FullPath + ficheiro.FileName), ficheiro);
         }
 
@@ -122,6 +135,7 @@
         public static string CriarFicheiroTemporario(string nome, IFormFile ficheiro)
         {
             string res = FormatLinuxServer(CaminhoTemporario + nome);
+            CriarPasta(FormatLinuxServer(CaminhoTemporario));
             return CriarFicheiro(res, ficheiro) ? nome : "";
         }
         public static bool ExisteFicheiroTemporario(string nome)
@@ -130,7 +144,18 @@
         }
         public static void MoverFicheiroTemporario(string source, string dest)
         {
-            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source)) MoveFile(FormatLinuxServer(CaminhoTemporario + source), FormatLinuxServer(dest + source));
+            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source))
+            {
+                CriarPasta(FormatLinuxServer(dest));
+                MoveFile(FormatLinuxServer(CaminhoTemporario + source), FormatLinuxServer(dest + source));
+            }
+        }
+
+        public static string CriarAnexo(string dest, string nome, IFormFile ficheiro)
+        {
+            string res = FormatLinuxServer(dest + nome);
+            CriarPasta(FormatLinuxServer(dest));
+            return CriarFicheiro(res, ficheiro) ? nome : "";
         }
     }
 }

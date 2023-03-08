@@ -198,13 +198,28 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            string nome = u.Iniciais + "_" + DateTime.Now.Ticks + (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
 
             if (string.IsNullOrEmpty(id))
             {
-                string nome = u.Iniciais + "_" + DateTime.Now.Ticks + (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
                 _logger.LogDebug("Utilizador {1} [{2}] a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
                 return Json(FicheirosContext.CriarFicheiroTemporario(nome, file));
             }
+
+            Anexo a = new Anexo()
+            {
+                Ecra = ecra,
+                Serie = int.Parse(serie),
+                Stamp_Origem = id,
+                Resumo = resumo,
+                Nome = nome,
+                Utilizador = u
+            };
+
+            res = phccontext.CriarAnexo(a);
+            if (int.Parse(res[0]) > 0) FicheirosContext.CriarAnexo(res[3], nome, file);
 
             return Json("");
         }
