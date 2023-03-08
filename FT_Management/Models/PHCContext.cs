@@ -914,7 +914,7 @@
             if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
             if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";
             if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
-            foreach (Produto item in fo.PecasServico)
+            foreach (Produto item in fo.PecasServico.Where(p => !p.Servico))
             {
                 Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
                 if (p.Stock_Atual < item.Stock_Fisico) res += "Não tem stock suficiente da seguinte peça: " + p.Ref_Produto.Trim() + "!\r\n";
