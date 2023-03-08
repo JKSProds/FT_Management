@@ -2649,35 +2649,41 @@ namespace FT_Management.Models
             pdfFormFields.SetField("Obs", (folhaobra.AssistenciaRemota ? "REMOTO " : "") + (folhaobra.Piquete ? "PIQUETE " : "") + (folhaobra.Instalação ? "INSTALAÇÃO " : ""));
 
             //Mao de Obra
-            int i = 1;
-            foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
+            if (folhaobra.IntervencaosServico != null)
             {
-                pdfFormFields.SetField("Data_" + i, intervencao.DataServiço.ToString("dd/MM/yy"));
-                pdfFormFields.SetField("Tec_" + i, intervencao.NomeTecnico);
-                pdfFormFields.SetField("Inicio_" + i, intervencao.HoraInicio.ToString("HH:mm"));
-                pdfFormFields.SetField("Fim_" + i, intervencao.HoraFim.ToString("HH:mm"));
+                int i = 1;
+                foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
+                {
+                    pdfFormFields.SetField("Data_" + i, intervencao.DataServiço.ToString("dd/MM/yy"));
+                    pdfFormFields.SetField("Tec_" + i, intervencao.NomeTecnico);
+                    pdfFormFields.SetField("Inicio_" + i, intervencao.HoraInicio.ToString("HH:mm"));
+                    pdfFormFields.SetField("Fim_" + i, intervencao.HoraFim.ToString("HH:mm"));
 
-                i++;
-                if (i == 14) break;
+                    i++;
+                    if (i == 14) break;
+                }
             }
 
             //Peças
-            int p = 1;
-            foreach (Produto pecas in folhaobra.PecasServico)
+            if (folhaobra.PecasServico != null)
             {
-                pdfFormFields.SetField("Ref_" + p, pecas.Ref_Produto);
-                if (pecas.Designacao_Produto.Length > 50)
+                int p = 1;
+                foreach (Produto pecas in folhaobra.PecasServico)
                 {
-                    pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto.Substring(0, 50));
-                }
-                else
-                {
-                    pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto);
-                }
-                pdfFormFields.SetField("Qtd_" + p, pecas.Stock_Fisico.ToString() + " " + pecas.TipoUn.ToString());
+                    pdfFormFields.SetField("Ref_" + p, pecas.Ref_Produto);
+                    if (pecas.Designacao_Produto.Length > 50)
+                    {
+                        pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto.Substring(0, 50));
+                    }
+                    else
+                    {
+                        pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto);
+                    }
+                    pdfFormFields.SetField("Qtd_" + p, pecas.Stock_Fisico.ToString() + " " + pecas.TipoUn.ToString());
 
-                p++;
-                if (p == 20) break;
+                    p++;
+                    if (p == 20) break;
+                }
             }
 
             if (!string.IsNullOrEmpty(folhaobra.RubricaCliente))
