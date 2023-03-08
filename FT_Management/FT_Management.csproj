@@ -12,7 +12,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGenerators.Mvc" Version="7.0.0" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Ical.Net" Version="4.2.0" />
-    <PackageReference Include="IronSoftware.System.Drawing" Version="2023.2.12" />
     <PackageReference Include="iTextSharp.LGPLv2.Core" Version="1.7.5" />
     <PackageReference Include="LettuceEncrypt" Version="1.2.0" />
     <PackageReference Include="libphonenumber-csharp" Version="8.12.52" />
