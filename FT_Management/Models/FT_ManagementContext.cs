@@ -35,7 +35,7 @@ namespace FT_Management.Models
         public List<Utilizador> ObterListaUtilizadores(bool Enable, bool Viatura)
         {
             List<Utilizador> LstUtilizadores = new List<Utilizador>();
-            string sqlQuery = "SELECT * FROM sys_utilizadores inner join dat_acessos_utilizador on sys_utilizadores.IdUtilizador = dat_acessos_utilizador.IdUtilizador " + (Enable ? "WHERE enable=1" : "") + " order by NomeCompleto;";
+            string sqlQuery = "SELECT sys_utilizadores.*, IFNULL(dat_acessos_utilizador.DataUltimoAcesso, '') as DataUltimoAcesso, IFNULL(dat_acessos_utilizador.TipoUltimoAcesso, '') as TipoUltimoAcesso FROM sys_utilizadores left join dat_acessos_utilizador on sys_utilizadores.IdUtilizador = dat_acessos_utilizador.IdUtilizador " + (Enable ? "WHERE enable=1" : "") + " order by NomeCompleto;";
 
             using Database db = ConnectionString;
             using (var result = db.Query(sqlQuery))
@@ -67,8 +67,8 @@ namespace FT_Management.Models
                         ChatToken = result["ChatToken"],
                         SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
-                        UltimoAcesso = result["DataUltimoAcesso"],
-                        AcessoAtivo = result["TipoUltimoAcesso"] == 1,
+                        UltimoAcesso = string.IsNullOrEmpty(result["DataUltimoAcesso"]) ? new DateTime() : result["DataUltimoAcesso"],
+                        AcessoAtivo = string.IsNullOrEmpty(result["DataUltimoAcesso"]) ? false : result["TipoUltimoAcesso"] == 1,
 #if !DEBUG
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif
@@ -221,7 +221,7 @@ namespace FT_Management.Models
         {
             string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, admin, enable, acessos, dev, IdPHC, IdArmazem, IniciaisUtilizador, CorCalendario, TipoMapa, DataNascimento, TelemovelUtilizador, ImgUtilizador, TipoTecnico, Zona, ChatToken, NotificacaoAutomatica, SecondFactorAuthStamp) VALUES ";
 
-            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + (utilizador.Acessos ? "1" : "0") + "', '" + (utilizador.Dev ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ", '" + utilizador.DataNascimento.ToString("yyyy-MM-dd") + "', '" + utilizador.ObterTelemovelFormatado(true) + "', '" + utilizador.ImgUtilizador + "', '" + utilizador.TipoTecnico + "', '" + utilizador.Zona + "', '" + utilizador.ChatToken + "', '" + utilizador.NotificacaoAutomatica + "', '" + utilizador.SecondFactorAuthStamp + "') \r\n");
+            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + (utilizador.Acessos ? "1" : "0") + "', '" + (utilizador.Dev ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ", '" + utilizador.DataNascimento.ToString("yyyy-MM-dd") + "', '" + utilizador.ObterTelemovelFormatado(true) + "', '" + utilizador.ImgUtilizador + "', '" + utilizador.TipoTecnico + "', '" + utilizador.Zona + "', '" + utilizador.ChatToken + "', '" + utilizador.NotificacaoAutomatica + "', '" + utilizador.SecondFactorAuthStamp + "') ");
 
             sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), admin = VALUES(admin), enable = VALUES(enable), acessos = VALUES(acessos), dev = VALUES(dev), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario), TipoMapa = VALUES(TipoMapa), DataNascimento = VALUES(DataNascimento), TelemovelUtilizador = VALUES(TelemovelUtilizador), ImgUtilizador = VALUES(ImgUtilizador), TipoTecnico = VALUES(TipoTecnico), Zona = VALUES(Zona), ChatToken = VALUES(ChatToken), NotificacaoAutomatica = VALUES(NotificacaoAutomatica), SecondFactorAuthStamp = VALUES(SecondFactorAuthStamp);";
 

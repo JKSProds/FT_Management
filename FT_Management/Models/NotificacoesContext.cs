@@ -373,7 +373,7 @@ namespace FT_Management.Models
         {
             string Assunto = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <br><b>" + fo.DataServico.ToShortDateString() + "</b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico)) + "</b>.";
-            EnviarMail(EmailDestino, Assunto, Mensagem, anexo, ObterEmailCC(1));
+            EnviarMail(EmailDestino + ";" + fo.Utilizador.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;
         }

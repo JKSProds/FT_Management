@@ -169,6 +169,24 @@
 #endif
             return View(t);
         }
+        //Obtem um utilizador em especifico
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult Utilizador(Utilizador u)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            var passwordHasher = new PasswordHasher<string>();
+
+            u.NomeUtilizador = u.NomeUtilizador.ToLower().Trim();
+            u.Password = passwordHasher.HashPassword(null, u.Password);
+            u.Iniciais = "ND";
+            u.Pin = "";
+            u.Enable = true;
+
+            context.NovoUtilizador(u);
+
+            return View(u);
+        }
 
         //Atualiza um utilizador em especifico
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
