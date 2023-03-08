@@ -87,7 +87,7 @@
                 {
                     <p class="control">
                         <button class="button is-primary is-info" onclick="Bulma('#modalAdicionarPeca').modal().open();"
-                            type="button">
+                        type="button">
                             <span class="icon">
                                 <i class="fas fa-plus fa-lg"></i>
                             </span>
@@ -96,7 +96,7 @@
                     </p>
                     <p class="control">
                         <button type="button" class="button is-info is-outlined"
-                            onclick="Bulma('#modalAdicionarLinha').modal().open();">
+                        onclick="Bulma('#modalAdicionarLinha').modal().open();">
                             <span class="icon">
                                 <i class="fa-solid fa-square-plus"></i>
                             </span>
@@ -125,7 +125,7 @@
     </div>
 </div>
 <hr />
-@if (Model.Linhas.Where(l => string.IsNullOrEmpty(l.Referencia.Trim())).Skip(3).Count() == 0)
+@if (Model.Linhas.Skip(3).Count() == 0)
 {
     <div class="container">
     <br />
@@ -171,7 +171,7 @@ else
                                     @if (!Model.Fechado)
                                     {
                                         <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
-                                            onclick="RemoverLinha('@item.Stamp_Linha')">
+                                onclick="RemoverLinha('@item.Stamp_Linha')">
                                             <span class="icon">
                                                 <i class="fa-solid fa-trash"></i>
                                             </span>
@@ -191,7 +191,7 @@ else
                                     @if (!Model.Fechado)
                                     {
                                         <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
-                                            onclick="RemoverLinha('@item.Stamp_Linha')">
+                                onclick="RemoverLinha('@item.Stamp_Linha')">
                                             <span class="icon">
                                                 <i class="fa-solid fa-trash"></i>
                                             </span>
