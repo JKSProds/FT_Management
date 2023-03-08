@@ -2462,8 +2462,8 @@ namespace FT_Management.Models
             int width = 1024;
             int height = 641;
 
-            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 90);
-            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 80);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 115, FontStyle.Bold);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
             Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
 
             using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
@@ -2474,7 +2474,7 @@ namespace FT_Management.Models
 
                     var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png");
                     img.Mutate(x => x.Resize(700, 158));
-                    imageContext.DrawImage(img, new Point(x, y), 1);
+                    imageContext.DrawImage(img, new Point(x, y + 20), 1);
 
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
                     QRCodeData qrCodeData = qrGenerator.CreateQrCode(p.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
@@ -2483,6 +2483,12 @@ namespace FT_Management.Models
                     var qr = Image.Load(qrCode.GetGraphic(20));
                     qr.Mutate(x => x.Resize(180, 180));
                     imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
+
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        Origin = new System.Numerics.Vector2(width - 200, y + 100),
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    }, p.Pos_Stock, Color.Black);
 
                     y += 170;
 
@@ -2495,26 +2501,18 @@ namespace FT_Management.Models
                         WrappingLength = width,
                     }, p.Designacao_Produto.Trim(), Color.Black);
 
-                    y += 300;
+                    y += 270;
                     imageContext.DrawText(new TextOptions(fontHeader)
                     {
-                        Origin = new System.Numerics.Vector2(x + 20, y),
-                        HorizontalAlignment = HorizontalAlignment.Left
+                        TextAlignment = TextAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y)
                     }, p.Ref_Produto, Color.Black);
 
-                    var r = new RectangularPolygon(10, y, width - 300, 100);
+                    var r = new RectangularPolygon(10, y, width - 20, 120);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
 
-                    imageContext.DrawText(new TextOptions(fontHeader)
-                    {
-                        Origin = new System.Numerics.Vector2(width - 270, y),
-                        HorizontalAlignment = HorizontalAlignment.Left
-                    }, p.Pos_Stock, Color.Black);
-
-                    var r2 = new RectangularPolygon(width - 280, y, 260, 100);
-                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r2, 50));
-
-                    y += 110;
+                    y += 120;
                     imageContext.DrawText(new TextOptions(fontFooter)
                     {
                         TextAlignment = TextAlignment.Center,
