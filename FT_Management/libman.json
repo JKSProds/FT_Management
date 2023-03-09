@@ -81,6 +81,11 @@
     {
       "library": "html2canvas@1.4.1",
       "destination": "wwwroot/lib/html2canvas/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "html5-qrcode@2.0.9",
+      "destination": "wwwroot/lib/html5-qrcode/"
     }
   ]
 }
