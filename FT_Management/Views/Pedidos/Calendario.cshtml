@@ -148,7 +148,7 @@ else
             locale: 'pt',
             displayEventTime: false,
             eventColor: '#3371FF',
-            events: '/Pedidos/ObterMarcacoes/0',
+            events: '/Pedidos/Marcacoes/0',
             columnHeader: false,
             slotEventOverlap: true,
             eventClick: function (info) {
@@ -165,7 +165,7 @@ else
 
                 $.ajax({
                     type: "POST",
-                    url: "/Pedidos/AlteracaoCalendarioTecnico/" + id + "?date=" + dataDestino + "&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal,
+                    url: "/Pedidos/Agendar/" + id + "?date=" + dataDestino + "&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal,
                     traditional: true,
                     success: function (result) {
                         info.event.setExtendedProp("dueDateClass", dataDestino);
@@ -215,9 +215,9 @@ else
                                 </p>
                             }
                             <div class="progress-container" id='pbval_@u.Id' data-text="---"><progress
-                                    class="progress is-info is-large" id="pb_@u.Id" max="100"></progress></div>
+                            class="progress is-info is-large" id="pb_@u.Id" max="100"></progress></div>
                             &nbsp;
-                            <a class="button is-link is-fullwidth is-large" href="~/Pedidos/ListaPedidos?IdTecnico=@u.IdPHC">
+                            <a class="button is-link is-fullwidth is-large" href="~/Pedidos/Pedidos/@u.IdPHC">
                                 <i class="fas fa-eye"></i>
                             </a>
                         </div>
@@ -246,7 +246,7 @@ else
                         locale: 'pt',
                         displayEventTime: false,
                         eventColor: '@u.CorCalendario',
-                        events: '/Pedidos/ObterMarcacoes/@u.Id',
+                        events: '/Pedidos/Marcacoes/@u.Id',
                         eventClick: function (info) {
                             info.jsEvent.preventDefault();
                             ObterMarcacao(info.event.extendedProps.idMarcacao);
@@ -261,7 +261,7 @@ else
 
                             $.ajax({
                                 type: "POST",
-                                url: "/Pedidos/AlteracaoCalendarioTecnico/" + id + "?date=" + dataDestino + "&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal,
+                                url: "/Pedidos/Agendar/" + id + "?date=" + dataDestino + "&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal,
                                 traditional: true,
                                 success: function (result) {
                                     info.event.setExtendedProp("dueDateClass", dataDestino);
@@ -285,7 +285,7 @@ else
 
                             $.ajax({
                                 type: "POST",
-                                url: "/Pedidos/AlteracaoCalendarioTecnico/" + id + "?date=" + dataDestino + "&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal,
+                                url: "/Pedidos/Agendar/" + id + "?date=" + dataDestino + "&dateOriginal=" + dataOriginal + "&idTecnico=" + tecDestino + "&idTecnicoOriginal=" + tecOriginal,
                                 traditional: true,
                                 success: function (result) {
                                     info.event.setExtendedProp("dueDateClass", dataDestino);
@@ -341,7 +341,7 @@ else
                     if (id > 0) {
                         document.getElementById('pageloader').classList.add('is-active');
                         $.ajax({
-                            url: '/Pedidos/ObterMarcacao/' + id,
+                            url: '/Pedidos/Marcacao/' + id,
                             type: "GET",
                             success: function (response) {
                                 document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function (elem) {
@@ -373,7 +373,7 @@ else
                 }
 
                 $.ajax({
-                    url: '/Pedidos/ObterPercentagemTecnico/' + @u.IdPHC,
+                    url: '/Pedidos/Percentagem/' + @u.IdPHC,
                     type: "GET",
                     success: function (response) {
                         document.getElementById('pb_@u.Id').max = response[0];

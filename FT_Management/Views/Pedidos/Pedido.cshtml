@@ -511,10 +511,10 @@
                                                     <span>@a.DataCriacao.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
                                                 <td class="is-actions-cell">
                                                     <a class="button is-primary is-outlined"
-                                                onclick="window.open('@Url.Action("DownloadAnexo", "Pedidos", new { id = @a.AnexoStamp})')"><i
+                                                onclick="window.open('@Url.Action("Anexo", "Pedidos", new { id = @a.AnexoStamp})')"><i
                                                     class="fas fa-eye" style="font-size:20px"></i></a>
                                                     <a class="button is-danger"
-                                                href="@Url.Action("ApagarAnexo", "Pedidos", new { id = @a.AnexoStamp })"><i
+                                                onclick="ApagarAnexo('@a.AnexoStamp')"><i
                                                     class="fas fa-trash" style="font-size:20px"></i></a>
                                                 </td>
                                             </tr>
@@ -631,7 +631,7 @@
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-                <form action="/Pedidos/AdicionarAnexo/@Model.IdMarcacao" class="dropzone" id="my-awesome-dropzone">
+                <form action="/Pedidos/Anexo/@Model.IdMarcacao" class="dropzone" id="my-awesome-dropzone">
                  <div class="dz-message needsclick">
                         Largue vários anexos aqui para fazer o upload
                     </div>
@@ -689,7 +689,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Pedidos/AdicionarComentario",
+            url: "/Pedidos/Comentario",
             data: json,
             traditional: true,
             success: function (result) {
@@ -721,6 +721,19 @@
                     var modal = Bulma('#modalEnviarFolhaObra').modal();
                     modal.open();
                     document.getElementById("btnEnviarMail_" + IdFolhaObra).classList.remove("is-loading");
+                });
+            }
+        });
+    }
+
+        function ApagarAnexo(stamp) {
+        $.ajax({
+            type: "DELETE",
+            url: "/Pedidos/Anexo/" + stamp,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    window.location.reload();
                 });
             }
         });

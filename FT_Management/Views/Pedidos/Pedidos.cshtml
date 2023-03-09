@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="column is-right my-auto">
-            <form method="get" action="ListaPedidos">
+            <form method="get" action="Pedidos">
                 <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
                         <input class="input" type="date" value="@(DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="DataPedidos"/>
                         <script>
@@ -43,7 +43,7 @@
             </form>
             <div class="buttons is-right my-1">
                 <p class="control">
-                    <a class="button is-primary is-outlined" onclick="window.location.href = '/Pedidos/ListaPedidos?IdTecnico=@ViewData["IdTecnico"]'">
+                    <a class="button is-primary is-outlined" onclick="window.location.href = '/Pedidos/Pedidos/@ViewData["IdTecnico"]'">
                         <span class="icon">
                             <i class="fa fa-calendar-day"></i>
                         </span>
@@ -52,7 +52,7 @@
                 </p>
 
                 <p class="control">
-                    <a class="button is-warning" onclick="window.location.href = '/Pedidos/ListaPedidosPendentes?IdTecnico=@ViewData["IdTecnico"]'">
+                    <a class="button is-warning" onclick="window.location.href = '/Pedidos/Pendentes/@ViewData["IdTecnico"]'">
                         <span class="icon">
                             <i class="fas fa-exclamation"></i>
                         </span>
@@ -78,7 +78,7 @@
                 @if (Model.Count() > 0)
                 {
                     <p class="control">
-                    <a class="button is-info" href="@Url.Action("ObterDirecaosDia", "Pedidos", new {id = @ViewData["IdTecnico"], DataPedidos = DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd")})">
+                    <a class="button is-info" href="@Url.Action("Direcaos", "Pedidos", new {id = @ViewData["IdTecnico"], DataPedidos = DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd")})">
                         <span class="icon">
                             <i class="fa-solid fa-map-location"></i>
                         </span>
@@ -168,7 +168,7 @@ else
                                     {
                                         <a class="button is-primary is-large card-footer-item" id="btnDirecoes_@item.MarcacaoStamp" href="@Utilizador.ObterLinkMapa(item.Cliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
                                     }
-                                    <a class="button is-info is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Print", "Pedidos", new {id = item.IdMarcacao }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
+                                    <a class="button is-info is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Etiqueta", "Pedidos", new {id = item.IdMarcacao }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
                                     <a class="button is-info is-large card-footer-item" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new {id = item.IdMarcacao }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
                                     @if (User.IsInRole("Admin"))
                                     {

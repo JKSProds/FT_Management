@@ -131,10 +131,10 @@ namespace FT_Management.Controllers
                     phccontext.CriarAnexosFolhaObra(fo);
                     fo = phccontext.ObterFolhaObra(fo.IdFolhaObra);
 
-                    if (Estado == 2) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
-                    if (Estado == 3) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 97, ReturnUrl = "/Pedidos/ListaPedidos?IdTecnico=" + fo.Utilizador.IdPHC });
+                    if (Estado == 2) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/Pedidos/" + fo.Utilizador.IdPHC });
+                    if (Estado == 3) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 97, ReturnUrl = "/Pedidos/Pedidos/" + fo.Utilizador.IdPHC });
 
-                    return RedirectToAction("ListaPedidos", "Pedidos", new { IdTecnico = fo.Utilizador.IdPHC });
+                    return RedirectToAction("Pedidos", "Pedidos", new { IdTecnico = fo.Utilizador.IdPHC });
                 }
 
                 ModelState.AddModelError("", res[1]);
