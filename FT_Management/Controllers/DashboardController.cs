@@ -21,7 +21,7 @@
             int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
-            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 2)) return Forbid();
+            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das encomendas.", u.NomeCompleto, u.Id);
 
@@ -39,7 +39,7 @@
             int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
-            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 2)) return Forbid();
+            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard dos Utilizadores.", u.NomeCompleto, u.Id);
 
@@ -64,7 +64,7 @@
             int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
-            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 2)) return Forbid();
+            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard dos pendentes.", u.NomeCompleto, u.Id);
 
@@ -82,7 +82,7 @@
             int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
-            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 2)) return Forbid();
+            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das Marcacoes.", u.NomeCompleto, u.Id);
 
