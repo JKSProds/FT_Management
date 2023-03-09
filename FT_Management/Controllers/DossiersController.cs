@@ -191,6 +191,23 @@
             return Json(phccontext.ApagarLinhaDossier(l.Stamp_Dossier, l.Stamp_Linha));
         }
 
+        //Obter um anexo
+        [HttpGet]
+        public virtual ActionResult Anexo(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Anexo a = phccontext.ObterAnexoDossier(id);
+            if (new FileExtensionContentTypeProvider().TryGetContentType(a.LocalizacaoFicheiro, out var mimeType))
+            {
+                byte[] file = FicheirosContext.ObterFicheiro(a.LocalizacaoFicheiro);
+                if (file == null) return Forbid();
+
+                return File(file, mimeType);
+            }
+            return Content("");
+        }
+
         //Adiciona um anexo
         [HttpPost]
         public JsonResult Anexo(string id, string ecra, string serie, string resumo, IFormFile file)

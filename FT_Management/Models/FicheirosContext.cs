@@ -35,6 +35,21 @@
             }
             return true;
         }
+        public static byte[] ObterFicheiro(string Caminho)
+        {
+            try
+            {
+                if (File.Exists(FormatLinuxServer(Caminho)))
+                {
+                    return File.ReadAllBytes(FormatLinuxServer(Caminho));
+                }
+            }
+            catch
+            {
+                return null;
+            }
+            return null;
+        }
         private static bool ApagarFicheiro(string Caminho)
         {
             try

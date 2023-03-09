@@ -475,7 +475,7 @@ namespace FT_Management.Controllers
                 return View("Calendario", new List<Utilizador>() { u });
             }
 
-            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(false, true);
+            List<Utilizador> LstTecnicos = context.ObterListaTecnicos(true, true);
 
             if (zona > 0) LstTecnicos = LstTecnicos.Where(t => t.Zona == zona).ToList();
             if (tipo > 0) LstTecnicos = LstTecnicos.Where(t => t.TipoTecnico == tipo).ToList();
