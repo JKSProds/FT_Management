@@ -2,6 +2,7 @@ namespace FT_Management.Models
 {
     public class Anexo
     {
+        public string Stamp_Anexo { get; set; }
         public string Ecra { get; set; }
         public int Serie { get; set; }
         public string Stamp_Origem { get; set; }

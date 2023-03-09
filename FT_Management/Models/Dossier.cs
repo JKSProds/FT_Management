@@ -27,6 +27,7 @@ namespace FT_Management.Models
         public DateTime DataCriacao { get; set; }
         public string EditadoPor { get; set; }
         public List<Linha_Dossier> Linhas { get; set; }
+        public List<Anexo> Anexos { get; set; }
         public bool Fechado { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Dossier/" + StampDossier; } }
 

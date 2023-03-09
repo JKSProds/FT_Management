@@ -3187,7 +3187,7 @@
         //Dossier Pedidos
         #region Dossier
 
-        public List<Dossier> ObterDossiers(string SQL_Query, bool LoadLinhas, bool LoadMarcacao, bool LoadFolhaObra)
+        public List<Dossier> ObterDossiers(string SQL_Query, bool LoadLinhas, bool LoadMarcacao, bool LoadFolhaObra, bool LoadAnexos)
         {
             List<Dossier> LstDossiers = new List<Dossier>();
 
@@ -3226,6 +3226,7 @@
                         if (LoadFolhaObra) LstDossiers.Last().FolhaObra = ObterFolhaObra(result["pastamp"].ToString());
                         if (LoadMarcacao) LstDossiers.Last().Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString());
                         if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossier(LstDossiers.Last().StampDossier);
+                        if (LoadAnexos) LstDossiers.Last().Anexos = ObterAnexosDossier(LstDossiers.Last().StampDossier);
                     }
                 }
 
@@ -3241,17 +3242,17 @@
         }
         public List<Dossier> ObterDossiers(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where dataobra='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndos=" + Serie : "") + " AND (obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%') order by nmdos", false, false, false);
+            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where dataobra='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndos=" + Serie : "") + " AND (obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%') order by nmdos", false, false, false, false);
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
         {
-            return ObterDossiers("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", false, false, false);
+            return ObterDossiers("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", false, false, false, false);
         }
 
         public Dossier ObterDossier(string STAMP)
         {
-            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "';", true, true, true).DefaultIfEmpty(new Dossier()).First();
+            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "';", true, true, true, true).DefaultIfEmpty(new Dossier()).First();
         }
 
         public List<Linha_Dossier> ObterLinhasDossier(string SQL_Query, bool LoadAll)
@@ -3464,6 +3465,95 @@
 
             return res;
         }
+
+        public List<Anexo> ObterAnexosDossier(string stamp)
+        {
+            List<Anexo> LstAnexosDossier = new List<Anexo>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from DBO.ANEXOS where recstamp='" + stamp + "';", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstAnexosDossier.Add(new Anexo
+                        {
+                            Stamp_Anexo = result["anexosstamp"].ToString(),
+                            Ecra = result["oritable"].ToString(),
+                            Serie = int.Parse(result["tpdos"].ToString()),
+                            Stamp_Origem = result["recstamp"].ToString(),
+                            Resumo = result["resumo"].ToString(),
+                            Nome = result["fname"].ToString(),
+                            LocalizacaoFicheiro = result["fullname"].ToString(),
+                            Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() }
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os anexos do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstAnexosDossier;
+        }
+
+        public Anexo ObterAnexoDossier(string stamp)
+        {
+            Anexo a = new Anexo();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from DBO.ANEXOS where anexosstamp='" + stamp + "';", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        a = new Anexo
+                        {
+                            Stamp_Anexo = result["anexosstamp"].ToString(),
+                            Ecra = result["oritable"].ToString(),
+                            Serie = int.Parse(result["tpdos"].ToString()),
+                            Stamp_Origem = result["recstamp"].ToString(),
+                            Resumo = result["resumo"].ToString(),
+                            Nome = result["fname"].ToString(),
+                            LocalizacaoFicheiro = result["fullname"].ToString(),
+                            Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() }
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o anexo do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return a;
+        }
+
         public List<KeyValuePair<int, string>> ObterSeriesDossiers()
         {
             List<KeyValuePair<int, string>> LstSeries = new List<KeyValuePair<int, string>>();
