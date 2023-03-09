@@ -603,21 +603,18 @@
 
                     function iniciarScan() {
                         Html5Qrcode.getCameras().then(devices => {
-                            /**
-                             * devices would be an array of objects of type:
-                             * { id: "id", label: "label" }
-                             */
+
                             if (devices && devices.length) {
                                 if (devices.length > 3) {
                                     cameraId = devices[3].id;
+                                } else if (devices.length > 2) {
+                                    cameraId = device.find(d => d.label.contains('traseira')).id;
                                 }
                             }
                         }).catch(err => {
-                            // handle err
                         });
 
                         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                            //console.log(`${decodedText}`, decodedResult);
                             Bulma('#modalLerBarcode').modal().close();
                             ObterPecaRef(decodedText);
                             pararScan();
@@ -626,7 +623,6 @@
                             fps: 10, qrbox: { width: 250, height: 250 }
                         };
 
-                        // If you want to prefer back camera
                         if (cameraId != '') {
                             html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
                         } else {
