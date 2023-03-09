@@ -63,7 +63,8 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Utilizador u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == id).DefaultIfEmpty(new Utilizador()).First();
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            if (id > 0) u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == id).DefaultIfEmpty(new Utilizador()).First();
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(u.IdPHC, DateTime.Parse(DataPedidos));
 
             ViewData["DataPedidos"] = DataPedidos;
@@ -525,10 +526,10 @@ namespace FT_Management.Controllers
                 MarcacaoAnexo a = phccontext.ObterAnexo(id);
                 phccontext.ApagarAnexoMarcacao(a);
                 FicheirosContext.ApagarAnexoMarcacao(a);
-                return RedirectToAction("Pedido", "Pedidos", new { id = phccontext.ObterMarcacao(a.IdMarcacao).IdMarcacao });
+                return Content("1");
 
             }
-            return RedirectToAction("Pedido");
+            return Content("0");
         }
 
         //Obter etiqueta da marcacao
