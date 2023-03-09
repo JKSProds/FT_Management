@@ -2387,13 +2387,13 @@ namespace FT_Management.Models
         {
             var stream = new System.IO.MemoryStream();
 
-            int x = 80;
-            int y = 0;
+            int x = 10;
+            int y = 50;
             int width = 1024;
             int height = 641;
 
             Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110, FontStyle.Bold);
-            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 50);
             Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
 
             using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
@@ -2425,7 +2425,7 @@ namespace FT_Management.Models
                         WrappingLength = width
                     }, "Cliente: " + pi.Encomenda.NomeCliente.Trim() + "\r\nData: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"), Color.Black);
 
-                    y += 290;
+                    y += 240;
                     imageContext.DrawText(new TextOptions(fontHeader)
                     {
                         TextAlignment = TextAlignment.Center,
