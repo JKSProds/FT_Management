@@ -2407,7 +2407,7 @@ namespace FT_Management.Models
                     imageContext.DrawImage(img, new Point(x, y), 1);
 
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(pi.GetUrl.ToString(), QRCodeGenerator.ECCLevel.Q);
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(pi.IdPicking.ToString(), QRCodeGenerator.ECCLevel.Q);
                     BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
                     var qr = Image.Load(qrCode.GetGraphic(20));
