@@ -38,6 +38,7 @@
         {
             Equipamentos = new List<Equipamento>();
             Ref_Produto = "";
+            TipoUn = "";
         }
     }
 
