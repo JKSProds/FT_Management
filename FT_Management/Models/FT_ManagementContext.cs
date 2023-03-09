@@ -2484,12 +2484,6 @@ namespace FT_Management.Models
                     qr.Mutate(x => x.Resize(180, 180));
                     imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
 
-                    imageContext.DrawText(new TextOptions(fontFooter)
-                    {
-                        Origin = new System.Numerics.Vector2(width - 200, y + 100),
-                        HorizontalAlignment = HorizontalAlignment.Right
-                    }, p.Pos_Stock, Color.Black);
-
                     y += 170;
 
                     imageContext.DrawText(new TextOptions(fontBody)
@@ -2501,7 +2495,7 @@ namespace FT_Management.Models
                         WrappingLength = width,
                     }, p.Designacao_Produto.Trim(), Color.Black);
 
-                    y += 270;
+                    y += 240;
                     imageContext.DrawText(new TextOptions(fontHeader)
                     {
                         TextAlignment = TextAlignment.Center,
@@ -2509,16 +2503,23 @@ namespace FT_Management.Models
                         Origin = new System.Numerics.Vector2(width / 2, y)
                     }, p.Ref_Produto, Color.Black);
 
-                    var r = new RectangularPolygon(10, y, width - 20, 120);
+                    var r = new RectangularPolygon(10, y, width - 20, 130);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
 
-                    y += 120;
+                    y += 140;
                     imageContext.DrawText(new TextOptions(fontFooter)
                     {
                         TextAlignment = TextAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y),
                         HorizontalAlignment = HorizontalAlignment.Center
                     }, "geral@food-tech.pt", Color.Black);
+
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        Origin = new System.Numerics.Vector2(width - 100, y),
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    }, p.Pos_Stock, Color.Black);
+
                 });
 
                 // render onto an Image
