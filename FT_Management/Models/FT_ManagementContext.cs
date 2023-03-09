@@ -2481,8 +2481,8 @@ namespace FT_Management.Models
                     BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
                     var qr = Image.Load(qrCode.GetGraphic(20));
-                    qr.Mutate(x => x.Resize(180, 180));
-                    imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
+                    qr.Mutate(x => x.Resize(200, 200));
+                    imageContext.DrawImage(qr, new Point(width - 200, 0), 1);
 
                     y += 170;
 

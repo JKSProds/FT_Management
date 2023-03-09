@@ -595,19 +595,7 @@
                     let html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader",
                         {
-                            fps: 10, qrbox: { width: 250, height: 250 },
-                            disableFlip: false,
-                            focusMode: "continuous",
-                            advanced: [{ zoom: 2.0 }],
-                            rememberLastUsedCamera: true,
-                            experimentalFeatures: {
-                                useBarCodeDetectorIfSupported: true,
-                            },
-                            willReadFrequently: true,
-                            supportedScanTypes: [
-                                // Html5QrcodeScanType.SCAN_TYPE_FILE,
-                                Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                            ],
+                            fps: 10, qrbox: { width: 250, height: 250 }
                         },
   /* verbose= */ false);
 
@@ -635,19 +623,7 @@
                             pararScan();
                         };
                         const config = {
-                            fps: 10, qrbox: { width: 250, height: 250 },
-                            disableFlip: false,
-                            focusMode: "continuous",
-                            advanced: [{ zoom: 2.0 }],
-                            rememberLastUsedCamera: true,
-                            experimentalFeatures: {
-                                useBarCodeDetectorIfSupported: true,
-                            },
-                            willReadFrequently: true,
-                            supportedScanTypes: [
-                                // Html5QrcodeScanType.SCAN_TYPE_FILE,
-                                Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-                            ],
+                            fps: 10, qrbox: { width: 250, height: 250 }
                         };
 
                         // If you want to prefer back camera
