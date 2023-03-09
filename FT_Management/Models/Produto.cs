@@ -37,6 +37,7 @@
         public Produto()
         {
             Equipamentos = new List<Equipamento>();
+            Ref_Produto = "";
         }
     }
 

@@ -1233,10 +1233,15 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     function ObterPecaRef(ref_produto) {
         if (ref_produto !== "") {
             $.ajax({
-                url: '/Produtos/Peca?ref_produto=' + ref_produto,
+                url: '/Produtos/Peca?ref_produto=' + ref_produto + "&armazem=" + @Model.Utilizador.IdArmazem,
                 type: "GET",
                 success: function (response) {
-                    PreencherPeca(response.ref_Produto + " - " + response.designacao_Produto.trim(), response.stampProduto);
+                    if (response.stampProduto == null) {
+                        notifyError('Ocorreu um erro ao obter a informação da peça! Verifique o seu stock!');
+                    } else {
+                        PreencherPeca(response.ref_Produto + " - " + response.designacao_Produto.trim(), response.stampProduto);
+                    }
+
                 },
                 error: function (response) {
                     notifyError('Ocorreu um erro ao obter a informação da peça!');
