@@ -23,7 +23,7 @@
         <div class="column is-right my-auto">
             <form method="get" style="width:100%" asp-action="Index">
                 <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
-                    <p class="control has-icons-left">
+                    <p class="control has-icons-left" style="width:100%">
                         <input class="input" type="date"
                             value="@(DateTime.Parse(ViewData["Data"].ToString()).ToString("yyyy-MM-dd"))" id="txtData"
                             name="Data" />
