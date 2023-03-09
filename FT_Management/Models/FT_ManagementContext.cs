@@ -2252,7 +2252,7 @@ namespace FT_Management.Models
             int width = 1024;
             int height = 641;
 
-            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110, FontStyle.Bold);
             Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
             Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
 
@@ -2322,7 +2322,7 @@ namespace FT_Management.Models
             int width = 1024;
             int height = 641;
 
-            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110, FontStyle.Bold);
             Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
             Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
 
@@ -2392,7 +2392,7 @@ namespace FT_Management.Models
             int width = 1024;
             int height = 641;
 
-            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110, FontStyle.Bold);
             Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 60);
             Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
 
@@ -2539,7 +2539,7 @@ namespace FT_Management.Models
             int width = 1024;
             int height = 641;
 
-            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 50);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 50, FontStyle.Bold);
             Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 80);
             Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 30);
 
