@@ -591,13 +591,43 @@
                         //console.warn(`Code scan error = ${error}`);
                     }
                     const html5QrCode = new Html5Qrcode("reader");
+                    var cameraId = '';
                     let html5QrcodeScanner = new Html5QrcodeScanner(
                         "reader",
-                        { fps: 10, qrbox: { width: 250, height: 250 } },
+                        {
+                            fps: 10, qrbox: { width: 250, height: 250 },
+                            disableFlip: false,
+                            focusMode: "continuous",
+                            advanced: [{ zoom: 2.0 }],
+                            rememberLastUsedCamera: true,
+                            experimentalFeatures: {
+                                useBarCodeDetectorIfSupported: true,
+                            },
+                            willReadFrequently: true,
+                            supportedScanTypes: [
+                                // Html5QrcodeScanType.SCAN_TYPE_FILE,
+                                Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+                            ],
+                        },
   /* verbose= */ false);
+
                     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
                     function iniciarScan() {
+                        Html5Qrcode.getCameras().then(devices => {
+                            /**
+                             * devices would be an array of objects of type:
+                             * { id: "id", label: "label" }
+                             */
+                            if (devices && devices.length) {
+                                if (devices.length > 3) {
+                                    cameraId = devices[3].id;
+                                }
+                            }
+                        }).catch(err => {
+                            // handle err
+                        });
+
                         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                             //console.log(`${decodedText}`, decodedResult);
                             Bulma('#modalLerBarcode').modal().close();
@@ -606,15 +636,27 @@
                         };
                         const config = {
                             fps: 10, qrbox: { width: 250, height: 250 },
-                            experimentalFeatures: {
-                                useBarCodeDetectorIfSupported: true
-                            },
+                            disableFlip: false,
+                            focusMode: "continuous",
+                            advanced: [{ zoom: 2.0 }],
                             rememberLastUsedCamera: true,
-                            showTorchButtonIfSupported: true
+                            experimentalFeatures: {
+                                useBarCodeDetectorIfSupported: true,
+                            },
+                            willReadFrequently: true,
+                            supportedScanTypes: [
+                                // Html5QrcodeScanType.SCAN_TYPE_FILE,
+                                Html5QrcodeScanType.SCAN_TYPE_CAMERA,
+                            ],
                         };
 
                         // If you want to prefer back camera
-                        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+                        if (cameraId != '') {
+                            html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
+                        } else {
+                            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+                        }
+
 
                     }
                     function pararScan() {
