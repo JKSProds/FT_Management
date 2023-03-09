@@ -608,8 +608,9 @@
                                 if (devices.length > 3) {
                                     cameraId = devices[3].id;
                                 } else if (devices.length > 2) {
-                                    cameraId = device.find(d => d.label.contains('traseira')).id;
+                                    cameraId = cameraId = devices[1].id;
                                 }
+                                console.log(devices);
                             }
                         }).catch(err => {
                         });
