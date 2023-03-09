@@ -2442,7 +2442,7 @@ namespace FT_Management.Models
                         TextAlignment = TextAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y),
                         HorizontalAlignment = HorizontalAlignment.Center
-                    }, "geral@food-tech.pt", Color.Black);
+                    }, "pecas@food-tech.pt", Color.Black);
                 });
 
                 // render onto an Image
@@ -2512,7 +2512,7 @@ namespace FT_Management.Models
                         TextAlignment = TextAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y),
                         HorizontalAlignment = HorizontalAlignment.Center
-                    }, "geral@food-tech.pt", Color.Black);
+                    }, "pecas@food-tech.pt", Color.Black);
 
                     imageContext.DrawText(new TextOptions(fontFooter)
                     {
@@ -2575,7 +2575,7 @@ namespace FT_Management.Models
                                 Origin = new System.Numerics.Vector2(x, y + 60),
                                 WrappingLength = width / 2 - 100,
                                 HorizontalAlignment = HorizontalAlignment.Center
-                            }, "geral@food-tech.pt", Color.Black);
+                            }, "pecas@food-tech.pt", Color.Black);
 
                             x = width / 2 + 100;
 
