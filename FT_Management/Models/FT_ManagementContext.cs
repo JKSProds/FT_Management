@@ -2725,41 +2725,35 @@ namespace FT_Management.Models
             pdfFormFields.SetField("Obs", (folhaobra.AssistenciaRemota ? "REMOTO " : "") + (folhaobra.Piquete ? "PIQUETE " : "") + (folhaobra.Instalação ? "INSTALAÇÃO " : ""));
 
             //Mao de Obra
-            if (folhaobra.IntervencaosServico != null)
+            int i = 1;
+            foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
             {
-                int i = 1;
-                foreach (Intervencao intervencao in folhaobra.IntervencaosServico)
-                {
-                    pdfFormFields.SetField("Data_" + i, intervencao.DataServiço.ToString("dd/MM/yy"));
-                    pdfFormFields.SetField("Tec_" + i, intervencao.NomeTecnico);
-                    pdfFormFields.SetField("Inicio_" + i, intervencao.HoraInicio.ToString("HH:mm"));
-                    pdfFormFields.SetField("Fim_" + i, intervencao.HoraFim.ToString("HH:mm"));
+                pdfFormFields.SetField("Data_" + i, intervencao.DataServiço.ToString("dd/MM/yy"));
+                pdfFormFields.SetField("Tec_" + i, intervencao.NomeTecnico);
+                pdfFormFields.SetField("Inicio_" + i, intervencao.HoraInicio.ToString("HH:mm"));
+                pdfFormFields.SetField("Fim_" + i, intervencao.HoraFim.ToString("HH:mm"));
 
-                    i++;
-                    if (i == 14) break;
-                }
+                i++;
+                if (i == 14) break;
             }
 
             //Peças
-            if (folhaobra.PecasServico != null)
+            int p = 1;
+            foreach (Produto pecas in folhaobra.PecasServico)
             {
-                int p = 1;
-                foreach (Produto pecas in folhaobra.PecasServico)
+                pdfFormFields.SetField("Ref_" + p, pecas.Ref_Produto);
+                if (pecas.Designacao_Produto.Length > 50)
                 {
-                    pdfFormFields.SetField("Ref_" + p, pecas.Ref_Produto);
-                    if (pecas.Designacao_Produto.Length > 50)
-                    {
-                        pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto.Substring(0, 50));
-                    }
-                    else
-                    {
-                        pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto);
-                    }
-                    pdfFormFields.SetField("Qtd_" + p, pecas.Stock_Fisico.ToString() + " " + pecas.TipoUn.ToString());
-
-                    p++;
-                    if (p == 20) break;
+                    pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto.Substring(0, 50));
                 }
+                else
+                {
+                    pdfFormFields.SetField("Desig_" + p, pecas.Designacao_Produto);
+                }
+                pdfFormFields.SetField("Qtd_" + p, pecas.Stock_Fisico.ToString() + " " + pecas.TipoUn.ToString());
+
+                p++;
+                if (p == 20) break;
             }
 
             if (!string.IsNullOrEmpty(folhaobra.RubricaCliente))
@@ -2780,32 +2774,7 @@ namespace FT_Management.Models
 
         }
 
-        public MemoryStream BitMapToMemoryStream(string filePath, int w, int h)
-        {
-            var ms = new MemoryStream();
 
-            PdfSharpCore.Pdf.PdfDocument doc = new PdfSharpCore.Pdf.PdfDocument();
-            PdfSharpCore.Pdf.PdfPage page = new PdfSharpCore.Pdf.PdfPage
-            {
-                Width = w,
-                Height = h
-            };
-
-            XImage img = XImage.FromFile(filePath);
-            img.Interpolate = false;
-
-            doc.Pages.Add(page);
-
-            XGraphics xgr = XGraphics.FromPdfPage(doc.Pages[0]);
-            XRect box = new XRect(0, 0, w, h);
-            xgr.DrawImage(img, box);
-
-            doc.Save(ms, false);
-
-            System.IO.File.Delete(filePath);
-
-            return ms;
-        }
         public MemoryStream MemoryStreamToPDF(MemoryStream stream, int w, int h)
         {
             var ms = new MemoryStream();
