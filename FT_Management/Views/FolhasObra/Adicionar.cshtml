@@ -602,18 +602,6 @@
                     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
                     function iniciarScan() {
-                        Html5Qrcode.getCameras().then(devices => {
-
-                            if (devices && devices.length) {
-                                if (devices.length > 3) {
-                                    cameraId = devices[3].id;
-                                } else if (devices.length > 2) {
-                                    cameraId = cameraId = devices[1].id;
-                                }
-                                console.log(devices);
-                            }
-                        }).catch(err => {
-                        });
 
                         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                             Bulma('#modalLerBarcode').modal().close();
@@ -624,11 +612,22 @@
                             fps: 10, qrbox: { width: 250, height: 250 }
                         };
 
-                        if (cameraId != '') {
-                            html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
-                        } else {
-                            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-                        }
+                        Html5Qrcode.getCameras().then(devices => {
+
+                            if (devices && devices.length) {
+                                if (devices.length > 3) {
+                                    cameraId = devices[3].id;
+                                } else if (devices.length > 2) {
+                                    cameraId = cameraId = devices[1].id;
+                                }
+                                if (cameraId != '') {
+                                    html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
+                                } else {
+                                    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+                                }
+                            }
+                        }).catch(err => {
+                        });
 
 
                     }
