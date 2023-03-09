@@ -71,17 +71,17 @@
 
         //Obter uma peca através do stamp ou ref
         [HttpGet]
-        public JsonResult Peca(string id, string ref_produto)
+        public JsonResult Peca(string id, string ref_produto, int armazem)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-
+            if (armazem == 0) armazem = 3;
             _logger.LogDebug("Utilizador {1} [{2}] a obter uma peça em especifico: Ref - {3}, Stamp - {4}.", u.NomeCompleto, u.Id, ref_produto, id);
 
             if (!string.IsNullOrEmpty(id)) return Json(phccontext.ObterProdutoStamp(id));
-            if (!string.IsNullOrEmpty(ref_produto)) return Json(phccontext.ObterProdutosArmazem(ref_produto).ToList().FirstOrDefault() ?? new Produto());
+            if (!string.IsNullOrEmpty(ref_produto)) return Json(phccontext.ObterProduto(ref_produto, armazem));
 
             return Json("");
         }
@@ -152,6 +152,20 @@
             _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta normal: Id - {3}, Armazem {4}.", u.NomeCompleto, u.Id, id, armazemid);
 
             return File(context.MemoryStreamToPDF(context.DesenharEtiquetaProduto(phccontext.ObterProduto(id, armazemid)), 801, 504), "application/pdf");
+        }
+
+        //Imprimir etiqueta pequena
+        [HttpGet]
+        public virtual ActionResult EtiquetaPequena(string id, int armazemid)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta normal: Id - {3}, Armazem {4}.", u.NomeCompleto, u.Id, id, armazemid);
+
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaProdutoPequena(phccontext.ObterProduto(id, armazemid)), 801, 504), "application/pdf");
         }
 
         //Imprimir multiplas etiquetas
