@@ -2387,7 +2387,7 @@ namespace FT_Management.Models
         {
             var stream = new System.IO.MemoryStream();
 
-            int x = 10;
+            int x = 40;
             int y = 0;
             int width = 1024;
             int height = 641;
@@ -2433,7 +2433,7 @@ namespace FT_Management.Models
                         HorizontalAlignment = HorizontalAlignment.Center
                     }, pi.Encomenda.Id.ToString(), Color.Black);
 
-                    var r = new RectangularPolygon(width / 2 / 2, y, width / 2, 120);
+                    var r = new RectangularPolygon(width / 2, y, width / 2, 120);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
 
                     y += 130;

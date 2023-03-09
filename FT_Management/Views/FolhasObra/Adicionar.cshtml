@@ -282,6 +282,12 @@
                                                 </span>
                                             </button>
                                         </div>
+                                        <div class="control">
+                                            <a class="button is-info"
+                                                onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
+                                                <i class="fa-solid fa-qrcode"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                     <input type="hidden" class="input" id="txtStampPeca">
                                     <span asp-validation-for="PecasServico" class="has-text-danger"></span>
@@ -574,41 +580,57 @@
             <div class="form-group">
                 <div id="reader" width="600px" height="600px"></div>
                 <script>
+                    function onScanSuccess(decodedText, decodedResult) {
+                        // handle the scanned code as you like, for example:
+                        console.log(`Code matched = ${decodedText}`, decodedResult);
+                    }
 
+                    function onScanFailure(error) {
+                        // handle scan failure, usually better to ignore and keep scanning.
+                        // for example:
+                        //console.warn(`Code scan error = ${error}`);
+                    }
+                    const html5QrCode = new Html5Qrcode("reader");
+                    let html5QrcodeScanner = new Html5QrcodeScanner(
+                        "reader",
+                        { fps: 10, qrbox: { width: 250, height: 250 } },
+  /* verbose= */ false);
                     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-                    Html5Qrcode.getCameras().then(devices => {
-                        /**
-                         * devices would be an array of objects of type:
-                         * { id: "id", label: "label" }
-                         */
-                        if (devices && devices.length) {
-                            var cameraId = devices[0].id;
-                            const html5QrCode = new Html5Qrcode(/* element id */ "reader");
-                            html5QrCode.start(
-                                cameraId,
-                                {
-                                    fps: 10,    // Optional, frame per seconds for qr code scanning
-                                    qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
-                                },
-                                (decodedText, decodedResult) => {
-                                    console.log(decodedResult + " - " + decodedText);
-                                },
-                                (errorMessage) => {
-                                    // parse error, ignore it.
-                                })
-                                .catch((err) => {
-                                    // Start failed, handle it.
-                                });
-                        }
-                    }).catch(err => {
-                        // handle err
-                    });
+
+                    function iniciarScan() {
+                        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                            //console.log(`${decodedText}`, decodedResult);
+                            Bulma('#modalLerBarcode').modal().close();
+                            ObterPecaRef(decodedText);
+                            pararScan();
+                        };
+                        const config = {
+                            fps: 10, qrbox: { width: 250, height: 250 },
+                            experimentalFeatures: {
+                                useBarCodeDetectorIfSupported: true
+                            },
+                            rememberLastUsedCamera: true,
+                            showTorchButtonIfSupported: true
+                        };
+
+                        // If you want to prefer back camera
+                        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+
+                    }
+                    function pararScan() {
+                        html5QrCode.stop().then((ignore) => {
+                            // QR Code scanning is stopped.
+                        }).catch((err) => {
+                            // Stop failed, handle it.
+                        });
+                    }
                 </script>
             </div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalLerBarcode').modal().close();" href="javascript:;">Fechar</button>
+                onclick="Bulma('#modalLerBarcode').modal().close();" id="btnConfirmAddAnexo"
+                href="javascript:;">Fechar</button>
         </footer>
     </div>
 </div>
@@ -868,6 +890,14 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
         $close.addEventListener('click', () => {
             if (!($target.classList.contains('is-active'))) clearInterval(interval);
+        });
+    });
+
+    (document.querySelectorAll('#modalLerBarcode') || []).forEach(($close) => {
+        const $target = $close.closest('#modalLerBarcode');
+
+        $close.addEventListener('click', () => {
+            pararScan();
         });
     });
 
@@ -1171,6 +1201,24 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                 success: function (response) {
                     AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
                     LimparPecas();
+                },
+                error: function (response) {
+                    notifyError('Ocorreu um erro ao obter a informação da peça!');
+                },
+                failure: function (response) {
+                    notifyError('Ocorreu um erro ao obter a informação da peça!');
+                }
+            });
+        }
+    }
+
+    function ObterPecaRef(ref_produto) {
+        if (ref_produto !== "") {
+            $.ajax({
+                url: '/Produtos/Peca?ref_produto=' + ref_produto,
+                type: "GET",
+                success: function (response) {
+                    PreencherPeca(response.ref_Produto + " - " + response.designacao_Produto.trim(), response.stampProduto);
                 },
                 error: function (response) {
                     notifyError('Ocorreu um erro ao obter a informação da peça!');
