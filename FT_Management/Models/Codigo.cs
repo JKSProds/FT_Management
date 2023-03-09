@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace FT_Management.Models
 {
     public class Codigo
@@ -13,7 +8,7 @@ namespace FT_Management.Models
         public string Obs { get; set; }
         public Utilizador utilizador { get; set; }
         public DateTime ValidadeCodigo { get; set; }
-        public string GetUrl { get { return "http://webapp.food-tech.pt/Home/ValidarCodigo/" + Stamp; } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Home/Validar/" + Stamp; } }
         public bool Validado { get { return Estado != 0; } }
         public Utilizador ValidadoPor { get; set; }
     }

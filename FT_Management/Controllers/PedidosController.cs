@@ -1,26 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using FT_Management.Models;
-using Ical;
+﻿using Ical;
 using Ical.Net.DataTypes;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Text;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Pdf;
-using System.Net.Http;
-using System.Net;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace FT_Management.Controllers
 {
@@ -96,6 +78,7 @@ namespace FT_Management.Controllers
             {
                 m.LstTecnicos = new List<Utilizador>() { new Utilizador() };
                 m.Tecnico = new Utilizador();
+                m.EstadoMarcacaoDesc = "Criado";
             }
 
             m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
@@ -189,8 +172,6 @@ namespace FT_Management.Controllers
 
             Marcacao m = phccontext.ObterMarcacao(id);
 
-            Console.WriteLine("A adicionar comentário!");
-
             Comentario c = new Comentario()
             {
                 Descricao = comentario,
@@ -200,27 +181,28 @@ namespace FT_Management.Controllers
             };
 
             bool res = phccontext.CriarComentarioMarcacao(c);
-
+            FolhaObra fo = new FolhaObra() { RelatorioServico = c.Descricao, ReferenciaServico = m.Referencia, Utilizador = c.Utilizador };
             if (fechar == 1)
             {
                 m.JustificacaoFecho = comentario;
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
-                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoResolvidaPD(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
-                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoResolvidaSONAE(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoPD(fo, m, 1);
+                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 1);
             }
             else if (encaminhar == 1)
             {
                 m.JustificacaoFecho = comentario;
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
-                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoEncaminhadaPD(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
-                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoEncaminhadaSONAE(new FolhaObra() { RelatorioServico = m.JustificacaoFecho, ReferenciaServico = m.Referencia, Utilizador = m.Utilizador }, m);
+                if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoPD(fo, m, 2);
+                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 2);
             }
             else if (reagendar == 1)
             {
-                m.EstadoMarcacaoDesc = "Reagendado";
+                m.EstadoMarcacaoDesc = "Reagendar";
                 m.Utilizador = c.Utilizador;
+                MailContext.EnviarEmailMarcacaoSONAE(fo, m, 3);
             }
 
             phccontext.AtualizaMarcacao(m);
@@ -237,7 +219,7 @@ namespace FT_Management.Controllers
             //{
             if (file.Length > 0)
             {
-                Anexo a = new Anexo()
+                MarcacaoAnexo a = new MarcacaoAnexo()
                 {
                     MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
                     IdMarcacao = id,
@@ -267,11 +249,11 @@ namespace FT_Management.Controllers
                 FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
                 PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-                Anexo a = phccontext.ObterAnexo(id);
+                MarcacaoAnexo a = phccontext.ObterAnexo(id);
                 string CaminhoFicheiro = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
                 if (!System.IO.File.Exists(CaminhoFicheiro)) return Forbid();
 
-                if (MimeTypes.TryGetMimeType(CaminhoFicheiro, out var mimeType))
+                if (new FileExtensionContentTypeProvider().TryGetContentType(CaminhoFicheiro, out var mimeType))
                 {
                     byte[] bytes = System.IO.File.ReadAllBytes(CaminhoFicheiro);
 
@@ -289,7 +271,7 @@ namespace FT_Management.Controllers
 
             if (id != null)
             {
-                Anexo a = phccontext.ObterAnexo(id);
+                MarcacaoAnexo a = phccontext.ObterAnexo(id);
                 phccontext.ApagarAnexoMarcacao(a);
                 FicheirosContext.ApagarAnexoMarcacao(a);
                 return RedirectToAction("Pedido", "Pedidos", new { id = phccontext.ObterMarcacao(a.IdMarcacao).IdMarcacao });
@@ -346,20 +328,17 @@ namespace FT_Management.Controllers
             return Content("Sucesso");
         }
 
-        public IActionResult ObterDirecaosDia(int IdTecnico, DateTime DataPedidos)
+        public IActionResult ObterDirecaosDia(int id, DateTime DataPedidos)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(IdTecnico, DataPedidos);
-            //string url = "https://www.google.com/maps/dir/33.93729,-106.85761/33.91629,-106.866761/33.98729,-106.85861//@34.0593359,-106.7131944,11z"
-            string url = "https://www.google.com/maps/dir/";
-            url += ListaMarcacoes.First().Cliente.ObterMoradaDirecoes().Replace("/", " ");
-            ListaMarcacoes.RemoveAt(0);
+            List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(id, DataPedidos);
+            string url = "https://www.google.com/maps/dir";
 
-            foreach (var item in ListaMarcacoes)
+            foreach (var item in ListaMarcacoes.GroupBy(c => c.Cliente).Select(X => X.First()))
             {
                 url += "/" + item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
             }
-            //url += "//@";
+
             return Redirect(new Uri(url).AbsoluteUri);
         }
 
@@ -400,7 +379,7 @@ namespace FT_Management.Controllers
 
                 foreach (var item in m.LstFolhasObra)
                 {
-                    res += "<tr><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/Detalhes/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
+                    res += "<tr><td onclick=\"location.href = '/FolhasObra/FolhaObra/" + item.IdFolhaObra + "'\"><span>" + item.DataServico.ToShortDateString() + "</span></td><td onclick=\"location.href = '/FolhasObra/FolhaObra/" + item.IdFolhaObra + "'\"><span>" + item.ClienteServico.NomeCliente + "</span></td><td onclick=\"location.href = '/FolhasObra/FolhaObra/" + item.IdFolhaObra + "'\"><span>" + item.EquipamentoServico.NumeroSerieEquipamento + "</span></td>";
                 }
 
                 res += "</tbody></table>";
@@ -573,8 +552,8 @@ namespace FT_Management.Controllers
             if (LstMarcacoesCriadas.Count > 0)
             {
                 List<Marcacao> LstMarcacoesFiltro = new List<Marcacao>();
-                int nPerDay = LstMarcacoesCriadas.Count() / 6 == 0 ? 1 : LstMarcacoesCriadas.Count() / 6;
-                for (int i = 0; i < 7; i++)
+                int nPerDay = LstMarcacoesCriadas.Count() / 5 == 0 ? 1 : LstMarcacoesCriadas.Count() / 5;
+                for (int i = 0; i < 6; i++)
                 {
                     LstMarcacoesFiltro.AddRange(LstMarcacoesCriadas.Skip(i * nPerDay).Take(nPerDay).Select(c => { c.DataMarcacao = DateTime.Now.AddDays(i - (int)DateTime.Now.DayOfWeek + 1); return c; }).ToList());
                 }
@@ -591,10 +570,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiquetaMarcacao(phccontext.ObterMarcacao(int.Parse(id))).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            return File(context.BitMapToMemoryStream(filePath, 810, 504), "application/pdf");
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaMarcacao(phccontext.ObterMarcacao(int.Parse(id))), 801, 504), "application/pdf");
         }
 
         public ActionResult Index(string numMarcacao, string nomeCliente, string referencia, string tipoe, int idtecnico, string estado)

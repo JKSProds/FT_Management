@@ -28,7 +28,7 @@
     }
 </style>
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
-<form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
+<form asp-action="FolhaObra" method="POST" name="frmAdicionar" id="frmAdicionar">
     <div class="container">
         <div class="columns is-mobile is-centered">
             <div class="column is-12">
@@ -173,6 +173,9 @@
                             <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
+                            <button id="btnZeroIntervencoes"
+                                class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>Sem
+                                Intervenções</button>
                             <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
                         </div>
                         <div class="column is-4">
@@ -313,6 +316,8 @@
                                 <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
                                 <div class="list has-visible-pointer-controls" id="divListaPecas">
                                 </div>
+                                <button id="btnZeroPecas" class="button is-danger my-1 is-large is-rounded is-fullwidth"
+                                    disabled>Sem Peças</button>
                             </div>
                         </div>
                     </div>
@@ -397,6 +402,17 @@
                                 </div>
                                 <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
                             </div>
+                            <div class="field mb-6">
+                                <p class="control">
+                                    <button type="button" class="button is-primary is-pulled-right is-fullwidth"
+                                        onclick="Bulma('#modalAdicionarAnexo').modal().open();">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span>Adicionar Anexos</span>
+                                    </button>
+                                </p>
+                            </div>
                         </div>
 
                         <div class="column is-6">
@@ -409,6 +425,7 @@
                             <button class="button is-danger" type="button"
                                 onclick="signaturePad.clear();">Limpar</button>
                         </div>
+
                         &nbsp;
                         <button type="button" onclick="ValidarFolhaObra()" class="button is-info is-large is-fullwidth">
                             <span class="icon">
@@ -423,6 +440,7 @@
     </div>
     <div style="display: none;">
         <div class="columns is-multiline mx-1 ">
+            <input type="text" class="input" asp-for="FicheirosAnexo" id="Ficheiros">
             <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
             <div class="column is-12">
                 <div class="field">
@@ -521,6 +539,30 @@
     </div>
 
 </form>
+
+
+<div id="modalAdicionarAnexo" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Adicionar Anexo</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <form action="/Dossiers/Anexo" method="POST" class="dropzone" id="dropAnexo">
+                    <div class="dz-message needsclick">
+                        Largue vários anexos aqui para fazer o upload
+                    </div>
+                </form>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
+                href="javascript:;">Fechar</button>
+        </footer>
+    </div>
+</div>
 
 <div class="modal" id="modalDeslocacao">
     <div class="modal-background"></div>
@@ -758,13 +800,12 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+@{
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }
 
 <script>
-    var AllEquipments = false;
     bulmaSteps.attach('.steps', {
         onShow: id => {
             if (id == 5) {
@@ -780,6 +821,16 @@
             if (!($target.classList.contains('is-active'))) clearInterval(interval);
         });
     });
+
+
+    Dropzone.options.dropAnexo = { // camelized version of the `id`
+        paramName: "file", // The name that will be used to transfer the file
+        maxFilesize: 10, // MB
+        success: function (file) {
+            document.getElementById('Ficheiros').value += file.xhr.response.replace('"', '').replace('"', '') + ";";
+            console.log(document.getElementById('Ficheiros').value);
+        }
+    };
 
     var canvas = document.getElementById('signature-pad');
     signaturePad = new SignaturePad(canvas, {
@@ -824,7 +875,7 @@
         notify("A validar folha de obra ...");
         $.ajax({
             type: "POST",
-            url: "/FolhasObra/ValidarFolhaObra",
+            url: "/FolhasObra/Validar",
             data: $("#frmAdicionar").serialize(),
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
@@ -842,11 +893,9 @@
     }
 
     function DesbloquearEquipamentos() {
-        if (AllEquipments) {
-            AllEquipments = false;
+        if (!chkDesbloquearEquipamentos.checked) {
             notify('Listagem de equipamentos bloqueada!');
         } else {
-            AllEquipments = true;
             notify('Listagem de equipamentos desbloqueada!');
         }
     }
@@ -864,6 +913,7 @@
         document.getElementById('pb_timer').value = time;
         time--;
         if (seconds % 10 === 0) ValidarCodigo(stamp_codigo);
+        if (time <= 0) { clearInterval(interval); Bulma('#modalAguardarValidacao').modal().close(); notifyError("Por favor tente novamente. Excedeu o tempo limite para aprovação do código!"); };
     }
 
     function CriarCodigo(stamp) {
@@ -901,6 +951,7 @@
         time = 5 * 60;
         interval = setInterval(AtualizarTimer, 1000);
         document.getElementById('pb_timer').max = time;
+        AtualizarTimer();
 
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalAguardarValidacao').modal().open();
@@ -925,7 +976,8 @@
         document.getElementById('chkEnviarEmail').checked = valor;
         Bulma('#modalEnviarEmail').modal().close();
         document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
-        Bulma('#modalGuardarLocalizacao').modal().open();
+        //Bulma('#modalGuardarLocalizacao').modal().open();
+        Bulma('#modalFecharMarcacao').modal().open();
     }
     function GuardarLocalizacao(valor) {
         document.getElementById('chkGuardarLocalizacao').checked = valor;
@@ -947,12 +999,14 @@
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtData').bulmaCalendar.value() + " " + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
             notify("Intervenção adicionada com sucesso!");
         }
+        if (!document.getElementById("btnZeroIntervencoes").hidden && (document.getElementById('ListaIntervencoes').value)) document.getElementById("btnZeroIntervencoes").classList.add("is-hidden");
     }
 
     function RemoverIntervencao(data) {
         document.getElementById('lst-datas-' + data).remove();
         document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value.replace(data + ';', '');
         if (document.getElementById('ListaIntervencoes').value.slice(-1) != ";" && document.getElementById('ListaIntervencoes').value != "") document.getElementById('ListaIntervencoes').value = document.getElementById('ListaIntervencoes').value + ";";
+        if (!(document.getElementById('ListaIntervencoes').value)) document.getElementById("btnZeroIntervencoes").classList.remove("is-hidden");
         notify("Intervenção removida com sucesso!");
     }
 
@@ -976,6 +1030,8 @@
         document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd};`;
         notify("Peça " + ref + " adicionada com sucesso!");
+
+        if (!document.getElementById("btnZeroPecas").hidden && (document.getElementById('ListaPecas').value)) document.getElementById("btnZeroPecas").classList.add("is-hidden");
     }
 
     function RemoverPeca(stamp) {
@@ -983,6 +1039,8 @@
         document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(stamp + ';', '');
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
         notify("Peça removida com sucesso!");
+
+        if (!(document.getElementById('ListaPecas').value)) document.getElementById("btnZeroPecas").classList.remove("is-hidden");
     }
 
     function CarregarPecas() {
@@ -999,9 +1057,9 @@
         $("#txtPecas").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Produtos/ObterPecasUtilizador/',
+                    url: '/Produtos/Pecas/',
                     data: { "filter": request.term },
-                    type: "POST",
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
@@ -1029,8 +1087,8 @@
 
     function CarregarPecasStock() {
         $.ajax({
-            url: '/Produtos/ObterPecasUtilizador/',
-            type: "POST",
+            url: '/Produtos/Pecas/',
+            type: "GET",
             success: function (response) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th style=\"width: 110px\">Referência</th><th>Designação</th><th>Quantidade</th><th></th></tr></thead><tbody>";
                 $(response).each(function () {
@@ -1059,8 +1117,8 @@
     function ObterPeca(stamp, qtd) {
         if (stamp !== "" && qtd > 0) {
             $.ajax({
-                url: '/Produtos/ObterPeca/' + stamp,
-                type: "POST",
+                url: '/Produtos/Peca/' + stamp,
+                type: "GET",
                 success: function (response) {
                     AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
                     LimparPecas();
@@ -1080,7 +1138,6 @@
         document.getElementById('txtStampPeca').value = '';
         document.getElementById("btnAdicionarPeca").disabled = true;
         document.getElementById("txtQtd").value = '1';
-        notify('Peça limpa com sucesso!');
     }
 
     //CLIENTES
@@ -1088,9 +1145,9 @@
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Clientes/ObterClientes/',
+                    url: '/Clientes/Clientes/',
                     data: { "prefix": request.term },
-                    type: "POST",
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
@@ -1122,8 +1179,8 @@
         $("#txtEquipamento").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Equipamentos/ObterEquipamentos/',
-                    data: { "prefix": request.term, "no": (AllEquipments ? "0" : "@Model.ClienteServico.IdCliente"), "loja": (AllEquipments ? "0" : "@Model.ClienteServico.IdLoja") },
+                    url: '/Equipamentos/Equipamentos/',
+                    data: { "prefix": request.term, "no": (chkDesbloquearEquipamentos.checked ? "0" : "@Model.ClienteServico.IdCliente"), "loja": (chkDesbloquearEquipamentos.checked ? "0" : "@Model.ClienteServico.IdLoja") },
                     type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
@@ -1168,7 +1225,7 @@
 
     function ObterEquipamentosCliente() {
         $.ajax({
-            url: '/Equipamentos/ObterEquipamentos/',
+            url: '/Equipamentos/Equipamentos/',
             data: { "prefix": "", "no": "@Model.ClienteServico.IdCliente", "loja": "@Model.ClienteServico.IdLoja" },
             type: "GET",
             success: function (data) {
@@ -1194,7 +1251,7 @@
         var Stamp = document.getElementById('txtEquipamentoStamp').value;
 
         $.ajax({
-            url: "/Equipamentos/ObterHistorico",
+            url: "/Equipamentos/Historico",
             type: "GET",
             data: "id=" + Stamp,
             dataType: "json", // type of data you're expecting from response
@@ -1218,7 +1275,7 @@
                     if (month < 10) {
                         month = '0' + month;
                     }
-                    html += "<tr onclick=\"location.href = '/FolhasObra/Detalhes/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
+                    html += "<tr onclick=\"location.href = '/FolhasObra/FolhaObra/" + obj.idFolhaObra + "'\"><td>" + day + '-' + month + '-' + year + "</td><td>" + tecnico + "</td><td>" + obj.relatorioServico + "</td></tr>";
                     existeFolhasObra = true;
                 }
                 html += "</tbody></table>"

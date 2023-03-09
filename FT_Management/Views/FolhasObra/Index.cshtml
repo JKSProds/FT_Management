@@ -81,26 +81,26 @@ else
                         {
                             <tr>
                                 <td data-label="@Html.DisplayNameFor(model => model.IdFolhaObra)"
-                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                    onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                     <span><b>@item.EmojiFO</b>@item.IdFolhaObra</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.ClienteServico.NomeCliente)"
-                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                    onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                     @Html.DisplayFor(modelItem => item.ClienteServico.NomeCliente)
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.EquipamentoServico.NumeroSerieEquipamento)"
-                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                    onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                     @Html.DisplayFor(modelItem => item.EquipamentoServico.NumeroSerieEquipamento)
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)"
-                                    onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                    onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                     @Html.DisplayFor(modelItem => item.IntervencaosServico.FirstOrDefault().NomeTecnico)
                                 </td>
                                 <td class="is-actions-cell">
                                     <div class="field has-addons" style="width:100%">
                                         <p class="control" style="width:100%">
                                             <button class="button is-success is-fullwidth"
-                                                onclick="window.open('@Url.Action("PrintFolhaObraSimples", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
+                                                onclick="window.open('@Url.Action("Ticket", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
                                                 <span class="icon is-small">
                                                     <i class="fa-solid fa-screwdriver-wrench"></i>
                                                 </span>
@@ -108,7 +108,7 @@ else
                                         </p>
                                         <p class="control" style="width:100%">
                                             <button class="button is-success is-outlined is-fullwidth"
-                                                onclick="window.open('@Url.Action("Print", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
+                                                onclick="window.open('@Url.Action("Etiqueta", "FolhasObra", new { id = item.IdFolhaObra, target="_blank" })')">
                                                 <span class="icon is-small">
                                                     <i class="fas fa-sticky-note"></i>
                                                 </span>
@@ -116,7 +116,7 @@ else
                                         </p>
                                         <p class="control" style="width:100%">
                                             <button class="button is-success is-fullwidth"
-                                                onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')">
+                                                onclick="window.open('@Url.Action("Documento", "FolhasObra", new { id = item.IdFolhaObra, target="_blank"})')">
                                                 <span class="icon is-small">
                                                     <i class="fas fa-print"></i>
                                                 </span>
@@ -174,8 +174,8 @@ else
             id: IdFolhaObra
         };
         $.ajax({
-            type: "POST",
-            url: "/FolhasObra/ObterEmailClienteFolhaObra",
+            type: "GET",
+            url: "/FolhasObra/Email",
             data: json,
             traditional: true,
             success: function (result) {
@@ -206,7 +206,7 @@ else
 
         $.ajax({
             type: "POST",
-            url: "/FolhasObra/EmailFolhaObra",
+            url: "/FolhasObra/Email",
             data: json,
             traditional: true,
             success: function (result) {

@@ -253,7 +253,7 @@
         document.getElementById('password').value = document.getElementById('inputPassword').value;
 
         $.ajax({
-            url: '/Utilizadores/Check2FA/',
+            url: '/Utilizadores/SecondFA/',
             data: { "id": document.getElementById('inputNome').value },
             type: "GET",
             success: function (data) {

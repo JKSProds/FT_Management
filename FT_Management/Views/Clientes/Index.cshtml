@@ -1,7 +1,4 @@
 ﻿@model IEnumerable<FT_Management.Models.Cliente>
-@using X.PagedList.Mvc.Core;
-@using X.PagedList;
-@using X.PagedList.Mvc.Bootstrap4.Core;
 
 @{
     ViewData["Title"] = "Clientes";
@@ -26,7 +23,8 @@
             <div class="column">
                 <div class="field has-addons has-addons-right mx-1">
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Nome do Cliente" aria-label="Nome do Cliente" aria-describedby="button-addon4" name="Nome" value="@ViewData["Nome"]">
+                        <input type="text" class="input" placeholder="Nome do Cliente" aria-label="Nome do Cliente"
+                            aria-describedby="button-addon4" name="Nome" value="@ViewData["Nome"]">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
@@ -34,7 +32,7 @@
                 </div>
                 <div class="buttons is-right">
                     <p class="control">
-                        <button type="submit" class="button is-info is-outlined">
+                        <button type="submit" class="button is-info">
                             <span class="icon">
                                 <i class="fas fa-search fa-lg"></i>
                             </span>
@@ -46,7 +44,7 @@
                             <span class="icon">
                                 <i class="fas fa-backspace fa-lg"></i>
                             </span>
-                            <span>Limpar Pesquisa</span>
+                            <span>Limpar</span>
                         </button>
                     </p>
                 </div>
@@ -63,52 +61,57 @@
     }
     else
     {
-          <div class="b-table">
+        <div class="b-table">
             <div class="table-wrapper has-mobile-cards">
-        <table class="table is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IdCliente)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.NomeCliente)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.TelefoneCliente)
-                    </th>
-                    <th>
+                <table class="table is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IdCliente)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.NomeCliente)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TelefoneCliente)
+                            </th>
+                            <th>
 
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td data-label="@Html.DisplayNameFor(model => model.IdCliente)" onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
-                            <span>@item.IdCliente - @item.IdLoja</span>
-                        </td>
-                        <td data-label="@Html.DisplayNameFor(model => model.NomeCliente)" onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
-                            @Html.DisplayFor(modelItem => item.NomeCliente)
-                        </td>
-                        <td data-label="@Html.DisplayNameFor(model => model.TelefoneCliente)" onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
-                            @Html.DisplayFor(modelItem => item.TelefoneCliente)
-                        </td>
-                        <td class="is-actions-cell">
-                            <div class="btn-group float-right">
-                                <a class="button is-info is-outlined @(item.TelefoneCliente.Length < 9 ? "disabled" : "")" href="tel:@item.TelefoneCliente"><i class="fas fa-phone float-left" style="margin-top:5px"></i></a>
-                                <a class="button is-primary is-outlined" href="@Utilizador.ObterLinkMapa(item, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
-                            </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td data-label="@Html.DisplayNameFor(model => model.IdCliente)"
+                                    onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
+                                    <span>@item.IdCliente - @item.IdLoja</span>
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.NomeCliente)"
+                                    onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
+                                    @Html.DisplayFor(modelItem => item.NomeCliente)
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.TelefoneCliente)"
+                                    onclick="window.open('@(Url.Action("Cliente", "Clientes", new { IdCliente = item.IdCliente, IdLoja = item.IdLoja, target="_blank" }))')">
+                                    @Html.DisplayFor(modelItem => item.TelefoneCliente)
+                                </td>
+                                <td class="is-actions-cell">
+                                    <div class="btn-group float-right">
+                                        <a class="button is-info is-outlined @(item.TelefoneCliente.Length < 9 ? "disabled" : "")"
+                                            href="tel:@item.TelefoneCliente"><i class="fas fa-phone float-left"
+                                                style="margin-top:5px"></i></a>
+                                        <a class="button is-primary is-outlined"
+                                            href="@Utilizador.ObterLinkMapa(item, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i
+                                                class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                                    </div>
 
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 </div>
-@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", "Clientes", new { page, Nome = @ViewData["Nome"] }))
-

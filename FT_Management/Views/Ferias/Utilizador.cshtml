@@ -122,11 +122,11 @@ else
                         {
                             <tr class="@(item.Validado ? "has-background-success-light" : "has-background-danger-light")">
                                 <td style="min-width: 20%;"
-                            data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)">
+                                    data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)">
                                     <span>@item.DataInicio.ToString("ddd dd/MM/yyyy")</span>
                                 </td>
                                 <td style="min-width: 20%;"
-                            data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)">
+                                    data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataFim)">
                                     <span>@item.DataFim.ToString("ddd dd/MM/yyyy")</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().ValidadoPorNome)">
@@ -134,7 +134,7 @@ else
                                 </td>
 
                                 <td data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().Obs)"
-                            style="width: 40%;">
+                                    style="width: 40%;">
                                     @Html.DisplayFor(modelItem => item.Obs)
                                 </td>
                                 <td class="is-actions-cell">
@@ -145,16 +145,16 @@ else
                                             @if (!item.Validado)
                                             {
                                                 <a class="button mr-2 is-outlined is-primary" onclick="ConfirmValidarFerias(@item.Id)"
-                                    href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
+                                                    href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                                             }
                                             <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias2(@item.Id)"
-                                    href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                                                href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
                                         }
 
                                         else
                                         {
                                             <a class="button is-danger is-outlined" onclick="ConfirmApagarFerias1(@item.Id)"
-                                    href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
+                                                href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
 
                                         }
                                     </div>
@@ -380,12 +380,16 @@ else
             } else {
                 $.ajax({
                     type: "POST",
-                    url: "/Ferias/AdicionarFerias",
+                    url: "/Ferias/Ferias",
                     data: json,
                     traditional: true,
                     success: function (result) {
                         $(function () {
-                            window.location.reload();
+                            if (result == "1") {
+                                window.location.reload();
+                            } else {
+                                notifyError("Ocorreu um erro ao adicionar as ferias!");
+                            }
                         });
                     }
                 });
@@ -403,8 +407,8 @@ else
 
 
         $.ajax({
-            type: "POST",
-            url: "/Ferias/AlterarDiasFerias",
+            type: "PUT",
+            url: "/Ferias/Dias",
             data: json,
             traditional: true,
             success: function (result) {
@@ -440,8 +444,8 @@ else
         };
 
         $.ajax({
-            type: "POST",
-            url: "/Ferias/ApagarIndividual",
+            type: "DELETE",
+            url: "/Ferias/Ferias",
             data: json,
             traditional: true,
             success: function (result) {
@@ -461,8 +465,8 @@ else
         };
 
         $.ajax({
-            type: "POST",
-            url: "/Ferias/Apagar",
+            type: "DELETE",
+            url: "/Ferias/Ferias",
             data: json,
             traditional: true,
             success: function (result) {

@@ -21,6 +21,17 @@
                 </div>
             </div>
         </div>
+        <div class="column">
+            <p class="control">
+                <a class="button is-primary is-fullwidth is-large"
+                    onclick="Bulma('#modalNovoUtilizador').modal().open();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </span>
+                    <span>Adicionar Utilizador</span>
+                </a>
+            </p>
+        </div>
     </div>
 </div>
 <hr />
@@ -67,25 +78,25 @@ else
                                     </div>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.Id)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                            onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>#@item.Id</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.NomeCompleto)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                            onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>@item.NomeCompleto</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.EmailUtilizador)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                            onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>@item.EmailUtilizador</span>
                                 </td>
                                 <td data-label="@Html.DisplayNameFor(model => model.UltimoAcesso)"
-                                    onclick="location.href='@(Url.Action("Editar", "Utilizadores", new { id = item.Id}))'">
+                            onclick="location.href='@(Url.Action("Utilizador", "Utilizadores", new { id = item.Id}))'">
                                     <span>@item.UltimoAcesso</span>
                                 </td>
                                 @if (this.User.IsInRole("Master") || !item.Admin)
                                 {
                                     <td class="is-actions-cell"
-                                        style="@(!this.User.IsInRole("Master") && @item.Admin ? "opacity:0.2;" : "")">
+                            style="@(!this.User.IsInRole("Master") && @item.Admin ? "opacity:0.2;" : "")">
 
                                         <div class="dropdown">
                                             <div class="dropdown-trigger">
@@ -101,7 +112,7 @@ else
                                                     <div class="dropdown-item">
                                                         <label class="switch is-rounded">
                                                             <input type="checkbox" id="chkEnable_@item.Id" checked="@item.Enable"
-                                                                onchange="AtualizarEnableUtilizador(@item.Id)">
+                                                    onchange="AtualizarEnableUtilizador(@item.Id)">
                                                             <span class="check is-info"></span>
                                                             <span class="control-label">@Html.DisplayNameFor(model =>
                                                     model.Enable)</span>
@@ -110,9 +121,9 @@ else
                                                     <hr class="dropdown-divider">
                                                     <div class="dropdown-item">
                                                         <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
-                                                            class="switch is-rounded">
+                                                class="switch is-rounded">
                                                             <input type="checkbox" id="chkAdmin_@item.Id" checked="@item.Admin"
-                                                                onchange="AtualizarAdminUtilizador(@item.Id)">
+                                                    onchange="AtualizarAdminUtilizador(@item.Id)">
                                                             <span class="check is-primary"></span>
                                                             <span class="control-label">@Html.DisplayNameFor(model =>
                                                     model.Admin)</span>
@@ -121,9 +132,9 @@ else
                                                     <hr class="dropdown-divider">
                                                     <div class="dropdown-item">
                                                         <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
-                                                            class="switch is-rounded">
+                                                class="switch is-rounded">
                                                             <input type="checkbox" id="chkAcessos_@item.Id" checked="@item.Acessos"
-                                                                onchange="AtualizarAcessosUtilizador(@item.Id)">
+                                                    onchange="AtualizarAcessosUtilizador(@item.Id)">
                                                             <span class="check is-warning"></span>
                                                             <span class="control-label">@Html.DisplayNameFor(model =>
                                                     model.Acessos)</span>
@@ -132,9 +143,9 @@ else
                                                     <hr class="dropdown-divider">
                                                     <div class="dropdown-item">
                                                         <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
-                                                            class="switch is-rounded">
+                                                class="switch is-rounded">
                                                             <input type="checkbox" id="chkDev_@item.Id" checked="@item.Dev"
-                                                                onchange="AtualizarDevUtilizador(@item.Id)">
+                                                    onchange="AtualizarDevUtilizador(@item.Id)">
                                                             <span class="check is-danger"></span>
                                                             <span class="control-label">@Html.DisplayNameFor(model =>
                                                     model.Dev)</span>
@@ -143,18 +154,18 @@ else
                                                     <hr class="dropdown-divider">
                                                     <div class="dropdown-item">
                                                         <button class="button is-success is-fullwidth"
-                                                            onclick="AbrirPermissoes(@item.Id)"><i
-                                                                class="fa-solid fa-key"></i></button>
+                                                onclick="AbrirPermissoes(@item.Id)"><i
+                                                    class="fa-solid fa-key"></i></button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <a class="button is-warning" href="~/Utilizadores/Logs/@item.Id"><i
-                                                class="fas fa-eye"></i></a>
+                                    class="fas fa-eye"></i></a>
                                         <button class="button is-danger is-outlined" onclick="ConfirmResetSenha(@item.Id)"><i
-                                                class="fas fa-unlock"></i></button>
+                                    class="fas fa-unlock"></i></button>
                                         <button class="button is-danger" onclick="ConfirmApagarUtilizador(@item.Id)"><i
-                                                class="fas fa-trash"></i></button>
+                                    class="fas fa-trash"></i></button>
                                     </td>
                                 }
                                 else
@@ -199,6 +210,124 @@ else
         </footer>
     </div>
 </div>
+
+<div id="modalNovoUtilizador" class="modal">
+    <form method="POST" style="width:100%" id="frmNovoUtilizador" asp-controller="Utilizadores" asp-action="Utilizador">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </span>
+                    <span>Novo Utilizador</span>
+                </p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.NomeUtilizador)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="text" class="input" name="NomeUtilizador" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.NomeCompleto)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="text" class="input" name="NomeCompleto" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.Password)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="password" class="input" name="Password" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.EmailUtilizador)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="email" class="input" name="EmailUtilizador" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.Telemovel)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="phone" class="input" name="Telemovel" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.IdArmazem)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="number" class="input" name="IdArmazem" value="0"
+                                    required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.IdPHC)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="number" class="input" name="IdPHC" value="0" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <span class="select" style="width:100%">
+                            <select style="width:100%" name="TipoUtilizador">
+                                <option id="1" value="1">Técnico</option>
+                                <option id="2" value="2">Comercial</option>
+                                <option id="3" value="3">Escritório</option>
+                            </select>
+                            <input type="hidden" id="txtTipoUtilizador" value="1">
+                        </span>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button type="submit" class="button is-success is-large">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-plus"></i>
+                    </span>
+                    <span>Criar Utilizador</span>
+                </button>
+                <button type="button" class="button is-danger is-large"
+                    onclick="Bulma('#modalNovoUtilizador').modal().close();">
+                    <span class="icon">
+                        <i class="fas fa-circle-xmark"></i>
+                    </span>
+                    <span>Fechar</span>
+                </button>
+            </footer>
+        </div>
+    </form>
+</div>
+
 <div id="modalResetSenha" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -282,10 +411,9 @@ else
     function ObterPermissoes() {
         $.ajax({
             type: "GET",
-            url: "/Utilizadores/ObterPermissoes",
+            url: "/Utilizadores/Permissoes",
             traditional: true,
             success: function (result) {
-                console.log(result);
                 document.getElementById('txtPermissoes').BulmaTagsInput().options.source = result;
             }
         });
@@ -299,16 +427,16 @@ else
     function AtualizarPermissoesUtilizador() {
         id = document.getElementById("hiddenIdUtilizador").value;
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AtualizarPermissoes/" + id,
+            type: "PUT",
+            url: "/Utilizadores/Permissoes/" + id,
             data: { perms: document.getElementById('txtPermissoes').BulmaTagsInput().items },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Permissões do Utilizador atualizadas com sucesso!');
                     } else {
-                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                        notifyError('Ocorreu um erro ao atualizar as permissões do utilizador!');
                     }
                     Bulma('#modalPermissoes').modal().close();
                 });
@@ -318,13 +446,13 @@ else
 
     function AtualizarEnableUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarEstado/" + id,
-            data: { estado: document.getElementById('chkEnable_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { enable: document.getElementById('chkEnable_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor do Estado do Utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -336,13 +464,13 @@ else
 
     function AtualizarAdminUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarAdmin/" + id,
-            data: { admin: document.getElementById('chkAdmin_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { admin: document.getElementById('chkAdmin_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor de Admin do Utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -354,13 +482,13 @@ else
 
     function AtualizarAcessosUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarAcessos/" + id,
-            data: { admin: document.getElementById('chkAcessos_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { acessos: document.getElementById('chkAcessos_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor de acessos do utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -372,13 +500,13 @@ else
 
     function AtualizarDevUtilizador(id) {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/AlterarDev/" + id,
-            data: { dev: document.getElementById('chkDev_' + id).checked },
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { dev: document.getElementById('chkDev_' + id).checked ? 1 : 2 },
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "Ok") {
+                    if (result == "1") {
                         notify('Valor de Developer do utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
@@ -399,8 +527,8 @@ else
 
     function ResetSenha() {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/ResetSenha/" + document.getElementById("hiddenIdUtilizador").value,
+            type: "DELETE",
+            url: "/Utilizadores/Senha/" + document.getElementById("hiddenIdUtilizador").value,
             data: { senha: document.getElementById("txtResetSenha").value },
             traditional: true,
             success: function (result) {
@@ -418,11 +546,11 @@ else
 
     function ApagarUtilizador() {
         $.ajax({
-            type: "POST",
-            url: "/Utilizadores/Apagar/" + document.getElementById("hiddenIdUtilizador").value,
+            type: "DELETE",
+            url: "/Utilizadores/Utilizador/" + document.getElementById("hiddenIdUtilizador").value,
             traditional: true,
             success: function (result) {
-                window.location.reload();
+                if (result == "1") window.location.reload();
             }
         });
     }

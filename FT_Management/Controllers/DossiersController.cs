@@ -1,29 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio, Tech")]
     public class DossiersController : Controller
     {
-        [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Index(string Data)
+        private readonly ILogger<DossiersController> _logger;
+
+        public DossiersController(ILogger<DossiersController> logger)
         {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
-            ViewData["Data"] = Data;
-
-            return View(phccontext.ObterDossiers(DateTime.Parse(Data)));
+            _logger = logger;
         }
 
+        //Obter todos os dossiers de uma data especifica
+        [HttpGet]
+        [Authorize(Roles = "Admin, Escritorio")]
+        public ActionResult Index(string Data, string Filtro, int Serie)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-        public ActionResult Pedido(string id, string ReturnUrl)
+            if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
+            if (string.IsNullOrEmpty(Filtro)) Filtro = "";
+            ViewData["Data"] = Data;
+            ViewData["Filtro"] = Filtro;
+            ViewData["Serie"] = Serie;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os dossiers da seguinte data: {3}", u.NomeCompleto, u.Id, Data);
+
+            List<KeyValuePair<int, string>> LstSeries = phccontext.ObterSeriesDossiers();
+            LstSeries.Insert(0, new KeyValuePair<int, string>(0, "Todos"));
+            ViewBag.Series = LstSeries.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value, Selected = l.Key == Serie });
+
+            return View(phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie));
+        }
+
+        //Obter um dossier em especifico
+        [HttpGet]
+        public ActionResult Dossier(string id, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -33,11 +46,18 @@ namespace FT_Management.Controllers
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
+            _logger.LogDebug("Utilizador {1} [{2}] a obter um dossier em especifico: Id - {3}, Cliente - {4}, Serie - {5}", u.NomeCompleto, u.Id, d.IdDossier, d.Cliente.NomeCliente, d.NomeDossier);
+
             ViewData["ReturnUrl"] = ReturnUrl;
-            return View(d);
+
+            if (d.Serie == 96 || d.Serie == 97) return View("Pedido", d);
+            if (d.Serie == 36) return View("Transferencia", d);
+            return View("Dossier", d);
         }
 
-        public ActionResult CriarDossier(string id, int serie, string ReturnUrl)
+        //Criar um pedido de dossier
+        [HttpGet]
+        public ActionResult Pedido(string id, int serie, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -49,10 +69,13 @@ namespace FT_Management.Controllers
                 Serie = serie,
                 FolhaObra = fo,
                 Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao),
-                EditadoPor = u.Iniciais
+                EditadoPor = u.Iniciais,
+                Tecnico = u
             };
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar um dossier novo: Id FO - {3}, Id Marcacao - {4}, Cliente - {5}, Serie - {6}", u.NomeCompleto, u.Id, fo.IdFolhaObra, fo.IdMarcacao, fo.ClienteServico.NomeCliente, serie);
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
             d = phccontext.ObterDossier(d.StampDossier);
@@ -63,17 +86,19 @@ namespace FT_Management.Controllers
             phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Designacao = "Reparação de " + fo.EquipamentoServico.TipoEquipamento, CriadoPor = d.EditadoPor });
             phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Designacao = fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, CriadoPor = d.EditadoPor });
 
-            return RedirectToAction("Pedido", new { id = d.StampDossier, ReturnUrl = ReturnUrl });
+            return RedirectToAction("Dossier", new { id = d.StampDossier, ReturnUrl = ReturnUrl });
         }
 
-        public ActionResult CriarDossierTransferencia(string id, int armazem, int load)
+        //Criar um documento de transferencia
+        [HttpGet]
+        public ActionResult Transferencia(string id, int armazem, int load)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Utilizador t = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == armazem).DefaultIfEmpty().First();
-            Dossier d = phccontext.ObterDossierAberto(u).Where(d => !d.Fechado).DefaultIfEmpty(new Dossier()).Last();
+            Dossier d = phccontext.ObterDossierAberto(u).DefaultIfEmpty(new Dossier()).Last();
 
             if (d.StampDossier == null)
             {
@@ -82,11 +107,14 @@ namespace FT_Management.Controllers
                     Serie = 36,
                     Marcacao = new Marcacao(),
                     FolhaObra = new FolhaObra(),
-                    EditadoPor = u.Iniciais
+                    EditadoPor = u.Iniciais,
+                    Tecnico = t
                 };
                 d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
                 d = phccontext.ObterDossier(d.StampDossier);
                 if (string.IsNullOrEmpty(d.StampDossier)) return Forbid();
+                _logger.LogDebug("Utilizador {1} [{2}] a criar um pedido de transferencia novo: Id Tecnico - {3}, Serie - {4}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.Serie);
+
                 MailContext.EnviarEmailPedidoTransferencia(u, d);
             }
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
@@ -111,11 +139,12 @@ namespace FT_Management.Controllers
                 }
 
             }
-            return RedirectToAction("Pedido", new { id = d.StampDossier, ReturnUrl = "/Produtos/Armazem/" + armazem });
+            return RedirectToAction("Dossier", new { id = d.StampDossier, ReturnUrl = "/Produtos/Armazem/" + armazem });
         }
 
-
-        public JsonResult CriarLinha(string id, string referencia, string design, double qtd)
+        //Adicionar uma linha ao dossier
+        [HttpPost]
+        public JsonResult Linha(string id, string referencia, string design, double qtd)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -138,31 +167,61 @@ namespace FT_Management.Controllers
                     CriadoPor = u.Iniciais
                 };
                 res = phccontext.CriarLinhaDossier(l);
+                _logger.LogDebug("Utilizador {1} [{2}] a criar uma linha nova ao dossier: Id - {3}, Serie - {4}, Ref - {5}, Qtd - {6}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.NomeDossier, l.Referencia, l.Quantidade);
             }
 
             return Json(int.Parse(res[0].ToString()) > 0 ? phccontext.ObterLinhaDossier(res[3].ToString()) : new Linha_Dossier());
         }
 
-        public JsonResult RemoverLinha(string id)
+        //Apagar uma linha do dossier
+        [HttpDelete]
+        public JsonResult Linha(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Linha_Dossier l = phccontext.ObterLinhaDossier(id);
             Dossier d = phccontext.ObterDossier(l.Stamp_Dossier);
 
             if (d.Fechado) return Json("");
 
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma linha do dossier: Id - {3}, Serie - {4}, Ref - {5}, Qtd - {6}", u.NomeCompleto, u.Id, d.Tecnico.Id, d.NomeDossier, l.Referencia, l.Quantidade);
+
             return Json(phccontext.ApagarLinhaDossier(l.Stamp_Dossier, l.Stamp_Linha));
         }
 
-        public ActionResult FecharDossier(string id, string ReturnUrl)
+        //Adiciona um anexo
+        [HttpPost]
+        public JsonResult Anexo(string id, string ecra, string serie, string resumo, IFormFile file)
         {
-            if (ReturnUrl != "" && ReturnUrl != null)
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            string nome = u.Iniciais + "_" + DateTime.Now.Ticks + (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
+
+            if (string.IsNullOrEmpty(id))
             {
-                return Redirect(ReturnUrl);
+                _logger.LogDebug("Utilizador {1} [{2}] a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
+                return Json(FicheirosContext.CriarFicheiroTemporario(nome, file));
             }
 
-            return RedirectToAction("Index", "Dossiers");
+            Anexo a = new Anexo()
+            {
+                Ecra = ecra,
+                Serie = int.Parse(serie),
+                Stamp_Origem = id,
+                Resumo = resumo,
+                Nome = nome,
+                Utilizador = u
+            };
+
+            res = phccontext.CriarAnexo(a);
+            if (int.Parse(res[0]) > 0) FicheirosContext.CriarAnexo(res[3], nome, file);
+
+            return Json("");
         }
     }
 }

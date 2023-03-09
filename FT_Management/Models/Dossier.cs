@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace FT_Management.Models
 {
     public class Dossier
@@ -16,8 +11,11 @@ namespace FT_Management.Models
         public string StampDossier { get; set; }
         public int Serie { get; set; }
         public string SerieNome { get { return this.Serie == 96 ? "Pedido de Peças" : this.Serie == 97 ? "Pedido de Orçamento" : this.Serie == 36 ? "Pedido de Transferência" : "N/D"; } }
+        [Display(Name = "Serie")]
         public string NomeDossier { get; set; }
+        [Display(Name = "Num. do Dossier")]
         public int IdDossier { get; set; }
+        [Display(Name = "Data")]
         public DateTime DataDossier { get; set; }
         public Cliente Cliente { get; set; }
         public string Referencia { get; set; }
@@ -30,7 +28,7 @@ namespace FT_Management.Models
         public string EditadoPor { get; set; }
         public List<Linha_Dossier> Linhas { get; set; }
         public bool Fechado { get; set; }
-        public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Pedido/" + StampDossier; } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Dossier/" + StampDossier; } }
 
         public void DefinirSerie(TipoDossier tp)
         {

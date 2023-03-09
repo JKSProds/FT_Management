@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class Viagem
     {

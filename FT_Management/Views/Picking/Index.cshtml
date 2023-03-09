@@ -402,16 +402,16 @@ else
     }
     function NovoPicking(id) {
         Bulma('#modalNovoPicking').modal().close();
-        window.location.href = 'Picking/Adicionar/' + id;
+        window.location.href = 'Picking/Picking/' + id;
     }
 
     function VerEncomenda(id, enc) {
         document.getElementById('txtIdEncomenda').value = enc;
 
         $.ajax({
-            url: '/Picking/ObterEncomenda/',
+            url: '/Picking/Encomenda/',
             data: { "stamp": enc },
-            type: "POST",
+            type: "GET",
             success: function (data) {
                 document.getElementById("txtIdEnc").value = data.id;
                 document.getElementById("txtNome").value = data.nomeCliente;

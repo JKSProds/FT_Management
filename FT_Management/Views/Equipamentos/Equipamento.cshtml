@@ -251,11 +251,11 @@
                                             {
                                                 <tr>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().IdFolhaObra)"
-                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         <span>@item.IdFolhaObra</span>
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.MarcaEquipamento)"
-                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         @Html.DisplayFor(modelItem =>
                                                 item.EquipamentoServico.MarcaEquipamento) -
                                                         @Html.DisplayFor(modelItem =>
@@ -263,17 +263,17 @@
 
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().EquipamentoServico.NumeroSerieEquipamento)"
-                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         @Html.DisplayFor(modelItem =>
                                                 item.EquipamentoServico.NumeroSerieEquipamento)
                                                     </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.FolhasObra.FirstOrDefault().DataServico)"
-                                                        onclick="window.open('@(Url.Action("Detalhes", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
+                                                        onclick="window.open('@(Url.Action("FolhaObra", "FolhasObra", new { Id = item.IdFolhaObra, target="_blank" }))')">
                                                         <span>@item.DataServico.ToShortDateString()</span>
                                                     </td>
                                                     <td class="is-actions-cell">
                                                         <a class="button is-outlined is-fullwidth is-primary"
-                                                            onclick="window.open('@Url.Action("PrintFolhaObra", "FolhasObra", new { id = item.IdFolhaObra})')"><i
+                                                            onclick="window.open('@Url.Action("Documento", "FolhasObra", new { id = item.IdFolhaObra})')"><i
                                                                 class="fas fa-print" style="font-size:20px"></i></a>
                                                     </td>
                                                 </tr>
@@ -346,7 +346,7 @@
     function AssociarCliente(stamp) {
         $.ajax({
             type: "POST",
-            url: "/Equipamentos/AssociarCliente/" + '@Model.EquipamentoStamp',
+            url: "/Equipamentos/Cliente/" + '@Model.EquipamentoStamp',
             data: { "stamp": stamp, "codigo": stamp_codigo },
             success: function (result) {
                 $(function () {
@@ -385,7 +385,7 @@
             document.getElementById("btnAssociar").classList.add('is-loading');
             $.ajax({
                 type: "POST",
-                url: "/Equipamentos/CriarCodigo/" + stamp,
+                url: "/Equipamentos/Codigo/" + stamp,
                 data: { "equipamento": '@Model.EquipamentoStamp', "cliente": document.getElementById('txtStampCliente').value },
                 success: function (result) {
                     $(function () {
@@ -433,9 +433,9 @@
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Clientes/ObterClientes/',
+                    url: '/Clientes/Clientes/',
                     data: { "prefix": request.term },
-                    type: "POST",
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {

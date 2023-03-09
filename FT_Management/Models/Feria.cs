@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class FeriasUtilizador
     {
@@ -40,7 +36,7 @@ namespace FT_Management.Models
         public string Obs { get; set; }
         public bool Aniversario { get; set; }
 
-        public string GetUrl { get { return "http://webapp.food-tech.pt/Ferias/Detalhes/" + IdUtilizador; } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/Ferias/Utilizador/" + IdUtilizador; } }
     }
 
     public class Feriado

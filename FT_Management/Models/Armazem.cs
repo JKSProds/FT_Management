@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class Armazem
     {
@@ -13,6 +7,7 @@ namespace FT_Management.Models
         public int ArmazemId { get; set; }
         [Display(Name = "Nome do Armazém")]
         public string ArmazemNome { get; set; }
+        public List<Movimentos> LstMovimentos { get; set; }
 
         public Armazem()
         {

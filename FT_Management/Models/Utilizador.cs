@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public static class ClaimsPrincipalExtension
     {
@@ -88,6 +81,14 @@ namespace FT_Management.Models
         public string SecondFactorImgUrl { get; set; }
         public string SecondFactorAuthCode { get; set; }
         public bool Ferias { get; set; }
+        public List<Marcacao> LstMarcacoes { get; set; }
+        public Marcacao MarcacaoCurso
+        {
+            get
+            {
+                return this.LstMarcacoes == null ? new Marcacao() : this.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Em Curso").DefaultIfEmpty(new Marcacao()).First();
+            }
+        }
         public Utilizador()
         {
             this.Id = 0;

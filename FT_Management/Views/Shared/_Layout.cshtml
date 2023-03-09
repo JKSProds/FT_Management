@@ -83,7 +83,7 @@
 
 <body>
     <header>
-        <nav class='navbar @(Environment.GetEnvironmentVariable("DEV") == "1" ? "is-warning" : "is-light")  has-shadow'
+        <nav class='navbar @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-warning" : "is-light")  has-shadow'
             role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
@@ -342,7 +342,7 @@
                                 @if (!User.IsInRole("Cliente"))
                                 {
                                     <div class="navbar-item">
-                                        <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Editar">
+                                        <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Utilizador">
                                             <span class="icon">
                                                 <i class="fas fa-user"></i>
                                             </span>
@@ -439,7 +439,8 @@
         <div class="content has-text-centered">
             <p>
                 <strong>Jorge Monteiro</strong>
-                (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("DEV") == "1" ?
+                (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                == "Development" ?
                 "_DEV" : ""))
             </p>
         </div>
@@ -450,6 +451,30 @@
 </html>
 
 <script>
+
+    function post(path, params, method = 'post') {
+
+        // The rest of this code assumes you are not using a library.
+        // It can be made less verbose if you use one.
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = path;
+
+        for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = key;
+                hiddenField.value = params[key];
+
+                form.appendChild(hiddenField);
+            }
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
     var printscreenData = "";
     function captura() {
         Bulma('#modalSugestoes').modal().close();
@@ -461,7 +486,7 @@
     function EnviarSugestao(base64) {
 
         $.ajax({
-            url: '/Utilizadores/NovaSugestao',
+            url: '/Home/Sugestao',
             type: "POST",
             data: { "obs": document.getElementById('txtObs').value, "file": base64 },
             success: function (data) {

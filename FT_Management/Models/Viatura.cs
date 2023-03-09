@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class Viatura
     {
@@ -9,6 +6,13 @@ namespace FT_Management.Models
         public string Matricula { get; set; }
         [Display(Name = "Morada")]
         public string LocalizacaoMorada { get; set; }
+        public string LocalizacaoCidade
+        {
+            get
+            {
+                return this.LocalizacaoMorada.Split(",").Length > 1 ? this.LocalizacaoMorada.Split(",")[this.LocalizacaoMorada.Split(",").Length - 2].Trim() : "";
+            }
+        }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
         [Display(Name = "Kms Totais")]

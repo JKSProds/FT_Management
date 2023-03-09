@@ -1,17 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Quartz;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Quartz.Spi;
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using Microsoft.Extensions.Hosting;
-using FT_Management.Models;
-using System.IO;
-using Microsoft.Extensions.Configuration;
-using Custom;
-using System.Linq;
+﻿using Microsoft.Extensions.Configuration;
 
 [DisallowConcurrentExecution]
 public class CronJobFerias : IJob
@@ -24,7 +11,7 @@ public class CronJobFerias : IJob
         try
         {
 
-            FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
             List<Ferias> LstFerias = dbContext.ObterListaFeriasValidar();
 
             if (LstFerias.Count > 0)
@@ -50,7 +37,7 @@ public class CronJobAniversario : IJob
         try
         {
 
-            FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
             List<Utilizador> LstUtilizadores = dbContext.ObterListaUtilizadores(false, false).Where(u => u.DataNascimento.ToString("yyyy") != "0001").Where(u => u.DataNascimento.ToString("dd-MM") == DateTime.Now.AddDays(1).ToString("dd-MM")).ToList();
 
             if (LstUtilizadores.Count > 0)
@@ -76,7 +63,7 @@ public class CronJobSaida : IJob
         try
         {
 
-            FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
             List<Acesso> LstAcessos = new List<Acesso>();
 
             foreach (Utilizador u in dbContext.ObterListaUtilizadores(true, false).Where(u => u.AcessoAtivo && u.Acessos))
@@ -107,7 +94,7 @@ public class CronJobAgendamentoCRM : IJob
         //_logger.LogInformation("Hello world!");
         try
         {
-            FT_ManagementContext dbContext = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
 
             foreach (var u in dbContext.ObterListaUtilizadores(true, false))
             {

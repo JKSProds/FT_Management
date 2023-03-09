@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Net.Http;
-using Custom;
-using System.Text;
-using System.IO;
-using System.Xml;
+﻿using Custom;
 
 namespace FT_Management.Models
 {
@@ -381,52 +373,36 @@ namespace FT_Management.Models
         {
             string Assunto = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <br><b>" + fo.DataServico.ToShortDateString() + "</b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico)) + "</b>.";
-            EnviarMail(EmailDestino, Assunto, Mensagem, anexo, ObterEmailCC(1));
+            EnviarMail(EmailDestino + ";" + fo.Utilizador.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;
         }
-        public static bool EnviarEmailMarcacaoResolvidaPD(FolhaObra fo, Marcacao m)
+        public static bool EnviarEmailMarcacaoPD(FolhaObra fo, Marcacao m, int Estado)
         {
+            //Estado 1 - Concluido | 2 - Encaminhar | 3 - Pendente
             if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem" && fo.ReferenciaServico.StartsWith("58"))
             {
-                string Assunto = "[Ticket#" + fo.ReferenciaServico + "] Resolvido";
-                EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
-            }
-
-            return true;
-        }
-        public static bool EnviarEmailMarcacaoEncaminhadaPD(FolhaObra fo, Marcacao m)
-        {
-            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem" && fo.ReferenciaServico.StartsWith("58"))
-            {
-                string Assunto = "[Ticket#" + fo.ReferenciaServico + "] Encaminhar";
+                string Assunto = "[Ticket#" + fo.ReferenciaServico + "] ";
+                Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
                 EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
             }
 
             return true;
         }
 
-        public static bool EnviarEmailMarcacaoResolvidaSONAE(FolhaObra fo, Marcacao m)
+        public static bool EnviarEmailMarcacaoSONAE(FolhaObra fo, Marcacao m, int Estado)
         {
+            //Estado 1 - Concluido | 2 - Encaminhar | 3 - Pendente
             if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
             {
-                string Assunto = "[" + fo.ReferenciaServico + "] Resolvido";
+                string Assunto = "[" + fo.ReferenciaServico + "] ";
+                Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
                 EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
             }
 
             return true;
         }
 
-        public static bool EnviarEmailMarcacaoEncaminhadaSONAE(FolhaObra fo, Marcacao m)
-        {
-            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
-            {
-                string Assunto = "[" + fo.ReferenciaServico + "] Encaminhar";
-                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
-            }
-
-            return true;
-        }
 
         public static bool EnviarEmailPropostaComercial(Utilizador u, Visita v, Proposta p)
         {
@@ -507,6 +483,15 @@ namespace FT_Management.Models
             }
             Mensagem += "</table>";
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
+
+            return true;
+        }
+
+        public static bool EnviarEmailError(Utilizador u, string id, string Mensagem)
+        {
+            string Assunto = "Error - " + u.NomeCompleto + " [" + id + "]";
+
+            EnviarMail("jmonteiro@food-tech.pt", Assunto, Mensagem, null, new List<string>());
 
             return true;
         }

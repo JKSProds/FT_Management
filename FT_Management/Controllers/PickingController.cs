@@ -1,19 +1,17 @@
-﻿using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net.Mail;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio")]
     public class PickingController : Controller
     {
+        private readonly ILogger<PickingController> _logger;
+
+        public PickingController(ILogger<PickingController> logger)
+        {
+            _logger = logger;
+        }
+
+        //Obter todas as encomendas com base em alguns filtros
+        [HttpGet]
         public IActionResult Index(int IdEncomenda, int Tipo, string NomeCliente)
         {
             ViewData["IdEncomenda"] = (IdEncomenda == 0 ? "" : IdEncomenda.ToString());
@@ -21,7 +19,12 @@ namespace FT_Management.Controllers
             ViewData["Tipo"] = Tipo;
 
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Encomenda.Tipo.TODAS) && e.NItems > 0).ToList();
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as encomendas com base num filtro: Id - {3}, Tipo - {4}, Nome - {5}.", u.NomeCompleto, u.Id, IdEncomenda, Tipo, NomeCliente);
+
+            List<Encomenda> LstEncomendas = phccontext.ObterEncomendas().Where(e => e.ExisteEncomenda(Models.Encomenda.Tipo.TODAS) && e.NItems > 0).ToList();
 
             if (Tipo > 0) LstEncomendas = LstEncomendas.Where(e => e.NumDossier == Tipo).ToList();
             if (!string.IsNullOrEmpty(NomeCliente)) LstEncomendas = LstEncomendas.Where(e => e.NomeCliente.ToUpper().Contains(NomeCliente.ToUpper())).ToList();
@@ -30,7 +33,25 @@ namespace FT_Management.Controllers
             return View(LstEncomendas);
         }
 
-        public IActionResult Adicionar(string id)
+        //Obter uma encomenda em especifico
+        [HttpGet]
+        public JsonResult Encomenda(string stamp)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            Encomenda e = phccontext.ObterEncomenda(stamp);
+            e.LinhasEncomenda = e.LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma encomenda em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, e.Id, e.BO_STAMP, e.PI_STAMP);
+
+            return new JsonResult(e);
+        }
+
+        //Obter um picking
+        [HttpGet]
+        public IActionResult Picking(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -57,49 +78,67 @@ namespace FT_Management.Controllers
                 p = phccontext.ObterPicking(pi_stamp);
             }
 
+            _logger.LogDebug("Utilizador {1} [{2}] a obter um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, e.BO_STAMP, p.Picking_Stamp);
+
             return View(p);
         }
-        public ActionResult Fechar(string id, string obs, string armazem)
+
+        //Fechar um picking
+        [HttpDelete]
+        public ActionResult Picking(string id, string obs, string armazem)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Picking p = phccontext.ObterPicking(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a fechar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
+
             p.EditadoPor = u.Iniciais;
-            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p.Picking_Stamp) + "</b>";
+            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p) + "</b>";
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 
             phccontext.FecharPicking(p);
             context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
 
-            var filePath = Path.GetTempFileName();
-            context.DesenharEtiquetaPicking(p).Save(filePath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-            MailContext.EnviarEmailFechoPicking(u, p, new Attachment(context.BitMapToMemoryStream(filePath, 810, 504), "Picking_" + p.IdPicking + ".pdf"));
+            MailContext.EnviarEmailFechoPicking(u, p, new Attachment(context.MemoryStreamToPDF(context.DesenharEtiquetaPicking(p), 801, 504), "Picking_" + p.IdPicking + ".pdf"));
 
             return Content("Ok");
         }
 
-
-        [HttpPost]
-        public ActionResult ValidarPicking(string id)
+        //Validar o picking
+        [HttpGet]
+        public ActionResult Validar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            return Content(phccontext.ValidarPicking(id));
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Picking p = phccontext.ObterPicking(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a validar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
+
+            return Content(phccontext.ValidarPicking(p));
         }
 
-        public JsonResult Validar(string stamp, Double qtd, string serie, string bomastamp)
+        //Atualizar uma linha
+        [HttpPut]
+        public JsonResult Linha(string stamp, Double qtd, string serie, string bomastamp)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar uma linha de um picking em especifico: Stamp - {3}, Qtd - {4}, Serie - {5}, BOMA STAMP - {6}.", u.NomeCompleto, u.Id, stamp, qtd, serie, bomastamp);
 
             Linha_Picking linha_picking = new Linha_Picking()
             {
                 Picking_Linha_Stamp = stamp,
                 Qtd_Linha = qtd,
                 Lista_Ref = new List<Ref_Linha_Picking>(),
-                EditadoPor = this.User.ObterNomeCompleto()
+                EditadoPor = u.NomeCompleto
             };
             if (serie != null || bomastamp != null)
             {
@@ -114,14 +153,6 @@ namespace FT_Management.Controllers
             return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking));
         }
 
-        public JsonResult ObterEncomenda(string stamp)
-        {
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Encomenda e = phccontext.ObterEncomenda(stamp);
-            e.LinhasEncomenda = e.LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
-
-            return new JsonResult(e);
-        }
     }
 }

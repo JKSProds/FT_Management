@@ -1,30 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Escritorio")]
     public class AcessosController : Controller
     {
+        private readonly ILogger<AcessosController> _logger;
+
+        public AcessosController(ILogger<AcessosController> logger)
+        {
+            _logger = logger;
+        }
+
+        //Obter todos os acessos de uma data em especifico
+        [HttpGet]
         public ActionResult Index(string Data)
         {
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            context.AdicionarLog(int.Parse(this.User.Claims.First().Value), "Acessos atualizados com sucesso!", 6);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os acessos do seguinte dia: {3}", u.NomeCompleto, u.Id, Data);
+            context.AdicionarLog(u.Id, "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
             return View(context.ObterListaAcessos(DateTime.Parse(Data)));
         }
-        [AllowAnonymous]
-        public JsonResult Obter(string api, int id)
+
+        //Obter ultimo acesso de um utilizador em especifico
+        [HttpGet]
+        public JsonResult Acesso(string api, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -34,11 +39,15 @@ namespace FT_Management.Controllers
             if (IdUtilizador == 0) return Json("Acesso negado!");
 
             Utilizador u = context.ObterUtilizador(id);
+
+            _logger.LogDebug("Utilizador Nº {1} a obter o ultimo acesso do seguinte utilizador: {2}({3})", IdUtilizador, u.NomeCompleto, u.Id);
+
             return Json(context.ObterUltimoAcesso(u.Id));
         }
 
-        [AllowAnonymous]
-        public JsonResult Adicionar(string api, int id, int tipo, int pin)
+        //Criar um acesso
+        [HttpPost]
+        public JsonResult Acesso(string api, int id, int tipo, int pin)
         {
             List<string> res = new List<string>() { "0", "Erro" };
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -48,6 +57,8 @@ namespace FT_Management.Controllers
             if (IdUtilizador == 0) return Json(res);
 
             Utilizador u = context.ObterUtilizador(id);
+            _logger.LogDebug("Utilizador Nº {1} a criar um acesso para o seguinte utilizador: {2}({3})! Tipo de Acesso: {4}", IdUtilizador, u.NomeCompleto, u.Id, tipo);
+
             if (u.Pin == pin.ToString() || pin.ToString() == "9233")
             {
                 List<Acesso> LstAcesso = new List<Acesso>() { new Acesso(){
@@ -71,9 +82,14 @@ namespace FT_Management.Controllers
             return Json(res);
         }
 
-        public virtual ActionResult ExportarListagemAcessos(string data)
+        //Obter todos os acessos em formato xls de uma data em especifico
+        [HttpGet]
+        public virtual ActionResult Acessos(string data)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a gerar uma Mapa de Presenças para a seguinte data: {3}", u.NomeCompleto, u.Id, data);
 
             var file = context.GerarMapaPresencas(DateTime.Parse(data));
             var output = new MemoryStream();
@@ -93,13 +109,18 @@ namespace FT_Management.Controllers
             return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
-        public ActionResult Apagar(string id)
+        //Apagar um acesso em especifico
+        [HttpDelete]
+        public JsonResult Acesso(string id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
 
             context.ApagarAcesso(int.Parse(id));
 
-            return RedirectToAction("Index");
+            return Json("1");
         }
     }
 }

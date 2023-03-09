@@ -75,15 +75,18 @@
                         <span>Armazém</span>
                     </a>
                 </p>
-                <p class="control">
-                    <a class="button is-primary is-outlined" href="@Url.Action("ObterDirecaosDia", "Pedidos", new {IdTecnico = @ViewData["IdTecnico"], DataPedidos = DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd")})">
+                @if (Model.Count() > 0)
+                {
+                    <p class="control">
+                    <a class="button is-info" href="@Url.Action("ObterDirecaosDia", "Pedidos", new {id = @ViewData["IdTecnico"], DataPedidos = DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd")})">
                         <span class="icon">
                             <i class="fa-solid fa-map-location"></i>
                         </span>
                         <span>Direções</span>
                     </a>
                 </p>
-                </div>
+                }
+            </div>
 
         </div>
     </div>
@@ -105,14 +108,17 @@ else
             {
                 <div class="column is-6">
                     <div class="card">
-                        <header class="card-header @(item.EstadoMarcacao == 4 || item.EstadoMarcacao == 9 || item.EstadoMarcacao == 10 ? "has-background-success" : "") @(item.EstadoMarcacao == 1 ? "has-background-info" : "")@(item.EstadoMarcacao != 1 & @item.EstadoMarcacao != 26 & @item.EstadoMarcacao != 4 ? "has-background-warning" : "")">
+                        <header class="card-header card-toggle" style="background:@item.Cor;">
                             <button class="button mx-1 is-rounded my-auto @(item.PrioridadeMarcacao == "Normal" ? "is-info" : item.PrioridadeMarcacao == "Urgente" ? "is-warning" : "is-danger") "><p class="is-uppercase has-text-weight-bold @(item.Hora.Length==0 && item.Periodo.Length==0 ? "is-size-6" : "is-size-9")" style="line-height:1;">@item.DataMarcacao.Day.ToString() @item.DataMarcacao.ToString("MMM")<br />@(item.Hora.Length>0 ? item.Hora : item.Periodo)</p></button>
                             <p class="subtitle my-1 has-text-centered column">
                                 @item.EmojiEstado<b>@item.IdMarcacao</b> - @item.Cliente.NomeCliente
                             </p>
-                            <button class="card-header-icon card-toggle" style="text-align:right" aria-label="more options">
+                            <button class="card-header-icon" style="text-align:right" aria-label="more options">
                                 <span class="icon">
-                                    <i class="fas @(item.LstComentarios.Count() != 0 ? "fa-angles-down" : "fa-angle-down")" aria-hidden="true"></i>
+                                    @if (item.LstAnexos.Count() > 0) { <i class="fa-solid fa-paperclip"></i> }
+                                </span>
+                                <span class="icon">
+                                    <i class="fas @(item.LstComentarios.Count() > 0 ? "fa-comment-dots" : "fa-angle-down")" aria-hidden="true"></i>
                                 </span>
                             </button>
                         </header>
@@ -152,18 +158,15 @@ else
                         <footer class="card-footer">
                             <div class="container is-12">
                                 <div class="buttons has-addons">
-                                    @if(item.EstadoMarcacaoDesc == "Em Curso") {
-<a class="button is-danger is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.MarcacaoStamp }))'"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
-                                    }else if(item.EstadoMarcacaoDesc != "Finalizado" && item.EstadoMarcacaoDesc != "Cancelado"){
-<a class="button is-success is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
-                                    }
+                                        <a class="button is-danger is-outlined is-large card-footer-item @(item.EstadoMarcacaoDesc == "Em Curso" ? "" : "is-hidden")" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.MarcacaoStamp }))'" id="btnStop_@item.MarcacaoStamp"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
+                                        <a class="button is-success is-large card-footer-item @(item.EstadoMarcacaoDesc == "Em Curso" || item.EstadoMarcacaoDesc == "Finalizado" || item.EstadoMarcacaoDesc == "Cancelado"  ? "is-hidden" : "")" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
                                     @if (item.Cliente.ContactoValido)
                                     {
                                         <a class="button is-info is-large card-footer-item" href="tel:@item.Cliente.TelefoneCliente"><i class="fa-solid fa-phone" style="margin-top:5px"></i></a>
                                     }
                                     @if (item.Cliente.MoradaValida)
                                     {
-                                        <a class="button is-primary is-large card-footer-item" href="@Utilizador.ObterLinkMapa(item.Cliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
+                                        <a class="button is-primary is-large card-footer-item" id="btnDirecoes_@item.MarcacaoStamp" href="@Utilizador.ObterLinkMapa(item.Cliente, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value)"><i class="fas fa-location-arrow float-left" style="margin-top:5px"></i></a>
                                     }
                                     <a class="button is-info is-outlined is-large card-footer-item" onclick="location.href = '@(Url.Action("Print", "Pedidos", new {id = item.IdMarcacao }))'"><i class="fas fa-sticky-note float-left" style="margin-top:5px"></i></a>
                                     <a class="button is-info is-large card-footer-item" onclick="location.href = '@(Url.Action("Pedido", "Pedidos", new {id = item.IdMarcacao }))'"><i class="fas fa-info float-left" style="margin-top:5px"></i></a>
@@ -194,15 +197,15 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <div class="buttons" style="width:100%">
-            <button type="button" class="button is-success is-large is-fullwidth" style="width:100%"
+            <div class="buttons is-centered" style="width:100%">
+            <button type="button" id="btnIniciarDeslocacao" class="button is-success is-large"
                 onclick="IniciarAssistencia(document.getElementById('txtStampMarcacao').value);" href="javascript:;">
                 <span class="icon">
                     <i class="fa-solid fa-car-side"></i>
                 </span>
                 <span>Iniciar Deslocação</span>
             </button>
-                        <button type="button" class="button is-info is-large is-fullwidth" style="width:100%"
+                        <button type="button" class="button is-info is-large"
                 onclick="location.href = '/FolhasObra/Adicionar/' + document.getElementById('txtStampMarcacao').value;" href="javascript:;">
                 <span class="icon">
                     <i class="fa-solid fa-file-circle-plus"></i>
@@ -219,7 +222,7 @@ else
         let cardToggles = document.getElementsByClassName('card-toggle');
         for (let i = 0; i < cardToggles.length; i++) {
             cardToggles[i].addEventListener('click', e => {
-                e.currentTarget.parentElement.parentElement.childNodes[3].classList.toggle('is-hidden');
+                e.currentTarget.parentElement.childNodes[3].classList.toggle('is-hidden');
             });
         }
     });
@@ -234,13 +237,17 @@ else
             success: function (result) {
                 $(function () {
                     if (result == "1") {
-                       window.location.reload();
+                       document.getElementById('btnDirecoes_' + stamp).click();
+                       document.getElementById('btnStart_' + stamp).classList.add('is-hidden');
+                       document.getElementById('btnStop_' + stamp).classList.remove('is-hidden');
+                       notify("Marcação atualizada com sucesso!");
                     } else {
                         document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
                         notifyError('Ocorreu um erro ao iniciar a assistencia!');
                     }
-        document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
-        document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');
+                    Bulma('#modalIniciarAssistencia').modal().close();
+                    document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
+                    document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');
                 });
             }
         });

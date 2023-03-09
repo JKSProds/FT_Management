@@ -1,16 +1,4 @@
 ﻿using Custom;
-using FT_Management.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using WebDav;
 
 namespace FT_Management.Controllers
 {
@@ -87,12 +75,13 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            if (User.IsInRole("Admin") || User.IsInRole("Escritorio")) { 
-                ViewData["Comerciais"] = context.ObterListaComerciais(true); 
-            } 
+            if (User.IsInRole("Admin") || User.IsInRole("Escritorio"))
+            {
+                ViewData["Comerciais"] = context.ObterListaComerciais(true);
+            }
             else
             {
-               ViewData["Comerciais"] = context.ObterListaComerciais(true).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
+                ViewData["Comerciais"] = context.ObterListaComerciais(true).Where(u => u.Id == int.Parse(this.User.Claims.First().Value)).ToList();
             }
 
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
@@ -191,7 +180,7 @@ namespace FT_Management.Controllers
 
             context.CriarVisitas(LstVisitas);
 
-            return RedirectToAction("Visita", new { idVisita = v.IdVisita, IdComercial = v.IdComercial});
+            return RedirectToAction("Visita", new { idVisita = v.IdVisita, IdComercial = v.IdComercial });
         }
 
         [Authorize(Roles = "Admin, Escritorio, Comercial")]
@@ -291,28 +280,28 @@ namespace FT_Management.Controllers
             string Url = ConfigurationManager.AppSetting["NextCloud:WebDav"];
             //foreach (var formFile in files)
             //{
-                if (file.Length > 0)
+            if (file.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await file.CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+
+                var clientParams = new WebDavClientParams
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
+                    BaseAddress = new Uri(Url),
+                    Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
+                };
+                var client = new WebDavClient(clientParams);
 
-                    var clientParams = new WebDavClientParams
-                    {
-                        BaseAddress = new Uri(Url),
-                        Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
-                    };
-                    var client = new WebDavClient(clientParams);
+                await client.Mkcol(Folder + "/");
+                await client.Mkcol(Folder + "/" + Path + "/");
 
-                    await client.Mkcol(Folder + "/");
-                    await client.Mkcol(Folder + "/" + Path + "/");
+                clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
+                client = new WebDavClient(clientParams);
 
-                    clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
-                    client = new WebDavClient(clientParams);
+                await client.PutFile(file.FileName, ms); // upload a resource
 
-                    await client.PutFile(file.FileName, ms); // upload a resource
-                
-               // }
+                // }
             }
         }
 

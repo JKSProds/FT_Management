@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class Produto
     {
@@ -38,6 +32,7 @@ namespace FT_Management.Models
         public bool Serie { get; set; }
         public List<Equipamento> Equipamentos { get; set; }
         public double Valor { get; set; }
+        public bool Servico { get { return this.Ref_Produto.StartsWith("SRV."); } }
 
         public Produto()
         {

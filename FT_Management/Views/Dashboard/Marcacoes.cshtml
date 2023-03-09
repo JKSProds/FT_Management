@@ -1,88 +1,126 @@
-﻿@model IEnumerable<FT_Management.Models.Marcacao>
+﻿@model IEnumerable<FT_Management.Models.Utilizador>
 
 @{
     ViewData["Title"] = "Marcações";
 }
 
-<input type="hidden" id="txtCriado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Criado").Count()" />
-<input type="hidden" id="txtEncFornecedor" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Enc. a Fornecedor").Count()" />
-<input type="hidden" id="txtPedidoCotacao" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Cotação").Count()" />
-<input type="hidden" id="txtPedidoFornecedor" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Fornecedor").Count()" />
-<input type="hidden" id="txtPecasMaia" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Peças na Maia").Count()" />
-<input type="hidden" id="txtOrcamentado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Orçamentado").Count()" />
-<input type="hidden" id="txtPedidoPecas" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Peças").Count()" />
-<input type="hidden" id="txtPedidoOrcamento" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Pedido Orçamento").Count()" />
-<input type="hidden" id="txtAgendado" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Agendado").Count()" />
-<input type="hidden" id="txtAbertasHoje" value="@Model.Where(m => m.EstadoMarcacaoDesc != "Finalizado").Where(m => m.DataMarcacao.ToShortDateString() == DateTime.Now.ToShortDateString()).Count()" />
-<input type="hidden" id="txtFechadasHoje" value="@Model.Where(m => m.EstadoMarcacaoDesc == "Finalizado").Where(m => m.DataMarcacao.ToShortDateString() == DateTime.Now.ToShortDateString()).Count()" />
+<div class="columns">
+    <div class="column is-8">
+        <div class="columns is-multiline">
+            @foreach (Utilizador u in Model)
+            {
+                <div class="column is-6">
+                    <div class="card" style="background:@u.CorCalendario;"
+                        onclick="VerViatura(@u.Viatura.Latitude, @u.Viatura.Longitude)">
+                        <div class="card-content p-4">
+                            <div class="media">
+                                <div class="media-left">
+                                    <figure class="image is-48x48">
+                                        <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <div class="columns">
+                                        <div class="column is-9">
+                                            <p class="title is-size-6">@u.NomeCompleto
+                                                @if (u.Viatura.Matricula != null)
+                                                {
+                                                    <span><i><b> (@u.Viatura.LocalizacaoCidade)</b></i></span>
+                                                }
+                                                @if (u.MarcacaoCurso.Cliente != null)
+                                                {
+                                                    <br>
+                                                    <button class="my-1 button is-danger is-small is-rounded" type="button">Em
+                                                        Curso:
+                                                        @u.MarcacaoCurso.Cliente.NomeCliente</button>
+                                                }
+                                            </p>
+                                        </div>
+                                        <div class="column">
+                                            <div class="b-table is-pulled-right">
+                                                <div class="table-wrapper has-mobile-cards" style="width:48px;height:48px">
+                                                    <canvas id="chartMarcacoes_@u.Id"></canvas>
+                                                </div>
+                                            </div>
+                                            <script>
+                                                new Chart(document.getElementById('chartMarcacoes_@u.Id').getContext('2d'), {
+                                                    type: 'doughnut',
+                                                    data: {
+                                                        labels: ['Completo', 'Aberto'],
+                                                        datasets: [{
+                                                            data: [@u.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado").Count(), @u.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc != "Finalizado" && m.EstadoMarcacaoDesc != "Cancelado").Count()],
+                                                            backgroundColor: [
+                                                                'rgba(35, 209, 96, 1)',
+                                                                'rgba(255, 56, 96, 1)'
+                                                            ]
+                                                        }]
+                                                    },
+                                                    options: {
+                                                        plugins: {
+                                                            legend: {
+                                                                display: false
+                                                            },
+                                                            tooltip: {
+                                                                enabled: false
+                                                            }
+                                                        },
+                                                        responsive: true
+                                                    }
+                                                });
+                                            </script>
+                                        </div>
+                                    </div>
 
-<div class="columns is-gapless">
-    <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced has-background-info-light">
-            <header class="card-header">
-                <p class="card-header-title">
-                    <span class="icon"><i class="fa-solid fa-calendar-days"></i></span>
-                    Marcações Abertas
-                </p>
-            </header>
-            <div class="card-content">
-                <div class="b-table">
-                    <div class="table-wrapper has-mobile-cards">
-                            <canvas id="chartMarcacoesAbertas" max-width="400" max-height="400"></canvas>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     </div>
-    <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced has-background-success-light">
-            <header class="card-header">
-                <p class="card-header-title">
-                    <span class="icon"><i class="fa-solid fa-calendar-check"></i></span>
-                    Marcações Concluidas (Hoje)
-                </p>
-            </header>
-            <div class="card-content">
-                <div class="b-table">
-                    <div class="table-wrapper has-mobile-cards">
-                            <canvas id="chartMarcacoesHoje" max-width="400" max-height="400"></canvas>
-                    </div>
-                </div>
-            </div>
+    <div class="column mx-1 is-4">
+        <div id="map" style="height: 800px;z-index: 1">
         </div>
     </div>
 </div>
 
 <script>
-    const ctx1 = document.getElementById('chartMarcacoesAbertas').getContext('2d');
-    const chartMarcacoesAbertas = new Chart(ctx1, {
-    type: 'pie',
-        data: {
-            labels: ['Criado', 'Enc. a Fornecedor', 'Pedido Cotação', 'Pedido Fornecedor', 'Peças na Maia', 'Orçamentado', 'Pedido Peças', 'Pedido Orçamento', 'Agendado'],
-            datasets: [{
-                data: [document.getElementById("txtCriado").value, document.getElementById("txtEncFornecedor").value, document.getElementById("txtPedidoCotacao").value, document.getElementById("txtPedidoFornecedor").value, document.getElementById("txtPecasMaia").value, document.getElementById("txtOrcamentado").value, document.getElementById("txtPedidoPecas").value, document.getElementById("txtPedidoOrcamento").value, document.getElementById("txtAgendado").value],
-                backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#885f2d","#ff7256","#5aecd2","#bf323b"],
-            }]
+    var map = L.map('map').setView([39.3999, -8.2245], 7);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 25,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var carro = L.icon({
+        iconUrl: window.location.origin + '/img/car-solid.svg',
+        iconSize: [20, 20]
+    });
+    var carroLigado = L.icon({
+        iconUrl: window.location.origin + '/img/car-on-solid.svg',
+        iconSize: [25, 25]
+    });
+
+    $.ajax({
+        url: '/Viaturas/Viaturas/',
+        type: "GET",
+        success: function (data) {
+            data.forEach((element) => {
+                var marker = L.marker([element.latitude, element.longitude], { icon: (element.ignicao ? carroLigado : carro) }).addTo(map);
+                marker.bindPopup("<b>" + element.matricula + " - " + element.kmsAtuais + " km</b><br>" + element.utilizador.nomeCompleto + " (" + element.velocidade + " km/h | " + element.combustivel + "%)<br>" + element.localizacaoMorada + "<br><br><a type='button' href='" + element.getUrl + "' class='button is-success is-fullwidth'><span class='icon'><i class='fas fa-location'></i></span><span>Direções</span></a>");
+            });
         },
-        options: {
+        error: function (data) {
+            notifyError('Ocorre um erro ao obter as viaturas!');
+        },
+        failure: function (data) {
+            notifyError('Ocorre um erro ao obter as viaturas!');
         }
     });
 
-    const ctx2 = document.getElementById('chartMarcacoesHoje').getContext('2d');
-    const chartMarcacoesHoje = new Chart(ctx2, {
-    type: 'doughnut',
-        data: {
-            labels: ['Completo', 'Aberto'],
-            datasets: [{
-                data: [document.getElementById("txtFechadasHoje").value, document.getElementById("txtAbertasHoje").value],
-                backgroundColor: [
-                    'rgba(0, 120, 179, 1)',
-                    'rgba(191, 50, 59, 1)'
-                ]
-            }]
-        },
-        options: {
-
-        }
-    });
+    function VerViatura(latitude, longitude) {
+        map.setView([latitude, longitude], 16);
+    }
 </script>

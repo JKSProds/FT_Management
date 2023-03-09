@@ -567,7 +567,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/FolhasObra/EmailFolhaObra",
+            url: "/FolhasObra/Email",
             data: json,
             traditional: true,
             success: function (result) {
@@ -624,9 +624,9 @@
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Clientes/ObterClientes/',
+                    url: '/Clientes/Clientes/',
                     data: { "prefix": request.term },
-                    type: "POST",
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {

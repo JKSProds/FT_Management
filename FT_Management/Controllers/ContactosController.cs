@@ -1,33 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FT_Management.Models;
-using Custom;
-using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.IO;
-using WebDav;
-using System.Net;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using X.PagedList;
+﻿using Custom;
 
 namespace FT_Management.Controllers
 {
     [Authorize(Roles = "Admin, Comercial, Escritorio")]
     public class ContactosController : Controller
     {
-        public IActionResult Index(int? page, string filter, string area, int idcomercial)
+        public IActionResult Index(string filter, string area, int idcomercial)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            
+
             List<Utilizador> LstUtilizadores = context.ObterListaComerciais(true).ToList();
             ViewBag.Comerciais = LstUtilizadores;
-                LstUtilizadores.Insert(0, new Utilizador() { Id= 0, NomeCompleto="Todos"});
+            LstUtilizadores.Insert(0, new Utilizador() { Id = 0, NomeCompleto = "Todos" });
             ViewBag.ListaComerciais = LstUtilizadores;
-
-            int pageSize = 50;
-            var pageNumber = page ?? 1;
 
             List<String> LstAreasNegocio = context.ObterListaAreasNegocio().ToList();
             LstAreasNegocio.Insert(0, "Todos");
@@ -42,8 +27,8 @@ namespace FT_Management.Controllers
             ViewData["idcomercial"] = idcomercial;
 
 
-            if (idcomercial > 0) return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)).Where(u => u.Comercial.Id == idcomercial).ToPagedList(pageNumber, pageSize));
-            return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)).ToPagedList(pageNumber, pageSize));
+            if (idcomercial > 0) return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)).Where(u => u.Comercial.Id == idcomercial));
+            return View(context.ObterListaContactos(filter).Where(c => c.AreaNegocio.Contains(area)));
         }
 
         [HttpPost]
@@ -52,13 +37,13 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Contacto contacto = context.ObterContacto(id);
-            string res= "";
+            string res = "";
             res += "<div class=\"mb-3\"><label>Nome da Empresa</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.NomeContacto + "' readonly><a class=\"button is-outline is-warning\" onclick=MostrarCliente() type=\"button\"><i class=\"fas fa-eye float-left\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Contacto</label><input type=\"text\" class=\"input\" value='" + contacto.PessoaContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Cargo</label><input type=\"text\" class=\"input\" value='" + contacto.CargoPessoaContacto + "' readonly></div>";
-            res += "<div class=\"mb-3\"><label>Email</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.EmailContacto + "' readonly><a class=\"button is-primary "+(contacto.EmailContacto.Length == 0 ? "disabled" : "")+" \" href=\"mailto:" +contacto.EmailContacto+ "\" type=\"button\"><i class=\"fas fa-envelope float-left\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Email</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.EmailContacto + "' readonly><a class=\"button is-primary " + (contacto.EmailContacto.Length == 0 ? "disabled" : "") + " \" href=\"mailto:" + contacto.EmailContacto + "\" type=\"button\"><i class=\"fas fa-envelope float-left\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>Telemóvel</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.TelefoneContacto + "' readonly><a class=\"button is-info " + (contacto.TelefoneContacto.Length < 9 ? "disabled" : "") + " \" href=\"tel:" + contacto.TelefoneContacto + "\" type=\"button\"><i class=\"fas fa-phone float-left\"></i></a></div></div>";
-            res += "<div class=\"mb-3\"><label>Morada</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.MoradaContacto + "' readonly><a class=\"button is-primary is-outlined " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"" + Utilizador.ObterLinkMapa(new Cliente() { MoradaCliente = contacto.MoradaContacto}, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value) + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\"></i></a></div></div>";
+            res += "<div class=\"mb-3\"><label>Morada</label><div class=\"field has-addons\"><input type=\"text\" class=\"input\" value='" + contacto.MoradaContacto + "' readonly><a class=\"button is-primary is-outlined " + (contacto.MoradaContacto.Length == 0 ? "disabled" : "") + " \" href=\"" + Utilizador.ObterLinkMapa(new Cliente() { MoradaCliente = contacto.MoradaContacto }, User.Claims.Where(u => u.Type.Contains("userdata")).First().Value) + "\" type=\"button\"><i class=\"fas fa-location-arrow float-left\"></i></a></div></div>";
             res += "<div class=\"mb-3\"><label>NIF</label><input type=\"text\" class=\"input\" value='" + contacto.NIFContacto + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Data de Contacto</label><input type=\"text\" class=\"input\" value='" + contacto.DataContacto.ToShortDateString() + "' readonly></div>";
             res += "<div class=\"mb-3\"><label>Tipo de Contacto</label><input type=\"text\" class=\"input\" value='" + contacto.TipoContacto + "' readonly></div>";
@@ -133,13 +118,14 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString()));
             Contacto c = context.ObterContacto(idcontacto);
 
-            HistoricoContacto hC = new HistoricoContacto() {
+            HistoricoContacto hC = new HistoricoContacto()
+            {
                 IdContacto = idcontacto,
                 Data = DateTime.Now,
                 IdComercial = u,
                 Obs = obs
             };
-            Cliente cl = c.NIFContacto.Length > 0 ? phccontext.ObterClienteNIF(c.NIFContacto) : new Cliente() { IdCliente = 0, IdLoja = 0};
+            Cliente cl = c.NIFContacto.Length > 0 ? phccontext.ObterClienteNIF(c.NIFContacto) : new Cliente() { IdCliente = 0, IdLoja = 0 };
 
             if (lembrete == 1)
             {
@@ -147,7 +133,7 @@ namespace FT_Management.Controllers
                 {
                     DataVisita = DateTime.Parse(datalembrete),
                     Cliente = cl,
-                    Contacto = cl.IdCliente == 0 ? new Contacto() { IdContacto = idcontacto} : new Contacto(),
+                    Contacto = cl.IdCliente == 0 ? new Contacto() { IdContacto = idcontacto } : new Contacto(),
                     IdComercial = u.Id,
                     ResumoVisita = "Lembrete criado:\r\n" + obs,
                     EstadoVisita = "Agendado"
@@ -156,7 +142,7 @@ namespace FT_Management.Controllers
             }
 
             context.CriarHistoricoContacto(hC);
-            
+
 
             return "OK";
         }
@@ -222,7 +208,7 @@ namespace FT_Management.Controllers
 
             return RedirectToAction("Index");
         }
-              
+
         public IActionResult ApagarContactoAdicional(int Id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -255,30 +241,30 @@ namespace FT_Management.Controllers
         public async void EnviarNextCloud(IFormFile file, string Url, string Path, string Folder)
         {
 
-                if (file.Length > 0)
+            if (file.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await file.CopyToAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+
+
+                var clientParams = new WebDavClientParams
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
+                    BaseAddress = new Uri(Url),
+                    Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
+                };
+                var client = new WebDavClient(clientParams);
 
 
-                    var clientParams = new WebDavClientParams
-                    {
-                        BaseAddress = new Uri(Url),
-                        Credentials = new NetworkCredential(ConfigurationManager.AppSetting["NextCloud:User"], ConfigurationManager.AppSetting["NextCloud:Password"])
-                    };
-                    var client = new WebDavClient(clientParams);
+                await client.Mkcol(Folder + "/");
+                await client.Mkcol(Folder + "/" + Path + "/");
 
+                clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
+                client = new WebDavClient(clientParams);
 
-                    await client.Mkcol(Folder + "/");
-                    await client.Mkcol(Folder + "/" + Path + "/");
+                await client.PutFile(file.FileName, ms); // upload a resource
 
-                    clientParams.BaseAddress = new Uri(clientParams.BaseAddress + Folder + "/" + Path + "/");
-                    client = new WebDavClient(clientParams);
-
-                    await client.PutFile(file.FileName, ms); // upload a resource
-
-                }
+            }
         }
 
     }

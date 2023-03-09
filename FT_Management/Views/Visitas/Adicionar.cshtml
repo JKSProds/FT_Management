@@ -24,7 +24,7 @@
     <hr />
 
     <div class="container">
-    <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
 
         <div class="steps" id="stepsDemo">
             <div class="step-item is-active">
@@ -67,8 +67,11 @@
                             <div class="field">
                                 <label asp-for="IdComercial"></label>
                                 <div class="select" style="width:100%">
-                                    @{ var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;}
-                                    <select class="select" style="width:100%" asp-for="IdComercial" asp-items="@(new SelectList(LstComerciais, "Id", "NomeCompleto"))"></select>
+                                    @{
+                                        var LstComerciais = ViewData["Comerciais"] as IList<Utilizador>;
+                                    }
+                                    <select class="select" style="width:100%" asp-for="IdComercial"
+                                        asp-items="@(new SelectList(LstComerciais, "Id", "NomeCompleto"))"></select>
                                 </div>
                                 <span asp-validation-for="IdComercial" class="text-danger"></span>
                             </div>
@@ -77,8 +80,11 @@
                             <div class="field">
                                 <label asp-for="PrioridadeVisita"></label>
                                 <div class="select" style="width:100%">
-                                    @{ var LstPrioridade = ViewData["Prioridade"] as IList<String>;}
-                                    <select class="select" style="width:100%" asp-for="PrioridadeVisita" asp-items="@(new SelectList(LstPrioridade))"></select>
+                                    @{
+                                        var LstPrioridade = ViewData["Prioridade"] as IList<String>;
+                                    }
+                                    <select class="select" style="width:100%" asp-for="PrioridadeVisita"
+                                        asp-items="@(new SelectList(LstPrioridade))"></select>
                                 </div>
                                 <span asp-validation-for="PrioridadeVisita" class="text-danger"></span>
                             </div>
@@ -87,8 +93,11 @@
                             <div class="field">
                                 <label asp-for="EstadoVisita"></label>
                                 <div class="select" style="width:100%">
-                                    @{ var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;}
-                                    <select style="width:100%" asp-for="EstadoVisita" asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                                    @{
+                                        var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;
+                                    }
+                                    <select style="width:100%" asp-for="EstadoVisita"
+                                        asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
                                 </div>
                                 <span asp-validation-for="EstadoVisita" class="text-danger"></span>
                             </div>
@@ -97,17 +106,18 @@
                             <div class="field">
                                 <label asp-for="DataVisita"></label>
                                 <div class="control">
-                                <input class="input" type="date" value="@(DateTime.Now)" id="txtData" asp-for="DataVisita"/>
-                                <script>
-                                    bulmaCalendar.attach('#txtData', {
-                                        color: 'info',
-                                        lang: 'pt',
-                                        dateFormat: 'dd/MM/yyyy',
-                                        todayLabel: 'Hoje',
-                                        showClearButton: false,
-                                        cancelLabel: 'Cancelar'
-                                    });
-                                </script>
+                                    <input class="input" type="date" value="@(DateTime.Now)" id="txtData"
+                                        asp-for="DataVisita" />
+                                    <script>
+                                        bulmaCalendar.attach('#txtData', {
+                                            color: 'info',
+                                            lang: 'pt',
+                                            dateFormat: 'dd/MM/yyyy',
+                                            todayLabel: 'Hoje',
+                                            showClearButton: false,
+                                            cancelLabel: 'Cancelar'
+                                        });
+                                    </script>
                                 </div>
                                 <span asp-validation-for="DataVisita" class="text-danger"></span>
                             </div>
@@ -120,13 +130,15 @@
                             <div class="field">
                                 <label asp-for="ResumoVisita"></label>
                                 <div class="control">
-                                    <textarea class="textarea" rows="8" placeholder="" asp-for="ResumoVisita" required></textarea>
+                                    <textarea class="textarea" rows="8" placeholder="" asp-for="ResumoVisita"
+                                        required></textarea>
                                 </div>
                                 <span asp-validation-for="ResumoVisita" class="text-danger"></span>
                             </div>
                         </div>
                         &nbsp;
-                        <input type="submit" onclick="submit()" value="Criar Visita" class="button is-info is-outlined is-fullwidth" />
+                        <input type="submit" onclick="submit()" value="Criar Visita"
+                            class="button is-info is-outlined is-fullwidth" />
                     </div>
                 </div>
                 &nbsp;
@@ -151,7 +163,9 @@
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
 <script>
@@ -161,9 +175,9 @@
         $("#txtCustomer").autocomplete({
             source: function (request, response) {
                 $.ajax({
-                    url: '/Clientes/ObterClientes/',
+                    url: '/Clientes/Clientes/',
                     data: { "prefix": request.term },
-                    type: "POST",
+                    type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {

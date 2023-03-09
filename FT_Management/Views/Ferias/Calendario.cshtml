@@ -1,5 +1,4 @@
-﻿
-@model IEnumerable<FT_Management.Models.Marcacao>
+﻿@model IEnumerable<FT_Management.Models.Marcacao>
 
 @{
     ViewData["Title"] = "Férias";
@@ -21,7 +20,6 @@
 </div>
 <hr />
 
-@*<partial name="~/Views/Pedidos/CalendarioView.cshtml" />*@
 <link href='~/js/fullcalendar/main.css' rel='stylesheet' />
 <script src='~/js/fullcalendar/main.js'></script>
 
@@ -30,7 +28,9 @@
 </div>
 &nbsp;
 <div class="container">
-    <a class="button is-rounded is-outlined  is-link is-light" onclick="location.href = '@(Url.Action("Index", "Ferias"))'">< Voltar</a>
+    <a class="button is-rounded is-outlined  is-link is-light"
+        onclick="location.href = '@(Url.Action("Index", "Ferias"))'">
+        < Voltar</a>
 </div>
 
 
@@ -40,7 +40,7 @@
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            plugins: [ 'dayGrid', 'interaction' ],
+            plugins: ['dayGrid', 'interaction'],
             timeZone: 'UTC',
             initialView: 'dayGridMonth',
             headerToolbar: {
@@ -54,7 +54,7 @@
             firstDay: 1,
             locale: 'pt',
             editable: false,
-            events: 'ObterFeriasCalendario',
+            events: 'EventosFerias',
             eventTimeFormat: { // like '14:30:00'
                 hour: '2-digit',
                 minute: '2-digit',

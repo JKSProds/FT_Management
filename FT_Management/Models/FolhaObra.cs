@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FT_Management.Models
+﻿namespace FT_Management.Models
 {
     public class FolhaObra
     {
@@ -61,7 +55,7 @@ namespace FT_Management.Models
         [Display(Name = "Rúbrica")]
         public string RubricaCliente { get; set; }
         public bool Piquete { get; set; }
-        public string GetUrl { get { return "http://webapp.food-tech.pt/FolhasObra/Detalhes/" + IdFolhaObra; } }
+        public string GetUrl { get { return "http://webapp.food-tech.pt/FolhasObra/FolhaObra/" + IdFolhaObra; } }
         [Display(Name = "Estado do Serviço")]
         public int EstadoFolhaObra { get; set; }
         [Display(Name = "Tipo de Serviço")]
@@ -80,6 +74,7 @@ namespace FT_Management.Models
         public bool FecharMarcacao { get; set; }
         public double ValorTotal { get { return PecasServico.Sum(p => p.Valor * p.Stock_Fisico); } }
         public double KmsDeslocacao { get; set; }
+        public string FicheirosAnexo { get; set; }
 
         public FolhaObra()
         {
@@ -105,7 +100,7 @@ namespace FT_Management.Models
             this.DataServico = m.DataMarcacao;
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
-            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) ? m.QuemPediuEmail : m.Cliente.EmailCliente;
+            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
             this.TipoFolhaObra = m.TipoServico;
             return this;

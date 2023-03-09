@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using FT_Management.Models;
-using System.Text.Json;
-using System.Dynamic;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Hosting;
-
-namespace FT_Management.Controllers
+﻿namespace FT_Management.Controllers
 {
     public class HomeController : Controller
     {
@@ -24,44 +11,84 @@ namespace FT_Management.Controllers
             applicationLifetime = appLifetime;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
-        [Authorize(Roles = "Admin")]
-        public IActionResult ValidarCodigo(string id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            return View(context.ObterCodigo(id));
-        }
-        [Authorize(Roles = "Admin")]
-        public IActionResult AprovarCodigo(string id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            context.AtualizarCodigo(id, 1, int.Parse(this.User.Claims.First().Value));
-            return RedirectToAction("ValidarCodigo", "Home", new { id = id });
-        }
-        [Authorize(Roles = "Admin")]
-        public IActionResult RejeitarCodigo(string id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            context.AtualizarCodigo(id, 1, int.Parse(this.User.Claims.First().Value));
-            return RedirectToAction("ValidarCodigo", "Home", new { id = id });
-        }
+
         public IActionResult AcessoNegado()
         {
             return View();
         }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error(string id)
+        {
+            return View(new ErrorViewModel { RequestId = !string.IsNullOrEmpty(id) ? id : Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
         [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Validar(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a aceder um codigo para validação: Codigo - {3}.", u.NomeCompleto, u.Id, id);
+
+            return View(context.ObterCodigo(id));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public ContentResult Aprovar(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a aprovar um codigo: Codigo - {3}.", u.NomeCompleto, u.Id, id);
+
+            context.AtualizarCodigo(id, 1, u.Id);
+            return Content("1");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public ContentResult Rejeitar(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a rejeitar um codigo: Codigo - {3}.", u.NomeCompleto, u.Id, id);
+
+            context.AtualizarCodigo(id, 2, u.Id);
+            return Content("1");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public IActionResult Restart()
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a para a aplicação manualmente!", u.NomeCompleto, u.Id);
+
             applicationLifetime.StopApplication();
             return View();
         }
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+
+        [HttpPost]
+        public JsonResult Sugestao(string Obs, string file)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a enviar uma sugestão nova.", u.NomeCompleto, u.Id);
+
+            MailContext.EnviarEmailSugestao(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), Obs, new System.Net.Mail.Attachment(new MemoryStream(Convert.FromBase64String(file.Split(',').Last())), "PrintScreen_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".png"));
+            return Json("Ok");
         }
     }
 }
