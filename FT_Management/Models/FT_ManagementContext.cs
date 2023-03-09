@@ -2387,7 +2387,7 @@ namespace FT_Management.Models
         {
             var stream = new System.IO.MemoryStream();
 
-            int x = 40;
+            int x = 80;
             int y = 0;
             int width = 1024;
             int height = 641;
@@ -2433,7 +2433,7 @@ namespace FT_Management.Models
                         HorizontalAlignment = HorizontalAlignment.Center
                     }, pi.Encomenda.Id.ToString(), Color.Black);
 
-                    var r = new RectangularPolygon(width / 2, y, width / 2, 120);
+                    var r = new RectangularPolygon(10, y, width - 20, 120);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
 
                     y += 130;
@@ -2517,6 +2517,83 @@ namespace FT_Management.Models
                     imageContext.DrawText(new TextOptions(fontFooter)
                     {
                         Origin = new System.Numerics.Vector2(width - 100, y),
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    }, p.Pos_Stock, Color.Black);
+
+                });
+
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
+            }
+
+            return stream;
+        }
+
+        public MemoryStream DesenharEtiquetaProdutoPequena(Produto p)
+        {
+            var stream = new System.IO.MemoryStream();
+
+            int x = 10;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 70, FontStyle.Bold);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 50);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 20);
+
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
+
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        TextAlignment = TextAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width,
+                    }, p.Designacao_Produto.Trim(), Color.Black);
+
+                    y += 150;
+
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/ft_logo.png");
+                    img.Mutate(x => x.Resize(173, 100));
+                    imageContext.DrawImage(img, new Point(x, y), 1);
+
+                    imageContext.DrawText(new TextOptions(fontHeader)
+                    {
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        TextAlignment = TextAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width,
+                    }, p.Ref_Produto.Trim(), Color.Black);
+
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(p.Ref_Produto, QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(150, 150));
+                    imageContext.DrawImage(qr, new Point(width - 150, y - 50), 1);
+
+                    y += 90;
+
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, "pecas@food-tech.pt", Color.Black);
+
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        Origin = new System.Numerics.Vector2(width - 300, y),
                         HorizontalAlignment = HorizontalAlignment.Right
                     }, p.Pos_Stock, Color.Black);
 

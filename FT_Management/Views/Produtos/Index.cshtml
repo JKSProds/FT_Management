@@ -141,6 +141,9 @@ else
                                 </td>
                                 <td style="min-width: 240px" class="is-actions-cell">
                                     <div class="buttons">
+                                        <a class="button is-outlined is-small is-primary printqr"
+                                    onclick="window.open('@Url.Action("EtiquetaPequena", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
+                                        class="fa-solid fa-qrcode"></i></a>
                                         <a class="button is-outlined is-normal is-primary printqr"
                                     onclick="window.open('@Url.Action("Etiqueta", "Produtos", new { id = item.Ref_Produto, armazemid=item.Armazem_ID, target="_blank" })')"><i
                                         class="fa-solid fa-qrcode"></i></a>
