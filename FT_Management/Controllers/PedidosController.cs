@@ -545,7 +545,6 @@ namespace FT_Management.Controllers
         }
 
         //Obter percentagem de marcacoes concluido
-        [Authorize(Roles = "Admin, Escritorio")]
         [HttpGet]
         public List<int> Percentagem(int id)
         {

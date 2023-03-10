@@ -919,9 +919,8 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     Dropzone.options.dropAnexo = { // camelized version of the `id`
         paramName: "file", // The name that will be used to transfer the file
         maxFilesize: 10, // MB
-        success: function (file) {
-            document.getElementById('Ficheiros').value += file.xhr.response.replace('"', '').replace('"', '') + ";";
-            console.log(document.getElementById('Ficheiros').value);
+        success: function (file, response) {
+            document.getElementById('Ficheiros').value += response + ";";
         }
     };
 
