@@ -335,7 +335,7 @@
                                 <label asp-for="EstadoFolhaObra"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
-                                        <select asp-for="EstadoFolhaObra" asp-items="ViewBag.EstadoFolhaObra"
+                                        <select asp-for="EstadoFolhaObra" id="lstEstadoFO" asp-items="ViewBag.EstadoFolhaObra"
                                             class="form-control" style="width:100%">
                                         </select>
                                     </span>
@@ -388,7 +388,7 @@
                         <div class="column is-3 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="RecolhaOficina">
+                                    <input type="checkbox" id="chkRecolherOficina" asp-for="RecolhaOficina">
                                     <span class="check is-info"></span>
                                     <span class="control-label">@Html.DisplayNameFor(model =>
                                         model.RecolhaOficina)</span>
@@ -726,6 +726,24 @@
     </div>
 </div>
 
+<div class="modal" id="modalRecolherOficina">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Equipamento</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Deseja recolher o equipamento para oficina?</p>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" onclick="RecolherOficina(true)">Sim</button>
+            <button class="button" onclick="RecolherOficina(false)">Não</button>
+        </footer>
+    </div>
+</div>
+
+
 <div class="modal" id="modalValidacao">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -919,9 +937,8 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     Dropzone.options.dropAnexo = { // camelized version of the `id`
         paramName: "file", // The name that will be used to transfer the file
         maxFilesize: 10, // MB
-        success: function (file) {
-            document.getElementById('Ficheiros').value += file.xhr.response.replace('"', '').replace('"', '') + ";";
-            console.log(document.getElementById('Ficheiros').value);
+        success: function (file, response) {
+            document.getElementById('Ficheiros').value += response + ";";
         }
     };
 
@@ -1070,13 +1087,22 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         Bulma('#modalEnviarEmail').modal().close();
         document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
         //Bulma('#modalGuardarLocalizacao').modal().open();
-        Bulma('#modalFecharMarcacao').modal().open();
+        if (document.getElementById("lstEstadoFO").value != "1") {
+            Bulma('#modalRecolherOficina').modal().open();
+        }else{
+            Bulma('#modalFecharMarcacao').modal().open();
+        }
     }
     function GuardarLocalizacao(valor) {
         document.getElementById('chkGuardarLocalizacao').checked = valor;
         Bulma('#modalGuardarLocalizacao').modal().close();
 
         Bulma('#modalFecharMarcacao').modal().open();
+    }
+        function RecolherOficina(valor) {
+        document.getElementById('chkRecolherOficina').checked = valor;
+        Bulma('#modalRecolherOficina').modal().close();
+            FecharMarcacao(false);
     }
     function FecharMarcacao(valor) {
         document.getElementById('chkFecharMarcacao').checked = valor;

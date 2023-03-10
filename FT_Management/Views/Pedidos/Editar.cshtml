@@ -38,7 +38,7 @@
 </div>
 <hr />
 
-<form asp-action="Editar" name="frmAdicionar" id="frmAdicionar">
+<form asp-action="Marcacao" method="post" name="frmAdicionar" id="frmAdicionar">
     <div class="container">
         <div class="columns is-multiline">
             <input type="hidden" asp-for="MarcacaoStamp" />
@@ -507,7 +507,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Pedidos/EmailPedidoCliente/" + id + "?email=" + email,
+            url: "/Pedidos/Email/" + id + "?email=" + email,
             traditional: true,
             success: function (result) {
                 $(function () {
@@ -531,7 +531,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/Pedidos/EmailPedidoTecnico/" + id,
+            url: "/Pedidos/Email/" + id,
             traditional: true,
             success: function (result) {
                 $(function () {
@@ -603,9 +603,9 @@
 
     function CarregarDadosResponsavel() {
         $.ajax({
-            url: '/Pedidos/ObterResponsavel/',
+            url: '/CLientes/Responsavel/',
             data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value, "TipoEquipamento": document.getElementById("TipoEquipamento").value },
-            type: "POST",
+            type: "GET",
             success: function (response) {
                 $("#txtQuemPediuNome").val(response.quemPediuNome);
                 $("#txtQuemPediuEmail").val(response.quemPediuEmail);

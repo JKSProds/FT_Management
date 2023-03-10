@@ -10,7 +10,7 @@
         {
             this.ConnectionString = connectionString;
             SqlConnection cnn;
-            FT_ManagementContext = new FT_ManagementContext(mySqlConnectionString, "");
+            FT_ManagementContext = new FT_ManagementContext(mySqlConnectionString);
 
             try
             {
@@ -957,6 +957,7 @@
                             IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
                             IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
                             RubricaCliente = "",
+                            EmGarantia = result["situacao"].ToString() == "Garantia",
                             Utilizador = FT_ManagementContext.ObterListaUtilizadores(true, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First()
                         });
 
@@ -982,6 +983,7 @@
                         {
                             LstFolhaObra.Last().PecasServico = ObterPecas(int.Parse(result["nopat"].ToString().Trim()));
                             LstFolhaObra.Last().GuiaTransporteAtual = LstFolhaObra.Last().PecasServico.Count() == 0 ? "" : (LstFolhaObra.Last().PecasServico.FirstOrDefault(p => p.Pos_Stock.Length > 0)?.Pos_Stock.ToString() ?? "");
+                            LstFolhaObra.Last().SituacoesPendentes = result["obstab2"].ToString();
                         }
 
                         if (LoadRubrica)
@@ -1043,12 +1045,12 @@
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
         {
-            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=" + IdFolhaObra + " and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.nopat=" + IdFolhaObra + " order by nopat;", true);
+            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=" + IdFolhaObra + " and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat where pa.nopat=" + IdFolhaObra + " order by pa.nopat;", true);
 
         }
         public FolhaObra ObterFolhaObra(string STAMP)
         {
-            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=pa.nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", true);
+            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=pa.nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat where pa.pastamp='" + STAMP + "' order by pa.nopat;", true);
 
         }
         public FolhaObra ObterFolhaObraSimples(string STAMP)

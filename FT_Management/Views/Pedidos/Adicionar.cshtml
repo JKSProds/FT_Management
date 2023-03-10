@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="~/lib/bulma-steps/dist/css/bulma-steps.min.css">
 <script src="~/lib/bulma-steps/dist/js/bulma-steps.min.js"></script>
 
-<form asp-action="Adicionar" name="frmAdicionar" id="frmAdicionar">
+<form asp-action="Marcacao" method="post" name="frmAdicionar" id="frmAdicionar">
     <div class="container">
         <div class="columns is-mobile is-centered">
             <div class="column is-12">
@@ -427,18 +427,18 @@
 
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+@{
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }
 
 <script>
     bulmaSteps.attach();
     function CarregarDadosResponsavel() {
         $.ajax({
-            url: '/Pedidos/ObterResponsavel/',
+            url: '/Clientes/Responsavel/',
             data: { "IdCliente": document.getElementById("txtIdCliente").value, "IdLoja": document.getElementById("txtIdLoja").value, "TipoEquipamento": document.getElementById("TipoEquipamento").value },
-            type: "POST",
+            type: "GET",
             success: function (response) {
                 $("#txtQuemPediuNome").val(response.quemPediuNome);
                 $("#txtQuemPediuEmail").val(response.quemPediuEmail);

@@ -86,5 +86,15 @@
 
             return Content(MailContext.EnviarEmailSenhaCliente(email, c) ? "1" : "");
         }
+
+        //Obter o responsavel do cliente
+        [HttpGet]
+        public JsonResult Responsavel(string IdCliente, string IdLoja, string TipoEquipamento)
+        {
+            if (string.IsNullOrEmpty(IdCliente)) return Json("");
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            return Json(phccontext.ObterResponsavelCliente(int.Parse(IdCliente), int.Parse(IdLoja), TipoEquipamento));
+        }
     }
 }

@@ -79,7 +79,7 @@
                         </span>
 
                     <div class="control">
-                        <a class="button is-info" href="~/Pedidos/ListaPedidos?IdTecnico=@ViewData["idtecnico"]">
+                        <a class="button is-info" href="~/Pedidos/Pedidos/@ViewData["idtecnico"]">
                             <i class="fas fa-eye"></i>
                         </a>
                     </div>
@@ -172,29 +172,29 @@
                     @foreach (var item in Model)
                     {
                         <tr id="marcacao_@item.IdMarcacao"
-                            class="@(item.EstadoMarcacaoDesc=="Finalizado" ? "has-background-success" : "")">
+                    class="@(item.EstadoMarcacaoDesc=="Finalizado" ? "has-background-success" : "")">
                             <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
-                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">
+                        data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">
                                 <span>@item.IdMarcacao</span>
                             </td>
                             <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
-                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">
+                        data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">
                                 <span>@item.Cliente.NomeCliente</span>
                             </td>
                             <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
-                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
+                        data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DataMarcacao)">
                                 <span class="data">@item.DataMarcacao.ToShortDateString()</span>
                             </td>
                             <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
-                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)">
+                        data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Referencia)">
                                 <span>@item.Referencia</span>
                             </td>
                             <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
-                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">
+                        data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().EstadoMarcacaoDesc)">
                                 <span class="estado">@item.EstadoMarcacaoDesc</span>
                             </td>
                             <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
-                                data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">
+                        data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().LstTecnicos.FirstOrDefault().NomeCompleto)">
                                 <span class="tecnico">@item.Tecnico.NomeCompleto</span>
                             </td>
                             <td class="is-actions-cell" style="min-width:200px">
@@ -204,7 +204,7 @@
                                     </span>
                                 </a>
                                 <a class="button is-primary is-rounded"
-                                    onclick="location.href = '@(Url.Action("Print", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'">
+                            onclick="location.href = '@(Url.Action("Etiqueta", "Pedidos", new { id = item.IdMarcacao, target="_blank" }))'">
                                     <span class="icon is-small">
                                         <i class="fas fa-sticky-note"></i>
                                     </span>
@@ -397,7 +397,7 @@
     function ObterMarcacao(id) {
         document.getElementById('pageloader').classList.add('is-active');
         $.ajax({
-            url: '/Pedidos/ObterMarcacao/' + id,
+            url: '/Pedidos/Marcacao/' + id,
             type: "GET",
             success: function (response) {
                 document.getElementById('txtData').bulmaCalendar.value(new Date(response.dataMarcacao).toLocaleDateString());
@@ -433,7 +433,7 @@
                 Tecnico: document.getElementById('LstTecnicos').value
             }
             $.ajax({
-                url: '/Pedidos/AlteracaoRapida/' + id,
+                url: '/Pedidos/Alterar/' + id,
                 type: "POST",
                 data: m,
                 success: function (response) {
