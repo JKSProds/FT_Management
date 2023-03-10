@@ -14,12 +14,6 @@ namespace FT_Management
             builder.Services.AddControllersWithViews();
             builder.Services.AddMvc();
 
-            //RateLimiting
-            builder.Services.AddMemoryCache();
-            builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-            builder.Services.AddInMemoryRateLimiting();
-            builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-
             builder.Services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(builder.Configuration.GetConnectionString("DefaultConnection"))));
             builder.Services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(builder.Configuration.GetConnectionString("PHCConnection"), builder.Configuration.GetConnectionString("DefaultConnection"))));
 
