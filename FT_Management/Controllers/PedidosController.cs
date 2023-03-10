@@ -391,7 +391,7 @@ namespace FT_Management.Controllers
         }
 
         //Iniciar deslocação
-        [HttpGet]
+        [HttpPost]
         public ActionResult Iniciar(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
