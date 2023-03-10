@@ -29,6 +29,7 @@
 
         //Obter ultimo acesso de um utilizador em especifico
         [HttpGet]
+        [AllowAnonymous]
         public JsonResult Acesso(string api, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
