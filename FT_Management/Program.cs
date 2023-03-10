@@ -97,7 +97,6 @@ namespace FT_Management
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseIpRateLimiting();
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
