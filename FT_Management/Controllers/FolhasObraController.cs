@@ -90,7 +90,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-
+            if ((fo.EstadoFolhaObra == 4 || fo.EmGarantia) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Necessita de preencher as observações internas!");
 
             if (ModelState.IsValid)
             {
@@ -140,7 +140,7 @@ namespace FT_Management.Controllers
                 ModelState.AddModelError("", res[1]);
             }
 
-            ModelState.AddModelError("", string.Join("|", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)));
+            ModelState.AddModelError("", string.Join(" ", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)));
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 
