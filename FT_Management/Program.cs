@@ -88,15 +88,6 @@ namespace FT_Management
 
             CultureInfo.DefaultThreadCurrentCulture = customCulture;
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
