@@ -48,6 +48,7 @@
 
         //Criar um acesso
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult Acesso(string api, int id, int tipo, int pin)
         {
             List<string> res = new List<string>() { "0", "Erro" };
