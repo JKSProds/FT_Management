@@ -186,5 +186,24 @@
             return File(context.MemoryStreamToPDF(context.DesenharEtiquetaMultipla(phccontext.ObterProduto(id, armazemid)), 801, 504), "application/pdf");
         }
 
+        //Imprimir etiqueta de garantia de uma peça de uma folha de obra
+        [HttpGet]
+        public ActionResult EtiquetaGarantia(string id, string peca)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            FolhaObra fo = phccontext.ObterFolhaObra(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta de garantia de peca: FO - {3}, Ref. {4}.", u.NomeCompleto, u.Id, fo.IdFolhaObra, peca);
+
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaPecaGarantia(fo.PecasServico.Where(p => p.Ref_Produto == peca).First(), fo), 801, 504), "application/pdf");
+        }
+
     }
 }

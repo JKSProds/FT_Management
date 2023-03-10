@@ -2453,6 +2453,78 @@ namespace FT_Management.Models
             return stream;
         }
 
+        public MemoryStream DesenharEtiquetaPecaGarantia(Produto p, FolhaObra fo)
+        {
+            var stream = new System.IO.MemoryStream();
+
+            int x = 10;
+            int y = 0;
+            int width = 1024;
+            int height = 641;
+
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 80, FontStyle.Bold);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 50);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
+
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
+
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png");
+                    img.Mutate(x => x.Resize(700, 158));
+                    imageContext.DrawImage(img, new Point(x, y + 20), 1);
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(180, 180));
+                    imageContext.DrawImage(qr, new Point(width - 200, 0), 1);
+
+                    y += 170;
+
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        TextAlignment = TextAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width,
+                    }, fo.SituacoesPendentes, Color.Black);
+
+                    y += 220;
+                    imageContext.DrawText(new TextOptions(fontHeader)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y)
+                    }, p.Ref_Produto + "\r\nN/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, Color.Black);
+
+                    var r = new RectangularPolygon(10, y, width - 20, 180);
+                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
+
+                    y += 180;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, "pecas@food-tech.pt", Color.Black);
+
+                });
+
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
+            }
+
+            return stream;
+        }
+
+
         public MemoryStream DesenharEtiquetaProduto(Produto p)
         {
             var stream = new System.IO.MemoryStream();

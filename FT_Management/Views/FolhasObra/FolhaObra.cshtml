@@ -147,19 +147,19 @@
                                                 {
                                                     <tr id="row_@item.StampIntervencao">
                                                         <td
-                                                            data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().DataServiço)">
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().DataServiço)">
                                                             <span>@item.DataServiço.ToString("dd-MM-yyyy")</span>
                                                         </td>
                                                         <td
-                                                            data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraInicio)">
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraInicio)">
                                                             <span>@item.HoraInicio.ToString("HH:mm")</span>
                                                         </td>
                                                         <td
-                                                            data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraFim)">
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().HoraFim)">
                                                             <span>@item.HoraFim.ToString("HH:mm")</span>
                                                         </td>
                                                         <td
-                                                            data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)">
+                                                    data-label="@Html.DisplayNameFor(model => model.IntervencaosServico.FirstOrDefault().NomeTecnico)">
                                                             <span>@item.NomeTecnico</span>
                                                         </td>
                                                         <td>
@@ -351,18 +351,24 @@
                                                 {
                                                     <tr id="linha_@item.Ref_Produto">
                                                         <td
-                                                            data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Ref_Produto)">
+                                                    data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Ref_Produto)">
                                                             <span>@item.Ref_Produto</span>
                                                         </td>
                                                         <td
-                                                            data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Designacao_Produto)">
+                                                    data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Designacao_Produto)">
                                                             <span>@item.Designacao_Produto</span>
                                                         </td>
                                                         <td
-                                                            data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Stock_Fisico)">
+                                                    data-label="@Html.DisplayNameFor(model => model.PecasServico.FirstOrDefault().Stock_Fisico)">
                                                             <span>@item.Stock_Fisico</span>
                                                         </td>
                                                         <td>
+                                                            @if (Model.EmGarantia && !item.Ref_Produto.Contains("SRV"))
+                                                            {
+                                                                <a class="button is-large is-info printqr"
+                                                        onclick="window.open('@Url.Action("EtiquetaGarantia", "Produtos", new { id = Model.StampFO, peca=item.Ref_Produto, target="_blank" })')"><i
+                                                            class="fa-solid fa-qrcode"></i></a>
+                                                            }
                                                         </td>
                                                     </tr>
                                                 }
@@ -410,9 +416,9 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+@{
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 }
 
 
