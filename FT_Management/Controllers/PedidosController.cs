@@ -397,7 +397,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Marcacao m = phccontext.ObterMarcacao(id);
+            Marcacao m = phccontext.ObterMarcacaoSimples(id);
             m.EstadoMarcacaoDesc = "Em Curso";
             m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
