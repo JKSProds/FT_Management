@@ -10,7 +10,7 @@
         {
             this.ConnectionString = connectionString;
             SqlConnection cnn;
-            FT_ManagementContext = new FT_ManagementContext(mySqlConnectionString, "");
+            FT_ManagementContext = new FT_ManagementContext(mySqlConnectionString);
 
             try
             {

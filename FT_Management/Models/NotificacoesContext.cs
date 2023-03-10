@@ -23,7 +23,7 @@ namespace FT_Management.Models
 
         public static bool EnableSend()
         {
-            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
 
             return context.ObterParam("EnableSendChat") == "1";
         }
@@ -140,7 +140,7 @@ namespace FT_Management.Models
     {
         public static bool EnableSend()
         {
-            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
 
             return context.ObterParam("EnableSendMail") == "1";
         }
@@ -255,7 +255,7 @@ namespace FT_Management.Models
         public static List<String> ObterEmailCC(int tipo)
         {
             //TIPO 1 == TECNICOS | TIPO 2 == COMERCIAIS | TIPO 3 == Férias
-            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
 
             return context.ObterEmailsCC(tipo);
         }

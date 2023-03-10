@@ -12,12 +12,9 @@ namespace FT_Management.Models
     {
 
         public string ConnectionString { get; set; }
-        private string FT_Logo_Print { get; set; }
-
-        public FT_ManagementContext(string connectionString, string FT_Logo)
+        public FT_ManagementContext(string connectionString)
         {
             this.ConnectionString = connectionString;
-            this.FT_Logo_Print = FT_Logo;
 
             try
             {

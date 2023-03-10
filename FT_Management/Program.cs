@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using System.Globalization;
+using AspNetCoreRateLimit;
 
 namespace FT_Management
 {
@@ -13,7 +14,13 @@ namespace FT_Management
             builder.Services.AddControllersWithViews();
             builder.Services.AddMvc();
 
-            builder.Services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(builder.Configuration.GetConnectionString("DefaultConnection"), builder.Configuration.GetSection("Variaveis").GetSection("PrintLogo").Value)));
+            //RateLimiting
+            builder.Services.AddMemoryCache();
+            builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+            builder.Services.AddInMemoryRateLimiting();
+            builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+            builder.Services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(builder.Configuration.GetConnectionString("DefaultConnection"))));
             builder.Services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(builder.Configuration.GetConnectionString("PHCConnection"), builder.Configuration.GetConnectionString("DefaultConnection"))));
 
             // Add Quartz builder.Services
@@ -96,6 +103,7 @@ namespace FT_Management
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseIpRateLimiting();
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

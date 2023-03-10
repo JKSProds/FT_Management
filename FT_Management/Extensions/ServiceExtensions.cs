@@ -7,7 +7,7 @@ namespace FT_Management
     {
         public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILogger _logger, IHttpContextAccessor _httpContextAccessor)
         {
-            FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"], "");
+            FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
 
             app.UseExceptionHandler(error =>
             {
