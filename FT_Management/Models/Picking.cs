@@ -3,6 +3,7 @@
     public class Picking
     {
         public string Picking_Stamp { get; set; }
+        public int Serie { get { return NomeDossier == "Picking List" ? 102 : 10; } }
         [Display(Name = "Núm. de Picking")]
         public int IdPicking { get; set; }
         [Display(Name = "Nome do Dossier")]
@@ -18,6 +19,7 @@
         public string EditadoPor { get; set; }
         public string Obs { get; set; }
         public Armazem ArmazemDestino { get; set; }
+        public List<Anexo> Anexos { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Picking/PrintPicking/" + Picking_Stamp; } }
 
     }

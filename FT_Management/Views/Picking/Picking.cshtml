@@ -20,6 +20,19 @@
                     </div>
                 </div>
             </div>
+            <div class="column">
+                 <div class="buttons is-right mt-3">
+                <p class="control" style="width:100%">
+                    <button class="button is-warning is-fullwidth is-large" onclick="Bulma('#modalAdicionarAnexo').modal().open();"
+                        type="button">
+                        <span class="icon">
+                            <i class="fa-solid fa-link"></i>
+                        </span>
+                        <span>Anexos</span>
+                    </button>
+                </p>
+            </div>
+            </div>
         </div>
     </div>
 <hr />
@@ -196,7 +209,80 @@
   </div>
 </div>
 
+<div id="modalAdicionarAnexo" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Anexos</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="form-group">
+                <form action="/Dossiers/Anexo" method="POST" class="dropzone">
+                    <input type="hidden" name="ecra" value="BO">
+                    <input type="hidden" name="serie" value="@Model.Serie">
+                    <input type="hidden" name="id" value="@Model.Picking_Stamp">
+                    <input type="hidden" name="resumo" value="Anexo da WebApp">
+                    <div class="dz-message needsclick">
+                        Largue vários anexos aqui para fazer o upload
+                    </div>
+                </form>
+            </div>
+            <hr>
+            @if (Model.Anexos.Count() == 0)
+            {
+
+                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados
+                    anexos!</button>
+            }
+            else
+            {
+                <div class="b-table">
+                    <div class="table-wrapper has-mobile-cards">
+                        <table class="table is-hoverable is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>@Html.DisplayNameFor(model => model.Anexos.First().Resumo)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Anexos.First().Nome)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Anexos.First().Utilizador.NomeCompleto)</th>
+                                    <th></th>
+                            <tbody>
+
+                                        @foreach (var a in Model.Anexos)
+                                        {
+                                    <tr>
+                                        <td data-label="@Html.DisplayNameFor(model => model.Anexos.First().Resumo)">
+                                            <span>@a.Resumo</span>
+                                        </td>
+                                        <td data-label="@Html.DisplayNameFor(model => model.Anexos.First().Nome)">
+                                            <span>@a.Nome</span>
+                                        </td>
+                                        <td
+                                    data-label="@Html.DisplayNameFor(model => model.Anexos.First().Utilizador.NomeCompleto)">
+                                            <span>@a.Utilizador.NomeCompleto</span>
+                                        </td>
+                                        <td class="is-actions-cell">
+                                            <a class="button is-primary is-outlined"
+                                        onclick="window.open('@Url.Action("Anexo", "Dossiers", new { id = @a.Stamp_Anexo, tager="_blank"})')"><i
+                                            class="fas fa-eye" style="font-size:20px"></i></a>
+                                        </td>
+                                    </tr>
+                                        }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
+                href="javascript:;">Fechar</button>
+        </footer>
+    </div>
+</div>
+
 <audio id="info_beep" src="~/audio/info_beep.mp3"></audio>
+
 
 <script>
 function ValidarSerie(id, l) {
