@@ -210,7 +210,7 @@
 
         //Adiciona um anexo
         [HttpPost]
-        public JsonResult Anexo(string id, string ecra, string serie, string resumo, IFormFile file)
+        public IActionResult Anexo(string id, string ecra, string serie, string resumo, IFormFile file)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -222,7 +222,8 @@
             if (string.IsNullOrEmpty(id))
             {
                 _logger.LogDebug("Utilizador {1} [{2}] a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
-                return Json(FicheirosContext.CriarFicheiroTemporario(nome, file));
+                FicheirosContext.CriarFicheiroTemporario(nome, file);
+                return Ok();
             }
 
             Anexo a = new Anexo()
@@ -236,9 +237,11 @@
             };
 
             res = phccontext.CriarAnexo(a);
-            if (int.Parse(res[0]) > 0) FicheirosContext.CriarAnexo(res[3], nome, file);
+            if (int.Parse(res[0]) < 0) return NotFound();
 
-            return Json("");
+            FicheirosContext.CriarAnexo(res[3], nome, file);
+
+            return Ok();
         }
     }
 }

@@ -2482,7 +2482,8 @@
                             DespacharEncomenda = result["u_envio"].ToString() == "Transportadora",
                             Encomenda = this.ObterEncomendaPicking(PI_STAMP),
                             Linhas = this.ObterLinhasPicking(PI_STAMP),
-                            EditadoPor = result["usrinis"].ToString().ToUpper()
+                            EditadoPor = result["usrinis"].ToString().ToUpper(),
+                            Anexos = ObterAnexosDossier(PI_STAMP)
                         };
                     }
                 }

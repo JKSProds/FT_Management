@@ -90,7 +90,7 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
+                            <tr onclick="window.open('@(Url.Action("Equipamento", "Equipamentos", new { id = item.EquipamentoStamp }))')">
                                 <td data-label="@Html.DisplayNameFor(model => model.MarcaEquipamento)">
                                     <span>@item.MarcaEquipamento</span>
                                 </td>
