@@ -122,7 +122,7 @@ else
         <section class="modal-card-body">
             <div class="form-group">
                 <form action="/Dossiers/Anexo" method="POST" class="dropzone">
-                    <input type="hidden" name="ecra" value="BO">
+                    <input type="hidden" name="ecra" value="@Model.Ecra">
                     <input type="hidden" name="serie" value="@Model.Serie">
                     <input type="hidden" name="id" value="@Model.StampDossier">
                     <div class="dz-message needsclick">

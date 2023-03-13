@@ -13,13 +13,14 @@
         //Obter todos os dossiers de uma data especifica
         [HttpGet]
         [Authorize(Roles = "Admin, Escritorio")]
-        public ActionResult Index(string Data, string Filtro, int Serie)
+        public ActionResult Index(string Data, string Filtro, int Serie, string Ecra)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
             if (string.IsNullOrEmpty(Filtro)) Filtro = "";
+            if (string.IsNullOrEmpty(Ecra)) Ecra = "BO";
             ViewData["Data"] = Data;
             ViewData["Filtro"] = Filtro;
             ViewData["Serie"] = Serie;
@@ -31,18 +32,20 @@
             LstSeries.Insert(0, new KeyValuePair<int, string>(0, "Todos"));
             ViewBag.Series = LstSeries.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value, Selected = l.Key == Serie });
 
-            return View(phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie));
+            return View(Ecra == "BO" ? phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie) : phccontext.ObterDossiersFaturacao(DateTime.Parse(Data), Filtro, 0));
         }
 
         //Obter um dossier em especifico
         [HttpGet]
-        public ActionResult Dossier(string id, string ReturnUrl)
+        public ActionResult Dossier(string id, string ecra, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            Dossier d = phccontext.ObterDossier(id);
+            Dossier d = new Dossier();
+            if (ecra == "BO") d = phccontext.ObterDossier(id);
+            if (ecra == "FT") d = phccontext.ObterDossierFaturacao(id);
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
@@ -50,8 +53,11 @@
 
             ViewData["ReturnUrl"] = ReturnUrl;
 
-            if (d.Serie == 96 || d.Serie == 97) return View("Pedido", d);
-            if (d.Serie == 36) return View("Transferencia", d);
+            if (d.Ecra == "BO")
+            {
+                if (d.Serie == 96 || d.Serie == 97) return View("Pedido", d);
+                if (d.Serie == 36) return View("Transferencia", d);
+            }
             return View("Dossier", d);
         }
 
@@ -225,12 +231,15 @@
                 return Content(FicheirosContext.CriarFicheiroTemporario(nome, file));
             }
 
-            Dossier d = phccontext.ObterDossier(id);
+            Dossier d = new Dossier();
+            if (ecra == "BO") d = phccontext.ObterDossier(id);
+            if (ecra == "FT") d = phccontext.ObterDossierFaturacao(id);
+
             Anexo a = new Anexo()
             {
-                Ecra = ecra,
-                Serie = int.Parse(serie),
-                Stamp_Origem = id,
+                Ecra = d.Ecra,
+                Serie = d.Serie,
+                Stamp_Origem = d.StampDossier,
                 Resumo = string.IsNullOrEmpty(resumo) ? d.NomeDossier + " (" + d.IdDossier + ") - " + u.NomeCompleto : resumo,
                 Nome = d.Iniciais + "_" + d.IdDossier + "_" + d.Cliente.NomeCliente.Trim() + "_" + DateTime.Now.Ticks + extensao,
                 Utilizador = u
