@@ -78,6 +78,30 @@
                             <span>Limpar</span>
                         </button>
                     </p>
+                    <p class="control">
+                        <a class="button is-info" href="/Dossiers?Ecra=BO" type="button">
+                            <span class="icon">
+                                <i class="fa-solid fa-file"></i>
+                            </span>
+                            <span>Dossiers</span>
+                        </a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-info" href="/Dossiers?Ecra=FT" type="button">
+                            <span class="icon">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                            </span>
+                            <span>Faturação</span>
+                        </a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-info" href="/Dossiers?Ecra=FO" disabled type="button">
+                            <span class="icon">
+                                <i class="fa-solid fa-euro-sign"></i>
+                            </span>
+                            <span>Compras</span>
+                        </a>
+                    </p>
                 </div>
             </form>
         </div>
@@ -136,7 +160,7 @@
                                         <div class="field has-addons" style="width:100%">
                                             <p class="control" style="width:100%">
                                                 <a class="button is-warning is-large is-fullwidth"
-                                            href="~/Dossiers/Dossier/@item.StampDossier">
+                                            href="~/Dossiers/Dossier/@item.StampDossier?ecra=@item.Ecra">
                                                     <span class="icon is-small">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </span>
