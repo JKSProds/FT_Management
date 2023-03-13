@@ -867,17 +867,21 @@
             {
                 if (FicheirosContext.ExisteFicheiroTemporario(f))
                 {
+                    byte[] byteArray = FicheirosContext.ObterFicheiroTemporario(f);
+                    var stream = new MemoryStream(byteArray);
+                    IFormFile file = new FormFile(stream, 0, byteArray.Length, "file", f);
+
                     Anexo a = new Anexo()
                     {
                         Ecra = "BO",
                         Serie = 49,
                         Stamp_Origem = fo.StampFO,
-                        Resumo = "Anexo da WebApp",
-                        Nome = f,
+                        Resumo = "FO (" + fo.IdAT + ") - " + fo.Utilizador.NomeCompleto,
+                        Nome = "FO_" + fo.IdAT + "_" + fo.Utilizador.Iniciais + "_" + DateTime.Now.Ticks + (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : ""),
                         Utilizador = fo.Utilizador
                     };
-                    res = this.CriarAnexo(a);
-                    if (int.Parse(res[0]) > 0) FicheirosContext.MoverFicheiroTemporario(f, res[3]);
+                    res = this.CriarAnexo(a, file);
+                    FicheirosContext.ApagarFicheiroTemporario(f);
                 }
             }
             return res;
@@ -3428,7 +3432,7 @@
             return res;
         }
 
-        public List<string> CriarAnexo(Anexo a)
+        public List<string> CriarAnexo(Anexo a, IFormFile file)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
@@ -3459,6 +3463,9 @@
                 res[3] = result[3].ToString();
 
                 conn.Close();
+
+                if (int.Parse(res[0]) < 0) return res;
+                FicheirosContext.CriarAnexo(res[3], a.Nome, file);
             }
 
             catch (Exception ex)
