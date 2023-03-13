@@ -210,36 +210,33 @@
 
         //Adiciona um anexo
         [HttpPost]
-        public IActionResult Anexo(string id, string ecra, string serie, string resumo, IFormFile file)
+        public IActionResult Anexo(string id, string ecra, string resumo, string serie, IFormFile file)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
-
-            string nome = u.Iniciais + "_" + DateTime.Now.Ticks + (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
+            string extensao = (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
 
             if (string.IsNullOrEmpty(id))
             {
+                string nome = u.Iniciais + "_" + DateTime.Now.Ticks + extensao;
                 _logger.LogDebug("Utilizador {1} [{2}] a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
-                FicheirosContext.CriarFicheiroTemporario(nome, file);
-                return Ok();
+                return Content(FicheirosContext.CriarFicheiroTemporario(nome, file));
             }
 
+            Dossier d = phccontext.ObterDossier(id);
             Anexo a = new Anexo()
             {
                 Ecra = ecra,
                 Serie = int.Parse(serie),
                 Stamp_Origem = id,
-                Resumo = resumo,
-                Nome = nome,
+                Resumo = string.IsNullOrEmpty(resumo) ? d.NomeDossier + " (" + d.IdDossier + ") - " + u.NomeCompleto : resumo,
+                Nome = d.Iniciais + "_" + d.IdDossier + "_" + d.Cliente.NomeCliente.Trim() + "_" + DateTime.Now.Ticks + extensao,
                 Utilizador = u
             };
 
-            res = phccontext.CriarAnexo(a);
-            if (int.Parse(res[0]) < 0) return NotFound();
-
-            FicheirosContext.CriarAnexo(res[3], nome, file);
+            res = phccontext.CriarAnexo(a, file);
 
             return Ok();
         }

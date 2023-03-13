@@ -7,7 +7,16 @@ namespace FT_Management.Models
             Pecas, Orcamento, Transferencia
 
         }
-
+        public string Iniciais
+        {
+            get
+            {
+                return string.Concat(this.NomeDossier
+         .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+         .Where(x => x.Length >= 1 && char.IsLetter(x[0]))
+         .Select(x => char.ToUpper(x[0])));
+            }
+        }
         public string StampDossier { get; set; }
         public int Serie { get; set; }
         public string SerieNome { get { return this.Serie == 96 ? "Pedido de Peças" : this.Serie == 97 ? "Pedido de Orçamento" : this.Serie == 36 ? "Pedido de Transferência" : "N/D"; } }

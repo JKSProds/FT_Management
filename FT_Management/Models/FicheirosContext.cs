@@ -50,6 +50,18 @@
             }
             return null;
         }
+
+        public static byte[] ObterFicheiroTemporario(string Ficheiro)
+        {
+            try
+            {
+                return ObterFicheiro(CaminhoTemporario + Ficheiro);
+            }
+            catch
+            {
+                return null;
+            }
+        }
         private static bool ApagarFicheiro(string Caminho)
         {
             try
@@ -88,6 +100,10 @@
         public static bool ApagarAnexoMarcacao(MarcacaoAnexo a)
         {
             return ApagarFicheiro(FormatLinuxServer(a.NomeFicheiro));
+        }
+        public static bool ApagarFicheiroTemporario(string Nome)
+        {
+            return ApagarFicheiro(FormatLinuxServer(CaminhoTemporario + Nome));
         }
         public static string ObterCaminhoProdutoImagem(string Ref_Produto)
         {
