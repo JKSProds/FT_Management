@@ -14,7 +14,7 @@
                             <span class="icon mr-3">
                                 <i class="fas fa-file-alt"></i>
                             </span>
-                            <span>Dossiers</span>
+                            <span>Dossiers - @ViewData["Ecra"]</span>
                         </p>
                     </article>
                 </div>
@@ -22,6 +22,7 @@
         </div>
         <div class="column is-right my-auto">
             <form method="get" style="width:100%" asp-action="Index">
+                <input type="hidden" name="Ecra" value="@ViewData["Ecra"]">
                 <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                     <p class="control has-icons-left" style="width:100%">
                         <input class="input" type="date"

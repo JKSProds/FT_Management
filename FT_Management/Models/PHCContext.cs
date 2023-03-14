@@ -3656,7 +3656,7 @@
         }
         public List<Dossier> ObterDossiersFaturacao(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiersFaturacao("select * from ft (nolock) where fdata='" + Data.ToString("yyyy-MM-dd") + "' order by nmdoc", false, false);
+            return ObterDossiersFaturacao("select * from ft (nolock) where fdata='" + Data.ToString("yyyy-MM-dd") + "' AND (fno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR encomenda like '%" + Filtro + "%') order by nmdoc", false, false);
         }
         public Dossier ObterDossierFaturacao(string STAMP)
         {
