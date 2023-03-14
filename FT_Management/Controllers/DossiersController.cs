@@ -24,6 +24,7 @@
             ViewData["Data"] = Data;
             ViewData["Filtro"] = Filtro;
             ViewData["Serie"] = Serie;
+            ViewData["Ecra"] = Ecra;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             _logger.LogDebug("Utilizador {1} [{2}] a obter todos os dossiers da seguinte data: {3}", u.NomeCompleto, u.Id, Data);
@@ -41,6 +42,7 @@
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            if (string.IsNullOrEmpty(ecra)) ecra = "BO";
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = new Dossier();
