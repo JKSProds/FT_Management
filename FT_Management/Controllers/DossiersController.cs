@@ -241,6 +241,8 @@
             Dossier d = new Dossier();
             if (ecra == "BO") d = phccontext.ObterDossier(id);
             if (ecra == "FT") d = phccontext.ObterDossierFaturacao(id);
+            if (ecra == "FO") d = phccontext.ObterDossierCompras(id);
+            if (d == new Dossier()) return Forbid();
 
             Anexo a = new Anexo()
             {

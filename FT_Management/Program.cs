@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Configuration;
 using System.Globalization;
-using AspNetCoreRateLimit;
 
 namespace FT_Management
 {
