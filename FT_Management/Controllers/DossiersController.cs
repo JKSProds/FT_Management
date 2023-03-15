@@ -17,6 +17,7 @@
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            List<KeyValuePair<int, string>> LstSeries = new List<KeyValuePair<int, string>>();
 
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
             if (string.IsNullOrEmpty(Filtro)) Filtro = "";
@@ -29,11 +30,13 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             _logger.LogDebug("Utilizador {1} [{2}] a obter todos os dossiers da seguinte data: {3}", u.NomeCompleto, u.Id, Data);
 
-            List<KeyValuePair<int, string>> LstSeries = phccontext.ObterSeriesDossiers();
+            if (Ecra == "BO") LstSeries = phccontext.ObterSeriesDossiers();
+            if (Ecra == "FT") LstSeries = phccontext.ObterSeriesFaturacao();
+
             LstSeries.Insert(0, new KeyValuePair<int, string>(0, "Todos"));
             ViewBag.Series = LstSeries.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value, Selected = l.Key == Serie });
 
-            return View(Ecra == "BO" ? phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie) : phccontext.ObterDossiersFaturacao(DateTime.Parse(Data), Filtro, 0));
+            return View(Ecra == "BO" ? phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie) : phccontext.ObterDossiersFaturacao(DateTime.Parse(Data), Filtro, Serie));
         }
 
         //Obter um dossier em especifico

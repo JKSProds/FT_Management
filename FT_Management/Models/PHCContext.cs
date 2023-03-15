@@ -3656,7 +3656,7 @@
         }
         public List<Dossier> ObterDossiersFaturacao(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiersFaturacao("select * from ft (nolock) where fdata='" + Data.ToString("yyyy-MM-dd") + "' AND (fno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR encomenda like '%" + Filtro + "%') order by nmdoc", false, false);
+            return ObterDossiersFaturacao("select * from ft (nolock) where fdata='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndoc=" + Serie : "") + " AND (fno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR encomenda like '%" + Filtro + "%') order by nmdoc", false, false);
         }
         public Dossier ObterDossierFaturacao(string STAMP)
         {
@@ -3713,6 +3713,40 @@
             return ObterLinhasDossierFaturacao("select * from fi where ftstamp='" + STAMP + "' order by lordem", true);
         }
 
+        public List<KeyValuePair<int, string>> ObterSeriesFaturacao()
+        {
+            List<KeyValuePair<int, string>> LstSeries = new List<KeyValuePair<int, string>>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select ndoc, nmdoc from td order by nmdoc;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstSeries.Add(new KeyValuePair<int, string>(int.Parse(result["ndoc"].ToString()), result["nmdoc"].ToString()));
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel obter as series dos dossiers do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstSeries;
+
+        }
 
         #endregion
     }
