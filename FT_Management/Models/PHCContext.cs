@@ -424,7 +424,7 @@
 
         //Obter Fornecedores
         #region FORNECEDORES
-        public List<Fornecedor> ObterFornecedores()
+        public List<Fornecedor> ObterFornecedores(string SQL_Query)
         {
 
             List<Fornecedor> LstFornecedor = new List<Fornecedor>();
@@ -435,7 +435,7 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;", conn)
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -468,6 +468,59 @@
 
             return LstFornecedor;
         }
+
+        public List<Fornecedor> ObterFornecedores()
+        {
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;");
+        }
+
+        public Fornecedor ObterFornecedor(int id)
+        {
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;").DefaultIfEmpty(new Fornecedor()).First();
+        }
+
+        public Cliente ObterFornecedorCliente(int id)
+        {
+
+            Cliente f = new Cliente();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        f = new Cliente()
+                        {
+                            ClienteStamp = result["flstamp"].ToString(),
+                            IdCliente = int.Parse(result["no"].ToString()),
+                            NomeCliente = result["nome"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            MoradaCliente = result["MoradaFornecedor"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            TelefoneCliente = result["telefone"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            EmailCliente = result["email"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
+                            PessoaContatoCliente = result["contacto"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''")
+                        };
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os Fornecedores do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return f;
+        }
+
         public List<String> ObterTiposEquipamento()
         {
 
@@ -3746,6 +3799,116 @@
 
             return LstSeries;
 
+        }
+
+        //COMPRAS
+        public List<Dossier> ObterDossiersCompras(string SQL_Query, bool LoadLinhas, bool LoadAnexos)
+        {
+            List<Dossier> LstDossiers = new List<Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstDossiers.Add(new Dossier()
+                        {
+                            Ecra = "FO",
+                            StampDossier = result["fostamp"].ToString().Trim(),
+                            NomeDossier = "Compras",
+                            IdDossier = int.Parse(result["foid"].ToString()),
+                            Referencia = result["adoc"].ToString(),
+                            DataDossier = DateTime.Parse(result["data"].ToString()),
+                            Serie = int.Parse(result["doccode"].ToString()),
+                            Cliente = ObterFornecedorCliente(int.Parse(result["no"].ToString())),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            Tecnico = new Utilizador() { NomeCompleto = result["usrinis"].ToString() },
+                            Fechado = true
+                        });
+                        if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossierCompras(LstDossiers.Last().StampDossier);
+                        if (LoadAnexos) LstDossiers.Last().Anexos = ObterAnexosDossier(LstDossiers.Last().StampDossier);
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstDossiers;
+        }
+        public List<Dossier> ObterDossiersCompras(DateTime Data, string Filtro, int Serie)
+        {
+            return ObterDossiersCompras("select * from fo (nolock) where data='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND doccode=" + Serie : "") + " AND (foid like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR adoc like '%" + Filtro + "%') order by doccode", false, false);
+        }
+        public Dossier ObterDossierCompras(string STAMP)
+        {
+            return ObterDossiersCompras("select * from fo (nolock) where fostamp='" + STAMP + "';", true, true).DefaultIfEmpty(new Dossier()).First();
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossierCompras(string SQL_Query, bool LoadAll)
+        {
+            List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["design"].ToString()))
+                        {
+                            LstLinhasDossier.Add(new Linha_Dossier
+                            {
+                                Stamp_Dossier = result["fostamp"].ToString(),
+                                Stamp_Linha = result["fnstamp"].ToString(),
+                                Referencia = result["ref"].ToString().Trim(),
+                                Designacao = result["design"].ToString().Trim(),
+                                Quantidade = Double.Parse(result["qtt"].ToString()),
+                                CriadoPor = result["usrinis"].ToString()
+                            });
+                        }
+
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstLinhasDossier;
+        }
+        public List<Linha_Dossier> ObterLinhasDossierCompras(string STAMP)
+        {
+            return ObterLinhasDossierCompras("select * from fn where fostamp='" + STAMP + "' order by lordem", true);
         }
 
         #endregion

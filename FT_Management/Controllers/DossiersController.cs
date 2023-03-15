@@ -36,7 +36,7 @@
             LstSeries.Insert(0, new KeyValuePair<int, string>(0, "Todos"));
             ViewBag.Series = LstSeries.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value, Selected = l.Key == Serie });
 
-            return View(Ecra == "BO" ? phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie) : phccontext.ObterDossiersFaturacao(DateTime.Parse(Data), Filtro, Serie));
+            return View(Ecra == "BO" ? phccontext.ObterDossiers(DateTime.Parse(Data), Filtro, Serie) : (Ecra == "FT" ? phccontext.ObterDossiersFaturacao(DateTime.Parse(Data), Filtro, Serie) : phccontext.ObterDossiersCompras(DateTime.Parse(Data), Filtro, Serie)));
         }
 
         //Obter um dossier em especifico
@@ -51,6 +51,8 @@
             Dossier d = new Dossier();
             if (ecra == "BO") d = phccontext.ObterDossier(id);
             if (ecra == "FT") d = phccontext.ObterDossierFaturacao(id);
+            if (ecra == "FO") d = phccontext.ObterDossierCompras(id);
+            if (d == new Dossier()) return Forbid();
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
