@@ -41,11 +41,12 @@
 
         //Obter um dossier em especifico
         [HttpGet]
-        public ActionResult Dossier(string id, string ecra, string ReturnUrl)
+        public ActionResult Dossier(string id, string ecra, string anexar, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (string.IsNullOrEmpty(ecra)) ecra = "BO";
+            if (string.IsNullOrEmpty(anexar)) anexar = "0";
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = new Dossier();
@@ -59,6 +60,7 @@
             _logger.LogDebug("Utilizador {1} [{2}] a obter um dossier em especifico: Id - {3}, Cliente - {4}, Serie - {5}", u.NomeCompleto, u.Id, d.IdDossier, d.Cliente.NomeCliente, d.NomeDossier);
 
             ViewData["ReturnUrl"] = ReturnUrl;
+            ViewData["Anexar"] = anexar;
 
             if (d.Ecra == "BO")
             {
@@ -229,6 +231,8 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            if (file == null) return StatusCode(500);
+
             string extensao = (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
 
             if (string.IsNullOrEmpty(id))
@@ -257,6 +261,21 @@
             res = phccontext.CriarAnexo(a, file);
             if (res[0] == "-1") return StatusCode(500);
             return Ok();
+        }
+
+        //Apagar Anexo
+        [HttpDelete]
+        public ActionResult Anexo(string id, bool apagar)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (id != null)
+            {
+                Anexo a = phccontext.ObterAnexoDossier(id);
+                if (phccontext.ApagarAnexo(id)) return FicheirosContext.ApagarAnexo(a.LocalizacaoFicheiro) ? Ok() : StatusCode(500);
+            }
+
+            return StatusCode(500);
         }
     }
 }

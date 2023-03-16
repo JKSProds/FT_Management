@@ -89,7 +89,6 @@
                     <p class="step-title">Rúbrica</p>
                 </div>
             </div>
-            <div asp-validation-summary="ModelOnly" class="hero is-danger is-medium">&nbsp;</div>
             <div class="steps-actions">
                 <div class="steps-action">
                     <button data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-danger" type="button">
@@ -119,12 +118,9 @@
                                     <div class="control" style="width:100%">
                                         <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
                                             id="txtEquipamentoStamp" />
-                                        <p class="control has-icons-left">
+                                        <p class="control">
                                             <input type="text" class="input"
                                                 asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
-                                            <span class="icon is-small is-left">
-                                                <i class="fa-solid fa-display"></i>
-                                            </span>
                                         </p>
                                     </div>
                                     <div class="control">
@@ -174,8 +170,7 @@
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
                             <button id="btnZeroIntervencoes"
-                                class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>Sem
-                                Intervenções</button>
+                                class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>Sem Periodos</button>
                             <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
                         </div>
                         <div class="column is-4">
@@ -217,7 +212,7 @@
                                 <span class="icon">
                                     <i class="fas fa-plus"></i>
                                 </span>
-                                <span>Adicionar Intervenção</span>
+                                <span>Adicionar Data & Hora</span>
                             </button>
 
                         </div>
@@ -230,7 +225,7 @@
                             <div class="field">
                                 <label asp-for="RelatorioServico"></label>
                                 <div class="control">
-                                    <textarea class="textarea is-primary" rows="15"
+                                    <textarea class="textarea is-primary" rows="7"
                                         asp-for="RelatorioServico"></textarea>
                                 </div>
                                 <span asp-validation-for="RelatorioServico" class="has-text-danger"></span>
@@ -240,7 +235,7 @@
                             <div class="field">
                                 <label asp-for="SituacoesPendentes"></label>
                                 <div class="control">
-                                    <textarea class="textarea is-primary" rows="15"
+                                    <textarea class="textarea is-primary" rows="7"
                                         asp-for="SituacoesPendentes"></textarea>
                                 </div>
                                 <span asp-validation-for="SituacoesPendentes" class="has-text-danger"></span>
@@ -253,18 +248,24 @@
                         <div class="column is-12">
                             <div class="field ">
                                 <label asp-for="PecasServico"></label>
-                                <div class="field has-addons">
+                                <div class="field has-addons mb-1">
                                     <div class="control" style="width:100%">
-                                        <p class="control has-icons-left">
+                                        <p class="control">
                                             <input type="text" class="input" id="txtPecas">
-                                            <span class="icon is-small is-left">
-                                                <i class="fa-solid fa-gears"></i>
-                                            </span>
                                         </p>
                                     </div>
-                                    <div class="field has-addons">
+                                                                            <div class="control">
+                                            <a class="button is-info"
+                                                onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
+                                                <i class="fa-solid fa-qrcode"></i>
+                                            </a>
+                                        </div>
+                                    <input type="hidden" class="input" id="txtStampPeca">
+                                    <span asp-validation-for="PecasServico" class="has-text-danger"></span>
+                                </div>
+                                <div class="field has-addons is-pulled-right mb-2">
                                         <div class="control">
-                                            <button type="button" class="button is-primary is-outlined disable-dbl-tap-zoom"
+                                            <button type="button" class="button is-danger disable-dbl-tap-zoom"
                                                 onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
                                                 <span class="icon">
                                                     <i class="fas fa-minus"></i>
@@ -272,26 +273,17 @@
                                             </button>
                                         </div>
                                         <div class="control" style="width:75px">
-                                            <input type="number" class="input" id="txtQtd" value="1">
+                                            <input type="number" class="input has-text-centered" id="txtQtd" value="1">
                                         </div>
                                         <div class="control">
-                                            <button type="button" class="button is-primary is-outlined disable-dbl-tap-zoom"
+                                            <button type="button" class="button is-success disable-dbl-tap-zoom"
                                                 onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
                                                 <span class="icon">
                                                     <i class="fas fa-plus"></i>
                                                 </span>
                                             </button>
                                         </div>
-                                        <div class="control">
-                                            <a class="button is-info"
-                                                onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
-                                                <i class="fa-solid fa-qrcode"></i>
-                                            </a>
-                                        </div>
                                     </div>
-                                    <input type="hidden" class="input" id="txtStampPeca">
-                                    <span asp-validation-for="PecasServico" class="has-text-danger"></span>
-                                </div>
                             </div>
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
@@ -546,6 +538,22 @@
 
 </form>
 
+<div id="modalMensagensErro" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-danger">
+            <p class="modal-card-title">Informação</p>
+        </header>
+        <section class="modal-card-body">
+                <div asp-validation-summary="ModelOnly" id="divMensagensErro" style="white-space: pre-line"></div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                onclick="Bulma('#modalMensagensErro').modal().close();" id="btnConfirmAddAnexo"
+                href="javascript:;">Fechar</button>
+        </footer>
+    </div>
+</div>
 
 <div id="modalAdicionarAnexo" class="modal">
     <div class="modal-background"></div>
@@ -916,6 +924,8 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             }
         }
     });
+    
+    if (document.getElementById('divMensagensErro') != null) Bulma('#modalMensagensErro').modal().open();
 
     (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
         const $target = $close.closest('#modalAguardarValidacao');
@@ -1114,7 +1124,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     //INTERVENCOES
     function AdicionarIntervencao() {
         if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid() && moment(document.getElementById('txtData').bulmaCalendar.value(), "DD/MM/YYYY", true).isValid()) {
-            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:100%">${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+            document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:80%">${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtData').bulmaCalendar.value() + " " + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
             notify("Intervenção adicionada com sucesso!");
         }
@@ -1146,7 +1156,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
     //PEÇAS
     function AdicionarPeca(stamp, ref, desig, qtd) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:100%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd};`;
         notify("Peça " + ref + " adicionada com sucesso!");
 
@@ -1182,7 +1192,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
-                                label: item.ref_Produto + " - " + item.designacao_Produto.trim(),
+                                label: item.ref_Produto + " - " + item.designacao_Produto.trim() + " - " + item.stock_Atual + " " + item.tipoUn,
                                 val: item.stampProduto
                             };
                         }))

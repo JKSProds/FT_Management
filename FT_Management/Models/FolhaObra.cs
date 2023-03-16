@@ -33,7 +33,7 @@
         public string ListaPecas { get; set; }
         [Display(Name = "Peças")]
         public List<Produto> PecasServico { get; set; }
-        [Display(Name = "Lista de Intervenções")]
+        [Display(Name = "Lista de Periodos")]
         [Required(ErrorMessage = "Tem de adicionar pelo menos 1 intervenção!")]
         public string ListaIntervencoes { get; set; }
         public List<Intervencao> IntervencaosServico { get; set; }

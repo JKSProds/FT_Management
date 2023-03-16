@@ -194,6 +194,14 @@ else
         <section class="modal-card-body">
             <div class="modal-body">
                 <p>Deseja iniciar a deslocação para o cliente ou efetuar a folha de obra?</p>
+                &nbsp;
+                <div class="form-check form-group col">
+                <label class="switch is-rounded is-info">
+                    <input type="checkbox" id="chkNav">
+                    <span class="check is-info"></span>
+                    <span class="control-label">Abrir aplicação de Navegação?</span>
+                </label>
+            </div>
             </div>
         </section>
         <footer class="modal-card-foot">
@@ -237,7 +245,9 @@ else
             success: function (result) {
                 $(function () {
                     if (result == "1") {
-                       document.getElementById('btnDirecoes_' + stamp).click();
+                        if (document.getElementById('chkNav').checked) {
+                            document.getElementById('btnDirecoes_' + stamp).click();
+                        }
                        document.getElementById('btnStart_' + stamp).classList.add('is-hidden');
                        document.getElementById('btnStop_' + stamp).classList.remove('is-hidden');
                        notify("Marcação atualizada com sucesso!");

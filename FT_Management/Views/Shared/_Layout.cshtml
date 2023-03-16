@@ -55,10 +55,6 @@
             touch-action: manipulation;
         }
 
-        .title {
-            font-size: 2rem;
-        }
-
         .dropzone {
             background: white;
             border-radius: 20px;
@@ -108,6 +104,8 @@
                 @if (User.Identity.IsAuthenticated && !User.IsInRole("Cliente"))
                 {
                     <div class="navbar-start">
+                        @if (User.IsInRole("Escritorio")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 <span class="icon">
@@ -151,6 +149,9 @@
                                 </p>
                             </div>
                         </div>
+                }
+                                                                @if (User.IsInRole("Escritorio")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Stocks
@@ -191,6 +192,9 @@
                                 </p>
                             </div>
                         </div>
+                }
+                                                                @if (User.IsInRole("Escritorio")  || User.IsInRole("Tech")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Técnicos
@@ -248,8 +252,19 @@
                                         <span>Equipamentos</span>
                                     </a>
                                 </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
+                                        <span class="icon">
+                                            <i class="fas  fa-umbrella-beach"></i>
+                                        </span>
+                                        <span>Mapa de Férias</span>
+                                    </a>
+                                </p>
                             </div>
                         </div>
+                }
+                                        @if (User.IsInRole("Escritorio")  || User.IsInRole("Comercial")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Comerciais
@@ -297,8 +312,19 @@
                                         <span>Clientes</span>
                                     </a>
                                 </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
+                                        <span class="icon">
+                                            <i class="fas  fa-umbrella-beach"></i>
+                                        </span>
+                                        <span>Mapa de Férias</span>
+                                    </a>
+                                </p>
                             </div>
                         </div>
+                }
+                                       @if (User.IsInRole("Escritorio")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Recursos Humanos
@@ -330,8 +356,10 @@
                                     </a>
                                 </p>
                             </div>
+                                                </div>
+                }
                         </div>
-                    </div>
+
                 }
                 <div class="navbar-end">
                     @if (User.Identity.IsAuthenticated)
@@ -523,7 +551,6 @@
     function notify(mensagem) {
         bulmaToast.toast({
             message: mensagem,
-            type: 'is-success',
             closeOnClick: true,
             pauseOnHover: true,
             opacity: 0.8,

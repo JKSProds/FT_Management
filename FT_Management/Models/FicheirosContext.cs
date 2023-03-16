@@ -188,5 +188,9 @@
             CriarPasta(FormatLinuxServer(dest));
             return CriarFicheiro(res, ficheiro) ? nome : "";
         }
+        public static bool ApagarAnexo(string Ficheiro_Caminho)
+        {
+            return ApagarFicheiro(FormatLinuxServer(Ficheiro_Caminho));
+        }
     }
 }
