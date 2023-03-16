@@ -249,8 +249,7 @@ else
                             <thead>
                                 <tr>
                                     <th>@Html.DisplayNameFor(model => model.Anexos.First().Resumo)</th>
-                                    <th>@Html.DisplayNameFor(model => model.Anexos.First().Nome)</th>
-                                    <th>@Html.DisplayNameFor(model => model.Anexos.First().Utilizador.NomeCompleto)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Anexos.First().Utilizador.Iniciais)</th>
                                     <th></th>
                             <tbody>
 
@@ -260,17 +259,17 @@ else
                                         <td data-label="@Html.DisplayNameFor(model => model.Anexos.First().Resumo)">
                                             <span>@a.Resumo</span>
                                         </td>
-                                        <td data-label="@Html.DisplayNameFor(model => model.Anexos.First().Nome)">
-                                            <span>@a.Nome</span>
-                                        </td>
                                         <td
-                                    data-label="@Html.DisplayNameFor(model => model.Anexos.First().Utilizador.NomeCompleto)">
+                                    data-label="@Html.DisplayNameFor(model => model.Anexos.First().Utilizador.Iniciais)">
                                             <span>@a.Utilizador.NomeCompleto</span>
                                         </td>
-                                        <td class="is-actions-cell">
+                                        <td class="is-actions-cell field is-grouped">
                                             <a class="button is-primary is-outlined"
-                                        onclick="window.open('@Url.Action("Anexo", "Dossiers", new { id = @a.Stamp_Anexo, tager="_blank"})')"><i
+                                        onclick="window.open('@Url.Action("Anexo", "Dossiers", new { id = @a.Stamp_Anexo, target="_blank"})')"><i
                                             class="fas fa-eye" style="font-size:20px"></i></a>
+                                            <a class="button is-danger ml-1" onclick="ApagarAnexo('@a.Stamp_Anexo')"><i
+                                            class="fas fa-trash" id="btnApagarAnexo_@a.Stamp_Anexo"
+                                            style="font-size:20px"></i></a>
                                         </td>
                                     </tr>
                                         }
@@ -418,6 +417,31 @@ else
 </div>
 
 <script>
+    if (@ViewData["Anexar"]) Bulma('#modalAdicionarAnexo').modal().open();
+    function ApagarAnexo(stamp) {
+        document.getElementById('btnApagarAnexo_' + stamp).classList.add("is-loading");
+        $.ajax({
+            type: "DELETE",
+            url: "/Dossiers/Anexo/" + stamp,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    document.getElementById("Anexo_" + stamp).parentNode.removeChild(document.getElementById("Anexo_" + stamp));
+                    notify("Ficheiro apagado com sucesso!");
+                    document.getElementById('btnApagarAnexo_' + stamp).classList.remove("is-loading");
+                });
+            },
+            error: function (response) {
+                notifyError('Ocorreu um erro ao apagar o anexo!');
+                document.getElementById('btnApagarAnexo_' + stamp).classList.remove("is-loading");
+            },
+            failure: function (response) {
+                notifyError('Ocorreu um erro ao apagar o anexo!');
+                document.getElementById('btnApagarAnexo_' + stamp).classList.remove("is-loading");
+            }
+        });
+    }
+
     function RemoverLinha(id) {
         document.getElementById("btn_" + id).classList.add("is-loading");
         $.ajax({

@@ -184,7 +184,7 @@ else
 </div>
 
 <script>
-
+    if (@ViewData["Anexar"]) Bulma('#modalAdicionarAnexo').modal().open();
     function ApagarAnexo(stamp) {
         document.getElementById('btnApagarAnexo_' + stamp).classList.add("is-loading");
         $.ajax({

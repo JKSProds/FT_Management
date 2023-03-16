@@ -41,11 +41,12 @@
 
         //Obter um dossier em especifico
         [HttpGet]
-        public ActionResult Dossier(string id, string ecra, string ReturnUrl)
+        public ActionResult Dossier(string id, string ecra, string anexar, string ReturnUrl)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (string.IsNullOrEmpty(ecra)) ecra = "BO";
+            if (string.IsNullOrEmpty(anexar)) anexar = "0";
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Dossier d = new Dossier();
@@ -59,6 +60,7 @@
             _logger.LogDebug("Utilizador {1} [{2}] a obter um dossier em especifico: Id - {3}, Cliente - {4}, Serie - {5}", u.NomeCompleto, u.Id, d.IdDossier, d.Cliente.NomeCliente, d.NomeDossier);
 
             ViewData["ReturnUrl"] = ReturnUrl;
+            ViewData["Anexar"] = anexar;
 
             if (d.Ecra == "BO")
             {
