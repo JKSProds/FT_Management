@@ -253,8 +253,8 @@
                 Ecra = d.Ecra,
                 Serie = d.Serie,
                 Stamp_Origem = d.StampDossier,
-                Resumo = string.IsNullOrEmpty(resumo) ? d.NomeDossier + " (" + d.IdDossier + ") - " + u.NomeCompleto : resumo,
-                Nome = d.Iniciais + "_" + d.Ecra == "FO" ? d.Referencia : d.IdDossier + "_" + d.Cliente.NomeCliente.Trim() + "_" + DateTime.Now.Ticks + extensao,
+                Resumo = string.IsNullOrEmpty(resumo) ? d.NomeDossier + " (" + (d.Ecra == "FO" ? d.Referencia : d.IdDossier) + ") - " + u.NomeCompleto : resumo,
+                Nome = d.Iniciais + "_" + (d.Ecra == "FO" ? d.Referencia : d.IdDossier) + "_" + d.Cliente.NomeCliente.Trim() + "_" + DateTime.Now.Ticks + extensao,
                 Utilizador = u
             };
 
