@@ -3276,7 +3276,7 @@
         }
         public List<Dossier> ObterDossiers(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where dataobra='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndos=" + Serie : "") + " AND (obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%') order by nmdos", false, false, false, false);
+            return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where " + (string.IsNullOrEmpty(Filtro) ? "dataobra='" + Data.ToString("yyyy-MM-dd") + "'" : "(obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%')") + (Serie > 0 ? " AND ndos=" + Serie : "") + " order by nmdos", false, false, false, false);
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
@@ -3666,7 +3666,7 @@
         }
         public List<Dossier> ObterDossiersFaturacao(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiersFaturacao("select * from ft (nolock) where fdata='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndoc=" + Serie : "") + " AND (fno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR encomenda like '%" + Filtro + "%') order by nmdoc", false, false);
+            return ObterDossiersFaturacao("select top 100 * from ft (nolock) where " + (string.IsNullOrEmpty(Filtro) ? "fdata='" + Data.ToString("yyyy-MM-dd") + "'" : "fno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR encomenda like '%" + Filtro + "%'") + (Serie > 0 ? " AND ndoc=" + Serie : "") + " order by nmdoc", false, false);
         }
         public Dossier ObterDossierFaturacao(string STAMP)
         {
@@ -3811,7 +3811,7 @@
         }
         public List<Dossier> ObterDossiersCompras(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiersCompras("select * from fo (nolock) where data='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND doccode=" + Serie : "") + " AND (foid like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR adoc like '%" + Filtro + "%') order by doccode", false, false);
+            return ObterDossiersCompras("select top 100 * from fo (nolock) where " + (string.IsNullOrEmpty(Filtro) ? " data='" + Data.ToString("yyyy-MM-dd") + "' " : " (foid like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR adoc like '%" + Filtro + "%')") + (Serie > 0 ? " AND doccode=" + Serie : "") + " order by doccode", false, false);
         }
         public Dossier ObterDossierCompras(string STAMP)
         {
