@@ -3120,8 +3120,8 @@
                 string SQL_Query = "EXEC WEB_Dossier_Gera ";
 
                 SQL_Query += "@SERIE = '" + d.Serie + "', ";
-                SQL_Query += "@U_MARCACAOSTAMP = '" + d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp + "', ";
-                SQL_Query += "@STAMP_PA = '" + d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO + "', ";
+                SQL_Query += "@U_MARCACAOSTAMP = '" + (d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp) + "', ";
+                SQL_Query += "@STAMP_PA = '" + (d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO) + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + d.EditadoPor + "', ";
                 SQL_Query += "@IDTECNICO = '" + d.Tecnico.IdPHC + "'; ";
 
