@@ -118,12 +118,9 @@
                                     <div class="control" style="width:100%">
                                         <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
                                             id="txtEquipamentoStamp" />
-                                        <p class="control has-icons-left">
+                                        <p class="control">
                                             <input type="text" class="input"
                                                 asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
-                                            <span class="icon is-small is-left">
-                                                <i class="fa-solid fa-display"></i>
-                                            </span>
                                         </p>
                                     </div>
                                     <div class="control">
@@ -253,7 +250,7 @@
                                 <label asp-for="PecasServico"></label>
                                 <div class="field has-addons mb-1">
                                     <div class="control" style="width:100%">
-                                        <p class="control has-icons-left">
+                                        <p class="control">
                                             <input type="text" class="input" id="txtPecas">
                                         </p>
                                     </div>
@@ -929,7 +926,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     });
     
     if (document.getElementById('divMensagensErro') != null) Bulma('#modalMensagensErro').modal().open();
-
+navigator.vibrate([
+  100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100,
+]);
     (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
         const $target = $close.closest('#modalAguardarValidacao');
 
@@ -1195,7 +1194,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
-                                label: item.ref_Produto + " - " + item.designacao_Produto.trim(),
+                                label: item.ref_Produto + " - " + item.designacao_Produto.trim() + " - " + item.stock_Atual + " " + item.tipoUn,
                                 val: item.stampProduto
                             };
                         }))
