@@ -28,7 +28,6 @@ namespace FT_Management.Models
         [Display(Name = "Data")]
         public DateTime DataDossier { get; set; }
         public Cliente Cliente { get; set; }
-        public Fornecedor Fornecedor { get; set; }
         public string Referencia { get; set; }
         public Utilizador Tecnico { get; set; }
         public FolhaObra FolhaObra { get; set; }

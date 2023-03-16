@@ -3,7 +3,7 @@
     public class PHCContext
     {
         private string ConnectionString { get; set; }
-        private readonly int TIMEOUT = 5;
+        private readonly int TIMEOUT = 240;
         private FT_ManagementContext FT_ManagementContext { get; set; }
 
         public PHCContext(string connectionString, string mySqlConnectionString)
@@ -28,6 +28,8 @@
 
             try
             {
+                Console.WriteLine(SQL_Query);
+
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
                 conn.Open();
@@ -38,14 +40,18 @@
                 };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
-                    while (result.Read())
+                    result.Read();
+                    if (result.HasRows)
                     {
-                        res.Add(result[0].ToString());
+                        for (int i = 0; i < result.FieldCount; i++)
+                        {
+                            res.Add(result[i].ToString());
+                        }
                     }
+
                 }
                 conn.Close();
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel executar query.\r\n(Exception: " + ex.Message + ")");
@@ -149,29 +155,11 @@
             List<string> res = new List<string>() { "-1", "Erro", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Guia_Global_Gera ";
 
-                conn.Open();
+                SQL_Query += "@ARMAZEM = '" + IdArmazem + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_Guia_Global_Gera", conn)
-                {
-                    CommandTimeout = 120,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@ARMAZEM", IdArmazem));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                if (result.HasRows)
-                {
-                    res[0] = result[0].ToString();
-                    res[1] = result[1].ToString();
-                    res[2] = result[2].ToString();
-                }
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -663,31 +651,16 @@
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_PAT_Gera ";
 
-                conn.Open();
+                SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "'; ";
+                SQL_Query += "@MASTAMP = '" + fo.EquipamentoServico.EquipamentoStamp + "'; ";
+                SQL_Query += "@ESTADO = '" + fo.EstadoFolhaObra + "'; ";
+                SQL_Query += "@OFICINA = '" + fo.RecolhaOficina + "'; ";
+                SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "'; ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_PAT_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@MASTAMP", fo.EquipamentoServico.EquipamentoStamp));
-                command.Parameters.Add(new SqlParameter("@ESTADO", fo.EstadoFolhaObra));
-                command.Parameters.Add(new SqlParameter("@OFICINA", fo.RecolhaOficina));
-                command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
 
                 if (res[0].ToString() != "-1")
                 {
@@ -3303,7 +3276,7 @@
         }
         public List<Dossier> ObterDossiers(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where dataobra='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndos=" + Serie : "") + " AND (obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%') order by nmdos", false, false, false, false);
+            return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where " + (string.IsNullOrEmpty(Filtro) ? "dataobra='" + Data.ToString("yyyy-MM-dd") + "'" : "(obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%')") + (Serie > 0 ? " AND ndos=" + Serie : "") + " order by nmdos", false, false, false, false);
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
@@ -3493,35 +3466,19 @@
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
+                string SQL_Query = "EXEC WEB_Anexo_Gera_PHC ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@ECRA = '" + a.Ecra + "', ";
+                SQL_Query += "@NDOC = '" + a.Serie + "', ";
+                SQL_Query += "@STAMP_ORIGEM = '" + a.Stamp_Origem + "', ";
+                SQL_Query += "@RESUMO = '" + a.Resumo + "', ";
+                SQL_Query += "@NOME_FICHEIRO = '" + a.Nome + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + a.Utilizador.Iniciais + "';";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_Anexo_Gera_PHC", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.Add(new SqlParameter("@ECRA", a.Ecra));
-                command.Parameters.Add(new SqlParameter("@NDOC", a.Serie));
-                command.Parameters.Add(new SqlParameter("@STAMP_ORIGEM", a.Stamp_Origem));
-                command.Parameters.Add(new SqlParameter("@RESUMO", a.Resumo));
-                command.Parameters.Add(new SqlParameter("@NOME_FICHEIRO", a.Nome));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", a.Utilizador.Iniciais));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-                res[3] = result[3].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
 
                 if (int.Parse(res[0]) < 0) return res;
-                FicheirosContext.CriarAnexo(res[3], a.Nome, file);
+                res[0] = string.IsNullOrEmpty(FicheirosContext.CriarAnexo(res[3], a.Nome, file)) ? "-1" : "1";
             }
 
             catch (Exception ex)
@@ -3709,7 +3666,7 @@
         }
         public List<Dossier> ObterDossiersFaturacao(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiersFaturacao("select * from ft (nolock) where fdata='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND ndoc=" + Serie : "") + " AND (fno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR encomenda like '%" + Filtro + "%') order by nmdoc", false, false);
+            return ObterDossiersFaturacao("select top 100 * from ft (nolock) where " + (string.IsNullOrEmpty(Filtro) ? "fdata='" + Data.ToString("yyyy-MM-dd") + "'" : "fno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR encomenda like '%" + Filtro + "%'") + (Serie > 0 ? " AND ndoc=" + Serie : "") + " order by nmdoc", false, false);
         }
         public Dossier ObterDossierFaturacao(string STAMP)
         {
@@ -3830,7 +3787,7 @@
                             IdDossier = int.Parse(result["foid"].ToString()),
                             Referencia = result["adoc"].ToString(),
                             DataDossier = DateTime.Parse(result["data"].ToString()),
-                            Serie = int.Parse(result["doccode"].ToString()),
+                            Serie = 0,
                             Cliente = ObterFornecedorCliente(int.Parse(result["no"].ToString())),
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
                             EditadoPor = result["usrinis"].ToString(),
@@ -3854,7 +3811,7 @@
         }
         public List<Dossier> ObterDossiersCompras(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiersCompras("select * from fo (nolock) where data='" + Data.ToString("yyyy-MM-dd") + "'" + (Serie > 0 ? " AND doccode=" + Serie : "") + " AND (foid like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR adoc like '%" + Filtro + "%') order by doccode", false, false);
+            return ObterDossiersCompras("select top 100 * from fo (nolock) where " + (string.IsNullOrEmpty(Filtro) ? " data='" + Data.ToString("yyyy-MM-dd") + "' " : " (foid like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR adoc like '%" + Filtro + "%')") + (Serie > 0 ? " AND doccode=" + Serie : "") + " order by doccode", false, false);
         }
         public Dossier ObterDossierCompras(string STAMP)
         {
