@@ -53,7 +53,7 @@
             if (ecra == "BO") d = phccontext.ObterDossier(id);
             if (ecra == "FT") d = phccontext.ObterDossierFaturacao(id);
             if (ecra == "FO") d = phccontext.ObterDossierCompras(id);
-            if (d == new Dossier()) return Forbid();
+            if (d.StampDossier == null) return Forbid();
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
