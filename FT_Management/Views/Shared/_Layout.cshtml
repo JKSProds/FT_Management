@@ -108,6 +108,8 @@
                 @if (User.Identity.IsAuthenticated && !User.IsInRole("Cliente"))
                 {
                     <div class="navbar-start">
+                        @if (User.IsInRole("Escritorio")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 <span class="icon">
@@ -151,6 +153,9 @@
                                 </p>
                             </div>
                         </div>
+                }
+                                                                @if (User.IsInRole("Escritorio")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Stocks
@@ -191,6 +196,9 @@
                                 </p>
                             </div>
                         </div>
+                }
+                                                                @if (User.IsInRole("Escritorio")  || User.IsInRole("Tech")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Técnicos
@@ -250,6 +258,9 @@
                                 </p>
                             </div>
                         </div>
+                }
+                                        @if (User.IsInRole("Escritorio")  || User.IsInRole("Comercial")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Comerciais
@@ -299,6 +310,9 @@
                                 </p>
                             </div>
                         </div>
+                }
+                                       @if (User.IsInRole("Escritorio")  || User.IsInRole("Admin"))
+                {
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">
                                 Recursos Humanos
@@ -330,8 +344,10 @@
                                     </a>
                                 </p>
                             </div>
+                                                </div>
+                }
                         </div>
-                    </div>
+
                 }
                 <div class="navbar-end">
                     @if (User.Identity.IsAuthenticated)
