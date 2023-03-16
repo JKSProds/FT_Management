@@ -48,7 +48,7 @@
                             res.Add(result[i].ToString());
                         }
                     }
-
+                    if (res.Count < 4) res.Add("");
                 }
                 conn.Close();
             }
@@ -720,34 +720,19 @@
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Intervencao_Gera ";
 
-                conn.Open();
+                SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
+                SQL_Query += "@STAMP_PA = '" + fo.StampFO + "', ";
+                SQL_Query += "@HORA_INI = '" + i.HoraInicio.ToShortTimeString() + "', ";
+                SQL_Query += "@HORA_FIM = '" + i.HoraFim.ToShortTimeString() + "', ";
+                SQL_Query += "@DATA = '" + i.DataServiço.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@RELATORIO = '" + i.RelatorioServico + "', ";
+                SQL_Query += "@QASSINOU = '" + fo.ConferidoPor + "', ";
+                SQL_Query += "@TECNICO = '" + i.IdTecnico + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + i.NomeTecnico + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_Intervencao_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
-                command.Parameters.Add(new SqlParameter("@HORA_INI", i.HoraInicio.ToShortTimeString()));
-                command.Parameters.Add(new SqlParameter("@HORA_FIM", i.HoraFim.ToShortTimeString()));
-                command.Parameters.Add(new SqlParameter("@DATA", i.DataServiço.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@RELATORIO", i.RelatorioServico));
-                command.Parameters.Add(new SqlParameter("@QASSINOU", fo.ConferidoPor));
-                command.Parameters.Add(new SqlParameter("@TECNICO", i.IdTecnico));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.NomeTecnico));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
 
                 return res;
             }
@@ -764,33 +749,18 @@
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_AT_INSERE_PECA ";
 
-                conn.Open();
+                SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
+                SQL_Query += "@STAMP_PA = '" + fo.StampFO + "', ";
+                SQL_Query += "@STAMP_MH = '" + i.StampIntervencao + "', ";
+                SQL_Query += "@REF = '" + p.Ref_Produto + "', ";
+                SQL_Query += "@QTT = '" + p.Stock_Fisico + "', ";
+                SQL_Query += "@SERIE = '" + "" + "', ";
+                SQL_Query += "@TECNICO = '" + i.IdTecnico + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + i.NomeTecnico + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_AT_INSERE_PECA", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
-                command.Parameters.Add(new SqlParameter("@STAMP_MH", i.StampIntervencao));
-                command.Parameters.Add(new SqlParameter("@REF", p.Ref_Produto));
-                command.Parameters.Add(new SqlParameter("@QTT", p.Stock_Fisico));
-                command.Parameters.Add(new SqlParameter("@SERIE", ""));
-                command.Parameters.Add(new SqlParameter("@TECNICO", i.IdTecnico));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.NomeTecnico));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
 
                 return res;
             }
@@ -822,8 +792,6 @@
                 a.NomeFicheiro = a.ObterNomeUnico() + ".png";
                 IFormFile file = new FormFile(stream, 0, bytes.Length, a.NomeFicheiro.Split(".").First(), a.NomeFicheiro);
 
-
-
                 if (FicheirosContext.CriarAnexoAssinatura(a, file)) res = CriarAnexoMarcacao(a);
                 if (res.Length == 0) return "";
             }
@@ -840,40 +808,25 @@
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Gera_AT ";
 
-                conn.Open();
+                SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
+                SQL_Query += "@STAMP_PA = '" + fo.StampFO + "', ";
+                SQL_Query += "@STAMPS_MH = '" + string.Join(",", fo.IntervencaosServico.Select(x => x.StampIntervencao)) + "', ";
+                SQL_Query += "@STAMP_ASSINATURA = '" + CriarAssinatura(fo) + "', ";
+                SQL_Query += "@QASSINOU = '" + fo.ConferidoPor + "', ";
+                SQL_Query += "@GARANTIA = '" + (fo.EmGarantia ? "1" : "0") + "', ";
+                SQL_Query += "@INSTALACAO = '" + (fo.Instalação ? "1" : "0") + "', ";
+                SQL_Query += "@OFICINA = '" + (fo.RecolhaOficina ? "1" : "0") + "', ";
+                SQL_Query += "@REMOTO = '" + (fo.AssistenciaRemota ? "1" : "0") + "', ";
+                SQL_Query += "@PIQUETE = '" + (fo.Piquete ? "1" : "0") + "', ";
+                SQL_Query += "@DESLOCACAO = '" + (fo.CobrarDeslocacao ? "1" : "0") + "', ";
+                SQL_Query += "@OBS = '" + fo.SituacoesPendentes + "', ";
+                SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_AT_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", fo.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@STAMP_PA", fo.StampFO));
-                command.Parameters.Add(new SqlParameter("@STAMPS_MH", string.Join(",", fo.IntervencaosServico.Select(x => x.StampIntervencao))));
-                command.Parameters.Add(new SqlParameter("@STAMP_ASSINATURA", CriarAssinatura(fo)));
-                command.Parameters.Add(new SqlParameter("@QASSINOU", fo.ConferidoPor));
-                command.Parameters.Add(new SqlParameter("@GARANTIA", fo.EmGarantia ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@INSTALACAO", fo.Instalação ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@OFICINA", fo.RecolhaOficina ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@REMOTO", fo.AssistenciaRemota ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@PIQUETE", fo.Piquete ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@DESLOCACAO", fo.CobrarDeslocacao ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@OBS", fo.SituacoesPendentes));
-                command.Parameters.Add(new SqlParameter("@DATA", fo.DataServico.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@TECNICO", fo.Utilizador.IdPHC));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", fo.Utilizador.NomeCompleto));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -1232,58 +1185,46 @@
         #region MARCACOES
         public int CriarMarcacao(Marcacao m)
         {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_Marcacao_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
                 m.DataMarcacao = m.DatasAdicionaisDistintas.First();
+                string SQL_Query = "EXEC WEB_Marcacao_Gera ";
 
-                command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
-                command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
-                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
-                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
-                command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
-                command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
-                command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@DATA", m.DataMarcacao.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@MDATAS", string.Join(";", m.DatasAdicionaisDistintas.Select(x => x.ToString("yyyyMMdd")))));
-                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "")));
-                command.Parameters.Add(new SqlParameter("@PRIORIDADE", m.PrioridadeMarcacao));
-                command.Parameters.Add(new SqlParameter("@TIPOS", m.TipoServico));
-                command.Parameters.Add(new SqlParameter("@TIPOE", m.TipoEquipamento));
-                command.Parameters.Add(new SqlParameter("@TIPOPEDIDO", m.TipoPedido));
-                command.Parameters.Add(new SqlParameter("@NINCIDENTE", m.Referencia));
-                command.Parameters.Add(new SqlParameter("@QPEDIU", m.QuemPediuNome));
-                command.Parameters.Add(new SqlParameter("@RESPTLM", m.QuemPediuTelefone));
-                command.Parameters.Add(new SqlParameter("@RESPEMAIL", m.QuemPediuEmail));
-                command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
-                command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
+                SQL_Query += "@NO = '" + m.Cliente.IdCliente + "', ";
+                SQL_Query += "@ESTAB = '" + m.Cliente.IdLoja + "', ";
+                SQL_Query += "@TECNICO = '" + m.Tecnico.IdPHC + "', ";
+                SQL_Query += "@TECNICOS = '" + string.Join(";", m.LstTecnicos.Select(x => x.IdPHC)) + "', ";
+                SQL_Query += "@ESTADO = '" + m.EstadoMarcacaoDesc + "', ";
+                SQL_Query += "@PERIODO = '" + m.Periodo + "', ";
+                SQL_Query += "@DATAPEDIDO = '" + m.DataPedido.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@DATA = '" + m.DataMarcacao.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@MDATAS = '" + string.Join(";", m.DatasAdicionaisDistintas.Select(x => x.ToString("yyyyMMdd"))) + "', ";
+                SQL_Query += "@HORA = '" + (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "") + "', ";
+                SQL_Query += "@PRIORIDADE = '" + m.PrioridadeMarcacao + "', ";
+                SQL_Query += "@TIPOS = '" + m.TipoServico + "', ";
+                SQL_Query += "@TIPOE = '" + m.TipoEquipamento + "', ";
+                SQL_Query += "@TIPOPEDIDO = '" + m.TipoPedido + "', ";
+                SQL_Query += "@NINCIDENTE = '" + m.Referencia + "', ";
+                SQL_Query += "@QPEDIU = '" + m.QuemPediuNome + "', ";
+                SQL_Query += "@RESPTLM = '" + m.QuemPediuTelefone + "', ";
+                SQL_Query += "@RESPEMAIL = '" + m.QuemPediuEmail + "', ";
+                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao + "', ";
+                SQL_Query += "@PIQUETE = '" + (m.Piquete ? "1" : "0") + "', ";
+                SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
 
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
+                res = ExecutarQuery(SQL_Query);
 
-                if (result[0].ToString() != "-1")
+                if (res[0].ToString() != "-1")
                 {
-                    m.IdMarcacao = int.Parse(result[3].ToString());
+                    m.IdMarcacao = int.Parse(res[3]);
 
                     if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico) && m.LstTecnicos.Where(t => t.Id == m.Utilizador.Id).Count() == 0) ChatContext.EnviarNotificacaoMarcacaoTecnico(m, m.Tecnico);
                     if (NotificacaoContext.NotificacaoAutomaticaEmail(m.Tecnico)) MailContext.EnviarEmailMarcacaoTecnico(m.Tecnico.EmailUtilizador, m, m.Tecnico.NomeCompleto);
                     if (NotificacaoContext.NotificacaoClienteIndustrial(m.Cliente) && m.Cliente.Vendedor.Id > 0) MailContext.EnviarEmailMarcacaoCliente(m.Cliente.Vendedor.EmailUtilizador, m, null);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação criada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
                 }
-
-                conn.Close();
-
-
             }
 
             catch (Exception ex)
@@ -1295,62 +1236,50 @@
         }
         public bool AtualizaMarcacao(Marcacao m)
         {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
-
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_Marcacao_Altera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
                 m.DataMarcacao = m.DatasAdicionaisDistintas.First();
+                string SQL_Query = "EXEC WEB_Marcacao_Altera ";
 
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", m.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@NO", m.Cliente.IdCliente));
-                command.Parameters.Add(new SqlParameter("@ESTAB", m.Cliente.IdLoja));
-                command.Parameters.Add(new SqlParameter("@TECNICO", m.Tecnico.IdPHC));
-                command.Parameters.Add(new SqlParameter("@TECNICOS", string.Join(";", m.LstTecnicos.Select(x => x.IdPHC))));
-                command.Parameters.Add(new SqlParameter("@ESTADO", m.EstadoMarcacaoDesc));
-                command.Parameters.Add(new SqlParameter("@PERIODO", m.Periodo));
-                command.Parameters.Add(new SqlParameter("@DATAPEDIDO", m.DataPedido.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@MDATAS", string.Join(";", m.DatasAdicionaisDistintas.Select(x => x.ToString("yyyyMMdd")))));
-                command.Parameters.Add(new SqlParameter("@DATA", m.DataMarcacao.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@HORA", (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "")));
-                command.Parameters.Add(new SqlParameter("@PRIORIDADE", m.PrioridadeMarcacao));
-                command.Parameters.Add(new SqlParameter("@TIPOS", m.TipoServico));
-                command.Parameters.Add(new SqlParameter("@TIPOE", m.TipoEquipamento));
-                command.Parameters.Add(new SqlParameter("@TIPOPEDIDO", m.TipoPedido));
-                command.Parameters.Add(new SqlParameter("@NINCIDENTE", m.Referencia));
-                command.Parameters.Add(new SqlParameter("@QPEDIU", m.QuemPediuNome));
-                command.Parameters.Add(new SqlParameter("@RESPTLM", m.QuemPediuTelefone));
-                command.Parameters.Add(new SqlParameter("@RESPEMAIL", m.QuemPediuEmail));
-                command.Parameters.Add(new SqlParameter("@RESUMO", m.ResumoMarcacao));
-                command.Parameters.Add(new SqlParameter("@PIQUETE", m.Piquete ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@OFICINA ", m.Oficina ? 1 : 0));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", m.Utilizador.NomeCompleto));
-                command.Parameters.Add(new SqlParameter("@JUSTFECHO", m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho));
-                command.Parameters.Add(new SqlParameter("@TECFECHO", m.Utilizador.NomeCompleto));
+                SQL_Query += "@U_MARCACAOSTAMP = '" + m.MarcacaoStamp + "', ";
+                SQL_Query += "@NO = '" + m.Cliente.IdCliente + "', ";
+                SQL_Query += "@ESTAB = '" + m.Cliente.IdLoja + "', ";
+                SQL_Query += "@TECNICO = '" + m.Tecnico.IdPHC + "', ";
+                SQL_Query += "@TECNICOS = '" + string.Join(";", m.LstTecnicos.Select(x => x.IdPHC)) + "', ";
+                SQL_Query += "@ESTADO = '" + m.EstadoMarcacaoDesc + "', ";
+                SQL_Query += "@PERIODO = '" + m.Periodo + "', ";
+                SQL_Query += "@DATAPEDIDO = '" + m.DataPedido.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@DATA = '" + m.DataMarcacao.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@MDATAS = '" + string.Join(";", m.DatasAdicionaisDistintas.Select(x => x.ToString("yyyyMMdd"))) + "', ";
+                SQL_Query += "@HORA = '" + (!String.IsNullOrEmpty(m.Hora) ? (m.Hora == "00:00" ? "" : DateTime.Parse(m.Hora).ToString("HHmm")) : "") + "', ";
+                SQL_Query += "@PRIORIDADE = '" + m.PrioridadeMarcacao + "', ";
+                SQL_Query += "@TIPOS = '" + m.TipoServico + "', ";
+                SQL_Query += "@TIPOE = '" + m.TipoEquipamento + "', ";
+                SQL_Query += "@TIPOPEDIDO = '" + m.TipoPedido + "', ";
+                SQL_Query += "@NINCIDENTE = '" + m.Referencia + "', ";
+                SQL_Query += "@QPEDIU = '" + m.QuemPediuNome + "', ";
+                SQL_Query += "@RESPTLM = '" + m.QuemPediuTelefone + "', ";
+                SQL_Query += "@RESPEMAIL = '" + m.QuemPediuEmail + "', ";
+                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao + "', ";
+                SQL_Query += "@PIQUETE = '" + (m.Piquete ? "1" : "0") + "', ";
+                SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
+                SQL_Query += "@JUSTFECHO = '" + (m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho) + "', ";
+                SQL_Query += "@TECFECHO = '" + m.Utilizador.NomeCompleto + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
 
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
+                res = ExecutarQuery(SQL_Query);
 
-                string resp = result[0].ToString();
-
-                if (resp != "-1")
+                if (res[0] != "-1")
                 {
                     if (NotificacaoContext.NotificacaoAutomaticaNextcloud(m.Tecnico) && m.LstTecnicos.Where(t => t.Id == m.Utilizador.Id).Count() == 0) ChatContext.EnviarNotificacaoAtualizacaoMarcacaoTecnico(m, m.Tecnico);
                     FT_ManagementContext.AdicionarLog(m.Utilizador.Id, "Marcação atualizada com sucesso! - Nº " + m.IdMarcacao + ", " + m.Cliente.NomeCliente + " pelo utilizador " + m.Utilizador.NomeCompleto, 5);
-                    conn.Close();
                     return true;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel atualizar a marcacao para o PHC!\r\n(Exception: " + ex.Message + ")");
-                return false;
             }
 
             return false;
@@ -1435,37 +1364,28 @@
         }
         public string CriarAnexoMarcacao(MarcacaoAnexo a)
         {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Anexo_Gera ";
 
-                conn.Open();
+                SQL_Query += "@U_MARCACAOSTAMP = '" + a.MarcacaoStamp + "', ";
+                SQL_Query += "@NOME_FICHEIRO = '" + a.NomeFicheiro + "', ";
+                SQL_Query += "@MARCACAO = '" + (a.AnexoMarcacao ? "1" : "0") + "', ";
+                SQL_Query += "@ASSINATURA = '" + (a.AnexoAssinatura ? "1" : "0") + "', ";
+                SQL_Query += "@INSTALACAO = '" + (a.AnexoInstalacao ? "1" : "0") + "', ";
+                SQL_Query += "@PECA = '" + (a.AnexoPeca ? "1" : "0") + "', ";
+                SQL_Query += "@EMAIL = '" + (a.AnexoEmail ? "1" : "0") + "', ";
+                SQL_Query += "@REF = '" + a.RefPeca + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + a.NomeUtilizador + "', ";
+                SQL_Query += "@TITULO = '" + a.ObterNomeLegivel() + "', ";
+                SQL_Query += "@OUSRDATA = '" + DateTime.Now.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@OUSRHORA = '" + DateTime.Now.ToShortTimeString() + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_Anexo_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
+                res = ExecutarQuery(SQL_Query);
 
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", a.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@NOME_FICHEIRO", a.NomeFicheiro));
-                command.Parameters.Add(new SqlParameter("@MARCACAO", a.AnexoMarcacao ? "1" : "0"));
-                command.Parameters.Add(new SqlParameter("@ASSINATURA", a.AnexoAssinatura ? "1" : "0"));
-                command.Parameters.Add(new SqlParameter("@INSTALACAO", a.AnexoInstalacao ? "1" : "0"));
-                command.Parameters.Add(new SqlParameter("@PECA", a.AnexoPeca ? "1" : "0"));
-                command.Parameters.Add(new SqlParameter("@EMAIL", a.AnexoEmail ? "1" : "0"));
-                command.Parameters.Add(new SqlParameter("@REF", a.RefPeca));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", a.NomeUtilizador));
-                command.Parameters.Add(new SqlParameter("@TITULO", a.ObterNomeLegivel()));
-                command.Parameters.Add(new SqlParameter("@OUSRDATA", DateTime.Now.ToString("yyyyMMdd")));
-                command.Parameters.Add(new SqlParameter("@OUSRHORA", DateTime.Now.ToShortTimeString()));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                string resp = result[2].ToString();
-
-                if (resp != "-1") return resp;
+                if (res[2] != "-1") return res[2];
             }
             catch (Exception ex)
             {
@@ -1475,26 +1395,16 @@
         }
         public bool ApagarAnexoMarcacao(MarcacaoAnexo a)
         {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Anexo_Apaga ";
 
-                conn.Open();
+                SQL_Query += "@STAMP = '" + a.AnexoStamp + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_Anexo_Apaga", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
+                res = ExecutarQuery(SQL_Query);
 
-                command.Parameters.Add(new SqlParameter("STAMP", a.AnexoStamp));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                string resp = result[0].ToString();
-
-                if (resp != "-1") return true;
+                if (res[0] != "-1") return true;
 
             }
             catch (Exception ex)
@@ -2191,32 +2101,21 @@
 
         public bool CriarComentarioMarcacao(Comentario c)
         {
-            bool res = false;
+            bool result = false;
+
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Comentario_Gera ";
 
-                conn.Open();
+                SQL_Query += "@U_MARCACAOSTAMP = '" + c.Marcacao.MarcacaoStamp + "', ";
+                SQL_Query += "@COMENTARIO = '" + (c.Descricao.Length > 4000 ? c.Descricao.Remove(4000) : c.Descricao) + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + c.Utilizador.NomeCompleto + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_Comentario_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
+                res = ExecutarQuery(SQL_Query);
 
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", c.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@COMENTARIO", c.Descricao.Length > 4000 ? c.Descricao.Remove(4000) : c.Descricao));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", c.Utilizador.NomeCompleto));
-                //command.Parameters.Add(new SqlParameter("@TECNICO", c.DataComentario.ToString()));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res = (result[0].ToString() != "-1");
-
-                conn.Close();
-
+                result = (res[0].ToString() != "-1");
                 FT_ManagementContext.AdicionarLog(c.Utilizador.Id, "Comentário adicionado com sucesso pelo utilizador " + c.Utilizador.NomeCompleto + " à marcação Nº " + c.Marcacao.IdMarcacao + " do cliente " + c.Marcacao.Cliente.NomeCliente, 5);
 
             }
@@ -2226,7 +2125,7 @@
                 Console.WriteLine("Não foi possivel criar o comentário para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return res;
+            return result;
         }
         private List<Comentario> ObterComentariosMarcacao(string SQL_Query)
         {
@@ -2412,31 +2311,18 @@
         #region Picking
         public string CriarPicking(string BO_STAMP, string NomeUtilizador)
         {
-            string res = "0";
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Picking_Gera ";
 
-                conn.Open();
+                SQL_Query += "@STAMP = '" + BO_STAMP + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + NomeUtilizador + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_Picking_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
+                res = ExecutarQuery(SQL_Query);
 
-                command.Parameters.Add(new SqlParameter("@STAMP", BO_STAMP));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", NomeUtilizador));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                if (result[0].ToString() != "-1")
-                {
-                    res = result[2].ToString();
-                }
-
-                conn.Close();
+                if (res[0] != "-1") return res[2];
             }
 
             catch (Exception ex)
@@ -2444,37 +2330,23 @@
                 Console.WriteLine("Não foi possivel enviar picking para o PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return res;
+            return "0";
         }
         public string FecharPicking(Picking p)
         {
-            string res = "0";
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Picking_Fecha ";
 
-                conn.Open();
+                SQL_Query += "@STAMP = '" + p.Picking_Stamp + "', ";
+                SQL_Query += "@ARMAZEMSTAMP = '" + p.ArmazemDestino.ArmazemStamp + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + p.EditadoPor + "'; ";
 
-                SqlCommand command = new SqlCommand("WEB_Picking_Fecha", conn)
-                {
-                    CommandTimeout = 120,
-                    CommandType = CommandType.StoredProcedure
-                };
+                res = ExecutarQuery(SQL_Query);
 
-                command.Parameters.Add(new SqlParameter("@STAMP", p.Picking_Stamp));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", p.EditadoPor));
-                command.Parameters.Add(new SqlParameter("@ARMAZEMSTAMP", p.ArmazemDestino.ArmazemStamp));
-                //command.Parameters.Add(new SqlParameter("@OBS", p.Obs));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                if (result[0].ToString() != "-1")
-                {
-                    res = result[0].ToString();
-                }
-
-                conn.Close();
+                if (res[0] != "-1") return res[0];
             }
 
             catch (Exception ex)
@@ -2482,7 +2354,7 @@
                 Console.WriteLine("Não foi possivel fechar o picking no PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return res;
+            return "0";
         }
         public Picking ObterPicking(string PI_STAMP)
         {
@@ -2633,38 +2505,22 @@
         }
         public List<string> AtualizarLinhaPicking(Linha_Picking linha)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
             try
             {
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                string SQL_Query = "EXEC WEB_Picking_Atualiza_Linha ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_Picking_Atualiza_Linha", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@STAMP", linha.Picking_Linha_Stamp));
-                command.Parameters.Add(new SqlParameter("@QTT", linha.Qtd_Linha));
+                SQL_Query += "@STAMP = '" + linha.Picking_Linha_Stamp + "', ";
+                SQL_Query += "@QTT = '" + linha.Qtd_Linha + "', ";
                 if (linha.Serie)
                 {
-                    command.Parameters.Add(new SqlParameter("@SERIE", linha.Lista_Ref.First().NumSerie));
-                    command.Parameters.Add(new SqlParameter("@BOMASTAMP", linha.Lista_Ref.First().BOMA_STAMP));
+                    SQL_Query += "@SERIE = '" + linha.Lista_Ref.First().NumSerie + "', ";
+                    SQL_Query += "@BOMASTAMP = '" + linha.Lista_Ref.First().BOMA_STAMP + "', ";
                 }
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", linha.EditadoPor));
+                SQL_Query += "@NOME_UTILIZADOR = '" + linha.EditadoPor + "'; ";
 
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = res[0] == "1" ? "" : result[1].ToString();
-                res[2] = result[2].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -2730,32 +2586,16 @@
 
         public List<string> CriarInventario(int ID_ARMAZEM, string NomeUtilizador)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_INV_Gera ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@ARMAZEM = '" + ID_ARMAZEM + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + NomeUtilizador + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_INV_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@ARMAZEM", ID_ARMAZEM));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", NomeUtilizador));
-
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -2768,34 +2608,17 @@
         public List<string> CriarLinhaInventario(Linha_Picking l)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_INV_CRIA_LINHA ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@STAMP = '" + l.Picking_Linha_Stamp + "', ";
+                SQL_Query += "@REF = '" + l.Ref_linha + "', ";
+                SQL_Query += "@QTT = '" + l.Qtd_Linha + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + l.EditadoPor + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_INV_CRIA_LINHA", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@STAMP", l.Picking_Linha_Stamp));
-                command.Parameters.Add(new SqlParameter("@REF", l.Ref_linha));
-                command.Parameters.Add(new SqlParameter("@QTT", l.Qtd_Linha));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.EditadoPor));
-
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-                res[3] = result[3].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -2807,36 +2630,18 @@
         }
         public List<string> CriarSerieLinhaInventario(Ref_Linha_Picking l)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "", "", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_INV_CRIA_LINHA_SERIE ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@STAMP_LIN = '" + l.Picking_Linha_Stamp + "', ";
+                SQL_Query += "@STAMP = '" + l.BOMA_STAMP + "', ";
+                SQL_Query += "@SERIE = '" + l.NumSerie + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + l.CriadoPor + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_INV_CRIA_LINHA_SERIE", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
-                command.Parameters.Add(new SqlParameter("@STAMP", l.BOMA_STAMP));
-                command.Parameters.Add(new SqlParameter("@SERIE", l.NumSerie));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
-
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-                res[3] = result[3].ToString();
-                res[4] = result[4].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -2849,31 +2654,16 @@
 
         public List<string> ApagarLinhaInventario(Ref_Linha_Picking l)
         {
-            List<string> res = new List<string>() { "-1", "Erro" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_INV_Apaga_Linha ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@STAMP_LIN = '" + l.Picking_Linha_Stamp + "', ";
+                SQL_Query += "@STAMP = '" + l.BOMA_STAMP + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_INV_Apaga_Linha", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
-                command.Parameters.Add(new SqlParameter("@STAMP", l.BOMA_STAMP));
-
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -2886,31 +2676,18 @@
 
         public List<string> ApagarLinhaSerieInventario(string stamp, Ref_Linha_Picking l)
         {
-            List<string> res = new List<string>() { "-1", "Erro" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_INV_APAGA_LINHA_SERIE ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@STAMP = '" + stamp + "', ";
+                SQL_Query += "@STAMP_LIN = '" + l.Picking_Linha_Stamp + "', ";
+                SQL_Query += "@STAMP_BOMA = '" + l.BOMA_STAMP + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + l.CriadoPor + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_INV_APAGA_LINHA_SERIE", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.Add(new SqlParameter("@STAMP", stamp));
-                command.Parameters.Add(new SqlParameter("@STAMP_LIN", l.Picking_Linha_Stamp));
-                command.Parameters.Add(new SqlParameter("@STAMP_BOMA", l.BOMA_STAMP));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -3182,29 +2959,16 @@
 
         public List<string> FecharInventario(Picking i)
         {
-            List<string> res = new List<string>() { "-1", "Erro" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_INV_Fecha ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@STAMP = '" + i.Picking_Stamp + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + i.EditadoPor + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_INV_Fecha", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.Add(new SqlParameter("@STAMP", i.Picking_Stamp));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", i.EditadoPor));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -3349,33 +3113,19 @@
 
         public List<string> CriarDossier(Dossier d)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "" };
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_Dossier_Gera ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@SERIE = '" + d.Serie + "', ";
+                SQL_Query += "@U_MARCACAOSTAMP = '" + d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp + "', ";
+                SQL_Query += "@STAMP_PA = '" + d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + d.EditadoPor + "', ";
+                SQL_Query += "@IDTECNICO = '" + d.Tecnico.IdPHC + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_Dossier_Gera", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.Add(new SqlParameter("@SERIE", d.Serie));
-                command.Parameters.Add(new SqlParameter("@U_MARCACAOSTAMP", d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp));
-                command.Parameters.Add(new SqlParameter("@STAMP_PA", d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", d.EditadoPor));
-                command.Parameters.Add(new SqlParameter("@IDTECNICO", d.Tecnico.IdPHC));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -3389,33 +3139,18 @@
         public List<string> CriarLinhaDossier(Linha_Dossier l)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_Dossier_Cria_Linha ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@STAMP = '" + l.Stamp_Dossier + "', ";
+                SQL_Query += "@REF = '" + l.Referencia + "', ";
+                SQL_Query += "@DESIGN = '" + l.Designacao + "', ";
+                SQL_Query += "@QTT = '" + l.Quantidade + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + l.CriadoPor + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_Dossier_Cria_Linha", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.Add(new SqlParameter("@STAMP", l.Stamp_Dossier));
-                command.Parameters.Add(new SqlParameter("@REF", l.Referencia));
-                command.Parameters.Add(new SqlParameter("@DESIGN", l.Designacao));
-                command.Parameters.Add(new SqlParameter("@QTT", l.Quantidade));
-                command.Parameters.Add(new SqlParameter("@NOME_UTILIZADOR", l.CriadoPor));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-                res[3] = result[3].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -3428,30 +3163,15 @@
         public List<string> ApagarLinhaDossier(string STAMP_DOSSIER, string STAMP_LINHA)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
             try
             {
+                string SQL_Query = "EXEC WEB_Dossier_Apaga_Linha ";
 
-                SqlConnection conn = new SqlConnection(ConnectionString);
+                SQL_Query += "@STAMP = '" + STAMP_DOSSIER + "', ";
+                SQL_Query += "@STAMP_LIN = '" + STAMP_LINHA + "'; ";
 
-                conn.Open();
-
-                SqlCommand command = new SqlCommand("WEB_Dossier_Apaga_Linha", conn)
-                {
-                    CommandTimeout = TIMEOUT,
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.Add(new SqlParameter("@STAMP", STAMP_DOSSIER));
-                command.Parameters.Add(new SqlParameter("@STAMP_LIN", STAMP_LINHA));
-
-                using SqlDataReader result = command.ExecuteReader();
-                result.Read();
-
-                res[0] = result[0].ToString();
-                res[1] = result[1].ToString();
-                res[2] = result[2].ToString();
-                res[3] = result[3].ToString();
-
-                conn.Close();
+                res = ExecutarQuery(SQL_Query);
             }
 
             catch (Exception ex)
@@ -3808,7 +3528,7 @@
                             StampDossier = result["fostamp"].ToString().Trim(),
                             NomeDossier = "Compras",
                             IdDossier = int.Parse(result["foid"].ToString()),
-                            Referencia = result["adoc"].ToString(),
+                            Referencia = result["adoc"].ToString().Trim(),
                             DataDossier = DateTime.Parse(result["data"].ToString()),
                             Serie = 0,
                             Cliente = ObterFornecedorCliente(int.Parse(result["no"].ToString())),

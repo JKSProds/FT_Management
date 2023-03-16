@@ -195,7 +195,6 @@ else
                 $(function () {
                     document.getElementById("Anexo_" + stamp).parentNode.removeChild(document.getElementById("Anexo_" + stamp));
                     notify("Ficheiro apagado com sucesso!");
-                    document.getElementById('btnApagarAnexo_' + stamp).classList.remove("is-loading");
                 });
             },
             error: function (response) {
