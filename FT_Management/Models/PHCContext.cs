@@ -3528,7 +3528,7 @@
                             StampDossier = result["fostamp"].ToString().Trim(),
                             NomeDossier = "Compras",
                             IdDossier = int.Parse(result["foid"].ToString()),
-                            Referencia = result["adoc"].ToString(),
+                            Referencia = result["adoc"].ToString().Trim(),
                             DataDossier = DateTime.Parse(result["data"].ToString()),
                             Serie = 0,
                             Cliente = ObterFornecedorCliente(int.Parse(result["no"].ToString())),
