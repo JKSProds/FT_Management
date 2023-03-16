@@ -653,11 +653,11 @@
             {
                 string SQL_Query = "EXEC WEB_PAT_Gera ";
 
-                SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "'; ";
-                SQL_Query += "@MASTAMP = '" + fo.EquipamentoServico.EquipamentoStamp + "'; ";
-                SQL_Query += "@ESTADO = '" + fo.EstadoFolhaObra + "'; ";
-                SQL_Query += "@OFICINA = '" + fo.RecolhaOficina + "'; ";
-                SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "'; ";
+                SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
+                SQL_Query += "@MASTAMP = '" + fo.EquipamentoServico.EquipamentoStamp + "', ";
+                SQL_Query += "@ESTADO = '" + fo.EstadoFolhaObra + "', ";
+                SQL_Query += "@OFICINA = '" + fo.RecolhaOficina + "', ";
+                SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
