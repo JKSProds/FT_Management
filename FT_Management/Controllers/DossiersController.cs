@@ -255,7 +255,7 @@
             };
 
             res = phccontext.CriarAnexo(a, file);
-
+            if (res[0] == "-1") return StatusCode(500);
             return Ok();
         }
     }
