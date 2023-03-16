@@ -91,13 +91,15 @@ namespace FT_Management.Controllers
             if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             if ((fo.EstadoFolhaObra == 4 || fo.EmGarantia) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Necessita de preencher as observações internas!");
+            fo.ValidarIntervencoes();
+            if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
 
             if (ModelState.IsValid)
             {
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
                 fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
-                fo.ValidarIntervencoes();
+
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
                 fo.ValidarTipoFolhaObra();
 
@@ -140,7 +142,7 @@ namespace FT_Management.Controllers
                 ModelState.AddModelError("", res[1]);
             }
 
-            ModelState.AddModelError("", string.Join(" ", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)));
+            ModelState.AddModelError("", string.Join("\r\n", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)));
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 
