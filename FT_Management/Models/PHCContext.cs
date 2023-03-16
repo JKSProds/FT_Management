@@ -808,7 +808,7 @@
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-                string SQL_Query = "EXEC WEB_AT_INSERE_PECA ";
+                string SQL_Query = "EXEC WEB_Gera_AT ";
 
                 SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
                 SQL_Query += "@STAMP_PA = '" + fo.StampFO + "', ";
