@@ -260,5 +260,20 @@
             if (res[0] == "-1") return StatusCode(500);
             return Ok();
         }
+
+        //Apagar Anexo
+        [HttpDelete]
+        public ActionResult Anexo(string id, bool apagar)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (id != null)
+            {
+                Anexo a = phccontext.ObterAnexoDossier(id);
+                if (phccontext.ApagarAnexo(id)) return FicheirosContext.ApagarAnexo(a.LocalizacaoFicheiro) ? Ok() : StatusCode(500);
+            }
+
+            return StatusCode(500);
+        }
     }
 }

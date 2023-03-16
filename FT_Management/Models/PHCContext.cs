@@ -3480,6 +3480,7 @@
 
                 if (int.Parse(res[0]) < 0) return res;
                 res[0] = string.IsNullOrEmpty(FicheirosContext.CriarAnexo(res[3], a.Nome, file)) ? "-1" : "1";
+                if (res[0] == "-1") ApagarAnexo(res[2]);
             }
 
             catch (Exception ex)
@@ -3488,6 +3489,27 @@
             }
 
             return res;
+        }
+
+        public bool ApagarAnexo(string Stamp_Anexo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+                string SQL_Query = "EXEC WEB_Anexo_Apaga ";
+
+                SQL_Query += "@STAMP = '" + Stamp_Anexo + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+
+                return res[0] != "-1";
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel apagar o anexo do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return false;
         }
 
         public List<Anexo> ObterAnexosDossier(string stamp)
