@@ -229,6 +229,8 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            if (file == null) return StatusCode(500);
+
             string extensao = (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
 
             if (string.IsNullOrEmpty(id))
