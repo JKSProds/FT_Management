@@ -48,7 +48,7 @@
                             res.Add(result[i].ToString());
                         }
                     }
-
+                    if (res.Count < 4) res.Add("");
                 }
                 conn.Close();
             }
