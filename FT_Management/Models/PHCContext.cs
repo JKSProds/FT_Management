@@ -45,7 +45,7 @@
                     {
                         for (int i = 0; i < result.FieldCount; i++)
                         {
-                            if (res.Count() >= i)
+                            if (res.Count() <= i)
                             {
                                 res.Add(result[i].ToString());
                             }
