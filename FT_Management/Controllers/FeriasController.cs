@@ -238,12 +238,12 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Forbid();
 
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            Utilizador t = context.ObterUtilizador(IdUtilizador);
+            Utilizador u = context.ObterUtilizador(IdUtilizador);
 
-            _logger.LogDebug("Utilizador {1} [{2}] a descarregar o calendario das ferias do Utilizador: Nome - {3}.", u.NomeCompleto, u.Id, t.NomeCompleto);
+            _logger.LogDebug("Utilizador {1} [{2}] a descarregar o calendario das ferias.", u.NomeCompleto, u.Id);
 
             List<Ferias> LstFerias = context.ObterListaFeriasValidadas();
 
