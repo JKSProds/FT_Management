@@ -69,6 +69,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FolhaObra fo = phccontext.ObterFolhaObra(Id);
 
+            if (fo.StampFO == null) return StatusCode(404);
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");

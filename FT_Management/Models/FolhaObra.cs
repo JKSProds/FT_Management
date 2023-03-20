@@ -115,8 +115,14 @@
 
         public void ValidarIntervencoes()
         {
+
+            if (this.ListaIntervencoes == null)
+            {
+                ListaIntervencoes = "";
+                return;
+            }
+
             this.IntervencaosServico.Clear();
-            if (this.ListaIntervencoes == null) return;
             foreach (var item in this.ListaIntervencoes.Split(";"))
             {
                 if (item != "")

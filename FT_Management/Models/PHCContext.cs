@@ -24,7 +24,7 @@
         }
         public List<string> ExecutarQuery(string SQL_Query)
         {
-            List<string> res = new List<string>();
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
             try
             {
@@ -45,10 +45,16 @@
                     {
                         for (int i = 0; i < result.FieldCount; i++)
                         {
-                            res.Add(result[i].ToString());
+                            if (res.Count() <= i)
+                            {
+                                res.Add(result[i].ToString());
+                            }
+                            else
+                            {
+                                res[i] = result[i].ToString();
+                            }
                         }
                     }
-                    if (res.Count < 4) res.Add("");
                 }
                 conn.Close();
             }
