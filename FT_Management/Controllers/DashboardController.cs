@@ -44,6 +44,7 @@
             _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard dos Utilizadores.", u.NomeCompleto, u.Id);
 
             ViewData["API"] = Api;
+            ViewData["Hora"] = context.ObterParam("ShowAcessTime");
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
             List<Ferias> LstFerias = context.ObterListaFerias(DateTime.Parse(DateTime.Now.ToLongDateString() + " 00:00:00"), DateTime.Parse(DateTime.Now.ToLongDateString() + " 23:59:59"));
             foreach (Ferias f in LstFerias)
