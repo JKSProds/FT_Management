@@ -11,7 +11,7 @@
   {
     <div class="column is-3" onclick="AbrirModal(@u.Id, '@u.NomeCompleto')">
       <div
-        class='card @(u.Aniversario || u.Ferias ? "has-background-info" : (u.AcessoAtivo ? "has-background-success" : "has-background-danger"))'>
+      class='card @(u.Aniversario || u.Ferias ? "has-background-info" : (u.AcessoAtivo ? "has-background-success" : "has-background-danger"))'>
         <div class="card-content">
           <div class="media">
             <div class="media-left">
@@ -21,7 +21,8 @@
             </div>
             <div class="media-content">
               <p class="title is-4">@u.NomeCompleto</p>
-              <p class="subtitle is-6">@u.UltimoAcesso.ToShortTimeString()<b>@(u.Aniversario ? " Aniversário" :
+              <p class="subtitle is-6">@(ViewData["Hora"] == "1" ? u.UltimoAcesso.ToShortTimeString() :
+              "")<b>@(u.Aniversario ? " Aniversário" :
                 (u.Ferias ? " Férias" : ""))
                 </b>
               </p>
