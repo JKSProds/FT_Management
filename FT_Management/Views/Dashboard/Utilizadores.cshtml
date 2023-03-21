@@ -21,7 +21,7 @@
             </div>
             <div class="media-content">
               <p class="title is-4">@u.NomeCompleto</p>
-              <p class="subtitle is-6">@(ViewData["Hora"] == "1" ? u.UltimoAcesso.ToShortTimeString() :
+              <p class="subtitle is-6">@(ViewData["Hora"].ToString() == "1" ? u.UltimoAcesso.ToShortTimeString() :
               "")<b>@(u.Aniversario ? " Aniversário" :
                 (u.Ferias ? " Férias" : ""))
                 </b>
