@@ -29,6 +29,7 @@
     public class Utilizador
     {
         public int Id { get; set; }
+        public string StampMoradaCargaDescarga { get; set; }
         [Required(ErrorMessage = "O nome de utilizador é obrigatório!")]
         [Display(Name = "Nome de Utilizador")]
         public string NomeUtilizador { get; set; }

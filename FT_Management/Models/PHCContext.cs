@@ -239,6 +239,37 @@
             return ObterArmazens("select * from sz where no='" + num + "' order by no;").FirstOrDefault() ?? new Armazem();
         }
 
+        public string ObterMoradaCargaDescarga(Cliente cl)
+        {
+            string res = "";
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select TOP 1 * from szadrs where szadrsdesc='" + cl.NomeCliente + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    result.Read();
+
+                    res = result["szadrsstamp"].ToString();
+
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel obter a morada de carga ou descarga do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         //NAO FUNCIONA
         public List<Movimentos> ObterListaMovimentos(string SQL_Query)
         {
@@ -272,6 +303,7 @@
                             DataMovimento = DateTime.Parse(DateTime.Parse(result["fdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["fhora"].ToString()).ToShortTimeString()),
                         });
                     }
+                    conn.Close();
                 }
             }
             catch (Exception ex)
@@ -319,7 +351,7 @@
                             EmailCliente = result["emailfo"].ToString().Trim(),
                             IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
                             Vendedor = LstUtilizadores.Where(v => v.IdPHC == int.Parse(result["vendedor"].ToString().Trim())).DefaultIfEmpty(new Utilizador()).First(),
-                            TipoCliente = result["tipo"].ToString().Trim()
+                            TipoCliente = result["tipo"].ToString().Trim(),
                         });
                         if (LoadMarcacoes) LstClientes.Last().Marcacoes = ObterMarcacoesSimples(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
                         if (LoadFolhasObra) LstClientes.Last().FolhasObra = ObterFolhasObra(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
@@ -897,12 +929,12 @@
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
 
-            if (fo.Guia) GerarGuiaTransporte(fo, fo.Marcacao, fo.Utilizador);
+            //if (fo.Guia) GerarGuiaTransporte(fo, fo.Marcacao, fo.Utilizador);
 
             return true;
         }
 
-        public void GerarGuiaTransporte(FolhaObra fo, Marcacao m, Utilizador u)
+        public bool GerarGuiaTransporte(FolhaObra fo, Marcacao m, Utilizador u)
         {
             Dossier d = new Dossier()
             {
@@ -913,22 +945,26 @@
                 Tecnico = u,
             };
 
-            if (fo.TipoFolhaObra == "Externo")
+            if (!fo.Oficina)
             {
-                d.Carga = fo.ClienteServico;
-                d.Descarga = this.ObterClienteSimples(7232, 0);
+                d.StampMoradaCarga = ObterMoradaCargaDescarga(fo.ClienteServico);
+                d.StampMoradaDescarga = u.StampMoradaCargaDescarga;
             }
-            else if (fo.TipoFolhaObra == "Interno")
+            else if (fo.Oficina)
             {
-                d.Descarga = fo.ClienteServico;
-                d.Carga = this.ObterClienteSimples(7232, 0);
+                d.StampMoradaDescarga = ObterMoradaCargaDescarga(fo.ClienteServico);
+                d.StampMoradaCarga = u.StampMoradaCargaDescarga;
             }
 
+            if (string.IsNullOrEmpty(d.StampMoradaCarga) || string.IsNullOrEmpty(d.StampMoradaDescarga) || string.IsNullOrEmpty(fo.EquipamentoServico.RefProduto)) return false;
             d.StampDossier = this.CriarDossier(d)[2].ToString();
             d = this.ObterDossier(d.StampDossier);
 
+            if (string.IsNullOrEmpty(d.StampDossier)) return false;
+
             //Criação de linhas por defeito
-            this.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = fo.EquipamentoServico.RefProduto, Designacao = fo.EquipamentoServico.DesignacaoEquipamento, Quantidade = 1, CriadoPor = fo.Utilizador.Iniciais });
+            this.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = fo.EquipamentoServico.RefProduto, Designacao = fo.EquipamentoServico.DesignacaoEquipamento, Quantidade = 1, Serie = fo.EquipamentoServico.NumeroSerieEquipamento, CriadoPor = u.Iniciais });
+            return true;
         }
 
         public string ValidarFolhaObra(FolhaObra fo)
@@ -3164,10 +3200,10 @@
                 SQL_Query += "@U_MARCACAOSTAMP = '" + (d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp) + "', ";
                 SQL_Query += "@STAMP_PA = '" + (d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO) + "', ";
 
-                if (VerificaDossierAceitaCargaDescarga(d.Serie))
+                if (DossierAceitaCargaDescarga(d.Serie))
                 {
-                    SQL_Query += "@CARGA = '" + d.Carga.ClienteStamp + "', ";
-                    SQL_Query += "@DESCARGA = '" + d.Descarga.ClienteStamp + "', ";
+                    SQL_Query += "@CARGA = '" + d.StampMoradaCarga + "', ";
+                    SQL_Query += "@DESCARGA = '" + d.StampMoradaDescarga + "', ";
                 }
 
                 SQL_Query += "@NOME_UTILIZADOR = '" + d.EditadoPor + "', ";
@@ -3196,6 +3232,7 @@
                 SQL_Query += "@REF = '" + l.Referencia + "', ";
                 SQL_Query += "@DESIGN = '" + l.Designacao + "', ";
                 SQL_Query += "@QTT = '" + l.Quantidade + "', ";
+                SQL_Query += "@SERIE = '" + l.Serie + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + l.CriadoPor + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -3403,7 +3440,7 @@
 
         }
 
-        public bool VerificaDossierAceitaCargaDescarga(int Serie)
+        public bool DossierAceitaCargaDescarga(int Serie)
         {
             bool res = false;
             try
@@ -3413,7 +3450,7 @@
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from ts where Serie=GT and ndos=" + Serie + ";", conn)
+                SqlCommand command = new SqlCommand("select * from ts where tiposaft='GT' and ndos=" + Serie + ";", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };

@@ -66,6 +66,7 @@
         public bool Avisar { get; set; }
         [Display(Name = "Recolher para Oficina")]
         public bool RecolhaOficina { get; set; }
+        public bool Oficina { get { return TipoFolhaObra == "Interno"; } }
         public bool CobrarDeslocacao { get; set; }
         public bool Instalação { get; set; }
         public bool EnviarEmail { get; set; }

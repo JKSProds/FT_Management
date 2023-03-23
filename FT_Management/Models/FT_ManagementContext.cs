@@ -66,6 +66,7 @@ namespace FT_Management.Models
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
                         UltimoAcesso = string.IsNullOrEmpty(result["DataUltimoAcesso"]) ? new DateTime() : result["DataUltimoAcesso"],
                         AcessoAtivo = string.IsNullOrEmpty(result["DataUltimoAcesso"]) ? false : result["TipoUltimoAcesso"] == 1,
+                        StampMoradaCargaDescarga = result["StampMoradaCargaDescarga"],
 #if !DEBUG
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif
@@ -118,6 +119,7 @@ namespace FT_Management.Models
                         ChatToken = result["ChatToken"],
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
                         SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
+                        StampMoradaCargaDescarga = result["StampMoradaCargaDescarga"],
 #if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif

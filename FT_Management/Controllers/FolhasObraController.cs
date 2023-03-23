@@ -108,7 +108,7 @@ namespace FT_Management.Controllers
 
                 Marcacao m = fo.Marcacao;
                 m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-                m.Oficina = fo.RecolhaOficina || (fo.TipoFolhaObra == "Interno" && fo.Guia);
+                m.Oficina = fo.RecolhaOficina || (!fo.Oficina && fo.Guia);
 
                 _logger.LogDebug("Utilizador {1} [{2}] a criar uma nova folha de obra: Id Marcacao - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}, N. Int - {7}, N. Pecas {8}, Estado - {9}.", fo.Utilizador.NomeCompleto, fo.Utilizador.Id, m.IdMarcacao, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto, fo.IntervencaosServico.Count(), fo.PecasServico.Count(), fo.EstadoFolhaObra);
 
