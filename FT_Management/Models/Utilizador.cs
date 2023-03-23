@@ -104,7 +104,11 @@
             this.AcessoAtivo = false;
         }
 
-
+        public List<Marcacao> ObterMarcacoes(DateTime data, bool concluido)
+        {
+            if (concluido) return this.LstMarcacoes.Where(m => m.DataMarcacao.ToShortDateString() == data.ToShortDateString() && (m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado")).ToList();
+            return this.LstMarcacoes.Where(m => m.DataMarcacao.ToShortDateString() == data.ToShortDateString() && (m.EstadoMarcacaoDesc != "Finalizado" && m.EstadoMarcacaoDesc != "Cancelado")).ToList();
+        }
         public string ObterTelemovelFormatado(bool Indicativo)
         {
             string res = "";

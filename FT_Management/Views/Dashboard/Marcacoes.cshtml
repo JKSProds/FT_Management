@@ -11,7 +11,7 @@
             {
                 <div class="column is-6">
                     <div class="card" style="background:@u.CorCalendario;"
-                        onclick="VerViatura(@u.Viatura.Latitude, @u.Viatura.Longitude)">
+                    onclick="VerViatura(@u.Viatura.Latitude, @u.Viatura.Longitude)">
                         <div class="card-content p-4">
                             <div class="media">
                                 <div class="media-left">
@@ -21,7 +21,7 @@
                                 </div>
                                 <div class="media-content">
                                     <div class="columns">
-                                        <div class="column is-9">
+                                        <div class="column">
                                             <p class="title is-size-6">@u.NomeCompleto
                                                 @if (u.Viatura.Matricula != null)
                                                 {
@@ -36,42 +36,106 @@
                                                 }
                                             </p>
                                         </div>
+                                    </div>
+                                    <div class="columns">
                                         <div class="column">
-                                            <div class="b-table is-pulled-right">
+                                            <div class="b-table is-pulled-left">
                                                 <div class="table-wrapper has-mobile-cards" style="width:48px;height:48px">
-                                                    <canvas id="chartMarcacoes_@u.Id"></canvas>
+                                                    <canvas id="chartAnteontem_@u.Id"></canvas>
                                                 </div>
                                             </div>
-                                            <script>
-                                                new Chart(document.getElementById('chartMarcacoes_@u.Id').getContext('2d'), {
-                                                    type: 'doughnut',
-                                                    data: {
-                                                        labels: ['Completo', 'Aberto'],
-                                                        datasets: [{
-                                                            data: [@u.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado").Count(), @u.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc != "Finalizado" && m.EstadoMarcacaoDesc != "Cancelado").Count()],
-                                                            backgroundColor: [
-                                                                'rgba(35, 209, 96, 1)',
-                                                                'rgba(255, 56, 96, 1)'
-                                                            ]
-                                                        }]
-                                                    },
-                                                    options: {
-                                                        plugins: {
-                                                            legend: {
-                                                                display: false
-                                                            },
-                                                            tooltip: {
-                                                                enabled: false
-                                                            }
-                                                        },
-                                                        responsive: true
-                                                    }
-                                                });
-                                            </script>
                                         </div>
+                                        <div class="column">
+                                            <div class="b-table is-pulled-left">
+                                                <div class="table-wrapper has-mobile-cards" style="width:48px;height:48px">
+                                                    <canvas id="chartOntem_@u.Id"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="column">
+                                            <div class="b-table is-pulled-left">
+                                                <div class="table-wrapper has-mobile-cards" style="width:48px;height:48px">
+                                                    <canvas id="chartHoje_@u.Id"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <script>
+                                            new Chart(document.getElementById('chartHoje_@u.Id').getContext('2d'), {
+                                                type: 'doughnut',
+                                                data: {
+                                                    labels: ['Completo', 'Aberto'],
+                                                    datasets: [{
+                                                        data: [@u.ObterMarcacoes(DateTime.Now, true).Count(), @u.ObterMarcacoes(DateTime.Now, false).Count()],
+                                                        backgroundColor: [
+                                                            'rgba(35, 209, 96, 1)',
+                                                            'rgba(255, 56, 96, 1)'
+                                                        ]
+                                                    }]
+                                                },
+                                                options: {
+                                                    plugins: {
+                                                        legend: {
+                                                            display: false
+                                                        },
+                                                        tooltip: {
+                                                            enabled: false
+                                                        }
+                                                    },
+                                                    responsive: true
+                                                }
+                                            });
+
+                                            new Chart(document.getElementById('chartAnteontem_@u.Id').getContext('2d'), {
+                                                type: 'doughnut',
+                                                data: {
+                                                    labels: ['Completo', 'Aberto'],
+                                                    datasets: [{
+                                                        data: [@u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count(), @u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()],
+                                                        backgroundColor: [
+                                                            'rgba(35, 209, 96, 1)',
+                                                            'rgba(255, 56, 96, 1)'
+                                                        ]
+                                                    }]
+                                                },
+                                                options: {
+                                                    plugins: {
+                                                        legend: {
+                                                            display: false
+                                                        },
+                                                        tooltip: {
+                                                            enabled: false
+                                                        }
+                                                    },
+                                                    responsive: true
+                                                }
+                                            });
+
+                                            new Chart(document.getElementById('chartOntem_@u.Id').getContext('2d'), {
+                                                type: 'doughnut',
+                                                data: {
+                                                    labels: ['Completo', 'Aberto'],
+                                                    datasets: [{
+                                                        data: [@u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count(), @u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()],
+                                                        backgroundColor: [
+                                                            'rgba(35, 209, 96, 1)',
+                                                            'rgba(255, 56, 96, 1)'
+                                                        ]
+                                                    }]
+                                                },
+                                                options: {
+                                                    plugins: {
+                                                        legend: {
+                                                            display: false
+                                                        },
+                                                        tooltip: {
+                                                            enabled: false
+                                                        }
+                                                    },
+                                                    responsive: true
+                                                }
+                                            });
+                                        </script>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
