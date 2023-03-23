@@ -39,6 +39,8 @@ namespace FT_Management.Models
         public List<Linha_Dossier> Linhas { get; set; }
         public List<Anexo> Anexos { get; set; }
         public bool Fechado { get; set; }
+        public Cliente Carga { get; set; }
+        public Cliente Descarga { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Dossier/" + StampDossier; } }
 
         public void DefinirSerie(TipoDossier tp)

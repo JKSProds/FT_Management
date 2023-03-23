@@ -897,10 +897,38 @@
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
 
-            //Levantar Equipamento if (fo.TipoFolhaObra == "Externo" && fo.Guia) 
-            //Devolver equipamento if (fo.TipoFolhaObra == "Interno" && fo.Guia)
+            if (fo.Guia) GerarGuiaTransporte(fo, fo.Marcacao, fo.Utilizador);
 
             return true;
+        }
+
+        public void GerarGuiaTransporte(FolhaObra fo, Marcacao m, Utilizador u)
+        {
+            Dossier d = new Dossier()
+            {
+                Serie = 92,
+                FolhaObra = fo,
+                Marcacao = m,
+                EditadoPor = u.Iniciais,
+                Tecnico = u,
+            };
+
+            if (fo.TipoFolhaObra == "Externo")
+            {
+                d.Carga = fo.ClienteServico;
+                d.Descarga = this.ObterClienteSimples(7232, 0);
+            }
+            else if (fo.TipoFolhaObra == "Interno")
+            {
+                d.Descarga = fo.ClienteServico;
+                d.Carga = this.ObterClienteSimples(7232, 0);
+            }
+
+            d.StampDossier = this.CriarDossier(d)[2].ToString();
+            d = this.ObterDossier(d.StampDossier);
+
+            //Criação de linhas por defeito
+            this.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = fo.EquipamentoServico.RefProduto, Designacao = fo.EquipamentoServico.DesignacaoEquipamento, Quantidade = 1, CriadoPor = fo.Utilizador.Iniciais });
         }
 
         public string ValidarFolhaObra(FolhaObra fo)
@@ -3135,6 +3163,13 @@
                 SQL_Query += "@SERIE = '" + d.Serie + "', ";
                 SQL_Query += "@U_MARCACAOSTAMP = '" + (d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp) + "', ";
                 SQL_Query += "@STAMP_PA = '" + (d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO) + "', ";
+
+                if (VerificaDossierAceitaCargaDescarga(d.Serie))
+                {
+                    SQL_Query += "@CARGA = '" + d.Carga.ClienteStamp + "', ";
+                    SQL_Query += "@DESCARGA = '" + d.Descarga.ClienteStamp + "', ";
+                }
+
                 SQL_Query += "@NOME_UTILIZADOR = '" + d.EditadoPor + "', ";
                 SQL_Query += "@IDTECNICO = '" + d.Tecnico.IdPHC + "'; ";
 
@@ -3365,6 +3400,38 @@
             }
 
             return LstSeries;
+
+        }
+
+        public bool VerificaDossierAceitaCargaDescarga(int Serie)
+        {
+            bool res = false;
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from ts where Serie=GT and ndos=" + Serie + ";", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    result.Read();
+                    res = result.HasRows;
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel verificar se o dossier aceita carga e descarga!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
 
         }
 

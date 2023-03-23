@@ -213,14 +213,11 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Anexo a = phccontext.ObterAnexoDossier(id);
-            if (new FileExtensionContentTypeProvider().TryGetContentType(a.LocalizacaoFicheiro, out var mimeType))
-            {
-                byte[] file = FicheirosContext.ObterFicheiro(a.LocalizacaoFicheiro);
-                if (file == null) return Forbid();
+            byte[] file = FicheirosContext.ObterFicheiro(a.LocalizacaoFicheiro);
+            if (file == null) return Forbid();
 
-                return File(file, mimeType);
-            }
-            return Content("");
+            if (new FileExtensionContentTypeProvider().TryGetContentType(a.NomeExtensao, out var mimeType)) return File(file, mimeType);
+            return File(file, "application/octet-stream", a.NomeExtensao);
         }
 
         //Adiciona um anexo
