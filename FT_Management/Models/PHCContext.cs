@@ -25,6 +25,7 @@
         public List<string> ExecutarQuery(string SQL_Query)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            int i = 0;
 
             try
             {
@@ -40,18 +41,21 @@
                 };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
-                    result.Read();
-                    if (result.HasRows)
+                    while (result.Read())
                     {
-                        for (int i = 0; i < result.FieldCount; i++)
+                        if (result.HasRows)
                         {
-                            if (res.Count() <= i)
+                            for (int j = 0; j < result.FieldCount; j++)
                             {
-                                res.Add(result[i].ToString());
-                            }
-                            else
-                            {
-                                res[i] = result[i].ToString();
+                                if (res.Count() <= i)
+                                {
+                                    res.Add(result[j].ToString());
+                                }
+                                else
+                                {
+                                    res[i] = result[j].ToString();
+                                }
+                                i++;
                             }
                         }
                     }
@@ -892,6 +896,9 @@
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 1);
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
+
+            //Levantar Equipamento if (fo.RecolhaOficina && fo.Guia) 
+            //Devovler equipamento if (!fo.RecolhaOficina && fo.Guia)
 
             return true;
         }
