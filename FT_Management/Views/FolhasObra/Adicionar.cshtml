@@ -533,6 +533,17 @@
                     <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
                 </div>
             </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="Guia" id="chkGuia">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model =>
+                            model.Guia)</span>
+                    </label>
+                    <span asp-validation-for="Guia" class="has-text-danger"></span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -751,6 +762,22 @@
     </div>
 </div>
 
+<div class="modal" id="modalGerarGuia">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Guia</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Deseja gerar guia de transporte para o equipamento selecionado?</p>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" onclick="GerarGuia(true)">Sim</button>
+            <button class="button" onclick="GerarGuia(false)">Não</button>
+        </footer>
+    </div>
+</div>
 
 <div class="modal" id="modalValidacao">
     <div class="modal-background"></div>
@@ -991,7 +1018,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     CarregarPecas();
 
     function ValidarFolhaObra() {
-        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() ? "" : canvas.toDataURL();
+        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? "" : canvas.toDataURL();
         notify("A validar folha de obra ...");
         $.ajax({
             type: "POST",
@@ -1096,9 +1123,11 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById('chkEnviarEmail').checked = valor;
         Bulma('#modalEnviarEmail').modal().close();
         document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
-        //Bulma('#modalGuardarLocalizacao').modal().open();
-        if (document.getElementById("lstEstadoFO").value != "1") {
+        
+        if (document.getElementById("lstEstadoFO").value != "1" && document.getElementById('lstTipoFO').value == "Externo") {
             Bulma('#modalRecolherOficina').modal().open();
+        }else if (document.getElementById('lstTipoFO').value == "Interno") {
+            Bulma('#modalGerarGuia').modal().open();
         }else{
             Bulma('#modalFecharMarcacao').modal().open();
         }
@@ -1109,10 +1138,19 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
         Bulma('#modalFecharMarcacao').modal().open();
     }
-        function RecolherOficina(valor) {
+    function RecolherOficina(valor) {
         document.getElementById('chkRecolherOficina').checked = valor;
         Bulma('#modalRecolherOficina').modal().close();
+        if (valor) {
+            Bulma('#modalGerarGuia').modal().open();
+        }else{
             FecharMarcacao(false);
+        }
+    }
+    function GerarGuia(valor) {
+        document.getElementById('chkGuia').checked = valor;
+        Bulma('#modalGerarGuia').modal().close();
+        FecharMarcacao(false);
     }
     function FecharMarcacao(valor) {
         document.getElementById('chkFecharMarcacao').checked = valor;

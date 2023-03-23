@@ -897,8 +897,8 @@
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
 
-            //Levantar Equipamento if (fo.RecolhaOficina && fo.Guia) 
-            //Devovler equipamento if (!fo.RecolhaOficina && fo.Guia)
+            //Levantar Equipamento if (fo.TipoFolhaObra == "Externo" && fo.Guia) 
+            //Devolver equipamento if (fo.TipoFolhaObra == "Interno" && fo.Guia)
 
             return true;
         }
