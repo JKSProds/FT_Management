@@ -653,6 +653,10 @@
         {
             return ObterEquipamentos("SELECT * FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';", false, false);
         }
+        public List<Equipamento> ObterEquipamentos(string Filtro)
+        {
+            return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + Filtro + "%' or nome like '%" + Filtro + "%';", false, false);
+        }
         public List<Equipamento> ObterEquipamentosSerie(string NumeroSerie)
         {
             return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + NumeroSerie + "%';", false, false);
