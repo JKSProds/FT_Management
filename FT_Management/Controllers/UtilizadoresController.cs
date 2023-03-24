@@ -154,22 +154,20 @@
             ViewBag.Notificacoes = LstNotificacoes.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
 
             Utilizador t = context.ObterUtilizador(id);
-#if !DEBUG
-                if (string.IsNullOrEmpty(t.SecondFactorAuthStamp))
-                {
-                    String stamp = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
+            if (string.IsNullOrEmpty(t.SecondFactorAuthStamp))
+            {
+                String stamp = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
 
-                    TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-                    SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", t.NomeUtilizador, stamp, false, 3);
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                SetupCode setupInfo = tfa.GenerateSetupCode("FoodTech", t.NomeUtilizador, stamp, false, 3);
 
-                    t.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
-                    t.SecondFactorAuthCode = setupInfo.ManualEntryKey;
-                    ViewData["2FASTAMP"] = stamp;
-                }
-#endif
+                t.SecondFactorImgUrl = setupInfo.QrCodeSetupImageUrl;
+                t.SecondFactorAuthCode = setupInfo.ManualEntryKey;
+                ViewData["2FASTAMP"] = stamp;
+            }
             return View(t);
         }
-        //Obtem um utilizador em especifico
+        //Cria um utilizador em especifico
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Utilizador(Utilizador u)
