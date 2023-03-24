@@ -95,7 +95,7 @@
                         LstProdutos.Add(new Produto()
                         {
                             StampProduto = result["ststamp"].ToString(),
-                            Ref_Produto = result["ref"].ToString(),
+                            Ref_Produto = result["ref"].ToString().Trim(),
                             Designacao_Produto = result["design"].ToString(),
                             //Stock_Fisico = double.Parse(result["stock_fis"].ToString()),
                             Stock_PHC = !string.IsNullOrEmpty(result["stock"].ToString()) ? double.Parse(result["stock"].ToString()) : 0,
