@@ -2953,7 +2953,7 @@ namespace FT_Management.Models
         public void CriarCodigo(Codigo c)
         {
 
-            string sql = "INSERT INTO dat_codigos (CodigoValidacao, EstadoCodigo, Observacoes, Utilizador, ValidadeCodigo) VALUES ('" + c.Stamp + "', '" + c.Estado + "', '" + c.Obs + "', '" + c.utilizador.Id + "', '" + c.ValidadeCodigo.ToString("yyyy-MM-dd HH:mm:ss") + "') ;";
+            string sql = "INSERT INTO dat_codigos (CodigoValidacao, EstadoCodigo, ObsInternas, Observacoes, Utilizador, ValidadeCodigo) VALUES ('" + c.Stamp + "', '" + c.Estado + "', '" + c.ObsInternas + "','" + c.Obs + "', '" + c.utilizador.Id + "', '" + c.ValidadeCodigo.ToString("yyyy-MM-dd HH:mm:ss") + "') ;";
 
             Database db = ConnectionString;
 
@@ -3001,6 +3001,7 @@ namespace FT_Management.Models
                     {
                         Stamp = result["CodigoValidacao"],
                         Estado = result["EstadoCodigo"],
+                        ObsInternas = result["ObsInternas"],
                         Obs = result["Observacoes"],
                         ValidadeCodigo = result["ValidadeCodigo"],
                         utilizador = this.ObterUtilizador(int.Parse(result["Utilizador"])),

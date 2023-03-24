@@ -393,16 +393,9 @@
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
-                            <div class="field">
-                                <label asp-for="ConferidoPor"></label>
-                                <div class="control">
-                                    <input class="input is-primary" type="text" asp-for="ConferidoPor" />
-                                </div>
-                                <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
-                            </div>
                             <div class="field mb-6">
                                 <p class="control">
-                                    <button type="button" class="button is-primary is-pulled-right is-fullwidth"
+                                    <button type="button" class="button is-warning is-pulled-right is-fullwidth"
                                         onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                                         <span class="icon is-small">
                                             <i class="fas fa-plus"></i>
@@ -410,6 +403,13 @@
                                         <span>Adicionar Anexos</span>
                                     </button>
                                 </p>
+                            </div>
+                            <div class="field">
+                                <label asp-for="ConferidoPor"></label>
+                                <div class="control">
+                                    <input class="input is-primary" type="text" asp-for="ConferidoPor" />
+                                </div>
+                                <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
                             </div>
                         </div>
 
@@ -1067,7 +1067,12 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         $.ajax({
             type: "POST",
             url: "/FolhasObra/CriarCodigo/" + stamp,
-            data: { "obs": document.getElementById("txtMensagens").value }
+            data: { "obs": document.getElementById("txtMensagens").value },
+            success: function (result) {
+                $(function () {
+                    stamp_codigo = result;
+                });
+            }
         });
     }
 
@@ -1093,8 +1098,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     function GerarCodigo() {
-        stamp_codigo = Date.now() + Math.random();
-        CriarCodigo(stamp_codigo);
+        CriarCodigo('@Model.Marcacao.MarcacaoStamp');
         time = 5 * 60;
         interval = setInterval(AtualizarTimer, 1000);
         document.getElementById('pb_timer').max = time;
