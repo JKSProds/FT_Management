@@ -1290,7 +1290,7 @@
                 SQL_Query += "@QPEDIU = '" + m.QuemPediuNome + "', ";
                 SQL_Query += "@RESPTLM = '" + m.QuemPediuTelefone + "', ";
                 SQL_Query += "@RESPEMAIL = '" + m.QuemPediuEmail + "', ";
-                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao + "', ";
+                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao.Replace("'", "''") + "', ";
                 SQL_Query += "@PIQUETE = '" + (m.Piquete ? "1" : "0") + "', ";
                 SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
@@ -1342,7 +1342,7 @@
                 SQL_Query += "@QPEDIU = '" + m.QuemPediuNome + "', ";
                 SQL_Query += "@RESPTLM = '" + m.QuemPediuTelefone + "', ";
                 SQL_Query += "@RESPEMAIL = '" + m.QuemPediuEmail + "', ";
-                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao + "', ";
+                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao.Replace("'", "''") + "', ";
                 SQL_Query += "@PIQUETE = '" + (m.Piquete ? "1" : "0") + "', ";
                 SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
                 SQL_Query += "@JUSTFECHO = '" + (m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho) + "', ";
