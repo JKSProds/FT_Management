@@ -92,16 +92,17 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
+            if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes) && !fo.EmGarantia) ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
             if (fo.EmGarantia && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!");
             fo.ValidarIntervencoes();
             if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
+            fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
             if (ModelState.IsValid)
             {
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
-                fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
+
 
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
                 fo.ValidarTipoFolhaObra();
