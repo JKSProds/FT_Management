@@ -2,7 +2,7 @@
 {
     public class Equipamento
     {
-        [Required]
+        [Required(ErrorMessage = "Falta escolher o equipamento!")]
         public string EquipamentoStamp { get; set; }
         public string TipoEquipamento { get; set; }
         public string DescricaoEquipamento { get { return this.NumeroSerieEquipamento + " - (" + MarcaEquipamento + " " + this.ModeloEquipamento + ")"; } }

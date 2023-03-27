@@ -5,248 +5,180 @@
 }
 
 <style>
-    .txt-center {
+    /* Add your custom styles here */
+    .logo {
+        animation: zoom-out 1s ease-out;
+    }
+
+    @@keyframes zoom-out {
+        0% {
+            transform: scale(2);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .two-fa-container {
+        display: inline-block;
+    }
+
+    .two-fa-input {
+        width: 2em;
         text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 5px;
+        font-size: 1.5em;
+        animation-duration: 0.5s;
+        animation-iteration-count: 2;
     }
 
-    body {
-        height: 100vh;
-        font-family: 'Poppins', sans-serif;
-        background: url("https://wallpaperplay.com/walls/full/b/3/7/329976.jpg");
-        background-repeat: no-repeat;
-        background-size: cover;
-    }
-
-    .center1 {
-        margin: auto;
-    }
-
-    .center3 {
-        display: flex;
-        align-items: center;
-        resize: both;
-    }
-
-    .two-step-div .two-title {
-        font-size: 22px;
-        font-weight: bold;
-        color: #3c3c3c;
-        margin-top: 15px;
-    }
-
-    .two-step-div .my-img {
-        width: 140px;
-        height: auto;
-    }
-
-    .two-step-div .two-p {
-        font-size: 13px;
-        margin-top: 15px;
-        margin-bottom: 30px;
-        color: #666666;
-    }
-
-    .two-step-div #form {
-        direction: ltr;
-    }
-
-    .two-step-div #form input {
-        border-color: transparent;
-        background: transparent;
-        border-bottom: 1.5px solid #cccccc;
-        text-align: center;
-        font-size: 20px;
-        margin-right: 10px;
-        margin-left: 10px;
-    }
-
-    .two-step-div #form input:focus {
-        outline: 0px transparent !important;
-        box-shadow: transparent !important;
-        border-right: transparent !important;
-        border-left: transparent !important;
-        border-top: transparent !important;
-        border-color: #00AEEF;
-        animation: border-pulsate 1.5s infinite;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .two-step-div .not-first:disabled {
-        background-color: transparent;
-        border-bottom: 1px solid #cccccc !important;
-    }
-
-    @@-moz-keyframes border-pulsate {
+    @@keyframes shake {
         0% {
-            border-color: #00AEEF;
+            transform: translateX(0);
         }
 
-        50% {
-            border-color: rgba(0, 0, 0, 0.3);
+        20% {
+            transform: translateX(10px);
+        }
+
+        40% {
+            transform: translateX(-10px);
+        }
+
+        60% {
+            transform: translateX(10px);
+        }
+
+        80% {
+            transform: translateX(-10px);
         }
 
         100% {
-            border-color: #00AEEF;
+            transform: translateX(0);
         }
     }
 
-    @@-webkit-keyframes border-pulsate {
-        0% {
-            border-color: #00AEEF;
-        }
-
-        50% {
-            border-color: rgba(0, 0, 0, 0.3);
-        }
-
-        100% {
-            border-color: #00AEEF;
-        }
-    }
-
-    @@-o-keyframes border-pulsate {
-        0% {
-            border-color: #00AEEF;
-        }
-
-        50% {
-            border-color: rgba(0, 0, 0, 0.3);
-        }
-
-        100% {
-            border-color: #00AEEF;
-        }
-    }
-
-    @@keyframes border-pulsate {
-        0% {
-            border-color: #00AEEF;
-        }
-
-        50% {
-            border-color: rgba(0, 0, 0, 0.3);
-        }
-
-        100% {
-            border-color: #00AEEF;
-        }
-    }
-
-    .btn-verify {
-        background: #00AEEF;
-        color: #ffffff;
-        border-color: transparent;
-        border-radius: 7px;
-        padding: 10px 25px;
-        font-size: 14px;
-        cursor: pointer;
-        /*transition: all 0.5s;*/
-        width: auto;
-        position: relative;
-        transition: 0.5s ease;
-
-    }
-
-    .btn-verify:hover {
-        transform: translateY(-8px);
-
-    }
-
-    .btn-verify:disabled {
-        background: rgba(103, 187, 209, 0.93);
-        cursor: auto;
-    }
-
-    .btn-verify:disabled:hover {
-        transform: none;
-
+    /* Add a shake animation to the login box or submit button on incorrect input */
+    .login-box {
+        animation: shake 0.3s;
     }
 </style>
 
-<div class="hero is-fullheight">
-    <div class="col-lg-6 float-right txt-center card-box2 two-step-div" hidden id="frm2FA">
-        <img class="my-img"
-            src="https://icons-for-free.com/iconfiles/png/512/locked+login+password+privacy+private+protect+protection+safe-1320196167397530530.png">
-        <p class="two-title">Autenticação de 2 Fatores</p>
-        <p class="two-p">Insira o código de 6 digitos da sua
-            <br>aplicação de autenticação!
-        </p>
-        <form id="form" method="post" asp-controller="Utilizadores" asp-action="Login">
-            <input hidden asp-for="NomeUtilizador" id="username">
-            <input hidden asp-for="Password" id="password">
-            <input hidden name="ReturnUrl" value=@ViewData["ReturnUrl"]>
-            <div>
-                <input type="text" inputmode="numeric" maxLength="6" name="first" id='first' size="1" min="0" max="9"
-                    pattern="[0-9]{1}" autocomplete="one-time-code" />
-                <input class="not-first" type="text" inputmode="numeric" name="second" maxLength="1" size="1" min="0"
-                    max="9" pattern="[0-9]{1}" />
-                <input class="not-first" type="text" inputmode="numeric" name="third" maxLength="1" size="1" min="0"
-                    max="9" pattern="[0-9]{1}" />
-                <input class="not-first" type="text" inputmode="numeric" name="fourth" maxLength="1" size="1" min="0"
-                    max="9" pattern="[0-9]{1}" />
-                <input class="not-first" type="text" inputmode="numeric" name="fifth" maxLength="1" size="1" min="0"
-                    max="9" pattern="[0-9]{1}" />
-                <input class="not-first" type="text" inputmode="numeric" name="sixth" maxLength="1" size="1" min="0"
-                    max="9" pattern="[0-9]{1}" />
-            </div>
-            <button type="submit" style="margin-top: 35px"
-                class="btn btn-primary btn-embossed btn-verify">Verificar</button>
-        </form>
-    </div>
-
-    <div id="frmLogin">
-        <div class="container has-text-centered">
-            <div class="column is-8 is-offset-2">
-                <div class="card card-signin my-5"
-                    style=" border: 0; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);">
-                    <form onsubmit="event.preventDefault(); checkLogin(); return false;">
-                        <div class="card-body">
-                            <img src="~/img/ft_logo.png" width="150" height="90" class=""
-                                style="display:block;margin:auto;">
-                            <br />
-                            <div class="field mx-2">
-                                <p class="control has-icons-left has-icons-right">
-                                    <input type="text" asp-for="NomeUtilizador" id="inputNome" class="input is-success"
-                                        placeholder="Nome de Utilizador" required autofocus>
+<section class="section">
+    <div class="container" id="frmShake">
+        <div class="columns is-centered">
+            <div class="column is-9-tablet is-8-desktop is-6-widescreen">
+                <div class="has-text-centered">
+                    <img class="logo" src="https://webapp.food-tech.pt/img/logo_website.png">
+                </div>
+                <div class="container" id="frmLogin">
+                    <div class="box">
+                        <form onsubmit="event.preventDefault(); checkLogin(); return false;">
+                            <div class="field">
+                                <label class="label">Nome de Utilizador</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" placeholder="Insira o seu nome de utilizador"
+                                        asp-for="NomeUtilizador" id="inputNome">
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-user"></i>
                                     </span>
-                                </p>
+                                </div>
                             </div>
-                            <div class="field mx-2">
-                                <p class="control has-icons-left">
-                                    <input type="password" asp-for="Password" id="inputPassword"
-                                        class="input is-success" placeholder="Password" required>
+                            <div class="field">
+                                <label class="label">Palavra-Passe</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="password" placeholder="Insira a sua palavra-passe"
+                                        asp-for="Password" id="inputPassword">
                                     <span class="icon is-small is-left">
-                                        <i class="fas fa-key"></i>
+                                        <i class="fas fa-lock"></i>
                                     </span>
-                                </p>
+                                </div>
                             </div>
 
-                            <button class="button is-info is-rounded mx-6 my-2" type="submit">
-                                <span class="icon">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                </span>
-                                <span>Iniciar Sessão</span>
-                            </button>
-                            <br />
-                            <div asp-validation-summary="ModelOnly" class="has-text-danger"></div>
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-link is-fullwidth is-large" id="login-button">Iniciar
+                                        Sessão</button>
+                                </div>
+                            </div>
+                            <div class="has-text-centered">
+                                <p>
+                                <div asp-validation-summary="ModelOnly" id="divError" class="has-text-danger"></div>
+                                </p>
+                            </div>
                             <input hidden name="ReturnUrl" value=@ViewData["ReturnUrl"]>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                </div>
+                <div class="container" id="frm2FA" hidden>
+                    <div class="box">
+                        <p class="has-text-centered">Insira o código de 6 digitos da sua
+                            <br>aplicação de autenticação!
+                        </p>
+                        &nbsp;
+                        <form id="form" method="post" asp-controller="Utilizadores" asp-action="Login">
+                            <input hidden asp-for="NomeUtilizador" id="username">
+                            <input hidden asp-for="Password" id="password">
+                            <input hidden name="ReturnUrl" value=@ViewData["ReturnUrl"]>
+                            <div class="field has-text-centered">
+                                <div class="control two-fa-container">
+                                    <input class="input two-fa-input" type="text" id="first" name="first" maxlength="1"
+                                        inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" autofocus>
+                                    <input class="input two-fa-input" type="text" name="second" maxlength="1"
+                                        inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                                    <input class="input two-fa-input" type="text" name="third" maxlength="1"
+                                        inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                                    <input class="input two-fa-input" type="text" name="fourth" maxlength="1"
+                                        inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                                    <input class="input two-fa-input" type="text" name="fifth" maxlength="1"
+                                        inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                                    <input class="input two-fa-input" type="text" name="sixth" maxlength="1"
+                                        inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+                                </div>
+                            </div>
+                            <button type="submit" class="button is-primary is-fullwidth is-large">Verificar</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
+
+<script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
 <script>
-    $(document).ready(function () {
+    if (document.getElementById("divError")) shake(document.getElementById("frmShake"))
+    function shake(element) {
+        element.classList.add('login-box');
+        if (navigator.vibrate) navigator.vibrate([500]);
+        setTimeout(() => {
+            element.classList.remove('login-box');
+        }, 300);
+    }
+    const inputs = document.querySelectorAll('.two-fa-input');
 
-        $('.not-first').prop("disabled", true);
-
-        $('.btn-verify').prop("disabled", true);
+    inputs.forEach((input, index) => {
+        input.addEventListener('keyup', (e) => {
+            if (e.keyCode === 8 && index > 0) {
+                inputs[index - 1].focus();
+            } else if (index < inputs.length - 1 && input.value !== '') {
+                inputs[index + 1].focus();
+            } else {
+                document.getElementById('form').submit();
+            }
+            if (e.keyCode === 8 || e.keyCode === 46) {
+                input.value = '';
+            }
+        });
     });
+
 
     function checkLogin() {
         document.getElementById('username').value = document.getElementById('inputNome').value;
@@ -260,9 +192,7 @@
                 if (data) {
                     document.getElementById('frm2FA').hidden = false;
                     document.getElementById('frmLogin').hidden = true;
-                    setTimeout(function () {
-                        document.getElementById('first').focus();
-                    });
+                    document.getElementById('first').focus();
                 } else {
                     document.getElementById('form').submit();
                 }
@@ -276,46 +206,4 @@
         });
 
     }
-
-    $(function () {
-        'use strict';
-        var body = $('body');
-
-        function goToNextInput(e) {
-
-            var key = e.which,
-                t = $(e.target),
-                sib = t.next('input');
-
-            if (key === 9) {
-                return true;
-            }
-
-            if (!sib || !sib.length) {
-                if (document.getElementById('first').value.length > 0) {
-                    sib = body.find('input').eq(0);
-                    document.getElementById('form').submit();
-                    $('.btn-verify').prop("disabled", false);
-                }
-            }
-
-            sib.select().removeAttr('disabled');
-            sib.select().focus();
-
-        }
-
-        function onFocus(e) {
-            $(e.target).select();
-        }
-
-        body.on('keyup', 'input', goToNextInput);
-        body.on('click', 'input', onFocus);
-
-    })
-
-    document.getElementById('first').addEventListener("paste", function () {
-        setTimeout(function () {
-            document.getElementById('form').submit();
-        });
-    });
 </script>

@@ -8,6 +8,7 @@ namespace FT_Management.Models
         public string Stamp_Origem { get; set; }
         public string Resumo { get; set; }
         public string Nome { get; set; }
+        public string NomeExtensao { get { return LocalizacaoFicheiro.Split("\\").Last(); } }
         public string LocalizacaoFicheiro { get; set; }
         public Utilizador Utilizador { get; set; }
     }

@@ -66,6 +66,7 @@ namespace FT_Management.Models
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
                         UltimoAcesso = string.IsNullOrEmpty(result["DataUltimoAcesso"]) ? new DateTime() : result["DataUltimoAcesso"],
                         AcessoAtivo = string.IsNullOrEmpty(result["DataUltimoAcesso"]) ? false : result["TipoUltimoAcesso"] == 1,
+                        StampMoradaCargaDescarga = result["StampMoradaCargaDescarga"],
 #if !DEBUG
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif
@@ -118,6 +119,7 @@ namespace FT_Management.Models
                         ChatToken = result["ChatToken"],
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
                         SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
+                        StampMoradaCargaDescarga = result["StampMoradaCargaDescarga"],
 #if !DEBUG 
                         ImgUtilizador = string.IsNullOrEmpty(result["ImgUtilizador"]) ? "/img/user.png" : result["ImgUtilizador"],
 #endif
@@ -2951,7 +2953,7 @@ namespace FT_Management.Models
         public void CriarCodigo(Codigo c)
         {
 
-            string sql = "INSERT INTO dat_codigos (CodigoValidacao, EstadoCodigo, Observacoes, Utilizador, ValidadeCodigo) VALUES ('" + c.Stamp + "', '" + c.Estado + "', '" + c.Obs + "', '" + c.utilizador.Id + "', '" + c.ValidadeCodigo.ToString("yyyy-MM-dd HH:mm:ss") + "') ;";
+            string sql = "INSERT INTO dat_codigos (CodigoValidacao, EstadoCodigo, ObsInternas, Observacoes, Utilizador, ValidadeCodigo) VALUES ('" + c.Stamp + "', '" + c.Estado + "', '" + c.ObsInternas + "','" + c.Obs + "', '" + c.utilizador.Id + "', '" + c.ValidadeCodigo.ToString("yyyy-MM-dd HH:mm:ss") + "') ;";
 
             Database db = ConnectionString;
 
@@ -2999,6 +3001,7 @@ namespace FT_Management.Models
                     {
                         Stamp = result["CodigoValidacao"],
                         Estado = result["EstadoCodigo"],
+                        ObsInternas = result["ObsInternas"],
                         Obs = result["Observacoes"],
                         ValidadeCodigo = result["ValidadeCodigo"],
                         utilizador = this.ObterUtilizador(int.Parse(result["Utilizador"])),

@@ -66,6 +66,7 @@
         public bool Avisar { get; set; }
         [Display(Name = "Recolher para Oficina")]
         public bool RecolhaOficina { get; set; }
+        public bool Oficina { get { return TipoFolhaObra == "Interno"; } }
         public bool CobrarDeslocacao { get; set; }
         public bool Instalação { get; set; }
         public bool EnviarEmail { get; set; }
@@ -75,6 +76,7 @@
         public double ValorTotal { get { return PecasServico.Sum(p => p.Valor * p.Stock_Fisico); } }
         public double KmsDeslocacao { get; set; }
         public string FicheirosAnexo { get; set; }
+        public bool Guia { get; set; }
 
         public FolhaObra()
         {
@@ -97,12 +99,13 @@
         public FolhaObra PreencherDadosMarcacao(Marcacao m)
         {
             this.ClienteServico = m.Cliente;
-            this.DataServico = m.DataMarcacao;
+            this.DataServico = DateTime.Now;
+            if (m.Oficina) this.TipoFolhaObra = "Interno";
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
             this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
-            this.TipoFolhaObra = m.TipoServico;
+            if (!m.Oficina) this.TipoFolhaObra = m.TipoServico;
             return this;
         }
 

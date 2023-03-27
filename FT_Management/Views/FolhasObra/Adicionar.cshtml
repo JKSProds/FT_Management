@@ -27,7 +27,7 @@
         background-color: white;
     }
 </style>
-<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
+<div class="pageloader is-success" id="pageloader"><span class="title">A gerar a folha de obra ...<br>POR FAVOR AGUARDE...</span></div>
 <form asp-action="FolhaObra" method="POST" name="frmAdicionar" id="frmAdicionar">
     <div class="container">
         <div class="columns is-mobile is-centered">
@@ -394,15 +394,8 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="ConferidoPor"></label>
-                                <div class="control">
-                                    <input class="input is-primary" type="text" asp-for="ConferidoPor" />
-                                </div>
-                                <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
-                            </div>
-                            <div class="field mb-6">
                                 <p class="control">
-                                    <button type="button" class="button is-primary is-pulled-right is-fullwidth"
+                                    <button type="button" class="button is-warning is-pulled-right is-fullwidth"
                                         onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                                         <span class="icon is-small">
                                             <i class="fas fa-plus"></i>
@@ -410,6 +403,13 @@
                                         <span>Adicionar Anexos</span>
                                     </button>
                                 </p>
+                            </div>
+                            <div class="field">
+                                <label asp-for="ConferidoPor"></label>
+                                <div class="control">
+                                    <input class="input is-primary" type="text" asp-for="ConferidoPor" />
+                                </div>
+                                <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
                             </div>
                         </div>
 
@@ -531,6 +531,17 @@
                             model.FecharMarcacao)</span>
                     </label>
                     <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="Guia" id="chkGuia">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model =>
+                            model.Guia)</span>
+                    </label>
+                    <span asp-validation-for="Guia" class="has-text-danger"></span>
                 </div>
             </div>
         </div>
@@ -751,6 +762,22 @@
     </div>
 </div>
 
+<div class="modal" id="modalGerarGuia">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Guia</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p>Deseja gerar guia de transporte para o equipamento selecionado?</p>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" onclick="GerarGuia(true)">Sim</button>
+            <button class="button" onclick="GerarGuia(false)">Não</button>
+        </footer>
+    </div>
+</div>
 
 <div class="modal" id="modalValidacao">
     <div class="modal-background"></div>
@@ -991,7 +1018,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     CarregarPecas();
 
     function ValidarFolhaObra() {
-        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() ? "" : canvas.toDataURL();
+        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? "" : canvas.toDataURL();
         notify("A validar folha de obra ...");
         $.ajax({
             type: "POST",
@@ -1040,7 +1067,12 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         $.ajax({
             type: "POST",
             url: "/FolhasObra/CriarCodigo/" + stamp,
-            data: { "obs": document.getElementById("txtMensagens").value }
+            data: { "obs": document.getElementById("txtMensagens").value },
+            success: function (result) {
+                $(function () {
+                    stamp_codigo = result;
+                });
+            }
         });
     }
 
@@ -1066,8 +1098,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     function GerarCodigo() {
-        stamp_codigo = Date.now() + Math.random();
-        CriarCodigo(stamp_codigo);
+        CriarCodigo('@Model.Marcacao.MarcacaoStamp');
         time = 5 * 60;
         interval = setInterval(AtualizarTimer, 1000);
         document.getElementById('pb_timer').max = time;
@@ -1096,9 +1127,11 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById('chkEnviarEmail').checked = valor;
         Bulma('#modalEnviarEmail').modal().close();
         document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
-        //Bulma('#modalGuardarLocalizacao').modal().open();
-        if (document.getElementById("lstEstadoFO").value != "1") {
+        
+        if (document.getElementById("lstEstadoFO").value != "1" && document.getElementById('lstTipoFO').value == "Externo") {
             Bulma('#modalRecolherOficina').modal().open();
+        }else if (document.getElementById('lstTipoFO').value == "Interno") {
+            Bulma('#modalGerarGuia').modal().open();
         }else{
             Bulma('#modalFecharMarcacao').modal().open();
         }
@@ -1109,10 +1142,19 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
         Bulma('#modalFecharMarcacao').modal().open();
     }
-        function RecolherOficina(valor) {
+    function RecolherOficina(valor) {
         document.getElementById('chkRecolherOficina').checked = valor;
         Bulma('#modalRecolherOficina').modal().close();
+        if (valor) {
+            Bulma('#modalGerarGuia').modal().open();
+        }else{
             FecharMarcacao(false);
+        }
+    }
+    function GerarGuia(valor) {
+        document.getElementById('chkGuia').checked = valor;
+        Bulma('#modalGerarGuia').modal().close();
+        FecharMarcacao(false);
     }
     function FecharMarcacao(valor) {
         document.getElementById('chkFecharMarcacao').checked = valor;
@@ -1208,7 +1250,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             select: function (e, i) {
                 $("#txtStampPeca").val(i.item.val);
                 document.getElementById("btnAdicionarPeca").disabled = false;
-                notify("Peça " + i.item.label + " selecionada com sucesso!");
             },
             minLength: 1
         }).css('z-index', 10);
@@ -1241,7 +1282,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         $("#txtPecas").val(designacao);
         document.getElementById("btnAdicionarPeca").disabled = false;
         Bulma('#modalPecas').modal().close();
-        notify("Peça " + designacao + " selecionada com sucesso!");
     }
     function ObterPeca(stamp, qtd) {
         if (stamp !== "" && qtd > 0) {
@@ -1353,7 +1393,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             select: function (e, i) {
                 $("#txtEquipamentoStamp").val(i.item.val);
                 document.getElementById("btnObterHistorico").disabled = false;
-                notify("Equipamento " + i.item.label + " selecionado com sucesso!");
             },
             minLength: 1
         }).css('z-index', 10);
@@ -1363,7 +1402,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById("btnObterHistorico").disabled = true;
         document.getElementById("txtEquipamentoStamp").value = '';
         document.getElementById("txtEquipamento").value = '';
-        notify('Equipamento limpo com sucesso!');
 
     }
 
@@ -1372,7 +1410,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         $("#txtEquipamento").val(designacao);
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
-        notify("Equipamento " + designacao + " selecionado com sucesso!");
     }
 
     function ObterEquipamentosCliente() {
@@ -1388,7 +1425,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                 html += "</tbody></table></div></div>"
                 $('#modalEquipamentos').find('.modal-body').html(html);
                 Bulma('#modalEquipamentos').modal().open();
-                notify("Obtidos com sucesso os equipamentos associados a este cliente!");
             },
             error: function (response) {
                 notifyError('Ocorreu um erro ao obter os equipamentos do cliente!');
@@ -1439,7 +1475,6 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                     var modal = Bulma('#modalObterHistoricoVazio').modal();
                     modal.open();
                 };
-                notify("Obtido com sucesso as intervenções associadas ao equipamento selecionado!");
             },
             error: function (error) {
                 notifyError('Ocorreu um erro ao obter as intervenções associadas ao equipamento selecionado!');

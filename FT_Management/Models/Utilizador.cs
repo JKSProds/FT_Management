@@ -29,6 +29,7 @@
     public class Utilizador
     {
         public int Id { get; set; }
+        public string StampMoradaCargaDescarga { get; set; }
         [Required(ErrorMessage = "O nome de utilizador é obrigatório!")]
         [Display(Name = "Nome de Utilizador")]
         public string NomeUtilizador { get; set; }
@@ -104,7 +105,11 @@
             this.AcessoAtivo = false;
         }
 
-
+        public List<Marcacao> ObterMarcacoes(DateTime data, bool concluido)
+        {
+            if (concluido) return this.LstMarcacoes.Where(m => m.DataMarcacao.ToShortDateString() == data.ToShortDateString() && (m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado")).ToList();
+            return this.LstMarcacoes.Where(m => m.DataMarcacao.ToShortDateString() == data.ToShortDateString() && (m.EstadoMarcacaoDesc != "Finalizado" && m.EstadoMarcacaoDesc != "Cancelado")).ToList();
+        }
         public string ObterTelemovelFormatado(bool Indicativo)
         {
             string res = "";

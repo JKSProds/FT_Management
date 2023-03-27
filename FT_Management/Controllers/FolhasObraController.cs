@@ -48,6 +48,7 @@ namespace FT_Management.Controllers
 
             FolhaObra fo = new FolhaObra().PreencherDadosMarcacao(m);
             fo.Utilizador = u;
+            fo.Marcacao = m;
 
             fo.PreencherViagem(context.ObterViagens(fo.Utilizador.Viatura.Matricula, DateTime.Now.ToShortDateString()).Where(v => v.Fim_Viagem.Year > 1).DefaultIfEmpty(new Viagem() { Fim_Viagem = fo.IntervencaosServico.First().HoraInicio, Distancia_Viagem = "0" }).Last());
             if (LstFolhasObra.Count() > 0)
@@ -91,7 +92,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (!User.IsInRole("Admin")) fo = fo.PreencherDadosMarcacao(phccontext.ObterMarcacao(fo.IdMarcacao));
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            if ((fo.EstadoFolhaObra == 4 || fo.EmGarantia) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Necessita de preencher as observações internas!");
+            if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
+            if (fo.EmGarantia && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!");
             fo.ValidarIntervencoes();
             if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
 
@@ -108,6 +110,7 @@ namespace FT_Management.Controllers
 
                 Marcacao m = fo.Marcacao;
                 m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+                m.Oficina = fo.RecolhaOficina || (!fo.Oficina && fo.Guia);
 
                 _logger.LogDebug("Utilizador {1} [{2}] a criar uma nova folha de obra: Id Marcacao - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}, N. Int - {7}, N. Pecas {8}, Estado - {9}.", fo.Utilizador.NomeCompleto, fo.Utilizador.Id, m.IdMarcacao, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto, fo.IntervencaosServico.Count(), fo.PecasServico.Count(), fo.EstadoFolhaObra);
 
@@ -266,15 +269,18 @@ namespace FT_Management.Controllers
         public ActionResult CriarCodigo(string id, string obs)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Marcacao m = phccontext.ObterMarcacao(id);
 
             Codigo c = new Codigo()
             {
-                Stamp = id,
+                Stamp = DateTime.Now.Ticks.ToString(),
                 Estado = 0,
                 ValidadeCodigo = DateTime.Now.AddMinutes(10),
                 utilizador = u,
-                Obs = obs
+                Obs = obs,
+                ObsInternas = "Cliente: " + m.Cliente.NomeCliente + " - Marcação Nº: " + m.IdMarcacao
             };
 
             _logger.LogDebug("Utilizador {1} [{2}] a criar um codigo para validar uma folha de obra: Codigo - {3}, Validade - {4}.", u.NomeCompleto, u.Id, c.Stamp, c.ValidadeCodigo.ToShortTimeString());
@@ -284,7 +290,7 @@ namespace FT_Management.Controllers
             {
                 ChatContext.EnviarNotificacaoCodigo(c, utilizador);
             }
-            return Content("OK");
+            return Content(c.Stamp);
         }
 
         //Validar o codigo

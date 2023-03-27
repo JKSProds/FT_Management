@@ -17,15 +17,16 @@
       </p>
       <p style="white-space: pre-line" class="text">
         <b>Observações:</b><br>
+        <b>@Model.ObsInternas</b>
         @Model.Obs
       </p>
       <hr>
       @if (!Model.Validado)
       {
         <button class="button is-success is-rounded is-large is-fullwidth my-2"
-          onclick="AprovarCodigo('@Model.Stamp')">Aprovar</button>
+      onclick="AprovarCodigo('@Model.Stamp')">Aprovar</button>
         <button class="button is-danger is-rounded is-large is-fullwidth my-2"
-          onclick="RejeitarCodigo('@Model.Stamp')">Rejeitar</button>
+      onclick="RejeitarCodigo('@Model.Stamp')">Rejeitar</button>
       }
       else
       {

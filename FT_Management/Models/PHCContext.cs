@@ -25,6 +25,7 @@
         public List<string> ExecutarQuery(string SQL_Query)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            int i = 0;
 
             try
             {
@@ -40,18 +41,21 @@
                 };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
-                    result.Read();
-                    if (result.HasRows)
+                    while (result.Read())
                     {
-                        for (int i = 0; i < result.FieldCount; i++)
+                        if (result.HasRows)
                         {
-                            if (res.Count() <= i)
+                            for (int j = 0; j < result.FieldCount; j++)
                             {
-                                res.Add(result[i].ToString());
-                            }
-                            else
-                            {
-                                res[i] = result[i].ToString();
+                                if (res.Count() <= i)
+                                {
+                                    res.Add(result[j].ToString());
+                                }
+                                else
+                                {
+                                    res[i] = result[j].ToString();
+                                }
+                                i++;
                             }
                         }
                     }
@@ -91,7 +95,7 @@
                         LstProdutos.Add(new Produto()
                         {
                             StampProduto = result["ststamp"].ToString(),
-                            Ref_Produto = result["ref"].ToString(),
+                            Ref_Produto = result["ref"].ToString().Trim(),
                             Designacao_Produto = result["design"].ToString(),
                             //Stock_Fisico = double.Parse(result["stock_fis"].ToString()),
                             Stock_PHC = !string.IsNullOrEmpty(result["stock"].ToString()) ? double.Parse(result["stock"].ToString()) : 0,
@@ -135,8 +139,8 @@
         }
         public List<Produto> ObterProdutosArmazem(int Armazem)
         {
-            if (Armazem < 10) return ObterProdutos("SELECT unidade, ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => !p.Ref_Produto.Contains("SRV")).ToList();
-            return ObterProdutos("SELECT unidade, ststamp, sa.ref, st.design, sa.stock, sa.armazem, sa.rescli, (sa.stock - sa.rescli) as stock_fis, sa.qttrec, stobs.u_locpt, noserie, epv1 FROM sa inner join st on sa.ref=st.ref inner join stobs on sa.ref=stobs.ref where sa.armazem = '" + Armazem + "' order by sa.ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0 || p.Ref_Produto.Contains("SRV.15")).ToList();
+            if (Armazem < 10) return ObterProdutos("select unidade, ststamp, ref, design, stock, armazem, rescli, stock_fis, qttrec, u_locpt, noserie, epv1, stns from ( SELECT unidade, ststamp, st.ref, st.design, isnull(sa.stock, 0) as stock, isnull(sa.armazem,0) as armazem, isnull(sa.rescli,0) as rescli, (isnull(sa.stock,0) - isnull(sa.rescli,0)) as stock_fis, isnull(sa.qttrec,0) as qttrec, stobs.u_locpt, noserie, epv1, st.stns  FROM st  left OUTER join sa on sa.ref=st.ref  inner join stobs on sa.ref=stobs.ref  where  st.stns = 0 union all SELECT unidade, ststamp, st.ref, st.design, 0 as stock, 0 as armazem, 0 as rescli, 0 as stock_fis, 0 as qttrec, stobs.u_locpt, noserie, epv1, stns  FROM st  inner join stobs on st.ref=stobs.ref  where  st.stns = 1 )x where armazem = case when stns = 1 then armazem else " + Armazem + " end order by ref;").Where(p => !p.Ref_Produto.Contains("SRV")).ToList();
+            return ObterProdutos("select unidade, ststamp, ref, design, stock, armazem, rescli, stock_fis, qttrec, u_locpt, noserie, epv1, stns from ( SELECT unidade, ststamp, st.ref, st.design, isnull(sa.stock, 0) as stock, isnull(sa.armazem,0) as armazem, isnull(sa.rescli,0) as rescli, (isnull(sa.stock,0) - isnull(sa.rescli,0)) as stock_fis, isnull(sa.qttrec,0) as qttrec, stobs.u_locpt, noserie, epv1, st.stns  FROM st  left OUTER join sa on sa.ref=st.ref  inner join stobs on sa.ref=stobs.ref  where  st.stns = 0 union all SELECT unidade, ststamp, st.ref, st.design, 0 as stock, 0 as armazem, 0 as rescli, 0 as stock_fis, 0 as qttrec, stobs.u_locpt, noserie, epv1, stns  FROM st  inner join stobs on st.ref=stobs.ref  where  st.stns = 1 )x where armazem = case when stns = 1 then armazem else " + Armazem + " end order by ref;").Where(p => (p.Stock_PHC - p.Stock_Res + p.Stock_Rec) > 0 || p.Servico).ToList();
         }
         public Produto ObterProduto(string Referencia, int IdArmazem)
         {
@@ -235,6 +239,37 @@
             return ObterArmazens("select * from sz where no='" + num + "' order by no;").FirstOrDefault() ?? new Armazem();
         }
 
+        public string ObterMoradaCargaDescarga(Cliente cl)
+        {
+            string res = "";
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select TOP 1 * from szadrs where szadrsdesc='" + cl.NomeCliente + "'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    result.Read();
+
+                    res = result["szadrsstamp"].ToString();
+
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel obter a morada de carga ou descarga do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         //NAO FUNCIONA
         public List<Movimentos> ObterListaMovimentos(string SQL_Query)
         {
@@ -268,6 +303,7 @@
                             DataMovimento = DateTime.Parse(DateTime.Parse(result["fdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["fhora"].ToString()).ToShortTimeString()),
                         });
                     }
+                    conn.Close();
                 }
             }
             catch (Exception ex)
@@ -315,7 +351,7 @@
                             EmailCliente = result["emailfo"].ToString().Trim(),
                             IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
                             Vendedor = LstUtilizadores.Where(v => v.IdPHC == int.Parse(result["vendedor"].ToString().Trim())).DefaultIfEmpty(new Utilizador()).First(),
-                            TipoCliente = result["tipo"].ToString().Trim()
+                            TipoCliente = result["tipo"].ToString().Trim(),
                         });
                         if (LoadMarcacoes) LstClientes.Last().Marcacoes = ObterMarcacoesSimples(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
                         if (LoadFolhasObra) LstClientes.Last().FolhasObra = ObterFolhasObra(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
@@ -617,6 +653,10 @@
         {
             return ObterEquipamentos("SELECT * FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';", false, false);
         }
+        public List<Equipamento> ObterEquipamentos(string Filtro)
+        {
+            return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + Filtro + "%' or nome like '%" + Filtro + "%';", false, false);
+        }
         public List<Equipamento> ObterEquipamentosSerie(string NumeroSerie)
         {
             return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + NumeroSerie + "%';", false, false);
@@ -893,6 +933,41 @@
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
             if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
 
+            //if (fo.Guia) GerarGuiaTransporte(fo, fo.Marcacao, fo.Utilizador);
+
+            return true;
+        }
+
+        public bool GerarGuiaTransporte(FolhaObra fo, Marcacao m, Utilizador u)
+        {
+            Dossier d = new Dossier()
+            {
+                Serie = 92,
+                FolhaObra = fo,
+                Marcacao = m,
+                EditadoPor = u.Iniciais,
+                Tecnico = u,
+            };
+
+            if (!fo.Oficina)
+            {
+                d.StampMoradaCarga = ObterMoradaCargaDescarga(fo.ClienteServico);
+                d.StampMoradaDescarga = u.StampMoradaCargaDescarga;
+            }
+            else if (fo.Oficina)
+            {
+                d.StampMoradaDescarga = ObterMoradaCargaDescarga(fo.ClienteServico);
+                d.StampMoradaCarga = u.StampMoradaCargaDescarga;
+            }
+
+            if (string.IsNullOrEmpty(d.StampMoradaCarga) || string.IsNullOrEmpty(d.StampMoradaDescarga) || string.IsNullOrEmpty(fo.EquipamentoServico.RefProduto)) return false;
+            d.StampDossier = this.CriarDossier(d)[2].ToString();
+            d = this.ObterDossier(d.StampDossier);
+
+            if (string.IsNullOrEmpty(d.StampDossier)) return false;
+
+            //Criação de linhas por defeito
+            this.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Referencia = fo.EquipamentoServico.RefProduto, Designacao = fo.EquipamentoServico.DesignacaoEquipamento, Quantidade = 1, Serie = fo.EquipamentoServico.NumeroSerieEquipamento, CriadoPor = u.Iniciais });
             return true;
         }
 
@@ -903,7 +978,7 @@
             if (fo.EquipamentoServico.EquipamentoStamp == null) res += "Não foi selecionado um equipamento!\r\n";
             if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
             if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
-            if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente!\r\n";
+            if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + fo.ValorTotal + "€\r\n";
             if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico))
             {
@@ -1215,7 +1290,7 @@
                 SQL_Query += "@QPEDIU = '" + m.QuemPediuNome + "', ";
                 SQL_Query += "@RESPTLM = '" + m.QuemPediuTelefone + "', ";
                 SQL_Query += "@RESPEMAIL = '" + m.QuemPediuEmail + "', ";
-                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao + "', ";
+                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao.Replace("'", "''") + "', ";
                 SQL_Query += "@PIQUETE = '" + (m.Piquete ? "1" : "0") + "', ";
                 SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
@@ -1267,7 +1342,7 @@
                 SQL_Query += "@QPEDIU = '" + m.QuemPediuNome + "', ";
                 SQL_Query += "@RESPTLM = '" + m.QuemPediuTelefone + "', ";
                 SQL_Query += "@RESPEMAIL = '" + m.QuemPediuEmail + "', ";
-                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao + "', ";
+                SQL_Query += "@RESUMO = '" + m.ResumoMarcacao.Replace("'", "''") + "', ";
                 SQL_Query += "@PIQUETE = '" + (m.Piquete ? "1" : "0") + "', ";
                 SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
                 SQL_Query += "@JUSTFECHO = '" + (m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho) + "', ";
@@ -3128,6 +3203,13 @@
                 SQL_Query += "@SERIE = '" + d.Serie + "', ";
                 SQL_Query += "@U_MARCACAOSTAMP = '" + (d.Marcacao.MarcacaoStamp == null ? "" : d.Marcacao.MarcacaoStamp) + "', ";
                 SQL_Query += "@STAMP_PA = '" + (d.FolhaObra.StampFO == null ? "" : d.FolhaObra.StampFO) + "', ";
+
+                if (DossierAceitaCargaDescarga(d.Serie))
+                {
+                    SQL_Query += "@CARGA = '" + d.StampMoradaCarga + "', ";
+                    SQL_Query += "@DESCARGA = '" + d.StampMoradaDescarga + "', ";
+                }
+
                 SQL_Query += "@NOME_UTILIZADOR = '" + d.EditadoPor + "', ";
                 SQL_Query += "@IDTECNICO = '" + d.Tecnico.IdPHC + "'; ";
 
@@ -3154,6 +3236,7 @@
                 SQL_Query += "@REF = '" + l.Referencia + "', ";
                 SQL_Query += "@DESIGN = '" + l.Designacao + "', ";
                 SQL_Query += "@QTT = '" + l.Quantidade + "', ";
+                SQL_Query += "@SERIE = '" + l.Serie + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + l.CriadoPor + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -3358,6 +3441,38 @@
             }
 
             return LstSeries;
+
+        }
+
+        public bool DossierAceitaCargaDescarga(int Serie)
+        {
+            bool res = false;
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from ts where tiposaft='GT' and ndos=" + Serie + ";", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    result.Read();
+                    res = result.HasRows;
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel verificar se o dossier aceita carga e descarga!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
 
         }
 

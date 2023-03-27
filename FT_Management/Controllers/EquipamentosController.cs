@@ -12,18 +12,18 @@ namespace FT_Management.Controllers
 
         //Obter lista de equipamentos com filtro do numero de serie
         [HttpGet]
-        public IActionResult Index(string Serie)
+        public IActionResult Index(string Filtro)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a obter lista de todos os equipamento com base no seguinte filtro: S/N - {3}", u.NomeCompleto, u.Id, Serie);
+            _logger.LogDebug("Utilizador {1} [{2}] a obter lista de todos os equipamento com base no seguinte filtro: S/N - {3}", u.NomeCompleto, u.Id, Filtro);
 
-            if (string.IsNullOrEmpty(Serie)) Serie = "";
-            ViewData["Serie"] = Serie;
+            if (string.IsNullOrEmpty(Filtro)) Filtro = "";
+            ViewData["Filtro"] = Filtro;
 
-            return View(phccontext.ObterEquipamentosSerie(Serie));
+            return View(phccontext.ObterEquipamentos(Filtro));
         }
 
         //Obter um equipamento em especifico com base num stamp
