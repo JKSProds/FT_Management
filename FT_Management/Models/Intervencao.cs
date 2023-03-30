@@ -18,9 +18,9 @@
         [Display(Name = "Data do Serviço")]
         public DateTime DataServiço { get; set; }
         [Display(Name = "Hora de Inicio")]
-        public DateTime HoraInicio { get; set; }
+        public TimeOnly HoraInicio { get; set; }
         [Display(Name = "Hora de Fim")]
-        public DateTime HoraFim { get; set; }
+        public TimeOnly HoraFim { get; set; }
     }
 
 }

@@ -204,7 +204,7 @@
                             <div class="field">
                                 <label>Fim</label>
                                 <div class="control">
-                                    <input type="time" class="input" id="txtHoraFim"
+                                    <input type="time" class="input" id="txtHoraFim" 
                                         value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
                                 </div>
                             </div>
@@ -1018,6 +1018,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     CarregarPecas();
 
     function ValidarFolhaObra() {
+        if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
         document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? "" : canvas.toDataURL();
         notify("A validar folha de obra ...");
         $.ajax({
@@ -1168,7 +1169,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid() && moment(document.getElementById('txtData').bulmaCalendar.value(), "DD/MM/YYYY", true).isValid()) {
             document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:80%">${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtData').bulmaCalendar.value() + " " + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
-            notify("Intervenção adicionada com sucesso!");
+            //notify("Intervenção adicionada com sucesso!");
         }
         if (!document.getElementById("btnZeroIntervencoes").hidden && (document.getElementById('ListaIntervencoes').value)) document.getElementById("btnZeroIntervencoes").classList.add("is-hidden");
     }
@@ -1184,13 +1185,16 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     function CarregarIntervencoes() {
         var intervencoes = document.getElementById('ListaIntervencoes').value;
         document.getElementById('ListaIntervencoes').value = '';
-
-        intervencoes.split(";").forEach(function (item) {
-            document.getElementById('txtData').bulmaCalendar.value(item.split(" ")[0]);
-            document.getElementById('txtHoraInicio').value = item.split("|")[0];
-            document.getElementById('txtHoraFim').value = item.split("|")[1];
-            AdicionarIntervencao();
-        });
+        if (intervencoes.split(";").length > 2) {
+            intervencoes.split(";").forEach(function (item) {
+                if (item != "") {
+                    document.getElementById('txtData').bulmaCalendar.value(item.split(" ")[0]);
+                    document.getElementById('txtHoraInicio').value = item.split(" ")[1].split("|")[0];
+                    document.getElementById('txtHoraFim').value = item.split(" ")[1].split("|")[1];
+                    AdicionarIntervencao();
+                }
+            });
+        }
         document.getElementById('txtData').bulmaCalendar.value('@Model.DataServico.ToShortDateString()');
         document.getElementById('txtHoraInicio').value = '@Model.IntervencaosServico.First().HoraInicio.ToShortTimeString()';
         document.getElementById('txtHoraFim').value = '@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()';
