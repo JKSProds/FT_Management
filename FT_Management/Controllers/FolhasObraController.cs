@@ -50,7 +50,7 @@ namespace FT_Management.Controllers
             fo.Utilizador = u;
             fo.Marcacao = m;
 
-            fo.PreencherViagem(context.ObterViagens(fo.Utilizador.Viatura.Matricula, DateTime.Now.ToShortDateString()).Where(v => v.Fim_Viagem.Year > 1).DefaultIfEmpty(new Viagem() { Fim_Viagem = DateTime.Parse(DateTime.Now.ToShortDateString() + " " + fo.IntervencaosServico.First().HoraInicio), Distancia_Viagem = "0" }).Last());
+            fo.PreencherViagem(context.ObterViagens(fo.Utilizador.Viatura.Matricula, DateTime.Now.ToShortDateString()).Where(v => v.Fim_Viagem.Year > 1).DefaultIfEmpty(new Viagem() { Fim_Viagem = DateTime.Parse(fo.IntervencaosServico.First().HoraInicio), Distancia_Viagem = "0" }).Last());
             if (LstFolhasObra.Count() > 0)
             {
                 fo.RubricaCliente = LstFolhasObra.First().RubricaCliente.Replace("}", "").Replace("{", "");
