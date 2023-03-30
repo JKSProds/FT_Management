@@ -23,6 +23,9 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="wwwroot\lib\offline\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="wwwroot\apple-touch-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -37,5 +40,8 @@
     <None Update="FT_Presencas.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\offline\" />
   </ItemGroup>
 </Project>
