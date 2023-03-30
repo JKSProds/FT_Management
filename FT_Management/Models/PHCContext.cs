@@ -979,7 +979,7 @@
             if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
             if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
             if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + fo.ValorTotal + "€\r\n";
-            if (fo.IntervencaosServico.Where(i => i.HoraFim > TimeOnly.FromDateTime(DateTime.Now.AddHours(-2))).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
+            if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico))
             {
                 Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
@@ -1177,8 +1177,8 @@
                             NomeTecnico = result["tecnnm"].ToString().Trim(),
                             RelatorioServico = result["relatorio"].ToString().TrimEnd(),
                             DataServiço = DateTime.Parse(result["data"].ToString().Trim()),
-                      HoraInicio = TimeOnly.Parse(result["hora"].ToString().Trim()),
-                       HoraFim = TimeOnly.Parse(result["horaf"].ToString().Trim()),
+                      HoraInicio = DateTime.Parse(result["hora"].ToString().Trim()),
+                       HoraFim = DateTime.Parse(result["horaf"].ToString().Trim()),
                         });
                     }
                 }

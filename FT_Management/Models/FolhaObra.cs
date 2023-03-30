@@ -90,8 +90,8 @@
                 new Intervencao()
                 {
                     NomeTecnico = "N/D",
-                    HoraInicio = TimeOnly.Parse(DateTime.Now.AddHours(-1).Hour.ToString() + ":00"),
-                    HoraFim = TimeOnly.Parse(DateTime.Now.Hour.ToString() + ":00")
+                    HoraInicio = DateTime.Parse(DateTime.Now.AddHours(-1).Hour.ToString() + ":00"),
+                    HoraFim = DateTime.Parse(DateTime.Now.Hour.ToString() + ":00")
                 }
             };
         }
@@ -111,8 +111,8 @@
 
         public void PreencherViagem(Viagem v)
         {
-            this.IntervencaosServico.First().HoraInicio = TimeOnly.Parse(v.Fim_Viagem.ToShortTimeString());
-            this.IntervencaosServico.First().HoraFim = TimeOnly.Parse(DateTime.Now.ToShortTimeString());
+            this.IntervencaosServico.First().HoraInicio = v.Fim_Viagem;
+            this.IntervencaosServico.First().HoraFim = DateTime.Now;
             this.KmsDeslocacao = double.Parse(v.Distancia_Viagem);
         }
 
@@ -133,8 +133,8 @@
                     this.IntervencaosServico.Add(new Intervencao
                     {
                         DataServiço = DateTime.Parse(item.Split(" ").First()),
-                        HoraInicio = TimeOnly.Parse(item.Split(" ").Last().Split("|").First()),
-                        HoraFim = TimeOnly.Parse(item.Split(" ").Last().Split("|").Last()),
+                        HoraInicio = DateTime.Parse(item.Split(" ").Last().Split("|").First()),
+                        HoraFim = DateTime.Parse(item.Split(" ").Last().Split("|").Last()),
                         RelatorioServico = this.RelatorioServico,
                         IdTecnico = this.Utilizador.IdPHC,
                         NomeTecnico = this.Utilizador.NomeCompleto,
