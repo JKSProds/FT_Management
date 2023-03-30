@@ -216,8 +216,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            List<CalendarioEvent> LstEventos = context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end.AddDays(-1)).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList();
-            LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end, id), new List<Feriado>()));
+            List<CalendarioEvent> LstEventos = context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start.AddDays(1), end).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList();
+            LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start.AddDays(1), end, id), new List<Feriado>()));
 
             if (id > 0) return new JsonResult(LstEventos);
 
