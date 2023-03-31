@@ -3725,6 +3725,116 @@
             return ObterLinhasDossierCompras("select * from fn where fostamp='" + STAMP + "' order by lordem", true);
         }
 
+
+        //COMPRAS
+        public List<Dossier> ObterDossiersRecibos(string SQL_Query, bool LoadLinhas, bool LoadAnexos)
+        {
+            List<Dossier> LstDossiers = new List<Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstDossiers.Add(new Dossier()
+                        {
+                            Ecra = "RE",
+                            StampDossier = result["restamp"].ToString().Trim(),
+                            NomeDossier = "Recibos",
+                            IdDossier = int.Parse(result["rno"].ToString()),
+                            Referencia = result["dilnoplano"].ToString().Trim(),
+                            DataDossier = DateTime.Parse(result["procdata"].ToString()),
+                            Serie = 0,
+                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), 0),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            Tecnico = new Utilizador() { NomeCompleto = result["usrinis"].ToString() },
+                            Fechado = true
+                        });
+                        if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossierRecibos(LstDossiers.Last().StampDossier);
+                        if (LoadAnexos) LstDossiers.Last().Anexos = ObterAnexosDossier(LstDossiers.Last().StampDossier);
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstDossiers;
+        }
+        public List<Dossier> ObterDossiersRecibos(DateTime Data, string Filtro, int Serie)
+        {
+            return ObterDossiersRecibos("select top 100 * from re (nolock) where " + (string.IsNullOrEmpty(Filtro) ? " procdata='" + Data.ToString("yyyy-MM-dd") + "' " : " (rno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR dilnoplano like '%" + Filtro + "%')") + " order by rno", false, false);
+        }
+        public Dossier ObterDossierRecibos(string STAMP)
+        {
+            return ObterDossiersRecibos("select * from re (nolock) where restamp='" + STAMP + "';", true, true).DefaultIfEmpty(new Dossier()).First();
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossierRecibos(string SQL_Query, bool LoadAll)
+        {
+            List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["cdesc"].ToString()))
+                        {
+                            LstLinhasDossier.Add(new Linha_Dossier
+                            {
+                                Stamp_Dossier = result["restamp"].ToString(),
+                                Stamp_Linha = result["rlstamp"].ToString(),
+                                Referencia = result["nrdoc"].ToString().Trim(),
+                                Designacao = result["cdesc"].ToString().Trim(),
+                                Quantidade = 0,
+                                CriadoPor = result["usrinis"].ToString()
+                            });
+                        }
+
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstLinhasDossier;
+        }
+        public List<Linha_Dossier> ObterLinhasDossierRecibos(string STAMP)
+        {
+            return ObterLinhasDossierRecibos("select * from rl where restamp='" + STAMP + "' order by lordem", true);
+        }
         #endregion
     }
 }
