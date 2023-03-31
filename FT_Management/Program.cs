@@ -84,6 +84,8 @@ namespace FT_Management
 
             System.Globalization.CultureInfo customCulture = new CultureInfo("pt-PT");
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
+            customCulture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+            customCulture.DateTimeFormat.DateSeparator = "/";
 
             CultureInfo.DefaultThreadCurrentCulture = customCulture;
 

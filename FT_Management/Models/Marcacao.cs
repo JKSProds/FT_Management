@@ -41,9 +41,11 @@
         public DateTime DataCriacao { get; set; }
         [Required]
         [Display(Name = "Data do Pedido")]
+        [DataType(DataType.Date)]
         public DateTime DataPedido { get; set; }
         [Required]
         [Display(Name = "Data da Marcação")]
+        [DataType(DataType.Date)]
         public DateTime DataMarcacao { get; set; }
         [Display(Name = "Datas")]
         public string DatasAdicionais { get; set; }
