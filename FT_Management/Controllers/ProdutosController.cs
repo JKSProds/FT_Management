@@ -111,6 +111,7 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            if (id == 0) id = u.IdArmazem;
             Utilizador t = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == id).DefaultIfEmpty().First();
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todas as peças em uso de um armazem em especifico: Armazem - {3}, GT - {4}.", u.NomeCompleto, u.Id, id, gt);
