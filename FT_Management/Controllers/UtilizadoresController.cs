@@ -1,4 +1,6 @@
-﻿namespace FT_Management.Controllers
+﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+
+namespace FT_Management.Controllers
 {
     public class UtilizadoresController : Controller
     {
@@ -74,6 +76,13 @@
             foreach (var user in LstUtilizadores)
             {
                 var passwordHasher = new PasswordHasher<string>();
+
+                if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.SuccessRehashNeeded)
+                {
+                    user.Password = passwordHasher.HashPassword(null, utilizador.Password);
+                    context.NovoUtilizador(user);
+                }
+
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
                     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" && !user.Dev) return Forbid();
