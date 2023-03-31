@@ -420,7 +420,7 @@
                                 }
                                 <div class="navbar-item">
                                     <a class="button is-info is-light is-fullwidth"
-                                    onclick="Bulma('#modalSugestoes').modal().open();">
+                                       onclick="Bulma('#modalSugestoes').modal().open();">
                                         <span class="icon">
                                             <i class="fa-solid fa-lightbulb"></i>
                                         </span>
@@ -434,6 +434,10 @@
                                         </span>
                                         <span>Terminar Sessão</span>
                                     </a>
+                                </div>
+                                <hr class="navbar-divider">
+                                <div class="navbar-item has-text-centered">
+                                    Versão @GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ?" - DEV" : "")
                                 </div>
                             </div>
                         </div>
@@ -483,9 +487,6 @@
         <div class="content has-text-centered">
             <p>
                 <strong>Jorge Monteiro</strong>
-                (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-                == "Development" ?
-                "_DEV" : ""))
             </p>
         </div>
     </footer>
