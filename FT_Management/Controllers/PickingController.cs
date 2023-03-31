@@ -42,7 +42,7 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             Encomenda e = phccontext.ObterEncomenda(stamp);
-            e.LinhasEncomenda = e.LinhasEncomenda.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
+            e.LinhasEncomenda = e.LinhasEncomendaPorFornecer.Where(l => l.DataEnvio.Year > 1900 && !l.Fornecido || e.Total).ToList();
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter uma encomenda em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, e.Id, e.BO_STAMP, e.PI_STAMP);
 
