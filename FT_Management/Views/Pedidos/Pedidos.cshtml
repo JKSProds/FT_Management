@@ -124,6 +124,7 @@ else
                         </header>
                         <div class="card-content is-hidden">
                             <div class="content">
+                                @Html.DisplayNameFor(model => model.Cliente.IdCliente): <b>@item.Cliente.IdCliente @(item.Cliente.IdLoja > 0 ? " / " + item.Cliente.IdLoja : "")</b><br />
                                 @Html.DisplayNameFor(model => model.DataPedido): <b>@item.DataPedido.ToShortDateString()</b><br />
                                 @Html.DisplayNameFor(model => model.EstadoMarcacaoDesc): <b>@item.EstadoMarcacaoDesc</b><br />
                                 @Html.DisplayNameFor(model => model.PrioridadeMarcacao): <b>@item.PrioridadeMarcacao</b><br />
@@ -135,22 +136,22 @@ else
                                 {
                                     <p class="subtitle">Comentários</p>
                                     <div class="b-table">
-                                    <div class="table-wrapper has-mobile-cards">    
-                                    <table class="table table-hover">
-                                        <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)</th>
-                                        <tbody>
+                                        <div class="table-wrapper has-mobile-cards">
+                                            <table class="table table-hover">
+                                                <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)</th>
+                                                <tbody>
 
-                                            @foreach (var c in item.LstComentarios)
-                                            {
-                                                <tr>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)"><span>@c.Utilizador.NomeCompleto</span></td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)"><span>@c.Descricao</span></td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)"><span>@c.DataComentario</span></td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                    </div>
+                                                    @foreach (var c in item.LstComentarios)
+                                                    {
+                                                        <tr>
+                                                            <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)"><span>@c.Utilizador.NomeCompleto</span></td>
+                                                            <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)"><span>@c.Descricao</span></td>
+                                                            <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)"><span>@c.DataComentario</span></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 }
                             </div>
