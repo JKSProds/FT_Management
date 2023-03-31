@@ -976,6 +976,7 @@
             string res = "";
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
             if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
+            if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3) res += "É obrigatorio inserir pelo menos 3 anexos numa instalação!\r\n";
             if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção é diferente da data da marcação ("+fo.DataServico.ToShortDateString()+")!\r\n";
             if (fo.EquipamentoServico.EquipamentoStamp == null) res += "Não foi selecionado um equipamento!\r\n";
             if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
