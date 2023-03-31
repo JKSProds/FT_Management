@@ -264,7 +264,7 @@
                 Serie = d.Serie,
                 Stamp_Origem = d.StampDossier,
                 Resumo = string.IsNullOrEmpty(resumo) ? d.NomeDossier + " (" + (d.Ecra == "FO" ? d.Referencia : d.IdDossier) + ") - " + u.NomeCompleto : resumo,
-                Nome = (d.Iniciais + "_" + (d.Ecra != "BO" && d.Ecra != "FT" ? d.Referencia : d.IdDossier) + (d.Ecra == "DO" ? "" : "_" + d.Cliente.NomeCliente.Trim()) + "_" + DateTime.Now.Ticks + extensao).Replace("/", "_").Replace("\\", "_"),
+                Nome = (d.Iniciais + "_" + (d.Ecra != "BO" && d.Ecra != "FT" && d.Ecra != "DO" ? d.Referencia : d.IdDossier) + (d.Ecra == "DO" ? "" : "_" + d.Cliente.NomeCliente.Trim()) + "_" + DateTime.Now.Ticks + extensao).Replace("/", "_").Replace("\\", "_"),
                 Utilizador = u
             };
 
