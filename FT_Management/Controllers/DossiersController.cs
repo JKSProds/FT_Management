@@ -40,6 +40,8 @@
             if (Ecra == "FT") return View(phccontext.ObterDossiersFaturacao(DateTime.Parse(Data), Filtro, Serie));
             if (Ecra == "FO") return View(phccontext.ObterDossiersCompras(DateTime.Parse(Data), Filtro, Serie));
             if (Ecra == "RE") return View(phccontext.ObterDossiersRecibos(DateTime.Parse(Data), Filtro, Serie));
+            if (Ecra == "PO") return View(phccontext.ObterDossiersPagamentos(DateTime.Parse(Data), Filtro, Serie));
+            if (Ecra == "DO") return View(phccontext.ObterDossiersDocContabilistos(DateTime.Parse(Data), Filtro, Serie));
 
             return View(new List<Dossier>());
         }
@@ -59,6 +61,8 @@
             if (ecra == "FT") d = phccontext.ObterDossierFaturacao(id);
             if (ecra == "FO") d = phccontext.ObterDossierCompras(id);
             if (ecra == "RE") d = phccontext.ObterDossierRecibos(id);
+            if (ecra == "PO") d = phccontext.ObterDossierPagamentos(id);
+            if (ecra == "DO") d = phccontext.ObterDossierDocContabilistos(id);
             if (d.StampDossier == null) return Forbid();
 
             if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
@@ -249,6 +253,9 @@
             if (ecra == "BO") d = phccontext.ObterDossier(id);
             if (ecra == "FT") d = phccontext.ObterDossierFaturacao(id);
             if (ecra == "FO") d = phccontext.ObterDossierCompras(id);
+            if (ecra == "RE") d = phccontext.ObterDossierRecibos(id);
+            if (ecra == "PO") d = phccontext.ObterDossierPagamentos(id);
+            if (ecra == "DO") d = phccontext.ObterDossierDocContabilistos(id);
             if (d == new Dossier()) return Forbid();
 
             Anexo a = new Anexo()
@@ -257,7 +264,7 @@
                 Serie = d.Serie,
                 Stamp_Origem = d.StampDossier,
                 Resumo = string.IsNullOrEmpty(resumo) ? d.NomeDossier + " (" + (d.Ecra == "FO" ? d.Referencia : d.IdDossier) + ") - " + u.NomeCompleto : resumo,
-                Nome = (d.Iniciais + "_" + (d.Ecra == "FO" ? d.Referencia : d.IdDossier) + "_" + d.Cliente.NomeCliente.Trim() + "_" + DateTime.Now.Ticks + extensao).Replace("/", "_").Replace("\\", "_"),
+                Nome = (d.Iniciais + "_" + (d.Ecra != "BO" && d.Ecra != "FT" ? d.Referencia : d.IdDossier) + (d.Ecra == "DO" ? "" : "_" + d.Cliente.NomeCliente.Trim()) + "_" + DateTime.Now.Ticks + extensao).Replace("/", "_").Replace("\\", "_"),
                 Utilizador = u
             };
 
