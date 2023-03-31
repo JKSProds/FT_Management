@@ -2335,7 +2335,7 @@
                         LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).First().LinhasEncomenda.Add(new Linha_Encomenda()
                         {
                             IdEncomenda = int.Parse(result["obrano"].ToString()),
-                            NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
+                            NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString().Trim()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
                             DataEnvio = DateTime.Parse(result["Data_Envio_Linha"].ToString()),
                             Total = result["Envio_Total"].ToString() == "True",
                             Produto = new Produto()
