@@ -791,16 +791,28 @@
                 <div class="field-label is-normal"><label class="label">Mensagens:</label></div>
                 <div class="field-body">
                     <div class="field" style="width:100%">
-                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8
-                                value=""></textarea></div>
+                        <div class="control">
+                            <textarea type="text" class="textarea" id="txtMensagens" readonly rows=5
+                                      value=""></textarea>
+                        </div>
                     </div>
+
                 </div>
             </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal"><label class="label">Observações:</label></div>
+                <div class="field" style="width:100%">
+                    <div class="control">
+                        <textarea type="text" class="textarea" id="txtObs" rows=3
+                                  value=""></textarea>
+                    </div>
+                </div>
+                </div>
         </section>
         <footer class="modal-card-foot">
             @if (User.IsInRole("Admin"))
             {
-                <button type="button" class="button is-info" onclick="AbrirMensagens();" href="javascript:;">
+                <button type="button" class="button is-danger is-large is-fullwidth" onclick="AbrirMensagens();" href="javascript:;">
                     <span class="icon">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -809,7 +821,7 @@
             }
             else
             {
-                <button type="button" class="button is-info" onclick="GerarCodigo();" href="javascript:;">
+                <button type="button" class="button is-info is-large is-fullwidth" onclick="GerarCodigo();" href="javascript:;">
                     <span class="icon">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -1068,7 +1080,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         $.ajax({
             type: "POST",
             url: "/FolhasObra/CriarCodigo/" + stamp,
-            data: { "obs": document.getElementById("txtMensagens").value },
+            data: { "obs": document.getElementById("txtMensagens").value + "\r\n\r\nObservações do Técnico: " + document.getElementById("txtObs").value},
             success: function (result) {
                 $(function () {
                     stamp_codigo = result;
@@ -1099,6 +1111,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     function GerarCodigo() {
+        if (document.getElementById('txtObs').value.length < 14) {
+            notifyError('Informação insuficiente nas observaçoes. Por favor insira mais informação!');
+        } else {
         CriarCodigo('@Model.Marcacao.MarcacaoStamp');
         time = 5 * 60;
         interval = setInterval(AtualizarTimer, 1000);
@@ -1107,7 +1122,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalAguardarValidacao').modal().open();
-        notify("Código gerado com sucesso. A aguardar aprovação!");
+            notify("Código gerado com sucesso. A aguardar aprovação!");
+            document.getElementById('txtObs').value = '';
+        }
     }
 
     //VALIDACOES FINAIS DA FOLHA DE OBRA
