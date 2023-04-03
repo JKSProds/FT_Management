@@ -204,7 +204,7 @@
                             <div class="field">
                                 <label>Fim</label>
                                 <div class="control">
-                                    <input type="time" class="input" id="txtHoraFim"
+                                    <input type="time" class="input" id="txtHoraFim" 
                                         value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
                                 </div>
                             </div>
@@ -395,7 +395,7 @@
                         <div class="column is-6">
                             <div class="field">
                                 <p class="control">
-                                    <button type="button" class="button is-warning is-pulled-right is-fullwidth"
+                                    <button type="button" class="mb-3 button is-warning is-pulled-right is-fullwidth"
                                         onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                                         <span class="icon is-small">
                                             <i class="fas fa-plus"></i>
@@ -791,16 +791,28 @@
                 <div class="field-label is-normal"><label class="label">Mensagens:</label></div>
                 <div class="field-body">
                     <div class="field" style="width:100%">
-                        <div class="control"><textarea type="text" class="textarea" id="txtMensagens" readonly rows=8
-                                value=""></textarea></div>
+                        <div class="control">
+                            <textarea type="text" class="textarea" id="txtMensagens" readonly rows=5
+                                      value=""></textarea>
+                        </div>
                     </div>
+
                 </div>
             </div>
+            <div class="field is-horizontal">
+                <div class="field-label is-normal"><label class="label">Observações:</label></div>
+                <div class="field" style="width:100%">
+                    <div class="control">
+                        <textarea type="text" class="textarea" id="txtObs" rows=3
+                                  value=""></textarea>
+                    </div>
+                </div>
+                </div>
         </section>
         <footer class="modal-card-foot">
             @if (User.IsInRole("Admin"))
             {
-                <button type="button" class="button is-info" onclick="AbrirMensagens();" href="javascript:;">
+                <button type="button" class="button is-danger is-large is-fullwidth" onclick="AbrirMensagens();" href="javascript:;">
                     <span class="icon">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -809,7 +821,7 @@
             }
             else
             {
-                <button type="button" class="button is-info" onclick="GerarCodigo();" href="javascript:;">
+                <button type="button" class="button is-info is-large is-fullwidth" onclick="GerarCodigo();" href="javascript:;">
                     <span class="icon">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -1018,6 +1030,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     CarregarPecas();
 
     function ValidarFolhaObra() {
+        if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
         document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? "" : canvas.toDataURL();
         notify("A validar folha de obra ...");
         $.ajax({
@@ -1067,7 +1080,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         $.ajax({
             type: "POST",
             url: "/FolhasObra/CriarCodigo/" + stamp,
-            data: { "obs": document.getElementById("txtMensagens").value },
+            data: { "obs": document.getElementById("txtMensagens").value + "\r\n\r\nObservações do Técnico: " + document.getElementById("txtObs").value},
             success: function (result) {
                 $(function () {
                     stamp_codigo = result;
@@ -1098,6 +1111,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     function GerarCodigo() {
+        if (document.getElementById('txtObs').value.length < 14) {
+            notifyError('Informação insuficiente nas observaçoes. Por favor insira mais informação!');
+        } else {
         CriarCodigo('@Model.Marcacao.MarcacaoStamp');
         time = 5 * 60;
         interval = setInterval(AtualizarTimer, 1000);
@@ -1106,7 +1122,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalAguardarValidacao').modal().open();
-        notify("Código gerado com sucesso. A aguardar aprovação!");
+            notify("Código gerado com sucesso. A aguardar aprovação!");
+            document.getElementById('txtObs').value = '';
+        }
     }
 
     //VALIDACOES FINAIS DA FOLHA DE OBRA
@@ -1168,7 +1186,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         if (moment(document.getElementById('txtHoraInicio').value, "HH:mm", true).isValid() && moment(document.getElementById('txtHoraFim').value, "HH:mm", true).isValid() && moment(document.getElementById('txtData').bulmaCalendar.value(), "DD/MM/YYYY", true).isValid()) {
             document.getElementById('divListaIntervencoes').innerHTML += `<div class="list-item" id="lst-datas-${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}"><div class="list-item-title" style="width:80%">${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value} - ${document.getElementById('txtHoraFim').value}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right is-fullwidth"><button class="button is-danger" type="button" onclick="RemoverIntervencao('${document.getElementById('txtData').bulmaCalendar.value()} ${document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
             document.getElementById('ListaIntervencoes').value = `${document.getElementById('ListaIntervencoes').value + document.getElementById('txtData').bulmaCalendar.value() + " " + document.getElementById('txtHoraInicio').value}|${document.getElementById('txtHoraFim').value};`;
-            notify("Intervenção adicionada com sucesso!");
+            //notify("Intervenção adicionada com sucesso!");
         }
         if (!document.getElementById("btnZeroIntervencoes").hidden && (document.getElementById('ListaIntervencoes').value)) document.getElementById("btnZeroIntervencoes").classList.add("is-hidden");
     }
@@ -1184,13 +1202,16 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     function CarregarIntervencoes() {
         var intervencoes = document.getElementById('ListaIntervencoes').value;
         document.getElementById('ListaIntervencoes').value = '';
-
-        intervencoes.split(";").forEach(function (item) {
-            document.getElementById('txtData').bulmaCalendar.value(item.split(" ")[0]);
-            document.getElementById('txtHoraInicio').value = item.split("|")[0];
-            document.getElementById('txtHoraFim').value = item.split("|")[1];
-            AdicionarIntervencao();
-        });
+        if (intervencoes.split(";").length > 2) {
+            intervencoes.split(";").forEach(function (item) {
+                if (item != "") {
+                    document.getElementById('txtData').bulmaCalendar.value(item.split(" ")[0]);
+                    document.getElementById('txtHoraInicio').value = item.split(" ")[1].split("|")[0];
+                    document.getElementById('txtHoraFim').value = item.split(" ")[1].split("|")[1];
+                    AdicionarIntervencao();
+                }
+            });
+        }
         document.getElementById('txtData').bulmaCalendar.value('@Model.DataServico.ToShortDateString()');
         document.getElementById('txtHoraInicio').value = '@Model.IntervencaosServico.First().HoraInicio.ToShortTimeString()';
         document.getElementById('txtHoraFim').value = '@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()';

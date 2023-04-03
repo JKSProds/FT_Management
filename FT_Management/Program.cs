@@ -84,7 +84,6 @@ namespace FT_Management
 
             System.Globalization.CultureInfo customCulture = new CultureInfo("pt-PT");
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
-
             CultureInfo.DefaultThreadCurrentCulture = customCulture;
 
             app.UseAuthentication();

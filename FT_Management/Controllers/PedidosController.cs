@@ -63,8 +63,8 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            if (id > 0) u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == id).DefaultIfEmpty(new Utilizador()).First();
+            Utilizador u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == id).DefaultIfEmpty(new Utilizador()).First();
+            if (id == 0) u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(u.IdPHC, DateTime.Parse(DataPedidos));
 
             ViewData["DataPedidos"] = DataPedidos;
@@ -217,7 +217,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             List<CalendarioEvent> LstEventos = context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end.AddDays(-1)).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList();
-            LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end, id), new List<Feriado>()));
+            LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end.AddDays(-1), id), new List<Feriado>()));
 
             if (id > 0) return new JsonResult(LstEventos);
 
@@ -361,7 +361,9 @@ namespace FT_Management.Controllers
             {
                 if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
                 if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+                m.EstadoMarcacaoDesc = "Reagendado";
             }
+            
 
             m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 

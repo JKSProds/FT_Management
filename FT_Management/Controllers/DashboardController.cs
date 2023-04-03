@@ -87,13 +87,23 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das Marcacoes.", u.NomeCompleto, u.Id);
 
-            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(true, true);
-            List<Marcacao> LstMarcacao = phccontext.ObterMarcacoes(DateTime.Now.AddDays(-2), DateTime.Now);
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(true, false);
+            List<Marcacao> LstMarcacao = phccontext.ObterMarcacoes(DateTime.Now.AddDays(-7), DateTime.Now);
+            List<int> LstMarcacaosPendentes = phccontext.ObterPercentagemMarcacoes();
 
             for (int i = 0; i <= LstUtilizadores.Count() - 1; i++)
             {
                 LstUtilizadores[i].LstMarcacoes = LstMarcacao.Where(m => m.Tecnico.Id == LstUtilizadores[i].Id).ToList();
             }
+
+            ViewData["Pecas"] = LstMarcacaosPendentes[0];
+            ViewData["Orcamento"] = LstMarcacaosPendentes[1];
+            ViewData["Pendentes"] = LstMarcacaosPendentes[2];
+            ViewData["Finalizados"] = LstMarcacaosPendentes[3];
+            ViewData["Oficina"] = LstMarcacaosPendentes[4];
+            ViewData["FinalizadosSemana"] = LstMarcacaosPendentes[5];
+            ViewData["TotaisSemana"] = LstMarcacaosPendentes[6];
+
 
             return View(LstUtilizadores);
         }

@@ -974,11 +974,14 @@
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
-            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção é diferente da data da marcação!\r\n";
-            if (fo.EquipamentoServico.EquipamentoStamp == null) res += "Não foi selecionado um equipamento!\r\n";
+            if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
+            if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
+            if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3) res += "É obrigatorio inserir pelo menos 3 anexos numa instalação!\r\n";
+            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção é diferente da data da marcação ("+fo.DataServico.ToShortDateString()+")!\r\n";
+            //if (fo.EquipamentoServico.EquipamentoStamp == null) res += "Não foi selecionado um equipamento!\r\n";
             if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
-            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual. \r\n";
-            if (fo.ValorTotal > 500) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + fo.ValorTotal + "€\r\n";
+            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual("+DateTime.Now.ToShortDateString()+"). \r\n";
+            if (fo.ValorTotal > 500 && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
             if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico))
             {
@@ -1176,17 +1179,10 @@
                             IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                             NomeTecnico = result["tecnnm"].ToString().Trim(),
                             RelatorioServico = result["relatorio"].ToString().TrimEnd(),
-                            DataServiço = DateTime.Parse(result["data"].ToString().Trim())
+                            DataServiço = DateTime.Parse(result["data"].ToString().Trim()),
+                      HoraInicio = DateTime.Parse(result["hora"].ToString().Trim()),
+                       HoraFim = DateTime.Parse(result["horaf"].ToString().Trim()),
                         });
-
-                        DateTime.TryParse(result["hora"].ToString().Trim(), out DateTime horainicio);
-                        LstIntervencao[^1].HoraInicio = horainicio;
-                        DateTime.TryParse(result["horaf"].ToString().Trim(), out DateTime horafim);
-                        LstIntervencao[^1].HoraFim = horafim;
-
-
-                        //Console.WriteLine(result["nopat"].ToString().Trim());
-
                     }
                 }
 
@@ -1891,6 +1887,37 @@
             return res;
 
         }
+
+        public List<int> ObterPercentagemMarcacoes()
+        {
+            List<int> res = new List<int>();
+
+            //Pedido de Pecas
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Pedido Peças') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Pedido de Orçamento
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Pedido Orçamento') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Pendentes Totais
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado not in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Finalizados
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Oficina
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE Oficina='True' and estado not in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Finalizados 7 dias
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Totais
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE data between '" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+
+            return res;
+
+        }
+
         public List<Atividade> ObterAtivivade(Marcacao m)
         {
             List<Atividade> LstAtividade = new List<Atividade>();
@@ -2342,7 +2369,7 @@
                         LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).First().LinhasEncomenda.Add(new Linha_Encomenda()
                         {
                             IdEncomenda = int.Parse(result["obrano"].ToString()),
-                            NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
+                            NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString().Trim()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
                             DataEnvio = DateTime.Parse(result["Data_Envio_Linha"].ToString()),
                             Total = result["Envio_Total"].ToString() == "True",
                             Produto = new Produto()
@@ -2351,7 +2378,7 @@
                                 Designacao_Produto = result["design"].ToString(),
                                 Stock_Fisico = result["Qtt_Separar"].ToString() == "0" ? double.Parse(result["Qtt_Envio"].ToString()) : double.Parse(result["Qtt_Separar"].ToString())
                             },
-                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) <= 0
+                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) == 0
                         });
                         //Console.WriteLine(result["Nome"] + " - " + result["Envio_Total"]);
                     }
@@ -3732,6 +3759,336 @@
             return ObterLinhasDossierCompras("select * from fn where fostamp='" + STAMP + "' order by lordem", true);
         }
 
+
+        //Recibos
+        public List<Dossier> ObterDossiersRecibos(string SQL_Query, bool LoadLinhas, bool LoadAnexos)
+        {
+            List<Dossier> LstDossiers = new List<Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstDossiers.Add(new Dossier()
+                        {
+                            Ecra = "RE",
+                            StampDossier = result["restamp"].ToString().Trim(),
+                            NomeDossier = "Recibos",
+                            IdDossier = int.Parse(result["rno"].ToString()),
+                            Referencia = result["dilnoplano"].ToString().Trim(),
+                            DataDossier = DateTime.Parse(result["procdata"].ToString()),
+                            Serie = 0,
+                            Cliente = ObterClienteSimples(int.Parse(result["no"].ToString()), 0),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            Tecnico = new Utilizador() { NomeCompleto = result["usrinis"].ToString() },
+                            Fechado = true
+                        });
+                        if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossierRecibos(LstDossiers.Last().StampDossier);
+                        if (LoadAnexos) LstDossiers.Last().Anexos = ObterAnexosDossier(LstDossiers.Last().StampDossier);
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstDossiers;
+        }
+        public List<Dossier> ObterDossiersRecibos(DateTime Data, string Filtro, int Serie)
+        {
+            return ObterDossiersRecibos("select top 100 * from re (nolock) where " + (string.IsNullOrEmpty(Filtro) ? " procdata='" + Data.ToString("yyyy-MM-dd") + "' " : " (rno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR dilnoplano like '%" + Filtro + "%')") + " order by rno", false, false);
+        }
+        public Dossier ObterDossierRecibos(string STAMP)
+        {
+            return ObterDossiersRecibos("select * from re (nolock) where restamp='" + STAMP + "';", true, true).DefaultIfEmpty(new Dossier()).First();
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossierRecibos(string SQL_Query, bool LoadAll)
+        {
+            List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["cdesc"].ToString()))
+                        {
+                            LstLinhasDossier.Add(new Linha_Dossier
+                            {
+                                Stamp_Dossier = result["restamp"].ToString(),
+                                Stamp_Linha = result["rlstamp"].ToString(),
+                                Referencia = result["nrdoc"].ToString().Trim(),
+                                Designacao = result["cdesc"].ToString().Trim(),
+                                Quantidade = 0,
+                                CriadoPor = result["usrinis"].ToString()
+                            });
+                        }
+
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstLinhasDossier;
+        }
+        public List<Linha_Dossier> ObterLinhasDossierRecibos(string STAMP)
+        {
+            return ObterLinhasDossierRecibos("select * from rl where restamp='" + STAMP + "' order by lordem", true);
+        }
+
+        //Pagamentos
+        public List<Dossier> ObterDossiersPagamentos(string SQL_Query, bool LoadLinhas, bool LoadAnexos)
+        {
+            List<Dossier> LstDossiers = new List<Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstDossiers.Add(new Dossier()
+                        {
+                            Ecra = "PO",
+                            StampDossier = result["postamp"].ToString().Trim(),
+                            NomeDossier = "Pagamentos",
+                            IdDossier = int.Parse(result["rno"].ToString()),
+                            Referencia = result["dilnoplano"].ToString().Trim(),
+                            DataDossier = DateTime.Parse(result["rdata"].ToString()),
+                            Serie = 0,
+                            Cliente = ObterFornecedorCliente(int.Parse(result["no"].ToString())),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            Tecnico = new Utilizador() { NomeCompleto = result["usrinis"].ToString() },
+                            Fechado = true
+                        });
+                        if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossierPagamentos(LstDossiers.Last().StampDossier);
+                        if (LoadAnexos) LstDossiers.Last().Anexos = ObterAnexosDossier(LstDossiers.Last().StampDossier);
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstDossiers;
+        }
+        public List<Dossier> ObterDossiersPagamentos(DateTime Data, string Filtro, int Serie)
+        {
+            return ObterDossiersPagamentos("select top 100 * from po (nolock) where " + (string.IsNullOrEmpty(Filtro) ? " rdata='" + Data.ToString("yyyy-MM-dd") + "' " : " (rno like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%' OR dilnoplano like '%" + Filtro + "%')") + " order by rno", false, false);
+        }
+        public Dossier ObterDossierPagamentos(string STAMP)
+        {
+            return ObterDossiersPagamentos("select * from po (nolock) where postamp='" + STAMP + "';", true, true).DefaultIfEmpty(new Dossier()).First();
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossierPagamentos(string SQL_Query, bool LoadAll)
+        {
+            List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["cdesc"].ToString()))
+                        {
+                            LstLinhasDossier.Add(new Linha_Dossier
+                            {
+                                Stamp_Dossier = result["postamp"].ToString(),
+                                Stamp_Linha = result["plstamp"].ToString(),
+                                Referencia = result["adoc"].ToString().Trim(),
+                                Designacao = result["cdesc"].ToString().Trim(),
+                                Quantidade = 0,
+                                CriadoPor = result["usrinis"].ToString()
+                            });
+                        }
+
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstLinhasDossier;
+        }
+        public List<Linha_Dossier> ObterLinhasDossierPagamentos(string STAMP)
+        {
+            return ObterLinhasDossierPagamentos("select * from pl where postamp='" + STAMP + "' order by lordem", true);
+        }
+
+        //Documentos Contabilisticos
+        public List<Dossier> ObterDossiersDocContabilistos(string SQL_Query, bool LoadLinhas, bool LoadAnexos)
+        {
+            List<Dossier> LstDossiers = new List<Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstDossiers.Add(new Dossier()
+                        {
+                            Ecra = "DO",
+                            StampDossier = result["dostamp"].ToString().Trim(),
+                            NomeDossier = "Documentos Contabilisticos",
+                            IdDossier = int.Parse(result["dilno"].ToString()),
+                            Referencia = result["adoc"].ToString().Trim(),
+                            DataDossier = DateTime.Parse(result["data"].ToString()),
+                            Serie = 0,
+                            Cliente = ObterClienteSimples(7232,0),
+                            DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
+                            EditadoPor = result["usrinis"].ToString(),
+                            Tecnico = new Utilizador() { NomeCompleto = result["usrinis"].ToString() },
+                            Fechado = true
+                        });
+                        if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossierDocContabilistos(LstDossiers.Last().StampDossier);
+                        if (LoadAnexos) LstDossiers.Last().Anexos = ObterAnexosDossier(LstDossiers.Last().StampDossier);
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler o dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstDossiers;
+        }
+        public List<Dossier> ObterDossiersDocContabilistos(DateTime Data, string Filtro, int Serie)
+        {
+            return ObterDossiersDocContabilistos("select top 100 * from do (nolock) where " + (string.IsNullOrEmpty(Filtro) ? " data='" + Data.ToString("yyyy-MM-dd") + "' " : " (adoc like '%" + Filtro + "%' OR dilno like '%" + Filtro + "%' OR usrinis like '%" + Filtro + "%')") + " order by adoc", false, false);
+        }
+        public Dossier ObterDossierDocContabilistos(string STAMP)
+        {
+            return ObterDossiersDocContabilistos("select * from do (nolock) where dostamp='" + STAMP + "';", true, true).DefaultIfEmpty(new Dossier()).First();
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossierDocContabilistos(string SQL_Query, bool LoadAll)
+        {
+            List<Linha_Dossier> LstLinhasDossier = new List<Linha_Dossier>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand(SQL_Query, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["descricao"].ToString()))
+                        {
+                            LstLinhasDossier.Add(new Linha_Dossier
+                            {
+                                Stamp_Dossier = result["dostamp"].ToString(),
+                                Stamp_Linha = result["mlstamp"].ToString(),
+                                Referencia = result["conta"].ToString().Trim() ,
+                                Designacao = result["descricao"].ToString().Trim() + " | " + result["descritivo"].ToString().Trim(),
+                                Quantidade = 0,
+                                CriadoPor = result["usrinis"].ToString()
+                            });
+                        }
+
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas do dossier do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstLinhasDossier;
+        }
+        public List<Linha_Dossier> ObterLinhasDossierDocContabilistos(string STAMP)
+        {
+            return ObterLinhasDossierDocContabilistos("select * from ml where dostamp='" + STAMP + "' order by lordem", true);
+        }
         #endregion
     }
 }

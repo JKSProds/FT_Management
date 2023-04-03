@@ -292,7 +292,7 @@ function ValidarSerie(id, l) {
         data: { "stamp": id, "qtd": 1, "serie": document.getElementById('txtSerie_' + id + l).value, "bomastamp": l_stamp },
         type: "PUT",
         success: function(data) {
-            if (data[1] == "") {
+            if (data[0] == "1") {
                 notify('N/S inserido com sucesso!');
                 document.getElementById('txtBomaStamp_' + id + l).value = data[2];
                 document.getElementById('txtSerie_' + id + l).disabled = true;
@@ -323,7 +323,7 @@ function ValidarSerie(id, l) {
             data: { "stamp": id, "qtd": 1, "serie":  '', "bomastamp" : l_stamp},
             type: "PUT",
             success: function (data) {
-                if (data[1] == "") {
+                if (data[0] == "1") {
                     notify('Núm. de Série apagado com sucesso!');
                     document.getElementById('txtSerie_' + id + l).value = '';
                     document.getElementById('txtBomaStamp_' + id + l).value = '';

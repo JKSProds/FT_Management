@@ -23,8 +23,8 @@
             </div>
         </div>
         <div class="column is-right my-auto">
-            <form method="get" action="Pedidos">
-                <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
+            <form method="get" action="~/Pedidos/Pedidos">
+                <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="id">
                         <input class="input" type="date" value="@(DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="DataPedidos"/>
                         <script>
                             bulmaCalendar.attach('#txtData', {
@@ -110,7 +110,7 @@ else
                     <div class="card">
                         <header class="card-header card-toggle" style="background:@item.Cor;">
                             <button class="button mx-1 is-rounded my-auto @(item.PrioridadeMarcacao == "Normal" ? "is-info" : item.PrioridadeMarcacao == "Urgente" ? "is-warning" : "is-danger") "><p class="is-uppercase has-text-weight-bold @(item.Hora.Length==0 && item.Periodo.Length==0 ? "is-size-6" : "is-size-9")" style="line-height:1;">@item.DataMarcacao.Day.ToString() @item.DataMarcacao.ToString("MMM")<br />@(item.Hora.Length>0 ? item.Hora : item.Periodo)</p></button>
-                            <p class="is-size-6 my-1 has-text-centered column">
+                            <p class="is-size-6 my-1 has-text-centered column has-text-light">
                                 @item.EmojiEstado<b>@item.IdMarcacao</b> - @item.Cliente.NomeCliente
                             </p>
                             <button class="card-header-icon" style="text-align:right" aria-label="more options">
@@ -124,6 +124,7 @@ else
                         </header>
                         <div class="card-content is-hidden">
                             <div class="content">
+                                @Html.DisplayNameFor(model => model.Cliente.IdCliente): <b>@item.Cliente.IdCliente @(item.Cliente.IdLoja > 0 ? " / " + item.Cliente.IdLoja : "")</b><br />
                                 @Html.DisplayNameFor(model => model.DataPedido): <b>@item.DataPedido.ToShortDateString()</b><br />
                                 @Html.DisplayNameFor(model => model.EstadoMarcacaoDesc): <b>@item.EstadoMarcacaoDesc</b><br />
                                 @Html.DisplayNameFor(model => model.PrioridadeMarcacao): <b>@item.PrioridadeMarcacao</b><br />
@@ -135,22 +136,22 @@ else
                                 {
                                     <p class="subtitle">Comentários</p>
                                     <div class="b-table">
-                                    <div class="table-wrapper has-mobile-cards">    
-                                    <table class="table table-hover">
-                                        <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)</th>
-                                        <tbody>
+                                        <div class="table-wrapper has-mobile-cards">
+                                            <table class="table table-hover">
+                                                <thead><tr><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)</th><th>@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)</th>
+                                                <tbody>
 
-                                            @foreach (var c in item.LstComentarios)
-                                            {
-                                                <tr>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)"><span>@c.Utilizador.NomeCompleto</span></td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)"><span>@c.Descricao</span></td>
-                                                    <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)"><span>@c.DataComentario</span></td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                    </div>
+                                                    @foreach (var c in item.LstComentarios)
+                                                    {
+                                                        <tr>
+                                                            <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Utilizador.NomeCompleto)"><span>@c.Utilizador.NomeCompleto</span></td>
+                                                            <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().Descricao)"><span>@c.Descricao</span></td>
+                                                            <td data-label="@Html.DisplayNameFor(model => model.LstComentarios.FirstOrDefault().DataComentario)"><span>@c.DataComentario</span></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 }
                             </div>

@@ -70,7 +70,7 @@
                                                             <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
                                                         </tr>
                                                     }
-                                                    @foreach (var linha in item.LinhasEncomenda)
+                                                    @foreach (var linha in item.LinhasEncomendaPorFornecer)
                                                     {
                                                         <tr onclick="window.open('@(Url.Action("Produto", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
@@ -82,7 +82,7 @@
                                         }
                                         else
                                         {
-                                            foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio <= DateTime.Now.AddDays(-1) && e.DataEnvio.Year > 1900 && !e.Total && !e.Fornecido).ToList())
+                                            foreach (var linha in item.LinhasEncomendaPorFornecer.Where(e => e.DataEnvio <= DateTime.Now.AddDays(-1) && e.DataEnvio.Year > 1900 && !e.Total && !e.Fornecido).ToList())
                                             {
 
                                                 <tr class="lista-toggle" style="font-weight:bold">
@@ -198,7 +198,7 @@
                                                             <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
                                                         </tr>
                                                     }
-                                                    @foreach (var linha in item.LinhasEncomenda)
+                                                    @foreach (var linha in item.LinhasEncomendaPorFornecer)
                                                     {
                                                         <tr onclick="window.open('@(Url.Action("Produto", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
@@ -211,7 +211,7 @@
                                         }
                                         else
                                         {
-                                            foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && !e.Total && !e.Fornecido).ToList())
+                                            foreach (var linha in item.LinhasEncomendaPorFornecer.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.ToShortDateString() && !e.Total && !e.Fornecido).ToList())
                                             {
                                                 <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
@@ -324,7 +324,7 @@
                                                             <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
                                                         </tr>
                                                     }
-                                                    @foreach (var linha in item.LinhasEncomenda)
+                                                    @foreach (var linha in item.LinhasEncomendaPorFornecer)
                                                     {
                                                         <tr onclick="window.open('@(Url.Action("Produto", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                             <td data-label="Referência">@linha.Produto.Ref_Produto</td>
@@ -336,7 +336,7 @@
                                         }
                                         else
                                         {
-                                            foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() && !e.Total && !e.Fornecido).ToList())
+                                            foreach (var linha in item.LinhasEncomendaPorFornecer.Where(e => e.DataEnvio.ToShortDateString() == DateTime.Now.AddDays(1).ToShortDateString() && !e.Total && !e.Fornecido).ToList())
                                             {
                                                 <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>
@@ -451,7 +451,7 @@
                                                             <td data-label="Observações" colspan="5"><p class="title is-6" style="font-style:italic">@item.Obs</p></td>
                                                         </tr>
                                                     }
-                                                @foreach (var linha in item.LinhasEncomenda)
+                                                @foreach (var linha in item.LinhasEncomendaPorFornecer)
                                                 {
                                                     <tr onclick="window.open('@(Url.Action("Produto", "Produtos", new { id = linha.Produto.Ref_Produto, target="_blank" }))')">
                                                         <td data-label="Referência">@linha.Produto.Ref_Produto</td>
@@ -463,7 +463,7 @@
                                         }
                                         else
                                         {
-                                            foreach (var linha in item.LinhasEncomenda.Where(e => e.DataEnvio >= DateTime.Now.AddDays(1) && !e.Total && !e.Fornecido).ToList())
+                                            foreach (var linha in item.LinhasEncomendaPorFornecer.Where(e => e.DataEnvio >= DateTime.Now.AddDays(1) && !e.Total && !e.Fornecido).ToList())
                                             {
                                                 <tr class="lista-toggle" style="font-weight:bold">
                                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Id)">@linha.IdEncomenda</td>

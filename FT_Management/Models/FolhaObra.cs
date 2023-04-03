@@ -118,7 +118,7 @@
 
         public void ValidarIntervencoes()
         {
-
+            FicheirosAnexo = "";
             if (this.ListaIntervencoes == null)
             {
                 ListaIntervencoes = "";
@@ -133,8 +133,8 @@
                     this.IntervencaosServico.Add(new Intervencao
                     {
                         DataServiço = DateTime.Parse(item.Split(" ").First()),
-                        HoraInicio = DateTime.Parse(item.Split(" ").First() + " " + item.Split(" ").Last().Split("|").First()),
-                        HoraFim = DateTime.Parse(item.Split(" ").First() + " " + item.Split(" ").Last().Split("|").Last()),
+                        HoraInicio = DateTime.Parse(item.Split(" ").Last().Split("|").First()),
+                        HoraFim = DateTime.Parse(item.Split(" ").Last().Split("|").Last()),
                         RelatorioServico = this.RelatorioServico,
                         IdTecnico = this.Utilizador.IdPHC,
                         NomeTecnico = this.Utilizador.NomeCompleto,

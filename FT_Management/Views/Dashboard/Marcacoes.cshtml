@@ -4,187 +4,133 @@
     ViewData["Title"] = "Marcações";
 }
 
-<div class="columns">
-    <div class="column is-8">
-        <div class="columns is-multiline">
-            @foreach (Utilizador u in Model)
-            {
-                <div class="column is-6">
-                    <div class="card" style="background:@u.CorCalendario;"
-                    onclick="VerViatura(@u.Viatura.Latitude, @u.Viatura.Longitude)">
-                        <div class="card-content p-4">
-                            <div class="media">
-                                <div class="media-left">
+<div class="columns is-multiline">
+    <div class="column is-9">
+        <div class="card">
+            <div class="card-content p-4">
+                <div class="media">
+                    <div class="media-content">
+                        <div class="columns">
+                            <div class="column">
+                                <p class="title is-size-1">
+                                    DASHBOARD - Últimos 7 Dias
+                                </p>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column is-4 title is-size-3">
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@ViewData["TotaisSemana"]</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@ViewData["FinalizadosSemana"]</b><br />
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(int.Parse(ViewData["TotaisSemana"].ToString()) - int.Parse(ViewData["FinalizadosSemana"].ToString()))</b><br />
+                                &nbsp;
+                                <div class="progress-container">
+                                    <progress class="progress is-info is-large" max="@ViewData["TotaisSemana"]" value="@ViewData["FinalizadosSemana"]"></progress>
+                                </div>
+                            </div>
+                            <div class="column is-4 title is-size-3">
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Finalizados: <b>@ViewData["Finalizados"]</b><br />
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendentes: <b>@ViewData["Pendentes"]</b><br />
+                                <br />
+                                &nbsp;
+                                <div class="progress-container">
+                                    <progress class="progress is-info is-large" max="@(int.Parse(ViewData["Finalizados"].ToString()) + int.Parse(ViewData["Pendentes"].ToString()))" value="@ViewData["Finalizados"]"></progress>
+                                </div>
+                            </div>
+                            <div class="column is-4 title is-size-3">
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-check"></i></span>Todos: <b>@(int.Parse(ViewData["Finalizados"].ToString()) * 100 / (int.Parse(ViewData["Finalizados"].ToString()) + int.Parse(ViewData["Pendentes"].ToString()))) %</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Últimos 7 dias: <b>@(int.Parse(ViewData["FinalizadosSemana"].ToString()) * 100 / int.Parse(ViewData["TotaisSemana"].ToString())) %</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-3">
+        <div class="card" style="height:100%">
+            <div class="card-content p-4">
+                <div class="media">
+                    <div class="media-content">
+                        <div class="columns">
+                            <div class="column">
+                                <p class="title is-size-1">
+                                    Pendentes
+                                </p>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column is-12 title is-size-3">
+                                <span class="icon mr-3"><i class="fa-solid fa-screwdriver-wrench"></i></span>Orçamento: <b>@ViewData["Orcamento"]</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-file-invoice"></i></span>Peças: <b>@ViewData["Pecas"]</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-building"></i></span>Em Oficina: <b>@ViewData["Oficina"]</b><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="columns is-multiline">
+        @foreach (Utilizador u in Model)
+        {
+            <div class="column is-3">
+                <div class="card" style="height:100%">
+                    <div class="card-content p-4">
+                        <div class="media">
+                            <div class="columns">
+                                <div class="column is-3">
                                     <figure class="image is-48x48">
                                         <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
                                     </figure>
                                 </div>
-                                <div class="media-content">
-                                    <div class="columns">
-                                        <div class="column">
-                                            <p class="title is-size-6">@u.NomeCompleto
-                                                @if (u.Viatura.Matricula != null)
-                                                {
-                                                    <span><i><b> (@u.Viatura.LocalizacaoCidade)</b></i></span>
-                                                }
-                                                @if (u.MarcacaoCurso.Cliente != null)
-                                                {
-                                                    <br>
-                                                    <button class="my-1 button is-danger is-small is-rounded" type="button">Em
-                                                        Curso:
-                                                        @u.MarcacaoCurso.Cliente.NomeCliente</button>
-                                                }
-                                            </p>
-                                        </div>
+                                <div class="column is-10">
+                                        <p class="title is-size-3">
+                                            @u.NomeCompleto
+                                            <button class="my-1 button is-danger is-small is-rounded is-hidden" hidden type="button">
+                                                Em
+                                                Curso: @(u.MarcacaoCurso.Cliente != null ? u.MarcacaoCurso.Cliente.NomeCliente : "-------------")
+                                            </button>
+                                        </p>
                                     </div>
-                                    <div class="columns">
-                                        <div class="column">
-                                            <div class="b-table is-pulled-left">
-                                                <div class="table-wrapper has-mobile-cards" style="width:48px;height:48px">
-                                                    <canvas id="chartAnteontem_@u.Id"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="column">
-                                            <div class="b-table is-pulled-left">
-                                                <div class="table-wrapper has-mobile-cards" style="width:48px;height:48px">
-                                                    <canvas id="chartOntem_@u.Id"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="column">
-                                            <div class="b-table is-pulled-left">
-                                                <div class="table-wrapper has-mobile-cards" style="width:48px;height:48px">
-                                                    <canvas id="chartHoje_@u.Id"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <script>
-                                            new Chart(document.getElementById('chartHoje_@u.Id').getContext('2d'), {
-                                                type: 'doughnut',
-                                                data: {
-                                                    labels: ['Completo', 'Aberto'],
-                                                    datasets: [{
-                                                        data: [@u.ObterMarcacoes(DateTime.Now, true).Count(), @u.ObterMarcacoes(DateTime.Now, false).Count()],
-                                                        backgroundColor: [
-                                                            'rgba(35, 209, 96, 1)',
-                                                            'rgba(255, 56, 96, 1)'
-                                                        ]
-                                                    }]
-                                                },
-                                                options: {
-                                                    plugins: {
-                                                        legend: {
-                                                            display: false
-                                                        },
-                                                        tooltip: {
-                                                            enabled: false
-                                                        }
-                                                    },
-                                                    responsive: true
-                                                }
-                                            });
-
-                                            new Chart(document.getElementById('chartAnteontem_@u.Id').getContext('2d'), {
-                                                type: 'doughnut',
-                                                data: {
-                                                    labels: ['Completo', 'Aberto'],
-                                                    datasets: [{
-                                                        data: [@u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count(), @u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()],
-                                                        backgroundColor: [
-                                                            'rgba(35, 209, 96, 1)',
-                                                            'rgba(255, 56, 96, 1)'
-                                                        ]
-                                                    }]
-                                                },
-                                                options: {
-                                                    plugins: {
-                                                        legend: {
-                                                            display: false
-                                                        },
-                                                        tooltip: {
-                                                            enabled: false
-                                                        }
-                                                    },
-                                                    responsive: true
-                                                }
-                                            });
-
-                                            new Chart(document.getElementById('chartOntem_@u.Id').getContext('2d'), {
-                                                type: 'doughnut',
-                                                data: {
-                                                    labels: ['Completo', 'Aberto'],
-                                                    datasets: [{
-                                                        data: [@u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count(), @u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()],
-                                                        backgroundColor: [
-                                                            'rgba(35, 209, 96, 1)',
-                                                            'rgba(255, 56, 96, 1)'
-                                                        ]
-                                                    }]
-                                                },
-                                                options: {
-                                                    plugins: {
-                                                        legend: {
-                                                            display: false
-                                                        },
-                                                        tooltip: {
-                                                            enabled: false
-                                                        }
-                                                    },
-                                                    responsive: true
-                                                }
-                                            });
-                                        </script>
+                                </div>
+                            </div>
+                            <div class="columns is-size-4">
+                                <div class="column is-4 ">
+                                    <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count())</b><br />
+                                    <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()</b><br />
+                                    <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()</b><br />
+                                    &nbsp;
+                                    <div class="progress-container">
+                                        <progress class="progress is-info is-large" max="@(u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count())" value="@u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()"></progress>
+                                    </div>
+                                </div>
+                                <div class="column is-4">
+                                    <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count())</b><br />
+                                    <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()</b><br />
+                                    <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()</b><br />
+                                    &nbsp;
+                                    <div class="progress-container">
+                                        <progress class="progress is-info is-large" max="@(u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count())" value="@u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()"></progress>
+                                    </div>
+                                </div>
+                                <div class="column is-4">
+                                    <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count())</b><br />
+                                    <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@u.ObterMarcacoes(DateTime.Now, true).Count()</b><br />
+                                    <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@u.ObterMarcacoes(DateTime.Now, false).Count()</b><br />
+                                    &nbsp;
+                                    <div class="progress-container">
+                                        <progress class="progress is-info is-large" max="@(u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count())" value="@u.ObterMarcacoes(DateTime.Now, true).Count()"></progress>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            }
-        </div>
-    </div>
-    <div class="column mx-1 is-4">
-        <div id="map" style="height: 800px;z-index: 1">
-        </div>
+
+        }
     </div>
 </div>
 
 <script>
-    var map = L.map('map').setView([39.3999, -8.2245], 7);
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 25,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    var carro = L.icon({
-        iconUrl: window.location.origin + '/img/car-solid.svg',
-        iconSize: [20, 20]
-    });
-    var carroLigado = L.icon({
-        iconUrl: window.location.origin + '/img/car-on-solid.svg',
-        iconSize: [25, 25]
-    });
-
-    $.ajax({
-        url: '/Viaturas/Viaturas/',
-        type: "GET",
-        success: function (data) {
-            data.forEach((element) => {
-                var marker = L.marker([element.latitude, element.longitude], { icon: (element.ignicao ? carroLigado : carro) }).addTo(map);
-                marker.bindPopup("<b>" + element.matricula + " - " + element.kmsAtuais + " km</b><br>" + element.utilizador.nomeCompleto + " (" + element.velocidade + " km/h | " + element.combustivel + "%)<br>" + element.localizacaoMorada + "<br><br><a type='button' href='" + element.getUrl + "' class='button is-success is-fullwidth'><span class='icon'><i class='fas fa-location'></i></span><span>Direções</span></a>");
-            });
-        },
-        error: function (data) {
-            notifyError('Ocorre um erro ao obter as viaturas!');
-        },
-        failure: function (data) {
-            notifyError('Ocorre um erro ao obter as viaturas!');
-        }
-    });
-
-    function VerViatura(latitude, longitude) {
-        map.setView([latitude, longitude], 16);
-    }
+   
 </script>

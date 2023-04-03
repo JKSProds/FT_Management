@@ -19,9 +19,12 @@
     <link href='~/lib/fullcalendar/core/main.min.css' rel='stylesheet' />
     <link href='~/lib/fullcalendar/daygrid/main.min.css' rel='stylesheet' />
     <link href='~/lib/leaflet/leaflet.css' rel='stylesheet' />
+    <link href='~/lib/offline/offline-theme-slide.css' rel='stylesheet' />
+    <link href='~/lib/offline/offline-language-portuguese.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/bulma-prefers-dark" />
 
     <link href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css" rel="Stylesheet"
-        type="text/css" />
+          type="text/css" />
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.10.0.min.js" type="text/javascript"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/jquery-ui.min.js" type="text/javascript"></script>
 
@@ -41,6 +44,7 @@
     <script type="module" src='~/lib/fullcalendar/daygrid/main.js'></script>
     <script src="~/lib/html5-qrcode/html5-qrcode.js" type="text/javascript"></script>
     <script src="~/lib/leaflet/leaflet.js" type="text/javascript"></script>
+    <script type="module" src="~/lib/offline/offline.min.js" type="text/javascript"></script>
 
     @*TAGS*@
     <link rel="stylesheet" href="~/lib/bulma-tagsinput/dist/css/bulma-tagsinput.min.css" />
@@ -221,19 +225,19 @@
                                     </p>
                                 }
                                 <p class="control mx-1">
-                                    <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Agendamento">
-                                        <span class="icon">
-                                            <i class="fas fa-calendar-day"></i>
-                                        </span>
-                                        <span>Calendário</span>
-                                    </a>
-                                </p>
-                                <p class="control mx-1">
                                     <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Pedidos">
                                         <span class="icon">
                                             <i class="fa-solid fa-calendar-check"></i>
                                         </span>
                                         <span>Minhas Marcações</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded  is-fullwidth" href="~/Produtos/Armazem">
+                                        <span class="icon">
+                                            <i class="fas  fa-dolly-flatbed"></i>
+                                        </span>
+                                        <span>Meu Armazém</span>
                                     </a>
                                 </p>
                                 <p class="control mx-1">
@@ -250,6 +254,14 @@
                                             <i class="fa-solid fa-desktop"></i>
                                         </span>
                                         <span>Equipamentos</span>
+                                    </a>
+                                </p>
+                                <p class="control mx-1">
+                                    <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Agendamento">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-day"></i>
+                                        </span>
+                                        <span>Calendário</span>
                                     </a>
                                 </p>
                                 <p class="control mx-1">
@@ -361,84 +373,88 @@
                         </div>
 
                 }
-                <div class="navbar-end">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div class="navbar-item has-dropdown">
-                            <a class="navbar-link">
-                                <figure class="mr-3 image is-inline-block is-48x48">
-                                    <img class="is-rounded" src="@this.User.ObterImgUtilizador()" alt="user_image">
-                                </figure>
-                                <span>@this.User.ObterNomeCompleto()</span>
-                            </a>
+            <div class="navbar-end">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="navbar-item has-dropdown">
+                        <a class="navbar-link">
+                            <figure class="mr-3 image is-inline-block is-48x48">
+                                <img class="is-rounded" src="@this.User.ObterImgUtilizador()" alt="user_image">
+                            </figure>
+                            <span>@this.User.ObterNomeCompleto()</span>
+                        </a>
 
-                            <div class="navbar-dropdown">
-                                @if (!User.IsInRole("Cliente"))
-                                {
-                                    <div class="navbar-item">
-                                        <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Utilizador">
-                                            <span class="icon">
-                                                <i class="fas fa-user"></i>
-                                            </span>
-                                            <span>Meu Perfil</span>
-                                        </a>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <button class="mx-3 button is-danger">@this.User.ObterNomeCompleto()</button>
-                                }
-                                @if (this.User.IsInRole("Admin"))
-                                {
-                                    <div class="navbar-item">
-                                        <a class="button is-light is-fullwidth" href="~/Utilizadores">
-                                            <span class="icon">
-                                                <i class="fas fa-gear"></i>
-                                            </span>
-                                            <span>Utilizadores</span>
-                                        </a>
-                                    </div>
-                                    <div class="navbar-item">
-                                        <a class="button is-danger is-fullwidth" href="~/Home/Restart">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-power-off"></i>
-                                            </span>
-                                            <span>Reiniciar</span>
-                                        </a>
-                                    </div>
-                                }
+                        <div class="navbar-dropdown">
+                            @if (!User.IsInRole("Cliente"))
+                            {
                                 <div class="navbar-item">
-                                    <a class="button is-info is-light is-fullwidth"
-                                    onclick="Bulma('#modalSugestoes').modal().open();">
+                                    <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Utilizador">
                                         <span class="icon">
-                                            <i class="fa-solid fa-lightbulb"></i>
+                                            <i class="fas fa-user"></i>
                                         </span>
-                                        <span>Sugestões</span>
+                                        <span>Meu Perfil</span>
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <button class="mx-3 button is-danger">@this.User.ObterNomeCompleto()</button>
+                            }
+                            @if (this.User.IsInRole("Admin"))
+                            {
+                                <div class="navbar-item">
+                                    <a class="button is-light is-fullwidth" href="~/Utilizadores">
+                                        <span class="icon">
+                                            <i class="fas fa-gear"></i>
+                                        </span>
+                                        <span>Utilizadores</span>
                                     </a>
                                 </div>
                                 <div class="navbar-item">
-                                    <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
+                                    <a class="button is-danger is-fullwidth" href="~/Home/Restart">
                                         <span class="icon">
-                                            <i class="fas fa-sign-out-alt"></i>
+                                            <i class="fa-solid fa-power-off"></i>
                                         </span>
-                                        <span>Terminar Sessão</span>
+                                        <span>Reiniciar</span>
                                     </a>
                                 </div>
+                            }
+                            <div class="navbar-item">
+                                <a class="button is-info is-light is-fullwidth"
+                                   onclick="Bulma('#modalSugestoes').modal().open();">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-lightbulb"></i>
+                                    </span>
+                                    <span>Sugestões</span>
+                                </a>
+                            </div>
+                            <div class="navbar-item">
+                                <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
+                                    <span class="icon">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </span>
+                                    <span>Terminar Sessão</span>
+                                </a>
+                            </div>
+                            <hr class="navbar-divider">
+                            <div class="navbar-item has-text-centered">
+                                Versão @GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ?" - DEV" : "")
                             </div>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="navbar-item">
-                            <a class="button is-info is-light" href="~/Utilizadores/Login">
-                                <span class="icon">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                </span>
-                                <span>Iniciar Sessão</span>
-                            </a>
-                        </div>
-                    }
-                </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="navbar-item">
+                        <a class="button is-info is-light" href="~/Utilizadores/Login">
+                            <span class="icon">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </span>
+                            <span>Iniciar Sessão</span>
+                        </a>
+                    </div>
+                }
+            </div>
             </div>
         </nav>
     </header>
@@ -472,9 +488,6 @@
         <div class="content has-text-centered">
             <p>
                 <strong>Jorge Monteiro</strong>
-                (V.@GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
-                == "Development" ?
-                "_DEV" : ""))
             </p>
         </div>
     </footer>
@@ -484,7 +497,6 @@
 </html>
 
 <script>
-
     function post(path, params, method = 'post') {
 
         // The rest of this code assumes you are not using a library.
@@ -550,6 +562,7 @@
     function notify(mensagem) {
         bulmaToast.toast({
             message: mensagem,
+            type: 'is-success',
             closeOnClick: true,
             pauseOnHover: true,
             opacity: 0.8,
@@ -557,4 +570,5 @@
             position: 'top-center'
         });
     }
+
 </script>

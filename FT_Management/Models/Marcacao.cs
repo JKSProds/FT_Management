@@ -11,6 +11,7 @@
                 this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
                 this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
                 this.EstadoMarcacaoDesc == "Reagendar" ? "📆 " :
+                this.EstadoMarcacaoDesc == "Reagendado" ? "" :
                 this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " :
                 this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " :
                 this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : "");
@@ -23,7 +24,7 @@
             get
             {
                 return this.EstadoMarcacaoDesc == "Finalizado" || this.EstadoMarcacaoDesc == "Cancelado" ? "#23d160" :
-                this.EstadoMarcacaoDesc != "Agendado" ? "#ffdd57" :
+                this.EstadoMarcacaoDesc != "Agendado" && this.EstadoMarcacaoDesc != "Reagendado" ? "#ffdd57" :
                 this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc == "Agendado" && this.DataMarcacao.ToShortDateString() != DateTime.Now.ToShortDateString() ? "#ff3860" : "";
             }
         }
@@ -41,9 +42,11 @@
         public DateTime DataCriacao { get; set; }
         [Required]
         [Display(Name = "Data do Pedido")]
+        [DataType(DataType.Date)]
         public DateTime DataPedido { get; set; }
         [Required]
         [Display(Name = "Data da Marcação")]
+        [DataType(DataType.Date)]
         public DateTime DataMarcacao { get; set; }
         [Display(Name = "Datas")]
         public string DatasAdicionais { get; set; }

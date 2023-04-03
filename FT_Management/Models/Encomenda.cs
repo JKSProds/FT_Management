@@ -19,6 +19,7 @@
         public DateTime DataDossier { get; set; }
         [Display(Name = "Linhas")]
         public List<Linha_Encomenda> LinhasEncomenda { get; set; }
+        public List<Linha_Encomenda> LinhasEncomendaPorFornecer { get { return this.LinhasEncomenda.Where(l => !l.Fornecido).ToList(); } }
         [Display(Name = "Tipo")]
         public bool Total { get { return this.LinhasEncomenda.Where(l => l.Total == false).Count() == 0; } }
         [Display(Name = "Items")]

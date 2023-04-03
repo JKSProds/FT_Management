@@ -1,4 +1,6 @@
-﻿namespace FT_Management.Controllers
+﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+
+namespace FT_Management.Controllers
 {
     public class UtilizadoresController : Controller
     {
@@ -74,6 +76,13 @@
             foreach (var user in LstUtilizadores)
             {
                 var passwordHasher = new PasswordHasher<string>();
+
+                if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.SuccessRehashNeeded)
+                {
+                    user.Password = passwordHasher.HashPassword(null, utilizador.Password);
+                    context.NovoUtilizador(user);
+                }
+
                 if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
                 {
                     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" && !user.Dev) return Forbid();
@@ -89,7 +98,7 @@
                             new Claim(ClaimTypes.Name, user.Id.ToString()),
                             new Claim(ClaimTypes.GivenName, user.NomeCompleto),
                             new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
-                            new Claim(ClaimTypes.Role, user.Id == 1 ? "Master" : ""),
+                            new Claim(ClaimTypes.Role, user.Id <= 2 ? "Master" : ""),
                             new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
                             new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
                             new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
