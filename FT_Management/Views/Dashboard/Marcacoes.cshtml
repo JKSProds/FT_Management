@@ -21,7 +21,7 @@
                             <div class="column is-4 title is-size-3">
                                 <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))</b><br />
                                 <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Em Aberto: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()))</b><br />
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()))</b><br />
                                 &nbsp;
                                 <div class="progress-container">
                                     <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))"></progress>
@@ -30,7 +30,7 @@
                             <div class="column is-4 title is-size-3">
                                 <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))</b><br />
                                 <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Em Aberto: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()))</b><br />
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()))</b><br />
                                 &nbsp;
                                 <div class="progress-container">
                                     <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))"></progress>
@@ -39,7 +39,7 @@
                             <div class="column is-4 title is-size-3">
                                 <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count()))</b><br />
                                 <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Em Aberto: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count()))</b><br />
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count()))</b><br />
                                 &nbsp;
                                 <div class="progress-container">
                                     <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, true).Count()))"></progress>
@@ -90,15 +90,13 @@
                             <div class="media-content">
                                 <div class="columns">
                                     <div class="column">
-                                        <p class="title is-size-6">
+                                        <p class="title is-size-3">
                                             @u.NomeCompleto
                                             @if (u.Viatura.Matricula != null)
                                             {
                                                 <span><i><b> (@u.Viatura.LocalizacaoCidade)</b></i></span>
                                             }
-
-                                            <br>
-                                            <button class="my-1 button is-danger is-small is-rounded" type="button">
+                                            <button class="my-1 button is-danger is-small is-rounded is-hidden" hidden type="button">
                                                 Em
                                                 Curso: @(u.MarcacaoCurso.Cliente != null ? u.MarcacaoCurso.Cliente.NomeCliente : "-------------")
                                             </button>
@@ -109,7 +107,7 @@
                                     <div class="column is-4 ">
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count())</b><br />
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()</b><br />
-                                        <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Em Aberto: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()</b><br />
+                                        <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()</b><br />
                                         &nbsp;
                                         <div class="progress-container">
                                             <progress class="progress is-info is-large" max="@(u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count())" value="@u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()"></progress>
@@ -118,7 +116,7 @@
                                     <div class="column is-4">
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count())</b><br />
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()</b><br />
-                                        <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Em Aberto: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()</b><br />
+                                        <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()</b><br />
                                         &nbsp;
                                         <div class="progress-container">
                                             <progress class="progress is-info is-large" max="@(u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count())" value="@u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()"></progress>
@@ -127,7 +125,7 @@
                                     <div class="column is-4">
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count())</b><br />
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@u.ObterMarcacoes(DateTime.Now, true).Count()</b><br />
-                                        <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Em Aberto: <b>@u.ObterMarcacoes(DateTime.Now, false).Count()</b><br />
+                                        <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@u.ObterMarcacoes(DateTime.Now, false).Count()</b><br />
                                         &nbsp;
                                         <div class="progress-container">
                                             <progress class="progress is-info is-large" max="@(u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count())" value="@u.ObterMarcacoes(DateTime.Now, true).Count()"></progress>
