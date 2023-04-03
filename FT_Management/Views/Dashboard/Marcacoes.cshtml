@@ -105,8 +105,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="columns">
-                                    <div class="column is-4">
+                                <div class="columns is-size-4">
+                                    <div class="column is-4 ">
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count())</b><br />
                                         <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()</b><br />
                                         <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Em Aberto: <b>@u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()</b><br />
