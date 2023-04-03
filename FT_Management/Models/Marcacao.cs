@@ -11,6 +11,7 @@
                 this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
                 this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
                 this.EstadoMarcacaoDesc == "Reagendar" ? "📆 " :
+                this.EstadoMarcacaoDesc == "Reagendado" ? "" :
                 this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " :
                 this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " :
                 this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : "");
