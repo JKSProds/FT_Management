@@ -24,7 +24,7 @@
         </div>
         <div class="column is-right my-auto">
             <form method="get" action="Pedidos">
-                <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="IdTecnico">
+                <input type="hidden" id="hiddenIdTecnico" value="@ViewData["IdTecnico"]" name="id">
                         <input class="input" type="date" value="@(DateTime.Parse(ViewData["DataPedidos"].ToString()).ToString("yyyy-MM-dd"))" id="txtData" name="DataPedidos"/>
                         <script>
                             bulmaCalendar.attach('#txtData', {
