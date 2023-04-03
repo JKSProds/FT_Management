@@ -24,7 +24,7 @@
             get
             {
                 return this.EstadoMarcacaoDesc == "Finalizado" || this.EstadoMarcacaoDesc == "Cancelado" ? "#23d160" :
-                this.EstadoMarcacaoDesc != "Agendado" ? "#ffdd57" :
+                this.EstadoMarcacaoDesc != "Agendado" || this.EstadoMarcacaoDesc != "Reagendado" ? "#ffdd57" :
                 this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc == "Agendado" && this.DataMarcacao.ToShortDateString() != DateTime.Now.ToShortDateString() ? "#ff3860" : "";
             }
         }
