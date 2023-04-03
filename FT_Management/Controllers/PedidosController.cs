@@ -64,6 +64,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterListaTecnicos(true, false).Where(u => u.IdPHC == id).DefaultIfEmpty(new Utilizador()).First();
+            if (id == 0) u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(u.IdPHC, DateTime.Parse(DataPedidos));
 
             ViewData["DataPedidos"] = DataPedidos;
