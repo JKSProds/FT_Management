@@ -89,11 +89,16 @@
 
             List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(true, true);
             List<Marcacao> LstMarcacao = phccontext.ObterMarcacoes(DateTime.Now.AddDays(-2), DateTime.Now);
+            List<Marcacao> LstMarcacaosPendentes = phccontext.ObterMarcacoesPendentes();
 
             for (int i = 0; i <= LstUtilizadores.Count() - 1; i++)
             {
                 LstUtilizadores[i].LstMarcacoes = LstMarcacao.Where(m => m.Tecnico.Id == LstUtilizadores[i].Id).ToList();
             }
+
+            ViewData["Orcamento"] = LstMarcacaosPendentes.Where(e => e.EstadoMarcacaoDesc != "Pedido Orçamento").Count();
+            ViewData["Pecas"] = LstMarcacaosPendentes.Where(e => e.EstadoMarcacaoDesc == "Pedido Orçamento").Count();
+            ViewData["Oficina"] = LstMarcacaosPendentes.Where(e => e.Oficina).Count();
 
             return View(LstUtilizadores);
         }

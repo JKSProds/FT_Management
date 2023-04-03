@@ -4,36 +4,104 @@
     ViewData["Title"] = "Marcações";
 }
 
-<div class="columns">
-    <div class="column is-12">
-        <div class="columns is-multiline">
-            @foreach (Utilizador u in Model)
-            {
-                <div class="column is-3">
-                    <div class="card" style="background:@u.CorCalendario;height:100%"
-                         onclick="VerViatura(@u.Viatura.Latitude, @u.Viatura.Longitude)">
-                        <div class="card-content p-4">
-                            <div class="media">
-                                <div class="media-left">
-                                    <figure class="image is-48x48">
-                                        <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
-                                    </figure>
+<div class="columns is-multiline">
+    <div class="column is-9">
+        <div class="card">
+            <div class="card-content p-4">
+                <div class="media">
+                    <div class="media-content">
+                        <div class="columns">
+                            <div class="column">
+                                <p class="title is-size-1">
+                                    DASHBOARD - Ultimos 3 Dias
+                                </p>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column is-4 title is-size-3">
+                                Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))</b><br />
+                                Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))</b><br />
+                                Em Aberto: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()))</b><br />
+                                &nbsp;
+                                <div class="progress-container">
+                                    <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))"></progress>
                                 </div>
-                                <div class="media-content">
-                                    <div class="columns">
-                                        <div class="column">
-                                            <p class="title is-size-6">
-                                                @u.NomeCompleto
+                            </div>
+                            <div class="column is-4 title is-size-3">
+                                Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))</b><br />
+                                Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))</b><br />
+                                Em Aberto: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()))</b><br />
+                                &nbsp;
+                                <div class="progress-container">
+                                    <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))"></progress>
+                                </div>
+                            </div>
+                            <div class="column is-4 title is-size-3">
+                                Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count()))</b><br />
+                                Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, true).Count()))</b><br />
+                                Em Aberto: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count()))</b><br />
+                                &nbsp;
+                                <div class="progress-container">
+                                    <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, true).Count()))"></progress>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-3">
+        <div class="card" style="height:100%">
+            <div class="card-content p-4">
+                <div class="media">
+                    <div class="media-content">
+                        <div class="columns">
+                            <div class="column">
+                                <p class="title is-size-1">
+                                    Pendentes
+                                </p>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column is-12 title is-size-3">
+                                Orçamento: <b>@ViewData["Orcamento"]</b><br />
+                                Peças: <b>@ViewData["Pecas"]</b><br />
+                                Em Oficina: <b>@ViewData["Oficina"]</b><br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="columns is-multiline">
+        @foreach (Utilizador u in Model)
+        {
+            <div class="column is-3">
+                <div class="card" style="background:@u.CorCalendario;height:100%">
+                    <div class="card-content p-4">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-48x48">
+                                    <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <div class="columns">
+                                    <div class="column">
+                                        <p class="title is-size-6">
+                                            @u.NomeCompleto
                                             @if (u.Viatura.Matricula != null)
                                             {
                                                 <span><i><b> (@u.Viatura.LocalizacaoCidade)</b></i></span>
                                             }
-                                            
-                                                <br>
-                                                <button class="my-1 button is-danger is-small is-rounded" type="button">
-                                                    Em
-                                                    Curso: @(u.MarcacaoCurso.Cliente != null ? u.MarcacaoCurso.Cliente.NomeCliente : "-------------")
-                                                    </button>
+
+                                            <br>
+                                            <button class="my-1 button is-danger is-small is-rounded" type="button">
+                                                Em
+                                                Curso: @(u.MarcacaoCurso.Cliente != null ? u.MarcacaoCurso.Cliente.NomeCliente : "-------------")
+                                            </button>
                                         </p>
                                     </div>
                                 </div>
@@ -71,9 +139,8 @@
                     </div>
                 </div>
 
-                </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
 
