@@ -118,7 +118,7 @@
 
         public void ValidarIntervencoes()
         {
-            FicheirosAnexo = "";
+            if (string.IsNullOrEmpty(this.FicheirosAnexo)) FicheirosAnexo = "";
             if (this.ListaIntervencoes == null)
             {
                 ListaIntervencoes = "";
