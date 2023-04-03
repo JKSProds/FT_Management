@@ -13,37 +13,32 @@
                         <div class="columns">
                             <div class="column">
                                 <p class="title is-size-1">
-                                    DASHBOARD - Ultimos 3 Dias
+                                    DASHBOARD - Últimos 7 Dias
                                 </p>
                             </div>
                         </div>
                         <div class="columns">
                             <div class="column is-4 title is-size-3">
-                                <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count()))</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@ViewData["TotaisSemana"]</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@ViewData["FinalizadosSemana"]</b><br />
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(int.Parse(ViewData["TotaisSemana"].ToString()) - int.Parse(ViewData["FinalizadosSemana"].ToString()))</b><br />
                                 &nbsp;
                                 <div class="progress-container">
-                                    <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-2), true).Count()))"></progress>
+                                    <progress class="progress is-info is-large" max="@ViewData["TotaisSemana"]" value="@ViewData["FinalizadosSemana"]"></progress>
                                 </div>
                             </div>
                             <div class="column is-4 title is-size-3">
-                                <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count()))</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Finalizados: <b>@ViewData["Finalizados"]</b><br />
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendentes: <b>@ViewData["Pendentes"]</b><br />
+                                <br />
                                 &nbsp;
                                 <div class="progress-container">
-                                    <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), false).Count() + u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now.AddDays(-1), true).Count()))"></progress>
+                                    <progress class="progress is-info is-large" max="@(int.Parse(ViewData["Finalizados"].ToString()) + int.Parse(ViewData["Pendentes"].ToString()))" value="@ViewData["Finalizados"]"></progress>
                                 </div>
                             </div>
                             <div class="column is-4 title is-size-3">
-                                <span class="icon mr-3"><i class="fa-solid fa-calendar-day"></i></span>Atribuidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Concluidas: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, true).Count()))</b><br />
-                                <span class="icon mr-3"><i class="fa-regular fa-calendar-xmark"></i></span>Pendente: <b>@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count()))</b><br />
-                                &nbsp;
-                                <div class="progress-container">
-                                    <progress class="progress is-info is-large" max="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, false).Count() + u.ObterMarcacoes(DateTime.Now, true).Count()))" value="@(Model.Sum(u => u.ObterMarcacoes(DateTime.Now, true).Count()))"></progress>
-                                </div>
+                                <span class="icon mr-3"><i class="fa-regular fa-calendar-check"></i></span>Todos: <b>@(int.Parse(ViewData["Finalizados"].ToString()) * 100 / (int.Parse(ViewData["Finalizados"].ToString()) + int.Parse(ViewData["Pendentes"].ToString()))) %</b><br />
+                                <span class="icon mr-3"><i class="fa-solid fa-calendar-check"></i></span>Últimos 7 dias: <b>@(int.Parse(ViewData["FinalizadosSemana"].ToString()) * 100 / int.Parse(ViewData["TotaisSemana"].ToString())) %</b>
                             </div>
                         </div>
                     </div>
@@ -92,10 +87,6 @@
                                     <div class="column">
                                         <p class="title is-size-3">
                                             @u.NomeCompleto
-                                            @if (u.Viatura.Matricula != null)
-                                            {
-                                                <span><i><b> (@u.Viatura.LocalizacaoCidade)</b></i></span>
-                                            }
                                             <button class="my-1 button is-danger is-small is-rounded is-hidden" hidden type="button">
                                                 Em
                                                 Curso: @(u.MarcacaoCurso.Cliente != null ? u.MarcacaoCurso.Cliente.NomeCliente : "-------------")

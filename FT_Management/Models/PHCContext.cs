@@ -1887,6 +1887,37 @@
             return res;
 
         }
+
+        public List<int> ObterPercentagemMarcacoes()
+        {
+            List<int> res = new List<int>();
+
+            //Pedido de Pecas
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Pedido Peças') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Pedido de Orçamento
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Pedido Orçamento') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Pendentes Totais
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado not in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Finalizados
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Oficina
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE Oficina='True' and estado not in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Finalizados 7 dias
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+            //Totais
+            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE data between '" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+
+
+            return res;
+
+        }
+
         public List<Atividade> ObterAtivivade(Marcacao m)
         {
             List<Atividade> LstAtividade = new List<Atividade>();
