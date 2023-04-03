@@ -361,7 +361,9 @@ namespace FT_Management.Controllers
             {
                 if (m.Tecnico.Id == idTecnicoOriginal) m.Tecnico = u;
                 if (m.LstTecnicos.Where(u => u.Id == idTecnicoOriginal).Count() > 0) m.LstTecnicos[m.LstTecnicos.FindIndex(u => u.Id == idTecnicoOriginal)] = u;
+                m.EstadoMarcacaoDesc = "Reagendado";
             }
+            
 
             m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
