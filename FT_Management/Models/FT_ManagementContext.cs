@@ -1196,7 +1196,7 @@ namespace FT_Management.Models
         public byte[] GerarMapaFerias(string Ano)
         {
             using ExcelPackage package = new ExcelPackage(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "FT_Ferias.xlsx"));
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             //int totalRows = workSheet.Dimension.Rows;
             List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false);
@@ -1459,7 +1459,7 @@ namespace FT_Management.Models
         public byte[] GerarMapaPresencas(DateTime Data)
         {
             using ExcelPackage package = new ExcelPackage(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "FT_Presencas.xlsx"));
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets["Table1"];
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             int totalRows = workSheet.Dimension.Rows;
             List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
@@ -1519,7 +1519,7 @@ namespace FT_Management.Models
                     }
                 }
             }
-
+           
             return package.GetAsByteArray();
         }
         public DateTime ObterDataUltimoAcesso(int IdPHC)

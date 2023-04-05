@@ -43,23 +43,16 @@ namespace FT_Management.Controllers
             string id = context.ObterAnoAtivo();
             _logger.LogDebug("Utilizador {1} [{2}] a gerar mapa de ferias do ano ativo: {3}.", u.NomeCompleto, u.Id, id);
 
-            var file = context.GerarMapaFerias(id);
-            var output = new MemoryStream();
-
-            output.Write(file, 0, file.Length);
-            output.Position = 0;
-
             var cd = new System.Net.Mime.ContentDisposition
             {
                 FileName = "MapaFerias_" + id + ".xlsx",
                 Inline = false,
-                Size = file.Length,
                 CreationDate = DateTime.Now,
 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return File(context.GerarMapaFerias(id), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         //Criar ferias com base no utilizador e nada data, saltando feriados e fins de semanas 
