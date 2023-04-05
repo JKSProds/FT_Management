@@ -93,22 +93,16 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a gerar uma Mapa de Presenças para a seguinte data: {3}", u.NomeCompleto, u.Id, data);
 
-            var file = context.GerarMapaPresencas(DateTime.Parse(data));
-            var output = new MemoryStream();
-            output.Write(file, 0, file.Length);
-            output.Position = 0;
-
             var cd = new System.Net.Mime.ContentDisposition
             {
-                FileName = "MapaPresencas_" + DateTime.Parse(data).ToString("MM-yyyy") + ".xlsx",
+                FileName = "MapaPresencas_" + DateTime.Parse(data).ToString("MM_yyyy") + ".xlsx",
                 Inline = false,
-                Size = file.Length,
                 CreationDate = DateTime.Now,
 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(output, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return File(context.GerarMapaPresencas(DateTime.Parse(data)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         //Apagar um acesso em especifico
