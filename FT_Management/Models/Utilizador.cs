@@ -74,6 +74,7 @@
         public bool AcessoAtivo { get; set; }
         public bool Acessos { get; set; }
         public bool Dev { get; set; }
+        public bool Dashboard { get; set; }
         public int TipoTecnico { get; set; }
         public int Zona { get; set; }
         public string ChatToken { get; set; }

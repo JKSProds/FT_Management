@@ -87,7 +87,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das Marcacoes.", u.NomeCompleto, u.Id);
 
-            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(true, false);
+            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(true, false).Where(u => u.Dashboard).ToList();
             List<Marcacao> LstMarcacao = phccontext.ObterMarcacoes(DateTime.Now.AddDays(-7), DateTime.Now);
             List<int> LstMarcacaosPendentes = phccontext.ObterPercentagemMarcacoes();
 
