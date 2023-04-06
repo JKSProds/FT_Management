@@ -1172,7 +1172,11 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     function GerarGuia(valor) {
         document.getElementById('chkGuia').checked = valor;
         Bulma('#modalGerarGuia').modal().close();
-        FecharMarcacao(false);
+        if (document.getElementById("lstEstadoFO").value == "1" {
+            Bulma('#modalFecharMarcacao').modal().open();
+        } else {
+            FecharMarcacao(false);
+        }
     }
     function FecharMarcacao(valor) {
         document.getElementById('chkFecharMarcacao').checked = valor;

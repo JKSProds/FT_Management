@@ -115,7 +115,13 @@ namespace FT_Management.Controllers
                 _logger.LogDebug("Utilizador {1} [{2}] a criar uma nova folha de obra: Id Marcacao - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}, N. Int - {7}, N. Pecas {8}, Estado - {9}.", fo.Utilizador.NomeCompleto, fo.Utilizador.Id, m.IdMarcacao, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto, fo.IntervencaosServico.Count(), fo.PecasServico.Count(), fo.EstadoFolhaObra);
 
                 int Estado = fo.EstadoFolhaObra;
-                if (fo.FecharMarcacao && fo.EstadoFolhaObra == 1) m.EstadoMarcacaoDesc = "Finalizado";
+                if (fo.FecharMarcacao && fo.EstadoFolhaObra == 1)
+                {
+                    m.EstadoMarcacaoDesc = "Finalizado";
+                }else
+                {
+                    fo.EstadoFolhaObra = 2;
+                }
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
                 if (fo.EstadoFolhaObra == 4)
