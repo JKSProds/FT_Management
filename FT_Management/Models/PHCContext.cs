@@ -59,7 +59,9 @@
                             }
                         }
                     }
+                    if (!result.HasRows && result.RecordsAffected > 0) res[0] = "1";
                 }
+                
                 conn.Close();
             }
             catch (Exception ex)
@@ -1919,6 +1921,17 @@
             //Finalizados 90 dias
             res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-90).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
 
+
+            return res;
+
+        }
+
+        public bool AtualizarMarcacaoEmCurso(Marcacao m)
+        {
+            bool res =  true;
+
+            ExecutarQuery("UPDATE u_marcacao set estado='Agendado' where estado='Em Curso' and tecnno=" + m.Tecnico.IdPHC + ";");
+            ExecutarQuery("UPDATE u_marcacao set estado='Em Curso' where u_marcacaostamp='"+m.MarcacaoStamp+"';");
 
             return res;
 
