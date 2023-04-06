@@ -64,17 +64,7 @@ namespace FT_Management.Models
 
         public static bool EnviarNotificacao(string Mensagem, Utilizador u)
         {
-            FT_ManagementContext context = new FT_ManagementContext(ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
-
-            Notificacao n = new Notificacao()
-            {
-                Mensagem = Mensagem,
-                UtilizadorDestino = u,
-                UtilizadorOrigem = new Utilizador() { Id = 32 },
-                Tipo = "Automática"
-            };
-
-            context.CriarNotificacao(n);
+           
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
         public static bool EnviarNotificacaoMarcacaoTecnico(Marcacao m, Utilizador u)
