@@ -98,11 +98,13 @@
 
             ViewData["Pecas"] = LstMarcacaosPendentes[0];
             ViewData["Orcamento"] = LstMarcacaosPendentes[1];
-            ViewData["Pendentes"] = LstMarcacaosPendentes[2];
-            ViewData["Finalizados"] = LstMarcacaosPendentes[3];
+            ViewData["Pendentes30"] = LstMarcacaosPendentes[2];
+            ViewData["Finalizados30"] = LstMarcacaosPendentes[3];
             ViewData["Oficina"] = LstMarcacaosPendentes[4];
             ViewData["FinalizadosSemana"] = LstMarcacaosPendentes[5];
             ViewData["TotaisSemana"] = LstMarcacaosPendentes[6];
+            ViewData["Pendentes90"] = LstMarcacaosPendentes[7];
+            ViewData["Finalizados90"] = LstMarcacaosPendentes[8];
 
 
             return View(LstUtilizadores);
