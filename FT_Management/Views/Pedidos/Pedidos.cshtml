@@ -127,7 +127,7 @@ else
                                 @Html.DisplayNameFor(model => model.Cliente.IdCliente): <b>@item.Cliente.IdCliente @(item.Cliente.IdLoja > 0 ? " / " + item.Cliente.IdLoja : "")</b><br />
                                 @Html.DisplayNameFor(model => model.DataPedido): <b>@item.DataPedido.ToShortDateString()</b><br />
                                 @Html.DisplayNameFor(model => model.EstadoMarcacaoDesc): <b>@item.EstadoMarcacaoDesc</b><br />
-                                @Html.DisplayNameFor(model => model.PrioridadeMarcacao): <b>@item.PrioridadeMarcacao</b><br />
+                                @Html.DisplayNameFor(model => model.TipoServico): <b>@(string.IsNullOrEmpty(item.TipoServico) ? "" : @item.TipoServico + " / ") @item.TipoEquipamento</b><br />
                                 @Html.DisplayNameFor(model => model.Referencia): <b>@item.Referencia</b>
                                 <hr />
                                 <p style="white-space: pre-line">@item.ResumoMarcacao</p>
