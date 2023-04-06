@@ -127,7 +127,7 @@ else
                                 @Html.DisplayNameFor(model => model.Cliente.IdCliente): <b>@item.Cliente.IdCliente @(item.Cliente.IdLoja > 0 ? " / " + item.Cliente.IdLoja : "")</b><br />
                                 @Html.DisplayNameFor(model => model.DataPedido): <b>@item.DataPedido.ToShortDateString()</b><br />
                                 @Html.DisplayNameFor(model => model.EstadoMarcacaoDesc): <b>@item.EstadoMarcacaoDesc</b><br />
-                                @Html.DisplayNameFor(model => model.PrioridadeMarcacao): <b>@item.PrioridadeMarcacao</b><br />
+                                @Html.DisplayNameFor(model => model.TipoServico): <b>@(string.IsNullOrEmpty(item.TipoServico) ? "" : @item.TipoServico + " / ") @item.TipoEquipamento</b><br />
                                 @Html.DisplayNameFor(model => model.Referencia): <b>@item.Referencia</b>
                                 <hr />
                                 <p style="white-space: pre-line">@item.ResumoMarcacao</p>
@@ -245,20 +245,10 @@ else
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result == "1") {
                         if (document.getElementById('chkNav').checked) {
                             document.getElementById('btnDirecoes_' + stamp).click();
                         }
-                       document.getElementById('btnStart_' + stamp).classList.add('is-hidden');
-                       document.getElementById('btnStop_' + stamp).classList.remove('is-hidden');
-                       notify("Marcação atualizada com sucesso!");
-                    } else {
-                        document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
-                        notifyError('Ocorreu um erro ao iniciar a assistencia!');
-                    }
-                    Bulma('#modalIniciarAssistencia').modal().close();
-                    document.getElementById('btnStart_' + stamp).classList.remove('is-loading');
-                    document.getElementById('btnIniciarDeslocacao').classList.remove('is-loading');
+                    window.location.reload();
                 });
             }
         });

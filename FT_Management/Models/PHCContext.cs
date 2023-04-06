@@ -59,7 +59,9 @@
                             }
                         }
                     }
+                    if (!result.HasRows && result.RecordsAffected > 0) res[0] = "1";
                 }
+                
                 conn.Close();
             }
             catch (Exception ex)
@@ -977,12 +979,12 @@
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
             if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
             if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3) res += "É obrigatorio inserir pelo menos 3 anexos numa instalação!\r\n";
-            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção é diferente da data da marcação ("+fo.DataServico.ToShortDateString()+")!\r\n";
-            //if (fo.EquipamentoServico.EquipamentoStamp == null) res += "Não foi selecionado um equipamento!\r\n";
+            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção ("+fo.DataServico.ToShortDateString()+") é diferente da data da marcação ("+string.Join(" | ", fo.Marcacao.DatasAdicionaisDistintas.Select(d=>d.ToShortDateString())) +")!\r\n";
             if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
-            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção é diferente da data atual("+DateTime.Now.ToShortDateString()+"). \r\n";
+            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção ("+string.Join(" | ", fo.IntervencaosServico.Select(i => i.DataServiço.ToShortDateString()))+") é diferente da data atual ("+DateTime.Now.ToShortDateString()+"). \r\n";
             if (fo.ValorTotal > 500 && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
             if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
+            if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) res += "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!\r\n";
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico))
             {
                 Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
@@ -1919,6 +1921,17 @@
             //Finalizados 90 dias
             res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-90).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
 
+
+            return res;
+
+        }
+
+        public bool AtualizarMarcacaoEmCurso(Marcacao m)
+        {
+            bool res =  true;
+
+            ExecutarQuery("UPDATE u_marcacao set estado='Agendado' where estado='Em Curso' and tecnno=" + m.Tecnico.IdPHC + ";");
+            ExecutarQuery("UPDATE u_marcacao set estado='Em Curso' where u_marcacaostamp='"+m.MarcacaoStamp+"';");
 
             return res;
 
