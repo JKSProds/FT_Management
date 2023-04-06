@@ -177,6 +177,8 @@ else
                                     class="fas fa-unlock"></i></button>
                                         <button class="button is-danger" onclick="ConfirmApagarUtilizador(@item.Id)"><i
                                     class="fas fa-trash"></i></button>
+                                        <button class="button is-info" onclick="ConfirmEnviarNotificacao('@item.Id')"><i
+                                    class="fas fa-bell"></i></button>
                                     </td>
                                 }
                                 else
@@ -360,6 +362,41 @@ else
                     <i class="fas fa-trash"></i>
                 </span>
                 <span>Reset Senha</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div id="modalNovaNotificacao" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon">
+                    <i class="fas fa-bell"></i>
+                </span>
+                <span>Nova Notificação</span>
+            </p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="control">
+                <textarea class="textarea is-primary" rows="7" id="txtMensagem"></textarea>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-success is-large is-fullwidth" onclick="EnviarNotificacao(document.getElementById('hiddenIdUtilizador').value, document.getElementById('txtMensagem').value)" href="javascript:;">
+                <span class="icon">
+                    <i class="fas fa-paper-plane"></i>
+                </span>
+                <span>Enviar</span>
+            </button>
+            <button type="button" class="button is-info is-large is-fullwidth"
+                    onclick="Bulma('#modalNovaNotificacao').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
             </button>
         </footer>
     </div>
@@ -552,6 +589,25 @@ else
     function ConfirmApagarUtilizador(id) {
         document.getElementById("hiddenIdUtilizador").value = id;
         Bulma('#modalApagarUtilizador').modal().open();
+    }
+
+    function ConfirmEnviarNotificacao(id) {
+        document.getElementById("hiddenIdUtilizador").value = id;
+        Bulma('#modalNovaNotificacao').modal().open();
+    }
+
+    function EnviarNotificacao(id, notificacao) {
+        $.ajax({
+            type: "POST",
+            url: "/Home/Notificacoes/" + id,
+            data: { "notificacao": notificacao, "tipo": "Geral" },
+            traditional: true,
+            success: function (result) {
+                notify('Notificação enviada com sucesso!');
+                Bulma('#modalNovaNotificacao').modal().close();
+                document.getElementById('txtMensagem').value = '';
+            }
+        });
     }
 
     function ResetSenha() {

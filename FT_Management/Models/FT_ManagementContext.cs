@@ -85,6 +85,7 @@ namespace FT_Management.Models
         {
             return ObterListaUtilizadores(Enable, false).Where(u => u.TipoUtilizador == 2).ToList();
         }
+
         public Utilizador ObterUtilizador(int Id)
         {
             Utilizador utilizador = new Utilizador();
@@ -138,6 +139,49 @@ namespace FT_Management.Models
                     }
                     utilizador.Viatura = ObterViatura(utilizador);
 
+                }
+            }
+            return utilizador;
+        }
+
+        public Utilizador ObterUtilizadorSimples(int Id)
+        {
+            Utilizador utilizador = new Utilizador();
+            string sqlQuery = "SELECT * FROM sys_utilizadores left join sys_api_keys on sys_utilizadores.IdUtilizador=sys_api_keys.IdUtilizador where sys_utilizadores.IdUtilizador=" + Id + ";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    utilizador = new Utilizador()
+                    {
+                        Id = result["IdUtilizador"],
+                        NomeUtilizador = result["NomeUtilizador"],
+                        Password = result["Password"],
+                        NomeCompleto = result["NomeCompleto"],
+                        TipoUtilizador = int.Parse(result["TipoUtilizador"]),
+                        EmailUtilizador = result["EmailUtilizador"],
+                        Admin = result["admin"] == 1,
+                        Enable = result["enable"] == 1,
+                        Acessos = result["acessos"],
+                        Dev = result["dev"],
+                        Dashboard = result["dashboard"],
+                        Telemovel = result["TelemovelUtilizador"],
+                        CorCalendario = result["CorCalendario"],
+                        IdPHC = result["IdPHC"],
+                        TipoMapa = result["TipoMapa"],
+                        Pin = result["PinUtilizador"],
+                        Iniciais = result["IniciaisUtilizador"],
+                        DataNascimento = result["DataNascimento"],
+                        IdArmazem = result["IdArmazem"],
+                        TipoTecnico = result["TipoTecnico"],
+                        Zona = result["Zona"],
+                        ChatToken = result["ChatToken"],
+                        NotificacaoAutomatica = result["NotificacaoAutomatica"],
+                        SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
+                        StampMoradaCargaDescarga = result["StampMoradaCargaDescarga"]
+                    };
                 }
             }
             return utilizador;
@@ -1647,8 +1691,8 @@ namespace FT_Management.Models
                 {
                     ID = result["Id"],
                     Mensagem = result["Mensagem"],
-                    Destino = result["Destino"],
-                    Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                    UtilizadorDestino = ObterUtilizadorSimples(result["UtilizadorDestino"]),
+                    UtilizadorOrigem = ObterUtilizadorSimples(result["UtilizadorOrigem"]),
                     Tipo = result["Tipo"],
                     Pendente = result["Pendente"] == 1
                 });
@@ -1656,10 +1700,32 @@ namespace FT_Management.Models
 
             return LstNotificacoes;
         }
-        public void CriarNotificacao(Notificacao notificacao)
+
+        public List<Notificacao> ObterNotificacoesPendentes(int id)
+        {
+            List<Notificacao> LstNotificacoes = new List<Notificacao>();
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT * FROM dat_notificacoes where Pendente=0 and timestamp > '"+DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd")+"' and UtilizadorDestino=" + id+";");
+            while (result.Read())
+            {
+                LstNotificacoes.Add(new Notificacao()
+                {
+                    ID = int.Parse(result["Id"]),
+                    Mensagem = result["Mensagem"],
+                    UtilizadorDestino = ObterUtilizadorSimples(int.Parse(result["UtilizadorDestino"])),
+                    UtilizadorOrigem = ObterUtilizadorSimples(int.Parse(result["UtilizadorOrigem"])),
+                    Tipo = result["Tipo"],
+                    Pendente = result["Pendente"] == "1"
+                });
+            }
+
+            return LstNotificacoes;
+        }
+
+        public bool CriarNotificacao(Notificacao notificacao)
         {
 
-            string sql = "INSERT INTO dat_notificacoes (Mensagem,Destino,IdUtilizador, Tipo, Pendente) VALUES ('" + notificacao.Mensagem + "', '" + notificacao.Destino + "', '" + notificacao.Utilizador.Id + "', '" + notificacao.Tipo + "', '" + notificacao.Pendente + "', )";
+            string sql = "INSERT INTO dat_notificacoes (Mensagem,UtilizadorDestino,UtilizadorOrigem, Tipo, Pendente) VALUES ('" + notificacao.Mensagem + "', '" + notificacao.UtilizadorDestino.Id + "', '" + notificacao.UtilizadorOrigem.Id + "', '" + notificacao.Tipo + "', '" + (notificacao.Pendente ? "1" : "0") + "');";
 
             try
             {
@@ -1667,9 +1733,31 @@ namespace FT_Management.Models
 
                 db.Execute(sql);
                 db.Connection.Close();
+
+                return true;
             }
             catch
             {
+                return false;
+            }
+        }
+
+        public bool ApagarNotificacao(int id)
+        {
+
+            string sql = "UPDATE dat_notificacoes SET Pendente=1 where Id="+id+";";
+
+            try
+            {
+                Database db = ConnectionString;
+
+                db.Execute(sql);
+                db.Connection.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
         #endregion
