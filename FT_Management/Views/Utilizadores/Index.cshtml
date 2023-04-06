@@ -151,6 +151,17 @@ else
                                                     model.Dev)</span>
                                                         </label>
                                                     </div>
+                                                     <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                                class="switch is-rounded">
+                                                            <input type="checkbox" id="chkDash_@item.Id" checked="@item.Dashboard"
+                                                    onchange="AtualizarDashboardUtilizador(@item.Id)">
+                                                            <span class="check is-danger"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.Dashboard)</span>
+                                                        </label>
+                                                    </div>
                                                     <hr class="dropdown-divider">
                                                     <div class="dropdown-item">
                                                         <button class="button is-success is-fullwidth"
@@ -508,6 +519,24 @@ else
                 $(function () {
                     if (result == "1") {
                         notify('Valor de Developer do utilizador atualizado com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                });
+            }
+        });
+    }
+
+    function AtualizarDashboardUtilizador(id) {
+        $.ajax({
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { dash: document.getElementById('chkDash_' + id).checked ? 1 : 2 },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "1") {
+                        notify('Valor de Dashboard do utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
                     }
