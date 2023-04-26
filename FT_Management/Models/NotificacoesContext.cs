@@ -64,6 +64,7 @@ namespace FT_Management.Models
 
         public static bool EnviarNotificacao(string Mensagem, Utilizador u)
         {
+           
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
         public static bool EnviarNotificacaoMarcacaoTecnico(Marcacao m, Utilizador u)

@@ -4,9 +4,9 @@
     {
         public int ID { get; set; }
         public string Mensagem { get; set; }
-        public string Destino { get; set; }
-        public Utilizador Utilizador { get; set; }
-        public int Tipo { get; set; }
+        public Utilizador UtilizadorDestino { get; set; }
+        public Utilizador UtilizadorOrigem { get; set; }
+        public string Tipo { get; set; }
         public bool Pendente { get; set; }
     }
 }

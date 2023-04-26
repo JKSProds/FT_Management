@@ -90,5 +90,49 @@
             MailContext.EnviarEmailSugestao(context.ObterUtilizador(int.Parse(this.User.Claims.First().Value)), Obs, new System.Net.Mail.Attachment(new MemoryStream(Convert.FromBase64String(file.Split(',').Last())), "PrintScreen_" + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".png"));
             return Json("Ok");
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Notificacoes(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter as suas notificacoes.", u.NomeCompleto, u.Id);
+
+            return Json(context.ObterNotificacoesPendentes(id).ToList());
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult Notificacoes(int id, string notificacao, string tipo)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar uma notificacao.", u.NomeCompleto, u.Id);
+
+            Notificacao n = new Notificacao()
+            {
+                Mensagem = notificacao,
+                UtilizadorDestino = context.ObterUtilizador(id),
+                UtilizadorOrigem = u,
+                Tipo = tipo
+            };
+
+            return Json(context.CriarNotificacao(n) ? StatusCode(200) : StatusCode(500));
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public IActionResult Notificacoes(int id, bool apagar)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a apagar uma notificacao.", u.NomeCompleto, u.Id);
+
+            return Json(context.ApagarNotificacao(id) ? StatusCode(200) : StatusCode(500));
+        }
     }
 }
