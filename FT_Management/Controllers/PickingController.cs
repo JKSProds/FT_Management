@@ -153,7 +153,7 @@
 
             List<string> res = phccontext.CriarOrdemRececao(id, linhas, u);
 
-            return Json(res[0] != "-1" ? res[2] : StatusCode(500));
+            return Json(res[2]);
         }
 
         //Fechar um picking

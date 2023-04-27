@@ -202,7 +202,12 @@
                 data: { "id": id, "linhas": res },
                 type: "POST",
                 success: function (data) {
-                    window.location.href = "/Picking/OrdemRececao/" + data;
+                    console.log(data);
+                    if (data === "") {
+                        notifyError("Ocorreu um erro ao gerar a ordem de rececao!");
+                    } else {
+                        window.location.href = "/Picking/OrdemRececao/" + data;
+                    }
                 },
                 error: function (response) {
                     notifyError("Ocorreu um erro ao gerar a ordem de rececao!")
