@@ -50,7 +50,7 @@
                                     <span class="check is-success"></span>
                                 </label>
                             </div>
-                            <p class="card-header-title" style="color:#ffffff">Encomenda Nº @item.Id - @item.DataDossier.ToShortDateString()</p>
+                            <p class="card-header-title" style="color:#ffffff">Encomenda Nº @item.Id</p>
                             <a class="card-header-icon button is-success m-1 is-disabled">@item.NItems</a>
                         </header>
                         <div class="card-content">
@@ -70,7 +70,7 @@
                                             @foreach (var linha in item.LinhasEncomendaPorFornecer)
                                                 {
                                                 <tr>
-                                                    <td>
+                                                    <td data-label="Copiar Linha?">
                                                         <div class="control">
                                                             <label class="mx-1 switch is-outlined is-rounded">
                                                                 <input type="checkbox" id="@linha.StampLinhaEncomenda" name="chkLinhas" />
