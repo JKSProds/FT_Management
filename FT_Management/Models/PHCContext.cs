@@ -2433,7 +2433,7 @@
 
         public List<Encomenda> ObterEncomendas(int no, int estab)
         {
-            return ObterEncomendas("SELECT * FROM V_Enc_Aberto Where no=" + no+" and estab="+estab+";").OrderBy(e => e.Data).ToList();
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto Where no=" + no+" and estab="+estab+" and ndos=2;").OrderBy(e => e.Data).ToList();
         }
 
         public Encomenda ObterEncomenda(int IdEncomenda)
