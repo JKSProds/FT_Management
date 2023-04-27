@@ -19,6 +19,19 @@
                     </div>
                 </div>
             </div>
+            <div class="column is-6">
+                <div class="buttons is-right mt-3">
+                    <p class="control" style="width:100%">
+                        <button class="button is-success is-fullwidth is-large" onclick="ObterOR('@Model.StampFornecedor')"
+                                type="button">
+                            <span class="icon">
+                                <i class="fa-solid fa-eye"></i>
+                            </span>
+                            <span>Ordens de Receção</span>
+                        </button>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 <hr />
@@ -88,6 +101,31 @@
     </span>
     <span>Criar Ordem de Receção</span>
 </a>
+
+<div class="modal" id="modalOrdensRececao">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Ordens de Receção</p>
+        </header>
+        <section class="modal-card-body">
+            <p class="title is-5">Em Aberto: </p>
+            <div id="divOrdens">
+                <button class="is-danger button is-large is-fullwidth" disabled>Sem Ordens de Receção</button>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-large is-fullwidth is-danger"
+                    onclick="Bulma('#modalOrdensRececao').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
 <script>
     function checkAllEncomenda(id) {
         var table = document.getElementById(id).parentElement.parentElement.parentElement.parentElement.childNodes[3].children[0].children[0].children[0].children[1]
@@ -122,4 +160,30 @@
             });
         }
     }
+
+    function ObterOR(id) {
+            $.ajax({
+                url: '/Picking/OrdensRececao/',
+                data: { "id": id },
+                type: "GET",
+                success: function (data) {
+                    if (data.length > 0) {
+                        console.log(data);
+                        var html = "";
+                        for (let i = 0; i < data.length; i++) {
+                            html += "<a class='button is-large is-info m-1' href='/Picking/OrdemRececao/" + data[i].picking_Stamp + "'>" + data[i].idPicking+"</a>";
+                        }
+                        document.getElementById("divOrdens").innerHTML = html;
+                    }
+                    Bulma('#modalOrdensRececao').modal().open();
+                },
+                error: function (response) {
+                    notifyError("Ocorreu um erro ao gerar a ordem de rececao!")
+                },
+                failure: function (response) {
+                    notifyError("Falha ao gerar a ordem de rececao!")
+                }
+            });
+    }
+
 </script>

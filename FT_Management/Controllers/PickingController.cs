@@ -112,6 +112,20 @@
             return View(p);
         }
 
+        //Obter uma ordem de rececao
+        [HttpGet]
+        public IActionResult OrdensRececao(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewBag.Armazens = phccontext.ObterArmazensFixos().Select(l => new SelectListItem() { Value = l.ArmazemStamp, Text = l.ArmazemNome, Selected = l.ArmazemId == 3 });
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            _logger.LogDebug("Utilizador {1} [{2}] a obter ordens de rececao associadas a um fornecedor: {3}.", u.NomeCompleto, u.Id, id);
+
+            return Json(phccontext.ObterFornecedor(id).OrdensRececao);
+        }
+
 
         //Obter uma ordem de rececao
         [HttpGet]

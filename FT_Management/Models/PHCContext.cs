@@ -457,7 +457,7 @@
 
         //Obter Fornecedores
         #region FORNECEDORES
-        public List<Fornecedor> ObterFornecedores(string SQL_Query, bool LoadEncomendas)
+        public List<Fornecedor> ObterFornecedores(string SQL_Query, bool LoadEncomendas, bool LoadDossiers)
         {
 
             List<Fornecedor> LstFornecedor = new List<Fornecedor>();
@@ -490,7 +490,9 @@
                             ReferenciaFornecedor = "N/D"
                         });
 
-                        if (LoadEncomendas) LstFornecedor.Last().Encomendas = ObterEncomendas(LstFornecedor.Last().IdFornecedor, 0);                    }
+                        if (LoadEncomendas) LstFornecedor.Last().Encomendas = ObterEncomendas(LstFornecedor.Last().IdFornecedor, 0);
+                        if (LoadDossiers) LstFornecedor.Last().OrdensRececao = ObterPickings(LstFornecedor.Last().IdFornecedor, 0);
+                    }
                 }
 
                 conn.Close();
@@ -505,21 +507,21 @@
 
         public List<Fornecedor> ObterFornecedores(bool LoadAll)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;", LoadAll);
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;", LoadAll, LoadAll);
         }
 
         public List<Fornecedor> ObterFornecedoresEncomendas(bool LoadAll, string filtro)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where nome like '%"+filtro+ "%' and ((SELECT COUNT(*) FROM V_Enc_Aberto Where V_Enc_Aberto.no=fl.[no] and V_Enc_Aberto.estab = fl.estab) > 0) order by nome;", LoadAll);
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where nome like '%"+filtro+ "%' and ((SELECT COUNT(*) FROM V_Enc_Aberto Where V_Enc_Aberto.no=fl.[no] and V_Enc_Aberto.estab = fl.estab) > 0) order by nome;", LoadAll, LoadAll);
         }
 
         public Fornecedor ObterFornecedor(int id)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;", true).DefaultIfEmpty(new Fornecedor()).First();
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;", true, true).DefaultIfEmpty(new Fornecedor()).First();
         }
         public Fornecedor ObterFornecedor(string id)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where flstamp='" + id + "' order by nome;", true).DefaultIfEmpty(new Fornecedor()).First();
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where flstamp='" + id + "' order by nome;", true, true).DefaultIfEmpty(new Fornecedor()).First();
         }
 
         public Cliente ObterFornecedorCliente(int id)
@@ -2572,6 +2574,53 @@
 
             return p;
         }
+
+        public List<Picking> ObterPickings(int no, int estab)
+        {
+            List<Picking> p = new List<Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_PICKING_CAB WHERE no='" + no + "' and estab='"+estab+"'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        p.Add(new Picking()
+                        {
+                            Picking_Stamp = result["PISTAMP"].ToString(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdPicking = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["DATA"].ToString()),
+                            NomeCliente = result["nome"].ToString(),
+                            DespacharEncomenda = result["u_envio"].ToString() == "Transportadora",
+                            Encomenda = this.ObterEncomendaPicking(result["PISTAMP"].ToString()),
+                            Linhas = this.ObterLinhasPicking(result["PISTAMP"].ToString()),
+                            EditadoPor = result["usrinis"].ToString().ToUpper(),
+                            Anexos = ObterAnexosDossier(result["PISTAMP"].ToString())
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os pickings do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return p;
+        }
+
         public List<Linha_Picking> ObterLinhasPicking(string PI_STAMP)
         {
             List<Linha_Picking> LstPickingLinhas = new List<Linha_Picking>();
