@@ -45,7 +45,7 @@
                         <header class="card-header @(item.Validado ? "has-background-success" : "has-background-info")">
                             <p class="card-header-title" style="color:#ffffff">
                                 <span class="icon"><i class="fa-solid fa-box"></i></span>
-                                @item.Ref_linha @((item.Nome_Loja != "") ? "- " + item.Nome_Loja : "")
+                                @item.Ref_linha @((item.Nome_Loja != "") ? "- " + item.Nome_Loja : "") (@item.Encomenda.Id)
                             </p>
                             <a class="card-header-icon button is-success m-1 is-disabled">@item.Qtd_Separar</a>
                         </header>
@@ -105,7 +105,7 @@
                         <header class="card-header @(item.Validado ? "has-background-success" : "has-background-info")">
                             <p class="card-header-title" style="color:#ffffff">
                                 <span class="icon"><i class="fa-solid fa-boxes-stacked"></i></span>
-                                @item.Ref_linha
+                                @item.Ref_linha (@item.Encomenda.Id)
                             </p>
                             <a class="card-header-icon button is-success m-1 is-disabled">@item.Qtd_Separar</a>
                         </header>

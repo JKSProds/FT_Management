@@ -43,6 +43,7 @@
         public bool Validado { get { return Qtd_Linha >= Qtd_Separar; } }
         [Display(Name = "Editado")]
         public string EditadoPor { get; set; }
+        public Encomenda Encomenda { get; set; }
     }
 
     public class Ref_Linha_Picking

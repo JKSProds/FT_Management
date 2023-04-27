@@ -2604,7 +2604,8 @@
                                 Serie = result["USA_NSERIE"].ToString() == "True",
                                 Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())),
                                 EditadoPor = result["usrinis"].ToString(),
-                                Nome_Loja = result["Loja_Lin"].ToString()
+                                Nome_Loja = result["Loja_Lin"].ToString(),
+                                Encomenda = ObterEncomenda(result["stamp_bo_ori"].ToString())
                             });
                         }
                         else
@@ -2762,7 +2763,7 @@
                 conn.Open();
                 foreach (var e in Encomendas)
                 {
-                    SqlCommand command = new SqlCommand("select SUM(o.qtt-o.qtt2) from bi o(NOLOCK) where o.bostamp='" + p.Encomenda.BO_STAMP + "'", conn)
+                    SqlCommand command = new SqlCommand("select SUM(o.qtt-o.qtt2) from bi o(NOLOCK) where o.bostamp='" + e.BO_STAMP + "'", conn)
                     {
                         CommandTimeout = TIMEOUT
                     };

@@ -155,7 +155,7 @@
             _logger.LogDebug("Utilizador {1} [{2}] a fechar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
 
             p.EditadoPor = u.Iniciais;
-            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p) + "</b>";
+            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + (p.Serie == 10 ? phccontext.ValidarOrdemRececao(p) : phccontext.ValidarPicking(p)) + "</b>";
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 
             phccontext.FecharPicking(p);
