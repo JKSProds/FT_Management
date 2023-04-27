@@ -119,6 +119,7 @@
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewBag.Armazens = phccontext.ObterArmazensFixos().Select(l => new SelectListItem() { Value = l.ArmazemStamp, Text = l.ArmazemNome, Selected = l.ArmazemId == 3 });
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             _logger.LogDebug("Utilizador {1} [{2}] a obter uma ordem de rececao em especifico: {3}.", u.NomeCompleto, u.Id, id);
@@ -177,7 +178,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a validar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
 
-            return Content(phccontext.ValidarPicking(p));
+            return Content(p.Serie == 10 ? phccontext.ValidarOrdemRececao(p) : phccontext.ValidarPicking(p));
         }
 
         //Atualizar uma linha

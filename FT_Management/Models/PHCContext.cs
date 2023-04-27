@@ -2449,6 +2449,10 @@
             List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE STAMP_PICKING='" + Stamp_Picking + "';");
             return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
         }
+        public List<Encomenda> ObterEncomendasPicking(string Stamp_Picking)
+        {
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE STAMP_PICKING='" + Stamp_Picking + "';");
+        }
         #endregion
 
         //PICKING
@@ -2746,6 +2750,43 @@
             return res;
         }
 
+        public string ValidarOrdemRececao(Picking p)
+        {
+            string res = "";
+            List<Encomenda> Encomendas = ObterEncomendasPicking(p.Picking_Stamp);
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+                foreach (var e in Encomendas)
+                {
+                    SqlCommand command = new SqlCommand("select SUM(o.qtt-o.qtt2) from bi o(NOLOCK) where o.bostamp='" + p.Encomenda.BO_STAMP + "'", conn)
+                    {
+                        CommandTimeout = TIMEOUT
+                    };
+                    using (SqlDataReader result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            double qtt = double.Parse(result[0].ToString());
+                            res += qtt == 0 ? "As referências lidas satisfazem a encomenda ("+e.Id+") na totalidade e a encomenda será fechada!\r\n\r\n" : "";
+                            res += qtt > 0 ? "As referências lidas não satisfazem a encomenda ("+e.Id+") na totalidade, por esse motivo a encomenda manter-se-á em aberto!\r\n\r\n" : "";
+                            res += qtt < 0 ? "As referências lidas são superiores á quantidade encomendada ("+e.Id+"), por esse motivo a encomenda será fechada!\r\n\r\n" : "";
+                        }
+                    }
+                }
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel validar a ordem de rececao do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
         #endregion
 
         //INVENTARIO
