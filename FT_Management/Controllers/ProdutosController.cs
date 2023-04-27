@@ -22,7 +22,7 @@
             _logger.LogDebug("Utilizador {1} [{2}] a obter todas as referencias baseadas num filtro: Ref - {3}, Desig - {4}, Armazem - {5}, Fornecedor - {6}, TipoEquipamento - {6}.", u.NomeCompleto, u.Id, Ref, Desig, Armazem, Fornecedor, TipoEquipamento);
 
             var LstArmazens = phccontext.ObterArmazens();
-            var LstFornecedores = phccontext.ObterFornecedores().Where(p => !string.IsNullOrEmpty(p.CodigoIntermedio));
+            var LstFornecedores = phccontext.ObterFornecedores(false).Where(p => !string.IsNullOrEmpty(p.CodigoIntermedio));
             var LstTiposEquipamento = phccontext.ObterTiposEquipamento();
             if (Ref == null) { Ref = ""; }
             if (Desig == null) { Desig = ""; }

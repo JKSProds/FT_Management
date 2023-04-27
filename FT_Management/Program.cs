@@ -116,7 +116,7 @@ namespace FT_Management
                 app.Logger.LogInformation("WebApp parada com sucesso!");
             });
 
-            app.Run();
+                app.Run();
         }
     }
 }

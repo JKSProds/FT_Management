@@ -457,7 +457,7 @@
 
         //Obter Fornecedores
         #region FORNECEDORES
-        public List<Fornecedor> ObterFornecedores(string SQL_Query)
+        public List<Fornecedor> ObterFornecedores(string SQL_Query, bool LoadEncomendas)
         {
 
             List<Fornecedor> LstFornecedor = new List<Fornecedor>();
@@ -489,7 +489,8 @@
                             CodigoIntermedio = result["u_numfart"].ToString(),
                             ReferenciaFornecedor = "N/D"
                         });
-                    }
+
+                        if (LoadEncomendas) LstFornecedor.Last().Encomendas = ObterEncomendas(LstFornecedor.Last().IdFornecedor, 0);                    }
                 }
 
                 conn.Close();
@@ -502,14 +503,23 @@
             return LstFornecedor;
         }
 
-        public List<Fornecedor> ObterFornecedores()
+        public List<Fornecedor> ObterFornecedores(bool LoadAll)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;");
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;", LoadAll);
+        }
+
+        public List<Fornecedor> ObterFornecedoresEncomendas(bool LoadAll, string filtro)
+        {
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where nome like '%"+filtro+ "%' and ((SELECT COUNT(*) FROM V_Enc_Aberto Where V_Enc_Aberto.no=fl.[no] and V_Enc_Aberto.estab = fl.estab) > 0) order by nome;", LoadAll);
         }
 
         public Fornecedor ObterFornecedor(int id)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;").DefaultIfEmpty(new Fornecedor()).First();
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;", true).DefaultIfEmpty(new Fornecedor()).First();
+        }
+        public Fornecedor ObterFornecedor(string id)
+        {
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where flstamp='" + id + "' order by nome;", true).DefaultIfEmpty(new Fornecedor()).First();
         }
 
         public Cliente ObterFornecedorCliente(int id)
@@ -2388,6 +2398,7 @@
                         LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).First().LinhasEncomenda.Add(new Linha_Encomenda()
                         {
                             IdEncomenda = int.Parse(result["obrano"].ToString()),
+                            StampLinhaEncomenda = result["bistamp"].ToString(),
                             NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString().Trim()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
                             DataEnvio = DateTime.Parse(result["Data_Envio_Linha"].ToString()),
                             Total = result["Envio_Total"].ToString() == "True",
@@ -2397,7 +2408,7 @@
                                 Designacao_Produto = result["design"].ToString(),
                                 Stock_Fisico = result["Qtt_Separar"].ToString() == "0" ? double.Parse(result["Qtt_Envio"].ToString()) : double.Parse(result["Qtt_Separar"].ToString())
                             },
-                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) == 0
+                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) == 0,
                         });
                         //Console.WriteLine(result["Nome"] + " - " + result["Envio_Total"]);
                     }
@@ -2415,8 +2426,14 @@
         }
         public List<Encomenda> ObterEncomendas()
         {
-            return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.Data).ToList();
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto Where ndos!=2").OrderBy(e => e.Data).ToList();
         }
+
+        public List<Encomenda> ObterEncomendas(int no, int estab)
+        {
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto Where no=" + no+" and estab="+estab+";").OrderBy(e => e.Data).ToList();
+        }
+
         public Encomenda ObterEncomenda(int IdEncomenda)
         {
             List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE OBRANO=" + IdEncomenda);
@@ -2459,6 +2476,29 @@
 
             return "0";
         }
+
+        public List<string> CriarOrdemRececao(string Linhas, Utilizador u)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                string SQL_Query = "EXEC WEB_OR_Gera ";
+
+                SQL_Query += "@STAMPS = '" + Linhas + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar a OR no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         public string FecharPicking(Picking p)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
