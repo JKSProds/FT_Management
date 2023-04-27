@@ -2483,7 +2483,7 @@
             return "0";
         }
 
-        public List<string> CriarOrdemRececao(string Linhas, Utilizador u)
+        public List<string> CriarOrdemRececao(string id, string linhas, Utilizador u)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
@@ -2491,8 +2491,9 @@
             {
                 string SQL_Query = "EXEC WEB_OR_Gera ";
 
-                SQL_Query += "@STAMPS = '" + Linhas + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
+                SQL_Query += "@STAMPS = '" + linhas + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "', ";
+                SQL_Query += "@STAMP_OR = '" + id + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
             }

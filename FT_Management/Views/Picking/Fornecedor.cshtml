@@ -95,7 +95,7 @@
             </div>
     }
 
-<a class="button is-large is-info is-rounded is-fullwidth" onclick="CriarOR()">
+<a class="button is-large is-info is-rounded is-fullwidth" onclick="ValidarCriarOR('@Model.StampFornecedor')">
     <span class="icon is-small">
         <i class="fa-solid fa-check"></i>
     </span>
@@ -110,13 +110,37 @@
         </header>
         <section class="modal-card-body">
             <p class="title is-5">Em Aberto: </p>
-            <div id="divOrdens">
+            <div id="divOrdens" class="buttons is-centered">
                 <button class="is-danger button is-large is-fullwidth" disabled>Sem Ordens de Receção</button>
             </div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-large is-fullwidth is-danger"
                     onclick="Bulma('#modalOrdensRececao').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div class="modal" id="modalNovaOrdemRececao">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Ordens de Receção</p>
+        </header>
+        <section class="modal-card-body">
+            <p class="text">Já existem ordens de receção em aberto para este fornecedor! Deseja associar as linhas selecionadas a uma ordem de receção?<br /><br /></p>
+            <div id="divOrdensAbertas" class="buttons is-centered">
+                <button class="is-danger button is-large is-fullwidth" disabled>Sem Ordens de Receção</button>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-large is-fullwidth is-danger"
+                    onclick="CriarOR('')" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -134,7 +158,36 @@
         }
     }
 
-    function CriarOR() {
+    function ValidarCriarOR(id) {
+        $.ajax({
+            url: '/Picking/OrdensRececao/',
+            data: { "id": id },
+            type: "GET",
+            success: function (data) {
+                if (data.length > 0) {
+                    var html = "";
+                    for (let i = 0; i < data.length; i++) {
+                        html += "<a class='button is-large is-info m-1' onclick='CriarOR(\"" + data[i].picking_Stamp + "\")'>" + data[i].idPicking + "</a>";
+                    }
+                    document.getElementById("divOrdensAbertas").innerHTML = html;
+
+                    Bulma('#modalNovaOrdemRececao').modal().open();
+                } else {
+                    CriarOR('');
+                }
+            },
+            error: function (response) {
+                notifyError("Ocorreu um erro ao validar a ordem de rececao!")
+            },
+            failure: function (response) {
+                notifyError("Falha ao validar a ordem de rececao!")
+            }
+        });
+
+    }
+
+    function CriarOR(id) {
+
         var chk = document.querySelectorAll('input[name=chkLinhas]:checked');
         if (chk.length == 0) {
             notifyError("Tem de selecionar pelo menos uma linha!")
@@ -146,7 +199,7 @@
 
             $.ajax({
                 url: '/Picking/OrdemRececao/',
-                data: { "id": res },
+                data: { "id": id, "linhas": res },
                 type: "POST",
                 success: function (data) {
                     window.location.href = "/Picking/OrdemRececao/" + data;
@@ -168,7 +221,6 @@
                 type: "GET",
                 success: function (data) {
                     if (data.length > 0) {
-                        console.log(data);
                         var html = "";
                         for (let i = 0; i < data.length; i++) {
                             html += "<a class='button is-large is-info m-1' href='/Picking/OrdemRececao/" + data[i].picking_Stamp + "'>" + data[i].idPicking+"</a>";

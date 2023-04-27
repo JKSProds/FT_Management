@@ -112,7 +112,7 @@
             return View(p);
         }
 
-        //Obter uma ordem de rececao
+        //Obter varias ordens de rececao
         [HttpGet]
         public IActionResult OrdensRececao(string id)
         {
@@ -141,9 +141,9 @@
             return View("Picking", phccontext.ObterPicking(id));
         }
 
-        //Criar um picking
+        //Criar uma ordem de rececao
         [HttpPost]
-        public IActionResult OrdemRececao(string id, bool criar)
+        public IActionResult OrdemRececao(string id, string linhas)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -151,7 +151,7 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             _logger.LogDebug("Utilizador {1} [{2}] a criar uma ordem de rececao em especifico: {3}.", u.NomeCompleto, u.Id, id);
 
-            List<string> res = phccontext.CriarOrdemRececao(id, u);
+            List<string> res = phccontext.CriarOrdemRececao(id, linhas, u);
 
             return Json(res[0] != "-1" ? res[2] : StatusCode(500));
         }
