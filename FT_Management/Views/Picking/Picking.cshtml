@@ -354,7 +354,7 @@ function ValidarSerie(id, l) {
             type: "PUT",
             success: function (data) {
                 document.getElementById('txtQtd_' + id).closest('.card').childNodes[1].classList.add('has-background-success');
-                if (data[1] == "") {
+                if (data[0] == "1") {
                     notify('Quantidade enviada com sucesso!');
                 } else {
                 ModalMensagem(data[1], "danger");
