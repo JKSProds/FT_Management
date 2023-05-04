@@ -457,7 +457,7 @@
 
         //Obter Fornecedores
         #region FORNECEDORES
-        public List<Fornecedor> ObterFornecedores(string SQL_Query)
+        public List<Fornecedor> ObterFornecedores(string SQL_Query, bool LoadEncomendas, bool LoadDossiers)
         {
 
             List<Fornecedor> LstFornecedor = new List<Fornecedor>();
@@ -489,6 +489,9 @@
                             CodigoIntermedio = result["u_numfart"].ToString(),
                             ReferenciaFornecedor = "N/D"
                         });
+
+                        if (LoadEncomendas) LstFornecedor.Last().Encomendas = ObterEncomendas(LstFornecedor.Last().IdFornecedor, 0);
+                        if (LoadDossiers) LstFornecedor.Last().OrdensRececao = ObterPickings(LstFornecedor.Last().IdFornecedor, 0);
                     }
                 }
 
@@ -502,14 +505,23 @@
             return LstFornecedor;
         }
 
-        public List<Fornecedor> ObterFornecedores()
+        public List<Fornecedor> ObterFornecedores(bool LoadAll)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;");
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl order by nome;", LoadAll, LoadAll);
+        }
+
+        public List<Fornecedor> ObterFornecedoresEncomendas(bool LoadAll, string filtro)
+        {
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where nome like '%"+filtro+ "%' and ((SELECT COUNT(*) FROM V_Enc_Aberto Where V_Enc_Aberto.no=fl.[no] and V_Enc_Aberto.estab = fl.estab) > 0) order by nome;", LoadAll, LoadAll);
         }
 
         public Fornecedor ObterFornecedor(int id)
         {
-            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;").DefaultIfEmpty(new Fornecedor()).First();
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where no=" + id + " order by nome;", true, true).DefaultIfEmpty(new Fornecedor()).First();
+        }
+        public Fornecedor ObterFornecedor(string id)
+        {
+            return ObterFornecedores("SELECT flstamp, no, nome, CONCAT(morada, ' ', local, ' ', codpost) as MoradaFornecedor, telefone, email, contacto, obs, u_numfart FROM fl where flstamp='" + id + "' order by nome;", true, true).DefaultIfEmpty(new Fornecedor()).First();
         }
 
         public Cliente ObterFornecedorCliente(int id)
@@ -2388,6 +2400,7 @@
                         LstEncomenda.Where(e => (e.Id == int.Parse(result["obrano"].ToString()) && e.NomeDossier == result["nmdos"].ToString())).First().LinhasEncomenda.Add(new Linha_Encomenda()
                         {
                             IdEncomenda = int.Parse(result["obrano"].ToString()),
+                            StampLinhaEncomenda = result["bistamp"].ToString(),
                             NomeCliente = String.IsNullOrEmpty(result["Loja_Lin"].ToString().Trim()) ? result["Nome"].ToString() : result["Loja_Lin"].ToString(),
                             DataEnvio = DateTime.Parse(result["Data_Envio_Linha"].ToString()),
                             Total = result["Envio_Total"].ToString() == "True",
@@ -2397,7 +2410,7 @@
                                 Designacao_Produto = result["design"].ToString(),
                                 Stock_Fisico = result["Qtt_Separar"].ToString() == "0" ? double.Parse(result["Qtt_Envio"].ToString()) : double.Parse(result["Qtt_Separar"].ToString())
                             },
-                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) == 0
+                            Fornecido = double.Parse(result["Qtt_Envio"].ToString()) == 0,
                         });
                         //Console.WriteLine(result["Nome"] + " - " + result["Envio_Total"]);
                     }
@@ -2415,8 +2428,14 @@
         }
         public List<Encomenda> ObterEncomendas()
         {
-            return ObterEncomendas("SELECT * FROM V_Enc_Aberto").OrderBy(e => e.Data).ToList();
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto Where ndos!=2").OrderBy(e => e.Data).ToList();
         }
+
+        public List<Encomenda> ObterEncomendas(int no, int estab)
+        {
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto Where no=" + no+" and estab="+estab+" and ndos=2;").OrderBy(e => e.Data).ToList();
+        }
+
         public Encomenda ObterEncomenda(int IdEncomenda)
         {
             List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE OBRANO=" + IdEncomenda);
@@ -2431,6 +2450,10 @@
         {
             List<Encomenda> LstEncomendas = ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE STAMP_PICKING='" + Stamp_Picking + "';");
             return LstEncomendas.Count() == 0 ? new Encomenda() : LstEncomendas.FirstOrDefault();
+        }
+        public List<Encomenda> ObterEncomendasPicking(string Stamp_Picking)
+        {
+            return ObterEncomendas("SELECT * FROM V_Enc_Aberto WHERE STAMP_PICKING='" + Stamp_Picking + "';");
         }
         #endregion
 
@@ -2459,6 +2482,30 @@
 
             return "0";
         }
+
+        public List<string> CriarOrdemRececao(string id, string linhas, Utilizador u)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                string SQL_Query = "EXEC WEB_OR_Gera ";
+
+                SQL_Query += "@STAMPS = '" + linhas + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "', ";
+                SQL_Query += "@STAMP_OR = '" + id + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar a OR no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         public string FecharPicking(Picking p)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
@@ -2528,6 +2575,53 @@
 
             return p;
         }
+
+        public List<Picking> ObterPickings(int no, int estab)
+        {
+            List<Picking> p = new List<Picking>();
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("SELECT * from V_PICKING_CAB WHERE no='" + no + "' and estab='"+estab+"'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        p.Add(new Picking()
+                        {
+                            Picking_Stamp = result["PISTAMP"].ToString(),
+                            NomeDossier = result["nmdos"].ToString(),
+                            IdPicking = int.Parse(result["obrano"].ToString()),
+                            DataDossier = DateTime.Parse(result["DATA"].ToString()),
+                            NomeCliente = result["nome"].ToString(),
+                            DespacharEncomenda = result["u_envio"].ToString() == "Transportadora",
+                            Encomenda = this.ObterEncomendaPicking(result["PISTAMP"].ToString()),
+                            Linhas = this.ObterLinhasPicking(result["PISTAMP"].ToString()),
+                            EditadoPor = result["usrinis"].ToString().ToUpper(),
+                            Anexos = ObterAnexosDossier(result["PISTAMP"].ToString())
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os pickings do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return p;
+        }
+
         public List<Linha_Picking> ObterLinhasPicking(string PI_STAMP)
         {
             List<Linha_Picking> LstPickingLinhas = new List<Linha_Picking>();
@@ -2560,7 +2654,8 @@
                                 Serie = result["USA_NSERIE"].ToString() == "True",
                                 Lista_Ref = ObterSerieLinhaPicking(result["BISTAMP"].ToString().Trim(), Double.Parse(result["QTT_SEPARAR"].ToString())),
                                 EditadoPor = result["usrinis"].ToString(),
-                                Nome_Loja = result["Loja_Lin"].ToString()
+                                Nome_Loja = result["Loja_Lin"].ToString(),
+                                Encomenda = ObterEncomenda(result["stamp_bo_ori"].ToString())
                             });
                         }
                         else
@@ -2706,6 +2801,43 @@
             return res;
         }
 
+        public string ValidarOrdemRececao(Picking p)
+        {
+            string res = "";
+            List<Encomenda> Encomendas = ObterEncomendasPicking(p.Picking_Stamp);
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+                foreach (var e in Encomendas)
+                {
+                    SqlCommand command = new SqlCommand("select SUM(o.qtt-o.qtt2) from bi o(NOLOCK) where o.bostamp='" + e.BO_STAMP + "'", conn)
+                    {
+                        CommandTimeout = TIMEOUT
+                    };
+                    using (SqlDataReader result = command.ExecuteReader())
+                    {
+                        while (result.Read())
+                        {
+                            double qtt = double.Parse(result[0].ToString());
+                            res += qtt == 0 ? "As referências lidas satisfazem a encomenda ("+e.Id+") na totalidade e a encomenda será fechada!\r\n\r\n" : "";
+                            res += qtt > 0 ? "As referências lidas não satisfazem a encomenda ("+e.Id+") na totalidade, por esse motivo a encomenda manter-se-á em aberto!\r\n\r\n" : "";
+                            res += qtt < 0 ? "As referências lidas são superiores á quantidade encomendada ("+e.Id+"), por esse motivo a encomenda será fechada!\r\n\r\n" : "";
+                        }
+                    }
+                }
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel validar a ordem de rececao do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
         #endregion
 
         //INVENTARIO

@@ -20,6 +20,9 @@
         [Display(Name = "Comentários")]
         public string Obs { get; set; }
         public string CodigoIntermedio { get; set; }
+        public List<Encomenda> Encomendas { get; set; }
+
+        public List<Picking> OrdensRececao { get; set; }
 
     }
 }

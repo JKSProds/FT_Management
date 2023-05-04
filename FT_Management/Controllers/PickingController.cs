@@ -33,6 +33,35 @@
             return View(LstEncomendas);
         }
 
+        //Obter todas os fornecedores
+        [HttpGet]
+        public IActionResult Fornecedores(string filtro)
+        {
+            ViewData["filtro"] = (string.IsNullOrEmpty(filtro) ? "" : filtro);
+
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas os fornecedores com base num filtro: {3}.", u.NomeCompleto, u.Id, filtro);
+
+            return View(phccontext.ObterFornecedoresEncomendas(true, filtro));
+        }
+
+        //Obter um fornecedor e as suas encomendas
+        [HttpGet]
+        public IActionResult Fornecedor(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Fornecedor f = phccontext.ObterFornecedor(id);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter um fornecedor em especifico e as suas encomendas: {3}.", u.NomeCompleto, u.Id, id);
+
+            return View(phccontext.ObterFornecedor(id));
+        }
+
         //Obter uma encomenda em especifico
         [HttpGet]
         public JsonResult Encomenda(string stamp)
@@ -83,6 +112,50 @@
             return View(p);
         }
 
+        //Obter varias ordens de rececao
+        [HttpGet]
+        public IActionResult OrdensRececao(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewBag.Armazens = phccontext.ObterArmazensFixos().Select(l => new SelectListItem() { Value = l.ArmazemStamp, Text = l.ArmazemNome, Selected = l.ArmazemId == 3 });
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            _logger.LogDebug("Utilizador {1} [{2}] a obter ordens de rececao associadas a um fornecedor: {3}.", u.NomeCompleto, u.Id, id);
+
+            return Json(phccontext.ObterFornecedor(id).OrdensRececao);
+        }
+
+
+        //Obter uma ordem de rececao
+        [HttpGet]
+        public IActionResult OrdemRececao(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            ViewBag.Armazens = phccontext.ObterArmazensFixos().Select(l => new SelectListItem() { Value = l.ArmazemStamp, Text = l.ArmazemNome, Selected = l.ArmazemId == 3 });
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma ordem de rececao em especifico: {3}.", u.NomeCompleto, u.Id, id);
+
+            return View("Picking", phccontext.ObterPicking(id));
+        }
+
+        //Criar uma ordem de rececao
+        [HttpPost]
+        public IActionResult OrdemRececao(string id, string linhas)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            _logger.LogDebug("Utilizador {1} [{2}] a criar uma ordem de rececao em especifico: {3}.", u.NomeCompleto, u.Id, id);
+
+            List<string> res = phccontext.CriarOrdemRececao(id, linhas, u);
+
+            return Json(res[2]);
+        }
+
         //Fechar um picking
         [HttpDelete]
         public ActionResult Picking(string id, string obs, string armazem)
@@ -96,7 +169,7 @@
             _logger.LogDebug("Utilizador {1} [{2}] a fechar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
 
             p.EditadoPor = u.Iniciais;
-            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + phccontext.ValidarPicking(p) + "</b>";
+            p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + (p.Serie == 10 ? phccontext.ValidarOrdemRececao(p) : phccontext.ValidarPicking(p)) + "</b>";
             p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
 
             phccontext.FecharPicking(p);
@@ -119,7 +192,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a validar um picking em especifico: Id - {3}, Stamp Encomenda - {4}, Picking Stamp - {5}.", u.NomeCompleto, u.Id, p.IdPicking, p.Encomenda.BO_STAMP, p.Picking_Stamp);
 
-            return Content(phccontext.ValidarPicking(p));
+            return Content(p.Serie == 10 ? phccontext.ValidarOrdemRececao(p) : phccontext.ValidarPicking(p));
         }
 
         //Atualizar uma linha

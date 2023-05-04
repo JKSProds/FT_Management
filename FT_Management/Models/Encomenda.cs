@@ -60,6 +60,7 @@
     }
     public class Linha_Encomenda
     {
+        public string StampLinhaEncomenda { get; set; }
         [Display(Name = "ID da Encomenda")]
         public int IdEncomenda { get; set; }
         public string NomeCliente { get; set; }

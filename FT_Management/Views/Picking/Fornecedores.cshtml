@@ -1,0 +1,113 @@
+﻿@model IEnumerable<FT_Management.Models.Fornecedor>
+
+@{
+    ViewData["Title"] = "Fornecedores";
+}
+
+
+<form asp-action="Fornecedores" method="get">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3 mb-2">
+                                    <i class="fa-solid fa-barcode"></i>
+                                </span>
+                                <span>Fornecedores</span>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
+                    <p class="control has-icons-left">
+                        <input type="text" class="input" placeholder="Filtro" id="txtFiltro"
+                            name="filtro" value="@ViewData["filtro"]" >
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-arrow-down-a-z"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="buttons is-right">
+                    <p class="control">
+                        <button type="submit" class="button is-info is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-search fa-lg"></i>
+                            </span>
+                            <span>Pesquisar</span>
+                        </button>
+                    </p>
+                    <p class="control">
+                        <button type="button" onclick="window.location.href = '/Picking/Fornecedores'" class="button is-outlined">
+                            <span class="icon">
+                                <i class="fas fa-backspace fa-lg"></i>
+                            </span>
+                            <span>Limpar</span>
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<hr />
+@if (Model.Count() == 0)
+{
+    <button class="button is-danger is-rounded is-outlined is-large is-fullwidth" disabled>Não foram encontrados fornecedores!</button>
+}
+else
+{
+        <div class="column mx-1">
+    <div class="card has-table has-mobile-sort-spaced">
+        <header class="card-header has-background-info">
+            <p class="card-header-title" style="color:#ffffff">
+                <span class="icon"><i class="fa-solid fa-person"></i></span>
+                Fornecedores
+            </p>
+            <a class="card-header-icon button is-success m-1 is-disabled">@Model.Count()</a>
+        </header>
+        <div class="card-content">
+            <div class="b-table">
+                <div class="table-wrapper has-mobile-cards">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().IdFornecedor)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NomeFornecedor)</th>
+                                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Encomendas)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Where(e => e.Encomendas.Count() > 0))
+                            {
+                                <tr>
+                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdFornecedor)">@item.IdFornecedor</td>
+                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().NomeFornecedor)">
+                                        @item.NomeFornecedor
+                                    </td>
+                                    <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Encomendas)">
+                                        @item.Encomendas.Count()
+                                    </td>
+                                    <td class="is-actions-cell">
+                                        <a class="button is-large is-success is-rounded is-pulled-right is-fullwidth" style="width:100%"
+                                           href="~/Picking/Fornecedor/@item.StampFornecedor">
+                                            <span class="icon is-small">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
