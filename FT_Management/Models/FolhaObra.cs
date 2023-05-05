@@ -70,6 +70,7 @@
         public bool CobrarDeslocacao { get; set; }
         public bool Instalação { get; set; }
         public bool EnviarEmail { get; set; }
+        [Display(Name = "Email")]
         public string EmailCliente { get; set; }
         public bool GuardarLocalizacao { get; set; }
         public bool FecharMarcacao { get; set; }

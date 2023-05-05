@@ -80,12 +80,6 @@
                     <p class="step-title">Outros</p>
                 </div>
             </div>
-            <div class="step-item">
-                <div class="step-marker">6</div>
-                <div class="step-details">
-                    <p class="step-title">Rúbrica</p>
-                </div>
-            </div>
             <div class="steps-actions">
                 <div class="steps-action">
                     <button data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-danger" type="button">
@@ -223,7 +217,7 @@
                                 <label asp-for="RelatorioServico"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
-                                              asp-for="RelatorioServico"></textarea>
+                                              asp-for="RelatorioServico" id="txtRelatorio"></textarea>
                                 </div>
                                 <span asp-validation-for="RelatorioServico" class="has-text-danger"></span>
                             </div>
@@ -391,11 +385,7 @@
                                 <span asp-validation-for="RecolhaOficina" class="has-text-danger"></span>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="step-content">
-                    <div class="columns is-multiline mx-1">
-                        <div class="column is-6">
+                        <div class="column is-3">
                             <div class="field">
                                 <p class="control">
                                     <button type="button" class="mb-3 button is-warning is-pulled-right is-fullwidth"
@@ -407,29 +397,9 @@
                                     </button>
                                 </p>
                             </div>
-                            <div class="field">
-                                <label asp-for="ConferidoPor"></label>
-                                <div class="control">
-                                    <input class="input is-primary" type="text" asp-for="ConferidoPor" />
-                                </div>
-                                <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
-                            </div>
-                        </div>
-
-                        <div class="column is-6">
-                            <div class="wrapper" style="width: 100%;" id="divRubrica">
-                                <canvas id="signature-pad" class="signature-pad"
-                                        style="width:100%;border:2px solid #000000;"></canvas>
-                            </div>
-                            <br />
-                            <button class="button is-warning" type="button" id="btnDesfazerRubrica">Desfazer</button>
-                            <button class="button is-danger" type="button"
-                                    onclick="signaturePad.clear();">
-                                Limpar
-                            </button>
                         </div>
                         &nbsp;
-                        <button type="button" onclick="ValidarFolhaObra()" class="button is-info is-large is-fullwidth">
+                        <button type="button" onclick="ValidarCliente();" class="button is-info is-large is-fullwidth">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -443,7 +413,6 @@
     <div style="display:none">
         <div class="columns is-multiline mx-1 ">
             <input type="text" class="input" asp-for="FicheirosAnexo" id="Ficheiros">
-            <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
             <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
             <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
             <input type="text" class="input" asp-for="ReferenciaServico">
@@ -462,6 +431,106 @@
         </div>
     </div>
 
+
+    <div class="modal" id="modalValidarCliente">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Validação do Cliente</p>
+                <button class="delete" type="button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="columns is-multiline mx-1">
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label">Equipamento: </label>
+                            <div class="control">
+                                <input class="input is-primary" type="text" id="txtValidaEquipamento" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label">Periodos: </label>
+                            <div class="control">
+                                <textarea class="textarea" id="txtValidaIntervencoes" readonly> </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label">Peças: </label>
+                            <div class="control">
+                                <textarea class="textarea" id="txtValidaPecas" readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label">Relatório: </label>
+                            <div class="control">
+                                <textarea class="textarea" id="txtValidaRelatorio" rows="5" readonly> </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label" asp-for="ConferidoPor"></label>
+                            <div class="control">
+                                <input class="input is-primary" type="text" asp-for="ConferidoPor" />
+                            </div>
+                            <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label" asp-for="EmailCliente"></label>
+                            <div class="control">
+                                <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
+                            </div>
+                            <span asp-validation-for="EmailCliente" class="has-text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="switch is-rounded">
+                                <input type="checkbox" id="chkSatisfeito">
+                                <span class="check is-info"></span>
+                                <span class="control-label">
+                                    Confirmo e declaro-me satisfeito com o serviço efetuado!
+                                </span>
+                            </label>
+                        </div>
+                        <div class="wrapper" style="width: 100%;" id="divRubrica">
+                            <canvas id="signature-pad" class="signature-pad"
+                                    style="width:100%;border:2px solid #000000;"></canvas>
+                        </div>
+                        <br />
+                        <button class="button is-warning" type="button" id="btnDesfazerRubrica">Desfazer</button>
+                        <button class="button is-danger" type="button"
+                                onclick="signaturePad.clear();">
+                            Limpar
+                        </button>
+                    </div>
+                </div>
+                    &nbsp;
+</section>
+            <footer class="modal-card-foot">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="ValidarFolhaObra();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                    <span>Avançar</span>
+                </button>
+                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalValidarCliente').modal().close();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-left"></i>
+                    </span>
+                    <span>Cancelar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
 
     <div class="modal" id="modalFinal">
         <div class="modal-background"></div>
@@ -842,26 +911,52 @@
 
 <script>
     function ValidarFolhaObra() {
+        if (!document.getElementById('chkSatisfeito').checked) {
+            notifyError("Não confirmou a assistência!");
+        } else {
+           
+            $.ajax({
+                type: "POST",
+                url: "/FolhasObra/Validar",
+                data: $("#frmAdicionar").serialize(),
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (result) {
+                    Bulma('#modalValidarCliente').modal().close();
+                    $(function () {
+                        document.getElementById("txtMensagens").value = result;
+                        if (result != "") {
+                            Bulma('#modalValidacao').modal().open();
+                        } else {
+                            notify("Folha de Obra sem mensagens de validação!");
+                            AbrirMensagens();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    function ValidarCliente() {
         if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
         document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
         notify("A validar folha de obra ...");
-        $.ajax({
-            type: "POST",
-            url: "/FolhasObra/Validar",
-            data: $("#frmAdicionar").serialize(),
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-            success: function (result) {
-                $(function () {
-                    document.getElementById("txtMensagens").value = result;
-                    if (result != "") {
-                        Bulma('#modalValidacao').modal().open();
-                    } else {
-                        notify("Folha de Obra sem mensagens de validação!");
-                        AbrirMensagens();
-                    }
-                });
-            }
-        });
+
+        document.getElementById('txtValidaEquipamento').value = document.getElementById('txtEquipamento').value;
+        document.getElementById('txtValidaRelatorio').value = document.getElementById('txtRelatorio').value;
+
+        document.getElementById('txtValidaIntervencoes').value = '';
+
+        document.getElementById('txtValidaIntervencoes').rows = document.getElementById('divListaIntervencoes').childNodes.length -1;
+        document.getElementById('divListaIntervencoes').childNodes.forEach(function (e) { if (e.childNodes[0]) document.getElementById('txtValidaIntervencoes').value += e.childNodes[0].innerText + " \r\n"; })
+
+        document.getElementById('txtValidaPecas').value = '';
+
+        document.getElementById('txtValidaPecas').rows = document.getElementById('divListaPecas').childNodes.length * 2;
+        document.getElementById('divListaPecas').childNodes.forEach(function (e) { if (e.childNodes[0]) document.getElementById('txtValidaPecas').value += e.childNodes[0].innerText + " \r\n"; })
+
+
+        Bulma('#modalValidarCliente').modal().open();
+        resizeCanvas();
     }
 
     function DesbloquearEquipamentos() {
@@ -1291,13 +1386,7 @@
         });
     }
 
-    bulmaSteps.attach('.steps', {
-        onShow: id => {
-            if (id == 5) {
-                resizeCanvas();
-            }
-        }
-    });
+    bulmaSteps.attach('.steps');
 
     if (document.getElementById('divMensagensErro') != null) Bulma('#modalMensagensErro').modal().open();
 
