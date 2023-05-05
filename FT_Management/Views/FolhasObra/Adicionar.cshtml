@@ -1031,7 +1031,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
     function ValidarFolhaObra() {
         if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
-        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? "" : canvas.toDataURL();
+        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
         notify("A validar folha de obra ...");
         $.ajax({
             type: "POST",
