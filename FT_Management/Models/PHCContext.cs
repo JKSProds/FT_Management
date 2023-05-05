@@ -787,7 +787,7 @@
                 SQL_Query += "@HORA_INI = '" + i.HoraInicio.ToShortTimeString() + "', ";
                 SQL_Query += "@HORA_FIM = '" + i.HoraFim.ToShortTimeString() + "', ";
                 SQL_Query += "@DATA = '" + i.DataServiço.ToString("yyyyMMdd") + "', ";
-                SQL_Query += "@RELATORIO = '" + i.RelatorioServico + "', ";
+                SQL_Query += "@RELATORIO = '" + i.RelatorioServico.Replace("'", "''") + "', ";
                 SQL_Query += "@QASSINOU = '" + fo.ConferidoPor + "', ";
                 SQL_Query += "@TECNICO = '" + i.IdTecnico + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + i.NomeTecnico + "'; ";
@@ -881,7 +881,7 @@
                 SQL_Query += "@REMOTO = '" + (fo.AssistenciaRemota ? "1" : "0") + "', ";
                 SQL_Query += "@PIQUETE = '" + (fo.Piquete ? "1" : "0") + "', ";
                 SQL_Query += "@DESLOCACAO = '" + (fo.CobrarDeslocacao ? "1" : "0") + "', ";
-                SQL_Query += "@OBS = '" + fo.SituacoesPendentes + "', ";
+                SQL_Query += "@OBS = '" + fo.SituacoesPendentes.Replace("'", "''") + "', ";
                 SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
                 SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
