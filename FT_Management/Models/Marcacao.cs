@@ -7,12 +7,12 @@
             get
             {
                 return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") +
-                (this.EstadoMarcacao == 4 || this.EstadoMarcacao == 9 || this.EstadoMarcacao == 10 ? "✅ " :
+                (this.EstadoMarcacaoDesc == "Finalizado" || this.EstadoMarcacaoDesc == "AT Validade" || this.EstadoMarcacaoDesc == "Aguarda Ped. Compra" ? "✅ " :
                 this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
                 this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
                 this.EstadoMarcacaoDesc == "Reagendar" ? "📆 " :
                 this.EstadoMarcacaoDesc == "Reagendado" ? "" :
-                this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " :
+                this.EstadoMarcacaoDesc != "Criado" && this.EstadoMarcacaoDesc != "Cancelado" ? "⌛️ " :
                 this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " :
                 this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : "");
             }

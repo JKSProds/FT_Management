@@ -71,7 +71,7 @@ namespace FT_Management.Controllers
             ViewData["IdTecnico"] = u.IdPHC;
             ViewData["IdArmazem"] = u.IdArmazem;
 
-            return View(ListaMarcacoes.OrderBy(m => m.Cliente.ClienteStamp).OrderBy(m => m.EstadoMarcacaoDesc));
+            return View(ListaMarcacoes.OrderBy(m => m.EstadoMarcacao).OrderBy(m => m.Cliente.ClienteStamp));
         }
 
         //Obter ICS do calendario

@@ -2048,7 +2048,7 @@
                     {
                         LstEstadoMarcacao.Add(new EstadoMarcacao()
                         {
-                            IdEstado = int.Parse(result["id"].ToString().Trim()),
+                            IdEstado = int.Parse(result["lordem"].ToString().Trim()),
                             EstadoMarcacaoDesc = result["estado"].ToString().Trim()
                         });
                         i++;
@@ -2066,11 +2066,11 @@
         }
         public List<EstadoMarcacao> ObterMarcacaoEstados()
         {
-            return ObterMarcacaoEstados("select ROW_NUMBER()  OVER (ORDER BY (Select 0)) as Id, * from u_estados;");
+            return ObterMarcacaoEstados("select * from u_estados;");
         }
         public EstadoMarcacao ObterMarcacaoEstado(string Estado)
         {
-            List<EstadoMarcacao> e = ObterMarcacaoEstados("select ROW_NUMBER()  OVER (ORDER BY (Select 0)) as Id, * from u_estados;");
+            List<EstadoMarcacao> e = ObterMarcacaoEstados("select * from u_estados;");
             return e.Where(e => e.EstadoMarcacaoDesc == Estado).FirstOrDefault();
         }
 
