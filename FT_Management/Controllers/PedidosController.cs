@@ -602,7 +602,7 @@ namespace FT_Management.Controllers
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(id, DataPedidos);
             string url = "https://www.google.com/maps/dir";
 
-            foreach (var item in ListaMarcacoes.GroupBy(c => c.Cliente).Select(X => X.First()))
+            foreach (var item in ListaMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Agendado" || m.EstadoMarcacaoDesc == "Reagendado").GroupBy(c => c.Cliente).Select(X => X.First()))
             {
                 url += "/" + item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
             }
