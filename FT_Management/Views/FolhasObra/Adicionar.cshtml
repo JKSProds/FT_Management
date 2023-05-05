@@ -48,9 +48,6 @@
         </div>
     </div>
     <hr />
-
-    <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
-
     <div class="container">
         <div class="steps is-small" id="stepsDemo">
             <div class="step-item is-active">
@@ -100,7 +97,7 @@
                 </div>
                 <div class="steps-action">
                     <button data-nav="next" id="stepsNext" onclick="resizeCanvas();"
-                        class="is-fullwidth button is-success" type="button">
+                            class="is-fullwidth button is-success" type="button">
                         <span class="icon">
                             <i class="fas fa-arrow-right"></i>
                         </span>
@@ -117,16 +114,16 @@
                                 <div class="field has-addons">
                                     <div class="control" style="width:100%">
                                         <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
-                                            id="txtEquipamentoStamp" />
+                                               id="txtEquipamentoStamp" />
                                         <p class="control">
                                             <input type="text" class="input"
-                                                asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
+                                                   asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
                                         </p>
                                     </div>
                                     <div class="control">
                                         <label class="mx-1 switch is-large is-outlined" style="height:40px">
                                             <input type="checkbox" id="chkDesbloquearEquipamentos"
-                                                onchange="DesbloquearEquipamentos();">
+                                                   onchange="DesbloquearEquipamentos();">
                                             <span class="check is-success"></span>
                                         </label>
                                     </div>
@@ -134,21 +131,21 @@
                                 <div class="field">
                                     <div class="control buttons">
                                         <button class="button is-secondary is-fullwidth" type="button"
-                                            onclick="LimparEquipamento()">
+                                                onclick="LimparEquipamento()">
                                             <span class="icon">
                                                 <i class="fa-solid fa-backspace"></i>
                                             </span>
                                             <span>Limpar</span>
                                         </button>
                                         <button type="button" class="button is-info is-fullwidth" id="btnObterHistorico"
-                                            onclick="ObterHistoricoEquipamento()" disabled>
+                                                onclick="ObterHistoricoEquipamento()" disabled>
                                             <span class="icon">
                                                 <i class="fas fa-history"></i>
                                             </span>
                                             <span>Histórico de Manutenções</span>
                                         </button>
                                         <button type="button" class="button is-success is-fullwidth"
-                                            id="btnObterEquipamentos" onclick="ObterEquipamentosCliente()">
+                                                id="btnObterEquipamentos" onclick="ObterEquipamentosCliente()">
                                             <span class="icon">
                                                 <i class="fas fa-desktop"></i>
                                             </span>
@@ -157,7 +154,7 @@
                                     </div>
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
-                                    class="has-text-danger"></span>
+                                      class="has-text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -170,25 +167,25 @@
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
                             <button id="btnZeroIntervencoes"
-                                class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>Sem Periodos</button>
+                                    class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>
+                                Sem Periodos
+                            </button>
                             <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
                         </div>
                         <div class="column is-4">
                             <div class="field">
                                 <div class="control">
                                     <input type="date" class="input "
-                                        value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
-                                        asp-for="DataServico" id="txtData">
-                                    <script>
-                                        bulmaCalendar.attach('#txtData', {
+                                           value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
+                                           asp-for="DataServico" id="txtData">
+                                    <script>bulmaCalendar.attach('#txtData', {
                                             color: 'info',
                                             lang: 'pt',
                                             dateFormat: 'dd/MM/yyyy',
                                             todayLabel: 'Hoje',
                                             showClearButton: false,
                                             cancelLabel: 'Cancelar'
-                                        });
-                                    </script>
+                                        });</script>
                                 </div>
                                 <span asp-validation-for="DataServico" class="has-text-danger"></span>
                             </div>
@@ -198,14 +195,14 @@
                                 <label>Inicio</label>
                                 <div class="control">
                                     <input type="time" class="input" id="txtHoraInicio"
-                                        value="@Model.IntervencaosServico.First().HoraInicio.ToShortTimeString()">
+                                           value="@Model.IntervencaosServico.First().HoraInicio.ToShortTimeString()">
                                 </div>
                             </div>
                             <div class="field">
                                 <label>Fim</label>
                                 <div class="control">
-                                    <input type="time" class="input" id="txtHoraFim" 
-                                        value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
+                                    <input type="time" class="input" id="txtHoraFim"
+                                           value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
                                 </div>
                             </div>
                             <button type="button" onclick="AdicionarIntervencao()" class="button is-info is-fullwidth">
@@ -226,7 +223,7 @@
                                 <label asp-for="RelatorioServico"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
-                                        asp-for="RelatorioServico"></textarea>
+                                              asp-for="RelatorioServico"></textarea>
                                 </div>
                                 <span asp-validation-for="RelatorioServico" class="has-text-danger"></span>
                             </div>
@@ -236,7 +233,7 @@
                                 <label asp-for="SituacoesPendentes"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
-                                        asp-for="SituacoesPendentes"></textarea>
+                                              asp-for="SituacoesPendentes"></textarea>
                                 </div>
                                 <span asp-validation-for="SituacoesPendentes" class="has-text-danger"></span>
                             </div>
@@ -254,41 +251,41 @@
                                             <input type="text" class="input" id="txtPecas">
                                         </p>
                                     </div>
-                                                                            <div class="control">
-                                            <a class="button is-info"
-                                                onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
-                                                <i class="fa-solid fa-qrcode"></i>
-                                            </a>
-                                        </div>
+                                    <div class="control">
+                                        <a class="button is-info"
+                                           onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
+                                            <i class="fa-solid fa-qrcode"></i>
+                                        </a>
+                                    </div>
                                     <input type="hidden" class="input" id="txtStampPeca">
                                     <span asp-validation-for="PecasServico" class="has-text-danger"></span>
                                 </div>
                                 <div class="field has-addons is-pulled-right mb-2">
-                                        <div class="control">
-                                            <button type="button" class="button is-danger disable-dbl-tap-zoom"
+                                    <div class="control">
+                                        <button type="button" class="button is-danger disable-dbl-tap-zoom"
                                                 onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
-                                                <span class="icon">
-                                                    <i class="fas fa-minus"></i>
-                                                </span>
-                                            </button>
-                                        </div>
-                                        <div class="control" style="width:75px">
-                                            <input type="number" class="input has-text-centered" id="txtQtd" value="1">
-                                        </div>
-                                        <div class="control">
-                                            <button type="button" class="button is-success disable-dbl-tap-zoom"
-                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
-                                                <span class="icon">
-                                                    <i class="fas fa-plus"></i>
-                                                </span>
-                                            </button>
-                                        </div>
+                                            <span class="icon">
+                                                <i class="fas fa-minus"></i>
+                                            </span>
+                                        </button>
                                     </div>
+                                    <div class="control" style="width:75px">
+                                        <input type="number" class="input has-text-centered" id="txtQtd" value="1">
+                                    </div>
+                                    <div class="control">
+                                        <button type="button" class="button is-success disable-dbl-tap-zoom"
+                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
+                                            <span class="icon">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
-                                    onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
-                                    disabled id="btnAdicionarPeca">
+                                        onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
+                                        disabled id="btnAdicionarPeca">
                                     <span class="icon">
                                         <i class="fa-solid fa-check"></i>
                                     </span>
@@ -301,7 +298,7 @@
                                     <span>Limpar</span>
                                 </button>
                                 <button type="button" class="button is-success is-fullwidth"
-                                    onclick="Bulma('#modalPecas').modal().open();">
+                                        onclick="Bulma('#modalPecas').modal().open();">
                                     <span class="icon">
                                         <i class="fa-solid fa-list-ul"></i>
                                     </span>
@@ -315,7 +312,9 @@
                                 <div class="list has-visible-pointer-controls" id="divListaPecas">
                                 </div>
                                 <button id="btnZeroPecas" class="button is-danger my-1 is-large is-rounded is-fullwidth"
-                                    disabled>Sem Peças</button>
+                                        disabled>
+                                    Sem Peças
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -328,7 +327,7 @@
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
                                         <select asp-for="EstadoFolhaObra" id="lstEstadoFO" asp-items="ViewBag.EstadoFolhaObra"
-                                            class="form-control" style="width:100%">
+                                                class="form-control" style="width:100%">
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
@@ -347,7 +346,7 @@
                                             var LstTipoFolhaObra = ViewData["TipoFolhaObra"] as IList<String>;
                                         }
                                         <select class="select" id="lstTipoFO" style="width:100%" asp-for="TipoFolhaObra"
-                                            asp-items="@(new SelectList(LstTipoFolhaObra))"></select>
+                                                asp-items="@(new SelectList(LstTipoFolhaObra))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
@@ -361,8 +360,10 @@
                                 <label class="switch is-rounded">
                                     <input type="checkbox" asp-for="EmGarantia">
                                     <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model =>
-                                        model.EmGarantia)</span>
+                                    <span class="control-label">
+                                        @Html.DisplayNameFor(model =>
+            model.EmGarantia)
+                                    </span>
                                 </label>
                                 <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
                             </div>
@@ -382,8 +383,10 @@
                                 <label class="switch is-rounded">
                                     <input type="checkbox" id="chkRecolherOficina" asp-for="RecolhaOficina">
                                     <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model =>
-                                        model.RecolhaOficina)</span>
+                                    <span class="control-label">
+                                        @Html.DisplayNameFor(model =>
+            model.RecolhaOficina)
+                                    </span>
                                 </label>
                                 <span asp-validation-for="RecolhaOficina" class="has-text-danger"></span>
                             </div>
@@ -396,7 +399,7 @@
                             <div class="field">
                                 <p class="control">
                                     <button type="button" class="mb-3 button is-warning is-pulled-right is-fullwidth"
-                                        onclick="Bulma('#modalAdicionarAnexo').modal().open();">
+                                            onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                                         <span class="icon is-small">
                                             <i class="fas fa-plus"></i>
                                         </span>
@@ -416,14 +419,15 @@
                         <div class="column is-6">
                             <div class="wrapper" style="width: 100%;" id="divRubrica">
                                 <canvas id="signature-pad" class="signature-pad"
-                                    style="width:100%;border:2px solid #000000;"></canvas>
+                                        style="width:100%;border:2px solid #000000;"></canvas>
                             </div>
                             <br />
                             <button class="button is-warning" type="button" id="btnDesfazerRubrica">Desfazer</button>
                             <button class="button is-danger" type="button"
-                                onclick="signaturePad.clear();">Limpar</button>
+                                    onclick="signaturePad.clear();">
+                                Limpar
+                            </button>
                         </div>
-
                         &nbsp;
                         <button type="button" onclick="ValidarFolhaObra()" class="button is-info is-large is-fullwidth">
                             <span class="icon">
@@ -436,117 +440,129 @@
             </div>
         </div>
     </div>
-    <div style="display: none;">
+    <div style="display:none">
         <div class="columns is-multiline mx-1 ">
             <input type="text" class="input" asp-for="FicheirosAnexo" id="Ficheiros">
             <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
-            <div class="column is-12">
-                <div class="field">
-                    <label asp-for="ClienteServico.NomeCliente"></label>
-                    <div class="control">
-                        <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
-                        <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
-                        <p class="control has-icons-left">
-                            <input type="text" class="input" value="@Model.ClienteServico.NomeCliente"
-                                asp-for="ClienteServico.NomeCliente" id="txtCustomer">
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-user-check"></i>
-                            </span>
-                        </p>
-                    </div>
-                    <span asp-validation-for="ClienteServico.IdCliente" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3">
-                <div class="field">
-                    <label asp-for="ReferenciaServico"></label>
-                    <div class="control">
-                        <p class="control">
-                            <input type="text" class="input" asp-for="ReferenciaServico">
-                        </p>
-                    </div>
-                    <span asp-validation-for="ReferenciaServico" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3">
-                <div class="field">
-                    <label asp-for="IdMarcacao"></label>
-                    <div class="control">
-                        <p class="control">
-                            <input type="text" class="input" asp-for="IdMarcacao">
-                        </p>
-                    </div>
-                    <span asp-validation-for="IdMarcacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="CobrarDeslocacao" id="chkCobrarDeslocacao">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.CobrarDeslocacao)</span>
-                    </label>
-                    <span asp-validation-for="CobrarDeslocacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="Piquete" id="chkPiquete">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.Piquete)</span>
-                    </label>
-                    <span asp-validation-for="Piquete" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="EnviarEmail" id="chkEnviarEmail">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model => model.EnviarEmail)</span>
-                    </label>
-                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="GuardarLocalizacao" id="chkGuardarLocalizacao">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.GuardarLocalizacao)</span>
-                    </label>
-                    <span asp-validation-for="GuardarLocalizacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.FecharMarcacao)</span>
-                    </label>
-                    <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="Guia" id="chkGuia">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.Guia)</span>
-                    </label>
-                    <span asp-validation-for="Guia" class="has-text-danger"></span>
-                </div>
+            <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
+            <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
+            <input type="text" class="input" asp-for="ReferenciaServico">
+            <input type="text" class="input" asp-for="IdMarcacao">
+            <input type="checkbox" asp-for="Piquete" id="chkPiquete">
+            <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
+
+            <div id="divChk">
+                <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
+                <input type="checkbox" id="chkEnviarEmail" asp-for="EnviarEmail">
+                <input type="checkbox" id="chkRecolhaOficina" asp-for="RecolhaOficina">
+                <input type="checkbox" id="chkGuia" asp-for="Guia">
+                <input type="checkbox" id="chkCobrarDeslocacao" asp-for="CobrarDeslocacao">
+                <input type="checkbox" id="chkGuardarLocalizacao" asp-for="GuardarLocalizacao">
             </div>
         </div>
     </div>
 
+
+    <div class="modal" id="modalFinal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Validações Finais</p>
+                <button class="delete" type="button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body" id="divFinalChk">
+                <div id="divLocalizacao" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkGuardarLocalizacao').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja guardar a localização atual do cliente?
+                                <input class="input is-primary" type="text" disabled
+                                       asp-for="Utilizador.Viatura.LocalizacaoMorada" />
+                                <a class="button is-static">
+                                    @Model.Utilizador.Viatura.Matricula
+                                </a>
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="GuardarLocalizacao" class="has-text-danger"></span>
+                </div>
+                <div id="divDeslocacao" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkCobrarDeslocacao').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja cobrar a deslocação a este cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="CobrarDeslocacao" class="has-text-danger"></span>
+                </div>
+                <div id="divEmail" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkEnviarEmail').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja enviar um email com a folha de obra para o cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
+                </div>
+                <div id="divRecolher" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" asp-for="RecolhaOficina" onchange="document.getElementById('divGuia').hidden = !this.checked; document.getElementById('chkRecolhaOficina').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja recolher o equipamento selecionado para oficina?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="RecolhaOficina" class="has-text-danger"></span>
+                </div>
+                <div id="divGuia" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkGuia').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja gerar guia de transporte para o equipamento selecionado?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="Guia" class="has-text-danger"></span>
+                </div>
+                <div id="divFechar" hidden class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" onchange="document.getElementById('chkFecharMarcacao').checked = this.checked;">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Deseja dar como concluida a assistência atual?
+                        </span>
+                    </label>
+                    <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();">
+                    <span class="icon">
+                        <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
+                    </span>
+                    <span>Guardar</span>
+                </button>
+                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalFinal').modal().close();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-left"></i>
+                    </span>
+                    <span>Cancelar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
 </form>
 
 <div id="modalMensagensErro" class="modal">
@@ -556,12 +572,14 @@
             <p class="modal-card-title">Informação</p>
         </header>
         <section class="modal-card-body">
-                <div asp-validation-summary="ModelOnly" id="divMensagensErro" style="white-space: pre-line"></div>
+            <div asp-validation-summary="ModelOnly" id="divMensagensErro" style="white-space: pre-line"></div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalMensagensErro').modal().close();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
+                    onclick="Bulma('#modalMensagensErro').modal().close();" id="btnConfirmAddAnexo"
+                    href="javascript:;">
+                Fechar
+            </button>
         </footer>
     </div>
 </div>
@@ -583,8 +601,10 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
+                    onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
+                    href="javascript:;">
+                Fechar
+            </button>
         </footer>
     </div>
 </div>
@@ -598,8 +618,7 @@
         <section class="modal-card-body">
             <div class="form-group">
                 <div id="reader" width="600px" height="600px"></div>
-                <script>
-                    function onScanSuccess(decodedText, decodedResult) {
+                <script>function onScanSuccess(decodedText, decodedResult) {
                         // handle the scanned code as you like, for example:
                         console.log(`Code matched = ${decodedText}`, decodedResult);
                     }
@@ -616,7 +635,7 @@
                         {
                             fps: 10, qrbox: { width: 250, height: 250 }
                         },
-  /* verbose= */ false);
+                  /* verbose= */ false);
 
                     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
@@ -656,125 +675,15 @@
                         }).catch((err) => {
                             // Stop failed, handle it.
                         });
-                    }
-                </script>
+                    }</script>
             </div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalLerBarcode').modal().close();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalDeslocacao">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Deslocação</p>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja cobrar a deslocação a este cliente?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="CobrarDeslocacao(true)">Sim</button>
-            <button class="button" onclick="CobrarDeslocacao(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalEnviarEmail">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Email</p>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja enviar um email com a folha de obra para o cliente?</p>
-            <input type="email" class="input" asp-for="EmailCliente" id="txtEmailCliente" />
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="EnviarEmail(true)">Sim</button>
-            <button class="button" onclick="EnviarEmail(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalGuardarLocalizacao">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Localização</p>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja guardar a localização atual do cliente?</p>
-            <div class="field has-addons">
-                <div class="control" style="width:100%">
-                    <input class="input is-primary" type="text" disabled
-                        asp-for="Utilizador.Viatura.LocalizacaoMorada" />
-                </div>
-                <p class="control">
-                    <a class="button is-static">
-                        @Model.Utilizador.Viatura.Matricula
-                    </a>
-                </p>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="GuardarLocalizacao(true)">Sim</button>
-            <button class="button" onclick="GuardarLocalizacao(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalFecharMarcacao">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Marcação</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja fechar a marcação?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="FecharMarcacao(true)">Sim</button>
-            <button class="button" onclick="FecharMarcacao(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalRecolherOficina">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Equipamento</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja recolher o equipamento para oficina?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="RecolherOficina(true)">Sim</button>
-            <button class="button" onclick="RecolherOficina(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalGerarGuia">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Guia</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja gerar guia de transporte para o equipamento selecionado?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="GerarGuia(true)">Sim</button>
-            <button class="button" onclick="GerarGuia(false)">Não</button>
+                    onclick="Bulma('#modalLerBarcode').modal().close();" id="btnConfirmAddAnexo"
+                    href="javascript:;">
+                Fechar
+            </button>
         </footer>
     </div>
 </div>
@@ -807,7 +716,7 @@
                                   value=""></textarea>
                     </div>
                 </div>
-                </div>
+            </div>
         </section>
         <footer class="modal-card-foot">
             @if (User.IsInRole("Admin"))
@@ -867,32 +776,7 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalObterHistorico').modal().close();" href="javascript:;">
-                <span class="icon">
-                    <i class="fa-regular fa-circle-xmark"></i>
-                </span>
-                <span>Fechar</span>
-            </button>
-        </footer>
-    </div>
-</div>
-
-
-<div id="modalObterHistoricoVazio" class="modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Histórico de Intervenções</p>
-            <button type="button" class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <div class="form-group">
-                <button class="button is-danger is-outlined is-rounded is-fullwidth">Não existem intervenções!</button>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalObterHistoricoVazio').modal().close();" href="javascript:;">
+                    onclick="Bulma('#modalObterHistorico').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -916,7 +800,7 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalEquipamentos').modal().close();" href="javascript:;">
+                    onclick="Bulma('#modalEquipamentos').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -925,6 +809,7 @@
         </footer>
     </div>
 </div>
+
 <div id="modalPecas" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -939,7 +824,7 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalPecas').modal().close();" href="javascript:;">
+                    onclick="Bulma('#modalPecas').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -950,85 +835,12 @@
 </div>
 
 @section Scripts {
-@{
-await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
 <script>
-    bulmaSteps.attach('.steps', {
-        onShow: id => {
-            if (id == 5) {
-                resizeCanvas();
-            }
-        }
-    });
-    
-    if (document.getElementById('divMensagensErro') != null) Bulma('#modalMensagensErro').modal().open();
-
-    (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
-        const $target = $close.closest('#modalAguardarValidacao');
-
-        $close.addEventListener('click', () => {
-            if (!($target.classList.contains('is-active'))) clearInterval(interval);
-        });
-    });
-
-    (document.querySelectorAll('#modalLerBarcode') || []).forEach(($close) => {
-        const $target = $close.closest('#modalLerBarcode');
-
-        $close.addEventListener('click', () => {
-            pararScan();
-        });
-    });
-
-
-    Dropzone.options.dropAnexo = { // camelized version of the `id`
-        paramName: "file", // The name that will be used to transfer the file
-        maxFilesize: 10, // MB
-        success: function (file, response) {
-            document.getElementById('Ficheiros').value += response + ";";
-        }
-    };
-
-    var canvas = document.getElementById('signature-pad');
-    signaturePad = new SignaturePad(canvas, {
-        minWidth: 0.5,
-        maxWidth: 1
-    });
-
-    document.getElementById('btnDesfazerRubrica').addEventListener('click', function () {
-        var data = signaturePad.toData();
-        if (data) {
-            data.pop(); // remove the last dot or line
-            signaturePad.fromData(data);
-        }
-    });
-
-    function resizeCanvas() {
-        const data = signaturePad.toData();
-
-        var ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        if (canvas.width == 0) { canvas.width = canvas.offsetWidth; canvas.height = 200; }
-
-        signaturePad.clear();
-        if (data.length > 0) { signaturePad.fromData(data) };
-        if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
-    }
-
-    window.onresize = function (event) {
-        resizeCanvas();
-    };
-
-    resizeCanvas();
-
-    CarregarIntervencoes();
-    CarregarPecasStock();
-    CarregarPecas();
-
     function ValidarFolhaObra() {
         if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
         document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
@@ -1129,60 +941,33 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
     //VALIDACOES FINAIS DA FOLHA DE OBRA
     function AbrirMensagens() {
-        if (document.getElementById('lstTipoFO').value == "Externo") {
-            Bulma('#modalDeslocacao').modal().open();
-        } else {
-            Bulma('#modalEnviarEmail').modal().open();
-        }
-    }
-    function CobrarDeslocacao(valor) {
-        document.getElementById('chkCobrarDeslocacao').checked = valor;
-        Bulma('#modalDeslocacao').modal().close();
 
-        Bulma('#modalEnviarEmail').modal().open();
-    }
-    function EnviarEmail(valor) {
-        document.getElementById('chkEnviarEmail').checked = valor;
-        Bulma('#modalEnviarEmail').modal().close();
-        document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
-        
+        $('#divFinalChk').find('input[type=checkbox]').each(function () {
+            this.checked = false;
+        });
+        $('#divChk').find('input[type=checkbox]').each(function () {
+            this.checked = false;
+        });
+
+        document.getElementById('divDeslocacao').hidden = true;
+        document.getElementById('divEmail').hidden = true;
+        document.getElementById('divRecolher').hidden = true;
+        document.getElementById('divGuia').hidden = true;
+        document.getElementById('divFechar').hidden = true;
+        document.getElementById('divLocalizacao').hidden = true;
+
+        document.getElementById('divDeslocacao').hidden = !document.getElementById('lstTipoFO').value == "Externo";
+        document.getElementById('divEmail').hidden = document.getElementById('EmailCliente').value == '';
+
         if (document.getElementById("lstEstadoFO").value != "1" && document.getElementById('lstTipoFO').value == "Externo") {
-            Bulma('#modalRecolherOficina').modal().open();
-        }else if (document.getElementById('lstTipoFO').value == "Interno") {
-            Bulma('#modalGerarGuia').modal().open();
-        }else{
-            Bulma('#modalFecharMarcacao').modal().open();
-        }
-    }
-    function GuardarLocalizacao(valor) {
-        document.getElementById('chkGuardarLocalizacao').checked = valor;
-        Bulma('#modalGuardarLocalizacao').modal().close();
-
-        Bulma('#modalFecharMarcacao').modal().open();
-    }
-    function RecolherOficina(valor) {
-        document.getElementById('chkRecolherOficina').checked = valor;
-        Bulma('#modalRecolherOficina').modal().close();
-        if (valor) {
-            Bulma('#modalGerarGuia').modal().open();
-        }else{
-            FecharMarcacao(false);
-        }
-    }
-    function GerarGuia(valor) {
-        document.getElementById('chkGuia').checked = valor;
-        Bulma('#modalGerarGuia').modal().close();
-        if (document.getElementById("lstEstadoFO").value == "1") {
-            Bulma('#modalFecharMarcacao').modal().open();
+            document.getElementById('divRecolher').hidden = false;
+        } else if (document.getElementById('lstTipoFO').value == "Interno") {
+            document.getElementById('divGuia').hidden = false;
         } else {
-            FecharMarcacao(false);
+            document.getElementById('divFechar').hidden = false;
         }
-    }
-    function FecharMarcacao(valor) {
-        document.getElementById('chkFecharMarcacao').checked = valor;
-        Bulma('#modalFecharMarcacao').modal().close();
-        document.getElementById('pageloader').classList.add('is-active');
-        document.getElementById('frmAdicionar').submit();
+        Bulma('#modalValidacao').modal().close();
+        Bulma('#modalFinal').modal().open();
     }
 
     //INTERVENCOES
@@ -1497,8 +1282,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                     var modal = Bulma('#modalObterHistorico').modal();
                     modal.open();
                 } else {
-                    var modal = Bulma('#modalObterHistoricoVazio').modal();
-                    modal.open();
+                   notifyError('Não foram encontradas intervenções associadas a este equipamento!')
                 };
             },
             error: function (error) {
@@ -1506,5 +1290,78 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             }
         });
     }
+
+    bulmaSteps.attach('.steps', {
+        onShow: id => {
+            if (id == 5) {
+                resizeCanvas();
+            }
+        }
+    });
+
+    if (document.getElementById('divMensagensErro') != null) Bulma('#modalMensagensErro').modal().open();
+
+    (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
+        const $target = $close.closest('#modalAguardarValidacao');
+
+        $close.addEventListener('click', () => {
+            if (!($target.classList.contains('is-active'))) clearInterval(interval);
+        });
+    });
+
+    (document.querySelectorAll('#modalLerBarcode') || []).forEach(($close) => {
+        const $target = $close.closest('#modalLerBarcode');
+
+        $close.addEventListener('click', () => {
+            pararScan();
+        });
+    });
+
+
+    Dropzone.options.dropAnexo = { // camelized version of the `id`
+        paramName: "file", // The name that will be used to transfer the file
+        maxFilesize: 10, // MB
+        success: function (file, response) {
+            document.getElementById('Ficheiros').value += response + ";";
+        }
+    };
+
+    var canvas = document.getElementById('signature-pad');
+    signaturePad = new SignaturePad(canvas, {
+        minWidth: 0.5,
+        maxWidth: 1
+    });
+
+    document.getElementById('btnDesfazerRubrica').addEventListener('click', function () {
+        var data = signaturePad.toData();
+        if (data) {
+            data.pop(); // remove the last dot or line
+            signaturePad.fromData(data);
+        }
+    });
+
+    function resizeCanvas() {
+        const data = signaturePad.toData();
+
+        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        if (canvas.width == 0) { canvas.width = canvas.offsetWidth; canvas.height = 200; }
+
+        signaturePad.clear();
+        if (data.length > 0) { signaturePad.fromData(data) };
+        if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
+    }
+
+    window.onresize = function (event) {
+        resizeCanvas();
+    };
+
+    resizeCanvas();
+
+    CarregarIntervencoes();
+    CarregarPecasStock();
+    CarregarPecas();
 
 </script>
