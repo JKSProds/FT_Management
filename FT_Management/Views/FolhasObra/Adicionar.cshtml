@@ -124,13 +124,6 @@
                                 </div>
                                 <div class="field">
                                     <div class="control buttons">
-                                        <button class="button is-secondary is-fullwidth" type="button"
-                                                onclick="LimparEquipamento()">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-backspace"></i>
-                                            </span>
-                                            <span>Limpar</span>
-                                        </button>
                                         <button type="button" class="button is-info is-fullwidth" id="btnObterHistorico"
                                                 onclick="ObterHistoricoEquipamento()" disabled>
                                             <span class="icon">
@@ -145,7 +138,15 @@
                                             </span>
                                             <span>Visualizar Equipamentos do Cliente</span>
                                         </button>
+                                        <button class="button is-secondary is-fullwidth" type="button"
+                                                onclick="LimparEquipamento()">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-backspace"></i>
+                                            </span>
+                                            <span>Limpar</span>
+                                        </button>
                                     </div>
+
                                 </div>
                                 <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
                                       class="has-text-danger"></span>
@@ -285,12 +286,6 @@
                                     </span>
                                     <span>Adicionar Peça</span>
                                 </button>
-                                <button class="button is-secondary is-fullwidth" type="button" onclick="LimparPecas()">
-                                    <span class="icon">
-                                        <i class="fa-solid fa-backspace"></i>
-                                    </span>
-                                    <span>Limpar</span>
-                                </button>
                                 <button type="button" class="button is-success is-fullwidth"
                                         onclick="Bulma('#modalPecas').modal().open();">
                                     <span class="icon">
@@ -298,7 +293,12 @@
                                     </span>
                                     <span>Visualizar Stock</span>
                                 </button>
-
+                                <button class="button is-secondary is-fullwidth" type="button" onclick="LimparPecas()">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-backspace"></i>
+                                    </span>
+                                    <span>Limpar</span>
+                                </button>
                             </div>
                             <div class="column is-12">
                                 <label asp-for="ListaPecas"></label>
