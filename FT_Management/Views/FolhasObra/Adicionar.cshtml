@@ -103,7 +103,7 @@
                 <div class="step-content is-active">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
-                            <div class="field ">
+                            <div class="field">
                                 <label asp-for="EquipamentoServico.NumeroSerieEquipamento"></label>
                                 <div class="field has-addons">
                                     <div class="control" style="width:100%">
@@ -114,43 +114,62 @@
                                                    asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
                                         </p>
                                     </div>
-                                    <div class="control">
-                                        <label class="mx-1 switch is-large is-outlined" style="height:40px">
-                                            <input type="checkbox" id="chkDesbloquearEquipamentos"
-                                                   onchange="DesbloquearEquipamentos();">
-                                            <span class="check is-success"></span>
-                                        </label>
-                                    </div>
                                 </div>
-                                <div class="field">
-                                    <div class="control buttons">
-                                        <button type="button" class="button is-info is-fullwidth" id="btnObterHistorico"
-                                                onclick="ObterHistoricoEquipamento()" disabled>
-                                            <span class="icon">
-                                                <i class="fas fa-history"></i>
-                                            </span>
-                                            <span>Histórico de Manutenções</span>
-                                        </button>
-                                        <button type="button" class="button is-success is-fullwidth"
-                                                id="btnObterEquipamentos" onclick="ObterEquipamentosCliente()">
-                                            <span class="icon">
-                                                <i class="fas fa-desktop"></i>
-                                            </span>
-                                            <span>Visualizar Equipamentos do Cliente</span>
-                                        </button>
-                                        <button class="button is-secondary is-fullwidth" type="button"
-                                                onclick="LimparEquipamento()">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-backspace"></i>
-                                            </span>
-                                            <span>Limpar</span>
-                                        </button>
-                                    </div>
-
-                                </div>
-                                <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
-                                      class="has-text-danger"></span>
                             </div>
+                        </div>
+                        <div class="column is-6 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded is-medium">
+                                    <input type="checkbox" id="chkDesbloquearEquipamentos" onchange="DesbloquearEquipamentos();">
+                                    <span class="check is-success"></span>
+                                    <span class="control-label">
+                                        Pesquisar todos os Equipamentos
+                                    </span>
+                                </label>
+                                <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-6 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded is-medium">
+                                    <input type="checkbox" asp-for="EmGarantia" id="chkGarantia">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">
+                                        @Html.DisplayNameFor(model => model.EmGarantia)
+                                    </span>
+                                </label>
+                                <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-12">
+                            <div class="field">
+                                <div class="control buttons">
+                                    <button type="button" class="button is-info is-fullwidth" id="btnObterHistorico"
+                                            onclick="ObterHistoricoEquipamento()" disabled>
+                                        <span class="icon">
+                                            <i class="fas fa-history"></i>
+                                        </span>
+                                        <span>Histórico de Manutenções</span>
+                                    </button>
+                                    <button type="button" class="button is-success is-fullwidth"
+                                            id="btnObterEquipamentos" onclick="ObterEquipamentosCliente()">
+                                        <span class="icon">
+                                            <i class="fas fa-desktop"></i>
+                                        </span>
+                                        <span>Visualizar Equipamentos do Cliente</span>
+                                    </button>
+                                    <button class="button is-secondary is-fullwidth" type="button"
+                                            onclick="LimparEquipamento()">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-backspace"></i>
+                                        </span>
+                                        <span>Limpar</span>
+                                    </button>
+                                </div>
+
+                            </div>
+                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
+                                  class="has-text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -349,30 +368,7 @@
                                 <span asp-validation-for="TipoFolhaObra" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="EmGarantia">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">
-                                        @Html.DisplayNameFor(model =>
-            model.EmGarantia)
-                                    </span>
-                                </label>
-                                <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="Avisar">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model => model.Avisar)</span>
-                                </label>
-                                <span asp-validation-for="Avisar" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-6">
+                        <div class="column is-12">
                             <div class="field">
                                 <p class="control">
                                     <button type="button" class="mb-3 button is-warning is-large is-pulled-right is-fullwidth"
@@ -408,6 +404,7 @@
             <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
 
             <div id="divChk">
+                <input type="checkbox" asp-for="Avisar" id="chkAvisar">
                 <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
                 <input type="checkbox" id="chkEnviarEmail" asp-for="EnviarEmail">
                 <input type="checkbox" id="chkRecolhaOficina" asp-for="RecolhaOficina">
@@ -415,107 +412,6 @@
                 <input type="checkbox" id="chkCobrarDeslocacao" asp-for="CobrarDeslocacao">
                 <input type="checkbox" id="chkGuardarLocalizacao" asp-for="GuardarLocalizacao">
             </div>
-        </div>
-    </div>
-
-
-    <div class="modal" id="modalValidarCliente">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Resumo da Assistência</p>
-                <button class="delete" type="button" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <div class="columns is-multiline mx-1">
-                    <div class="column is-12">
-                        <div class="field">
-                            <label class="label">Equipamento: </label>
-                            <div class="control">
-                                <input class="input is-primary" type="text" id="txtValidaEquipamento" readonly/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column is-12">
-                        <div class="field">
-                            <label class="label">Periodos: </label>
-                            <div class="control">
-                                <textarea class="textarea" id="txtValidaIntervencoes" readonly> </textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column is-12">
-                        <div class="field">
-                            <label class="label">Peças: </label>
-                            <div class="control">
-                                <textarea class="textarea" id="txtValidaPecas" readonly></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column is-12">
-                        <div class="field">
-                            <label class="label">Relatório: </label>
-                            <div class="control">
-                                <textarea class="textarea" id="txtValidaRelatorio" rows="5" readonly> </textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column is-12">
-                        <div class="field">
-                            <label class="label" asp-for="ConferidoPor"></label>
-                            <div class="control">
-                                <input class="input is-primary" type="text" asp-for="ConferidoPor" />
-                            </div>
-                            <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="column is-12">
-                        <div class="field">
-                            <label class="label" asp-for="EmailCliente"></label>
-                            <div class="control">
-                                <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
-                            </div>
-                            <span asp-validation-for="EmailCliente" class="has-text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="column is-12">
-                        <div class="field">
-                            <label class="switch is-rounded">
-                                <input type="checkbox" id="chkSatisfeito">
-                                <span class="check is-info"></span>
-                                <span class="control-label">
-                                    Confirmo e declaro-me satisfeito com o serviço efetuado!
-                                </span>
-                            </label>
-                        </div>
-                        <div class="wrapper" style="width: 100%;" id="divRubrica">
-                            <canvas id="signature-pad" class="signature-pad disable-dbl-tap-zoom"
-                                    style="width:100%;border:2px solid #000000;"></canvas>
-                        </div>
-                        <br />
-                        <button class="button is-warning" type="button" id="btnDesfazerRubrica">Desfazer</button>
-                        <button class="button is-danger" type="button"
-                                onclick="signaturePad.clear();">
-                            Limpar
-                        </button>
-                    </div>
-                </div>
-                    &nbsp;
-</section>
-            <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();">
-                    <span class="icon">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </span>
-                    <span>Avançar</span>
-                </button>
-                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalValidarCliente').modal().close();">
-                    <span class="icon">
-                        <i class="fa-solid fa-circle-left"></i>
-                    </span>
-                    <span>Cancelar</span>
-                </button>
-            </footer>
         </div>
     </div>
 
@@ -568,6 +464,18 @@
                     </div>
                     <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
                 </div>
+                <div id="divEncaminhar" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkAvisar').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja encaminhar o pedido para resolução por parte do cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
+                </div>
                 <div id="divRecolher" hidden class="field">
                     <div class="field">
                         <label class="switch is-rounded">
@@ -604,7 +512,7 @@
                 </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="ValidarCliente();">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close();ValidarCliente();">
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
                     </span>
@@ -619,6 +527,182 @@
             </footer>
         </div>
     </div>
+
+    <div class="modal" id="modalValidarCliente">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Resumo da Assistência</p>
+                <button class="delete" type="button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="columns is-multiline mx-1">
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label is-size-4">1 - Equipamento: </label>
+                            <div class="field has-addons" >
+                                <p class="control" style="width:100%"><input class="input is-primary" type="text" id="txtValidaEquipamento" readonly /></p>
+                                <p class="control">
+                                    <button class="button my-auto" type="button"><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnEstadoGarantia">GARANTIA</p></button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="card">
+                            <header class="card-header card-toggle">
+                                <p class="is-size-4 my-1 has-text-weight-bold column">
+                                    2 - Periodos
+                                </p>
+                                <button class="button mx-1 is-rounded my-auto" disabled><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnCountIntervencoes">2</p></button>
+                               <button class="card-header-icon" style="text-align:right" type="button">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </header>
+                            <div class="card-content is-hidden">
+                                <div class="content">
+                                    <div class="control">
+                                        <p id="txtValidaIntervencoes"> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="card">
+                            <header class="card-header card-toggle">
+                                <p class="is-size-4 my-1 has-text-weight-bold column">
+                                    3 - Peças
+                                </p>
+                                <button class="button mx-1 is-rounded my-auto" disabled><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnCountPecas">2</p></button>
+                                <button class="card-header-icon" style="text-align:right" type="button">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </header>
+                            <div class="card-content is-hidden">
+                                <div class="content">
+                                    <div class="control">
+                                        <p id="txtValidaPecas"> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="card">
+                            <header class="card-header card-toggle">
+                                <p class="is-size-4 my-1 has-text-weight-bold column">
+                                    4 - Relatório
+                                </p>
+                                <button class="card-header-icon" style="text-align:right" type="button">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    <div class="control">
+                                        <p style="white-space: pre-line" id="txtValidaRelatorio"> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    &nbsp;
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalValidarCliente2').modal().open();resizeCanvas();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                    <span>Confirmar</span>
+                </button>
+                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalValidarCliente').modal().close();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-left"></i>
+                    </span>
+                    <span>Cancelar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+
+    <div class="modal" id="modalValidarCliente2">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Rúbrica</p>
+                <button class="delete" type="button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="columns is-multiline mx-1">
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label" asp-for="ConferidoPor"></label>
+                            <div class="control">
+                                <input class="input is-primary" type="text" asp-for="ConferidoPor" />
+                            </div>
+                            <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label" asp-for="EmailCliente"></label>
+                            <div class="control">
+                                <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
+                            </div>
+                            <span asp-validation-for="EmailCliente" class="has-text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="switch is-rounded">
+                                <input type="checkbox" id="chkSatisfeito">
+                                <span class="check is-info"></span>
+                                <span class="control-label">
+                                    Confirmo e declaro-me satisfeito com o serviço efetuado!
+                                </span>
+                            </label>
+                        </div>
+                        <div class="wrapper" style="width: 100%;" id="divRubrica">
+                            <canvas id="signature-pad" class="signature-pad disable-dbl-tap-zoom"
+                                    style="width:100%;border:2px solid #000000;"></canvas>
+                        </div>
+                        <br />
+                        <button class="button is-warning is-fullwidth mb-2" type="button" id="btnDesfazerRubrica">Desfazer</button>
+                        <button class="button is-danger is-fullwidth" type="button"
+                                onclick="signaturePad.clear();">
+                            Limpar
+                        </button>
+                    </div>
+                </div>
+                &nbsp;
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();">
+                    <span class="icon">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </span>
+                    <span>Gravar</span>
+                </button>
+                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalValidarCliente2').modal().close();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-left"></i>
+                    </span>
+                    <span>Voltar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+
 </form>
 
 <div id="modalMensagensErro" class="modal">
@@ -865,22 +949,42 @@
     }
 
     function ValidarCliente() {
+        document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-success');
+        document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-danger');
+        document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-info');
+
+        if (document.getElementById('lstTipoFO').value == "Instalação") {
+            document.getElementById('btnEstadoGarantia').innerHTML = 'INSTALAÇÃO';
+            document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-info')
+        } else {
+            document.getElementById('chkGarantia').checked ? document.getElementById('btnEstadoGarantia').innerHTML = 'GARANTIA' : document.getElementById('btnEstadoGarantia').innerHTML = 'NÃO GARANTIA';
+            document.getElementById('chkGarantia').checked ? document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-success') : document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-danger');
+        }
+
         document.getElementById('txtValidaEquipamento').value = document.getElementById('txtEquipamento').value;
-        document.getElementById('txtValidaRelatorio').value = document.getElementById('txtRelatorio').value;
+        document.getElementById('txtValidaRelatorio').innerHTML = document.getElementById('txtRelatorio').value; 
 
-        document.getElementById('txtValidaIntervencoes').value = '';
+        document.getElementById('txtValidaIntervencoes').innerHTML = '';
 
-        document.getElementById('txtValidaIntervencoes').rows = document.getElementById('divListaIntervencoes').childNodes.length -1;
-        document.getElementById('divListaIntervencoes').childNodes.forEach(function (e) { if (e.childNodes[0]) document.getElementById('txtValidaIntervencoes').value += e.childNodes[0].innerText + " \r\n"; })
+        var periodo = 1;
+        document.getElementById('divListaIntervencoes').childNodes.forEach(function (e) {
+            if (e.childNodes[0]) {
+                document.getElementById('txtValidaIntervencoes').innerHTML += e.childNodes[0].innerText + "<br>";
 
-        document.getElementById('txtValidaPecas').value = '';
+                var timeStart = new Date(e.childNodes[0].innerText.split(' ')[0] + ' ' +  e.childNodes[0].innerText.split(' ')[1]).getHours();
+                var timeEnd = new Date(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' - ')[1]).getHours();
 
-        document.getElementById('txtValidaPecas').rows = document.getElementById('divListaPecas').childNodes.length * 2;
-        document.getElementById('divListaPecas').childNodes.forEach(function (e) { if (e.childNodes[0]) document.getElementById('txtValidaPecas').value += e.childNodes[0].innerText + " \r\n"; })
+                periodo += timeEnd - timeStart;
+            }
+            })
+        document.getElementById('btnCountIntervencoes').innerHTML = "< " + periodo + " Hora(s)";
+
+        document.getElementById('btnCountPecas').innerHTML = document.getElementById('divListaPecas').childNodes.length + " Peça(s)";
+        document.getElementById('txtValidaPecas').innerHTML = '';
+        document.getElementById('divListaPecas').childNodes.forEach(function (e) { if (e.childNodes[0]) document.getElementById('txtValidaPecas').innerHTML += e.childNodes[0].innerText + "<br>"; })
 
 
         Bulma('#modalValidarCliente').modal().open();
-        resizeCanvas();
     }
 
     function DesbloquearEquipamentos() {
@@ -969,6 +1073,7 @@
         });
 
         document.getElementById('divDeslocacao').hidden = true;
+        document.getElementById('divEncaminhar').hidden = true;
         document.getElementById('divEmail').hidden = true;
         document.getElementById('divRecolher').hidden = true;
         document.getElementById('divGuia').hidden = true;
@@ -977,6 +1082,7 @@
 
         document.getElementById('divDeslocacao').hidden = !(document.getElementById('lstTipoFO').value == "Externo");
         document.getElementById('divEmail').hidden = false;
+        document.getElementById('divEncaminhar').hidden = false;
 
         if (document.getElementById("lstEstadoFO").value != "1" && document.getElementById('lstTipoFO').value == "Externo") {
             document.getElementById('divRecolher').hidden = false;
@@ -1206,9 +1312,11 @@
                     type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
+                            console.log(data);
                             return {
                                 label: item.numeroSerieEquipamento + " (" + item.marcaEquipamento + " - " + item.modeloEquipamento + ")",
-                                val: item.equipamentoStamp
+                                val: item.equipamentoStamp,
+                                garantia: item.garantia
                             };
                         }))
                     },
@@ -1223,6 +1331,7 @@
             select: function (e, i) {
                 $("#txtEquipamentoStamp").val(i.item.val);
                 document.getElementById("btnObterHistorico").disabled = false;
+                document.getElementById("chkGarantia").checked = i.item.garantia;
             },
             minLength: 1
         }).css('z-index', 10);
@@ -1232,6 +1341,7 @@
         document.getElementById("btnObterHistorico").disabled = true;
         document.getElementById("txtEquipamentoStamp").value = '';
         document.getElementById("txtEquipamento").value = '';
+        document.getElementById("chkGarantia").checked = false;
 
     }
 
@@ -1436,6 +1546,15 @@
             // Stop failed, handle it.
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        let cardToggles = document.getElementsByClassName('card-toggle');
+        for (let i = 0; i < cardToggles.length; i++) {
+            cardToggles[i].addEventListener('click', e => {
+                e.currentTarget.parentElement.childNodes[3].classList.toggle('is-hidden');
+            });
+        }
+    });
 
     window.onresize = function (event) {
         resizeCanvas();

@@ -633,6 +633,7 @@
                             IdCliente = int.Parse(result["no"].ToString()),
                             IdLoja = int.Parse(result["estab"].ToString()),
                             IdFornecedor = int.Parse(result["flno"].ToString()),
+                            Garantia = result["situacao"].ToString() == "Garantia",
                             UltimoTecnico = !result.IsDBNull("utecnnm") ? result["utecnnm"].ToString() : "N/D",
                             DataCompra = DateTime.Parse(result["fldata"].ToString()),
                             DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
@@ -661,7 +662,7 @@
         }
         public List<Equipamento> ObterEquipamentos()
         {
-            return ObterEquipamentos("SELECT * FROM ma;", false, false);
+            return ObterEquipamentos("SELECT TOP(100) * FROM ma;", false, false);
         }
         public List<Equipamento> ObterEquipamentos(Cliente c)
         {

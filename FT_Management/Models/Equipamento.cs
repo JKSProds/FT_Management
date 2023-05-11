@@ -28,6 +28,7 @@
         public string RefProduto { get; set; }
         public Cliente Cliente { get; set; }
         public List<FolhaObra> FolhasObra { get; set; }
+        public bool Garantia { get; set; }
 
         [Display(Name = "Técnico")]
         public string UltimoTecnico { get; set; }
