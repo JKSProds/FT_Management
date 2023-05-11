@@ -44,7 +44,7 @@
         public Utilizador Utilizador { get; set; }
         public string IdCartao { get; set; }
         private string _ConferidoPor;
-        [Display(Name = "Conferido por")]
+        [Display(Name = "Nome | Número")]
         [Required(ErrorMessage = "Falta preencher o campo Conferido por!")]
         public string ConferidoPor { get { return _ConferidoPor ?? ""; } set { _ConferidoPor = value; } }
         private string _GuiaTransporteAtual;
