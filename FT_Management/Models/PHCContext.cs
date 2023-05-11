@@ -933,7 +933,7 @@
             {
                 //Atualizar email na BD
                 ExecutarQuery("if exists(select u_clrespstamp from u_clresp a join cl b on a.clstamp = b.clstamp where b.no = " + fo.ClienteServico.IdCliente + " and b.estab = " + fo.ClienteServico.IdLoja + " and tipoe = '" + fo.Marcacao.TipoEquipamento + "') update a set emailfo = '" + fo.EmailCliente + "', nomefo = '" + fo.ConferidoPor + "' from u_clresp a join cl b on a.clstamp = b.clstamp where b.no = " + fo.ClienteServico.IdCliente + " and b.estab = " + fo.ClienteServico.IdLoja + " and tipoe = '" + fo.Marcacao.TipoEquipamento + "' else insert into u_clresp(u_clrespstamp, clstamp, tipoe,  ousrinis, ousrdata, ousrhora, usrinis, usrdata, usrhora, emailfo, nomefo) select 'WEBAPP'+LEFT(NEWID(),18), clstamp, '" + fo.Marcacao.TipoEquipamento + "', '"+fo.Utilizador.Iniciais+"', GETDATE(), FORMAT(CONVERT(DATETIME,GETDATE(),108),'HH:mm:ss','PT-PT'),'"+fo.Utilizador.Iniciais+"', GETDATE(), FORMAT(CONVERT(DATETIME,GETDATE(),108),'HH:mm:ss','PT-PT'), '" + fo.EmailCliente + "',  '" + fo.ConferidoPor + "' from cl b where b.no = " + fo.ClienteServico.IdCliente + " and b.estab = " + fo.ClienteServico.IdLoja);
-                MailContext.EnviarEmailFolhaObra(fo.EmailCliente + ";" + fo.Utilizador.EmailUtilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
+                MailContext.EnviarEmailFolhaObra(fo.EmailCliente, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioFolhaObra(fo).ToArray())), "FO_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
             }
             else
             {
