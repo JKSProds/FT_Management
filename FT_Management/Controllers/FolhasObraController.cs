@@ -59,6 +59,8 @@ namespace FT_Management.Controllers
 
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
+            ViewBag.MotivosGarantia = phccontext.ObterMotivosAvariaGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
+            ViewBag.MotivosNaoGarantia = phccontext.ObterMotivosAvariaNaoGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
             return View(fo);
         }
 
@@ -92,17 +94,17 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
+
             if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes) && !fo.EmGarantia) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!"); 
-            if (fo.EmGarantia && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
+            if ((fo.EmGarantia || fo.EquipamentoServico.Garantia) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
             fo.ValidarIntervencoes();
             if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
-            fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
             if (ModelState.IsValid)
             {
-                fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
-
+                fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
                 fo.ValidarTipoFolhaObra();
 
@@ -154,6 +156,8 @@ namespace FT_Management.Controllers
 
             ModelState.AddModelError("", string.Join("\r\n", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)));
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
+            ViewBag.MotivosGarantia = phccontext.ObterMotivosAvariaGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
+            ViewBag.MotivosNaoGarantia = phccontext.ObterMotivosAvariaNaoGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 
             return View("Adicionar", fo);

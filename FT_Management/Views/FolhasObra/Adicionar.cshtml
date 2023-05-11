@@ -132,7 +132,7 @@
                         <div class="column is-6 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded is-medium">
-                                    <input type="checkbox" asp-for="EmGarantia" id="chkGarantia">
+                                    <input type="checkbox" asp-for="EmGarantia" id="chkGarantia" onchange="document.getElementById('chkPecaGarantia').checked = this.checked;document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !this.checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = this.checked;">
                                     <span class="check is-info"></span>
                                     <span class="control-label">
                                         @Html.DisplayNameFor(model => model.EmGarantia)
@@ -298,7 +298,9 @@
                             </div>
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
-                                        onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
+                                        onclick="if (document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked) { Bulma('#modalPecaGarantia').modal().open(); } else {
+        ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value);
+                                        }"
                                         disabled id="btnAdicionarPeca">
                                     <span class="icon">
                                         <i class="fa-solid fa-check"></i>
@@ -396,12 +398,14 @@
     <div style="display:none">
         <div class="columns is-multiline mx-1 ">
             <input type="text" class="input" asp-for="FicheirosAnexo" id="Ficheiros">
+            <input type="hidden" asp-for="ClienteServico.NomeCliente" id="txtIdCliente" />
             <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
             <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
             <input type="text" class="input" asp-for="ReferenciaServico">
             <input type="text" class="input" asp-for="IdMarcacao">
             <input type="checkbox" asp-for="Piquete" id="chkPiquete">
             <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
+            <input type="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia">
 
             <div id="divChk">
                 <input type="checkbox" asp-for="Avisar" id="chkAvisar">
@@ -540,7 +544,7 @@
                     <div class="column is-12">
                         <div class="field">
                             <label class="label is-size-4">Equipamento</label>
-                            <div class="field has-addons" >
+                            <div class="field has-addons">
                                 <p class="control" style="width:100%"><input class="input is-primary" type="text" id="txtValidaEquipamento" readonly /></p>
                                 <p class="control">
                                     <button class="button my-auto" type="button"><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnEstadoGarantia">GARANTIA</p></button>
@@ -555,7 +559,7 @@
                                     Periodos
                                 </p>
                                 <button class="button mx-1 is-rounded my-auto" disabled><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnCountIntervencoes">2</p></button>
-                               <button class="card-header-icon" style="text-align:right" type="button">
+                                <button class="card-header-icon" style="text-align:right" type="button">
                                     <span class="icon">
                                         <i class="fas fa-angle-down" aria-hidden="true"></i>
                                     </span>
@@ -701,9 +705,70 @@
             </footer>
         </div>
     </div>
-
-
 </form>
+
+
+<div id="modalPecaGarantia" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-warning">
+            <p class="modal-card-title">Informações de Garantia da Peça</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <label class="switch is-rounded">
+                    <input type="checkbox" id="chkPecaGarantia" onchange="document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !this.checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = this.checked;">
+                    <span class="check is-info"></span>
+                    <span class="control-label">
+                        Peça em Garantia?
+                    </span>
+                </label>
+            </div>
+            <div class="field" hidden>
+                <p class="control has-icons-left">
+                    <span class="select" style="width:100%">
+                        <select id="lstMotivosAvariaGarantia" asp-items="ViewBag.MotivosGarantia"
+                                class="form-control" style="width:100%">
+                        </select>
+                    </span>
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field" hidden>
+                <p class="control has-icons-left">
+                    <span class="select" style="width:100%">
+                        <select id="lstMotivosAvariaNaoGarantia" asp-items="ViewBag.MotivosNaoGarantia"
+                                class="form-control" style="width:100%">
+                        </select>
+                    </span>
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field" style="width:100%">
+                <div class="control">
+                    <textarea type="text" class="textarea" id="txtObsPecaGarantia" rows=5 value=""></textarea>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-large is-fullwidth is-success" type="button" onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, document.getElementById('chkPecaGarantia').checked, (document.getElementById('chkPecaGarantia').checked ? document.getElementById('lstMotivosAvariaGarantia').value : document.getElementById('lstMotivosAvariaNaoGarantia').value), document.getElementById('txtObsPecaGarantia').value)">
+                <span class="icon">
+                    <i class="fa-solid fa-circle-plus"></i>
+                </span>
+                <span>Adicionar Peça</span>
+            </button>
+            <button type="button" class="button is-info is-large is-fullwidth"
+                    onclick="Bulma('#modalPecaGarantia').modal().close();"
+                    href="javascript:;">
+                Fechar
+            </button>
+        </footer>
+    </div>
+</div>
 
 <div id="modalMensagensErro" class="modal">
     <div class="modal-background"></div>
@@ -948,6 +1013,28 @@
             });
     }
 
+    function MostrarMotivosAvaria() {
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/Motivos",
+            data: $("#frmAdicionar").serialize(),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                Bulma('#modalValidarCliente').modal().close();
+                $(function () {
+                    document.getElementById("txtMensagens").value = result;
+                    if (result != "") {
+                        Bulma('#modalValidacao').modal().open();
+                    } else {
+                        notify("Folha de Obra sem mensagens de validação!");
+                        AbrirMensagens();
+                    }
+                });
+            }
+        });
+    }
+
+
     function ValidarCliente() {
         document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-success');
         document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-danger');
@@ -962,7 +1049,7 @@
         }
 
         document.getElementById('txtValidaEquipamento').value = document.getElementById('txtEquipamento').value;
-        document.getElementById('txtValidaRelatorio').innerHTML = document.getElementById('txtRelatorio').value; 
+        document.getElementById('txtValidaRelatorio').innerHTML = document.getElementById('txtRelatorio').value;
 
         document.getElementById('txtValidaIntervencoes').innerHTML = '';
 
@@ -1091,7 +1178,7 @@
         }
 
         document.getElementById('divFechar').hidden = !(document.getElementById("lstEstadoFO").value == "1");
-       
+
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalFinal').modal().open();
     }
@@ -1133,9 +1220,9 @@
     }
 
     //PEÇAS
-    function AdicionarPeca(stamp, ref, desig, qtd) {
+    function AdicionarPeca(stamp, ref, desig, qtd, garantia, motivo, obs) {
         document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
-        document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd};`;
+        document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd + '|' + garantia + '|' + motivo + '|' + obs};`;
         notify("Peça " + ref + " adicionada com sucesso!");
 
         if (!document.getElementById("btnZeroPecas").hidden && (document.getElementById('ListaPecas').value)) document.getElementById("btnZeroPecas").classList.add("is-hidden");
@@ -1143,7 +1230,12 @@
 
     function RemoverPeca(stamp) {
         document.getElementById(stamp).remove();
-        document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(stamp + ';', '');
+
+        for (i = 0; i < document.getElementById('ListaPecas').value.split(';').length; i++) {
+            alert(document.getElementById('ListaPecas').value.split(';')[i]);
+            document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(document.getElementById('ListaPecas').value.split(';')[i] + ';')
+        }
+
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
         notify("Peça removida com sucesso!");
 
@@ -1219,13 +1311,14 @@
         document.getElementById("btnAdicionarPeca").disabled = false;
         Bulma('#modalPecas').modal().close();
     }
-    function ObterPeca(stamp, qtd) {
+    function ObterPeca(stamp, qtd, garantia, motivo, obs) {
+        Bulma('#modalPecaGarantia').modal().close();
         if (stamp !== "" && qtd > 0) {
             $.ajax({
                 url: '/Produtos/Peca/' + stamp,
                 type: "GET",
                 success: function (response) {
-                    AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
+                    AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd, garantia, motivo, obs);
                     LimparPecas();
                 },
                 error: function (response) {
@@ -1266,6 +1359,10 @@
         document.getElementById('txtStampPeca').value = '';
         document.getElementById("btnAdicionarPeca").disabled = true;
         document.getElementById("txtQtd").value = '1';
+        document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantia').checked;
+        document.getElementById('txtObsPecaGarantia').value = '';
+        document.getElementById('lstMotivosAvariaNaoGarantia').selectedIndex = 0;
+        document.getElementById('lstMotivosAvariaGarantia').selectedIndex = 0;
     }
 
     //CLIENTES
@@ -1312,7 +1409,6 @@
                     type: "GET",
                     success: function (data) {
                         response($.map(data, function (item) {
-                            console.log(data);
                             return {
                                 label: item.numeroSerieEquipamento + " (" + item.marcaEquipamento + " - " + item.modeloEquipamento + ")",
                                 val: item.equipamentoStamp,
