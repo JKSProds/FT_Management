@@ -246,7 +246,7 @@
             {
                 string nome = u.Iniciais + "_" + DateTime.Now.Ticks + extensao;
                 _logger.LogDebug("Utilizador {1} [{2}] a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
-                return Content(FicheirosContext.CriarFicheiroTemporario(nome, file));
+                return Ok(FicheirosContext.CriarFicheiroTemporario(nome, file));
             }
 
             Dossier d = new Dossier();

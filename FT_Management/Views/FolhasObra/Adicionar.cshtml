@@ -674,64 +674,6 @@
         <section class="modal-card-body">
             <div class="form-group">
                 <div id="reader" width="600px" height="600px"></div>
-                <script>function onScanSuccess(decodedText, decodedResult) {
-                        // handle the scanned code as you like, for example:
-                        console.log(`Code matched = ${decodedText}`, decodedResult);
-                    }
-
-                    function onScanFailure(error) {
-                        // handle scan failure, usually better to ignore and keep scanning.
-                        // for example:
-                        //console.warn(`Code scan error = ${error}`);
-                    }
-                    const html5QrCode = new Html5Qrcode("reader");
-                    var cameraId = '';
-                    let html5QrcodeScanner = new Html5QrcodeScanner(
-                        "reader",
-                        {
-                            fps: 10, qrbox: { width: 250, height: 250 }
-                        },
-                  /* verbose= */ false);
-
-                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-
-                    function iniciarScan() {
-
-                        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                            Bulma('#modalLerBarcode').modal().close();
-                            ObterPecaRef(decodedText);
-                            pararScan();
-                        };
-                        const config = {
-                            fps: 10, qrbox: { width: 250, height: 250 }
-                        };
-
-                        Html5Qrcode.getCameras().then(devices => {
-
-                            if (devices && devices.length) {
-                                if (devices.length > 3) {
-                                    cameraId = devices[3].id;
-                                } else if (devices.length > 2) {
-                                    cameraId = cameraId = devices[1].id;
-                                }
-                                if (cameraId != '') {
-                                    html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
-                                } else {
-                                    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-                                }
-                            }
-                        }).catch(err => {
-                        });
-
-
-                    }
-                    function pararScan() {
-                        html5QrCode.stop().then((ignore) => {
-                            // QR Code scanning is stopped.
-                        }).catch((err) => {
-                            // Stop failed, handle it.
-                        });
-                    }</script>
             </div>
         </section>
         <footer class="modal-card-foot">
@@ -1393,8 +1335,18 @@
     Dropzone.options.dropAnexo = { // camelized version of the `id`
         paramName: "file", // The name that will be used to transfer the file
         maxFilesize: 10, // MB
+        dictRemoveFile: "Remover ficheiro",
+        dictCancelUpload: "Cancelar",
+        addRemoveLinks: true,
         success: function (file, response) {
+            console.log(response);
             document.getElementById('Ficheiros').value += response + ";";
+            file.newName = response;
+            return file.previewElement.classList.add("dz-success");
+        },
+        removedfile: function (file) {
+            file.previewElement.remove();
+            document.getElementById('Ficheiros').value = document.getElementById('Ficheiros').value.replace(file.newName + ';', '');
         }
     };
 
@@ -1424,6 +1376,65 @@
         signaturePad.clear();
         if (data.length > 0) { signaturePad.fromData(data) };
         if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // handle the scanned code as you like, for example:
+        console.log(`Code matched = ${decodedText}`, decodedResult);
+    }
+
+    function onScanFailure(error) {
+        // handle scan failure, usually better to ignore and keep scanning.
+        // for example:
+        //console.warn(`Code scan error = ${error}`);
+    }
+    const html5QrCode = new Html5Qrcode("reader");
+    var cameraId = '';
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        {
+            fps: 10, qrbox: { width: 250, height: 250 }
+        },
+                  /* verbose= */ false);
+
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+    function iniciarScan() {
+
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            Bulma('#modalLerBarcode').modal().close();
+            ObterPecaRef(decodedText);
+            pararScan();
+        };
+        const config = {
+            fps: 10, qrbox: { width: 250, height: 250 }
+        };
+
+        Html5Qrcode.getCameras().then(devices => {
+
+            if (devices && devices.length) {
+                if (devices.length > 3) {
+                    cameraId = devices[3].id;
+                } else if (devices.length > 2) {
+                    cameraId = cameraId = devices[1].id;
+                }
+                if (cameraId != '') {
+                    html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
+                } else {
+                    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+                }
+            }
+        }).catch(err => {
+        });
+
+
+    }
+    function pararScan() {
+        html5QrCode.stop().then((ignore) => {
+            // QR Code scanning is stopped.
+        }).catch((err) => {
+            // Stop failed, handle it.
+        });
     }
 
     window.onresize = function (event) {
