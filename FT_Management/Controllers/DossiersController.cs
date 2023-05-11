@@ -98,8 +98,6 @@
                 Tecnico = u
             };
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
-
             _logger.LogDebug("Utilizador {1} [{2}] a criar um dossier novo: Id FO - {3}, Id Marcacao - {4}, Cliente - {5}, Serie - {6}", u.NomeCompleto, u.Id, fo.IdFolhaObra, fo.IdMarcacao, fo.ClienteServico.NomeCliente, serie);
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
