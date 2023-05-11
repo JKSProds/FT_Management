@@ -372,23 +372,10 @@
                                 <span asp-validation-for="Avisar" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" id="chkRecolherOficina" asp-for="RecolhaOficina">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">
-                                        @Html.DisplayNameFor(model =>
-            model.RecolhaOficina)
-                                    </span>
-                                </label>
-                                <span asp-validation-for="RecolhaOficina" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3">
+                        <div class="column is-6">
                             <div class="field">
                                 <p class="control">
-                                    <button type="button" class="mb-3 button is-warning is-pulled-right is-fullwidth"
+                                    <button type="button" class="mb-3 button is-warning is-large is-pulled-right is-fullwidth"
                                             onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                                         <span class="icon is-small">
                                             <i class="fas fa-plus"></i>
@@ -399,7 +386,7 @@
                             </div>
                         </div>
                         &nbsp;
-                        <button type="button" onclick="ValidarCliente();" class="button is-info is-large is-fullwidth">
+                        <button type="button" onclick="ValidarFolhaObra();" class="button is-info is-large is-fullwidth">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -436,7 +423,7 @@
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Validação do Cliente</p>
+                <p class="modal-card-title">Resumo da Assistência</p>
                 <button class="delete" type="button" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
@@ -516,7 +503,7 @@
                     &nbsp;
 </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="ValidarFolhaObra();">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();">
                     <span class="icon">
                         <i class="fa-solid fa-circle-check"></i>
                     </span>
@@ -536,7 +523,7 @@
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Validações Finais</p>
+                <p class="modal-card-title">Verificações Finais</p>
                 <button class="delete" type="button" aria-label="close"></button>
             </header>
             <section class="modal-card-body" id="divFinalChk">
@@ -617,7 +604,7 @@
                 </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="ValidarCliente();">
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
                     </span>
@@ -911,11 +898,11 @@
 
 <script>
     function ValidarFolhaObra() {
-        if (!document.getElementById('chkSatisfeito').checked) {
-            notifyError("Não confirmou a assistência!");
-        } else {
-           
-            $.ajax({
+        if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
+        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
+        notify("A validar folha de obra ...");
+
+             $.ajax({
                 type: "POST",
                 url: "/FolhasObra/Validar",
                 data: $("#frmAdicionar").serialize(),
@@ -933,14 +920,9 @@
                     });
                 }
             });
-        }
     }
 
     function ValidarCliente() {
-        if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
-        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
-        notify("A validar folha de obra ...");
-
         document.getElementById('txtValidaEquipamento').value = document.getElementById('txtEquipamento').value;
         document.getElementById('txtValidaRelatorio').value = document.getElementById('txtRelatorio').value;
 
@@ -1051,16 +1033,17 @@
         document.getElementById('divFechar').hidden = true;
         document.getElementById('divLocalizacao').hidden = true;
 
-        document.getElementById('divDeslocacao').hidden = !document.getElementById('lstTipoFO').value == "Externo";
-        document.getElementById('divEmail').hidden = document.getElementById('EmailCliente').value == '';
+        document.getElementById('divDeslocacao').hidden = !(document.getElementById('lstTipoFO').value == "Externo");
+        document.getElementById('divEmail').hidden = false;
 
         if (document.getElementById("lstEstadoFO").value != "1" && document.getElementById('lstTipoFO').value == "Externo") {
             document.getElementById('divRecolher').hidden = false;
         } else if (document.getElementById('lstTipoFO').value == "Interno") {
             document.getElementById('divGuia').hidden = false;
-        } else {
-            document.getElementById('divFechar').hidden = false;
         }
+
+        document.getElementById('divFechar').hidden = !(document.getElementById("lstEstadoFO").value == "1");
+       
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalFinal').modal().open();
     }
