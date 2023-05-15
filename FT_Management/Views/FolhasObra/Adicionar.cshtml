@@ -1221,7 +1221,7 @@
 
     //PEÇAS
     function AdicionarPeca(stamp, ref, desig, qtd, garantia, motivo, obs) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd + '|' + garantia + '|' + motivo + '|' + obs};`;
         notify("Peça " + ref + " adicionada com sucesso!");
 
@@ -1232,8 +1232,7 @@
         document.getElementById(stamp).remove();
 
         for (i = 0; i < document.getElementById('ListaPecas').value.split(';').length; i++) {
-            alert(document.getElementById('ListaPecas').value.split(';')[i]);
-            document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(document.getElementById('ListaPecas').value.split(';')[i] + ';')
+            if (document.getElementById('ListaPecas').value.split(';')[i].startsWith(stamp)) document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(document.getElementById('ListaPecas').value.split(';')[i] + ';', '')
         }
 
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";

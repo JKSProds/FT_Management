@@ -174,14 +174,14 @@
             {
                 if (item != "")
                 {
-                    if (this.PecasServico.Where(p => p.StampProduto == item.Split("|").First()).Count() == 0)
+                    if (this.PecasServico.Where(p => p.StampProduto == item.Split("|")[0]).Count() == 0)
                     {
-                        this.PecasServico.Add(LstPecas.Where(p => p.StampProduto == item.Split("|").First()).First());
-                        this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|").Last());
+                        this.PecasServico.Add(LstPecas.Where(p => p.StampProduto == item.Split("|")[0]).First());
+                        this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|")[1]);
                     }
                     else
                     {
-                        this.PecasServico.Where(p => p.StampProduto == item.Split("|").First()).First().Stock_Fisico += Double.Parse(item.Split("|").Last());
+                        this.PecasServico.Where(p => p.StampProduto == item.Split("|")[0]).First().Stock_Fisico += Double.Parse(item.Split("|")[1]);
                     }
                 }
             }
