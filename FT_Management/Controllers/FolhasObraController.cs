@@ -97,7 +97,7 @@ namespace FT_Management.Controllers
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
             if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes) && !fo.EmGarantia) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!"); 
-            if ((fo.EmGarantia || fo.EquipamentoServico.Garantia) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
+            if ((fo.EmGarantia || fo.EquipamentoServico.Garantia) && string.IsNullOrEmpty(fo.SituacoesPendentes) && fo.TipoFolhaObra!="Instalação") ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
             fo.ValidarIntervencoes();
             if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
 
