@@ -868,7 +868,7 @@
         <footer class="modal-card-foot">
             @if (User.IsInRole("Admin"))
             {
-                <button type="button" class="button is-danger is-large is-fullwidth" onclick="document.getElementById('frmAdicionar').submit();" href="javascript:;">
+                <button type="button" class="button is-danger is-large is-fullwidth" onclick="document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();" href="javascript:;">
                     <span class="icon">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -1446,9 +1446,10 @@
 
     }
 
-    function PreencherEquipamento(designacao, stamp) {
+    function PreencherEquipamento(designacao, stamp, garantia) {
         $("#txtEquipamentoStamp").val(stamp);
         $("#txtEquipamento").val(designacao);
+        document.getElementById("chkGarantia").checked = garantia;
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
     }
@@ -1461,7 +1462,7 @@
             success: function (data) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"><thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th><th></th></tr></thead><tbody>";
                 $(data).each(function () {
-                    html += "<tr><td data-label='Marca'>" + this.marcaEquipamento + "</td><td data-label='Modelo'>" + this.modeloEquipamento + "</td><td data-label='N/S'>" + this.numeroSerieEquipamento + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
+                    html += "<tr><td data-label='Marca'>" + this.marcaEquipamento + "</td><td data-label='Modelo'>" + this.modeloEquipamento + "</td><td data-label='N/S'>" + this.numeroSerieEquipamento + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\", \"" + this.garantia + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
                 });
                 html += "</tbody></table></div></div>"
                 $('#modalEquipamentos').find('.modal-body').html(html);
