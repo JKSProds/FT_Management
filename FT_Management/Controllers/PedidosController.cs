@@ -451,7 +451,13 @@ namespace FT_Management.Controllers
             {
                 m.EstadoMarcacaoDesc = "Reagendar";
                 m.Utilizador = c.Utilizador;
-                MailContext.EnviarEmailMarcacaoSONAE(fo, m, 3);
+                if (m.Cliente.IdCliente == 878) {
+                    MailContext.EnviarEmailMarcacaoPD(fo, m, 3);
+                }
+                else
+                {
+                    MailContext.EnviarEmailMarcacaoSONAE(fo, m, 3);
+                }
             }
 
             phccontext.AtualizaMarcacao(m);
