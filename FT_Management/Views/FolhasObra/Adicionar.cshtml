@@ -699,7 +699,7 @@
                 &nbsp;
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1]; ValidarFolhaObra();">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="if (document.getElementById('chkSatisfeito').checked) { document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1]; ValidarFolhaObra(); } else { notifyError('Por favor confirme a sua satisfação para avancar!'); }">
                     <span class="icon">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </span>

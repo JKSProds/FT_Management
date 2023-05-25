@@ -1048,7 +1048,7 @@
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
-            if (fo.EmGarantia != fo.EquipamentoServico.Garantia) res += "O estado do Equipamento selecionado é "+(fo.EquipamentoServico.Garantia ? "GARANTIA" : "NÃO GARANTIA")+", mas o técnico selecionou "+(fo.EmGarantia ? "GARANTIA" : "NÃO GARANTIA")+"!\r\n";
+            if (fo.EmGarantia != fo.EquipamentoServico.Garantia) res += "O estado do Equipamento selecionado ("+fo.EquipamentoServico.NumeroSerieEquipamento + ") é "+(fo.EquipamentoServico.Garantia ? "GARANTIA" : "NÃO GARANTIA")+", mas o técnico selecionou "+(fo.EmGarantia ? "GARANTIA" : "NÃO GARANTIA")+"!\r\n";
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
             if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
             if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3) res += "É obrigatorio inserir pelo menos 3 anexos numa instalação!\r\n";
