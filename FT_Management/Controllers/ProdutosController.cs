@@ -138,7 +138,7 @@
             int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
             if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
-            if (u.Id == 0) return Json("Acesso Negado");
+            if (u.Id == 0) return Json("Acesso Negado - " + Api);
 
             _logger.LogDebug("Utilizador {1} [{2}] a gerar a guia global do armazem: {3}.", u.NomeCompleto, u.Id, id);
 
