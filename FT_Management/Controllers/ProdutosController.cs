@@ -129,12 +129,15 @@
 
         //Gerar guia global
         [HttpPost]
-        public JsonResult GuiaGlobal(int id)
+        public JsonResult GuiaGlobal(int id, string Api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
+            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            Utilizador u = context.ObterUtilizador(IdUtilizador);
+            if (u.Id == 0) return Json("Acesso Negado");
 
             _logger.LogDebug("Utilizador {1} [{2}] a gerar a guia global do armazem: {3}.", u.NomeCompleto, u.Id, id);
 
