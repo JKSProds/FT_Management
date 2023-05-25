@@ -128,6 +128,7 @@
         }
 
         //Gerar guia global
+        [AllowAnonymous]
         [HttpPost]
         public JsonResult GuiaGlobal(int id, string Api)
         {
