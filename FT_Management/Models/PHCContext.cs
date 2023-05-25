@@ -726,7 +726,7 @@
 
                 if (res[0].ToString() != "-1")
                 {
-                    fo.StampFO = res[2].ToString();
+                    fo.StampPA = res[2].ToString();
 
                     //CRIAR INTERVENÇÔES
                     for (int i = 0; i < fo.IntervencaosServico.Count(); i++)
@@ -756,7 +756,7 @@
                     res = CriarAT(fo);
 
                     //Obter Folha de Obra
-                    fo = ObterFolhaObra(fo.StampFO);
+                    fo = ObterFolhaObra(fo.StampPA);
                     res[1] = fo.IdAT;
                     res[3] = fo.IdFolhaObra.ToString();
 
@@ -784,7 +784,7 @@
                 string SQL_Query = "EXEC WEB_Intervencao_Gera ";
 
                 SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
-                SQL_Query += "@STAMP_PA = '" + fo.StampFO + "', ";
+                SQL_Query += "@STAMP_PA = '" + fo.StampPA + "', ";
                 SQL_Query += "@HORA_INI = '" + i.HoraInicio.ToShortTimeString() + "', ";
                 SQL_Query += "@HORA_FIM = '" + i.HoraFim.ToShortTimeString() + "', ";
                 SQL_Query += "@DATA = '" + i.DataServiço.ToString("yyyyMMdd") + "', ";
@@ -813,7 +813,7 @@
                 string SQL_Query = "EXEC WEB_AT_INSERE_PECA ";
 
                 SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
-                SQL_Query += "@STAMP_PA = '" + fo.StampFO + "', ";
+                SQL_Query += "@STAMP_PA = '" + fo.StampPA + "', ";
                 SQL_Query += "@STAMP_MH = '" + i.StampIntervencao + "', ";
                 SQL_Query += "@REF = '" + p.Ref_Produto + "', ";
                 SQL_Query += "@QTT = '" + p.Stock_Fisico + "', ";
@@ -872,7 +872,7 @@
                 string SQL_Query = "EXEC WEB_Gera_AT ";
 
                 SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
-                SQL_Query += "@STAMP_PA = '" + fo.StampFO + "', ";
+                SQL_Query += "@STAMP_PA = '" + fo.StampPA + "', ";
                 SQL_Query += "@STAMPS_MH = '" + string.Join(",", fo.IntervencaosServico.Select(x => x.StampIntervencao)) + "', ";
                 SQL_Query += "@STAMP_ASSINATURA = '" + CriarAssinatura(fo) + "', ";
                 SQL_Query += "@QASSINOU = '" + fo.ConferidoPor + "', ";
@@ -888,6 +888,63 @@
                 SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return res;
+
+        }
+
+        public List<string> CriarRMAF(FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+                string SQL_Query = "EXEC WEB_RMAF_Gera ";
+
+                SQL_Query += "@U_MARCACAOSTAMP = '" + fo.Marcacao.MarcacaoStamp + "', ";
+                SQL_Query += "@STAMP_CL = '" + fo.ClienteServico.ClienteStamp + "', ";
+                SQL_Query += "@STAMP_PA = '" + fo.StampPA + "', ";
+                SQL_Query += "@STAMP_MA = '" + fo.EquipamentoServico.EquipamentoStamp + "', ";
+                SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
+                SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return res;
+
+        }
+
+        public List<string> CriarRMAFLinhas(string Stamp, FolhaObra fo)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+               
+
+                foreach (var p in fo.PecasServico)
+                {
+                    string SQL_Query = "";
+
+                    SQL_Query = "EXEC WEB_RMAF_Cria_Linha ";
+
+                    SQL_Query += "@STAMP = '" + Stamp + "', ";
+                    SQL_Query += "@REF = '" + p.Ref_Produto + "', ";
+                    SQL_Query += "@QTT = '" + p.Stock_Fisico + "', ";
+                    SQL_Query += "@MOTIVO = '[" + p.MotivoGarantia + "] " + p.ObsGarantia + "', ";
+                    SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "';\r\n";
+
+                    res = ExecutarQuery(SQL_Query);
+                }
             }
 
             catch (Exception ex)

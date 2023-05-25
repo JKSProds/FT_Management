@@ -126,13 +126,12 @@
                                         Pesquisar todos os Equipamentos
                                     </span>
                                 </label>
-                                <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
                             </div>
                         </div>
                         <div class="column is-6 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded is-medium">
-                                    <input type="checkbox" asp-for="EmGarantia" id="chkGarantia" onchange="document.getElementById('chkPecaGarantia').checked = this.checked;document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !this.checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = this.checked;">
+                                    <input type="checkbox" asp-for="EmGarantia" id="chkGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
                                     <span class="check is-info"></span>
                                     <span class="control-label">
                                         @Html.DisplayNameFor(model => model.EmGarantia)
@@ -276,6 +275,15 @@
                                 </div>
                                 <div class="field has-addons is-pulled-right mb-2">
                                     <div class="control">
+                                        <label class="switch is-rounded is-large">
+                                            <input type="checkbox" id="chkGarantiaSelecionadaPeca" onchange="document.getElementById('chkPecaGarantia').checked = this.checked;">
+                                            <span class="check is-info"></span>
+                                            <span class="control-label">
+                                                Garantia?
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="control">
                                         <button type="button" class="button is-danger disable-dbl-tap-zoom"
                                                 onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
                                             <span class="icon">
@@ -294,11 +302,12 @@
                                             </span>
                                         </button>
                                     </div>
+
                                 </div>
                             </div>
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
-                                        onclick="if (document.getElementById('chkGarantia').checked | document.getElementById('chkEquipamentoGarantia').checked) { Bulma('#modalPecaGarantia').modal().open(); } else {
+                                        onclick="if (document.getElementById('chkGarantiaSelecionadaPeca').checked || document.getElementById('chkGarantia').checked) { document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;Bulma('#modalPecaGarantia').modal().open(); } else {
         ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value);
                                         }"
                                         disabled id="btnAdicionarPeca">
@@ -405,7 +414,7 @@
             <input type="text" class="input" asp-for="IdMarcacao">
             <input type="text" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
             <input type="checkbox" class="checkbox" asp-for="Piquete" id="chkPiquete">
-            <input type="checkbox" class="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia">
+            <input type="checkbox" class="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
 
             <div id="divChk">
                 <input type="checkbox" asp-for="Avisar" id="chkAvisar">
@@ -1058,8 +1067,8 @@
                 document.getElementById('txtValidaIntervencoes').innerHTML += e.childNodes[0].innerText + "<br>";
 
 
-                var timeStart = moment(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' ')[1], 'DD/MM/YYYY hh:mm', true);
-                var timeEnd = moment(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' - ')[1], 'DD/MM/YYYY hh:mm', true);
+                var timeStart = moment(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' ')[1], 'DD/MM/YYYY hh:mm', 'pt');
+                var timeEnd = moment(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' - ')[1], 'DD/MM/YYYY hh:mm', 'pt');
 
                 periodo += moment.duration(timeEnd.diff(timeStart)).asHours();
 
@@ -1227,6 +1236,10 @@
 
     //PEÇAS
     function AdicionarPeca(stamp, ref, desig, qtd, garantia, motivo, obs) {
+        if (garantia === undefined) garantia = false;
+        if (motivo === undefined) motivo = '';
+        if (obs === undefined) obs = '';
+
         document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd + '|' + garantia + '|' + motivo + '|' + obs};`;
         notify("Peça " + ref + " adicionada com sucesso!");
@@ -1253,7 +1266,7 @@
         document.getElementById('ListaPecas').value = '';
 
         pecas.split(";").forEach(function (item) {
-            ObterPeca(item.split("|")[0], item.split("|")[1]);
+            ObterPeca(item.split("|")[0], item.split("|")[1], item.split("|")[2], item.split("|")[3], item.split("|")[4]);
         });
     }
 
@@ -1364,10 +1377,12 @@
         document.getElementById('txtStampPeca').value = '';
         document.getElementById("btnAdicionarPeca").disabled = true;
         document.getElementById("txtQtd").value = '1';
-        document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantia').checked;
+        document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
+        document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked;
         document.getElementById('txtObsPecaGarantia').value = '';
         document.getElementById('lstMotivosAvariaNaoGarantia').selectedIndex = 0;
         document.getElementById('lstMotivosAvariaGarantia').selectedIndex = 0;
+        document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;
     }
 
     //CLIENTES
@@ -1434,6 +1449,7 @@
                 document.getElementById("btnObterHistorico").disabled = false;
                 document.getElementById("chkGarantia").checked = i.item.garantia;
                 document.getElementById("chkEquipamentoGarantia").checked = i.item.garantia;
+                document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
             },
             minLength: 1
         }).css('z-index', 10);
@@ -1452,6 +1468,7 @@
         $("#txtEquipamento").val(designacao);
         document.getElementById("chkGarantia").checked = garantia;
         document.getElementById("chkEquipamentoGarantia").checked = i.item.garantia;
+        document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
     }

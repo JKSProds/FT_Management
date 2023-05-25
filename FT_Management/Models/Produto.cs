@@ -33,6 +33,9 @@
         public List<Equipamento> Equipamentos { get; set; }
         public double Valor { get; set; }
         public bool Servico { get { return this.Ref_Produto.StartsWith("SRV.15"); } }
+        public bool Garantia { get; set; }
+        public string MotivoGarantia { get; set; }
+        public string ObsGarantia { get; set; }
 
         public Produto()
         {
