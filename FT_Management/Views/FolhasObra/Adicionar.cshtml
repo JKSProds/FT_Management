@@ -298,7 +298,7 @@
                             </div>
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
-                                        onclick="if (document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked) { Bulma('#modalPecaGarantia').modal().open(); } else {
+                                        onclick="if (document.getElementById('chkGarantia').checked | document.getElementById('chkEquipamentoGarantia').checked) { Bulma('#modalPecaGarantia').modal().open(); } else {
         ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value);
                                         }"
                                         disabled id="btnAdicionarPeca">
@@ -398,14 +398,14 @@
     <div style="display:none">
         <div class="columns is-multiline mx-1 ">
             <input type="text" class="input" asp-for="FicheirosAnexo" id="Ficheiros">
-            <input type="hidden" asp-for="ClienteServico.NomeCliente" id="txtIdCliente" />
-            <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
-            <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
+            <input type="text" class="input" asp-for="ClienteServico.NomeCliente" id="txtIdCliente" />
+            <input type="text" class="input" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
+            <input type="text" class="input" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
             <input type="text" class="input" asp-for="ReferenciaServico">
             <input type="text" class="input" asp-for="IdMarcacao">
-            <input type="checkbox" asp-for="Piquete" id="chkPiquete">
-            <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
-            <input type="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia">
+            <input type="text" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
+            <input type="checkbox" class="checkbox" asp-for="Piquete" id="chkPiquete">
+            <input type="checkbox" class="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia">
 
             <div id="divChk">
                 <input type="checkbox" asp-for="Avisar" id="chkAvisar">
@@ -1433,6 +1433,7 @@
                 $("#txtEquipamentoStamp").val(i.item.val);
                 document.getElementById("btnObterHistorico").disabled = false;
                 document.getElementById("chkGarantia").checked = i.item.garantia;
+                document.getElementById("chkEquipamentoGarantia").checked = i.item.garantia;
             },
             minLength: 1
         }).css('z-index', 10);
@@ -1450,6 +1451,7 @@
         $("#txtEquipamentoStamp").val(stamp);
         $("#txtEquipamento").val(designacao);
         document.getElementById("chkGarantia").checked = garantia;
+        document.getElementById("chkEquipamentoGarantia").checked = i.item.garantia;
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
     }
