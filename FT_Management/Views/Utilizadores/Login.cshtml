@@ -84,7 +84,7 @@
                                 <label class="label">Nome de Utilizador</label>
                                 <div class="control has-icons-left">
                                     <input class="input" type="text" placeholder="Insira o seu nome de utilizador"
-                                        asp-for="NomeUtilizador" id="inputNome">
+                                           asp-for="NomeUtilizador" id="inputNome">
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-user"></i>
                                     </span>
@@ -94,22 +94,29 @@
                                 <label class="label">Palavra-Passe</label>
                                 <div class="control has-icons-left">
                                     <input class="input" type="password" placeholder="Insira a sua palavra-passe"
-                                        asp-for="Password" id="inputPassword">
+                                           asp-for="Password" id="inputPassword">
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-lock"></i>
                                     </span>
                                 </div>
                             </div>
-
                             <div class="field">
                                 <div class="control">
-                                    <button class="button is-link is-fullwidth is-large" id="login-button">Iniciar
-                                        Sessão</button>
+                                    <button class="button is-link is-fullwidth is-large" id="login-button">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-right-to-bracket fa-beat"></i>
+                                        </span>
+                                        <span>
+                                            Iniciar
+                                            Sessão
+                                        </span>
+                                        
+                                    </button>
                                 </div>
                             </div>
                             <div class="has-text-centered">
                                 <p>
-                                <div asp-validation-summary="ModelOnly" id="divError" class="has-text-danger"></div>
+                                    <div asp-validation-summary="ModelOnly" id="divError" class="has-text-danger"></div>
                                 </p>
                             </div>
                             <input hidden name="ReturnUrl" value=@ViewData["ReturnUrl"]>
