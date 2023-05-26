@@ -1467,7 +1467,7 @@
         $("#txtEquipamentoStamp").val(stamp);
         $("#txtEquipamento").val(designacao);
         document.getElementById("chkGarantia").checked = garantia;
-        document.getElementById("chkEquipamentoGarantia").checked = i.item.garantia;
+        document.getElementById("chkEquipamentoGarantia").checked = garantia;
         document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
