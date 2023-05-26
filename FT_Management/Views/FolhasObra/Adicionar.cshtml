@@ -1466,8 +1466,8 @@
     function PreencherEquipamento(designacao, stamp, garantia) {
         $("#txtEquipamentoStamp").val(stamp);
         $("#txtEquipamento").val(designacao);
-        document.getElementById("chkGarantia").checked = garantia;
-        document.getElementById("chkEquipamentoGarantia").checked = garantia;
+        document.getElementById("chkGarantia").checked = garantia == 'true';
+        document.getElementById("chkEquipamentoGarantia").checked = garantia == 'true';
         document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
