@@ -1300,7 +1300,7 @@
                     {
                         if (LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).Count() > 0) {
                             LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).First().MotivoGarantia += result["lobs"];
-                            LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).First().Garantia = result["ndos"].ToString().Trim() == "105";
+                            if (!LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).First().Garantia) LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).First().Garantia = result["ndos"].ToString().Trim() == "105";
 
                         } else {
                             LstProduto.Add(new Produto()
