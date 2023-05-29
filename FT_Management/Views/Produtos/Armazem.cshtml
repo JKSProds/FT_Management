@@ -36,17 +36,26 @@
                         <span class="icon">
                             <i class="fas  fa-dolly-flatbed"></i>
                         </span>
-                        <span>Stock</span></a>
+                        <span>Stock</span>
+                    </a>
                     <a class="button is-info" onclick="Bulma('#modalGerarPedidoTransferencia').modal().open();">
                         <span class="icon">
                             <i class="fas fa-file-alt"></i>
                         </span>
-                        <span>Nova Transferência</span></a>
+                        <span>Nova Transferência</span>
+                    </a>
                     <a class="button is-success" onclick="Bulma('#modalGerarGuiaGlobal').modal().open();">
                         <span class="icon">
                             <i class="fa-solid fa-file-export"></i>
                         </span>
-                        <span>Guia Global</span></a>
+                        <span>Guia Global</span>
+                    </a>
+                    <a class="button is-warning" onclick="ObterGarantias(@Model.ArmazemId)">
+                        <span class="icon">
+                            <i class="fa-solid fa-gift"></i>
+                        </span>
+                        <span>Garantias</span>
+                    </a>
                 </div>
                 <input hidden id="hiddenSelectedGT" name="gt" value="@ViewData["GT"]" />
             </form>
@@ -145,6 +154,30 @@ else
             </button>
             <button type="button" class="button is-large is-fullwidth is-danger"
                 onclick="Bulma('#modalGerarGuiaGlobal').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div id="modalRMAF" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Garantias</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+               
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-large is-fullwidth is-danger"
+                    onclick="Bulma('#modalRMAF').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -260,6 +293,38 @@ else
         var load = document.getElementById('chkPecas').checked ? 1 : 0;
         document.getElementById('pageloader').classList.remove('is-active');
         window.location.href = "/Dossiers/Transferencia/" + id + "?armazem=" + armazem + "&load=" + load;
+    }
+
+    function ObterGarantias(id) {
+        document.getElementById('pageloader').classList.add('is-active');
+        $.ajax({
+            url: '/Produtos/Garantias/' + id,
+            type: "GET",
+            success: function (response) {
+                var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th>Cliente</th><th style=\"width: 110px\">Equipamento</th><th>Peça</th><th>Estado</th><th></th></tr></thead><tbody>";
+                $(response).each(function () {
+                    var s = this;
+                    $(this.linhas).each(function () {
+                        if (this.referencia != '') html += "<tr><td data-label='Cliente'>" + s.folhaObra.clienteServico.nomeCliente + "</td><td data-label='Equipamento'>" + s.folhaObra.equipamentoServico.numeroSerieEquipamento + "</td><td data-label='Peça'>" + this.designacao + "</td><td data-label='Estado'>" + s.estado + "</td><td class='is-actions-cell buttons'><button class='button is-info is-fullwidth' type='button' onclick='window.open(\"/Produtos/EtiquetaGarantia/" + s.folhaObra.stampFO + "?peca=" + this.referencia + "\")'><span class='icon is-small'><i class='fa-solid fa-qrcode'></i></span></button><button class='button is-success is-fullwidth' type='button' onclick='ValidarPecaGarantia(\""+s.stampDossier+"\")'><span class='icon is-small'><i class='fa-solid fa-check'></i></span></button></td></tr>";
+                    });
+                });
+                html += "</tbody></table></div></div>"
+                $('#modalRMAF').find('.modal-body').html(html);
+                if (response.length > 0) { Bulma('#modalRMAF').modal().open(); } else {
+                    notifyError('Não exisitem peças pendentes em garantia!')
+                }
+
+                document.getElementById('pageloader').classList.remove('is-active');
+            },
+            error: function (response) {
+                document.getElementById('pageloader').classList.remove('is-active');
+                notifyError('Ocorreu um erro ao obter os dossiers em garantia!');
+            },
+            failure: function (response) {
+                document.getElementById('pageloader').classList.remove('is-active');
+                notifyError('Falha ao obter os dossiers em garantia!');
+            }
+        });
     }
 
 </script>

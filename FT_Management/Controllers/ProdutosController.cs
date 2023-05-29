@@ -127,6 +127,22 @@
             return View(a);
         }
 
+        //Obter peças em uso num armazem
+        [HttpGet]
+        public ActionResult Garantias(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == id).DefaultIfEmpty().First();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as garantias pendentes. Tecnico: {3}", u.NomeCompleto, u.Id, t.IdPHC);
+            if (t.IdPHC == 0) return StatusCode(500);
+
+            return Json(phccontext.ObterDossiersRMATecnico(t));
+        }
+
         //Gerar guia global
         [AllowAnonymous]
         [HttpPost]

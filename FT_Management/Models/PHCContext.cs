@@ -3405,9 +3405,9 @@
                             DataDossier = DateTime.Parse(result["dataobra"].ToString()),
                             Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["ousrinis"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
                             Serie = int.Parse(result["ndos"].ToString()),
-                            Cliente = int.Parse(result["ndos"].ToString()) == 2 || int.Parse(result["ndos"].ToString()) == 10 || int.Parse(result["no"].ToString()) == 1 ? new Cliente() { NomeCliente = result["nome"].ToString() } : ObterClienteSimples(int.Parse(result["no"].ToString()), int.Parse(result["estab"].ToString())),
+                            Cliente =  new Cliente() { NomeCliente = result["nome"].ToString() },
                             Referencia = result["obranome"].ToString(),
-                            Estado = result["u_estado"].ToString(),
+                            Estado = result["tabela1"].ToString(),
                             Obs = result["obstab2"].ToString(),
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
                             EditadoPor = result["usrinis"].ToString(),
@@ -3433,6 +3433,10 @@
         public List<Dossier> ObterDossiers(DateTime Data, string Filtro, int Serie)
         {
             return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where " + (string.IsNullOrEmpty(Filtro) ? "dataobra='" + Data.ToString("yyyy-MM-dd") + "'" : "(obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%')") + (Serie > 0 ? " AND ndos=" + Serie : "") + " order by nmdos", false, false, false, false);
+        }
+        public List<Dossier> ObterDossiersRMATecnico(Utilizador u)
+        {
+            return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where tecnico=" + u.IdPHC + " and fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
