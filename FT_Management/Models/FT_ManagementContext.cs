@@ -2582,7 +2582,7 @@ namespace FT_Management.Models
                         HorizontalAlignment = HorizontalAlignment.Center,
                         WordBreaking = WordBreaking.Normal,
                         WrappingLength = width,
-                    }, fo.SituacoesPendentes, Color.Black);
+                    }, p.MotivoGarantia, Color.Black);
 
                     y += 220;
                     imageContext.DrawText(new TextOptions(fontHeader)

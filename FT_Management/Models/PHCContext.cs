@@ -1298,15 +1298,23 @@
                 {
                     while (result.Read())
                     {
-                        LstProduto.Add(new Produto()
-                        {
-                            Armazem_ID = int.Parse(result["nopat"].ToString().Trim()),
-                            Ref_Produto = result["ref"].ToString().Trim(),
-                            Designacao_Produto = result["design"].ToString().Trim(),
-                            TipoUn = "UN",
-                            Pos_Stock = result["guiatransporte"].ToString().Trim(),
-                            Stock_Fisico = double.Parse(result["qtt"].ToString().Trim())
-                        });
+                        if (LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).Count() > 0) {
+                            LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).First().MotivoGarantia += result["lobs"];
+                            LstProduto.Where(p => p.Ref_Produto == result["ref"].ToString().Trim()).First().Garantia = result["ndos"].ToString().Trim() == "105";
+
+                        } else {
+                            LstProduto.Add(new Produto()
+                            {
+                                Armazem_ID = int.Parse(result["nopat"].ToString().Trim()),
+                                Ref_Produto = result["ref"].ToString().Trim(),
+                                Designacao_Produto = result["design"].ToString().Trim(),
+                                TipoUn = "UN",
+                                Pos_Stock = result["guiatransporte"].ToString().Trim(),
+                                Stock_Fisico = double.Parse(result["qtt"].ToString().Trim()),
+                                MotivoGarantia = result["lobs"].ToString().Trim(),
+                                Garantia = result["ndos"].ToString().Trim() == "105"
+                            });;
+                        }  
                     }
                 }
 
@@ -1321,7 +1329,7 @@
         }
         public List<Produto> ObterPecas(int IdFolhaObra)
         {
-            return ObterPecas("select pa.nopat, bi.ref, bi.design, bi.qtt, (SELECT TOP 1 CONCAT(obrano, ' - AT ', atcodeid) from V_DOCS_GLOBAL WHERE ar2mazem=bi.armazem and dataobra<bi.dataobra and bi.ref not like '%SRV%' order by dataobra desc) as guiatransporte from pa inner join bo on bo.pastamp=pa.pastamp inner join bi on bi.obrano=bo.obrano where ref!=''  and bo.ndos=49 and pa.nopat=" + IdFolhaObra + " order by ref;");
+            return ObterPecas("select bi.ndos, pa.nopat, bi.ref, bi.design, bi.qtt, bi.lobs, (SELECT TOP 1 CONCAT(obrano, ' - AT ', atcodeid) from V_DOCS_GLOBAL WHERE ar2mazem=bi.armazem and dataobra<bi.dataobra and bi.ref not like '%SRV%' order by dataobra desc) as guiatransporte from bi inner JOIN bo on bo.bostamp=bi.bostamp inner join pa on pa.pastamp=bo.pastamp where pa.nopat="+ IdFolhaObra +" and ref != '' order by ref, ndos;");
         }
         public List<Movimentos> ObterPecasGuiaTransporte(string GuiaTransporte, Utilizador u)
         {
