@@ -107,6 +107,7 @@ namespace FT_Management.Controllers
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
                 fo.ValidarTipoFolhaObra();
+                fo.SituacoesPendentes += "\r\n" + string.Join(" | ", fo.PecasServico.Select(x => x.Ref_Produto + " - " + "[" + x.MotivoGarantia + "] " + x.ObsGarantia));
 
                 if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) phccontext.AtualizarClienteEquipamento(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
 
@@ -143,7 +144,7 @@ namespace FT_Management.Controllers
                     phccontext.AtualizaMarcacao(m);
                     phccontext.FecharFolhaObra(fo);
                     phccontext.CriarAnexosFolhaObra(fo);
-                    if (fo.PecasServico.Where(p => !string.IsNullOrEmpty(p.MotivoGarantia)).Count() > 0) phccontext.CriarRMAFLinhas(phccontext.CriarRMAF(fo)[2], fo);
+                    if (fo.PecasServico.Where(p => p.Garantia).Count() > 0) phccontext.CriarRMAFLinhas(phccontext.CriarRMAF(fo)[2], fo);
                     fo = phccontext.ObterFolhaObra(fo.IdFolhaObra);
 
                     if (Estado == 2) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/Pedidos/" + fo.Utilizador.IdPHC });

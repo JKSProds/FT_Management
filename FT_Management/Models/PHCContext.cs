@@ -931,7 +931,7 @@
             {
                
 
-                foreach (var p in fo.PecasServico)
+                foreach (var p in fo.PecasServico.Where(p => p.Garantia))
                 {
                     string SQL_Query = "";
 
