@@ -253,11 +253,12 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            FolhaObra fo = phccontext.ObterFolhaObra(id);
+            Dossier d = phccontext.ObterDossier(id);
+            d.FolhaObra.PecasServico = phccontext.ObterPecas(d.FolhaObra.IdFolhaObra);
 
-            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta de garantia de peca: FO - {3}, Ref. {4}.", u.NomeCompleto, u.Id, fo.IdFolhaObra, peca);
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta de garantia de peca: FO - {3}, Ref. {4}.", u.NomeCompleto, u.Id, d.FolhaObra.IdFolhaObra, peca);
 
-            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaPecaGarantia(fo.PecasServico.Where(p => p.Ref_Produto == peca).First(), fo), 801, 504), "application/pdf");
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaPecaGarantia(d, d.FolhaObra.PecasServico.Where(p => p.Ref_Produto == peca).First()), 801, 504), "application/pdf");
         }
     }
 }

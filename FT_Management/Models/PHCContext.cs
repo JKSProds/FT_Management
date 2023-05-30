@@ -1111,6 +1111,8 @@
                     {
                         LstFolhaObra.Add(new FolhaObra()
                         {
+                            EquipamentoServico = new Equipamento() { NumeroSerieEquipamento = result["serie"].ToString().Trim() },
+                            ClienteServico = new Cliente() { NomeCliente = result["nome"].ToString().Trim() },
                             StampFO = result["pastamp"].ToString(),
                             IdFolhaObra = int.Parse(result["nopat"].ToString().Trim()),
                             DataServico = DateTime.Parse(result["pdata"].ToString().Trim()),
@@ -3433,7 +3435,7 @@
                             EditadoPor = result["usrinis"].ToString(),
                             Fechado = result["fechada"].ToString() == "True"
                         });
-                        if (LoadFolhaObra) LstDossiers.Last().FolhaObra = ObterFolhaObra(result["pastamp"].ToString());
+                        if (LoadFolhaObra) LstDossiers.Last().FolhaObra = ObterFolhaObraSimples(result["pastamp"].ToString());
                         if (LoadMarcacao) LstDossiers.Last().Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString());
                         if (LoadLinhas) LstDossiers.Last().Linhas = ObterLinhasDossier(LstDossiers.Last().StampDossier);
                         if (LoadAnexos) LstDossiers.Last().Anexos = ObterAnexosDossier(LstDossiers.Last().StampDossier);
