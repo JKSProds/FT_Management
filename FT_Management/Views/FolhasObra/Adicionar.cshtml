@@ -385,7 +385,7 @@
                                     <button type="button" class="mb-3 button is-warning is-large is-pulled-right is-fullwidth"
                                             onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                                         <span class="icon is-small">
-                                            <i class="fas fa-plus"></i>
+                                            <i class="fa-solid fa-paperclip"></i>
                                         </span>
                                         <span>Adicionar Anexos</span>
                                     </button>
@@ -1020,28 +1020,6 @@
                 }
             });
     }
-
-    function MostrarMotivosAvaria() {
-        $.ajax({
-            type: "POST",
-            url: "/FolhasObra/Motivos",
-            data: $("#frmAdicionar").serialize(),
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-            success: function (result) {
-                Bulma('#modalValidarCliente').modal().close();
-                $(function () {
-                    document.getElementById("txtMensagens").value = result;
-                    if (result != "") {
-                        Bulma('#modalValidacao').modal().open();
-                    } else {
-                        notify("Folha de Obra sem mensagens de validação!");
-                        AbrirMensagens();
-                    }
-                });
-            }
-        });
-    }
-
 
     function ValidarCliente() {
         document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-success');
