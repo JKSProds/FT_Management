@@ -1,0 +1,102 @@
+﻿@model IEnumerable<FT_Management.Models.Dossier>
+
+@{
+    ViewData["Title"] = "Garantias";
+}
+
+<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title"><b>Garantias</b></p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+
+@if (Model.Count() == 0)
+{
+    <br />
+    <button class="button is-danger is-fullwidth is-disabled">Não foram encontradas garantias!</button>
+}
+else
+{
+    <div class="container">
+        <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+                <table class="table is-hoverable is-fullwidth" id="tblProdutos">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.First().FolhaObra.ClienteServico.NomeCliente)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.First().FolhaObra.EquipamentoServico.NumeroSerieEquipamento)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.First().FolhaObra.Utilizador.NomeCompleto)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.First().Linhas)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.First().Estado)
+                            </th>
+                            <th>
+                               
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                            {
+                            @foreach (var l in item.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
+                                {
+                                <tr style="width:auto">
+                                    <td data-label="@Html.DisplayNameFor(model => model.First().FolhaObra.ClienteServico.NomeCliente)">
+                                        <span>@item.FolhaObra.ClienteServico.NomeCliente</span>
+                                    </td>
+                                    <td data-label="@Html.DisplayNameFor(model => model.First().FolhaObra.EquipamentoServico.NumeroSerieEquipamento)">
+                                        <span>@item.FolhaObra.EquipamentoServico.NumeroSerieEquipamento</span>
+                                    </td>
+                                    <td data-label="@Html.DisplayNameFor(model => model.First().FolhaObra.Utilizador.NomeCompleto)">
+                                        <span>@item.FolhaObra.Utilizador.NomeCompleto</span>
+                                    </td>
+                                    <td data-label="@Html.DisplayNameFor(model => model.First().Linhas)">
+                                        <span>@l.Designacao</span>
+                                    </td>
+                                    <td data-label="@Html.DisplayNameFor(model => model.First().Estado)">
+                                        <span>@item.Estado</span>
+                                    </td>
+                                    <td class="is-actions-cell">
+                                        <div class="buttons" style="width:100%">
+                                        <button class="button is-info is-fullwidth" type="button" onclick="window.open('/Produtos/EtiquetaGarantia/@item.FolhaObra.StampFO?peca=@l.Referencia')">
+                                            <span class="icon is-small">
+                                            <i class="fa-solid fa-qrcode"></i>
+                                                </span>
+                                        </button>
+                                        <button class="button is-success is-fullwidth" type="button" onclick="AtualizarEstadoGarantia('@item.StampDossier')">
+                                            <span class="icon is-small">
+                                            <i class="fa-solid fa-check"></i>
+                                            </span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+                            }
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+<br />
+

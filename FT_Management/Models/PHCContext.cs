@@ -3458,6 +3458,10 @@
         {
             return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where tecnico=" + u.IdPHC + " and fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
         }
+        public List<Dossier> ObterDossiersRMA()
+        {
+            return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
+        }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
         {

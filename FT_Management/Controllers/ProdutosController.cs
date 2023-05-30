@@ -127,9 +127,9 @@
             return View(a);
         }
 
-        //Obter peças em uso num armazem
+        //Obter peças em garantia num armazem
         [HttpGet]
-        public ActionResult Garantias(int id)
+        public ActionResult Garantia(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -143,9 +143,24 @@
             return Json(phccontext.ObterDossiersRMATecnico(t));
         }
 
+        //Obter peças em garantia
+        [HttpGet]
+        [Authorize(Roles = "Admin, Escritorio")]
+        public ActionResult Garantias()
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as garantias pendentes de todos os tecnicos!", u.NomeCompleto, u.Id);
+
+            return View(phccontext.ObterDossiersRMA());
+        }
+
         //Atualizar estado do RMAF
         [HttpPut]
-        public ActionResult Garantias(string id)
+        public ActionResult Garantia(string id)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

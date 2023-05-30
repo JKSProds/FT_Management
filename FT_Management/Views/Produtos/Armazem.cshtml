@@ -298,7 +298,7 @@ else
     function ObterGarantias(id) {
         document.getElementById('pageloader').classList.add('is-active');
         $.ajax({
-            url: '/Produtos/Garantias/' + id,
+            url: '/Produtos/Garantia/' + id,
             type: "GET",
             success: function (response) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th>Cliente</th><th style=\"width: 110px\">Equipamento</th><th>Peça</th><th>Estado</th><th></th></tr></thead><tbody>";
@@ -330,7 +330,7 @@ else
     function AtualizarEstadoGarantia(id) {
         document.getElementById('pageloader').classList.add('is-active');
         $.ajax({
-            url: '/Produtos/Garantias/' + id,
+            url: '/Produtos/Garantia/' + id,
             type: "PUT",
             success: function (response) {
                 notifyError('Atualizado estado da garantia com sucesso!');
