@@ -3061,22 +3061,6 @@ namespace FT_Management.Models
             db.Connection.Close();
         }
 
-        public int ValidarCodigo(string stamp)
-        {
-            int res = 0;
-            string sqlQuery = "SELECT EstadoCodigo FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "';";
-
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    res = int.Parse(result[0]);
-                }
-            }
-            return res;
-        }
-
         public Codigo ObterCodigo(string stamp)
         {
             Codigo c = new Codigo();

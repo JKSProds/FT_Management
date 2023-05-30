@@ -313,8 +313,9 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             _logger.LogDebug("Utilizador {1} [{2}] a tentar validar o codigo de uma folha de obra: Codigo - {3}.", u.NomeCompleto, u.Id, id);
+            Codigo c = context.ObterCodigo(id);
 
-            return Content(context.ValidarCodigo(id).ToString());
+            return Json(c.Estado + "|" + c.ValidadoPor.NomeCompleto);
         }
 
 

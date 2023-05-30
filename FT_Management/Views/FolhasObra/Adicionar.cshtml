@@ -1106,15 +1106,16 @@
             type: "POST",
             url: "/FolhasObra/ValidarCodigo/" + stamp,
             success: function (result) {
+                console.log(result);
                 $(function () {
-                    if (result == "1") {
-                        notify("Código Aprovado");
+                    if (result.split("|")[0] == "1") {
+                        notify("Código Aprovado pelo utilizador " + result.split("|")[1]);
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
                         document.getElementById('pageloader').classList.add('is-active');
                         document.getElementById('frmAdicionar').submit();
-                    } else if (result == "2") {
-                        notifyError("Código Rejeitado");
+                    } else if (result.split("|")[0] == "2") {
+                        notifyError("Código Rejeitado pelo utilizador " + result.split("|")[1]);
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
                     }
