@@ -2590,7 +2590,7 @@ namespace FT_Management.Models
                         TextAlignment = TextAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y)
-                    },d.FolhaObra.EquipamentoServico.NumeroSerieEquipamento, Color.Black);
+                    },"N/S: " + d.FolhaObra.EquipamentoServico.NumeroSerieEquipamento, Color.Black);
 
                     var r = new RectangularPolygon(10, y, width - 20, 90);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
