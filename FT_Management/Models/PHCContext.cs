@@ -29,7 +29,7 @@
 
             try
             {
-                Console.WriteLine(SQL_Query);
+                Console.WriteLine("Query: " + SQL_Query);
 
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
@@ -69,6 +69,7 @@
                 Console.WriteLine("Não foi possivel executar query.\r\n(Exception: " + ex.Message + ")");
             }
 
+            Console.WriteLine("Resultado: " + string.Join(" | ", res.Select(x => x)));
             return res;
         }
 
