@@ -819,7 +819,8 @@
                 SQL_Query += "@QTT = '" + p.Stock_Fisico + "', ";
                 SQL_Query += "@SERIE = '" + "" + "', ";
                 SQL_Query += "@TECNICO = '" + i.IdTecnico + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + i.NomeTecnico + "'; ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + i.NomeTecnico + "', ";
+                SQL_Query += "@GARANTIA = '" + (p.Garantia ? "1" : "0") + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
 
