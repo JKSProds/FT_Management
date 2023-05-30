@@ -164,7 +164,7 @@
             return Convert.ToBase64String(imageBytes); ;
         }
 
-        public List<string> GerarGuiaGlobal(int IdArmazem)
+        public List<string> GerarGuiaGlobal(int IdArmazem, Utilizador u)
         {
             List<string> res = new List<string>() { "-1", "Erro", "" };
             try
@@ -174,6 +174,8 @@
                 SQL_Query += "@ARMAZEM = '" + IdArmazem + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
+
+                ChatContext.EnviarNotificacaoGuiaGlobal(u);
             }
 
             catch (Exception ex)

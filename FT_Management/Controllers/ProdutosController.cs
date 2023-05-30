@@ -192,7 +192,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a gerar a guia global do armazem: {3}.", u.NomeCompleto, u.Id, id);
 
-            return Json(phccontext.GerarGuiaGlobal(id));
+            return Json(phccontext.GerarGuiaGlobal(id, u));
         }
 
         //Imprimir etiqueta normal

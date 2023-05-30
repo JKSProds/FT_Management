@@ -91,6 +91,14 @@ namespace FT_Management.Models
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
+
+        public static bool EnviarNotificacaoGuiaGlobal(Utilizador u)
+        {
+            string Mensagem = "Foi gerada com sucesso a sua guia global.\r\nPor requisite a impressão/envio da sua guia!";
+
+            return EnviarMensagem(u.ChatToken, Mensagem);
+        }
+
         public static List<KeyValuePair<String, String>> ObterChatsAtivos()
         {
             List<KeyValuePair<string, string>> LstChats = new List<KeyValuePair<string, string>>();
