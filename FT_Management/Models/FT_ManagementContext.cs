@@ -2601,7 +2601,7 @@ namespace FT_Management.Models
                         TextAlignment = TextAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y),
                         HorizontalAlignment = HorizontalAlignment.Center
-                    }, "RMA Fornecedor Nº " + d.IdDossier.ToString() + " | Nº da Marc. " + d.Marcacao.IdMarcacao, Color.Black);
+                    }, "RMA Fornecedor Nº " + d.IdDossier.ToString() + " | Marcação Nº " + d.Marcacao.IdMarcacao, Color.Black);
 
                 });
 
