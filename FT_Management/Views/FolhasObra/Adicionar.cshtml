@@ -308,7 +308,7 @@
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
                                         onclick="if (document.getElementById('chkGarantiaSelecionadaPeca').checked || document.getElementById('chkGarantia').checked) { document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;Bulma('#modalPecaGarantia').modal().open(); } else {
-        ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value);
+        ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, false, '', '');
                                         }"
                                         disabled id="btnAdicionarPeca">
                                     <span class="icon">
@@ -1236,11 +1236,7 @@
 
     //PEÇAS
     function AdicionarPeca(stamp, ref, desig, qtd, garantia, motivo, obs) {
-        if (garantia === undefined) garantia = false;
-        if (motivo === undefined) motivo = '';
-        if (obs === undefined) obs = '';
-
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item ` + (garantia ? "has-background-success-light" : "has-background-danger-light") +`" id="${stamp}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN) - ' + (garantia ? ' GARANTIA ' : ' N/GARANTIA ')}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd + '|' + garantia + '|' + motivo + '|' + obs};`;
         notify("Peça " + ref + " adicionada com sucesso!");
 
