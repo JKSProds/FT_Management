@@ -333,7 +333,7 @@ else
             url: '/Produtos/Garantia/' + id,
             type: "PUT",
             success: function (response) {
-                notifyError('Atualizado estado da garantia com sucesso!');
+                notify('Atualizado estado da garantia com sucesso!');
                 ObterGarantias(@Model.ArmazemId);
             },
             error: function (response) {

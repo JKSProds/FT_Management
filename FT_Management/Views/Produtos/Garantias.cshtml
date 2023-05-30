@@ -88,7 +88,7 @@ else
                                                     <i class="fa-solid fa-qrcode"></i>
                                                 </span>
                                             </button>
-                                            <button class="button is-success is-fullwidth" type="button" onclick="AtualizarEstadoGarantia('@item.StampDossier')">
+                                            <button class="button is-success is-fullwidth" type="button" onclick="document.getElementById('txtHiddenStamp').value = '@item.StampDossier'; Bulma('#modalConfirmarAtualizarGarantia').modal().open();">
                                                 <span class="icon is-small">
                                                     <i class="fa-solid fa-check"></i>
                                                 </span>
@@ -105,4 +105,56 @@ else
     </div>
 }
 <br />
+<input id="txtHiddenStamp" hidden />
 
+<div id="modalConfirmarAtualizarGarantia" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Atualizar Garantia</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body">
+                <p>Tem a certeza que deseja dar como entregue a peça selecionada?</p>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-info is-fullwidth is-large" type="button"
+                    onclick="AtualizarEstadoGarantia(document.getElementById('txtHiddenStamp').value)">
+                <span class="icon">
+                    <i class="fa-solid fa-check"></i>
+                </span>
+                <span>Sim</span>
+            </button>
+            <button type="button" class="button is-large is-fullwidth is-danger"
+                    onclick="Bulma('#modalConfirmarAtualizarGarantia').modal().close();" href="javascript:;">
+                <span class="icon">
+                    <i class="fa-regular fa-circle-xmark"></i>
+                </span>
+                <span>Não</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<script>
+    function AtualizarEstadoGarantia(id) {
+        document.getElementById('pageloader').classList.add('is-active');
+        $.ajax({
+            url: '/Produtos/Garantia/' + id,
+            type: "PUT",
+            success: function (response) {
+                window.location.reload();
+            },
+            error: function (response) {
+                document.getElementById('pageloader').classList.remove('is-active');
+                notifyError('Ocorreu um erro ao obter os dossiers em garantia!');
+            },
+            failure: function (response) {
+                document.getElementById('pageloader').classList.remove('is-active');
+                notifyError('Falha ao obter os dossiers em garantia!');
+            }
+        });
+    }
+</script>
