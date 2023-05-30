@@ -305,16 +305,36 @@ else
                 $(response).each(function () {
                     var s = this;
                     $(this.linhas).each(function () {
-                        if (this.referencia != '') html += "<tr><td data-label='Cliente'>" + s.folhaObra.clienteServico.nomeCliente + "</td><td data-label='Equipamento'>" + s.folhaObra.equipamentoServico.numeroSerieEquipamento + "</td><td data-label='Peça'>" + this.designacao + "</td><td data-label='Estado'>" + s.estado + "</td><td class='is-actions-cell buttons'><button class='button is-info is-fullwidth' type='button' onclick='window.open(\"/Produtos/EtiquetaGarantia/" + s.folhaObra.stampFO + "?peca=" + this.referencia + "\")'><span class='icon is-small'><i class='fa-solid fa-qrcode'></i></span></button><button class='button is-success is-fullwidth' type='button' onclick='ValidarPecaGarantia(\""+s.stampDossier+"\")'><span class='icon is-small'><i class='fa-solid fa-check'></i></span></button></td></tr>";
+                        if (this.referencia != '') html += "<tr><td data-label='Cliente'>" + s.folhaObra.clienteServico.nomeCliente + "</td><td data-label='Equipamento'>" + s.folhaObra.equipamentoServico.numeroSerieEquipamento + "</td><td data-label='Peça'>" + this.designacao + "</td><td data-label='Estado'>" + s.estado + "</td><td class='is-actions-cell'><div class=\"buttons\" style=\"width:100%\"><button class='button is-info is-fullwidth' type='button' onclick='window.open(\"/Produtos/EtiquetaGarantia/" + s.folhaObra.stampFO + "?peca=" + this.referencia + "\")'><span class='icon is-small'><i class='fa-solid fa-qrcode'></i></span></button><button class='button is-success is-fullwidth' type='button' onclick='AtualizarEstadoGarantia(\""+s.stampDossier+"\")'><span class='icon is-small'><i class='fa-solid fa-check'></i></span></button></div></td></tr>";
                     });
                 });
                 html += "</tbody></table></div></div>"
                 $('#modalRMAF').find('.modal-body').html(html);
                 if (response.length > 0) { Bulma('#modalRMAF').modal().open(); } else {
-                    notifyError('Não exisitem peças pendentes em garantia!')
+                    notifyError('Não existem peças pendentes em garantia!')
                 }
 
                 document.getElementById('pageloader').classList.remove('is-active');
+            },
+            error: function (response) {
+                document.getElementById('pageloader').classList.remove('is-active');
+                notifyError('Ocorreu um erro ao obter os dossiers em garantia!');
+            },
+            failure: function (response) {
+                document.getElementById('pageloader').classList.remove('is-active');
+                notifyError('Falha ao obter os dossiers em garantia!');
+            }
+        });
+    }
+
+    function AtualizarEstadoGarantia(id) {
+        document.getElementById('pageloader').classList.add('is-active');
+        $.ajax({
+            url: '/Produtos/Garantias/' + id,
+            type: "PUT",
+            success: function (response) {
+                notifyError('Atualizado estado da garantia com sucesso!');
+                ObterGarantias(@Model.ArmazemId);
             },
             error: function (response) {
                 document.getElementById('pageloader').classList.remove('is-active');

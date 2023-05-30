@@ -920,7 +920,7 @@
 
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel criar o RMAF no PHC!\r\n(Exception: " + ex.Message + ")");
             }
             return res;
 
@@ -931,8 +931,8 @@
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
             try
             {
-               
 
+                if (string.IsNullOrEmpty(Stamp)) return res;
                 foreach (var p in fo.PecasServico.Where(p => p.Garantia))
                 {
                     string SQL_Query = "";
@@ -951,7 +951,25 @@
 
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel enviar a AT para o PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel criar as linhas do RMAF no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+            return res;
+
+        }
+
+        public List<string> AtualizarEstadoRMAF(string Estado, string Stamp)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            try
+            {
+                string SQL_Query = "UPDATE bo set tabela1='"+Estado+"' WHERE bostamp='"+Stamp+"';";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel atualizar o estado do RMAF no PHC!\r\n(Exception: " + ex.Message + ")");
             }
             return res;
 

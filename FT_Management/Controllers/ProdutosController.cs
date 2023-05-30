@@ -143,6 +143,25 @@
             return Json(phccontext.ObterDossiersRMATecnico(t));
         }
 
+        //Atualizar estado do RMAF
+        [HttpPut]
+        public ActionResult Garantias(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            if (id == null)
+            {
+                return StatusCode(500);
+            }
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar o estado do RMAF: Id - {3}", u.NomeCompleto, u.Id, id);
+
+            return phccontext.AtualizarEstadoRMAF(u.Zona == 1 ? "Maia" : u.Zona == 2 ? "Alverca" : "Outros", id)[0] != "-1" ? StatusCode(200) : StatusCode(500);
+        }
+
         //Gerar guia global
         [AllowAnonymous]
         [HttpPost]
@@ -225,6 +244,5 @@
 
             return File(context.MemoryStreamToPDF(context.DesenharEtiquetaPecaGarantia(fo.PecasServico.Where(p => p.Ref_Produto == peca).First(), fo), 801, 504), "application/pdf");
         }
-
     }
 }
