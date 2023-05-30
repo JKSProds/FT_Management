@@ -107,7 +107,7 @@ namespace FT_Management.Controllers
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
                 fo.ValidarTipoFolhaObra();
-                fo.SituacoesPendentes += "\r\n" + string.Join(" | ", fo.PecasServico.Select(x => x.Ref_Produto + " - " + "[" + x.MotivoGarantia + "] " + x.ObsGarantia));
+                fo.SituacoesPendentes += "\r\n" + string.Join(" | ", fo.PecasServico.Where(p => p.Garantia != fo.EquipamentoServico.Garantia).Select(x => x.Ref_Produto + " - " + "[" + x.MotivoGarantia + "] " + x.ObsGarantia));
 
                 if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) phccontext.AtualizarClienteEquipamento(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
 
