@@ -373,11 +373,8 @@
                                 <label asp-for="Formulario"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
-                                        @{
-                                            var LstFormularios = ViewData["Formularios"] as IList<String>;
-                                        }
                                         <select class="select" style="width:100%" asp-for="Formulario"
-                                                asp-items="@(new SelectList(LstFormularios))"></select>
+                                                asp-items="ViewBag.Formularios"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fa-solid fa-rectangle-list"></i>

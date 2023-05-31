@@ -41,7 +41,7 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Marcacao m = phccontext.ObterMarcacao(id);
 
-            if (!string.IsNullOrEmpty(m.Formulario) && !m.FormularioSubmetido) return RedirectToAction(m.Formulario, "Formulario", new { id = id });
+            if (!string.IsNullOrEmpty(m.Formulario) && !m.FormularioSubmetido) return RedirectToAction(phccontext.ObterFormularios().Where(f => f.Key == m.Formulario).Select(l => l.Value).First(), "Formulario", new { id = id });
 
             _logger.LogDebug("Utilizador {1} [{2}] a adicionar uma folha de obra nova do cliente: {3}.", u.NomeCompleto, u.Id, m.Cliente.NomeCliente);
 

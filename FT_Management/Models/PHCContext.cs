@@ -1,4 +1,6 @@
-﻿namespace FT_Management.Models
+﻿using System.Collections.Generic;
+
+namespace FT_Management.Models
 {
     public class PHCContext
     {
@@ -4416,10 +4418,10 @@
         //FORMULARIOS
         #region FORMULARIOS
 
-        public List<string> ObterFormularios()
+        public List<KeyValuePair<string, string>> ObterFormularios()
         {
-            List<string> LstFormularios = new List<string>();
-            LstFormularios.Add("");
+            List<KeyValuePair<string, string>> LstFormularios = new List<KeyValuePair<string, string>>();
+            LstFormularios.Add(new KeyValuePair<string, string>("", ""));
 
             try
             {
@@ -4436,7 +4438,7 @@
                 {
                     while (result.Read())
                     {
-                        LstFormularios.Add(result["nome"].ToString());
+                        LstFormularios.Add(new KeyValuePair<string, string>(result["nome"].ToString(), result["valor"].ToString()));
                     }
                 }
 

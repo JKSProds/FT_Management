@@ -251,7 +251,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
-            ViewData["Formularios"] = phccontext.ObterFormularios();
+            ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
 
             if (id != 0) return View(phccontext.ObterMarcacao(id));
 
@@ -273,7 +273,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
-            ViewData["Formularios"] = phccontext.ObterFormularios();
+            ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
             Marcacao m = phccontext.ObterMarcacao(id);
             return View(m);
         }
@@ -327,6 +327,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
 
             ModelState.AddModelError("", "Ocorreu um erro ao modificar a marcação! Por favor tente novamente.");
             if (m.IdMarcacao == 0) return View("Adicionar", m);
