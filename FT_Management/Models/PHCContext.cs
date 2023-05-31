@@ -4405,5 +4405,19 @@
             return ObterLinhasDossierDocContabilistos("select * from ml where dostamp='" + STAMP + "' order by lordem", true);
         }
         #endregion
+
+        //FORMULARIOS
+        #region FORMULARIOS
+
+        public List<string> CertificacaoDetetorMetais(string EmailCliente, string NomeCliente, Equipamento e, Marcacao m, Utilizador u)
+        {
+            string SQLQuery = "UPDATE u_marcacao set FORMSUBMITIDO=1 WHERE u_marcacaostamp='"+m.MarcacaoStamp+"'; \r\n";
+            SQLQuery += "if exists(select u_clrespstamp from u_clresp a join cl b on a.clstamp = b.clstamp where b.no = " + m.Cliente.IdCliente + " and b.estab = " + m.Cliente.IdLoja + " and tipoe = '" + m.TipoEquipamento + "') update a set emailfo = '" + EmailCliente + "', nomefo = '" + NomeCliente + "' from u_clresp a join cl b on a.clstamp = b.clstamp where b.no = " + m.Cliente.IdCliente + " and b.estab = " + m.Cliente.IdLoja + " and tipoe = '" + m.TipoEquipamento + "' else insert into u_clresp(u_clrespstamp, clstamp, tipoe,  ousrinis, ousrdata, ousrhora, usrinis, usrdata, usrhora, emailfo, nomefo) select 'WEBAPP'+LEFT(NEWID(),18), clstamp, '" + m.TipoEquipamento + "', '" + u.Iniciais + "', GETDATE(), FORMAT(CONVERT(DATETIME,GETDATE(),108),'HH:mm:ss','PT-PT'),'" + u.Iniciais + "', GETDATE(), FORMAT(CONVERT(DATETIME,GETDATE(),108),'HH:mm:ss','PT-PT'), '" + EmailCliente + "',  '" + NomeCliente + "' from cl b where b.no = " + m.Cliente.IdCliente + " and b.estab = " + m.Cliente.IdLoja + ";\r\n";
+            SQLQuery += "UPDATE MA SET U_DATACERT = '" + DateTime.Now.ToString("yyyyMMdd") + "' WHERE MASTAMP = '" + e.EquipamentoStamp + "';";
+
+            return ExecutarQuery(SQLQuery);
+        }
+
+        #endregion
     }
 }

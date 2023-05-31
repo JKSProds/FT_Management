@@ -87,6 +87,8 @@
         public bool Piquete { get; set; }
         public Utilizador Utilizador { get; set; }
         public string MarcacaoStamp { get; set; }
+        public string Formulario { get; set; }
+        public bool FormularioSubmetido { get; set; }
 
 
         public int IdTecnico { get; set; }

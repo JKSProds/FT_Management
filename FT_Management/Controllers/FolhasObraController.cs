@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using FT_Management.Models;
 
 namespace FT_Management.Controllers
 {
@@ -39,6 +40,8 @@ namespace FT_Management.Controllers
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Marcacao m = phccontext.ObterMarcacao(id);
+
+            if (!string.IsNullOrEmpty(m.Formulario) && !m.FormularioSubmetido) return RedirectToAction(m.Formulario, new { id = id });
 
             _logger.LogDebug("Utilizador {1} [{2}] a adicionar uma folha de obra nova do cliente: {3}.", u.NomeCompleto, u.Id, m.Cliente.NomeCliente);
 
