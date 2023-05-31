@@ -11,7 +11,12 @@
             <div class="tile">
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
-                        <p class="title"><b>Garantias</b></p>
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fa-solid fa-house-medical"></i>
+                            </span>
+                            <span>Garantias</span>
+                        </p>
                     </article>
                 </div>
             </div>
@@ -47,7 +52,7 @@ else
                                 @Html.DisplayNameFor(model => model.First().FolhaObra.Utilizador.NomeCompleto)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.First().Linhas)
+                                Designação
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.First().Estado)
@@ -75,7 +80,7 @@ else
                                     <td data-label="@Html.DisplayNameFor(model => model.First().FolhaObra.Utilizador.NomeCompleto)">
                                         <span>@item.FolhaObra.Utilizador.NomeCompleto</span>
                                     </td>
-                                    <td data-label="@Html.DisplayNameFor(model => model.First().Linhas)">
+                                    <td data-label="Designação">
                                         <span>@l.Designacao</span>
                                     </td>
                                     <td data-label="@Html.DisplayNameFor(model => model.First().Estado)">
