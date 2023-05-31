@@ -176,7 +176,7 @@
             {
                 if (item != "")
                 {
-                        this.PecasServico.Add(LstPecas.Where(p => p.StampProduto == item.Split("|")[0]).First());
+                        this.PecasServico.Add(new Produto() { StampProduto = item.Split("|").First()});
                         this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|")[1]);
                         this.PecasServico.Last().Garantia = item.Split("|")[2] == "true";
                         this.PecasServico.Last().MotivoGarantia = item.Split("|")[3];
