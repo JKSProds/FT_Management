@@ -30,6 +30,7 @@
         public List<FolhaObra> FolhasObra { get; set; }
         public bool Garantia { get; set; }
         public bool Contrato { get; set; }
+        public bool Inativo { get; set; }
 
         [Display(Name = "Técnico")]
         public string UltimoTecnico { get; set; }

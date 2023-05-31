@@ -643,7 +643,9 @@ namespace FT_Management.Models
                             UltimoTecnico = !result.IsDBNull("utecnnm") ? result["utecnnm"].ToString() : "N/D",
                             DataCompra = DateTime.Parse(result["fldata"].ToString()),
                             DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
-                            Cliente = new Cliente() { NomeCliente = result["nome"].ToString() }
+                            Cliente = new Cliente() { NomeCliente = result["nome"].ToString(), },
+                            Contrato = !result.IsDBNull("csupstamp"),
+                            Inativo = result["u_outloja"].ToString().Trim() == "1",
                         });
 
                         if (LoadCliente)
@@ -668,29 +670,29 @@ namespace FT_Management.Models
         }
         public List<Equipamento> ObterEquipamentos()
         {
-            return ObterEquipamentos("SELECT TOP(100) * FROM ma;", false, false);
+            return ObterEquipamentos("SELECT TOP(100) ma.*, c.datai, c.datap, c.csupstamp FROM ma left join cdeq b on ma.mastamp = b.mastamp left join csup c on b.csupstamp = c.csupstamp;", false, false);
         }
         public List<Equipamento> ObterEquipamentos(Cliente c)
         {
-            return ObterEquipamentos("SELECT * FROM ma where no='" + c.IdCliente + "' and estab='" + c.IdLoja + "';", false, false);
+            return ObterEquipamentos("SELECT ma.*, c.datai, c.datap, c.csupstamp FROM ma left join cdeq b on ma.mastamp = b.mastamp left join csup c on b.csupstamp = c.csupstamp where ma.no='" + c.IdCliente + "' and ma.estab='" + c.IdLoja + "';", false, false);
         }
         public List<Equipamento> ObterEquipamentos(string Filtro)
         {
-            return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + Filtro + "%' or nome like '%" + Filtro + "%';", false, false);
+            return ObterEquipamentos("SELECT TOP(100)  ma.*, c.datai, c.datap, c.csupstamp FROM ma left join cdeq b on ma.mastamp = b.mastamp left join csup c on b.csupstamp = c.csupstamp where ma.serie like '%" + Filtro + "%' or ma.nome like '%" + Filtro + "%';", false, false);
         }
         public List<Equipamento> ObterEquipamentosSerie(string NumeroSerie)
         {
-            return ObterEquipamentos("SELECT TOP(100) * FROM ma where serie like '%" + NumeroSerie + "%';", false, false);
+            return ObterEquipamentos("SELECT TOP(100)  ma.*, c.datai, c.datap, c.csupstamp FROM ma left join cdeq b on ma.mastamp = b.mastamp left join csup c on b.csupstamp = c.csupstamp where ma.serie like '%" + NumeroSerie + "%';", false, false);
         }
         public Equipamento ObterEquipamento(string IdEquipamento)
         {
-            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", true, true);
+            List<Equipamento> e = ObterEquipamentos("SELECT  ma.*, c.datai, c.datap, c.csupstamp FROM ma left join cdeq b on ma.mastamp = b.mastamp left join csup c on b.csupstamp = c.csupstamp where ma.mastamp='" + IdEquipamento + "';", true, true);
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
         public Equipamento ObterEquipamentoSimples(string IdEquipamento)
         {
-            List<Equipamento> e = ObterEquipamentos("SELECT * FROM ma where mastamp='" + IdEquipamento + "';", true, false);
+            List<Equipamento> e = ObterEquipamentos("SELECT ma.*, c.datai, c.datap, c.csupstamp FROM ma left join cdeq b on ma.mastamp = b.mastamp left join csup c on b.csupstamp = c.csupstamp where ma.mastamp='" + IdEquipamento + "';", true, false);
             if (e.Count > 0) return e[0];
             return new Equipamento();
         }
