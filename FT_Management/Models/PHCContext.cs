@@ -1807,6 +1807,8 @@
                         QuemPediuNome = result["qpediu"].ToString(),
                         QuemPediuEmail = result["respemail"].ToString(),
                         QuemPediuTelefone = result["resptlm"].ToString(),
+                        Formulario = result["formulario"].ToString(),
+                        FormularioSubmetido = result["formulario_submetido"].ToString() == "True",
                         Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() },
                         Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : "",
                         Cliente = new Cliente() { NomeCliente = result["nome"].ToString() }
@@ -4412,7 +4414,7 @@
 
         public List<string> CertificacaoDetetorMetais(string EmailCliente, string NomeCliente, Equipamento e, Marcacao m, Utilizador u)
         {
-            string SQLQuery = "UPDATE u_marcacao set FORMSUBMITIDO=1 WHERE u_marcacaostamp='"+m.MarcacaoStamp+"'; \r\n";
+            string SQLQuery = "UPDATE u_marcacao set formsub=1 WHERE u_marcacaostamp='"+m.MarcacaoStamp+"'; \r\n";
             SQLQuery += "if exists(select u_clrespstamp from u_clresp a join cl b on a.clstamp = b.clstamp where b.no = " + m.Cliente.IdCliente + " and b.estab = " + m.Cliente.IdLoja + " and tipoe = '" + m.TipoEquipamento + "') update a set emailfo = '" + EmailCliente + "', nomefo = '" + NomeCliente + "' from u_clresp a join cl b on a.clstamp = b.clstamp where b.no = " + m.Cliente.IdCliente + " and b.estab = " + m.Cliente.IdLoja + " and tipoe = '" + m.TipoEquipamento + "' else insert into u_clresp(u_clrespstamp, clstamp, tipoe,  ousrinis, ousrdata, ousrhora, usrinis, usrdata, usrhora, emailfo, nomefo) select 'WEBAPP'+LEFT(NEWID(),18), clstamp, '" + m.TipoEquipamento + "', '" + u.Iniciais + "', GETDATE(), FORMAT(CONVERT(DATETIME,GETDATE(),108),'HH:mm:ss','PT-PT'),'" + u.Iniciais + "', GETDATE(), FORMAT(CONVERT(DATETIME,GETDATE(),108),'HH:mm:ss','PT-PT'), '" + EmailCliente + "',  '" + NomeCliente + "' from cl b where b.no = " + m.Cliente.IdCliente + " and b.estab = " + m.Cliente.IdLoja + ";\r\n";
             SQLQuery += "UPDATE MA SET U_DATACERT = '" + DateTime.Now.ToString("yyyyMMdd") + "' WHERE MASTAMP = '" + e.EquipamentoStamp + "';";
 
