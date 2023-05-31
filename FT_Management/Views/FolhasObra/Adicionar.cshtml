@@ -1475,11 +1475,11 @@
             success: function (data) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"><thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th><th></th></tr></thead><tbody>";
                 $(data).each(function () {
-                    html += "<tr><td data-label='Marca'>" + this.marcaEquipamento + "</td><td data-label='Modelo'>" + this.modeloEquipamento + "</td><td data-label='N/S'>" + this.numeroSerieEquipamento + "</td><td class='is-actions-cell'><div class='buttons'>";
-                    if (this.garantia) html += "<input type='button' class='button is-success is-small mx-1' value='G' />";
-                    if (!this.garantia) html += "<input type='button' class='button is-danger is-small mx-1' value='FG' />";
-                    if (this.contrato) html += "<input type='button' class='button is-info is-small mx-1' value='C' />";
-                    if (!this.contrato) html += "<input type='button' class='button is-warning is-small mx-1' value='FC' />";
+                    html += "<tr><td data-label='Marca'>" + this.marcaEquipamento + "</td><td data-label='Modelo'>" + this.modeloEquipamento + "</td><td data-label='N/S'>" + this.numeroSerieEquipamento + "</td><td class='is-actions-cell'><div class='buttons' style='width:100%'>";
+                    if (this.garantia) html += "<input type='button' class='button is-success mx-1' value='G' />";
+                    if (!this.garantia) html += "<input type='button' class='button is-danger mx-1' value='FG' />";
+                    if (this.contrato) html += "<input type='button' class='button is-info mx-1' value='C' />";
+                    if (!this.contrato) html += "<input type='button' class='button is-warning  mx-1' value='FC' />";
                     html += "<button class='button is-success is-fullwidth' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\", \"" + this.garantia + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></div></td></tr>";
                 });
                 html += "</tbody></table></div></div>"
