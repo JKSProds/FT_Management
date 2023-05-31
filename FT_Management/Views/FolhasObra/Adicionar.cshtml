@@ -1215,7 +1215,7 @@
 
     //PEÇAS
     function AdicionarPeca(stamp, ref, desig, qtd, garantia, motivo, obs) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item ` + (garantia ? "has-background-success-light" : "has-background-danger-light") +`" id="${stamp}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN) - ' + (garantia ? ' GARANTIA ' : ' N/GARANTIA ')}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item ` + (garantia ? "has-background-success-light" : "has-background-danger-light") +`" id="${stamp}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN) - ' + (garantia ? ' GARANTIA ' : ' DEBITO ')}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd + '|' + garantia + '|' + motivo + '|' + obs};`;
         notify("Peça " + ref + " adicionada com sucesso!");
 
