@@ -1094,7 +1094,7 @@ namespace FT_Management.Models
             }))
             {
                 Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
-                if (p.Stock_Atual < item.Stock_Fisico) res += "Não tem stock suficiente da seguinte peça: " + p.Ref_Produto.Trim() + "! Stock Atual: "+p.Stock_Atual+" / Stock Requisitado: "+item.Stock_Fisico+"\r\n";
+                if (p.Stock_Atual < item.Stock_Fisico) res += "Não tem stock suficiente da seguinte peça: " + p.Ref_Produto.Trim() + "! Stock Atual: "+p.Stock_Atual+" / Stock Requisitado: "+item.Stock_Fisico+"!\r\n";
             }
 
             if (!string.IsNullOrEmpty(res)) res += "\r\nDeseja proseguir?";
