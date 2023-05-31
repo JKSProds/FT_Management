@@ -189,7 +189,8 @@
                                     <input type="date" class="input "
                                            value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
                                            asp-for="DataServico" id="txtData">
-                                    <script>bulmaCalendar.attach('#txtData', {
+                                    <script>
+                                        bulmaCalendar.attach('#txtData', {
                                             color: 'info',
                                             lang: 'pt',
                                             dateFormat: 'dd/MM/yyyy',
@@ -995,27 +996,27 @@
 
 <script>
     function ValidarFolhaObra() {
-         notify("A validar folha de obra ...");
+        notify("A validar folha de obra ...");
 
-             $.ajax({
-                type: "POST",
-                url: "/FolhasObra/Validar",
-                data: $("#frmAdicionar").serialize(),
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                success: function (result) {
-                    Bulma('#modalValidarCliente').modal().close();
-                    $(function () {
-                        document.getElementById("txtMensagens").value = result;
-                        if (result != "") {
-                            Bulma('#modalValidacao').modal().open();
-                        } else {
-                            notify("Folha de Obra sem mensagens de validação!");
-                            document.getElementById('pageloader').classList.add('is-active');
-                            document.getElementById('frmAdicionar').submit();
-                        }
-                    });
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/Validar",
+            data: $("#frmAdicionar").serialize(),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                Bulma('#modalValidarCliente').modal().close();
+                $(function () {
+                    document.getElementById("txtMensagens").value = result;
+                    if (result != "") {
+                        Bulma('#modalValidacao').modal().open();
+                    } else {
+                        notify("Folha de Obra sem mensagens de validação!");
+                        document.getElementById('pageloader').classList.add('is-active');
+                        document.getElementById('frmAdicionar').submit();
+                    }
+                });
+            }
+        });
     }
 
     function ValidarCliente() {
@@ -1050,7 +1051,7 @@
 
                 console.log(timeStart + ' - ' + timeEnd + ' | ' + periodo);
             }
-            })
+        })
         document.getElementById('btnCountIntervencoes').innerHTML = "< " + Math.ceil(periodo) + " Hora(s)";
 
         document.getElementById('btnCountPecas').innerHTML = document.getElementById('divListaPecas').childNodes.length + " Peça(s)";
@@ -1089,7 +1090,7 @@
         $.ajax({
             type: "POST",
             url: "/FolhasObra/CriarCodigo/" + stamp,
-            data: { "obs": document.getElementById("txtMensagens").value + "\r\n\r\nObservações do Técnico: " + document.getElementById("txtObs").value},
+            data: { "obs": document.getElementById("txtMensagens").value + "\r\n\r\nObservações do Técnico: " + document.getElementById("txtObs").value },
             success: function (result) {
                 $(function () {
                     stamp_codigo = result;
@@ -1125,14 +1126,14 @@
         if (document.getElementById('txtObs').value.length < 14) {
             notifyError('Informação insuficiente nas observaçoes. Por favor insira mais informação!');
         } else {
-        CriarCodigo('@Model.Marcacao.MarcacaoStamp');
-        time = 5 * 60;
-        interval = setInterval(AtualizarTimer, 1000);
-        document.getElementById('pb_timer').max = time;
-        AtualizarTimer();
+            CriarCodigo('@Model.Marcacao.MarcacaoStamp');
+            time = 5 * 60;
+            interval = setInterval(AtualizarTimer, 1000);
+            document.getElementById('pb_timer').max = time;
+            AtualizarTimer();
 
-        Bulma('#modalValidacao').modal().close();
-        Bulma('#modalAguardarValidacao').modal().open();
+            Bulma('#modalValidacao').modal().close();
+            Bulma('#modalAguardarValidacao').modal().open();
             notify("Código gerado com sucesso. A aguardar aprovação!");
             document.getElementById('txtObs').value = '';
         }
@@ -1212,7 +1213,7 @@
 
     //PEÇAS
     function AdicionarPeca(stamp, ref, desig, qtd, garantia, motivo, obs) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item ` + (garantia ? "has-background-success-light" : "has-background-danger-light") +`" id="${stamp}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN) - ' + (garantia ? ' GARANTIA ' : ' DEBITO ')}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item ` + (garantia ? "has-background-success-light" : "has-background-danger-light") + `" id="${stamp}"><div class="list-item-title" style="width:70%">${ref + ' - ' + desig + ' (' + qtd + ' UN) - ' + (garantia ? ' GARANTIA ' : ' DEBITO ')}</div><div class="list-item-controls" style="width:30%"><div class="buttons is-right"><button class="button is-light" type="button"><span class='has-text-weight-bold'>${(garantia ? ' GARANTIA ' : ' DEBITO ')}</span></button><button class="button is-success" type="button"><span>${qtd + ' UN'}</span></button><button class="button is-danger" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
         document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd + '|' + garantia + '|' + motivo + '|' + obs};`;
         notify("Peça " + ref + " adicionada com sucesso!");
 
@@ -1446,7 +1447,7 @@
             return $("<li>")
                 .append(html)
                 .appendTo(ul);
-            };
+        };
     });
 
     function LimparEquipamento() {
@@ -1532,7 +1533,7 @@
                     var modal = Bulma('#modalObterHistorico').modal();
                     modal.open();
                 } else {
-                   notifyError('Não foram encontradas intervenções associadas a este equipamento!')
+                    notifyError('Não foram encontradas intervenções associadas a este equipamento!')
                 };
             },
             error: function (error) {
@@ -1625,7 +1626,7 @@
         {
             fps: 10, qrbox: { width: 250, height: 250 }
         },
-                  /* verbose= */ false);
+                                  /* verbose= */ false);
 
     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 

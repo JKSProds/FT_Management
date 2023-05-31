@@ -174,13 +174,13 @@
             if (this.ListaPecas == null) return;
             foreach (var item in this.ListaPecas.Split(";"))
             {
-                if (item != "")
+                if (item != "" && LstPecas.Where(p => p.StampProduto == item.Split("|").First()).Count() > 0)
                 {
-                        this.PecasServico.Add(new Produto() { StampProduto = item.Split("|").First()});
-                        this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|")[1]);
-                        this.PecasServico.Last().Garantia = item.Split("|")[2] == "true";
-                        this.PecasServico.Last().MotivoGarantia = item.Split("|")[3];
-                        this.PecasServico.Last().ObsGarantia = item.Split("|")[4];
+                    this.PecasServico.Add(new Produto() { StampProduto = item.Split("|").First(), Ref_Produto = LstPecas.Where(p => p.StampProduto == item.Split("|").First()).First().Ref_Produto });
+                    this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|")[1]);
+                    this.PecasServico.Last().Garantia = item.Split("|")[2] == "true";
+                    this.PecasServico.Last().MotivoGarantia = item.Split("|")[3];
+                    this.PecasServico.Last().ObsGarantia = item.Split("|")[4];
                 }
             }
         }
