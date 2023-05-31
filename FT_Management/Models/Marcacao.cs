@@ -88,6 +88,8 @@
         public Utilizador Utilizador { get; set; }
         public string MarcacaoStamp { get; set; }
         public string Formulario { get; set; }
+
+        [Display(Name = "Submetido")]
         public bool FormularioSubmetido { get; set; }
 
 

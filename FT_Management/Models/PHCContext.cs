@@ -1397,6 +1397,8 @@
                 SQL_Query += "@RESUMO = '" + m.ResumoMarcacao.Replace("'", "''") + "', ";
                 SQL_Query += "@PIQUETE = '" + (m.Piquete ? "1" : "0") + "', ";
                 SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
+                SQL_Query += "@FORMULARIO = '" + m.Formulario + "', ";
+                SQL_Query += "@FORMSUB = '" + (m.FormularioSubmetido ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -1451,6 +1453,8 @@
                 SQL_Query += "@OFICINA = '" + (m.Oficina ? "1" : "0") + "', ";
                 SQL_Query += "@JUSTFECHO = '" + (m.JustificacaoFecho.Length > 4000 ? m.JustificacaoFecho.Remove(4000) : m.JustificacaoFecho) + "', ";
                 SQL_Query += "@TECFECHO = '" + m.Utilizador.NomeCompleto + "', ";
+                SQL_Query += "@FORMULARIO = '" + m.Formulario + "', ";
+                SQL_Query += "@FORMSUB = '" + (m.FormularioSubmetido ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -4411,6 +4415,42 @@
 
         //FORMULARIOS
         #region FORMULARIOS
+
+        public List<string> ObterFormularios()
+        {
+            List<string> LstFormularios = new List<string>();
+            LstFormularios.Add("");
+
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select nome, valor from u_formulario order by lordem", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstFormularios.Add(result["nome"].ToString());
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel obter os formularios do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstFormularios;
+
+        }
 
         public List<string> CertificacaoDetetorMetais(string EmailCliente, string NomeCliente, Equipamento e, Marcacao m, Utilizador u)
         {

@@ -251,6 +251,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            ViewData["Formularios"] = phccontext.ObterFormularios();
 
             if (id != 0) return View(phccontext.ObterMarcacao(id));
 
@@ -272,6 +273,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            ViewData["Formularios"] = phccontext.ObterFormularios();
             Marcacao m = phccontext.ObterMarcacao(id);
             return View(m);
         }
