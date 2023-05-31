@@ -108,7 +108,7 @@
                                 <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
                                            id="txtEquipamentoStamp" />
-                                    <input type="text" class="input is-rounded" asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento" placeholder="Número de Série">
+                                    <input type="text" class="input is-rounded" asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento" placeholder="Insira o número de série">
                                     <span class="icon is-small is-left">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </span>
@@ -254,26 +254,20 @@
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
-                            <div class="field ">
+                            <div class="field">
                                 <label asp-for="PecasServico"></label>
-                                <div class="field has-addons mb-1">
-                                    <div class="control" style="width:100%">
-                                        <p class="control">
-                                            <input type="text" class="input" id="txtPecas">
-                                        </p>
-                                    </div>
-                                    <div class="control">
-                                        <a class="button is-info"
-                                           onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
-                                            <i class="fa-solid fa-qrcode"></i>
-                                        </a>
-                                    </div>
+                                <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" class="input" id="txtStampPeca">
-                                    <span asp-validation-for="PecasServico" class="has-text-danger"></span>
-                                </div>
+                                    <input type="text" class="input is-rounded" placeholder="Insira a referência" id="txtPecas">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="field ">
                                 <div class="field has-addons is-pulled-right mb-2">
                                     <div class="control">
-                                        <label class="switch is-rounded is-large">
+                                        <label class="switch is-rounded">
                                             <input type="checkbox" id="chkGarantiaSelecionadaPeca" onchange="document.getElementById('chkPecaGarantia').checked = this.checked;">
                                             <span class="check is-info"></span>
                                             <span class="control-label">
@@ -300,7 +294,12 @@
                                             </span>
                                         </button>
                                     </div>
-
+                                    <div class="control">
+                                        <a class="button is-info"
+                                           onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
+                                            <i class="fa-solid fa-qrcode"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                             <div class="control buttons">
