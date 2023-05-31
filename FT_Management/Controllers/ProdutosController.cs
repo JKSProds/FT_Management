@@ -116,14 +116,14 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todas as peças em uso de um armazem em especifico: Armazem - {3}, GT - {4}.", u.NomeCompleto, u.Id, id, gt);
 
-            List<string> LstGuias = phccontext.ObterGuiasTransporte(t.IdArmazem);
+            List<string> LstGuias = phccontext.ObterGuiasTransporte(id);
             if (string.IsNullOrEmpty(gt)) gt = LstGuias.Count() == 0 ? "Sem Guias Globais" : LstGuias.First();
 
             ViewData["Guias"] = new SelectList(LstGuias);
             ViewData["GT"] = gt;
 
             Armazem a = phccontext.ObterArmazem(id);
-            a.LstMovimentos = phccontext.ObterPecasGuiaTransporte(gt, t).OrderBy(m => m.DataMovimento).ToList();
+            if (t != null) a.LstMovimentos = phccontext.ObterPecasGuiaTransporte(gt, t).OrderBy(m => m.DataMovimento).ToList();
             return View(a);
         }
 

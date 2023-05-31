@@ -211,6 +211,7 @@
                             ArmazemStamp = result["szstamp"].ToString().Trim(),
                             ArmazemId = int.Parse(result["no"].ToString()),
                             ArmazemNome = result["nome"].ToString().Trim(),
+                            LstMovimentos = new List<Movimentos>()
                         });
                     }
                 }
