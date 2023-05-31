@@ -104,7 +104,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="EquipamentoServico.NumeroSerieEquipamento"></label>
+                                <label asp-for="EquipamentoServico"></label>
                                 <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
                                            id="txtEquipamentoStamp" />
@@ -1276,7 +1276,7 @@
         }).data("ui-autocomplete")._renderItem = function (ul, item) {
             console.log(ul, item);
             var html = "<a>" + item.label + "<div class='buttons'>";
-            html += "<input type='button' class='button is-success is-small mx-1 is-fullwidth' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
+            html += "<input type='button' class='button is-success mx-1 is-fullwidth' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
             html += "</div></a>";
             return $("<li>")
                 .append(html)
@@ -1439,10 +1439,10 @@
         }).data("ui-autocomplete")._renderItem = function (ul, item) {
             console.log(ul, item);
             var html = "<a>" + item.label + "<div class='buttons'>";
-            if (item.garantia) html += "<input type='button' class='button is-success is-small mx-1' value='G' style='float: right;' />";
-            if (!item.garantia) html += "<input type='button' class='button is-danger is-small mx-1' value='FG' style='float: right;' />";
-            if (item.contrato) html += "<input type='button' class='button is-info is-small mx-1' value='C' style='float: right;' />";
-            if (!item.contrato) html += "<input type='button' class='button is-warning is-small mx-1' value='FC' style='float: right;' />";
+            if (item.garantia) html += "<input type='button' class='button is-success mx-1' value='G' style='float: right;' />";
+            if (!item.garantia) html += "<input type='button' class='button is-danger mx-1' value='FG' style='float: right;' />";
+            if (item.contrato) html += "<input type='button' class='button is-info mx-1' value='C' style='float: right;' />";
+            if (!item.contrato) html += "<input type='button' class='button is-warning mx-1' value='FC' style='float: right;' />";
             html += "</div></a>";
             return $("<li>")
                 .append(html)

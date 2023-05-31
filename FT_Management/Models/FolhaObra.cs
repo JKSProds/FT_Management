@@ -39,6 +39,7 @@
         public string ListaIntervencoes { get; set; }
         public List<Intervencao> IntervencaosServico { get; set; }
         [Required(ErrorMessage = "Falta selecionar o equipamento!")]
+        [Display(Name = "Equipamento")]
         public Equipamento EquipamentoServico { get; set; }
         [Required(ErrorMessage = "Falta selecionar o cliente!")]
         public Cliente ClienteServico { get; set; }
