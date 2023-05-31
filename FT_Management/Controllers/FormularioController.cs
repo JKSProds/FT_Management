@@ -35,7 +35,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a guardar formulario de certificação do detetor de metais: Equipamento Stamp: {3}", u.NomeCompleto, u.Id, equipamento);
 
-            phccontext.CertificacaoDetetorMetais(email, nome, phccontext.ObterEquipamentoSimples(equipamento), phccontext.ObterMarcacaoSimples(marcacao), u);
+            phccontext.CertificacaoDetetorMetais(email, nome, phccontext.ObterEquipamentoSimples(equipamento), phccontext.ObterMarcacao(marcacao), u);
 
             return RedirectToAction("Adicionar", "FolhasObra", new {id = marcacao });
         }
