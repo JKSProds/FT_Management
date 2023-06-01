@@ -309,20 +309,14 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
+            if (string.IsNullOrEmpty(id)) return StatusCode(500);
+
             _logger.LogDebug("Utilizador {1} [{2}] a tentar validar o codigo de uma folha de obra: Codigo - {3}.", u.NomeCompleto, u.Id, id);
             Codigo c = context.ObterCodigo(id);
+            if (string.IsNullOrEmpty(c.Stamp)) return StatusCode(500);
 
             return Json(c.Estado + "|" + c.ValidadoPor.NomeCompleto);
         }
-
-
-
-
-
-
-
-
-
 
     }
 }
