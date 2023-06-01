@@ -392,33 +392,33 @@ namespace FT_Management.Models
         }
         public List<Cliente> ObterClientes()
         {
-            return ObterClientes("SELECT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no is not null order by cl.no, cl.estab;", false, false, false, false);
+            return ObterClientes("SELECT DISTINCT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no is not null order by cl.no, cl.estab;", false, false, false, false);
         }
         public List<Cliente> ObterClientes(string filtro, bool filtrar)
         {
             if (filtrar)
             {
-                return ObterClientes("SELECT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.nome like '%" + filtro + "%' and cl.no is not null order by cl.no, cl.estab;", false, false, false, false);
+                return ObterClientes("SELECT DISTINCT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.nome like '%" + filtro + "%' and cl.no is not null order by cl.no, cl.estab;", false, false, false, false);
             }
             return new List<Cliente>() { new Cliente() { } };
         }
         public Cliente ObterCliente(int IdCliente, int IdLoja)
         {
-            return ObterCliente("SELECT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and cl.estab=" + IdLoja + " and cl.no is not null;", true);
+            return ObterCliente("SELECT DISTINCT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and cl.estab=" + IdLoja + " and cl.no is not null;", true);
 
         }
         public Cliente ObterClienteSimples(string STAMP)
         {
-            return ObterCliente("SELECT TOP(1) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.clstamp='" + STAMP + "' and cl.no is not null;", false);
+            return ObterCliente("SELECT DISTINCT TOP(1) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.clstamp='" + STAMP + "' and cl.no is not null;", false);
 
         }
         public Cliente ObterClienteSimples(int IdCliente, int IdLoja)
         {
-            return ObterCliente("SELECT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and cl.estab=" + IdLoja + " and cl.no is not null;", false);
+            return ObterCliente("SELECT DISTINCT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.no=" + IdCliente + " and cl.estab=" + IdLoja + " and cl.no is not null;", false);
         }
         public Cliente ObterClienteNIF(string NIF)
         {
-            return ObterCliente("SELECT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.ncont='" + NIF + "' and cl.no is not null;", true);
+            return ObterCliente("SELECT DISTINCT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.ncont='" + NIF + "' and cl.no is not null;", true);
         }
         #endregion
 
