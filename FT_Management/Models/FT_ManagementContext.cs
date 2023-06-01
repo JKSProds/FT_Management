@@ -2542,7 +2542,7 @@ namespace FT_Management.Models
             return stream;
         }
 
-        public MemoryStream DesenharEtiquetaPecaGarantia(Produto p, FolhaObra fo)
+        public MemoryStream DesenharEtiquetaPecaGarantia(Dossier d, Produto p)
         {
             var stream = new System.IO.MemoryStream();
 
@@ -2566,7 +2566,7 @@ namespace FT_Management.Models
                     imageContext.DrawImage(img, new Point(x, y + 20), 1);
 
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(d.Marcacao.GetUrl, QRCodeGenerator.ECCLevel.Q);
                     BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
                     var qr = Image.Load(qrCode.GetGraphic(20));
@@ -2582,26 +2582,26 @@ namespace FT_Management.Models
                         HorizontalAlignment = HorizontalAlignment.Center,
                         WordBreaking = WordBreaking.Normal,
                         WrappingLength = width,
-                    }, fo.SituacoesPendentes, Color.Black);
+                    }, p.MotivoGarantia + "\r\n" + p.Ref_Produto + "\r\n" + p.Designacao_Produto + "\r\n", Color.Black);
 
-                    y += 220;
+                    y += 310;
                     imageContext.DrawText(new TextOptions(fontHeader)
                     {
                         TextAlignment = TextAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y)
-                    }, p.Ref_Produto + "\r\nN/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, Color.Black);
+                    },"N/S: " + d.FolhaObra.EquipamentoServico.NumeroSerieEquipamento, Color.Black);
 
-                    var r = new RectangularPolygon(10, y, width - 20, 180);
+                    var r = new RectangularPolygon(10, y, width - 20, 90);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
 
-                    y += 180;
+                    y += 90;
                     imageContext.DrawText(new TextOptions(fontFooter)
                     {
                         TextAlignment = TextAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y),
                         HorizontalAlignment = HorizontalAlignment.Center
-                    }, "pecas@food-tech.pt", Color.Black);
+                    }, "RMA Fornecedor Nº " + d.IdDossier.ToString() + " | Marcação Nº " + d.Marcacao.IdMarcacao, Color.Black);
 
                 });
 
@@ -3059,22 +3059,6 @@ namespace FT_Management.Models
 
             db.Execute(sql);
             db.Connection.Close();
-        }
-
-        public int ValidarCodigo(string stamp)
-        {
-            int res = 0;
-            string sqlQuery = "SELECT EstadoCodigo FROM dat_codigos where CodigoValidacao='" + stamp + "' and ValidadeCodigo > '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "';";
-
-            using Database db = ConnectionString;
-            using (var result = db.Query(sqlQuery))
-            {
-                while (result.Read())
-                {
-                    res = int.Parse(result[0]);
-                }
-            }
-            return res;
         }
 
         public Codigo ObterCodigo(string stamp)

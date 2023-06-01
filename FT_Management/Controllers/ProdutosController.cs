@@ -116,29 +116,83 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todas as peças em uso de um armazem em especifico: Armazem - {3}, GT - {4}.", u.NomeCompleto, u.Id, id, gt);
 
-            List<string> LstGuias = phccontext.ObterGuiasTransporte(t.IdArmazem);
+            List<string> LstGuias = phccontext.ObterGuiasTransporte(id);
             if (string.IsNullOrEmpty(gt)) gt = LstGuias.Count() == 0 ? "Sem Guias Globais" : LstGuias.First();
 
             ViewData["Guias"] = new SelectList(LstGuias);
             ViewData["GT"] = gt;
 
             Armazem a = phccontext.ObterArmazem(id);
-            a.LstMovimentos = phccontext.ObterPecasGuiaTransporte(gt, t).OrderBy(m => m.DataMovimento).ToList();
+            if (t != null) a.LstMovimentos = phccontext.ObterPecasGuiaTransporte(gt, t).OrderBy(m => m.DataMovimento).ToList();
             return View(a);
         }
 
-        //Gerar guia global
-        [HttpPost]
-        public JsonResult GuiaGlobal(int id)
+        //Obter peças em garantia num armazem
+        [HttpGet]
+        public ActionResult Garantia(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterListaUtilizadores(false, false).Where(u => u.IdArmazem == id).DefaultIfEmpty().First();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as garantias pendentes. Tecnico: {3}", u.NomeCompleto, u.Id, t.IdPHC);
+            if (t.IdPHC == 0) return StatusCode(500);
+
+            return Json(phccontext.ObterDossiersRMATecnico(t));
+        }
+
+        //Obter peças em garantia
+        [HttpGet]
+        [Authorize(Roles = "Admin, Escritorio")]
+        public ActionResult Garantias()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as garantias pendentes de todos os tecnicos!", u.NomeCompleto, u.Id);
+
+            return View(phccontext.ObterDossiersRMA());
+        }
+
+        //Atualizar estado do RMAF
+        [HttpPut]
+        public ActionResult Garantia(string id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
+            if (id == null)
+            {
+                return StatusCode(500);
+            }
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar o estado do RMAF: Id - {3}", u.NomeCompleto, u.Id, id);
+
+            return phccontext.AtualizarEstadoRMAF(u.Zona == 1 ? "Maia" : u.Zona == 2 ? "Alverca" : "Outros", id)[0] != "-1" ? StatusCode(200) : StatusCode(500);
+        }
+
+        //Gerar guia global
+        [AllowAnonymous]
+        [HttpPost]
+        public JsonResult GuiaGlobal(int id, string Api)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
+            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            Utilizador u = context.ObterUtilizador(IdUtilizador);
+            if (u.Id == 0) return Json("Acesso Negado - " + Api);
+
             _logger.LogDebug("Utilizador {1} [{2}] a gerar a guia global do armazem: {3}.", u.NomeCompleto, u.Id, id);
 
-            return Json(phccontext.GerarGuiaGlobal(id));
+            return Json(phccontext.GerarGuiaGlobal(id, u));
         }
 
         //Imprimir etiqueta normal
@@ -199,12 +253,12 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            FolhaObra fo = phccontext.ObterFolhaObra(id);
+            Dossier d = phccontext.ObterDossier(id);
+            d.FolhaObra.PecasServico = phccontext.ObterPecas(d.FolhaObra.IdFolhaObra);
 
-            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta de garantia de peca: FO - {3}, Ref. {4}.", u.NomeCompleto, u.Id, fo.IdFolhaObra, peca);
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir uma etiqueta de garantia de peca: FO - {3}, Ref. {4}.", u.NomeCompleto, u.Id, d.FolhaObra.IdFolhaObra, peca);
 
-            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaPecaGarantia(fo.PecasServico.Where(p => p.Ref_Produto == peca).First(), fo), 801, 504), "application/pdf");
+            return File(context.MemoryStreamToPDF(context.DesenharEtiquetaPecaGarantia(d, d.FolhaObra.PecasServico.Where(p => p.Ref_Produto == peca).First()), 801, 504), "application/pdf");
         }
-
     }
 }

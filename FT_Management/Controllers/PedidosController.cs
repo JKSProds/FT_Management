@@ -71,7 +71,7 @@ namespace FT_Management.Controllers
             ViewData["IdTecnico"] = u.IdPHC;
             ViewData["IdArmazem"] = u.IdArmazem;
 
-            return View(ListaMarcacoes.OrderBy(m => m.Cliente.ClienteStamp).OrderBy(m => m.EstadoMarcacaoDesc));
+            return View(ListaMarcacoes.OrderBy(m => m.EstadoMarcacao).OrderBy(m => m.Cliente.ClienteStamp));
         }
 
         //Obter ICS do calendario
@@ -251,6 +251,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
 
             if (id != 0) return View(phccontext.ObterMarcacao(id));
 
@@ -272,6 +273,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
             Marcacao m = phccontext.ObterMarcacao(id);
             return View(m);
         }
@@ -325,6 +327,7 @@ namespace FT_Management.Controllers
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
+            ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
 
             ModelState.AddModelError("", "Ocorreu um erro ao modificar a marcação! Por favor tente novamente.");
             if (m.IdMarcacao == 0) return View("Adicionar", m);
@@ -451,7 +454,13 @@ namespace FT_Management.Controllers
             {
                 m.EstadoMarcacaoDesc = "Reagendar";
                 m.Utilizador = c.Utilizador;
-                MailContext.EnviarEmailMarcacaoSONAE(fo, m, 3);
+                if (m.Cliente.IdCliente == 878) {
+                    MailContext.EnviarEmailMarcacaoPD(fo, m, 3);
+                }
+                else
+                {
+                    MailContext.EnviarEmailMarcacaoSONAE(fo, m, 3);
+                }
             }
 
             phccontext.AtualizaMarcacao(m);
@@ -602,7 +611,7 @@ namespace FT_Management.Controllers
             List<Marcacao> ListaMarcacoes = phccontext.ObterMarcacoes(id, DataPedidos);
             string url = "https://www.google.com/maps/dir";
 
-            foreach (var item in ListaMarcacoes.GroupBy(c => c.Cliente).Select(X => X.First()))
+            foreach (var item in ListaMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Agendado" || m.EstadoMarcacaoDesc == "Reagendado").GroupBy(c => c.Cliente).Select(X => X.First()))
             {
                 url += "/" + item.Cliente.ObterMoradaDirecoes().Replace("/", " ");
             }

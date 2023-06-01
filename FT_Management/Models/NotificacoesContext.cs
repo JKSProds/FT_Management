@@ -91,6 +91,14 @@ namespace FT_Management.Models
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
+
+        public static bool EnviarNotificacaoGuiaGlobal(Utilizador u)
+        {
+            string Mensagem = "Foi gerada com sucesso a sua guia global.\r\nPor requisite a impressão/envio da sua guia!";
+
+            return EnviarMensagem(u.ChatToken, Mensagem);
+        }
+
         public static List<KeyValuePair<String, String>> ObterChatsAtivos()
         {
             List<KeyValuePair<string, string>> LstChats = new List<KeyValuePair<string, string>>();
@@ -373,7 +381,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailFolhaObra(string EmailDestino, FolhaObra fo, Attachment anexo)
         {
             string Assunto = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-            string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <br><b>" + fo.DataServico.ToShortDateString() + "</b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico)) + "</b>.";
+            string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <b>" + fo.DataServico.ToShortDateString() + "</b><br><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico).Distinct()) + "</b>.";
             EnviarMail(EmailDestino + ";" + fo.Utilizador.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;

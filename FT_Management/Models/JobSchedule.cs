@@ -7,7 +7,6 @@ public class CronJobFerias : IJob
 
     public Task Execute(IJobExecutionContext context)
     {
-        //_logger.LogInformation("Hello world!");
         try
         {
 
@@ -33,7 +32,6 @@ public class CronJobAniversario : IJob
 
     public Task Execute(IJobExecutionContext context)
     {
-        //_logger.LogInformation("Hello world!");
         try
         {
 
@@ -44,7 +42,6 @@ public class CronJobAniversario : IJob
             {
                 MailContext.EnviarEmailAniversario(LstUtilizadores);
             }
-            dbContext.ValidarEmailEnviado();
         }
         catch
         {
@@ -59,7 +56,6 @@ public class CronJobSaida : IJob
 
     public Task Execute(IJobExecutionContext context)
     {
-        //_logger.LogInformation("Hello world!");
         try
         {
 
@@ -91,7 +87,6 @@ public class CronJobAgendamentoCRM : IJob
 
     public Task Execute(IJobExecutionContext context)
     {
-        //_logger.LogInformation("Hello world!");
         try
         {
             FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);

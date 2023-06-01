@@ -302,7 +302,7 @@
                 </div>
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
-                        <div class="column is-6">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="TipoServico"></label>
                                 <p class="control has-icons-left">
@@ -311,7 +311,7 @@
                                             var LstTipoServico = ViewData["TipoServico"] as IList<String>;
                                         }
                                         <select class="select" style="width:100%" asp-for="TipoServico"
-                                            asp-items="@(new SelectList(LstTipoServico))"></select>
+                                                asp-items="@(new SelectList(LstTipoServico))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-wrench"></i>
@@ -320,7 +320,7 @@
                                 <span asp-validation-for="TipoServico" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-6">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="PrioridadeMarcacao"></label>
                                 <p class="control has-icons-left">
@@ -329,7 +329,7 @@
                                             var LstPrioridade = ViewData["Prioridade"] as IList<String>;
                                         }
                                         <select class="select" style="width:100%" asp-for="PrioridadeMarcacao"
-                                            asp-items="@(new SelectList(LstPrioridade))"></select>
+                                                asp-items="@(new SelectList(LstPrioridade))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
@@ -338,7 +338,7 @@
                                 <span asp-validation-for="PrioridadeMarcacao" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-6">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="TipoPedido"></label>
                                 <p class="control has-icons-left">
@@ -347,7 +347,7 @@
                                             var LstTipoPedido = ViewData["TipoPedido"] as IList<String>;
                                         }
                                         <select class="select" style="width:100%" asp-for="Periodo"
-                                            asp-items="@(new SelectList(LstTipoPedido))"></select>
+                                                asp-items="@(new SelectList(LstTipoPedido))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-phone-slash"></i>
@@ -356,7 +356,7 @@
                                 <span asp-validation-for="TipoPedido" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-6">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="Referencia"></label>
                                 <p class="control has-icons-left">
@@ -368,19 +368,44 @@
                                 <span asp-validation-for="Referencia" class="has-text-danger"></span>
                             </div>
                         </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label asp-for="Formulario"></label>
+                                <p class="control has-icons-left">
+                                    <span class="select" style="width: 100%">
+                                        <select class="select" style="width:100%" asp-for="Formulario"
+                                                asp-items="ViewBag.Formularios"></select>
+                                    </span>
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-rectangle-list"></i>
+                                    </span>
+                                </p>
+                                <span asp-validation-for="Formulario" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-4 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded is-large">
+                                    <input type="checkbox" asp-for="FormularioSubmetido">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.FormularioSubmetido)</span>
+                                </label>
+                                <span asp-validation-for="FormularioSubmetido" class="has-text-danger"></span>
+                            </div>
+                        </div>
                         <div class="column is-12">
                             <div class="field">
                                 <label asp-for="ResumoMarcacao"></label>
                                 <div class="control">
                                     <textarea class="textarea" rows="10" placeholder="Resumo"
-                                        asp-for="ResumoMarcacao"></textarea>
+                                              asp-for="ResumoMarcacao"></textarea>
                                 </div>
                                 <span asp-validation-for="ResumoMarcacao" class="has-text-danger"></span>
                             </div>
                         </div>
                         &nbsp;
                         <button type="button" id="btnCriarMarcacao" onclick="ValidarMarcacao()" value="Criar Marcação"
-                            class="button is-info is-large is-fullwidth">
+                                class="button is-info is-large is-fullwidth">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
                             </span>

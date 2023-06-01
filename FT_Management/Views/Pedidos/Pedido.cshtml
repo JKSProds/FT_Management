@@ -147,7 +147,7 @@
                                 <div class="control has-icons-left">
                                     <p class="control " style="width:100%">
                                         <input class="input" type="text" readonly
-                                            value="@string.Join(" | ", Model.DatasAdicionaisDistintas.Select(d => d.ToShortDateString())) @Model.Hora">
+                                               value="@string.Join(" | ", Model.DatasAdicionaisDistintas.Select(d => d.ToShortDateString())) @Model.Hora">
                                     </p>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-calendar-day"></i>
@@ -265,19 +265,19 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-4">
+                        <div class="column is-3">
                             <div class="field">
                                 <label class="label">Técnico(s)</label>
                                 <p class="control has-icons-left">
                                     <input value="@string.Join(" | ", Model.LstTecnicos.Select(x => x.NomeCompleto))"
-                                        class="input" readonly />
+                                           class="input" readonly />
                                     <span class="icon is-small is-left">
                                         <i class="fa-solid fa-users"></i>
                                     </span>
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-4">
+                        <div class="column is-2">
                             <div class="field">
                                 <label asp-for="Referencia" class="label"></label>
                                 <p class="control has-icons-left">
@@ -286,6 +286,26 @@
                                         <i class="fas fa-asterisk"></i>
                                     </span>
                                 </p>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label asp-for="Formulario" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <input asp-for="Formulario" class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-rectangle-list"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2 my-auto">
+                            <div class="field">
+                                <label disabled class="switch is-rounded">
+                                    <input type="checkbox" disabled checked="@Model.FormularioSubmetido">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.FormularioSubmetido)</span>
+                                </label>
                             </div>
                         </div>
                         <div class="column is-2 my-auto">
@@ -297,7 +317,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="column is-2 my-auto">
+                        <div class="column is-1 my-auto">
                             <div class="field">
                                 <label disabled class="switch is-rounded">
                                     <input type="checkbox" disabled checked="@Model.Oficina">

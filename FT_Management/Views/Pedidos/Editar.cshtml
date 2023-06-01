@@ -99,8 +99,8 @@
                     <label asp-for="DataPedido" class="label"></label>
                     <p class="control has-icons-left">
                         <input type="date" class="input"
-                            value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))"
-                            asp-for="DataPedido" id="txtDataPedido" disabled>
+                               value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))"
+                               asp-for="DataPedido" id="txtDataPedido" disabled>
                     </p>
                 </div>
             </div>
@@ -110,10 +110,9 @@
                     <div class="field has-addons">
                         <p class="control " style="width:100%">
                             <input type="date" class="input "
-                                value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
-                                asp-for="DataMarcacao" id="txtData">
-                            <script>
-                                bulmaCalendar.attach('#txtData', {
+                                   value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
+                                   asp-for="DataMarcacao" id="txtData">
+                            <script>bulmaCalendar.attach('#txtData', {
                                     color: 'info',
                                     lang: 'pt',
                                     displayMode: 'dialog',
@@ -121,12 +120,11 @@
                                     todayLabel: 'Hoje',
                                     showClearButton: false,
                                     cancelLabel: 'Cancelar'
-                                });
-                            </script>
+                                });</script>
                         </p>
                         <div class="control">
                             <button class="button is-info"
-                                onclick="AdicionarData(document.getElementById('txtData').value)" type="button">
+                                    onclick="AdicionarData(document.getElementById('txtData').value)" type="button">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
@@ -160,7 +158,7 @@
                             }
                             <span class="select" style="width:100%">
                                 <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect"
-                                    asp-items="@(new MultiSelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+                                        asp-items="@(new MultiSelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
                             </span>
                         </div>
                     </div>
@@ -177,7 +175,7 @@
                                 var LstPeriodo = ViewData["Periodo"] as IList<String>;
                             }
                             <select class="select" style="width:100%" asp-for="Periodo"
-                                asp-items="@(new SelectList(LstPeriodo))"></select>
+                                    asp-items="@(new SelectList(LstPeriodo))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-cloud-sun"></i>
@@ -195,7 +193,7 @@
                         }
                         <span class="select" style="width:100%">
                             <select style="width:100%" asp-for="EstadoMarcacaoDesc"
-                                asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                                    asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-check"></i>
@@ -214,7 +212,7 @@
                                 var LstPrioridade = ViewData["Prioridade"] as IList<String>;
                             }
                             <select class="select" style="width:100%" asp-for="PrioridadeMarcacao"
-                                asp-items="@(new SelectList(LstPrioridade))"></select>
+                                    asp-items="@(new SelectList(LstPrioridade))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-hourglass"></i>
@@ -232,7 +230,7 @@
                                 var LstTipoServico = ViewData["TipoServico"] as IList<String>;
                             }
                             <select class="select" style="width:100%" asp-for="TipoServico"
-                                asp-items="@(new SelectList(LstTipoServico))"></select>
+                                    asp-items="@(new SelectList(LstTipoServico))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-wrench"></i>
@@ -251,8 +249,8 @@
                             }
                             <span class="select" style="width:100%">
                                 <select style="width:100%" asp-for="TipoEquipamento"
-                                    asp-items="@(new SelectList(LstTipoEquipamento))"
-                                    onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
+                                        asp-items="@(new SelectList(LstTipoEquipamento))"
+                                        onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
                             </span>
                             <span class="icon is-small is-left">
                                 <i class="fas fa-cogs"></i>
@@ -313,7 +311,7 @@
                                 var LstTipoPedido = ViewData["TipoPedido"] as IList<String>;
                             }
                             <select class="select" style="width:100%" asp-for="TipoPedido"
-                                asp-items="@(new SelectList(LstTipoPedido))"></select>
+                                    asp-items="@(new SelectList(LstTipoPedido))"></select>
                         </span>
                         <span class="icon is-small is-left">
                             <i class="fas fa-phone-slash"></i>
@@ -352,6 +350,31 @@
                     </label>
                 </div>
             </div>
+            <div class="column is-10">
+                <div class="field">
+                    <label asp-for="Formulario"></label>
+                    <p class="control has-icons-left">
+                        <span class="select" style="width: 100%">
+                            <select class="select" style="width:100%" asp-for="Formulario"
+                                    asp-items="ViewBag.Formularios"></select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-rectangle-list"></i>
+                        </span>
+                    </p>
+                    <span asp-validation-for="Formulario" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-2 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded is-large">
+                        <input type="checkbox" asp-for="FormularioSubmetido">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model => model.FormularioSubmetido)</span>
+                    </label>
+                    <span asp-validation-for="FormularioSubmetido" class="has-text-danger"></span>
+                </div>
+            </div>
             <div class="column is-12">
                 <div class="field">
                     <label asp-for="ResumoMarcacao" class="label"></label>
@@ -364,7 +387,7 @@
         </div>
         &nbsp;
         <button type="button" id="btnGuardarMarcacao" onclick="ValidarMarcacao()" value="Guardar Marcação"
-            class="button is-info is-outlined is-fullwidth">
+            class="button is-info is-large is-fullwidth">
             <span class="icon">
                 <i class="fas fa-plus"></i>
             </span>

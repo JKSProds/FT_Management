@@ -4,6 +4,7 @@
     {
         public string EmojiFO { get { return !string.IsNullOrEmpty(this.StampFO) && this.StampFO.Contains("WEBAPP") ? "⭐ " : "💩 "; } }
         public string StampFO { get; set; }
+        public string StampPA { get; set; }
         [Display(Name = "Num. da Folha de Obra")]
         public int IdFolhaObra { get; set; }
         [Display(Name = "Num. da Assistência Técnica")]
@@ -38,13 +39,14 @@
         public string ListaIntervencoes { get; set; }
         public List<Intervencao> IntervencaosServico { get; set; }
         [Required(ErrorMessage = "Falta selecionar o equipamento!")]
+        [Display(Name = "Equipamento")]
         public Equipamento EquipamentoServico { get; set; }
         [Required(ErrorMessage = "Falta selecionar o cliente!")]
         public Cliente ClienteServico { get; set; }
         public Utilizador Utilizador { get; set; }
         public string IdCartao { get; set; }
         private string _ConferidoPor;
-        [Display(Name = "Conferido por")]
+        [Display(Name = "Nome | Número")]
         [Required(ErrorMessage = "Falta preencher o campo Conferido por!")]
         public string ConferidoPor { get { return _ConferidoPor ?? ""; } set { _ConferidoPor = value; } }
         private string _GuiaTransporteAtual;
@@ -70,6 +72,7 @@
         public bool CobrarDeslocacao { get; set; }
         public bool Instalação { get; set; }
         public bool EnviarEmail { get; set; }
+        [Display(Name = "Email")]
         public string EmailCliente { get; set; }
         public bool GuardarLocalizacao { get; set; }
         public bool FecharMarcacao { get; set; }
@@ -171,17 +174,13 @@
             if (this.ListaPecas == null) return;
             foreach (var item in this.ListaPecas.Split(";"))
             {
-                if (item != "")
+                if (item != "" && LstPecas.Where(p => p.StampProduto == item.Split("|").First()).Count() > 0)
                 {
-                    if (this.PecasServico.Where(p => p.StampProduto == item.Split("|").First()).Count() == 0)
-                    {
-                        this.PecasServico.Add(LstPecas.Where(p => p.StampProduto == item.Split("|").First()).First());
-                        this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|").Last());
-                    }
-                    else
-                    {
-                        this.PecasServico.Where(p => p.StampProduto == item.Split("|").First()).First().Stock_Fisico += Double.Parse(item.Split("|").Last());
-                    }
+                    this.PecasServico.Add(new Produto() { StampProduto = item.Split("|").First(), Ref_Produto = LstPecas.Where(p => p.StampProduto == item.Split("|").First()).First().Ref_Produto });
+                    this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|")[1]);
+                    this.PecasServico.Last().Garantia = item.Split("|")[2] == "true";
+                    this.PecasServico.Last().MotivoGarantia = item.Split("|")[3];
+                    this.PecasServico.Last().ObsGarantia = item.Split("|")[4];
                 }
             }
         }

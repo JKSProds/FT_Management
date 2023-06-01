@@ -4,7 +4,7 @@
     <Authors>Jorge Monteiro</Authors>
     <Company>JKSProds - Software</Company>
     <Version>02.2022</Version>
-    <AssemblyVersion>03.2023.04.27</AssemblyVersion>
+    <AssemblyVersion>03.2023.05.31</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting.WindowsServices" Version="6.0.0" />
@@ -28,6 +28,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Views\Formulario\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="FT_Ferias.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -37,5 +40,8 @@
     <None Update="FT_Presencas.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Formulario\" />
   </ItemGroup>
 </Project>

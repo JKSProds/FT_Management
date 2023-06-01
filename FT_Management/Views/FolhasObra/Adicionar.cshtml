@@ -48,9 +48,6 @@
         </div>
     </div>
     <hr />
-
-    <input type="hidden" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
-
     <div class="container">
         <div class="steps is-small" id="stepsDemo">
             <div class="step-item is-active">
@@ -83,12 +80,6 @@
                     <p class="step-title">Outros</p>
                 </div>
             </div>
-            <div class="step-item">
-                <div class="step-marker">6</div>
-                <div class="step-details">
-                    <p class="step-title">Rúbrica</p>
-                </div>
-            </div>
             <div class="steps-actions">
                 <div class="steps-action">
                     <button data-nav="previous" id="stepsPrevious" class="is-fullwidth button is-danger" type="button">
@@ -100,7 +91,7 @@
                 </div>
                 <div class="steps-action">
                     <button data-nav="next" id="stepsNext" onclick="resizeCanvas();"
-                        class="is-fullwidth button is-success" type="button">
+                            class="is-fullwidth button is-success" type="button">
                         <span class="icon">
                             <i class="fas fa-arrow-right"></i>
                         </span>
@@ -112,53 +103,70 @@
                 <div class="step-content is-active">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
-                            <div class="field ">
-                                <label asp-for="EquipamentoServico.NumeroSerieEquipamento"></label>
-                                <div class="field has-addons">
-                                    <div class="control" style="width:100%">
-                                        <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
-                                            id="txtEquipamentoStamp" />
-                                        <p class="control">
-                                            <input type="text" class="input"
-                                                asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento">
-                                        </p>
-                                    </div>
-                                    <div class="control">
-                                        <label class="mx-1 switch is-large is-outlined" style="height:40px">
-                                            <input type="checkbox" id="chkDesbloquearEquipamentos"
-                                                onchange="DesbloquearEquipamentos();">
-                                            <span class="check is-success"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <div class="control buttons">
-                                        <button class="button is-secondary is-fullwidth" type="button"
-                                            onclick="LimparEquipamento()">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-backspace"></i>
-                                            </span>
-                                            <span>Limpar</span>
-                                        </button>
-                                        <button type="button" class="button is-info is-fullwidth" id="btnObterHistorico"
-                                            onclick="ObterHistoricoEquipamento()" disabled>
-                                            <span class="icon">
-                                                <i class="fas fa-history"></i>
-                                            </span>
-                                            <span>Histórico de Manutenções</span>
-                                        </button>
-                                        <button type="button" class="button is-success is-fullwidth"
-                                            id="btnObterEquipamentos" onclick="ObterEquipamentosCliente()">
-                                            <span class="icon">
-                                                <i class="fas fa-desktop"></i>
-                                            </span>
-                                            <span>Visualizar Equipamentos do Cliente</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
-                                    class="has-text-danger"></span>
+                            <div class="field">
+                                <label asp-for="EquipamentoServico"></label>
+                                <p class="control has-icons-left has-icons-right">
+                                    <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
+                                           id="txtEquipamentoStamp" />
+                                    <input type="text" class="input is-rounded" asp-for="EquipamentoServico.NumeroSerieEquipamento" id="txtEquipamento" placeholder="Insira o número de série">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                </p>
                             </div>
+                        </div>
+                        <div class="column is-6 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded is-medium">
+                                    <input type="checkbox" id="chkDesbloquearEquipamentos" onchange="DesbloquearEquipamentos();">
+                                    <span class="check is-success"></span>
+                                    <span class="control-label">
+                                        Pesquisar todos os Equipamentos
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="column is-6 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded is-medium">
+                                    <input type="checkbox" asp-for="EmGarantia" id="chkGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">
+                                        @Html.DisplayNameFor(model => model.EmGarantia)
+                                    </span>
+                                </label>
+                                <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-12">
+                            <div class="field">
+                                <div class="control buttons">
+                                    <button type="button" class="button is-info is-fullwidth" id="btnObterHistorico"
+                                            onclick="ObterHistoricoEquipamento()" disabled>
+                                        <span class="icon">
+                                            <i class="fas fa-history"></i>
+                                        </span>
+                                        <span>Histórico de Manutenções</span>
+                                    </button>
+                                    <button type="button" class="button is-success is-fullwidth"
+                                            id="btnObterEquipamentos" onclick="ObterEquipamentosCliente()">
+                                        <span class="icon">
+                                            <i class="fas fa-desktop"></i>
+                                        </span>
+                                        <span>Visualizar Equipamentos do Cliente</span>
+                                    </button>
+                                    <button class="button is-secondary is-fullwidth" type="button"
+                                            onclick="LimparEquipamento()">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-backspace"></i>
+                                        </span>
+                                        <span>Limpar</span>
+                                    </button>
+                                </div>
+
+                            </div>
+                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
+                                  class="has-text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -170,15 +178,17 @@
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
                             <button id="btnZeroIntervencoes"
-                                class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>Sem Periodos</button>
+                                    class="button is-danger my-1 is-large is-rounded is-fullwidth" disabled>
+                                Sem Periodos
+                            </button>
                             <span asp-validation-for="ListaIntervencoes" class="has-text-danger"></span>
                         </div>
                         <div class="column is-4">
                             <div class="field">
                                 <div class="control">
                                     <input type="date" class="input "
-                                        value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
-                                        asp-for="DataServico" id="txtData">
+                                           value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
+                                           asp-for="DataServico" id="txtData">
                                     <script>
                                         bulmaCalendar.attach('#txtData', {
                                             color: 'info',
@@ -187,8 +197,7 @@
                                             todayLabel: 'Hoje',
                                             showClearButton: false,
                                             cancelLabel: 'Cancelar'
-                                        });
-                                    </script>
+                                        });</script>
                                 </div>
                                 <span asp-validation-for="DataServico" class="has-text-danger"></span>
                             </div>
@@ -198,14 +207,14 @@
                                 <label>Inicio</label>
                                 <div class="control">
                                     <input type="time" class="input" id="txtHoraInicio"
-                                        value="@Model.IntervencaosServico.First().HoraInicio.ToShortTimeString()">
+                                           value="@Model.IntervencaosServico.First().HoraInicio.ToShortTimeString()">
                                 </div>
                             </div>
                             <div class="field">
                                 <label>Fim</label>
                                 <div class="control">
-                                    <input type="time" class="input" id="txtHoraFim" 
-                                        value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
+                                    <input type="time" class="input" id="txtHoraFim"
+                                           value="@Model.IntervencaosServico.First().HoraFim.ToShortTimeString()">
                                 </div>
                             </div>
                             <button type="button" onclick="AdicionarIntervencao()" class="button is-info is-fullwidth">
@@ -226,7 +235,7 @@
                                 <label asp-for="RelatorioServico"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
-                                        asp-for="RelatorioServico"></textarea>
+                                              asp-for="RelatorioServico" id="txtRelatorio"></textarea>
                                 </div>
                                 <span asp-validation-for="RelatorioServico" class="has-text-danger"></span>
                             </div>
@@ -236,7 +245,7 @@
                                 <label asp-for="SituacoesPendentes"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
-                                        asp-for="SituacoesPendentes"></textarea>
+                                              asp-for="SituacoesPendentes"></textarea>
                                 </div>
                                 <span asp-validation-for="SituacoesPendentes" class="has-text-danger"></span>
                             </div>
@@ -246,53 +255,71 @@
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
-                            <div class="field ">
+                            <div class="field">
                                 <label asp-for="PecasServico"></label>
-                                <div class="field has-addons mb-1">
-                                    <div class="control" style="width:100%">
-                                        <p class="control">
-                                            <input type="text" class="input" id="txtPecas">
-                                        </p>
-                                    </div>
-                                                                            <div class="control">
-                                            <a class="button is-info"
-                                                onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
-                                                <i class="fa-solid fa-qrcode"></i>
-                                            </a>
-                                        </div>
+                                <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" class="input" id="txtStampPeca">
-                                    <span asp-validation-for="PecasServico" class="has-text-danger"></span>
-                                </div>
+                                    <input type="text" class="input is-rounded" placeholder="Insira a referência" id="txtPecas">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="field ">
                                 <div class="field has-addons is-pulled-right mb-2">
-                                        <div class="control">
-                                            <button type="button" class="button is-danger disable-dbl-tap-zoom"
-                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
-                                                <span class="icon">
-                                                    <i class="fas fa-minus"></i>
-                                                </span>
-                                            </button>
-                                        </div>
-                                        <div class="control" style="width:75px">
-                                            <input type="number" class="input has-text-centered" id="txtQtd" value="1">
-                                        </div>
-                                        <div class="control">
-                                            <button type="button" class="button is-success disable-dbl-tap-zoom"
-                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
-                                                <span class="icon">
-                                                    <i class="fas fa-plus"></i>
-                                                </span>
-                                            </button>
-                                        </div>
+                                    <div class="control">
+                                        <label class="switch is-rounded">
+                                            <input type="checkbox" id="chkGarantiaSelecionadaPeca" onchange="document.getElementById('chkPecaGarantia').checked = this.checked;">
+                                            <span class="check is-info"></span>
+                                            <span class="control-label">
+                                                Garantia?
+                                            </span>
+                                        </label>
                                     </div>
+                                    <div class="control">
+                                        <button type="button" class="button is-danger disable-dbl-tap-zoom"
+                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) - 1">
+                                            <span class="icon">
+                                                <i class="fas fa-minus"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="control" style="width:75px">
+                                        <input type="number" class="input has-text-centered" id="txtQtd" value="1">
+                                    </div>
+                                    <div class="control">
+                                        <button type="button" class="button is-success disable-dbl-tap-zoom"
+                                                onclick="document.getElementById('txtQtd').value = parseInt(document.getElementById('txtQtd').value) + 1">
+                                            <span class="icon">
+                                                <i class="fas fa-plus"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="control">
+                                        <a class="button is-info"
+                                           onclick="Bulma('#modalLerBarcode').modal().open();iniciarScan();">
+                                            <i class="fa-solid fa-qrcode"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
-                                    onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
-                                    disabled id="btnAdicionarPeca">
+                                        onclick="if (document.getElementById('chkGarantiaSelecionadaPeca').checked || document.getElementById('chkGarantia').checked) { document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;Bulma('#modalPecaGarantia').modal().open(); } else {
+        ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, false, '', '');
+                                        }"
+                                        disabled id="btnAdicionarPeca">
                                     <span class="icon">
                                         <i class="fa-solid fa-check"></i>
                                     </span>
                                     <span>Adicionar Peça</span>
+                                </button>
+                                <button type="button" class="button is-success is-fullwidth"
+                                        onclick="Bulma('#modalPecas').modal().open();">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-list-ul"></i>
+                                    </span>
+                                    <span>Visualizar Stock</span>
                                 </button>
                                 <button class="button is-secondary is-fullwidth" type="button" onclick="LimparPecas()">
                                     <span class="icon">
@@ -300,14 +327,6 @@
                                     </span>
                                     <span>Limpar</span>
                                 </button>
-                                <button type="button" class="button is-success is-fullwidth"
-                                    onclick="Bulma('#modalPecas').modal().open();">
-                                    <span class="icon">
-                                        <i class="fa-solid fa-list-ul"></i>
-                                    </span>
-                                    <span>Visualizar Stock</span>
-                                </button>
-
                             </div>
                             <div class="column is-12">
                                 <label asp-for="ListaPecas"></label>
@@ -315,7 +334,9 @@
                                 <div class="list has-visible-pointer-controls" id="divListaPecas">
                                 </div>
                                 <button id="btnZeroPecas" class="button is-danger my-1 is-large is-rounded is-fullwidth"
-                                    disabled>Sem Peças</button>
+                                        disabled>
+                                    Sem Peças
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -328,7 +349,7 @@
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
                                         <select asp-for="EstadoFolhaObra" id="lstEstadoFO" asp-items="ViewBag.EstadoFolhaObra"
-                                            class="form-control" style="width:100%">
+                                                class="form-control" style="width:100%">
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
@@ -347,7 +368,7 @@
                                             var LstTipoFolhaObra = ViewData["TipoFolhaObra"] as IList<String>;
                                         }
                                         <select class="select" id="lstTipoFO" style="width:100%" asp-for="TipoFolhaObra"
-                                            asp-items="@(new SelectList(LstTipoFolhaObra))"></select>
+                                                asp-items="@(new SelectList(LstTipoFolhaObra))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
@@ -356,76 +377,21 @@
                                 <span asp-validation-for="TipoFolhaObra" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="EmGarantia">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model =>
-                                        model.EmGarantia)</span>
-                                </label>
-                                <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" asp-for="Avisar">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model => model.Avisar)</span>
-                                </label>
-                                <span asp-validation-for="Avisar" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded">
-                                    <input type="checkbox" id="chkRecolherOficina" asp-for="RecolhaOficina">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">@Html.DisplayNameFor(model =>
-                                        model.RecolhaOficina)</span>
-                                </label>
-                                <span asp-validation-for="RecolhaOficina" class="has-text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="step-content">
-                    <div class="columns is-multiline mx-1">
-                        <div class="column is-6">
+                        <div class="column is-12">
                             <div class="field">
                                 <p class="control">
-                                    <button type="button" class="mb-3 button is-warning is-pulled-right is-fullwidth"
-                                        onclick="Bulma('#modalAdicionarAnexo').modal().open();">
+                                    <button type="button" class="mb-3 button is-warning is-large is-pulled-right is-fullwidth"
+                                            onclick="Bulma('#modalAdicionarAnexo').modal().open();">
                                         <span class="icon is-small">
-                                            <i class="fas fa-plus"></i>
+                                            <i class="fa-solid fa-paperclip"></i>
                                         </span>
                                         <span>Adicionar Anexos</span>
                                     </button>
                                 </p>
                             </div>
-                            <div class="field">
-                                <label asp-for="ConferidoPor"></label>
-                                <div class="control">
-                                    <input class="input is-primary" type="text" asp-for="ConferidoPor" />
-                                </div>
-                                <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
-                            </div>
                         </div>
-
-                        <div class="column is-6">
-                            <div class="wrapper" style="width: 100%;" id="divRubrica">
-                                <canvas id="signature-pad" class="signature-pad"
-                                    style="width:100%;border:2px solid #000000;"></canvas>
-                            </div>
-                            <br />
-                            <button class="button is-warning" type="button" id="btnDesfazerRubrica">Desfazer</button>
-                            <button class="button is-danger" type="button"
-                                onclick="signaturePad.clear();">Limpar</button>
-                        </div>
-
                         &nbsp;
-                        <button type="button" onclick="ValidarFolhaObra()" class="button is-info is-large is-fullwidth">
+                        <button type="button" onclick="AbrirMensagens();" class="button is-info is-large is-fullwidth">
                             <span class="icon">
                                 <i class="fas fa-plus"></i>
                             </span>
@@ -436,118 +402,380 @@
             </div>
         </div>
     </div>
-    <div style="display: none;">
+    <div style="display:none">
         <div class="columns is-multiline mx-1 ">
             <input type="text" class="input" asp-for="FicheirosAnexo" id="Ficheiros">
-            <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
-            <div class="column is-12">
-                <div class="field">
-                    <label asp-for="ClienteServico.NomeCliente"></label>
-                    <div class="control">
-                        <input type="hidden" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
-                        <input type="hidden" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
-                        <p class="control has-icons-left">
-                            <input type="text" class="input" value="@Model.ClienteServico.NomeCliente"
-                                asp-for="ClienteServico.NomeCliente" id="txtCustomer">
-                            <span class="icon is-small is-left">
-                                <i class="fas fa-user-check"></i>
-                            </span>
-                        </p>
-                    </div>
-                    <span asp-validation-for="ClienteServico.IdCliente" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3">
-                <div class="field">
-                    <label asp-for="ReferenciaServico"></label>
-                    <div class="control">
-                        <p class="control">
-                            <input type="text" class="input" asp-for="ReferenciaServico">
-                        </p>
-                    </div>
-                    <span asp-validation-for="ReferenciaServico" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3">
-                <div class="field">
-                    <label asp-for="IdMarcacao"></label>
-                    <div class="control">
-                        <p class="control">
-                            <input type="text" class="input" asp-for="IdMarcacao">
-                        </p>
-                    </div>
-                    <span asp-validation-for="IdMarcacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="CobrarDeslocacao" id="chkCobrarDeslocacao">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.CobrarDeslocacao)</span>
-                    </label>
-                    <span asp-validation-for="CobrarDeslocacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="Piquete" id="chkPiquete">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.Piquete)</span>
-                    </label>
-                    <span asp-validation-for="Piquete" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="EnviarEmail" id="chkEnviarEmail">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model => model.EnviarEmail)</span>
-                    </label>
-                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="GuardarLocalizacao" id="chkGuardarLocalizacao">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.GuardarLocalizacao)</span>
-                    </label>
-                    <span asp-validation-for="GuardarLocalizacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.FecharMarcacao)</span>
-                    </label>
-                    <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="Guia" id="chkGuia">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model =>
-                            model.Guia)</span>
-                    </label>
-                    <span asp-validation-for="Guia" class="has-text-danger"></span>
-                </div>
+            <input type="text" class="input" asp-for="ClienteServico.NomeCliente" id="txtIdCliente" />
+            <input type="text" class="input" asp-for="ClienteServico.IdCliente" id="txtIdCliente" />
+            <input type="text" class="input" asp-for="ClienteServico.IdLoja" id="txtIdLoja" />
+            <input type="text" class="input" asp-for="ReferenciaServico">
+            <input type="text" class="input" asp-for="IdMarcacao">
+            <input type="text" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
+            <input type="checkbox" class="checkbox" asp-for="Piquete" id="chkPiquete">
+            <input type="checkbox" class="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
+
+            <div id="divChk">
+                <input type="checkbox" asp-for="Avisar" id="chkAvisar">
+                <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
+                <input type="checkbox" id="chkEnviarEmail" asp-for="EnviarEmail">
+                <input type="checkbox" id="chkRecolhaOficina" asp-for="RecolhaOficina">
+                <input type="checkbox" id="chkGuia" asp-for="Guia">
+                <input type="checkbox" id="chkCobrarDeslocacao" asp-for="CobrarDeslocacao">
+                <input type="checkbox" id="chkGuardarLocalizacao" asp-for="GuardarLocalizacao">
             </div>
         </div>
     </div>
 
+    <div class="modal" id="modalFinal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Verificações Finais</p>
+                <button class="delete" type="button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body" id="divFinalChk">
+                <div id="divEncaminhar" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkAvisar').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja encaminhar o pedido para resolução por parte do cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
+                </div>
+                <div id="divLocalizacao" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkGuardarLocalizacao').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja guardar a localização atual do cliente?
+                                <input class="input is-primary" type="text" disabled
+                                       asp-for="Utilizador.Viatura.LocalizacaoMorada" />
+                                <a class="button is-static">
+                                    @Model.Utilizador.Viatura.Matricula
+                                </a>
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="GuardarLocalizacao" class="has-text-danger"></span>
+                </div>
+                <div id="divDeslocacao" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkCobrarDeslocacao').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja cobrar a deslocação a este cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="CobrarDeslocacao" class="has-text-danger"></span>
+                </div>
+                <div id="divEmail" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkEnviarEmail').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja enviar um email com a folha de obra para o cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
+                </div>
+                <div id="divRecolher" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" asp-for="RecolhaOficina" onchange="document.getElementById('divGuia').hidden = !this.checked; document.getElementById('chkRecolhaOficina').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja recolher o equipamento selecionado para oficina?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="RecolhaOficina" class="has-text-danger"></span>
+                </div>
+                <div id="divGuia" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkGuia').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja gerar guia de transporte para o equipamento selecionado?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="Guia" class="has-text-danger"></span>
+                </div>
+                <div id="divFechar" hidden class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" onchange="document.getElementById('chkFecharMarcacao').checked = this.checked;">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Deseja dar como concluida a assistência atual?
+                        </span>
+                    </label>
+                    <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close();ValidarCliente();">
+                    <span class="icon">
+                        <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
+                    </span>
+                    <span>Guardar</span>
+                </button>
+                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalFinal').modal().close();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-left"></i>
+                    </span>
+                    <span>Cancelar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <div class="modal" id="modalValidarCliente">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Resumo da Assistência</p>
+                <button class="delete" type="button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="columns is-multiline mx-1">
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label is-size-4">Equipamento</label>
+                            <div class="field has-addons">
+                                <p class="control" style="width:100%"><input class="input is-primary" type="text" id="txtValidaEquipamento" readonly /></p>
+                                <p class="control">
+                                    <button class="button my-auto" type="button"><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnEstadoGarantia">GARANTIA</p></button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="card">
+                            <header class="card-header card-toggle">
+                                <p class="is-size-4 my-1 has-text-weight-bold column">
+                                    Periodos
+                                </p>
+                                <button class="button mx-1 is-rounded my-auto" disabled><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnCountIntervencoes">2</p></button>
+                                <button class="card-header-icon" style="text-align:right" type="button">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </header>
+                            <div class="card-content is-hidden">
+                                <div class="content">
+                                    <div class="control">
+                                        <p id="txtValidaIntervencoes"> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="card">
+                            <header class="card-header card-toggle">
+                                <p class="is-size-4 my-1 has-text-weight-bold column">
+                                    Peças
+                                </p>
+                                <button class="button mx-1 is-rounded my-auto" disabled><p class="is-uppercase has-text-weight-bold" style="line-height:1;" id="btnCountPecas">2</p></button>
+                                <button class="card-header-icon" style="text-align:right" type="button">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </header>
+                            <div class="card-content is-hidden">
+                                <div class="content">
+                                    <div class="control">
+                                        <p id="txtValidaPecas"> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="card">
+                            <header class="card-header card-toggle">
+                                <p class="is-size-4 my-1 has-text-weight-bold column">
+                                    Relatório
+                                </p>
+                                <button class="card-header-icon" style="text-align:right" type="button">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    <div class="control">
+                                        <p style="white-space: pre-line" id="txtValidaRelatorio"> </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    &nbsp;
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalValidarCliente2').modal().open();resizeCanvas();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                    <span>Confirmar</span>
+                </button>
+                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalValidarCliente').modal().close();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-left"></i>
+                    </span>
+                    <span>Cancelar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+
+    <div class="modal" id="modalValidarCliente2">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Rúbrica</p>
+                <button class="delete" type="button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="columns is-multiline mx-1">
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label" asp-for="ConferidoPor"></label>
+                            <div class="control">
+                                <input class="input is-primary" type="text" asp-for="ConferidoPor" />
+                            </div>
+                            <span asp-validation-for="ConferidoPor" class="has-text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="label" asp-for="EmailCliente"></label>
+                            <div class="control">
+                                <input type="email" class="input" asp-for="EmailCliente" id="EmailCliente" />
+                            </div>
+                            <span asp-validation-for="EmailCliente" class="has-text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="column is-12">
+                        <div class="field">
+                            <label class="switch is-rounded">
+                                <input type="checkbox" id="chkSatisfeito">
+                                <span class="check is-info"></span>
+                                <span class="control-label">
+                                    Confirmo e declaro-me satisfeito com o serviço efetuado!
+                                </span>
+                            </label>
+                        </div>
+                        <div class="wrapper" style="width: 100%;" id="divRubrica">
+                            <canvas id="signature-pad" class="signature-pad disable-dbl-tap-zoom"
+                                    style="width:100%;border:2px solid #000000;"></canvas>
+                        </div>
+                        <br />
+                        <button class="button is-warning is-fullwidth mb-2" type="button" id="btnDesfazerRubrica">Desfazer</button>
+                        <button class="button is-danger is-fullwidth" type="button"
+                                onclick="signaturePad.clear();">
+                            Limpar
+                        </button>
+                    </div>
+                </div>
+                &nbsp;
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="if (document.getElementById('chkSatisfeito').checked) { document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1]; ValidarFolhaObra(); } else { notifyError('Por favor confirme a sua satisfação para avancar!'); }">
+                    <span class="icon">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </span>
+                    <span>Gravar</span>
+                </button>
+                <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalValidarCliente2').modal().close();">
+                    <span class="icon">
+                        <i class="fa-solid fa-circle-left"></i>
+                    </span>
+                    <span>Voltar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
 </form>
+
+
+<div id="modalPecaGarantia" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-warning">
+            <p class="modal-card-title">Informações de Garantia da Peça</p>
+        </header>
+        <section class="modal-card-body">
+            <div class="field">
+                <label class="switch is-rounded">
+                    <input type="checkbox" id="chkPecaGarantia" onchange="document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !this.checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = this.checked;">
+                    <span class="check is-info"></span>
+                    <span class="control-label">
+                        Peça em Garantia?
+                    </span>
+                </label>
+            </div>
+            <div class="field" hidden>
+                <p class="control has-icons-left">
+                    <span class="select" style="width:100%">
+                        <select id="lstMotivosAvariaGarantia" asp-items="ViewBag.MotivosGarantia"
+                                class="form-control" style="width:100%">
+                        </select>
+                    </span>
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field" hidden>
+                <p class="control has-icons-left">
+                    <span class="select" style="width:100%">
+                        <select id="lstMotivosAvariaNaoGarantia" asp-items="ViewBag.MotivosNaoGarantia"
+                                class="form-control" style="width:100%">
+                        </select>
+                    </span>
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field" style="width:100%">
+                <div class="control">
+                    <textarea type="text" class="textarea" id="txtObsPecaGarantia" rows=5 value=""></textarea>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-large is-fullwidth is-success" type="button" onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, document.getElementById('chkPecaGarantia').checked, (document.getElementById('chkPecaGarantia').checked ? document.getElementById('lstMotivosAvariaGarantia').value : document.getElementById('lstMotivosAvariaNaoGarantia').value), document.getElementById('txtObsPecaGarantia').value)">
+                <span class="icon">
+                    <i class="fa-solid fa-circle-plus"></i>
+                </span>
+                <span>Adicionar Peça</span>
+            </button>
+            <button type="button" class="button is-info is-large is-fullwidth"
+                    onclick="Bulma('#modalPecaGarantia').modal().close();"
+                    href="javascript:;">
+                Fechar
+            </button>
+        </footer>
+    </div>
+</div>
 
 <div id="modalMensagensErro" class="modal">
     <div class="modal-background"></div>
@@ -556,12 +784,14 @@
             <p class="modal-card-title">Informação</p>
         </header>
         <section class="modal-card-body">
-                <div asp-validation-summary="ModelOnly" id="divMensagensErro" style="white-space: pre-line"></div>
+            <div asp-validation-summary="ModelOnly" id="divMensagensErro" style="white-space: pre-line"></div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalMensagensErro').modal().close();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
+                    onclick="Bulma('#modalMensagensErro').modal().close();" id="btnConfirmAddAnexo"
+                    href="javascript:;">
+                Fechar
+            </button>
         </footer>
     </div>
 </div>
@@ -583,8 +813,10 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
+                    onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
+                    href="javascript:;">
+                Fechar
+            </button>
         </footer>
     </div>
 </div>
@@ -598,183 +830,14 @@
         <section class="modal-card-body">
             <div class="form-group">
                 <div id="reader" width="600px" height="600px"></div>
-                <script>
-                    function onScanSuccess(decodedText, decodedResult) {
-                        // handle the scanned code as you like, for example:
-                        console.log(`Code matched = ${decodedText}`, decodedResult);
-                    }
-
-                    function onScanFailure(error) {
-                        // handle scan failure, usually better to ignore and keep scanning.
-                        // for example:
-                        //console.warn(`Code scan error = ${error}`);
-                    }
-                    const html5QrCode = new Html5Qrcode("reader");
-                    var cameraId = '';
-                    let html5QrcodeScanner = new Html5QrcodeScanner(
-                        "reader",
-                        {
-                            fps: 10, qrbox: { width: 250, height: 250 }
-                        },
-  /* verbose= */ false);
-
-                    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-
-                    function iniciarScan() {
-
-                        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-                            Bulma('#modalLerBarcode').modal().close();
-                            ObterPecaRef(decodedText);
-                            pararScan();
-                        };
-                        const config = {
-                            fps: 10, qrbox: { width: 250, height: 250 }
-                        };
-
-                        Html5Qrcode.getCameras().then(devices => {
-
-                            if (devices && devices.length) {
-                                if (devices.length > 3) {
-                                    cameraId = devices[3].id;
-                                } else if (devices.length > 2) {
-                                    cameraId = cameraId = devices[1].id;
-                                }
-                                if (cameraId != '') {
-                                    html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
-                                } else {
-                                    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-                                }
-                            }
-                        }).catch(err => {
-                        });
-
-
-                    }
-                    function pararScan() {
-                        html5QrCode.stop().then((ignore) => {
-                            // QR Code scanning is stopped.
-                        }).catch((err) => {
-                            // Stop failed, handle it.
-                        });
-                    }
-                </script>
             </div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalLerBarcode').modal().close();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalDeslocacao">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Deslocação</p>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja cobrar a deslocação a este cliente?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="CobrarDeslocacao(true)">Sim</button>
-            <button class="button" onclick="CobrarDeslocacao(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalEnviarEmail">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Email</p>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja enviar um email com a folha de obra para o cliente?</p>
-            <input type="email" class="input" asp-for="EmailCliente" id="txtEmailCliente" />
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="EnviarEmail(true)">Sim</button>
-            <button class="button" onclick="EnviarEmail(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalGuardarLocalizacao">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Localização</p>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja guardar a localização atual do cliente?</p>
-            <div class="field has-addons">
-                <div class="control" style="width:100%">
-                    <input class="input is-primary" type="text" disabled
-                        asp-for="Utilizador.Viatura.LocalizacaoMorada" />
-                </div>
-                <p class="control">
-                    <a class="button is-static">
-                        @Model.Utilizador.Viatura.Matricula
-                    </a>
-                </p>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="GuardarLocalizacao(true)">Sim</button>
-            <button class="button" onclick="GuardarLocalizacao(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalFecharMarcacao">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Marcação</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja fechar a marcação?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="FecharMarcacao(true)">Sim</button>
-            <button class="button" onclick="FecharMarcacao(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalRecolherOficina">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Equipamento</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja recolher o equipamento para oficina?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="RecolherOficina(true)">Sim</button>
-            <button class="button" onclick="RecolherOficina(false)">Não</button>
-        </footer>
-    </div>
-</div>
-
-<div class="modal" id="modalGerarGuia">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Guia</p>
-            <button class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <p>Deseja gerar guia de transporte para o equipamento selecionado?</p>
-        </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success" onclick="GerarGuia(true)">Sim</button>
-            <button class="button" onclick="GerarGuia(false)">Não</button>
+                    onclick="Bulma('#modalLerBarcode').modal().close();" id="btnConfirmAddAnexo"
+                    href="javascript:;">
+                Fechar
+            </button>
         </footer>
     </div>
 </div>
@@ -807,12 +870,12 @@
                                   value=""></textarea>
                     </div>
                 </div>
-                </div>
+            </div>
         </section>
         <footer class="modal-card-foot">
             @if (User.IsInRole("Admin"))
             {
-                <button type="button" class="button is-danger is-large is-fullwidth" onclick="AbrirMensagens();" href="javascript:;">
+                <button type="button" class="button is-danger is-large is-fullwidth" onclick="document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();" href="javascript:;">
                     <span class="icon">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -867,32 +930,7 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalObterHistorico').modal().close();" href="javascript:;">
-                <span class="icon">
-                    <i class="fa-regular fa-circle-xmark"></i>
-                </span>
-                <span>Fechar</span>
-            </button>
-        </footer>
-    </div>
-</div>
-
-
-<div id="modalObterHistoricoVazio" class="modal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Histórico de Intervenções</p>
-            <button type="button" class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <div class="form-group">
-                <button class="button is-danger is-outlined is-rounded is-fullwidth">Não existem intervenções!</button>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalObterHistoricoVazio').modal().close();" href="javascript:;">
+                    onclick="Bulma('#modalObterHistorico').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -916,7 +954,7 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalEquipamentos').modal().close();" href="javascript:;">
+                    onclick="Bulma('#modalEquipamentos').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -925,6 +963,7 @@
         </footer>
     </div>
 </div>
+
 <div id="modalPecas" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -939,7 +978,7 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalPecas').modal().close();" href="javascript:;">
+                    onclick="Bulma('#modalPecas').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
@@ -950,106 +989,77 @@
 </div>
 
 @section Scripts {
-@{
-await Html.RenderPartialAsync("_ValidationScriptsPartial");
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
 
 <script>
-    bulmaSteps.attach('.steps', {
-        onShow: id => {
-            if (id == 5) {
-                resizeCanvas();
-            }
-        }
-    });
-    
-    if (document.getElementById('divMensagensErro') != null) Bulma('#modalMensagensErro').modal().open();
-
-    (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
-        const $target = $close.closest('#modalAguardarValidacao');
-
-        $close.addEventListener('click', () => {
-            if (!($target.classList.contains('is-active'))) clearInterval(interval);
-        });
-    });
-
-    (document.querySelectorAll('#modalLerBarcode') || []).forEach(($close) => {
-        const $target = $close.closest('#modalLerBarcode');
-
-        $close.addEventListener('click', () => {
-            pararScan();
-        });
-    });
-
-
-    Dropzone.options.dropAnexo = { // camelized version of the `id`
-        paramName: "file", // The name that will be used to transfer the file
-        maxFilesize: 10, // MB
-        success: function (file, response) {
-            document.getElementById('Ficheiros').value += response + ";";
-        }
-    };
-
-    var canvas = document.getElementById('signature-pad');
-    signaturePad = new SignaturePad(canvas, {
-        minWidth: 0.5,
-        maxWidth: 1
-    });
-
-    document.getElementById('btnDesfazerRubrica').addEventListener('click', function () {
-        var data = signaturePad.toData();
-        if (data) {
-            data.pop(); // remove the last dot or line
-            signaturePad.fromData(data);
-        }
-    });
-
-    function resizeCanvas() {
-        const data = signaturePad.toData();
-
-        var ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        if (canvas.width == 0) { canvas.width = canvas.offsetWidth; canvas.height = 200; }
-
-        signaturePad.clear();
-        if (data.length > 0) { signaturePad.fromData(data) };
-        if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
-    }
-
-    window.onresize = function (event) {
-        resizeCanvas();
-    };
-
-    resizeCanvas();
-
-    CarregarIntervencoes();
-    CarregarPecasStock();
-    CarregarPecas();
-
     function ValidarFolhaObra() {
-        if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
-        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? "" : canvas.toDataURL();
         notify("A validar folha de obra ...");
+
         $.ajax({
             type: "POST",
             url: "/FolhasObra/Validar",
             data: $("#frmAdicionar").serialize(),
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
+                Bulma('#modalValidarCliente').modal().close();
                 $(function () {
                     document.getElementById("txtMensagens").value = result;
                     if (result != "") {
                         Bulma('#modalValidacao').modal().open();
                     } else {
                         notify("Folha de Obra sem mensagens de validação!");
-                        AbrirMensagens();
+                        document.getElementById('pageloader').classList.add('is-active');
+                        document.getElementById('frmAdicionar').submit();
                     }
                 });
             }
         });
+    }
+
+    function ValidarCliente() {
+        document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-success');
+        document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-danger');
+        document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-info');
+
+        if (document.getElementById('lstTipoFO').value == "Instalação") {
+            document.getElementById('btnEstadoGarantia').innerHTML = 'INSTALAÇÃO';
+            document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-info')
+        } else {
+            document.getElementById('chkGarantia').checked ? document.getElementById('btnEstadoGarantia').innerHTML = 'GARANTIA' : document.getElementById('btnEstadoGarantia').innerHTML = 'NÃO GARANTIA';
+            document.getElementById('chkGarantia').checked ? document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-success') : document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-danger');
+        }
+
+        document.getElementById('txtValidaEquipamento').value = document.getElementById('txtEquipamento').value;
+        document.getElementById('txtValidaRelatorio').innerHTML = document.getElementById('txtRelatorio').value;
+
+        document.getElementById('txtValidaIntervencoes').innerHTML = '';
+
+        var periodo = 0;
+        document.getElementById('divListaIntervencoes').childNodes.forEach(function (e) {
+            if (e.childNodes[0]) {
+                document.getElementById('txtValidaIntervencoes').innerHTML += e.childNodes[0].innerText + "<br>";
+
+
+                var timeStart = moment(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' ')[1], 'DD/MM/YYYY hh:mm', 'pt');
+                var timeEnd = moment(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' - ')[1], 'DD/MM/YYYY hh:mm', 'pt');
+
+                periodo += moment.duration(timeEnd.diff(timeStart)).asHours();
+
+
+                console.log(timeStart + ' - ' + timeEnd + ' | ' + periodo);
+            }
+        })
+        document.getElementById('btnCountIntervencoes').innerHTML = "< " + Math.ceil(periodo) + " Hora(s)";
+
+        document.getElementById('btnCountPecas').innerHTML = document.getElementById('divListaPecas').childNodes.length + " Peça(s)";
+        document.getElementById('txtValidaPecas').innerHTML = '';
+        document.getElementById('divListaPecas').childNodes.forEach(function (e) { if (e.childNodes[0]) document.getElementById('txtValidaPecas').innerHTML += e.childNodes[0].innerText + "<br>"; })
+
+
+        Bulma('#modalValidarCliente').modal().open();
     }
 
     function DesbloquearEquipamentos() {
@@ -1080,7 +1090,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         $.ajax({
             type: "POST",
             url: "/FolhasObra/CriarCodigo/" + stamp,
-            data: { "obs": document.getElementById("txtMensagens").value + "\r\n\r\nObservações do Técnico: " + document.getElementById("txtObs").value},
+            data: { "obs": document.getElementById("txtMensagens").value + "\r\n\r\nObservações do Técnico: " + document.getElementById("txtObs").value },
             success: function (result) {
                 $(function () {
                     stamp_codigo = result;
@@ -1094,14 +1104,16 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             type: "POST",
             url: "/FolhasObra/ValidarCodigo/" + stamp,
             success: function (result) {
+                console.log(result);
                 $(function () {
-                    if (result == "1") {
-                        notify("Código Aprovado");
+                    if (result.split("|")[0] == "1") {
+                        notify("Código Aprovado pelo utilizador " + result.split("|")[1]);
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
-                        AbrirMensagens();
-                    } else if (result == "2") {
-                        notifyError("Código Rejeitado");
+                        document.getElementById('pageloader').classList.add('is-active');
+                        document.getElementById('frmAdicionar').submit();
+                    } else if (result.split("|")[0] == "2") {
+                        notifyError("Código Rejeitado pelo utilizador " + result.split("|")[1]);
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
                     }
@@ -1114,14 +1126,14 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         if (document.getElementById('txtObs').value.length < 14) {
             notifyError('Informação insuficiente nas observaçoes. Por favor insira mais informação!');
         } else {
-        CriarCodigo('@Model.Marcacao.MarcacaoStamp');
-        time = 5 * 60;
-        interval = setInterval(AtualizarTimer, 1000);
-        document.getElementById('pb_timer').max = time;
-        AtualizarTimer();
+            CriarCodigo('@Model.Marcacao.MarcacaoStamp');
+            time = 5 * 60;
+            interval = setInterval(AtualizarTimer, 1000);
+            document.getElementById('pb_timer').max = time;
+            AtualizarTimer();
 
-        Bulma('#modalValidacao').modal().close();
-        Bulma('#modalAguardarValidacao').modal().open();
+            Bulma('#modalValidacao').modal().close();
+            Bulma('#modalAguardarValidacao').modal().open();
             notify("Código gerado com sucesso. A aguardar aprovação!");
             document.getElementById('txtObs').value = '';
         }
@@ -1129,60 +1141,38 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
     //VALIDACOES FINAIS DA FOLHA DE OBRA
     function AbrirMensagens() {
-        if (document.getElementById('lstTipoFO').value == "Externo") {
-            Bulma('#modalDeslocacao').modal().open();
-        } else {
-            Bulma('#modalEnviarEmail').modal().open();
-        }
-    }
-    function CobrarDeslocacao(valor) {
-        document.getElementById('chkCobrarDeslocacao').checked = valor;
-        Bulma('#modalDeslocacao').modal().close();
+        if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
+        document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
 
-        Bulma('#modalEnviarEmail').modal().open();
-    }
-    function EnviarEmail(valor) {
-        document.getElementById('chkEnviarEmail').checked = valor;
-        Bulma('#modalEnviarEmail').modal().close();
-        document.getElementById('EmailCliente').value = document.getElementById('txtEmailCliente').value;
-        
+        $('#divFinalChk').find('input[type=checkbox]').each(function () {
+            this.checked = false;
+        });
+        $('#divChk').find('input[type=checkbox]').each(function () {
+            this.checked = false;
+        });
+
+        document.getElementById('divDeslocacao').hidden = true;
+        document.getElementById('divEncaminhar').hidden = true;
+        document.getElementById('divEmail').hidden = true;
+        document.getElementById('divRecolher').hidden = true;
+        document.getElementById('divGuia').hidden = true;
+        document.getElementById('divFechar').hidden = true;
+        document.getElementById('divLocalizacao').hidden = true;
+
+        document.getElementById('divDeslocacao').hidden = !(document.getElementById('lstTipoFO').value == "Externo");
+        document.getElementById('divEmail').hidden = false;
+        document.getElementById('divEncaminhar').hidden = false;
+
         if (document.getElementById("lstEstadoFO").value != "1" && document.getElementById('lstTipoFO').value == "Externo") {
-            Bulma('#modalRecolherOficina').modal().open();
-        }else if (document.getElementById('lstTipoFO').value == "Interno") {
-            Bulma('#modalGerarGuia').modal().open();
-        }else{
-            Bulma('#modalFecharMarcacao').modal().open();
+            document.getElementById('divRecolher').hidden = false;
+        } else if (document.getElementById('lstTipoFO').value == "Interno") {
+            //document.getElementById('divGuia').hidden = false;
         }
-    }
-    function GuardarLocalizacao(valor) {
-        document.getElementById('chkGuardarLocalizacao').checked = valor;
-        Bulma('#modalGuardarLocalizacao').modal().close();
 
-        Bulma('#modalFecharMarcacao').modal().open();
-    }
-    function RecolherOficina(valor) {
-        document.getElementById('chkRecolherOficina').checked = valor;
-        Bulma('#modalRecolherOficina').modal().close();
-        if (valor) {
-            Bulma('#modalGerarGuia').modal().open();
-        }else{
-            FecharMarcacao(false);
-        }
-    }
-    function GerarGuia(valor) {
-        document.getElementById('chkGuia').checked = valor;
-        Bulma('#modalGerarGuia').modal().close();
-        if (document.getElementById("lstEstadoFO").value == "1") {
-            Bulma('#modalFecharMarcacao').modal().open();
-        } else {
-            FecharMarcacao(false);
-        }
-    }
-    function FecharMarcacao(valor) {
-        document.getElementById('chkFecharMarcacao').checked = valor;
-        Bulma('#modalFecharMarcacao').modal().close();
-        document.getElementById('pageloader').classList.add('is-active');
-        document.getElementById('frmAdicionar').submit();
+        document.getElementById('divFechar').hidden = !(document.getElementById("lstEstadoFO").value == "1");
+
+        Bulma('#modalValidacao').modal().close();
+        Bulma('#modalFinal').modal().open();
     }
 
     //INTERVENCOES
@@ -1222,9 +1212,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     //PEÇAS
-    function AdicionarPeca(stamp, ref, desig, qtd) {
-        document.getElementById('divListaPecas').innerHTML += `<div class="list-item" id="${stamp + '|' + qtd}"><div class="list-item-title" style="width:80%">${ref + ' - ' + desig + ' (' + qtd + ' UN)'}</div><div class="list-item-controls" style="width:20%"><div class="buttons is-right"><button class="button is-danger is-fullwidth" type="button" onclick="RemoverPeca('${stamp + '|' + qtd}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
-        document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd};`;
+    function AdicionarPeca(stamp, ref, desig, qtd, garantia, motivo, obs) {
+        document.getElementById('divListaPecas').innerHTML += `<div class="list-item ` + (garantia ? "has-background-success-light" : "has-background-danger-light") + `" id="${stamp}"><div class="list-item-title" style="width:70%">${ref + ' - ' + desig + ' (' + qtd + ' UN) - ' + (garantia ? ' GARANTIA ' : ' DEBITO ')}</div><div class="list-item-controls" style="width:30%"><div class="buttons is-right"><button class="button is-light" type="button"><span class='has-text-weight-bold'>${(garantia ? ' GARANTIA ' : ' DEBITO ')}</span></button><button class="button is-success" type="button"><span>${qtd + ' UN'}</span></button><button class="button is-danger" type="button" onclick="RemoverPeca('${stamp}')"><span class="icon is-small"> <i class="fas fa-trash"></i> </span></button></div></div>`;
+        document.getElementById('ListaPecas').value = `${document.getElementById('ListaPecas').value + stamp + '|' + qtd + '|' + garantia + '|' + motivo + '|' + obs};`;
         notify("Peça " + ref + " adicionada com sucesso!");
 
         if (!document.getElementById("btnZeroPecas").hidden && (document.getElementById('ListaPecas').value)) document.getElementById("btnZeroPecas").classList.add("is-hidden");
@@ -1232,7 +1222,11 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
     function RemoverPeca(stamp) {
         document.getElementById(stamp).remove();
-        document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(stamp + ';', '');
+
+        for (i = 0; i < document.getElementById('ListaPecas').value.split(';').length; i++) {
+            if (document.getElementById('ListaPecas').value.split(';')[i].startsWith(stamp)) document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value.replace(document.getElementById('ListaPecas').value.split(';')[i] + ';', '')
+        }
+
         if (document.getElementById('ListaPecas').value.slice(-1) != ";" && document.getElementById('ListaPecas').value != "") document.getElementById('ListaPecas').value = document.getElementById('ListaPecas').value + ";";
         notify("Peça removida com sucesso!");
 
@@ -1245,7 +1239,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById('ListaPecas').value = '';
 
         pecas.split(";").forEach(function (item) {
-            ObterPeca(item.split("|")[0], item.split("|")[1]);
+            ObterPeca(item.split("|")[0], item.split("|")[1], item.split("|")[2], item.split("|")[3], item.split("|")[4]);
         });
     }
 
@@ -1259,8 +1253,10 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
-                                label: item.ref_Produto + " - " + item.designacao_Produto.trim() + " - " + item.stock_Atual + " " + item.tipoUn,
-                                val: item.stampProduto
+                                label: item.ref_Produto + " - " + item.designacao_Produto.trim(),
+                                val: item.stampProduto,
+                                qtd: item.stock_Atual,
+                                un: item.tipoUn
                             };
                         }))
                     },
@@ -1277,7 +1273,15 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                 document.getElementById("btnAdicionarPeca").disabled = false;
             },
             minLength: 1
-        }).css('z-index', 10);
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            console.log(ul, item);
+            var html = "<a>" + item.label + "<div class='buttons'>";
+            html += "<input type='button' class='button is-success mx-1 is-fullwidth' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
+            html += "</div></a>";
+            return $("<li>")
+                .append(html)
+                .appendTo(ul);
+        };
     });
 
     function CarregarPecasStock() {
@@ -1308,13 +1312,14 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById("btnAdicionarPeca").disabled = false;
         Bulma('#modalPecas').modal().close();
     }
-    function ObterPeca(stamp, qtd) {
+    function ObterPeca(stamp, qtd, garantia, motivo, obs) {
+        Bulma('#modalPecaGarantia').modal().close();
         if (stamp !== "" && qtd > 0) {
             $.ajax({
                 url: '/Produtos/Peca/' + stamp,
                 type: "GET",
                 success: function (response) {
-                    AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd);
+                    AdicionarPeca(response.stampProduto, response.ref_Produto, response.designacao_Produto.trim(), qtd, garantia, motivo, obs);
                     LimparPecas();
                 },
                 error: function (response) {
@@ -1355,6 +1360,12 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
         document.getElementById('txtStampPeca').value = '';
         document.getElementById("btnAdicionarPeca").disabled = true;
         document.getElementById("txtQtd").value = '1';
+        document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
+        document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked;
+        document.getElementById('txtObsPecaGarantia').value = '';
+        document.getElementById('lstMotivosAvariaNaoGarantia').selectedIndex = 0;
+        document.getElementById('lstMotivosAvariaGarantia').selectedIndex = 0;
+        document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;
     }
 
     //CLIENTES
@@ -1403,7 +1414,9 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                         response($.map(data, function (item) {
                             return {
                                 label: item.numeroSerieEquipamento + " (" + item.marcaEquipamento + " - " + item.modeloEquipamento + ")",
-                                val: item.equipamentoStamp
+                                val: item.equipamentoStamp,
+                                garantia: item.garantia,
+                                contrato: item.contrato
                             };
                         }))
                     },
@@ -1418,21 +1431,39 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             select: function (e, i) {
                 $("#txtEquipamentoStamp").val(i.item.val);
                 document.getElementById("btnObterHistorico").disabled = false;
+                document.getElementById("chkGarantia").checked = i.item.garantia;
+                document.getElementById("chkEquipamentoGarantia").checked = i.item.garantia;
+                document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
             },
             minLength: 1
-        }).css('z-index', 10);
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            console.log(ul, item);
+            var html = "<a>" + item.label + "<div class='buttons'>";
+            if (item.garantia) html += "<input type='button' class='button is-success mx-1' value='G' style='float: right;' />";
+            if (!item.garantia) html += "<input type='button' class='button is-danger mx-1' value='FG' style='float: right;' />";
+            if (item.contrato) html += "<input type='button' class='button is-info mx-1' value='C' style='float: right;' />";
+            if (!item.contrato) html += "<input type='button' class='button is-warning mx-1' value='FC' style='float: right;' />";
+            html += "</div></a>";
+            return $("<li>")
+                .append(html)
+                .appendTo(ul);
+        };
     });
 
     function LimparEquipamento() {
         document.getElementById("btnObterHistorico").disabled = true;
         document.getElementById("txtEquipamentoStamp").value = '';
         document.getElementById("txtEquipamento").value = '';
+        document.getElementById("chkGarantia").checked = false;
 
     }
 
-    function PreencherEquipamento(designacao, stamp) {
+    function PreencherEquipamento(designacao, stamp, garantia) {
         $("#txtEquipamentoStamp").val(stamp);
         $("#txtEquipamento").val(designacao);
+        document.getElementById("chkGarantia").checked = garantia == 'true';
+        document.getElementById("chkEquipamentoGarantia").checked = garantia == 'true';
+        document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
         document.getElementById("btnObterHistorico").disabled = false;
         Bulma('#modalEquipamentos').modal().close();
     }
@@ -1445,7 +1476,12 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             success: function (data) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"><thead><tr><th style=\"width: 110px\">Marca</th><th>Modelo</th><th>Numero de Série</th><th></th></tr></thead><tbody>";
                 $(data).each(function () {
-                    html += "<tr><td data-label='Marca'>" + this.marcaEquipamento + "</td><td data-label='Modelo'>" + this.modeloEquipamento + "</td><td data-label='N/S'>" + this.numeroSerieEquipamento + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
+                    html += "<tr><td data-label='Marca'>" + this.marcaEquipamento + "</td><td data-label='Modelo'>" + this.modeloEquipamento + "</td><td data-label='N/S'>" + this.numeroSerieEquipamento + "</td><td class='is-actions-cell'><div class='buttons' style='width:100%'>";
+                    if (this.garantia) html += "<input type='button' class='button is-success mx-1' value='G' />";
+                    if (!this.garantia) html += "<input type='button' class='button is-danger mx-1' value='FG' />";
+                    if (this.contrato) html += "<input type='button' class='button is-info mx-1' value='C' />";
+                    if (!this.contrato) html += "<input type='button' class='button is-warning  mx-1' value='FC' />";
+                    html += "<button class='button is-success is-fullwidth' type='button' onclick='PreencherEquipamento(\"" + this.numeroSerieEquipamento + "\", \"" + this.equipamentoStamp + "\", \"" + this.garantia + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></div></td></tr>";
                 });
                 html += "</tbody></table></div></div>"
                 $('#modalEquipamentos').find('.modal-body').html(html);
@@ -1497,8 +1533,7 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                     var modal = Bulma('#modalObterHistorico').modal();
                     modal.open();
                 } else {
-                    var modal = Bulma('#modalObterHistoricoVazio').modal();
-                    modal.open();
+                    notifyError('Não foram encontradas intervenções associadas a este equipamento!')
                 };
             },
             error: function (error) {
@@ -1506,5 +1541,150 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
             }
         });
     }
+
+    bulmaSteps.attach('.steps');
+
+    if (document.getElementById('divMensagensErro') != null) Bulma('#modalMensagensErro').modal().open();
+
+    (document.querySelectorAll('#modalAguardarValidacao') || []).forEach(($close) => {
+        const $target = $close.closest('#modalAguardarValidacao');
+
+        $close.addEventListener('click', () => {
+            if (!($target.classList.contains('is-active'))) clearInterval(interval);
+        });
+    });
+
+    (document.querySelectorAll('#modalLerBarcode') || []).forEach(($close) => {
+        const $target = $close.closest('#modalLerBarcode');
+
+        $close.addEventListener('click', () => {
+            pararScan();
+        });
+    });
+
+
+    Dropzone.options.dropAnexo = { // camelized version of the `id`
+        paramName: "file", // The name that will be used to transfer the file
+        maxFilesize: 10, // MB
+        dictRemoveFile: "Remover ficheiro",
+        dictCancelUpload: "Cancelar",
+        addRemoveLinks: true,
+        success: function (file, response) {
+            console.log(response);
+            document.getElementById('Ficheiros').value += response + ";";
+            file.newName = response;
+            return file.previewElement.classList.add("dz-success");
+        },
+        removedfile: function (file) {
+            file.previewElement.remove();
+            document.getElementById('Ficheiros').value = document.getElementById('Ficheiros').value.replace(file.newName + ';', '');
+        }
+    };
+
+    var canvas = document.getElementById('signature-pad');
+    signaturePad = new SignaturePad(canvas, {
+        minWidth: 0.5,
+        maxWidth: 1
+    });
+
+    document.getElementById('btnDesfazerRubrica').addEventListener('click', function () {
+        var data = signaturePad.toData();
+        if (data) {
+            data.pop(); // remove the last dot or line
+            signaturePad.fromData(data);
+        }
+    });
+
+    function resizeCanvas() {
+        const data = signaturePad.toData();
+
+        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        if (canvas.width == 0) { canvas.width = canvas.offsetWidth; canvas.height = 200; }
+
+        signaturePad.clear();
+        if (data.length > 0) { signaturePad.fromData(data) };
+        if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // handle the scanned code as you like, for example:
+        console.log(`Code matched = ${decodedText}`, decodedResult);
+    }
+
+    function onScanFailure(error) {
+        // handle scan failure, usually better to ignore and keep scanning.
+        // for example:
+        //console.warn(`Code scan error = ${error}`);
+    }
+    const html5QrCode = new Html5Qrcode("reader");
+    var cameraId = '';
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        {
+            fps: 10, qrbox: { width: 250, height: 250 }
+        },
+                                  /* verbose= */ false);
+
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+    function iniciarScan() {
+
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            Bulma('#modalLerBarcode').modal().close();
+            ObterPecaRef(decodedText);
+            pararScan();
+        };
+        const config = {
+            fps: 10, qrbox: { width: 250, height: 250 }
+        };
+
+        Html5Qrcode.getCameras().then(devices => {
+
+            if (devices && devices.length) {
+                if (devices.length > 3) {
+                    cameraId = devices[3].id;
+                } else if (devices.length > 2) {
+                    cameraId = cameraId = devices[1].id;
+                }
+                if (cameraId != '') {
+                    html5QrCode.start(cameraId, config, qrCodeSuccessCallback);
+                } else {
+                    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+                }
+            }
+        }).catch(err => {
+        });
+
+
+    }
+    function pararScan() {
+        html5QrCode.stop().then((ignore) => {
+            // QR Code scanning is stopped.
+        }).catch((err) => {
+            // Stop failed, handle it.
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        let cardToggles = document.getElementsByClassName('card-toggle');
+        for (let i = 0; i < cardToggles.length; i++) {
+            cardToggles[i].addEventListener('click', e => {
+                e.currentTarget.parentElement.childNodes[3].classList.toggle('is-hidden');
+            });
+        }
+    });
+
+    window.onresize = function (event) {
+        resizeCanvas();
+    };
+
+    resizeCanvas();
+
+    CarregarIntervencoes();
+    CarregarPecasStock();
+    CarregarPecas();
 
 </script>

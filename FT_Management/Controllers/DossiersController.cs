@@ -98,8 +98,6 @@
                 Tecnico = u
             };
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != fo.Utilizador.Id) return Forbid();
-
             _logger.LogDebug("Utilizador {1} [{2}] a criar um dossier novo: Id FO - {3}, Id Marcacao - {4}, Cliente - {5}, Serie - {6}", u.NomeCompleto, u.Id, fo.IdFolhaObra, fo.IdMarcacao, fo.ClienteServico.NomeCliente, serie);
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
@@ -246,7 +244,7 @@
             {
                 string nome = u.Iniciais + "_" + DateTime.Now.Ticks + extensao;
                 _logger.LogDebug("Utilizador {1} [{2}] a anexar um ficheiro num dossier: Serie - {4}, NomeFicheiro - {5}", u.NomeCompleto, u.Id, "Assis. Tecnica", nome);
-                return Content(FicheirosContext.CriarFicheiroTemporario(nome, file));
+                return Ok(FicheirosContext.CriarFicheiroTemporario(nome, file));
             }
 
             Dossier d = new Dossier();
@@ -287,5 +285,6 @@
 
             return StatusCode(500);
         }
+
     }
 }

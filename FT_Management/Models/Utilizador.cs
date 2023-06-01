@@ -155,14 +155,14 @@
         {
             if (string.IsNullOrEmpty(c.Latitude) || string.IsNullOrEmpty(c.Longitude))
             {
-                if (valor == "Waze") return "https://waze.com/ul?q=" + c.ObterMoradaDirecoes() + "&navigate=yes";
+                if (valor == "Waze") return "waze://?q=" + c.ObterMoradaDirecoes().Replace(" ", "%20") + "&navigate=yes";
                 if (valor == "Apple") return "https://maps.apple.com/?q=" + c.ObterMoradaDirecoes();
                 return "https://maps.google.com/?daddr=" + c.ObterMoradaDirecoes();
 
             }
             else
             {
-                if (valor == "Waze") return "https://waze.com/ul?ll=" + c.Latitude + "," + c.Longitude + "&navigate=yes";
+                if (valor == "Waze") return "waze://?ll=" + c.Latitude + "," + c.Longitude + "&navigate=yes";
                 if (valor == "Apple") return "https://maps.apple.com/?q=" + c.NomeCliente + "&ll=" + c.Latitude + "," + c.Longitude;
                 return "https://maps.google.com/?q=" + c.Latitude + "," + c.Longitude;
 

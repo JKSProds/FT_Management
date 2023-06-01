@@ -93,6 +93,14 @@
                             <span>Limpar</span>
                         </a>
                     </p>
+                    <p class="control">
+                        <button type="button" onclick="AbrirArmazem(document.getElementById('lstarmazens').value)" class="button is-primary">
+                            <span class="icon">
+                                <i class="fa fa-wrench"></i>
+                            </span>
+                            <span>Armazém</span>
+                        </button>
+                    </p>
                 </div>
             </form>
         </div>
@@ -176,4 +184,8 @@ else
     document.getElementById("lstfornecedores").value = document.getElementById("hiddenSelectedFornecedor").value;
     document.getElementById("lstarmazens").value = document.getElementById("hiddenSelectedArmazem").value;
     document.getElementById("lsttiposequipamento").value = document.getElementById("hiddenSelectedTipoEquipamento").value;
+
+    function AbrirArmazem(id) {
+        window.location.href = '/Produtos/Armazem/' + id;
+    }
 </script>

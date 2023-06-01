@@ -7,14 +7,13 @@
             get
             {
                 return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") +
-                (this.EstadoMarcacao == 4 || this.EstadoMarcacao == 9 || this.EstadoMarcacao == 10 ? "✅ " :
+                (this.DataMarcacao < DateTime.Now && (this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Reagendado") ? "❌ " :
+                this.EstadoMarcacaoDesc == "Reagendado" || this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Criado" || this.EstadoMarcacaoDesc == "Rececionado" ? "" :
+                this.EstadoMarcacaoDesc == "Pedido Orçamento" || this.EstadoMarcacaoDesc == "Pedido Peças" ? "⌛️" :
                 this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
                 this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
                 this.EstadoMarcacaoDesc == "Reagendar" ? "📆 " :
-                this.EstadoMarcacaoDesc == "Reagendado" ? "" :
-                this.EstadoMarcacao != 1 && this.EstadoMarcacao != 26 ? "⌛️ " :
-                this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " :
-                this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc != "Criado" ? "❌ " : "");
+                this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : "✅ ");
             }
         }
 
@@ -23,9 +22,10 @@
         {
             get
             {
-                return this.EstadoMarcacaoDesc == "Finalizado" || this.EstadoMarcacaoDesc == "Cancelado" ? "#23d160" :
-                this.EstadoMarcacaoDesc != "Agendado" && this.EstadoMarcacaoDesc != "Reagendado" ? "#ffdd57" :
-                this.DataMarcacao < DateTime.Now && this.EstadoMarcacaoDesc == "Agendado" && this.DataMarcacao.ToShortDateString() != DateTime.Now.ToShortDateString() ? "#ff3860" : "";
+                return this.EstadoMarcacaoDesc == "Reagendado" || this.EstadoMarcacaoDesc == "Agendado" ? "" :
+                this.EstadoMarcacaoDesc == "Pedido Orçamento" || this.EstadoMarcacaoDesc == "Pedido Peças" ? "#ffdd57" :
+                this.EstadoMarcacaoDesc == "Criado" || this.EstadoMarcacaoDesc == "Em Curso" ? "#00d1b2" :
+                this.DataMarcacao < DateTime.Now && (this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Reagendado") ? "#ff3860" : "#23d160";
             }
         }
         [Display(Name = "Num. da Marcação")]
@@ -87,6 +87,10 @@
         public bool Piquete { get; set; }
         public Utilizador Utilizador { get; set; }
         public string MarcacaoStamp { get; set; }
+        public string Formulario { get; set; }
+
+        [Display(Name = "Submetido")]
+        public bool FormularioSubmetido { get; set; }
 
 
         public int IdTecnico { get; set; }
