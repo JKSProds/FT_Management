@@ -1087,6 +1087,7 @@ namespace FT_Management.Models
             if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
             if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) res += "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!\r\n";
             if (fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() > fo.FicheirosAnexo.Split(";").Count()) res += "É obrigatório adicionar pelo menos 1 anexo ("+ fo.FicheirosAnexo.Split(";").Count() + ") por peça ("+ fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() + ") inserida para validar a GARANTIA!\r\n";
+            if (fo.Marcacao.Contrato != fo.Contrato) res += "É obrigatório adicionar pelo menos 1 anexo para justificar a alteração de Contrato!\r\n";
 
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico).GroupBy(l => l.StampProduto).Select(cl => new Produto
             {
@@ -2310,6 +2311,40 @@ namespace FT_Management.Models
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel ler as prioridades!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<String> ObterExclusoes(int id)
+        {
+
+            List<String> res = new List<String>
+            {
+                ""
+            };
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select descricao from u_exclusoes where servextra="+id+" order by lordem;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(result[0].ToString());
+                    }
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as exclusoes!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;

@@ -92,7 +92,7 @@
         public string Formulario { get; set; }
         [Display(Name = "Submetido")]
         public bool FormularioSubmetido { get; set; }
-        public bool Contrato { get { return (string.IsNullOrEmpty(this.JustExtraContrato) && this.Cliente.Contrato); } }
+        public bool Contrato { get { return (string.IsNullOrEmpty(this.JustExtraContrato) && (this.Cliente == null) ? false : this.Cliente.Contrato); } }
         [Display(Name = "Motivo - Extra Contrato")]
         public string JustExtraContrato { get; set; }
 

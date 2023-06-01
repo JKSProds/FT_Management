@@ -138,6 +138,8 @@
                                 <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
                             </div>
                         </div>
+                        @if (Model.ClienteServico.Contrato)
+                            {
                         <div class="column is-3 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded is-medium">
@@ -150,13 +152,16 @@
                                 <span asp-validation-for="Contrato" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-12" hidden id="divExtraContrato">
+                        <div class="column is-12" id="divExtraContrato" style="display:@(Model.Contrato ? "none" : "block")">
                             <div class="field">
                                 <label asp-for="JustExtraContrato" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
+                                        @{
+                                            var LstExclusoes = ViewData["Exclusoes"] as IList<String>;
+                                        }
                                         <select class="select" style="width:100%" asp-for="JustExtraContrato"
-                                                asp-items="ViewBag.JustExtraContrato"></select>
+                                                asp-items="@(new SelectList(LstExclusoes))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fa-solid fa-file-contract"></i>
@@ -165,6 +170,7 @@
                                 <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
                             </div>
                         </div>
+                            }
                         <div class="column is-12">
                             <div class="field">
                                 <div class="control buttons">
@@ -1301,7 +1307,7 @@
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold'>" + item.label + "</a><div class='field is-grouped is-right '>";
             html += "<input type='button' class='button mr-1 is-success' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
             html += "</div>";
             return $("<li>")
@@ -1463,7 +1469,7 @@
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold'>" + item.label + "</a><div class='field is-grouped is-right '>";
              if (item.garantia) html += "<input type='button' class='button is-success mr-1' value='G' />";
             if (!item.garantia) html += "<input type='button' class='button is-danger mr-1' value='FG'  />";
             if (item.contrato) html += "<input type='button' class='button is-info mr-1' value='C' />";

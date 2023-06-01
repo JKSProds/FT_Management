@@ -64,6 +64,8 @@ namespace FT_Management.Controllers
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
             ViewBag.MotivosGarantia = phccontext.ObterMotivosAvariaGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
             ViewBag.MotivosNaoGarantia = phccontext.ObterMotivosAvariaNaoGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
+            ViewData["Exclusoes"] = phccontext.ObterExclusoes(0);
+
             return View(fo);
         }
 
@@ -156,6 +158,7 @@ namespace FT_Management.Controllers
             ViewBag.EstadoFolhaObra = phccontext.ObterEstadoFolhaObra().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
             ViewBag.MotivosGarantia = phccontext.ObterMotivosAvariaGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
             ViewBag.MotivosNaoGarantia = phccontext.ObterMotivosAvariaNaoGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
+            ViewData["Exclusoes"] = phccontext.ObterExclusoes(0);
             ViewData["TipoFolhaObra"] = phccontext.ObterTipoFolhaObra();
 
             return View("Adicionar", fo);

@@ -81,6 +81,7 @@
         public string FicheirosAnexo { get; set; }
         public bool Guia { get; set; }
         public bool Contrato { get; set; }
+        [Display(Name = "Motivo - Fora de Contrato")]
         public string JustExtraContrato { get; set; }
 
         public FolhaObra()
