@@ -332,25 +332,7 @@
                     <span asp-validation-for="Referencia" class="has-text-danger"></span>
                 </div>
             </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="Piquete">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model => model.Piquete)</span>
-                    </label>
-                </div>
-            </div>
-            <div class="column is-3 my-auto">
-                <div class="field">
-                    <label class="switch is-rounded">
-                        <input type="checkbox" asp-for="Oficina">
-                        <span class="check is-info"></span>
-                        <span class="control-label">@Html.DisplayNameFor(model => model.Oficina)</span>
-                    </label>
-                </div>
-            </div>
-            <div class="column is-5">
+            <div class="column is-3">
                 <div class="field">
                     <label asp-for="JustExtraContrato"></label>
                     <p class="control has-icons-left">
@@ -365,7 +347,7 @@
                     <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
                 </div>
             </div>
-            <div class="column is-5">
+            <div class="column is-3">
                 <div class="field">
                     <label asp-for="Formulario"></label>
                     <p class="control has-icons-left">
@@ -380,14 +362,42 @@
                     <span asp-validation-for="Formulario" class="has-text-danger"></span>
                 </div>
             </div>
-            <div class="column is-2 my-auto">
+            <div class="column is-3 my-auto">
                 <div class="field">
-                    <label class="switch is-rounded is-large">
+                    <label class="switch is-rounded">
                         <input type="checkbox" asp-for="FormularioSubmetido">
                         <span class="check is-info"></span>
                         <span class="control-label">@Html.DisplayNameFor(model => model.FormularioSubmetido)</span>
                     </label>
                     <span asp-validation-for="FormularioSubmetido" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="Piquete">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model => model.Piquete)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="column is-3 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="Remoto">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model => model.Remoto)</span>
+                    </label>
+                    <span asp-validation-for="Remoto" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-2 my-auto">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" asp-for="Oficina">
+                        <span class="check is-info"></span>
+                        <span class="control-label">@Html.DisplayNameFor(model => model.Oficina)</span>
+                    </label>
                 </div>
             </div>
             <div class="column is-12">

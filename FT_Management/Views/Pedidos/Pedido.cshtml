@@ -85,7 +85,7 @@
                                         </span>
                                     </p>
                                     <input class="input" type="text" style="width:30%" readonly
-                                                value="@Model.Cliente.IdCliente - @Model.Cliente.IdLoja">
+                                           value="@Model.Cliente.IdCliente - @Model.Cliente.IdLoja">
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <div class="control">
@@ -279,7 +279,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-3">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="JustExtraContrato" class="label"></label>
                                 <p class="control has-icons-left">
@@ -290,7 +290,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-2">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="Referencia" class="label"></label>
                                 <p class="control has-icons-left">
@@ -301,7 +301,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-2">
+                        <div class="column is-4">
                             <div class="field">
                                 <label asp-for="Formulario" class="label"></label>
                                 <p class="control has-icons-left">
@@ -312,7 +312,7 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-2 my-auto">
+                        <div class="column is-3 my-auto">
                             <div class="field">
                                 <label disabled class="switch is-rounded">
                                     <input type="checkbox" disabled checked="@Model.FormularioSubmetido">
@@ -321,7 +321,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="column is-2 my-auto">
+                        <div class="column is-3 my-auto">
                             <div class="field">
                                 <label disabled class="switch is-rounded">
                                     <input type="checkbox" disabled checked="@Model.Piquete">
@@ -330,7 +330,16 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="column is-1 my-auto">
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label disabled class="switch is-rounded">
+                                    <input type="checkbox" disabled checked="@Model.Remoto">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Remoto)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="column is-3 my-auto">
                             <div class="field">
                                 <label disabled class="switch is-rounded">
                                     <input type="checkbox" disabled checked="@Model.Oficina">

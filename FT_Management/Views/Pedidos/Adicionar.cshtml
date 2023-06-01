@@ -166,7 +166,7 @@
                                     }
                                     <span class="select" style="width:100%">
                                         <select style="width:100%" asp-for="EstadoMarcacaoDesc"
-                                            asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                                                asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-check"></i>
@@ -175,7 +175,7 @@
                             </div>
                             <span asp-validation-for="EstadoMarcacaoDesc" class="has-text-danger"></span>
                         </div>
-                        <div class="column is-3 my-auto">
+                        <div class="column is-2 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded">
                                     <input type="checkbox" asp-for="Piquete">
@@ -185,7 +185,17 @@
                                 <span asp-validation-for="Piquete" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-3 my-auto">
+                        <div class="column is-2 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="Remoto">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Remoto)</span>
+                                </label>
+                                <span asp-validation-for="Remoto" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-2 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded">
                                     <input type="checkbox" asp-for="Oficina">
@@ -205,7 +215,7 @@
                                         }
                                         <span class="select" style="width:100%">
                                             <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect"
-                                                asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+                                                    asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
                                         </span>
                                     </div>
                                 </div>

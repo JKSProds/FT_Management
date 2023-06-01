@@ -106,11 +106,12 @@
             this.ClienteServico = m.Cliente;
             this.DataServico = DateTime.Now;
             if (m.Oficina) this.TipoFolhaObra = "Interno";
+            if (m.Remoto) this.TipoFolhaObra = "Remoto";
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
             this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
-            if (!m.Oficina) this.TipoFolhaObra = m.TipoServico;
+            if (!m.Oficina && !m.Remoto) this.TipoFolhaObra = m.TipoServico;
             this.Contrato = m.ExtraContrato;
             return this;
         }
