@@ -895,6 +895,8 @@ namespace FT_Management.Models
                 SQL_Query += "@OBS = '" + fo.SituacoesPendentes.Replace("'", "''") + "', ";
                 SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
                 SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
+                SQL_Query += "@EXCLUSAO = '" + fo.JustExtraContrato + "', ";
+                SQL_Query += "@EXCLUICONTRATO = '" + (fo.Contrato ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -1412,6 +1414,8 @@ namespace FT_Management.Models
                 SQL_Query += "@FORMULARIO = '" + m.Formulario + "', ";
                 SQL_Query += "@FORMSUB = '" + (m.FormularioSubmetido ? "1" : "0") + "', ";
                 SQL_Query += "@REMOTO = '" + (m.Remoto ? "1" : "0") + "', ";
+                SQL_Query += "@EXCLUSAO = '" + m.JustExtraContrato + "', ";
+                SQL_Query += "@EXCLUICONTRATO = '" + (m.Contrato ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -1469,6 +1473,8 @@ namespace FT_Management.Models
                 SQL_Query += "@FORMULARIO = '" + m.Formulario + "', ";
                 SQL_Query += "@FORMSUB = '" + (m.FormularioSubmetido ? "1" : "0") + "', ";
                 SQL_Query += "@REMOTO = '" + (m.Remoto ? "1" : "0") + "', ";
+                SQL_Query += "@EXCLUSAO = '" + m.JustExtraContrato + "', ";
+                SQL_Query += "@EXCLUICONTRATO = '" + (m.Contrato ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + m.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -1827,6 +1833,7 @@ namespace FT_Management.Models
                         QuemPediuTelefone = result["resptlm"].ToString(),
                         Formulario = result["formulario"].ToString(),
                         FormularioSubmetido = result["formulario_submetido"].ToString() == "True",
+                        JustExtraContrato = result["exclusao"].ToString(),
                         Remoto = result["remoto"].ToString() == "True",
                         Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() },
                         Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : "",

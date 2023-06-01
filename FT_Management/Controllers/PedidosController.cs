@@ -218,6 +218,7 @@ namespace FT_Management.Controllers
 
             List<CalendarioEvent> LstEventos = context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end.AddDays(-1)).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList();
             LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end.AddDays(-1), id), new List<Feriado>()));
+            LstEventos.AddRange(context.ConverterFeriadosEventos(context.ObterListaFeriados(start.Year.ToString())));
 
             if (id > 0) return new JsonResult(LstEventos);
 

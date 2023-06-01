@@ -1126,6 +1126,38 @@ namespace FT_Management.Models
 
             CriarFeriados(LstFeriados);
         }
+
+
+        public List<CalendarioEvent> ConverterFeriadosEventos(List<Feriado> Feriados)
+        {
+            List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
+
+           
+            foreach (var item in Feriados)
+            {
+                try
+                {
+                        LstEventos.Add(new CalendarioEvent
+                        {
+                            id = item.Id.ToString(),
+                            calendarId = "1",
+                            title = item.Emoji + item.DescFeriado,
+                            start = item.DataFeriado,
+                            end = item.DataFeriado,
+                            isAllDay = true,
+                            category = "time",
+                            editable = false
+                        });
+                }
+                catch
+                {
+
+                }
+
+            }
+            return LstEventos;
+        }
+
         public List<Ferias> ObterListaFeriasValidar()
         {
             List<Ferias> LstFerias = new List<Ferias>();
