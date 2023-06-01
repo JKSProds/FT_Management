@@ -304,6 +304,18 @@
             </div>
             <div class="column is-3">
                 <div class="field">
+                    <label asp-for="Referencia" class="label"></label>
+                    <p class="control has-icons-left">
+                        <input asp-for="Referencia" class="input" />
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-asterisk"></i>
+                        </span>
+                    </p>
+                    <span asp-validation-for="Referencia" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-3">
+                <div class="field">
                     <label asp-for="TipoPedido" class="label"></label>
                     <p class="control has-icons-left">
                         <span class="select" style="width: 100%">
@@ -322,19 +334,7 @@
             </div>
             <div class="column is-3">
                 <div class="field">
-                    <label asp-for="Referencia" class="label"></label>
-                    <p class="control has-icons-left">
-                        <input asp-for="Referencia" class="input" />
-                        <span class="icon is-small is-left">
-                            <i class="fas fa-asterisk"></i>
-                        </span>
-                    </p>
-                    <span asp-validation-for="Referencia" class="has-text-danger"></span>
-                </div>
-            </div>
-            <div class="column is-3">
-                <div class="field">
-                    <label asp-for="JustExtraContrato"></label>
+                    <label asp-for="JustExtraContrato" class="label"></label>
                     <p class="control has-icons-left">
                         <span class="select" style="width: 100%">
                             <select class="select" style="width:100%" asp-for="JustExtraContrato"
@@ -349,7 +349,7 @@
             </div>
             <div class="column is-3">
                 <div class="field">
-                    <label asp-for="Formulario"></label>
+                    <label asp-for="Formulario" class="label"></label>
                     <p class="control has-icons-left">
                         <span class="select" style="width: 100%">
                             <select class="select" style="width:100%" asp-for="Formulario"

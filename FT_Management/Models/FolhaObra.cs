@@ -81,7 +81,7 @@
         public string FicheirosAnexo { get; set; }
         public bool Guia { get; set; }
         public bool Contrato { get; set; }
-        public string ForaContrato { get; set; }
+        public string JustExtraContrato { get; set; }
 
         public FolhaObra()
         {
@@ -112,7 +112,7 @@
             this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
             if (!m.Oficina && !m.Remoto) this.TipoFolhaObra = m.TipoServico;
-            this.Contrato = m.ExtraContrato;
+            this.Contrato = m.Contrato;
             return this;
         }
 

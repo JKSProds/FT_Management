@@ -104,7 +104,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="EquipamentoServico"></label>
+                                <label asp-for="EquipamentoServico" class="label"></label>
                                 <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
                                            id="txtEquipamentoStamp" />
@@ -126,7 +126,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="column is-6 my-auto">
+                        <div class="column is-3 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded is-medium">
                                     <input type="checkbox" asp-for="EmGarantia" id="chkGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
@@ -136,6 +136,33 @@
                                     </span>
                                 </label>
                                 <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded is-medium">
+                                    <input type="checkbox" asp-for="Contrato" onchange="document.getElementById('divExtraContrato').style.display = this.checked ? 'none' : 'block';">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">
+                                        @Html.DisplayNameFor(model => model.Contrato)
+                                    </span>
+                                </label>
+                                <span asp-validation-for="Contrato" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-12" hidden id="divExtraContrato">
+                            <div class="field">
+                                <label asp-for="JustExtraContrato" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <span class="select" style="width: 100%">
+                                        <select class="select" style="width:100%" asp-for="JustExtraContrato"
+                                                asp-items="ViewBag.JustExtraContrato"></select>
+                                    </span>
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-file-contract"></i>
+                                    </span>
+                                </p>
+                                <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
                             </div>
                         </div>
                         <div class="column is-12">
@@ -173,7 +200,7 @@
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-4">
-                            <label asp-for="ListaIntervencoes"></label>
+                            <label asp-for="ListaIntervencoes" class="label"></label>
                             <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
@@ -232,7 +259,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="RelatorioServico"></label>
+                                <label asp-for="RelatorioServico" class="label"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
                                               asp-for="RelatorioServico" id="txtRelatorio"></textarea>
@@ -242,7 +269,7 @@
                         </div>
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="SituacoesPendentes"></label>
+                                <label asp-for="SituacoesPendentes" class="label"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
                                               asp-for="SituacoesPendentes"></textarea>
@@ -256,7 +283,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="PecasServico"></label>
+                                <label asp-for="PecasServico" class="label"></label>
                                 <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" class="input" id="txtStampPeca">
                                     <input type="text" class="input is-rounded" placeholder="Insira a referência" id="txtPecas">
@@ -329,7 +356,7 @@
                                 </button>
                             </div>
                             <div class="column is-12">
-                                <label asp-for="ListaPecas"></label>
+                                <label asp-for="ListaPecas" class="label"></label>
                                 <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
                                 <div class="list has-visible-pointer-controls" id="divListaPecas">
                                 </div>
@@ -345,7 +372,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="EstadoFolhaObra"></label>
+                                <label asp-for="EstadoFolhaObra" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
                                         <select asp-for="EstadoFolhaObra" id="lstEstadoFO" asp-items="ViewBag.EstadoFolhaObra"
@@ -361,7 +388,7 @@
                         </div>
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="TipoFolhaObra"></label>
+                                <label asp-for="TipoFolhaObra" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
                                         @{
