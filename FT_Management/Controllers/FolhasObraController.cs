@@ -124,17 +124,10 @@ namespace FT_Management.Controllers
                 if (fo.FecharMarcacao && fo.EstadoFolhaObra == 1)
                 {
                     m.EstadoMarcacaoDesc = "Finalizado";
-                }else
-                {
-                    fo.EstadoFolhaObra = 2;
                 }
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
-                if (fo.EstadoFolhaObra == 4)
-                {
-                    m.EstadoMarcacaoDesc = "Reagendar";
-                    fo.EstadoFolhaObra = 2;
-                }
+                if (fo.EstadoFolhaObra == 4) m.EstadoMarcacaoDesc = "Reagendar";
 
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)

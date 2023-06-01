@@ -88,10 +88,11 @@
         public Utilizador Utilizador { get; set; }
         public string MarcacaoStamp { get; set; }
         public string Formulario { get; set; }
-
         [Display(Name = "Submetido")]
         public bool FormularioSubmetido { get; set; }
-
+        public bool ExtraContrato { get { return (!string.IsNullOrEmpty(this.JustExtraContrato)); } }
+        [Display(Name = "Motivo - Extra Contrato")]
+        public string JustExtraContrato { get; set; }
 
         public int IdTecnico { get; set; }
         [Display(Name = "Técnico")]

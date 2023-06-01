@@ -84,6 +84,8 @@
                                             <i class="fas fa-user-check"></i>
                                         </span>
                                     </p>
+                                    <input class="input" type="text" style="width:30%" readonly
+                                                value="@Model.Cliente.IdCliente - @Model.Cliente.IdLoja">
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <div class="control">
@@ -166,13 +168,25 @@
                                 </p>
                             </div>
                         </div>
-                        <div class="column is-4">
+                        <div class="column is-2">
                             <div class="field">
                                 <label asp-for="EstadoMarcacaoDesc" class="label"></label>
                                 <p class="control has-icons-left">
                                     <input asp-for="EstadoMarcacaoDesc" class="input" readonly />
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-check"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="column is-2">
+                            <div class="field">
+                                <label class="label">Técnico(s)</label>
+                                <p class="control has-icons-left">
+                                    <input value="@string.Join(" | ", Model.LstTecnicos.Select(x => x.NomeCompleto))"
+                                           class="input" readonly />
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-users"></i>
                                     </span>
                                 </p>
                             </div>
@@ -267,12 +281,11 @@
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <label class="label">Técnico(s)</label>
+                                <label asp-for="JustExtraContrato" class="label"></label>
                                 <p class="control has-icons-left">
-                                    <input value="@string.Join(" | ", Model.LstTecnicos.Select(x => x.NomeCompleto))"
-                                           class="input" readonly />
+                                    <input asp-for="JustExtraContrato" class="input" readonly />
                                     <span class="icon is-small is-left">
-                                        <i class="fa-solid fa-users"></i>
+                                        <i class="fa-solid fa-file-contract"></i>
                                     </span>
                                 </p>
                             </div>

@@ -51,9 +51,9 @@
                         <input type="hidden" asp-for="Cliente.IdCliente" id="txtIdCliente" />
                         <input type="hidden" asp-for="Cliente.IdLoja" id="txtIdLoja" />
                         <p class="control has-icons-left" style="width:100%">
-                            <input type="text" class="input" asp-for="Cliente.NomeCliente" id="txtCustomer">
+                            <input type="text" class="input is-rounded" asp-for="Cliente.NomeCliente" id="txtCustomer" placeholder="Insira o nome do cliente">
                             <span class="icon is-small is-left">
-                                <i class="fas fa-user-check"></i>
+                                <i class="fa-solid fa-magnifying-glass"></i>
                             </span>
                         </p>
                         <div class="control">
@@ -350,7 +350,22 @@
                     </label>
                 </div>
             </div>
-            <div class="column is-10">
+            <div class="column is-5">
+                <div class="field">
+                    <label asp-for="JustExtraContrato"></label>
+                    <p class="control has-icons-left">
+                        <span class="select" style="width: 100%">
+                            <select class="select" style="width:100%" asp-for="JustExtraContrato"
+                                    asp-items="ViewBag.JustExtraContrato"></select>
+                        </span>
+                        <span class="icon is-small is-left">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </span>
+                    </p>
+                    <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
+                </div>
+            </div>
+            <div class="column is-5">
                 <div class="field">
                     <label asp-for="Formulario"></label>
                     <p class="control has-icons-left">
@@ -673,7 +688,16 @@
                 CarregarDadosResponsavel();
             },
             minLength: 1
-        }).css('z-index', 10);
+        }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
+            console.log(ul, item);
+            var html = "<a>" + item.label + "<div class='buttons'>";
+            if (item.contrato) html += "<input type='button' class='button is-info mx-1' value='C' style='float: right;' />";
+            if (!item.contrato) html += "<input type='button' class='button is-warning mx-1' value='FC' style='float: right;' />";
+            html += "</div></a>";
+            return $("<li>")
+                .append(html)
+                .appendTo(ul);
+        };
     });
 
 </script>

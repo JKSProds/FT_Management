@@ -17,16 +17,26 @@
 
 <div class="container">
     <div class="columns is-mobile is-centered">
-        <div class="column is-12">
+        <div class="column is-8">
             <div class="tile is-centered">
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
-
                         <p class="title">
                             <span class="icon mr-3">
                                 <i class="fas fa-user-tie"></i>
                             </span>
                             <span>@Model.NomeCliente</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-4">
+            <div class="tile is-centered">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification @(Model.Contrato ? "is-info" : "is-warning")">
+                        <p class="title has-text-centered">
+                            <span>@(Model.Contrato ? "CONTRATO" : "FORA CONTRATO")</span>
                         </p>
                     </article>
                 </div>

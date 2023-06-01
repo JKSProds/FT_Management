@@ -80,6 +80,8 @@
         public double KmsDeslocacao { get; set; }
         public string FicheirosAnexo { get; set; }
         public bool Guia { get; set; }
+        public bool Contrato { get; set; }
+        public string ForaContrato { get; set; }
 
         public FolhaObra()
         {
@@ -109,6 +111,7 @@
             this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
             if (!m.Oficina) this.TipoFolhaObra = m.TipoServico;
+            this.Contrato = m.ExtraContrato;
             return this;
         }
 
