@@ -895,8 +895,8 @@ namespace FT_Management.Models
                 SQL_Query += "@OBS = '" + fo.SituacoesPendentes.Replace("'", "''") + "', ";
                 SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
                 SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
-                SQL_Query += "@EXCLUSAO = '" + fo.JustExtraContrato + "', ";
-                SQL_Query += "@EXCLUICONTRATO = '" + (fo.Contrato ? "1" : "0") + "', ";
+                //SQL_Query += "@EXCLUSAO = '" + fo.JustExtraContrato + "', ";
+                //SQL_Query += "@EXCLUICONTRATO = '" + (fo.Contrato ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);

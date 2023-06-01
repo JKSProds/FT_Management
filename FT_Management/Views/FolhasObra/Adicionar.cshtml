@@ -114,6 +114,8 @@
                                     </span>
                                 </p>
                             </div>
+                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
+                                  class="has-text-danger"></span>
                         </div>
                         <div class="column is-6 my-auto">
                             <div class="field">
@@ -138,7 +140,7 @@
                                 <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
                             </div>
                         </div>
-                        @if (Model.ClienteServico.Contrato)
+                        @if (Model.ClienteServico.Contrato && Model.Marcacao.Contrato)
                             {
                         <div class="column is-3 my-auto">
                             <div class="field">
@@ -198,8 +200,7 @@
                                 </div>
 
                             </div>
-                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
-                                  class="has-text-danger"></span>
+                           
                         </div>
                     </div>
                 </div>
@@ -445,6 +446,8 @@
             <input type="text" class="input" asp-for="IdMarcacao">
             <input type="text" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
             <input type="checkbox" class="checkbox" asp-for="Piquete" id="chkPiquete">
+            <input type="checkbox" class="checkbox" asp-for="ClienteServico.Contrato" >
+            <input type="checkbox" class="checkbox" asp-for="Marcacao.Contrato">
             <input type="checkbox" class="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
 
             <div id="divChk">

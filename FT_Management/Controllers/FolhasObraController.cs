@@ -80,8 +80,6 @@ namespace FT_Management.Controllers
             if (fo.StampFO == null) return Forbid();
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == context.ObterUtilizador(int.Parse(this.User.Claims.First().Value.ToString())).IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
-
             _logger.LogDebug("Utilizador {1} [{2}] a obter uma folha de obra em especifico: Id - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}.", u.NomeCompleto, u.Id, fo.IdFolhaObra, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto);
 
             ViewData["SelectedTecnico"] = u.NomeCompleto;
@@ -102,9 +100,9 @@ namespace FT_Management.Controllers
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
             if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes) && !fo.EmGarantia) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!"); 
-            //if ((fo.EmGarantia || fo.EquipamentoServico.Garantia) && string.IsNullOrEmpty(fo.SituacoesPendentes) && fo.TipoFolhaObra!="Instalação") ModelState.AddModelError("SituacoesPendentes", "Equipamento em garantia. Necessita de preencher as observações internas!");
             fo.ValidarIntervencoes();
             if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
+            if (fo.Contrato) fo.JustExtraContrato = "";
 
             if (ModelState.IsValid)
             {
