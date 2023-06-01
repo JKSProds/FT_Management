@@ -176,7 +176,8 @@
             {
                 if (item != "" && LstPecas.Where(p => p.StampProduto == item.Split("|").First()).Count() > 0)
                 {
-                    this.PecasServico.Add(new Produto() { StampProduto = item.Split("|").First(), Ref_Produto = LstPecas.Where(p => p.StampProduto == item.Split("|").First()).First().Ref_Produto });
+                    Produto p = LstPecas.Where(p => p.StampProduto == item.Split("|").First()).First();
+                    this.PecasServico.Add(new Produto() { StampProduto = p.StampProduto, Ref_Produto = p.Ref_Produto, Designacao_Produto = p.Designacao_Produto });
                     this.PecasServico.Last().Stock_Fisico = Double.Parse(item.Split("|")[1]);
                     this.PecasServico.Last().Garantia = item.Split("|")[2] == "true";
                     this.PecasServico.Last().MotivoGarantia = item.Split("|")[3];
