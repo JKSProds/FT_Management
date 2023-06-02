@@ -703,7 +703,7 @@
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='line-height:35px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:35px'>" + item.label + "</a><div class='field is-grouped is-right '>";
             if (item.contrato) html += "<input type='button' class='button mr-1 is-info' value='C' style='float: right;' />";
             if (!item.contrato) html += "<input type='button' class='button mr-1 is-warning' value='FC' style='float: right;' />";
             html += "</div>";
