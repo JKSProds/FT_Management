@@ -1314,8 +1314,8 @@
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold'>" + item.label + "</a><div class='field is-grouped is-right '>";
-            html += "<input type='button' class='button mr-1 is-success' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
+            var html = "<div class='field has-addons mb-1'><a class='button is-small is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='line-height:25px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            html += "<input type='button' class='button is-small mr-1 is-success' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
             html += "</div>";
             return $("<li>")
                 .append(html)
@@ -1476,11 +1476,11 @@
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold'>" + item.label + "</a><div class='field is-grouped is-right '>";
-             if (item.garantia) html += "<input type='button' class='button is-success mr-1' value='G' />";
-            if (!item.garantia) html += "<input type='button' class='button is-danger mr-1' value='FG'  />";
-            if (item.contrato) html += "<input type='button' class='button is-info mr-1' value='C' />";
-            if (!item.contrato) html += "<input type='button' class='button is-warning mr-1' value='FC' />";
+            var html = "<div class='field has-addons mb-1'><a class='button is-small is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='line-height:25px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+             if (item.garantia) html += "<input type='button' class='button is-small is-success mr-1' value='G' />";
+            if (!item.garantia) html += "<input type='button' class='button is-small is-danger mr-1' value='FG'  />";
+            if (item.contrato) html += "<input type='button' class='button is-small is-info mr-1' value='C' />";
+            if (!item.contrato) html += "<input type='button' class='button is-small is-warning mr-1' value='FC' />";
             html += "</div>";
             return $("<li>")
                 .append(html)
