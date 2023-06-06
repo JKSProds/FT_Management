@@ -646,7 +646,7 @@ namespace FT_Management.Models
                             DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
                             Cliente = new Cliente() { NomeCliente = result["nome"].ToString(), },
                             Contrato = !result.IsDBNull("csupstamp"),
-                            Inativo = result["u_outloja"].ToString().Trim() == "1",
+                            Ativo = result["u_outloja"].ToString().Trim() == "0",
                         });
 
                         if (LoadCliente)
