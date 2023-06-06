@@ -17,24 +17,51 @@
 
 <div class="container">
     <div class="columns is-mobile is-centered">
-        <div class="column is-12">
+        <div class="column is-6">
             <div class="tile is-centered">
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
-
                         <p class="title">
                             <span class="icon mr-3">
                                 <i class="fa-solid fa-desktop"></i>
                             </span>
-                            <span>@Model.MarcaEquipamento @Model.ModeloEquipamento
-                                (@Model.NumeroSerieEquipamento)</span>
+                            <span>
+                                @Model.MarcaEquipamento @Model.ModeloEquipamento
+                                (@Model.NumeroSerieEquipamento)
+                            </span>
                         </p>
                     </article>
                 </div>
             </div>
         </div>
+        <div class="column is-3">
+            <div class="tile is-centered">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification @(Model.Contrato ? "is-info" : "is-warning") ">
+                        <p class="subtitle has-text-centered has-text-weight-bold">
+                            <span>
+                                @(Model.Contrato ? "CONTRATO" : "FORA CONTRATO")
+                            </span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+            <div class="column is-3">
+                <div class="tile is-centered">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification @(Model.Garantia ? "is-success" : "is-danger")">
+                            <p class="subtitle has-text-centered has-text-weight-bold">
+                                <span>
+                                    @(Model.Garantia ? "GARANTIA" : "FORA GARANTIA")
+                                </span>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 <hr />
 
 <div class="container">
