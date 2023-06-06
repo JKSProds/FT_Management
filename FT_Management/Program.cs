@@ -1,5 +1,3 @@
-using FT_Management.BasicAuthentication.Shared.Authentication.Basic;
-using FT_Management.BasicAuthentication.Shared.Authentication.Basic.Handlers;
 using Microsoft.Extensions.Configuration;
 using System.Globalization;
 
