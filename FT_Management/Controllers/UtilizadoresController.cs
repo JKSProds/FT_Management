@@ -100,7 +100,7 @@ namespace FT_Management.Controllers
                             new Claim(ClaimTypes.Thumbprint, user.ImgUtilizador),
                             new Claim(ClaimTypes.Role, user.Id <= 2 ? "Master" : ""),
                             new Claim(ClaimTypes.Role, user.Admin ? "Admin" : "User"),
-                            new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : "Escritorio"),
+                            new Claim(ClaimTypes.Role, user.TipoUtilizador == 1 ? "Tech" : user.TipoUtilizador == 2 ? "Comercial" : user.TipoUtilizador == 3 ? "Escritorio" : "Outros"),
                             new Claim(ClaimTypes.UserData, user.TipoMapa == 1 ? "Google Maps" : (user.TipoMapa == 2 ? "Waze" : "Apple"))
 
                         };

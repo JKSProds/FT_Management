@@ -144,8 +144,8 @@
         }
 
         //Obter peças em garantia
-        [HttpGet, BasicAuthorization]
-        [Authorize(Roles = "Admin, Escritorio")]
+        [HttpGet]
+        [Authorize(Roles = "Admin, Escritorio, Outros")]
         public ActionResult Garantias()
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;

@@ -44,4 +44,10 @@
   <ItemGroup>
     <Folder Include="Views\Formulario\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Extensions\BasicAuthenticationDefaults.cs" />
+    <Compile Remove="Extensions\BasicAuthenticationClient.cs" />
+    <Compile Remove="Extensions\BasicAuthorizationAttribute.cs" />
+    <Compile Remove="Extensions\BasicAuthenticationHandler.cs" />
+  </ItemGroup>
 </Project>
