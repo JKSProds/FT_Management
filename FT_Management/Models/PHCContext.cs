@@ -360,7 +360,7 @@ namespace FT_Management.Models
                             IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
                             Vendedor = LstUtilizadores.Where(v => v.IdPHC == int.Parse(result["vendedor"].ToString().Trim())).DefaultIfEmpty(new Utilizador()).First(),
                             TipoCliente = result["tipo"].ToString().Trim(),
-                            Contrato = !result.IsDBNull("csupstamp")
+                            ContratoStamp = !result.IsDBNull("csupstamp") ? result["csupstamp"].ToString().Trim() : "",
                         });
                         if (LoadMarcacoes) LstClientes.Last().Marcacoes = ObterMarcacoesSimples(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
                         if (LoadFolhasObra) LstClientes.Last().FolhasObra = ObterFolhasObra(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
@@ -645,7 +645,7 @@ namespace FT_Management.Models
                             DataCompra = DateTime.Parse(result["fldata"].ToString()),
                             DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
                             Cliente = new Cliente() { NomeCliente = result["nome"].ToString(), },
-                            Contrato = !result.IsDBNull("csupstamp"),
+                            Contrato = result.IsDBNull("csupstamp"),
                             Inativo = result["u_outloja"].ToString().Trim() == "1",
                         });
 
@@ -707,6 +707,20 @@ namespace FT_Management.Models
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel associar o cliente no PHC!\r\n(Exception: " + ex.Message + ")");
+                return false;
+            }
+            return true;
+        }
+        public bool AssociarEquipamentoContrato(Cliente c, Equipamento e, Utilizador u)
+        {
+            try
+            {
+                ExecutarQuery("");
+                FT_ManagementContext.AdicionarLog(u.Id, "Foi inserido o equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " ao contrato ativo do Cliente: " + c.NomeCliente + " pelo utilizador " + u.NomeCompleto, 2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel inserir o equipamento no contrato do cliente no PHC!\r\n(Exception: " + ex.Message + ")");
                 return false;
             }
             return true;
@@ -895,8 +909,8 @@ namespace FT_Management.Models
                 SQL_Query += "@OBS = '" + fo.SituacoesPendentes.Replace("'", "''") + "', ";
                 SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
                 SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
-                //SQL_Query += "@EXCLUSAO = '" + fo.JustExtraContrato + "', ";
-                //SQL_Query += "@EXCLUICONTRATO = '" + (fo.Contrato ? "1" : "0") + "', ";
+                SQL_Query += "@EXCLUSAO = '" + fo.JustExtraContrato + "', ";
+                SQL_Query += "@EXCLUICONTRATO = '" + (fo.Contrato ? "1" : "0") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -1078,18 +1092,28 @@ namespace FT_Management.Models
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
+            if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
             if (fo.EmGarantia != fo.EquipamentoServico.Garantia) res += "O estado do Equipamento selecionado ("+fo.EquipamentoServico.NumeroSerieEquipamento + ") é "+(fo.EquipamentoServico.Garantia ? "GARANTIA" : "NÃO GARANTIA")+", mas o técnico selecionou "+(fo.EmGarantia ? "GARANTIA" : "NÃO GARANTIA")+"!\r\n";
+
+            //INTERVENCOES
+            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção ("+fo.DataServico.ToShortDateString()+") é diferente da data da marcação ("+string.Join(" | ", fo.Marcacao.DatasAdicionaisDistintas.Select(d=>d.ToShortDateString())) +")!\r\n";
+             if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção ("+string.Join(" | ", fo.IntervencaosServico.Select(i => i.DataServiço.ToShortDateString()))+") é diferente da data atual ("+DateTime.Now.ToShortDateString()+"). \r\n";
+            if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
+
+            //CONTRATOS
+            if (fo.Marcacao.Contrato != fo.Contrato) res += "É obrigatório adicionar pelo menos 1 anexo para justificar a alteração de contrato!\r\n";
+            if (fo.Marcacao.Contrato != fo.Contrato && string.IsNullOrEmpty(fo.JustExtraContrato)) res += "É obrigatório escolher pelo menos um dos motivos para estar fora do contrato!\r\n";
+            if (fo.ClienteServico.Contrato && !fo.EquipamentoServico.Contrato && fo.Contrato) res += "O equipamento selecionado ("+fo.EquipamentoServico.MarcaEquipamento+" "+fo.EquipamentoServico.ModeloEquipamento+" - "+fo.EquipamentoServico.NumeroSerieEquipamento+") encontra-se fora de contrato. Deseja inserir este equipamento na Tabela de Contratos associada a este cliente?\r\n";
+
+            //ANEXOS
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
             if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
             if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3) res += "É obrigatorio inserir pelo menos 3 anexos numa instalação!\r\n";
-            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção ("+fo.DataServico.ToShortDateString()+") é diferente da data da marcação ("+string.Join(" | ", fo.Marcacao.DatasAdicionaisDistintas.Select(d=>d.ToShortDateString())) +")!\r\n";
-            if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
-            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção ("+string.Join(" | ", fo.IntervencaosServico.Select(i => i.DataServiço.ToShortDateString()))+") é diferente da data atual ("+DateTime.Now.ToShortDateString()+"). \r\n";
-            if (fo.ValorTotal > 500 && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
-            if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
+
+            //PEÇAS
             if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) res += "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!\r\n";
-            if (fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() > fo.FicheirosAnexo.Split(";").Count()) res += "É obrigatório adicionar pelo menos 1 anexo ("+ fo.FicheirosAnexo.Split(";").Count() + ") por peça ("+ fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() + ") inserida para validar a GARANTIA!\r\n";
-            if (fo.Marcacao.Contrato != fo.Contrato) res += "É obrigatório adicionar pelo menos 1 anexo para justificar a alteração de Contrato!\r\n";
+            if (fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() > fo.FicheirosAnexo.Split(";").Count()) res += "É obrigatório adicionar pelo menos 1 anexo (" + fo.FicheirosAnexo.Split(";").Count() + ") por peça (" + fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() + ") inserida para validar a GARANTIA!\r\n";
+            if (fo.ValorTotal > 500 && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
 
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico).GroupBy(l => l.StampProduto).Select(cl => new Produto
             {

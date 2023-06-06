@@ -113,6 +113,7 @@ namespace FT_Management.Controllers
                 fo.SituacoesPendentes += "\r\n" + string.Join(" | ", fo.PecasServico.Where(p => p.Garantia != fo.EquipamentoServico.Garantia).Select(x => x.Ref_Produto + " - " + "[" + x.MotivoGarantia + "] " + x.ObsGarantia));
 
                 if (fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) phccontext.AtualizarClienteEquipamento(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
+                if (fo.ClienteServico.Contrato && !fo.EquipamentoServico.Contrato && fo.Contrato) phccontext.AssociarEquipamentoContrato(fo.ClienteServico, fo.EquipamentoServico, fo.Utilizador);
 
                 Marcacao m = fo.Marcacao;
                 m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
