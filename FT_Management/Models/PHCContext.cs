@@ -715,7 +715,7 @@ namespace FT_Management.Models
         {
             try
             {
-                ExecutarQuery("");
+                ExecutarQuery("INSERT INTO cdeq ([cdeqstamp], [serie], [marca], [maquina], [csupstamp], [mastamp], [lordem]) SELECT 'WEBAPP' + left(newid(),19), serie, marca, maquina, '"+c.ContratoStamp +"', mastamp, isnull((select MAX(lordem)+1 from cdeq(nolock) where csupstamp = '"+ c.ContratoStamp + "'),1) from ma where mastamp = '"+e.EquipamentoStamp+"';");
                 FT_ManagementContext.AdicionarLog(u.Id, "Foi inserido o equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " ao contrato ativo do Cliente: " + c.NomeCliente + " pelo utilizador " + u.NomeCompleto, 2);
             }
             catch (Exception ex)
