@@ -144,7 +144,7 @@
         }
 
         //Obter peças em garantia
-        [HttpGet]
+        [HttpGet, BasicAuthorization]
         [Authorize(Roles = "Admin, Escritorio")]
         public ActionResult Garantias()
         {

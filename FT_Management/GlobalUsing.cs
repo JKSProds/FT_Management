@@ -1,3 +1,4 @@
+global using FT_Management.BasicAuthentication.Authentication.Basic.Attributes;
 global using System;
 global using System.Net;
 global using System.Web;
