@@ -62,7 +62,7 @@
         public int EstadoFolhaObra { get; set; }
         [Display(Name = "Tipo de Serviço")]
         public string TipoFolhaObra { get; set; }
-        [Display(Name = "Em Garantia")]
+        [Display(Name = "Garantia?")]
         public bool EmGarantia { get; set; }
         [Display(Name = "Encaminhar Pedido")]
         public bool Avisar { get; set; }
@@ -80,6 +80,7 @@
         public double KmsDeslocacao { get; set; }
         public string FicheirosAnexo { get; set; }
         public bool Guia { get; set; }
+        [Display(Name = "Contrato?")]
         public bool Contrato { get; set; }
         [Display(Name = "Motivo - Fora de Contrato")]
         public string JustExtraContrato { get; set; }
