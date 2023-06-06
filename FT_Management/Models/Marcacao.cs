@@ -6,7 +6,7 @@
         {
             get
             {
-                return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") +
+                return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") + (this.Remoto ? "💻 " : "") +
                 (this.DataMarcacao < DateTime.Now && (this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Reagendado") ? "❌ " :
                 this.EstadoMarcacaoDesc == "Reagendado" || this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Criado" || this.EstadoMarcacaoDesc == "Rececionado" ? "" :
                 this.EstadoMarcacaoDesc == "Pedido Orçamento" || this.EstadoMarcacaoDesc == "Pedido Peças" ? "⌛️" :
@@ -83,15 +83,18 @@
         public string FechadoPor { get; set; }
         [Display(Name = "Em Oficina?")]
         public bool Oficina { get; set; }
+        [Display(Name = "Remoto?")]
+        public bool Remoto { get; set; }
         [Display(Name = "Serviço de Piquete?")]
         public bool Piquete { get; set; }
         public Utilizador Utilizador { get; set; }
         public string MarcacaoStamp { get; set; }
         public string Formulario { get; set; }
-
         [Display(Name = "Submetido")]
         public bool FormularioSubmetido { get; set; }
-
+        public bool Contrato { get { return (string.IsNullOrEmpty(this.JustExtraContrato) && (this.Cliente == null ? false : this.Cliente.Contrato)); } }
+        [Display(Name = "Motivo - Extra Contrato")]
+        public string JustExtraContrato { get; set; }
 
         public int IdTecnico { get; set; }
         [Display(Name = "Técnico")]

@@ -77,23 +77,20 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="Cliente"></label>
-                                <div class="control">
+                                <label asp-for="Cliente" class="label"></label>
+                                <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" asp-for="Cliente.IdCliente" id="txtIdCliente" />
                                     <input type="hidden" asp-for="Cliente.IdLoja" id="txtIdLoja" />
-                                    <p class="control has-icons-left">
-                                        <input type="text" class="input" asp-for="Cliente.NomeCliente" id="txtCustomer">
-                                        <span class="icon is-small is-left">
-                                            <i class="fas fa-user-check"></i>
-                                        </span>
-                                    </p>
-                                </div>
-                                <span asp-validation-for="Cliente.IdCliente" class="has-text-danger"></span>
+                                    <input type="text" class="input is-rounded" asp-for="Cliente.NomeCliente" id="txtCustomer" placeholder="Insira o nome do cliente">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                </p>
                             </div>
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <label asp-for="TipoEquipamento"></label>
+                                <label asp-for="TipoEquipamento" class="label"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
                                         @{
@@ -101,8 +98,8 @@
                                         }
                                         <span class="select" style="width:100%">
                                             <select style="width:100%" asp-for="TipoEquipamento"
-                                                asp-items="@(new SelectList(LstTipoEquipamento))"
-                                                onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
+                                                    asp-items="@(new SelectList(LstTipoEquipamento))"
+                                                    onchange="CarregarDadosResponsavel()" id="TipoEquipamento"></select>
                                         </span>
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-cogs"></i>
@@ -114,7 +111,7 @@
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <label asp-for="QuemPediuNome"></label>
+                                <label asp-for="QuemPediuNome" class="label"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
                                         <input type="text" class="input" asp-for="QuemPediuNome" id="txtQuemPediuNome">
@@ -128,11 +125,11 @@
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <label asp-for="QuemPediuEmail"></label>
+                                <label asp-for="QuemPediuEmail" class="label"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
                                         <input type="email" class="input" asp-for="QuemPediuEmail"
-                                            id="txtQuemPediuEmail">
+                                               id="txtQuemPediuEmail">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-envelope"></i>
                                         </span>
@@ -143,11 +140,11 @@
                         </div>
                         <div class="column is-3">
                             <div class="field">
-                                <label asp-for="QuemPediuTelefone"></label>
+                                <label asp-for="QuemPediuTelefone" class="label"></label>
                                 <div class="control">
                                     <p class="control has-icons-left">
                                         <input type="tel" class="input" asp-for="QuemPediuTelefone"
-                                            id="txtQuemPediuTelefone">
+                                               id="txtQuemPediuTelefone">
                                         <span class="icon is-small is-left">
                                             <i class="fas fa-phone"></i>
                                         </span>
@@ -162,14 +159,14 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="EstadoMarcacaoDesc"></label>
+                                <label asp-for="EstadoMarcacaoDesc" class="label"></label>
                                 <p class="control has-icons-left">
                                     @{
                                         var LstEstado = ViewData["Estado"] as IList<EstadoMarcacao>;
                                     }
                                     <span class="select" style="width:100%">
                                         <select style="width:100%" asp-for="EstadoMarcacaoDesc"
-                                            asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
+                                                asp-items="@(new SelectList(LstEstado, "EstadoMarcacaoDesc", "EstadoMarcacaoDesc"))"></select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-check"></i>
@@ -178,7 +175,7 @@
                             </div>
                             <span asp-validation-for="EstadoMarcacaoDesc" class="has-text-danger"></span>
                         </div>
-                        <div class="column is-3 my-auto">
+                        <div class="column is-2 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded">
                                     <input type="checkbox" asp-for="Piquete">
@@ -188,7 +185,17 @@
                                 <span asp-validation-for="Piquete" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-3 my-auto">
+                        <div class="column is-2 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded">
+                                    <input type="checkbox" asp-for="Remoto">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">@Html.DisplayNameFor(model => model.Remoto)</span>
+                                </label>
+                                <span asp-validation-for="Remoto" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-2 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded">
                                     <input type="checkbox" asp-for="Oficina">
@@ -200,7 +207,7 @@
                         </div>
                         <div class="column is-12">
                             <div class="field" style="height: 325px;">
-                                <label asp-for="Tecnico"></label>
+                                <label asp-for="Tecnico" class="label"></label>
                                 <div class="control">
                                     <div class="select is-multiple" style="width:100%">
                                         @{
@@ -208,7 +215,7 @@
                                         }
                                         <span class="select" style="width:100%">
                                             <select style="width:100%" multiple size="8" asp-for="LstTecnicosSelect"
-                                                asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
+                                                    asp-items="@(new SelectList(LstTecnicos, "Id", "NomeCompleto"))"></select>
                                         </span>
                                     </div>
                                 </div>
@@ -221,7 +228,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="DataPedido"></label>
+                                <label asp-for="DataPedido" class="label"></label>
                                 <div class="control">
                                     <input type="date" class="input"
                                         value="@(DateTime.Parse(Model.DataPedido.ToString()).ToString("yyyy-MM-dd"))"
@@ -246,7 +253,7 @@
                             asp-for="DatasAdicionais" id="txtDatasAdicionais">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="DataMarcacao"></label>
+                                <label asp-for="DataMarcacao" class="label"></label>
                                 <div class="control">
                                     <input type="date" class="input "
                                         value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
@@ -273,7 +280,7 @@
                         </div>
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="Hora"></label>
+                                <label asp-for="Hora" class="label"></label>
                                 <div class="control">
                                     <input type="time" class="input " asp-for="Hora" id="txtHora">
                                 </div>
@@ -282,7 +289,7 @@
                         </div>
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="Periodo"></label>
+                                <label asp-for="Periodo" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
                                         @{
@@ -304,7 +311,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-4">
                             <div class="field">
-                                <label asp-for="TipoServico"></label>
+                                <label asp-for="TipoServico" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
                                         @{
@@ -322,7 +329,7 @@
                         </div>
                         <div class="column is-4">
                             <div class="field">
-                                <label asp-for="PrioridadeMarcacao"></label>
+                                <label asp-for="PrioridadeMarcacao" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
                                         @{
@@ -340,7 +347,7 @@
                         </div>
                         <div class="column is-4">
                             <div class="field">
-                                <label asp-for="TipoPedido"></label>
+                                <label asp-for="TipoPedido" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
                                         @{
@@ -356,9 +363,9 @@
                                 <span asp-validation-for="TipoPedido" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-4">
+                        <div class="column is-3">
                             <div class="field">
-                                <label asp-for="Referencia"></label>
+                                <label asp-for="Referencia" class="label"></label>
                                 <p class="control has-icons-left">
                                     <input type="text" class="input" asp-for="Referencia">
                                     <span class="icon is-small is-left">
@@ -368,9 +375,27 @@
                                 <span asp-validation-for="Referencia" class="has-text-danger"></span>
                             </div>
                         </div>
+                        <div class="column is-3">
+                            <div class="field">
+                                <label asp-for="JustExtraContrato" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <span class="select" style="width: 100%">
+                                        @{
+                                            var LstExclusoes = ViewData["Exclusoes"] as IList<String>;
+                                        }
+                                        <select class="select" style="width:100%" asp-for="JustExtraContrato"
+                                                asp-items="@(new SelectList(LstExclusoes))"></select>
+                                    </span>
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-file-contract"></i>
+                                    </span>
+                                </p>
+                                <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
+                            </div>
+                        </div>
                         <div class="column is-4">
                             <div class="field">
-                                <label asp-for="Formulario"></label>
+                                <label asp-for="Formulario" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width: 100%">
                                         <select class="select" style="width:100%" asp-for="Formulario"
@@ -383,9 +408,9 @@
                                 <span asp-validation-for="Formulario" class="has-text-danger"></span>
                             </div>
                         </div>
-                        <div class="column is-4 my-auto">
+                        <div class="column is-2 my-auto">
                             <div class="field">
-                                <label class="switch is-rounded is-large">
+                                <label class="switch is-rounded">
                                     <input type="checkbox" asp-for="FormularioSubmetido">
                                     <span class="check is-info"></span>
                                     <span class="control-label">@Html.DisplayNameFor(model => model.FormularioSubmetido)</span>
@@ -395,7 +420,7 @@
                         </div>
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="ResumoMarcacao"></label>
+                                <label asp-for="ResumoMarcacao" class="label"></label>
                                 <div class="control">
                                     <textarea class="textarea" rows="10" placeholder="Resumo"
                                               asp-for="ResumoMarcacao"></textarea>
@@ -516,7 +541,8 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                             return {
                                 label: item.nomeCliente + " (" + item.idCliente + " - " + item.idLoja + ")",
                                 val: item.idCliente,
-                                val2: item.idLoja
+                                val2: item.idLoja,
+                                contrato: item.contrato
                             };
                         }))
                     },
@@ -534,6 +560,14 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                 CarregarDadosResponsavel();
             },
             minLength: 1
-        }).css('z-index', 10);
+        }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
+            var html = "<div class='field has-addons mb-1'><a class='button is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:35px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            if (item.contrato) html += "<input type='button' class='button mr-1 is-info' value='C' style='float: right;' />";
+            if (!item.contrato) html += "<input type='button' class='button mr-1 is-warning' value='FC' style='float: right;' />";
+            html += "</div>";
+            return $("<li>")
+                .append(html)
+                .appendTo(ul);
+            };
     });
 </script>

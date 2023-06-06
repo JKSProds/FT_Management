@@ -104,7 +104,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="EquipamentoServico"></label>
+                                <label asp-for="EquipamentoServico" class="label"></label>
                                 <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" asp-for="EquipamentoServico.EquipamentoStamp"
                                            id="txtEquipamentoStamp" />
@@ -114,6 +114,8 @@
                                     </span>
                                 </p>
                             </div>
+                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
+                                  class="has-text-danger"></span>
                         </div>
                         <div class="column is-6 my-auto">
                             <div class="field">
@@ -126,7 +128,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="column is-6 my-auto">
+                        <div class="column is-3 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded is-medium">
                                     <input type="checkbox" asp-for="EmGarantia" id="chkGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
@@ -138,6 +140,39 @@
                                 <span asp-validation-for="EmGarantia" class="has-text-danger"></span>
                             </div>
                         </div>
+                        @if (Model.ClienteServico.Contrato && Model.Marcacao.Contrato)
+                            {
+                        <div class="column is-3 my-auto">
+                            <div class="field">
+                                <label class="switch is-rounded is-medium">
+                                    <input type="checkbox" asp-for="Contrato" onchange="document.getElementById('divExtraContrato').style.display = this.checked ? 'none' : 'block';">
+                                    <span class="check is-info"></span>
+                                    <span class="control-label">
+                                        @Html.DisplayNameFor(model => model.Contrato)
+                                    </span>
+                                </label>
+                                <span asp-validation-for="Contrato" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="column is-12" id="divExtraContrato" style="display:@(Model.Contrato ? "none" : "block")">
+                            <div class="field">
+                                <label asp-for="JustExtraContrato" class="label"></label>
+                                <p class="control has-icons-left">
+                                    <span class="select" style="width: 100%">
+                                        @{
+                                            var LstExclusoes = ViewData["Exclusoes"] as IList<String>;
+                                        }
+                                        <select class="select" style="width:100%" asp-for="JustExtraContrato"
+                                                asp-items="@(new SelectList(LstExclusoes))"></select>
+                                    </span>
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-file-contract"></i>
+                                    </span>
+                                </p>
+                                <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
+                            </div>
+                        </div>
+                            }
                         <div class="column is-12">
                             <div class="field">
                                 <div class="control buttons">
@@ -165,15 +200,14 @@
                                 </div>
 
                             </div>
-                            <span asp-validation-for="EquipamentoServico.EquipamentoStamp"
-                                  class="has-text-danger"></span>
+                           
                         </div>
                     </div>
                 </div>
                 <div class="step-content">
                     <div class="columns is-multiline mx-1">
                         <div class="column is-4">
-                            <label asp-for="ListaIntervencoes"></label>
+                            <label asp-for="ListaIntervencoes" class="label"></label>
                             <input type="hidden" class="input" asp-for="ListaIntervencoes" id="ListaIntervencoes">
                             <div class="list has-visible-pointer-controls" id="divListaIntervencoes">
                             </div>
@@ -232,7 +266,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="RelatorioServico"></label>
+                                <label asp-for="RelatorioServico" class="label"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
                                               asp-for="RelatorioServico" id="txtRelatorio"></textarea>
@@ -242,7 +276,7 @@
                         </div>
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="SituacoesPendentes"></label>
+                                <label asp-for="SituacoesPendentes" class="label"></label>
                                 <div class="control">
                                     <textarea class="textarea is-primary" rows="7"
                                               asp-for="SituacoesPendentes"></textarea>
@@ -256,7 +290,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-12">
                             <div class="field">
-                                <label asp-for="PecasServico"></label>
+                                <label asp-for="PecasServico" class="label"></label>
                                 <p class="control has-icons-left has-icons-right">
                                     <input type="hidden" class="input" id="txtStampPeca">
                                     <input type="text" class="input is-rounded" placeholder="Insira a referência" id="txtPecas">
@@ -329,7 +363,7 @@
                                 </button>
                             </div>
                             <div class="column is-12">
-                                <label asp-for="ListaPecas"></label>
+                                <label asp-for="ListaPecas" class="label"></label>
                                 <input type="hidden" class="input" asp-for="ListaPecas" id="ListaPecas">
                                 <div class="list has-visible-pointer-controls" id="divListaPecas">
                                 </div>
@@ -345,7 +379,7 @@
                     <div class="columns is-multiline mx-1">
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="EstadoFolhaObra"></label>
+                                <label asp-for="EstadoFolhaObra" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
                                         <select asp-for="EstadoFolhaObra" id="lstEstadoFO" asp-items="ViewBag.EstadoFolhaObra"
@@ -361,7 +395,7 @@
                         </div>
                         <div class="column is-6">
                             <div class="field">
-                                <label asp-for="TipoFolhaObra"></label>
+                                <label asp-for="TipoFolhaObra" class="label"></label>
                                 <p class="control has-icons-left">
                                     <span class="select" style="width:100%">
                                         @{
@@ -412,6 +446,8 @@
             <input type="text" class="input" asp-for="IdMarcacao">
             <input type="text" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
             <input type="checkbox" class="checkbox" asp-for="Piquete" id="chkPiquete">
+            <input type="checkbox" class="checkbox" asp-for="ClienteServico.Contrato" >
+            <input type="checkbox" class="checkbox" asp-for="Marcacao.Contrato">
             <input type="checkbox" class="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
 
             <div id="divChk">
@@ -732,6 +768,8 @@
                 </label>
             </div>
             <div class="field" hidden>
+                <p><b>Ao selecionar garantia por favor indique abaixo o motivo da peça estar em garantia. Esta peça será incluido num RMA a Fornecedor para fazermos reclamação da peça e não será cobrada ao cliente.</b></p>
+                &nbsp;
                 <p class="control has-icons-left">
                     <span class="select" style="width:100%">
                         <select id="lstMotivosAvariaGarantia" asp-items="ViewBag.MotivosGarantia"
@@ -744,6 +782,8 @@
                 </p>
             </div>
             <div class="field" hidden>
+                <p><b>Ao selecionar não garantia por favor indique abaixo o motivo da peça não estar em garantia. Esta peça será cobrada ao cliente.</b></p>
+                &nbsp;
                 <p class="control has-icons-left">
                     <span class="select" style="width:100%">
                         <select id="lstMotivosAvariaNaoGarantia" asp-items="ViewBag.MotivosNaoGarantia"
@@ -1273,11 +1313,10 @@
                 document.getElementById("btnAdicionarPeca").disabled = false;
             },
             minLength: 1
-        }).data("ui-autocomplete")._renderItem = function (ul, item) {
-            console.log(ul, item);
-            var html = "<a>" + item.label + "<div class='buttons'>";
-            html += "<input type='button' class='button is-success mx-1 is-fullwidth' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
-            html += "</div></a>";
+        }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
+            var html = "<div class='field has-addons mb-1'><a class='button is-small is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:35px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            html += "<input type='button' class='button is-small mr-1 is-success' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
+            html += "</div>";
             return $("<li>")
                 .append(html)
                 .appendTo(ul);
@@ -1436,14 +1475,13 @@
                 document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;
             },
             minLength: 1
-        }).data("ui-autocomplete")._renderItem = function (ul, item) {
-            console.log(ul, item);
-            var html = "<a>" + item.label + "<div class='buttons'>";
-            if (item.garantia) html += "<input type='button' class='button is-success mx-1' value='G' style='float: right;' />";
-            if (!item.garantia) html += "<input type='button' class='button is-danger mx-1' value='FG' style='float: right;' />";
-            if (item.contrato) html += "<input type='button' class='button is-info mx-1' value='C' style='float: right;' />";
-            if (!item.contrato) html += "<input type='button' class='button is-warning mx-1' value='FC' style='float: right;' />";
-            html += "</div></a>";
+        }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
+            var html = "<div class='field has-addons mb-1'><a class='button is-small is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:35px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+             if (item.garantia) html += "<input type='button' class='button is-small is-success mr-1' value='G' />";
+            if (!item.garantia) html += "<input type='button' class='button is-small is-danger mr-1' value='FG'  />";
+            if (item.contrato) html += "<input type='button' class='button is-small is-info mr-1' value='C' />";
+            if (!item.contrato) html += "<input type='button' class='button is-small is-warning mr-1' value='FC' />";
+            html += "</div>";
             return $("<li>")
                 .append(html)
                 .appendTo(ul);

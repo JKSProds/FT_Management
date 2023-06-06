@@ -218,6 +218,7 @@ namespace FT_Management.Controllers
 
             List<CalendarioEvent> LstEventos = context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end.AddDays(-1)).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList();
             LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end.AddDays(-1), id), new List<Feriado>()));
+            LstEventos.AddRange(context.ConverterFeriadosEventos(context.ObterListaFeriados(start.Year.ToString())));
 
             if (id > 0) return new JsonResult(LstEventos);
 
@@ -250,6 +251,7 @@ namespace FT_Management.Controllers
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["Exclusoes"] = phccontext.ObterExclusoes(1);
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
             ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
 
@@ -272,6 +274,7 @@ namespace FT_Management.Controllers
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["Exclusoes"] = phccontext.ObterExclusoes(1);
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
             ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
             Marcacao m = phccontext.ObterMarcacao(id);
@@ -326,6 +329,7 @@ namespace FT_Management.Controllers
             ViewData["Estado"] = phccontext.ObterMarcacaoEstados();
             ViewData["Periodo"] = phccontext.ObterPeriodo();
             ViewData["Prioridade"] = phccontext.ObterPrioridade();
+            ViewData["Exclusoes"] = phccontext.ObterExclusoes(1);
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
             ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
 
