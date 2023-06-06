@@ -22,7 +22,7 @@
                 <div class="tile is-parent is-vertical">
                     <article class="tile is-child notification is-info">
                         <p class="title has-text-centered is-hoverable is-clickable"
-                            onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.ClienteServico.IdCliente, IdLoja = @Model.ClienteServico.IdLoja }))'">
+                           onclick="location.href = '@(Url.Action("Cliente", "Clientes", new { IdCliente = @Model.ClienteServico.IdCliente, IdLoja = @Model.ClienteServico.IdLoja }))'">
                             <span class="icon mr-3">
                                 <i class="fas fa-eye"></i>
                             </span>
@@ -32,8 +32,21 @@
                 </div>
             </div>
         </div>
-
-    </div>
+            @if (Model.ClienteServico.Contrato)
+            {
+                <div class="column">
+                    <div class="tile is-centered">
+                        <div class="tile is-parent is-vertical">
+                            <article class="tile is-child notification @(Model.Contrato ? "is-info" : "is-warning")">
+                                <p class="title has-text-centered">
+                                    <span>@(Model.Contrato ? "CONTRATO" : "FORA CONTRATO")</span>
+                                </p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+                    }
+            </div>
 </div>
 <hr />
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
