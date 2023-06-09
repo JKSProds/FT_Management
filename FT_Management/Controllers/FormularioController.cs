@@ -86,10 +86,11 @@ namespace FT_Management.Controllers
                 if (!string.IsNullOrEmpty(e))
                 {
                     Equipamentos.Add(phccontext.ObterEquipamento(e.Split("|")[0]));
-                    Equipamentos.Last().TipoEquipamento = e.Split("|")[1];
+                    Equipamentos.Last().Seccao = e.Split("|")[1];
 
                     phccontext.AtualizarClienteEquipamento(c, Equipamentos.Last(), u);
                     phccontext.AssociarEquipamentoContrato(c, Equipamentos.Last(), u);
+                    phccontext.AtualizarInventarioEquipamento(Equipamentos.Last(), u);
                 }
             }
 

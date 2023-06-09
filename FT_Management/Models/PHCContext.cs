@@ -644,6 +644,8 @@ namespace FT_Management.Models
                             UltimoTecnico = !result.IsDBNull("utecnnm") ? result["utecnnm"].ToString() : "N/D",
                             DataCompra = DateTime.Parse(result["fldata"].ToString()),
                             DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
+                            Seccao = result["u_seccao"].ToString().Trim(),
+                            DataInventario = DateTime.Parse(result["u_datainv"].ToString()),
                             Cliente = new Cliente() { NomeCliente = result["nome"].ToString(), },
                             Contrato = !result.IsDBNull("csupstamp"),
                             Ativo = result["u_outloja"].ToString().Trim() == "0",
@@ -721,6 +723,20 @@ namespace FT_Management.Models
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel inserir o equipamento no contrato do cliente no PHC!\r\n(Exception: " + ex.Message + ")");
+                return false;
+            }
+            return true;
+        }
+        public bool AtualizarInventarioEquipamento(Equipamento e, Utilizador u)
+        {
+            try
+            {
+                ExecutarQuery("UPDATE MA SET u_seccao='"+e.Seccao+"', u_datainv='"+DateTime.Now.ToString("yyyyMMdd")+"', u_outloja='0' WHERE mastamp='"+e.EquipamentoStamp+"';");
+                FT_ManagementContext.AdicionarLog(u.Id, "Foi atualizado o inventario do equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " pelo utilizador " + u.NomeCompleto, 2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel atualizar o equipamento para inventario no PHC!\r\n(Exception: " + ex.Message + ")");
                 return false;
             }
             return true;

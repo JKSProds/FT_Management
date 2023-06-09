@@ -31,6 +31,8 @@
         public bool Garantia { get; set; }
         public bool Contrato { get; set; }
         public bool Ativo { get; set; }
+        public string Seccao { get; set; }
+        public DateTime DataInventario { get; set; }
 
         [Display(Name = "Técnico")]
         public string UltimoTecnico { get; set; }
