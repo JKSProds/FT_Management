@@ -1089,9 +1089,6 @@
                 var timeEnd = moment(e.childNodes[0].innerText.split(' ')[0] + ' ' + e.childNodes[0].innerText.split(' - ')[1], 'DD/MM/YYYY hh:mm', 'pt');
 
                 periodo += moment.duration(timeEnd.diff(timeStart)).asHours();
-
-
-                console.log(timeStart + ' - ' + timeEnd + ' | ' + periodo);
             }
         })
         document.getElementById('btnCountIntervencoes').innerHTML = "< " + Math.ceil(periodo) + " Hora(s)";
@@ -1146,7 +1143,6 @@
             type: "POST",
             url: "/FolhasObra/ValidarCodigo/" + stamp,
             success: function (result) {
-                console.log(result);
                 $(function () {
                     if (result.split("|")[0] == "1") {
                         notify("Código Aprovado pelo utilizador " + result.split("|")[1]);
@@ -1610,7 +1606,6 @@
         dictCancelUpload: "Cancelar",
         addRemoveLinks: true,
         success: function (file, response) {
-            console.log(response);
             document.getElementById('Ficheiros').value += response + ";";
             file.newName = response;
             return file.previewElement.classList.add("dz-success");
@@ -1647,11 +1642,6 @@
         signaturePad.clear();
         if (data.length > 0) { signaturePad.fromData(data) };
         if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
-    }
-
-    function onScanSuccess(decodedText, decodedResult) {
-        // handle the scanned code as you like, for example:
-        console.log(`Code matched = ${decodedText}`, decodedResult);
     }
 
     function onScanFailure(error) {
