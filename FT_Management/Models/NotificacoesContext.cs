@@ -496,6 +496,24 @@ namespace FT_Management.Models
             return true;
         }
 
+        public static bool EnviarEmailInventarioTecnico(Utilizador u, List<Produto> Produtos, Armazem a)
+        {
+            string Assunto = "Inventário de Armazém - " + a.ArmazemNome;
+            string Mensagem = "Foi efetuado um novo inventario pelo utilizador " + u.NomeCompleto + " do armazém nº <b>" + a.ArmazemId + "</b>!<br><br>";
+
+            Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Stock em PHC</th><th>Stock Fisico</th><th></th></tr>";
+
+            foreach (var p in Produtos)
+            {
+                    Mensagem += "<tr><td style='padding: 5px;'>" + p.Ref_Produto + "</td><td style='padding: 5px;'>" + p.Designacao_Produto + "</td><td style='padding: 5px;'>" + p.Stock_Atual + "</td><td style='padding: 5px;'>" + p.Stock_Fisico + "</td><td>"+ (p.Stock_Atual == p.Stock_Fisico ? "✅" : p.Stock_Atual > p.Stock_Fisico ? "⬇️" : "⬆️") + "</td></tr>";
+            }
+
+            Mensagem += "</table>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
+
+            return true;
+        }
+
         public static bool EnviarEmailError(Utilizador u, string id, string Mensagem)
         {
             string Assunto = "Error - " + u.NomeCompleto + " [" + id + "]";

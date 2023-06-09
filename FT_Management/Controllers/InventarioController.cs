@@ -180,6 +180,48 @@
 
             return new JsonResult(phccontext.ApagarLinhaSerieInventario(stamp, new Ref_Linha_Picking() { BOMA_STAMP = stamp_boma, Picking_Linha_Stamp = stamp_linha, CriadoPor = this.User.ObterNomeCompleto() }));
         }
+
+        //TECNICOS
+
+        //Obter inventario tecnico
+        [HttpGet]
+        public ActionResult Tecnico(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            if (id == 0) id = u.IdArmazem;
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os produtos do armazém: {3}.", u.NomeCompleto, u.Id, id);
+
+            ViewData["Armazem"] = phccontext.ObterArmazens().Where(a => a.ArmazemId == id).DefaultIfEmpty(new Armazem()).First().ArmazemNome;
+            return View(phccontext.ObterProdutosArmazem(id));
+        }
+
+        //Validar inventario tecnico
+        [HttpPost]
+        public ActionResult Tecnico(int id, string inventario)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Armazem a = phccontext.ObterArmazens().Where(a => a.ArmazemId == id).DefaultIfEmpty(new Armazem()).First();
+            if (string.IsNullOrEmpty(inventario) || string.IsNullOrEmpty(a.ArmazemStamp)) return RedirectToAction("Armazem", "Produtos");
+
+            _logger.LogDebug("Utilizador {1} [{2}] a enviar o inventario do armazém: {3}.", u.NomeCompleto, u.Id, id);
+
+            List<Produto> LstProdutos = phccontext.ObterProdutosArmazem(id);
+
+            foreach (var item in inventario.Split(";"))
+            {
+                if (LstProdutos.Where(p => p.StampProduto == item.Split("|")[0]).Count() > 0)
+                    LstProdutos.Where(p => p.StampProduto == item.Split("|")[0]).First().Stock_Fisico = Double.Parse(item.Split("|")[1]);
+            }
+
+            if (LstProdutos.Where(p => !p.Servico).ToList().Count() > 0) MailContext.EnviarEmailInventarioTecnico(u, LstProdutos.Where(p => !p.Servico).ToList(), a);
+
+            return RedirectToAction("Armazem", "Produtos");
+        }
     }
 
 }
