@@ -24,7 +24,7 @@
             {
                 return this.EstadoMarcacaoDesc == "Reagendado" || this.EstadoMarcacaoDesc == "Agendado" ? "" :
                 this.EstadoMarcacaoDesc == "Pedido Orçamento" || this.EstadoMarcacaoDesc == "Pedido Peças" ? "#ffdd57" :
-                this.EstadoMarcacaoDesc == "Criado" || this.EstadoMarcacaoDesc == "Em Curso" ? "#00d1b2" :
+                this.EstadoMarcacaoDesc == "Criado" || this.EstadoMarcacaoDesc == "Em Curso" ? "#8b9dc3" :
                 this.DataMarcacao < DateTime.Now && (this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Reagendado") ? "#ff3860" : "#23d160";
             }
         }
