@@ -71,7 +71,7 @@ else
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Equipamentos.OrderByDescending(e => e.ModeloEquipamento))
+                        @foreach (var item in Model.Equipamentos.Where(e => e.RefProduto.Contains(".42.")).OrderByDescending(e => e.ModeloEquipamento))
                         {
                             <tr style="width:auto" id="@item.EquipamentoStamp">
                                 <td data-label="@Html.DisplayNameFor(model => model.Equipamentos.First().MarcaEquipamento)">
