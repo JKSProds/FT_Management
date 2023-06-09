@@ -1099,7 +1099,7 @@ namespace FT_Management.Models
             if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
 
             //CONTRATOS
-            if (fo.Marcacao.Contrato != fo.Contrato && fo.FicheirosAnexo.Split(";").Count() == 0) res += "É obrigatório adicionar pelo menos 1 anexo para justificar a alteração de contrato!\r\n";
+            if (fo.Marcacao.Contrato != fo.Contrato && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatório adicionar pelo menos 1 anexo para justificar a alteração de contrato!\r\n";
             if (fo.Marcacao.Contrato != fo.Contrato && string.IsNullOrEmpty(fo.JustExtraContrato)) res += "É obrigatório escolher pelo menos um dos motivos para estar fora do contrato!\r\n";
             if (fo.ClienteServico.Contrato && !fo.EquipamentoServico.Contrato && fo.Contrato) res += "O equipamento selecionado ("+fo.EquipamentoServico.MarcaEquipamento+" "+fo.EquipamentoServico.ModeloEquipamento+" - "+fo.EquipamentoServico.NumeroSerieEquipamento+") encontra-se fora de contrato. Deseja inserir este equipamento na Tabela de Contratos associada a este cliente?\r\n";
 
@@ -1967,6 +1967,10 @@ namespace FT_Management.Models
         public Marcacao ObterMarcacaoSimples(string Stamp)
         {
             return ObterMarcacao("select * from v_marcacoes where u_marcacaostamp='" + Stamp + "'", false);
+        }
+        public Marcacao ObterMarcacaoSimples(int Id)
+        {
+            return ObterMarcacao("select * from v_marcacoes where num=" + Id + "", false);
         }
         public List<int> ObterPercentagemMarcacoes(int IdTecnico)
         {
