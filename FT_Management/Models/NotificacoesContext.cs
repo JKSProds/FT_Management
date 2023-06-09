@@ -471,7 +471,7 @@ namespace FT_Management.Models
                     Mensagem += "<tr><td style='padding: 5px;'>" + l.Referencia + "</td><td style='padding: 5px;'>" + l.Designacao + "</td><td style='padding: 5px;'>" + l.Quantidade + "</td></tr>";
                 }
             }
-            Mensagem += "</table>";
+            Mensagem += "</table><p>Por favor dê seguimento ao pedido indicado no link acima de forma a finalizarmos a marcação de forma mais célere.</p>";
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
 
             return true;
@@ -490,7 +490,7 @@ namespace FT_Management.Models
                     Mensagem += "<tr><td style='padding: 5px;'>" + l.Referencia + "</td><td style='padding: 5px;'>" + l.Designacao + "</td><td style='padding: 5px;'>" + l.Quantidade + "</td></tr>";
                 }
             }
-            Mensagem += "</table>";
+            Mensagem += "</table><p>Por favor dê seguimento ao pedido indicado no link acima de forma a atualizar o stock do técnico.</p>";
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
 
             return true;
