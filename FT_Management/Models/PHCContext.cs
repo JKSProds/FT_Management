@@ -1860,7 +1860,7 @@ namespace FT_Management.Models
                         Remoto = result["remoto"].ToString() == "True",
                         Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() },
                         Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : "",
-                        Cliente = new Cliente() { NomeCliente = result["nome"].ToString() }
+                        Cliente = new Cliente() { NomeCliente = result["nome"].ToString(), IdCliente= int.Parse(result["no"].ToString().Trim()), IdLoja=int.Parse(result["estab"].ToString().Trim()) }
                     });
                     if (LoadCliente) LstMarcacao.Last().Cliente = ObterClienteSimples(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()));
                     if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));

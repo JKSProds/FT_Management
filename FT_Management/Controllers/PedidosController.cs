@@ -277,7 +277,7 @@ namespace FT_Management.Controllers
             ViewData["Exclusoes"] = phccontext.ObterExclusoes(1);
             ViewData["TipoPedido"] = phccontext.ObterTipoPedido();
             ViewBag.Formularios = phccontext.ObterFormularios().Select(l => new SelectListItem() { Value = l.Key, Text = l.Key });
-            Marcacao m = phccontext.ObterMarcacaoSimples(id);
+            Marcacao m = phccontext.ObterMarcacao(id);
             return View(m);
         }
 

@@ -10,7 +10,7 @@
             _logger = logger;
         }
 
-        //Obter todos os acessos de uma data em especifico
+        //Abrir formulario de certificacao de detetor de metais
         [HttpGet]
         public ActionResult CertificaDetetorMetais(string id)
         {
@@ -38,6 +38,15 @@
             phccontext.CertificacaoDetetorMetais(email, nome, phccontext.ObterEquipamentoSimples(equipamento), phccontext.ObterMarcacao(marcacao), u);
 
             return RedirectToAction("Adicionar", "FolhasObra", new {id = marcacao });
+        }
+
+        //Abrir inventario tecnico
+        [HttpGet]
+        public ActionResult InventarioTecnico(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return StatusCode(500);
+
+            return RedirectToAction("Tecnico", "Inventario", 0);
         }
     }
 }
