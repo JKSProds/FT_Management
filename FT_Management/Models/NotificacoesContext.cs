@@ -526,7 +526,7 @@ namespace FT_Management.Models
                 Mensagem += "<tr><td style='padding: 5px;'>" + e.MarcaEquipamento + "</td><td style='padding: 5px;'>" + e.ModeloEquipamento + "</td><td style='padding: 5px;'>" + e.NumeroSerieEquipamento + "</td><td style='padding: 5px;'>" + e.TipoEquipamento + "</td></tr>";
             }
 
-            Mensagem += "</table>";
+            Mensagem += "</table><br><br><p><b>Estes equipamentos foram transferidos e associados automaticamente a esta loja e ao contrato deste cliente.</b></p>";
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(1));
 
             return true;

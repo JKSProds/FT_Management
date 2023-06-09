@@ -76,6 +76,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Marcacao m = phccontext.ObterMarcacaoSimples(id);
+            Cliente c = phccontext.ObterClienteSimples(m.Cliente.IdCliente, m.Cliente.IdLoja);
             List<Equipamento> Equipamentos = new List<Equipamento>();
 
             foreach (var e in inventario.Split(";"))
@@ -84,12 +85,15 @@ namespace FT_Management.Controllers
                 {
                     Equipamentos.Add(phccontext.ObterEquipamento(e.Split("|")[0]));
                     Equipamentos.Last().TipoEquipamento = e.Split("|")[1];
+
+                    phccontext.AtualizarClienteEquipamento(c, Equipamentos.Last(), u);
+                    phccontext.AssociarEquipamentoContrato(c, Equipamentos.Last(), u);
                 }
             }
 
             MailContext.EnviarEmailInventarioLoja(u, Equipamentos, phccontext.ObterCliente(m.Cliente.IdCliente, m.Cliente.IdLoja));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a guardar formulario de inventario de loja: Cliente: {3}, Loja: {4}", u.NomeCompleto, u.Id, m.Cliente.IdCliente, m.Cliente.IdLoja);
+            _logger.LogDebug("Utilizador {1} [{2}] a guardar formulario de inventario de loja: Cliente: {3}, Loja: {4}", u.NomeCompleto, u.Id, c.IdCliente, c.IdLoja);
             return RedirectToAction("Adicionar", "FolhasObra", new { id = id });
         }
     }
