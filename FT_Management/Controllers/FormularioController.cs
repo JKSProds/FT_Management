@@ -62,6 +62,8 @@ namespace FT_Management.Controllers
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             Marcacao m = phccontext.ObterMarcacaoSimples(id);
 
+            ViewData["Seccoes"] = phccontext.ObterSeccoes();
+
             _logger.LogDebug("Utilizador {1} [{2}] a obter formulario de inventario de loja: Cliente: {3}, Loja: {4}", u.NomeCompleto, u.Id, m.Cliente.IdCliente, m.Cliente.IdLoja);
             return View(phccontext.ObterCliente(m.Cliente.IdCliente, m.Cliente.IdLoja));
         }

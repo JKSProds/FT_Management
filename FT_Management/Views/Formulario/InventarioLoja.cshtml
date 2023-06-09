@@ -85,14 +85,12 @@ else
                                 </td>
                                 <td data-label="Secção">
                                     <span class="select" style="width:100%">
-                                        <select style="width:100%">
-                                            <option value="" selected></option>
-                                            <option value="Talho">Talho</option>
-                                            <option value="Peixaria">Peixaria</option>
-                                            <option value="Charcutaria">Charcutaria</option>
-                                            <option value="Take-Away">Take-Away</option>
-                                            <option value="Padaria">Padaria</option>
-                                            <option value="Fruta">Fruta</option>
+                                        @{
+                                            var LstSeccoes = ViewData["Seccoes"] as IList<String>;
+                                        }
+                                        <select class="select" style="width:100%"
+                                                asp-items="@(new SelectList(LstSeccoes))">
+                                            <option value=""></option>
                                         </select>
                                     </span>
                                 </td>
@@ -240,11 +238,12 @@ else
 
         var cell = row.insertCell();
         cell.dataset.label = 'Secção';
-        cell.innerHTML = "<span class='select' style='width:100%'><select style='width:100%'><option value='' selected=''></option><option value='Talho'>Talho</option><option value='Peixaria'>Peixaria</option><option value='Charcutaria'>Charcutaria</option><option value='Take-Away'>Take-Away</option><option value='Padaria'>Padaria</option><option value='Fruta'>Fruta</option></select></span>"
+        cell.innerHTML = row.previousElementSibling.children[3].innerHTML
 
         var cell = row.insertCell();
-        cell.innerHTML = "<button class='button is-large is-fullwidth is-success' type='button' onclick=\"if (this.parentElement.previousElementSibling.children[0].children[0].value != '') {this.parentElement.previousElementSibling.children[0].children[0].disabled = true; this.parentElement.parentElement.classList.add('has-background-success', 'checked'); this.style.display = 'none'; this.nextElementSibling.style.display = 'block'}\"><span class='icon'><i class='fa-solid fa-check'></i></span></button><button class='button is-large is-fullwidth is-danger' style='display:none' type='button' onclick=\"this.parentElement.previousElementSibling.children[0].children[0].disabled = false; this.parentElement.parentElement.classList.remove('has-background-success', 'checked'); this.style.display = 'none'; previousElementSibling.style.display = 'block'\"><span class='icon'><i class='fa-solid fa-trash'></i></span></button></td>"
+        cell.innerHTML = row.previousElementSibling.children[4].innerHTML;
 
         Bulma('#modalAdicionarEquipamento').modal().close();
+        document.getElementById('txtEquipamento').value = '';
     }
 </script>

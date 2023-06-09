@@ -2383,6 +2383,39 @@ namespace FT_Management.Models
 
             return res;
         }
+
+
+        public List<String> ObterSeccoes()
+        {
+
+            List<String> res = new List<String>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select nome from u_seccoes order by lordem;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(result[0].ToString());
+                    }
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as secçoes!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         public List<String> ObterTipoPedido()
         {
 
