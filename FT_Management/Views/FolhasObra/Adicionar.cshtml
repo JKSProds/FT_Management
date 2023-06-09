@@ -1644,6 +1644,11 @@
         if (data.length == 0) { signaturePad.fromDataURL('data:image/png;base64,' + document.getElementById('txtRubricaCliente').value); }
     }
 
+    function onScanSuccess(decodedText, decodedResult) {
+        // handle the scanned code as you like, for example:
+        console.log(`Code matched = ${decodedText}`, decodedResult);
+    }
+
     function onScanFailure(error) {
         // handle scan failure, usually better to ignore and keep scanning.
         // for example:
