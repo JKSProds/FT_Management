@@ -83,7 +83,7 @@ else
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.Where(e => e.Encomendas.Count() > 0))
+                            @foreach (var item in Model.Where(e => e.Encomendas.Where(e => e.LinhasEncomendaPorFornecer.Count() > 0).Count() > 0))
                             {
                                 <tr>
                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdFornecedor)">@item.IdFornecedor</td>
@@ -91,7 +91,7 @@ else
                                         @item.NomeFornecedor
                                     </td>
                                     <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Encomendas)">
-                                        @item.Encomendas.Count()
+                                        @item.Encomendas.Where(e => e.LinhasEncomendaPorFornecer.Count() > 0).Count()
                                     </td>
                                     <td class="is-actions-cell">
                                         <a class="button is-large is-success is-rounded is-pulled-right is-fullwidth" style="width:100%"

@@ -65,7 +65,7 @@
             if (ecra == "DO") d = phccontext.ObterDossierDocContabilistos(id);
             if (d.StampDossier == null) return Forbid();
 
-            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
+            //if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && u.Id != d.Tecnico.Id) return Forbid();
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter um dossier em especifico: Id - {3}, Cliente - {4}, Serie - {5}", u.NomeCompleto, u.Id, d.IdDossier, d.Cliente.NomeCliente, d.NomeDossier);
 
@@ -102,7 +102,7 @@
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
             d = phccontext.ObterDossier(d.StampDossier);
-            MailContext.EnviarEmailPedidoTransferencia(u, d);
+            MailContext.EnviarEmailDossier(u, d);
 
             //Criação de linhas por defeito
             phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Designacao = "Pedido de Assistência Técnica N.º " + fo.IdFolhaObra, CriadoPor = d.EditadoPor });

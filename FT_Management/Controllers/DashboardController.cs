@@ -45,13 +45,21 @@
 
             ViewData["API"] = Api;
             ViewData["Hora"] = context.ObterParam("ShowAcessTime");
+            ViewData["Acesso"] = context.ObterParam("ShowAcess");
+
+            using (HttpClient wc = new HttpClient())
+            {
+                dynamic json = JsonConvert.DeserializeObject(wc.GetStringAsync("https://zenquotes.io/api/random").Result.Replace("[", "").Replace("]", ""));
+                ViewData["Frase"] = json.q + "<br><b>" + json.a;
+            }
+
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
             List<Ferias> LstFerias = context.ObterListaFerias(DateTime.Parse(DateTime.Now.ToLongDateString() + " 00:00:00"), DateTime.Parse(DateTime.Now.ToLongDateString() + " 23:59:59"));
             foreach (Ferias f in LstFerias)
             {
                 if (LstUtilizadores.Where(u => u.Id == f.IdUtilizador).Count() > 0) LstUtilizadores.Where(u => u.Id == f.IdUtilizador).First().Ferias = true;
             }
-            return View(LstUtilizadores);
+            return View("UtilizadoresNew", LstUtilizadores);
         }
 
         //Obter dashboard das marcacoes pendentes
