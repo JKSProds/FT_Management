@@ -102,7 +102,7 @@
 
             d.StampDossier = phccontext.CriarDossier(d)[2].ToString();
             d = phccontext.ObterDossier(d.StampDossier);
-            MailContext.EnviarEmailPedidoTransferencia(u, d);
+            MailContext.EnviarEmailDossier(u, d);
 
             //Criação de linhas por defeito
             phccontext.CriarLinhaDossier(new Linha_Dossier() { Stamp_Dossier = d.StampDossier, Designacao = "Pedido de Assistência Técnica N.º " + fo.IdFolhaObra, CriadoPor = d.EditadoPor });
