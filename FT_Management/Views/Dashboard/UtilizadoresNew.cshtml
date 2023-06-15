@@ -1,0 +1,367 @@
+﻿@model IEnumerable<FT_Management.Models.Utilizador>
+
+@{
+    ViewData["Title"] = "Utilizadores";
+}
+
+<style>
+    .animation {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #ffffff;
+    }
+.loader {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+    animation: animate 1.2s linear infinite;
+}
+
+@@keyframes animate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader span {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+}
+
+.loader span:nth-child(1) {
+    filter: blur(5px);
+}
+
+.loader span:nth-child(2) {
+    filter: blur(10px);
+}
+
+.loader span:nth-child(3) {
+    filter: blur(25px);
+}
+
+.loader span:nth-child(4) {
+    filter: blur(50px);
+}
+
+.loader:after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: #f1f1f1;
+    border: solid white 10px;
+    border-radius: 50%;
+}
+
+
+    h1 {
+        font-size: 6rem;
+        padding-left: 20px;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+</style>
+
+<div id="animationDiv" class="animation" onclick="showDiv()">
+    <div class="loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="pl-6">
+        <img  src="~/img/logo_website.png" />
+        <br />
+        <p class="subtitle">O único lugar onde sucesso vem antes do trabalho é no dicionário - Albert Einsten</p>
+    </div>
+</div>
+
+
+<script>
+    function showDiv() {
+        document.getElementById("animationDiv").style.display = (document.getElementById("animationDiv").style.display == "" ? "none" : "");
+
+        document.getElementById("hiddenDiv").style.display = (document.getElementById("hiddenDiv").style.display == "flex" ? "none" : "flex");
+
+        if (document.getElementById("hiddenDiv").style.display == "flex") setTimeout(showDiv, 25000);
+    }
+</script>
+
+
+<div id="hiddenDiv" class='columns is-centered is-multiline' style="display:none">
+    @foreach (var u in Model)
+    {
+        <div class="column is-3" onclick="AbrirModal(@u.Id, '@u.NomeCompleto')">
+            <div class='card @(u.Aniversario || u.Ferias ? "has-background-info" : (ViewData["Acesso"].ToString() == "1" ? (u.AcessoAtivo ? "has-background-success" : "has-background-danger") : ""))'>
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">@u.NomeCompleto</p>
+                            <p class="subtitle is-6">
+                                @(ViewData["Hora"].ToString() == "1" ? u.UltimoAcesso.ToShortTimeString() :
+              "")<b>
+                                    @(u.Aniversario ? " Aniversário" :
+                (u.Ferias ? " Férias" : ""))
+                                </b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal" id="modalPin">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title" id="txtHeaderModal">Registar Acesso</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <input type="password" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
+            <input type="hidden" value="" id='txtUtilizadorSelecionado'>
+            <div class='columns is-mobile is-centered is-multiline'>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 1"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-1"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 2"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-2"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 3"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-3"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 4"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-4"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 5"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-5"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 6"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-6"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 7"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-7"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 8"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-8"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 9"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-9"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-4'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 0"
+                            href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-0"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class='column is-8'>
+                    <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                            onclick="document.getElementById('txtInputPin').value = '';" href="javascript:;">
+                        <span class="icon">
+                            <i class="fa-solid fa-backspace"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" id="btnEntrada" class="button is-success is-fullwidth is-large" onclick="RegistarEntrada()"
+                    href="javascript:;">
+                <span class="icon">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </span>
+                <span>Entrada</span>
+            </button>
+            <button type="button" id="btnSaida" class="button is-danger is-fullwidth is-large" onclick="RegistarSaida()"
+                    href="javascript:;">
+                <span class="icon">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </span>
+                <span>Saida</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div class="modal" id="modalMensagem">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Acesso</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div id="divMensagem" class="is-1 has-text-centered title"></div>
+        </section>
+    </div>
+</div>
+
+<script>
+
+  function AbrirModal(id, nome) {
+    document.getElementById('txtUtilizadorSelecionado').value = id;
+    document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
+    EstadoAtual();
+  }
+  function RegistarEntrada() {
+    $.ajax({
+      type: "POST",
+      url: "/Acessos/Acesso",
+      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "1", "pin": document.getElementById('txtInputPin').value },
+      success: function (result) {
+        $(function () {
+          if (result[0] == "1") {
+            document.getElementById("divMensagem").innerHTML = result[1];
+            Bulma('#modalPin').modal().close();
+            Bulma('#modalMensagem').modal().open();
+            setTimeout(function () {
+              window.location.reload();
+            }, 2500);
+          } else {
+            Bulma('#modalPin').modal().close();
+            document.getElementById('txtInputPin').value = '';
+            notifyError(result[1]);
+          }
+        });
+      }
+    });
+  }
+  function RegistarSaida() {
+    $.ajax({
+      type: "POST",
+      url: "/Acessos/Acesso",
+      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "2", "pin": document.getElementById('txtInputPin').value },
+      success: function (result) {
+        $(function () {
+          if (result[0] == "1") {
+            document.getElementById("divMensagem").innerHTML = result[1];
+            Bulma('#modalPin').modal().close();
+            Bulma('#modalMensagem').modal().open();
+            setTimeout(function () {
+              window.location.reload();
+            }, 2500);
+          } else {
+            Bulma('#modalPin').modal().close();
+            document.getElementById('txtInputPin').value = '';
+            notifyError(result[1]);
+          }
+        });
+      }
+    });
+  }
+
+  function EstadoAtual() {
+    $.ajax({
+      type: "GET",
+      url: "/Acessos/Acesso/" + document.getElementById('txtUtilizadorSelecionado').value,
+      data: { "api": '@ViewData["API"]' },
+      success: function (result) {
+        $(function () {
+           
+          result.tipo == 1 ? document.getElementById('btnEntrada').classList.add('is-hidden') : document.getElementById('btnEntrada').classList.remove('is-hidden');
+          result.tipo == 2 ? document.getElementById('btnSaida').classList.add('is-hidden') : document.getElementById('btnSaida').classList.remove('is-hidden');
+          Bulma('#modalPin').modal().open();
+        });
+      }
+    });
+  }
+
+    function ObterFrase() {
+         $.ajax({
+                url: 'https://zenquotes.io/api/random',
+                type: "GET",
+                success: function (response) {
+                    console.log(response);
+                    console.log(response.q);
+                },
+                error: function (response) {
+                    notifyError('Ocorreu um erro ao obter a frase do dia!');
+                },
+                failure: function (response) {
+                    notifyError('Falha ao obter a frase do dia!');
+                }
+            });
+    }
+
+    ObterFrase();
+</script>
