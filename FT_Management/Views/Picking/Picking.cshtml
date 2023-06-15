@@ -178,7 +178,12 @@
         <h1 id="txtMensagem" style="font-size:200%;font-weight:900"></h1>
     </section>
     <footer class="modal-card-foot">
-      <button class="button" onclick="Bulma('#modalMensagem').modal().close();">Ok</button>
+        <button class="button is-large is-fullwidth" onclick="Bulma('#modalMensagem').modal().close();">
+            <span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Fechar</span>
+        </button>
     </footer>
   </div>
 </div>
@@ -203,8 +208,18 @@
     </div>
   </section>
     <footer class="modal-card-foot">
-      <button class="button is-success" onclick="FecharPicking('@Model.Picking_Stamp')">Sim</button>
-      <button class="button" onclick="Bulma('#modalFecharPicking').modal().close();">Não</button>
+        <button class="button is-success is-large is-fullwidth" onclick="FecharPicking('@Model.Picking_Stamp')">
+            <span class="icon">
+                <i class="fa-solid fa-floppy-disk"></i>
+            </span>
+            <span>Sim</span>
+        </button>
+        <button class="button is-large is-fullwidth" onclick="Bulma('#modalFecharPicking').modal().close();">
+            <span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Não</span>
+        </button>
     </footer>
   </div>
 </div>
@@ -274,8 +289,13 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
+                    onclick="Bulma('#modalAdicionarAnexo').modal().close();" id="btnConfirmAddAnexo"
+                    href="javascript:;">
+                <span class="icon">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </span>
+                <span>Fechar</span>
+            </button>
         </footer>
     </div>
 </div>
