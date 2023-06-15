@@ -85,6 +85,7 @@
                                                         <th>
                                 @Html.DisplayNameFor(model => model.UltimoTecnico)
                             </th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,10 +101,22 @@
                                 <td data-label="@Html.DisplayNameFor(model => model.NumeroSerieEquipamento)">
                                     @Html.DisplayFor(modelItem => item.NumeroSerieEquipamento)
                                 </td>
-                                                                <td data-label="@Html.DisplayNameFor(model => model.Cliente.NomeCliente)">
+                                <td data-label="@Html.DisplayNameFor(model => model.Cliente.NomeCliente)">
                                     @Html.DisplayFor(modelItem => item.Cliente.NomeCliente)
-                                </td>                                                                <td data-label="@Html.DisplayNameFor(model => model.UltimoTecnico)">
+                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => model.UltimoTecnico)">
                                     @Html.DisplayFor(modelItem => item.UltimoTecnico)
+                                </td>
+                                <td class="is-actions-cell">
+                                    <div class="field is-grouped is-pulled-right">
+                                        <a class="button @(item.Contrato ? "is-info" : "is-warning") mr-1">
+                                            @(item.Contrato ? "CONTRATO" : "FORA CONTRATO")
+                                        </a>
+                                        <a class="button @(item.Garantia ? "is-success" : "is-danger")">
+                                            @(item.Garantia ? "GARANTIA" : "FORA GARANTIA")
+                                        </a>
+                                    </div>
+
                                 </td>
                             </tr>
                         }

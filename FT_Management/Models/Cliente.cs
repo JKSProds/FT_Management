@@ -35,7 +35,8 @@
         public string TipoCliente { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
-        public bool Contrato { get; set; }
+        public string ContratoStamp { get; set; }
+        public bool Contrato { get { return !string.IsNullOrEmpty(ContratoStamp); } }
         public List<Marcacao> Marcacoes { get; set; }
         public List<FolhaObra> FolhasObra { get; set; }
         public List<Visita> Visitas { get; set; }

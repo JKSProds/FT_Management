@@ -360,7 +360,7 @@ namespace FT_Management.Models
                             IdVendedor = int.Parse(result["vendedor"].ToString().Trim()),
                             Vendedor = LstUtilizadores.Where(v => v.IdPHC == int.Parse(result["vendedor"].ToString().Trim())).DefaultIfEmpty(new Utilizador()).First(),
                             TipoCliente = result["tipo"].ToString().Trim(),
-                            Contrato = !result.IsDBNull("csupstamp")
+                            ContratoStamp = !result.IsDBNull("csupstamp") ? result["csupstamp"].ToString().Trim() : "",
                         });
                         if (LoadMarcacoes) LstClientes.Last().Marcacoes = ObterMarcacoesSimples(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
                         if (LoadFolhasObra) LstClientes.Last().FolhasObra = ObterFolhasObra(new Cliente() { IdCliente = int.Parse(result["no"].ToString()), IdLoja = int.Parse(result["estab"].ToString()) });
@@ -644,9 +644,11 @@ namespace FT_Management.Models
                             UltimoTecnico = !result.IsDBNull("utecnnm") ? result["utecnnm"].ToString() : "N/D",
                             DataCompra = DateTime.Parse(result["fldata"].ToString()),
                             DataVenda = DateTime.Parse(result["ftfdata"].ToString()),
+                            Seccao = result["u_seccao"].ToString().Trim(),
+                            DataInventario = DateTime.Parse(result["u_datainv"].ToString()),
                             Cliente = new Cliente() { NomeCliente = result["nome"].ToString(), },
                             Contrato = !result.IsDBNull("csupstamp"),
-                            Inativo = result["u_outloja"].ToString().Trim() == "1",
+                            Ativo = result["u_outloja"].ToString().Trim() == "0",
                         });
 
                         if (LoadCliente)
@@ -711,12 +713,38 @@ namespace FT_Management.Models
             }
             return true;
         }
+        public bool AssociarEquipamentoContrato(Cliente c, Equipamento e, Utilizador u)
+        {
+            try
+            {
+                ExecutarQuery("INSERT INTO cdeq ([cdeqstamp], [serie], [marca], [maquina], [csupstamp], [mastamp], [lordem]) SELECT 'WEBAPP' + left(newid(),19), serie, marca, maquina, '"+c.ContratoStamp +"', mastamp, isnull((select MAX(lordem)+1 from cdeq(nolock) where csupstamp = '"+ c.ContratoStamp + "'),1) from ma where mastamp = '"+e.EquipamentoStamp+"';");
+                FT_ManagementContext.AdicionarLog(u.Id, "Foi inserido o equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " ao contrato ativo do Cliente: " + c.NomeCliente + " pelo utilizador " + u.NomeCompleto, 2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel inserir o equipamento no contrato do cliente no PHC!\r\n(Exception: " + ex.Message + ")");
+                return false;
+            }
+            return true;
+        }
+        public bool AtualizarInventarioEquipamento(Equipamento e, Utilizador u)
+        {
+            try
+            {
+                ExecutarQuery("UPDATE MA SET u_seccao='"+e.Seccao+"', u_datainv='"+DateTime.Now.ToString("yyyyMMdd")+"', u_outloja='0' WHERE mastamp='"+e.EquipamentoStamp+"';");
+                FT_ManagementContext.AdicionarLog(u.Id, "Foi atualizado o inventario do equipamento " + e.MarcaEquipamento + " " + e.ModeloEquipamento + " com número de serie: " + e.NumeroSerieEquipamento + " pelo utilizador " + u.NomeCompleto, 2);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel atualizar o equipamento para inventario no PHC!\r\n(Exception: " + ex.Message + ")");
+                return false;
+            }
+            return true;
+        }
         #endregion
 
         //Obter Folhas de Obra
         #region FOLHASOBRA
-
-        //EM DESENVOLVIMENTO
         public List<string> CriarFolhaObra(FolhaObra fo)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
@@ -895,8 +923,8 @@ namespace FT_Management.Models
                 SQL_Query += "@OBS = '" + fo.SituacoesPendentes.Replace("'", "''") + "', ";
                 SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
                 SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
-                //SQL_Query += "@EXCLUSAO = '" + fo.JustExtraContrato + "', ";
-                //SQL_Query += "@EXCLUICONTRATO = '" + (fo.Contrato ? "1" : "0") + "', ";
+                SQL_Query += "@EXCLUSAO = '" + fo.JustExtraContrato + "', ";
+                SQL_Query += "@EXCLUICONTRATO = '" + (fo.Contrato ? "0" : "1") + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + fo.Utilizador.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -1078,18 +1106,28 @@ namespace FT_Management.Models
         public string ValidarFolhaObra(FolhaObra fo)
         {
             string res = "";
+            if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com " + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " - " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
             if (fo.EmGarantia != fo.EquipamentoServico.Garantia) res += "O estado do Equipamento selecionado ("+fo.EquipamentoServico.NumeroSerieEquipamento + ") é "+(fo.EquipamentoServico.Garantia ? "GARANTIA" : "NÃO GARANTIA")+", mas o técnico selecionou "+(fo.EmGarantia ? "GARANTIA" : "NÃO GARANTIA")+"!\r\n";
+
+            //INTERVENCOES
+            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção ("+fo.DataServico.ToShortDateString()+") é diferente da data da marcação ("+string.Join(" | ", fo.Marcacao.DatasAdicionaisDistintas.Select(d=>d.ToShortDateString())) +")!\r\n";
+             if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção ("+string.Join(" | ", fo.IntervencaosServico.Select(i => i.DataServiço.ToShortDateString()))+") é diferente da data atual ("+DateTime.Now.ToShortDateString()+"). \r\n";
+            if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
+
+            //CONTRATOS
+            if (fo.Marcacao.Contrato != fo.Contrato && string.IsNullOrEmpty(fo.FicheirosAnexo)) res += "É obrigatório adicionar pelo menos 1 anexo para justificar a alteração de contrato!\r\n";
+            if (fo.Marcacao.Contrato != fo.Contrato && string.IsNullOrEmpty(fo.JustExtraContrato)) res += "É obrigatório escolher pelo menos um dos motivos para estar fora do contrato!\r\n";
+            if (fo.ClienteServico.Contrato && !fo.EquipamentoServico.Contrato && fo.Contrato) res += "O equipamento selecionado ("+fo.EquipamentoServico.MarcaEquipamento+" "+fo.EquipamentoServico.ModeloEquipamento+" - "+fo.EquipamentoServico.NumeroSerieEquipamento+") encontra-se fora de contrato. Deseja inserir este equipamento na Tabela de Contratos associada a este cliente?\r\n";
+
+            //ANEXOS
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
             if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
             if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3) res += "É obrigatorio inserir pelo menos 3 anexos numa instalação!\r\n";
-            if (fo.Marcacao.DatasAdicionaisDistintas.Where(d => d.ToShortDateString() == fo.DataServico.ToShortDateString()).Count() == 0) res += "A data da intervenção ("+fo.DataServico.ToShortDateString()+") é diferente da data da marcação ("+string.Join(" | ", fo.Marcacao.DatasAdicionaisDistintas.Select(d=>d.ToShortDateString())) +")!\r\n";
-            if (fo.EquipamentoServico.EquipamentoStamp != null && fo.EquipamentoServico.Cliente.ClienteStamp != fo.ClienteServico.ClienteStamp) res += "O equipamento selecionado com o N/S " + fo.EquipamentoServico.NumeroSerieEquipamento + " pertence ao cliente " + fo.EquipamentoServico.Cliente.NomeCliente + ". Deseja proseguir e associar este equipamento ao cliente " + fo.ClienteServico.NomeCliente + "?\r\n";
-            if (fo.IntervencaosServico.Where(i => i.DataServiço.ToShortDateString() != DateTime.Now.ToShortDateString()).Count() > 0) res += "A data escolhida para a intervenção ("+string.Join(" | ", fo.IntervencaosServico.Select(i => i.DataServiço.ToShortDateString()))+") é diferente da data atual ("+DateTime.Now.ToShortDateString()+"). \r\n";
-            if (fo.ValorTotal > 500 && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
-            if (fo.IntervencaosServico.Where(i => i.HoraFim > DateTime.Now.AddHours(-2)).Count() == 0 && fo.IntervencaosServico.Count() > 0) res += "A intervenção adicionada excede o limite de 2 horas para criar uma folha de obra pelo que não pode proseguir!\r\n";
+
+            //PEÇAS
             if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) res += "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!\r\n";
-            if (fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() > fo.FicheirosAnexo.Split(";").Count()) res += "É obrigatório adicionar pelo menos 1 anexo ("+ fo.FicheirosAnexo.Split(";").Count() + ") por peça ("+ fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() + ") inserida para validar a GARANTIA!\r\n";
-            if (fo.Marcacao.Contrato != fo.Contrato) res += "É obrigatório adicionar pelo menos 1 anexo para justificar a alteração de Contrato!\r\n";
+            if (fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() > fo.FicheirosAnexo.Split(";").Count()) res += "É obrigatório adicionar pelo menos 1 anexo (" + fo.FicheirosAnexo.Split(";").Count() + ") por peça (" + fo.PecasServico.Where(p => p.Garantia != fo.EmGarantia).Count() + ") inserida para validar a GARANTIA!\r\n";
+            if (fo.ValorTotal > 500 && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
 
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico).GroupBy(l => l.StampProduto).Select(cl => new Produto
             {
@@ -1139,10 +1177,11 @@ namespace FT_Management.Models
                             IdCartao = result.IsDBNull("u_marcacaostamp") ? "" : result["u_marcacaostamp"].ToString().Trim(),
                             IdMarcacao = result.IsDBNull("num") ? 0 : int.Parse(result["num"].ToString()),
                             RubricaCliente = "",
+                            JustExtraContrato = result.IsDBNull("u_exclusao") ? "" : result["u_exclusao"].ToString().Trim(),
+                            Contrato = result["u_excluict"].ToString().Trim() == "False",
                             EmGarantia = result["situacao"].ToString() == "Garantia",
                             Utilizador = FT_ManagementContext.ObterListaUtilizadores(true, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First()
                         });
-
                         if (LoadEquipamento) LstFolhaObra.Last().EquipamentoServico = ObterEquipamentoSimples(result["mastamp"].ToString().Trim());
                         if (LoadCliente) LstFolhaObra.Last().ClienteServico = ObterClienteSimples(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()));
                         if (LoadIntervencoes)
@@ -1202,42 +1241,42 @@ namespace FT_Management.Models
 
         public List<FolhaObra> ObterFolhasObra(int IdMarcacao)
         {
-            return ObterFolhasObra("select *, (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 qassinou from u_intervencao, u_marcacao where u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp and u_marcacao.num=" + IdMarcacao + ") as qassinou, (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ") as u_marcacaostamp, (SELECT u_nincide from u_marcacao where num=" + IdMarcacao + ") as u_nincide, (select '" + IdMarcacao + "' as num) as num from pa where pastamp in (select STAMP_DEST from u_intervencao where u_marcacaostamp = (select u_marcacao.u_marcacaostamp from u_marcacao where num = " + IdMarcacao + ")) order by nopat", true, true, false, false, false);
+            return ObterFolhasObra("select logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp WHERE u_marcacao.num="+IdMarcacao+"", true, true, false, false, false);
 
         }
         public List<FolhaObra> ObterFolhasObraEquipamento(string StampEquipamento)
         {
-            return ObterFolhasObra("select (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,* from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.mastamp='" + StampEquipamento + "' order by nopat;", true, true, false, false, false);
+            return ObterFolhasObra("select num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.mastamp='" + StampEquipamento + "' order by pa.nopat;", true, true, false, false, false);
 
         }
         public List<FolhaObra> ObterFolhasObra(Cliente c)
         {
-            return ObterFolhasObra("select (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,* from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by nopat;", true, false, false, false, false);
+            return ObterFolhasObra("select num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by pa.nopat;", true, false, false, false, false);
 
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data)
         {
-            return ObterFolhasObra("select (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,* from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' order by nopat;", true, true, true, false, false).GroupBy(f => f.IdFolhaObra).Select(f => f.First()).ToList();
+            return ObterFolhasObra("select num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' order by pa.nopat;", true, true, true, false, false).GroupBy(f => f.IdFolhaObra).Select(f => f.First()).ToList();
 
         }
         public List<FolhaObra> ObterFolhasObra(DateTime Data, Cliente c)
         {
-            return ObterFolhasObra("select (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=pa.nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' and pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by nopat;", true, true, true, false, true);
+            return ObterFolhasObra("select num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.pdata='" + Data.ToString("yyyy-MM-dd") + "' and pa.no='" + c.IdCliente + "' and pa.estab='" + c.IdLoja + "' order by pa.nopat;", true, true, true, false, true);
 
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
         {
-            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=" + IdFolhaObra + " and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat where pa.nopat=" + IdFolhaObra + " order by pa.nopat;", true);
+            return ObterFolhaObra("select TOP 1 num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.nopat=" + IdFolhaObra + " order by pa.nopat;", true);
 
         }
         public FolhaObra ObterFolhaObra(string STAMP)
         {
-            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=pa.nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat where pa.pastamp='" + STAMP + "' order by pa.nopat;", true);
+            return ObterFolhaObra("select TOP 1 num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.pastamp='" + STAMP + "' order by pa.nopat;", true);
 
         }
         public FolhaObra ObterFolhaObraSimples(string STAMP)
         {
-            return ObterFolhaObra("select TOP 1 (select TOP 1 logi2 from bo where pastamp = pa.pastamp) as logi2,(select TOP 1 obrano from bo where orinopat=nopat and ndos=49) as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp full outer join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp where pa.pastamp='" + STAMP + "' order by nopat;", false);
+            return ObterFolhaObra("select TOP 1 num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.pastamp='" + STAMP + "' order by pa.nopat;", false);
 
         }
 
@@ -1837,7 +1876,7 @@ namespace FT_Management.Models
                         Remoto = result["remoto"].ToString() == "True",
                         Utilizador = new Utilizador() { NomeCompleto = result["ousrinis"].ToString() },
                         Hora = result["hora"].ToString().Length == 4 ? result["hora"].ToString()[..2] + ":" + result["hora"].ToString().Substring(2, 2) : "",
-                        Cliente = new Cliente() { NomeCliente = result["nome"].ToString() }
+                        Cliente = new Cliente() { NomeCliente = result["nome"].ToString(), IdCliente= int.Parse(result["no"].ToString().Trim()), IdLoja=int.Parse(result["estab"].ToString().Trim()) }
                     });
                     if (LoadCliente) LstMarcacao.Last().Cliente = ObterClienteSimples(int.Parse(result["no"].ToString().Trim()), int.Parse(result["estab"].ToString().Trim()));
                     if (LoadComentarios) LstMarcacao.Last().LstComentarios = ObterComentariosMarcacao(int.Parse(result["num"].ToString().Trim()));
@@ -1944,6 +1983,10 @@ namespace FT_Management.Models
         public Marcacao ObterMarcacaoSimples(string Stamp)
         {
             return ObterMarcacao("select * from v_marcacoes where u_marcacaostamp='" + Stamp + "'", false);
+        }
+        public Marcacao ObterMarcacaoSimples(int Id)
+        {
+            return ObterMarcacao("select * from v_marcacoes where num=" + Id + "", false);
         }
         public List<int> ObterPercentagemMarcacoes(int IdTecnico)
         {
@@ -2356,6 +2399,39 @@ namespace FT_Management.Models
 
             return res;
         }
+
+
+        public List<String> ObterSeccoes()
+        {
+
+            List<String> res = new List<String>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand("select nome from u_seccoes order by lordem;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(result[0].ToString());
+                    }
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as secçoes!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         public List<String> ObterTipoPedido()
         {
 

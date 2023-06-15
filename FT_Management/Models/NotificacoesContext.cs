@@ -471,7 +471,7 @@ namespace FT_Management.Models
                     Mensagem += "<tr><td style='padding: 5px;'>" + l.Referencia + "</td><td style='padding: 5px;'>" + l.Designacao + "</td><td style='padding: 5px;'>" + l.Quantidade + "</td></tr>";
                 }
             }
-            Mensagem += "</table>";
+            Mensagem += "</table><p><b>Por favor dê seguimento ao pedido indicado no link acima de forma a finalizarmos a marcação de forma mais célere.</b></p>";
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
 
             return true;
@@ -490,8 +490,44 @@ namespace FT_Management.Models
                     Mensagem += "<tr><td style='padding: 5px;'>" + l.Referencia + "</td><td style='padding: 5px;'>" + l.Designacao + "</td><td style='padding: 5px;'>" + l.Quantidade + "</td></tr>";
                 }
             }
+            Mensagem += "</table><p><b>Por favor dê seguimento ao pedido indicado no link acima de forma a atualizar o stock do técnico.</b></p>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
+
+            return true;
+        }
+
+        public static bool EnviarEmailInventarioTecnico(Utilizador u, List<Produto> Produtos, Armazem a)
+        {
+            string Assunto = "Inventário de Armazém - " + a.ArmazemNome;
+            string Mensagem = "Foi efetuado um novo inventario pelo utilizador " + u.NomeCompleto + " do armazém nº <b>" + a.ArmazemId + "</b>!<br><br>";
+
+            Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Stock em PHC</th><th>Stock Fisico</th><th></th></tr>";
+
+            foreach (var p in Produtos)
+            {
+                    Mensagem += "<tr><td style='padding: 5px;'>" + p.Ref_Produto + "</td><td style='padding: 5px;'>" + p.Designacao_Produto + "</td><td style='padding: 5px;'>" + p.Stock_Atual + "</td><td style='padding: 5px;'>" + p.Stock_Fisico + "</td><td>"+ (p.Stock_Atual == p.Stock_Fisico ? "✅" : p.Stock_Atual > p.Stock_Fisico ? "⬇️" : "⬆️") + "</td></tr>";
+            }
+
             Mensagem += "</table>";
             EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(8));
+
+            return true;
+        }
+
+        public static bool EnviarEmailInventarioLoja(Utilizador u, List<Equipamento> Equipamentos, Cliente c)
+        {
+            string Assunto = "Inventário do Cliente - " + c.NomeCliente;
+            string Mensagem = "Foi efetuado um novo inventario pelo utilizador " + u.NomeCompleto + " do Cliente <b>" + c.NomeCliente + "</b>!<br><br>";
+
+            Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Marca</th><th>Modelo</th><th>Número de Série</th><th>Secção</th></tr>";
+
+            foreach (var e in Equipamentos)
+            {
+                Mensagem += "<tr><td style='padding: 5px;'>" + e.MarcaEquipamento + "</td><td style='padding: 5px;'>" + e.ModeloEquipamento + "</td><td style='padding: 5px;'>" + e.NumeroSerieEquipamento + "</td><td style='padding: 5px;'>" + e.Seccao + "</td></tr>";
+            }
+
+            Mensagem += "</table><br><br><p><b>Estes equipamentos foram transferidos e associados automaticamente a esta loja e ao contrato deste cliente.</b></p>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(1));
 
             return true;
         }
