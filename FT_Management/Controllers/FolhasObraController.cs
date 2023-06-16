@@ -96,6 +96,7 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
             if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes) && !fo.EmGarantia) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!"); 
@@ -110,7 +111,6 @@ namespace FT_Management.Controllers
             ModelState.Remove("Utilizador.MarcacaoCurso.PrioridadeMarcacao");
             if (ModelState.IsValid)
             {
-                fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
