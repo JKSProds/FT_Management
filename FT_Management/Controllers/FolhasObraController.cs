@@ -96,7 +96,6 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
             if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes) && !fo.EmGarantia) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!"); 
@@ -104,8 +103,14 @@ namespace FT_Management.Controllers
             if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
             if (fo.Contrato) fo.JustExtraContrato = "";
 
+            ModelState.Remove("Utilizador.Password");
+            ModelState.Remove("Utilizador.MarcacaoCurso.Referencia");
+            ModelState.Remove("Utilizador.MarcacaoCurso.ResumoMarcacao");
+            ModelState.Remove("Utilizador.MarcacaoCurso.TipoEquipamento");
+            ModelState.Remove("Utilizador.MarcacaoCurso.PrioridadeMarcacao");
             if (ModelState.IsValid)
             {
+                fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
