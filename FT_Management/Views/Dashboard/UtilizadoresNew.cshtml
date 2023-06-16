@@ -81,7 +81,7 @@
     input[type=checkbox] {
         --off: #c7cad1;
         --mid: #829ad6;
-        --on: #36649d;
+        --on: #0067a0;
         --transDur: 0.5s;
         --timing: cubic-bezier(0.6,0,0.4,1);
         animation: bgOff var(--transDur) var(--timing);
@@ -225,7 +225,7 @@
             <span></span>
         </div>
         <div class="overlay">
-            <input class="pristine" style="zoom:750%;position:relative;left:8px;z-index:9" type="checkbox" id="chk" name="toggle" value="on" onclick="showDiv();">
+            <input class="pristine" style="zoom:750%;position:relative;left:8px;z-index:9" type="checkbox" id="chk" name="toggle" value="on" checked onclick="showDiv();">
         </div>
     </div>
     <div class="column is-6">
@@ -253,7 +253,9 @@
 </div>
 
 
-    <script>function showDiv() {
+    <script>
+        document.getElementById('chk').removeAttribute("class");
+        function showDiv() {
             document.getElementById("animationDiv").style.display = (document.getElementById("animationDiv").style.display == "" ? "none" : "");
 
             document.getElementById("hiddenDiv").style.display = (document.getElementById("hiddenDiv").style.display == "flex" ? "none" : "flex");
