@@ -2,7 +2,7 @@
 {
     public class FolhaObra
     {
-        public string EmojiFO { get { return !string.IsNullOrEmpty(this.StampFO) && this.StampFO.Contains("WEBAPP") ? "⭐ " : "💩 "; } }
+        public string EmojiFO { get { return (!string.IsNullOrEmpty(this.StampFO) && this.StampFO.Contains("WEBAPP") ? "⭐ " : "💩 ") + (this.Contrato ? "🤝 " : ""); } }
         public string StampFO { get; set; }
         public string StampPA { get; set; }
         [Display(Name = "Num. da Folha de Obra")]

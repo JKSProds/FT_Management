@@ -145,7 +145,7 @@
                         <div class="column is-3 my-auto">
                             <div class="field">
                                 <label class="switch is-rounded is-medium">
-                                    <input type="checkbox" asp-for="Contrato" onchange="document.getElementById('divExtraContrato').style.display = this.checked ? 'none' : 'block';">
+                                    <input type="checkbox" id="chkContrato" asp-for="Contrato" onchange="document.getElementById('divExtraContrato').style.display = this.checked ? 'none' : 'block';">
                                     <span class="check is-info"></span>
                                     <span class="control-label">
                                         @Html.DisplayNameFor(model => model.Contrato)
@@ -1066,7 +1066,10 @@
         document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-danger');
         document.getElementById('btnEstadoGarantia').parentElement.classList.remove('is-info');
 
-        if (document.getElementById('lstTipoFO').value == "Instalação") {
+        if (document.getElementById('chkContrato') && document.getElementById('chkContrato').checked) {
+            document.getElementById('btnEstadoGarantia').innerHTML = 'CONTRATO';
+            document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-info')
+        } else if (document.getElementById('lstTipoFO').value == "Instalação") {
             document.getElementById('btnEstadoGarantia').innerHTML = 'INSTALAÇÃO';
             document.getElementById('btnEstadoGarantia').parentElement.classList.add('is-info')
         } else {
