@@ -91,6 +91,8 @@
             ListaPecas = "";
             EstadoEquipamento = "";
             EquipamentoServico = new Equipamento();
+            ClienteServico = new Cliente() { NomeCliente = "N/D" };
+            Utilizador = new Utilizador();
             this.PecasServico = new List<Produto>();
             this.IntervencaosServico = new List<Intervencao>()
             {
