@@ -50,7 +50,7 @@
             using (HttpClient wc = new HttpClient())
             {
                 dynamic json = JsonConvert.DeserializeObject(wc.GetStringAsync("https://zenquotes.io/api/random").Result.Replace("[", "").Replace("]", ""));
-                ViewData["Frase"] = json.q + "<br><b>" + json.a;
+                ViewData["Frase"] = json.q + "<br><b>" + json.a + "</b>";
             }
 
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
