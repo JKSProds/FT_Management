@@ -434,5 +434,34 @@ namespace FT_Management.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        //Obtem os logs do utilziador numa data em especifico
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Notificacao(int id, string Mensagem, string Api)
+        {
+            if (Mensagem == string.Empty) return StatusCode(500);
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+           
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
+            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            Utilizador u = context.ObterUtilizador(IdUtilizador);
+            Utilizador u2 = context.ObterUtilizador(id);
+            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a enviar uma notificacao: {3}.", u.NomeCompleto, u.Id, Mensagem);
+
+            if (id == 0)
+            {
+                foreach (var usr in context.ObterListaUtilizadores(true, false).Where(u => u.TipoUtilizador == 3 && !string.IsNullOrEmpty(u.ChatToken) && u.NotificacaoAutomatica == 2))
+                {
+                   if (!ChatContext.EnviarNotificacao(Mensagem, usr)) return StatusCode(500);
+                }
+                return StatusCode(200);
+            }
+
+            return ChatContext.EnviarNotificacao(Mensagem,u2) ? StatusCode(200) : StatusCode(500);
+        }
     }
 }
