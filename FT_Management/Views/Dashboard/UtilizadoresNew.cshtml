@@ -205,8 +205,8 @@
     }
 </style>
 
-    <div class="columns animation" id="animationDiv" onclick="showDiv();">
-        <div class="column is-6 container animation">
+    <div class="columns is-multiline animation" id="animationDiv">
+        <div class="column is-4 container animation">
                 <div class="loader content" id="loader">
                     <span></span>
                     <span></span>
@@ -214,15 +214,24 @@
                     <span></span>
                 </div>
                 <div class="overlay">
-                    <input class="pristine" style="zoom:750%;position:relative;left:10px;z-index:9" type="checkbox" id="chk" name="toggle" value="on">
+                    <input class="pristine" style="zoom:750%;position:relative;left:10px;z-index:9" type="checkbox" id="chk" name="toggle" value="on" onclick="showDiv();">
                 </div>
                 
         </div>
-        <div class="column is-6">
+        <div class="column is-8">
             <div class="pl-6">
                 <img src="~/img/logo_website.png" />
                 <br />
                 <p class="subtitle">@Html.Raw(ViewData["Frase"])</p>
+                <p class="control" style="width:100%">
+                    Não está ninguem no escritório?<br />
+                    <button class="button is-info is-large" onclick="NotificacaoEscritorio();" type="button">
+                        <span class="icon">
+                            <i class="fa-solid fa-bell fa-shake"></i>
+                        </span>
+                        <span>Pressione Aqui</span>
+                    </button>
+                </p>
             </div>
         </div>
     </div>
@@ -483,6 +492,17 @@
           result.tipo == 2 ? document.getElementById('btnSaida').classList.add('is-hidden') : document.getElementById('btnSaida').classList.remove('is-hidden');
           Bulma('#modalPin').modal().open();
         });
+      }
+    });
+  }
+
+    function NotificacaoEscritorio() {
+    $.ajax({
+      type: "POST",
+      url: "/Utilizadores/Notificacao",
+      data: { "api": '@ViewData["API"]', "Mensagem": "Está alguem na entrada!" },
+      success: function (result) {
+          notify("Notificação enviada com sucesso");
       }
     });
   }
