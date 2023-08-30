@@ -447,6 +447,7 @@
             <input type="text" class="input" asp-for="IdMarcacao">
             <input type="text" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
             <input type="text" class="input" asp-for="CheckList" id="txtCheckList">
+            <input type="text" class="input" asp-for="Marcacao.TipoEquipamento" id="txtTipoEquipamento">
             <input type="checkbox" class="checkbox" asp-for="Piquete" id="chkPiquete">
             <input type="checkbox" class="checkbox" asp-for="ClienteServico.Contrato">
             <input type="checkbox" class="checkbox" asp-for="Instalação">
@@ -1960,11 +1961,11 @@
     CarregarPecas();
 
     if ('@Model.Instalação' == 'True') {
-        document.getElementById("divCorte").hidden = !('@Model.Marcacao.TipoEquipamento' == "Corte")
-        document.getElementById("divPesagem").hidden = !('@Model.Marcacao.TipoEquipamento' == "Pesagem")
-        document.getElementById("divEmbalagem").hidden = !('@Model.Marcacao.TipoEquipamento' == "Embalagem")
-        document.getElementById("divDetecao").hidden = !('@Model.Marcacao.TipoEquipamento' == "Deteção")
-        document.getElementById("divLavagem").hidden = !('@Model.Marcacao.TipoEquipamento' == "Lavagem")
+        document.getElementById("divCorte").hidden = !(document.getElementById("txtTipoEquipamento").value == "Corte")
+        document.getElementById("divPesagem").hidden = !(document.getElementById("txtTipoEquipamento").value == "Pesagem")
+        document.getElementById("divEmbalagem").hidden = !(document.getElementById("txtTipoEquipamento").value == "Embalagem")
+        document.getElementById("divDetecao").hidden = !(document.getElementById("txtTipoEquipamento").value == "Deteção")
+        document.getElementById("divLavagem").hidden = !(document.getElementById("txtTipoEquipamento").value == "Lavagem")
     }
 
 </script>
