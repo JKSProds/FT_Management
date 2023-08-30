@@ -514,6 +514,24 @@ namespace FT_Management.Models
             return true;
         }
 
+        public static bool EnviarEmailCheckListInstalacao(Utilizador u, FolhaObra fo)
+        {
+            string Assunto = "CheckList Instalação - "+fo.Marcacao.TipoEquipamento+" - "+fo.ClienteServico.NomeCliente;
+            string Mensagem = "Foi finalizada uma instalação pelo utilizador " + u.NomeCompleto + " do equipamento <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + "( " + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b>!<br><br>";
+
+            Mensagem += "<table style='width:100%;border-width:3px;' border='1'>";
+
+            foreach (var l in fo.CheckList.Split(";"))
+            {
+                if (!string.IsNullOrEmpty(l)) Mensagem += "<tr><td style='padding: 5px;'>" + l.Split("|").First() + "</td><td>" + (l.Split("|").Last() == "1" ? "✅" : "❌") + "</td></tr>";
+            }
+
+            Mensagem += "</table>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(1));
+
+            return true;
+        }
+
         public static bool EnviarEmailInventarioLoja(Utilizador u, List<Equipamento> Equipamentos, Cliente c)
         {
             string Assunto = "Inventário do Cliente - " + c.NomeCliente;

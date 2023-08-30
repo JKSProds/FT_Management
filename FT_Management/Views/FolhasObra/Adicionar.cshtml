@@ -141,40 +141,40 @@
                             </div>
                         </div>
                         @if (Model.ClienteServico.Contrato && Model.Marcacao.Contrato)
-                            {
-                        <div class="column is-3 my-auto">
-                            <div class="field">
-                                <label class="switch is-rounded is-medium">
-                                    <input type="checkbox" id="chkContrato" asp-for="Contrato" onchange="document.getElementById('divExtraContrato').style.display = this.checked ? 'none' : 'block';">
-                                    <span class="check is-info"></span>
-                                    <span class="control-label">
-                                        @Html.DisplayNameFor(model => model.Contrato)
-                                    </span>
-                                </label>
-                                <span asp-validation-for="Contrato" class="has-text-danger"></span>
+                        {
+                            <div class="column is-3 my-auto">
+                                <div class="field">
+                                    <label class="switch is-rounded is-medium">
+                                        <input type="checkbox" id="chkContrato" asp-for="Contrato" onchange="document.getElementById('divExtraContrato').style.display = this.checked ? 'none' : 'block';">
+                                        <span class="check is-info"></span>
+                                        <span class="control-label">
+                                            @Html.DisplayNameFor(model => model.Contrato)
+                                        </span>
+                                    </label>
+                                    <span asp-validation-for="Contrato" class="has-text-danger"></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="column is-12" id="divExtraContrato" style="display:@(Model.Contrato ? "none" : "block")">
-                            <div class="field">
-                                <label asp-for="JustExtraContrato" class="label"></label>
-                                <p><b>Ao selecionar esta opção indica que esta assistência será cobrada fora do contrato. Por favor indique abaixo o motivo e justifique o mesmo com um ou mais anexos.</b></p>
-                                &nbsp;
-                                <p class="control has-icons-left">
-                                    <span class="select" style="width: 100%">
-                                        @{
-                                            var LstExclusoes = ViewData["Exclusoes"] as IList<String>;
-                                        }
-                                        <select class="select" style="width:100%" asp-for="JustExtraContrato"
-                                                asp-items="@(new SelectList(LstExclusoes))"></select>
-                                    </span>
-                                    <span class="icon is-small is-left">
-                                        <i class="fa-solid fa-file-contract"></i>
-                                    </span>
-                                </p>
-                                <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
+                            <div class="column is-12" id="divExtraContrato" style="display:@(Model.Contrato ? "none" : "block")">
+                                <div class="field">
+                                    <label asp-for="JustExtraContrato" class="label"></label>
+                                    <p><b>Ao selecionar esta opção indica que esta assistência será cobrada fora do contrato. Por favor indique abaixo o motivo e justifique o mesmo com um ou mais anexos.</b></p>
+                                    &nbsp;
+                                    <p class="control has-icons-left">
+                                        <span class="select" style="width: 100%">
+                                            @{
+                                                var LstExclusoes = ViewData["Exclusoes"] as IList<String>;
+                                            }
+                                            <select class="select" style="width:100%" asp-for="JustExtraContrato"
+                                                    asp-items="@(new SelectList(LstExclusoes))"></select>
+                                        </span>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa-solid fa-file-contract"></i>
+                                        </span>
+                                    </p>
+                                    <span asp-validation-for="JustExtraContrato" class="has-text-danger"></span>
+                                </div>
                             </div>
-                        </div>
-                            }
+                        }
                         <div class="column is-12">
                             <div class="field">
                                 <div class="control buttons">
@@ -202,7 +202,7 @@
                                 </div>
 
                             </div>
-                           
+
                         </div>
                     </div>
                 </div>
@@ -225,8 +225,7 @@
                                     <input type="date" class="input "
                                            value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
                                            asp-for="DataServico" id="txtData">
-                                    <script>
-                                        bulmaCalendar.attach('#txtData', {
+                                    <script>bulmaCalendar.attach('#txtData', {
                                             color: 'info',
                                             lang: 'pt',
                                             dateFormat: 'dd/MM/yyyy',
@@ -447,8 +446,10 @@
             <input type="text" class="input" asp-for="ReferenciaServico">
             <input type="text" class="input" asp-for="IdMarcacao">
             <input type="text" class="input" asp-for="RubricaCliente" id="txtRubricaCliente">
+            <input type="text" class="input" asp-for="CheckList" id="txtCheckList">
             <input type="checkbox" class="checkbox" asp-for="Piquete" id="chkPiquete">
-            <input type="checkbox" class="checkbox" asp-for="ClienteServico.Contrato" >
+            <input type="checkbox" class="checkbox" asp-for="ClienteServico.Contrato">
+            <input type="checkbox" class="checkbox" asp-for="Instalação">
             <input type="checkbox" class="checkbox" asp-for="Marcacao.Contrato">
             <input type="checkbox" class="checkbox" asp-for="EquipamentoServico.Garantia" id="chkEquipamentoGarantia" onchange="document.getElementById('chkGarantiaSelecionadaPeca').checked = document.getElementById('chkGarantia').checked || document.getElementById('chkEquipamentoGarantia').checked;">
 
@@ -561,7 +562,7 @@
                 </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close();ValidarCliente();">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close(); if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} ">
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
                     </span>
@@ -751,6 +752,226 @@
         </div>
     </div>
 </form>
+
+<div class="modal" id="modalFinalInstalação">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Verificações Instalação</p>
+            <button class="delete" type="button" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="divFinalInstalacao">
+            <div class="field">
+                <p class="has-text-weight-bold">Por favor confirme todas as perguntas abaixo. Será enviado um email com esta informação para o responsável técnico!</p>
+            </div>
+            <hr />
+            <div id="divDetecao" hidden class="field">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Colocação do Certificado?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Colocação do Sticker?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Testes de Produto?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Formação dada ao cliente?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuados testes de produção real?
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div id="divPesagem" hidden class="field">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuado testes de pesagem?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuado testes de etiquetagem?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Colocação de sticker?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Formação dada ao cliente?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuados testes de produção real?
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div id="divCorte" hidden class="field">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuado cortes de produto?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Colocação de sticker?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Formação dada ao cliente?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuados testes de produção real?
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div id="divEmbalagem" hidden class="field">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuado testes de produto?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Colocação de sticker?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Formação dada ao cliente?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Efetuados testes de produção real?
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div id="divLavagem" hidden class="field">
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Colocação de sticker?
+                        </span>
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Formação dada ao cliente?
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-large is-fullwidth is-success" type="button" onclick="GuardarCheckList(); Bulma('#modalFinalInstalação').modal().close();ValidarCliente();">
+                <span class="icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </span>
+                <span>Avançar</span>
+            </button>
+            <button class="button is-large is-fullwidth" type="button" onclick="Bulma('#modalFinalInstalação').modal().close();">
+                <span class="icon">
+                    <i class="fa-solid fa-circle-left"></i>
+                </span>
+                <span>Cancelar</span>
+            </button>
+        </footer>
+    </div>
+</div>
 
 
 <div id="modalPecaGarantia" class="modal">
@@ -1037,6 +1258,19 @@
 }
 
 <script>
+    function GuardarCheckList() {
+        var e = document.getElementById('divFinalInstalacao');
+        var s = '';
+        for (let i = 2; i < e.childElementCount; i++) {
+            if (!e.children[i].hidden) {
+                for (let j = 0; j < e.children[i].childElementCount; j++) {
+                    s += e.children[i].children[j].children[0].children[2].textContent.trim() + '|' + (e.children[i].children[j].children[0].children[0].checked ? '1' : '0') + ";";
+                }
+            }
+        }
+        document.getElementById('txtCheckList').value = s;
+    }
+
     function ValidarFolhaObra() {
         notify("A validar folha de obra ...");
 
@@ -1724,5 +1958,13 @@
     CarregarIntervencoes();
     CarregarPecasStock();
     CarregarPecas();
+
+    if ('@Model.Instalação' == 'True') {
+        document.getElementById("divCorte").hidden = !('@Model.Marcacao.TipoEquipamento' == "Corte")
+        document.getElementById("divPesagem").hidden = !('@Model.Marcacao.TipoEquipamento' == "Pesagem")
+        document.getElementById("divEmbalagem").hidden = !('@Model.Marcacao.TipoEquipamento' == "Embalagem")
+        document.getElementById("divDetecao").hidden = !('@Model.Marcacao.TipoEquipamento' == "Deteção")
+        document.getElementById("divLavagem").hidden = !('@Model.Marcacao.TipoEquipamento' == "Lavagem")
+    }
 
 </script>

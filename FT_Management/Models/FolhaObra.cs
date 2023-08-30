@@ -84,6 +84,7 @@
         public bool Contrato { get; set; }
         [Display(Name = "Motivo - Fora de Contrato")]
         public string JustExtraContrato { get; set; }
+        public string CheckList { get; set; }
 
         public FolhaObra()
         {
@@ -111,12 +112,14 @@
             this.DataServico = DateTime.Now;
             if (m.Oficina) this.TipoFolhaObra = "Interno";
             if (m.Remoto) this.TipoFolhaObra = "Remoto";
+            if (m.TipoServico == "Instalação") this.TipoFolhaObra = "Instalação";
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
             this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
             if (!m.Oficina && !m.Remoto) this.TipoFolhaObra = m.TipoServico;
             this.Contrato = m.Contrato;
+            this.Instalação = m.TipoServico == "Instalação";
             return this;
         }
 
