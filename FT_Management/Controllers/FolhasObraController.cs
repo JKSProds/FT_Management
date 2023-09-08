@@ -105,12 +105,12 @@ namespace FT_Management.Controllers
             if (fo.Contrato) fo.JustExtraContrato = "";
 
             ModelState.Remove("Utilizador.Password");
-            ModelState.Remove("Utilizador.MarcacaoCurso.Referencia");
-            ModelState.Remove("Utilizador.MarcacaoCurso.ResumoMarcacao");
-            ModelState.Remove("Utilizador.MarcacaoCurso.TipoEquipamento");
-            ModelState.Remove("Utilizador.MarcacaoCurso.PrioridadeMarcacao");
+            ModelState.Remove("Marcacao.ResumoMarcacao");
+            ModelState.Remove("Marcacao.PrioridadeMarcacao");
+            ModelState.Remove("Marcacao.Referencia");
+
             if (ModelState.IsValid)
-            {
+            {   
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
