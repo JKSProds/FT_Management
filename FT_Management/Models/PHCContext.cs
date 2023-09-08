@@ -1055,7 +1055,7 @@ namespace FT_Management.Models
                 ChatContext.EnviarNotificacaoFolhaObraTecnico(fo, fo.Utilizador);
             }
 
-            if (fo.Instalação && fo.FecharMarcacao) MailContext.EnviarEmailCheckListInstalacao(fo.Utilizador, fo);
+            if (fo.Instalação && fo.FecharMarcacao) MailContext.EnviarEmailCheckListInstalacao(fo.Utilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioCertificado(fo).ToArray())), "CE_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
 
             //PD
             if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 1);

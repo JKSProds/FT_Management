@@ -514,7 +514,7 @@ namespace FT_Management.Models
             return true;
         }
 
-        public static bool EnviarEmailCheckListInstalacao(Utilizador u, FolhaObra fo)
+        public static bool EnviarEmailCheckListInstalacao(Utilizador u, FolhaObra fo, Attachment anexo)
         {
             string Assunto = "CheckList Instalação - "+fo.Marcacao.TipoEquipamento+" - "+fo.ClienteServico.NomeCliente;
             string Mensagem = "Foi finalizada uma instalação pelo utilizador " + u.NomeCompleto + " do equipamento <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + "( " + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b>!<br><br>";
@@ -527,7 +527,7 @@ namespace FT_Management.Models
             }
 
             Mensagem += "</table>";
-            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(1));
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;
         }
