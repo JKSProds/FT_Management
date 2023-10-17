@@ -63,6 +63,7 @@ namespace FT_Management.Models
                         TipoTecnico = result["TipoTecnico"],
                         Zona = result["Zona"],
                         ChatToken = result["ChatToken"],
+                        FaceRec = result["FaceRec"],
                         SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
                         UltimoAcesso = string.IsNullOrEmpty(result["DataUltimoAcesso"]) ? new DateTime() : result["DataUltimoAcesso"],
@@ -120,6 +121,7 @@ namespace FT_Management.Models
                         TipoTecnico = result["TipoTecnico"],
                         Zona = result["Zona"],
                         ChatToken = result["ChatToken"],
+                        FaceRec = result["FaceRec"],
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
                         SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
                         StampMoradaCargaDescarga = result["StampMoradaCargaDescarga"],
@@ -178,6 +180,7 @@ namespace FT_Management.Models
                         TipoTecnico = result["TipoTecnico"],
                         Zona = result["Zona"],
                         ChatToken = result["ChatToken"],
+                        FaceRec = result["FaceRec"],
                         NotificacaoAutomatica = result["NotificacaoAutomatica"],
                         SecondFactorAuthStamp = result["SecondFactorAuthStamp"],
                         StampMoradaCargaDescarga = result["StampMoradaCargaDescarga"]
