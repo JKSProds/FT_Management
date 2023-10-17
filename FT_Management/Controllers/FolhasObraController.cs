@@ -77,6 +77,8 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FolhaObra fo = phccontext.ObterFolhaObra(Id);
 
+            fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
+            phccontext.AtualizarAnexosAssinatura(fo);
             if (fo.StampFO == null) return Forbid();
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 

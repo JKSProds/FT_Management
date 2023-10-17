@@ -1832,6 +1832,8 @@ namespace FT_Management.Models
 
                     stamper.Close();
                     reader.Close();
+
+                    ExecutarQuery("update u_anexos_mar set instalacao='0' where u_anexos_marstamp='" + a.AnexoStamp + "' ");
                 }
 
                 FicheirosContext.MoverFicheiro(novoPdfFilePath, pdfFilePath);

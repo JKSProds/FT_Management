@@ -552,7 +552,7 @@
                                             data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)">
                                                     <span>@a.DataCriacao.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
                                                 <td class="is-actions-cell">
-                                                            @if (a.AnexoInstalacao)
+                                                            @if (!string.IsNullOrEmpty(a.TipoDocumento))
                                                             {
                                                         <button type="button" class="button is-info" disabled>
                                                                     @a.TipoDocumento
