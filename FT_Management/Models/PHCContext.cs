@@ -1797,47 +1797,58 @@ namespace FT_Management.Models
             return LstAnexos;
         }
 
-        public void AtualizarAnexosAssinatura(FolhaObra fo)
+        public bool AtualizarAnexosAssinatura(FolhaObra fo)
         {
-            foreach (MarcacaoAnexo a in fo.Marcacao.LstAnexos.Where(a => a.AnexoInstalacao)) {
-
-                string pdfFilePath = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
-                string novoPdfFilePath = FicheirosContext.FormatLinuxServer("S:\\WebApp\\" + a.NomeFicheiro.Split("\\").Last());
-
-                using (var fs = new FileStream(novoPdfFilePath, FileMode.Create, FileAccess.Write))
+            try
+            {
+                foreach (MarcacaoAnexo a in fo.Marcacao.LstAnexos.Where(a => a.AnexoInstalacao))
                 {
-                    // Abra o documento original
-                    var reader = new PdfReader(pdfFilePath);
-                    var stamper = new PdfStamper(reader, fs);
-                    var cb = stamper.GetOverContent(1); // A primeira página do PDF
 
-                    // Adicionar texto
-                    Font font = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+                    string pdfFilePath = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
+                    string novoPdfFilePath = FicheirosContext.FormatLinuxServer("S:\\WebApp\\" + a.NomeFicheiro.Split("\\").Last());
 
-                    if (a.TipoDocumento == "GT")
+                    using (var fs = new FileStream(novoPdfFilePath, FileMode.Create, FileAccess.Write))
                     {
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.ConferidoPor, font), 450, 250, 0);
-                    }else 
-                    {
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.ConferidoPor, font), 450, 170, 0);
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.Utilizador.NomeCompleto, font), 250, 170, 0);
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase("X", font), 65, 160, 0);
-                    }
+                        // Abra o documento original
+                        var reader = new PdfReader(pdfFilePath);
+                        var stamper = new PdfStamper(reader, fs);
+                        var cb = stamper.GetOverContent(1); // A primeira página do PDF
+
+                        // Adicionar texto
+                        Font font = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+
+                        if (a.TipoDocumento == "GT")
+                        {
+                            ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.ConferidoPor, font), 450, 250, 0);
+                        }
+                        else
+                        {
+                            ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.ConferidoPor, font), 450, 170, 0);
+                            ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.Utilizador.NomeCompleto, font), 250, 170, 0);
+                            ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase("X", font), 65, 160, 0);
+                        }
 
                         // Adicionar imagem
-                    Image imagem = Image.GetInstance(ObterRubrica(fo.IdFolhaObra));
-                    imagem.ScaleToFit(200, 200);
-                    imagem.SetAbsolutePosition(400, 300);
-                    cb.AddImage(imagem);
+                        Image imagem = Image.GetInstance(ObterRubrica(fo.IdFolhaObra));
+                        imagem.ScaleToFit(200, 200);
+                        imagem.SetAbsolutePosition(400, 300);
+                        cb.AddImage(imagem);
 
-                    stamper.Close();
-                    reader.Close();
+                        stamper.Close();
+                        reader.Close();
 
-                    ExecutarQuery("update u_anexos_mar set instalacao='0' where u_anexos_marstamp='" + a.AnexoStamp + "' ");
+                        ExecutarQuery("update u_anexos_mar set instalacao='0' where u_anexos_marstamp='" + a.AnexoStamp + "' ");
+                    }
+
+                    FicheirosContext.MoverFicheiro(novoPdfFilePath, pdfFilePath);
                 }
-
-                FicheirosContext.MoverFicheiro(novoPdfFilePath, pdfFilePath);
             }
+            catch (Exception)
+            {
+
+                return false;
+            }
+            return true;
         }
 
 
