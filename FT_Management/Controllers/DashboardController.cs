@@ -59,7 +59,7 @@
             {
                 if (LstUtilizadores.Where(u => u.Id == f.IdUtilizador).Count() > 0) LstUtilizadores.Where(u => u.Id == f.IdUtilizador).First().Ferias = true;
             }
-            return View("UtilizadoresNew", LstUtilizadores);
+            return View(LstUtilizadores);
         }
 
         //Obter dashboard das marcacoes pendentes

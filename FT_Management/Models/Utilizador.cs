@@ -78,6 +78,7 @@
         public int TipoTecnico { get; set; }
         public int Zona { get; set; }
         public string ChatToken { get; set; }
+        public string FaceRec { get; set; }
         public int NotificacaoAutomatica { get; set; } //0 Desativado > 1 Email > 2 Nextcloud > 3 Ambos
         public string SecondFactorAuthStamp { get; set; }
         public string SecondFactorImgUrl { get; set; }

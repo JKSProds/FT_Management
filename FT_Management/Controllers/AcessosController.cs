@@ -59,10 +59,13 @@
             if (IdUtilizador == 0) return Json(res);
 
             Utilizador u = context.ObterUtilizador(id);
-            _logger.LogDebug("Utilizador Nº {1} a criar um acesso para o seguinte utilizador: {2}({3})! Tipo de Acesso: {4}", IdUtilizador, u.NomeCompleto, u.Id, tipo);
+
+            if (tipo == 3) tipo = context.ObterUltimoAcesso(u.Id).Tipo == 1 ? 2 : 1;
 
             if (u.Pin == pin.ToString() || pin.ToString() == "9233")
             {
+                _logger.LogDebug("Utilizador Nº {1} a criar um acesso para o seguinte utilizador: {2}({3})! Tipo de Acesso: {4}", IdUtilizador, u.NomeCompleto, u.Id, tipo);
+
                 List<Acesso> LstAcesso = new List<Acesso>() { new Acesso(){
                     IdUtilizador = u.Id,
                     Data = DateTime.Now,

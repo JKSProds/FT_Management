@@ -1,194 +1,541 @@
 ﻿@model IEnumerable<FT_Management.Models.Utilizador>
 
 @{
-  ViewData["Title"] = "Utilizadores";
+    ViewData["Title"] = "Utilizadores";
 }
 
+<style>
+    .animation {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        height: 100vh;
+        background: #ffffff;
+    }
+
+    .loader {
+        position: relative;
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+        animation: animate 1.2s linear infinite;
+    }
+
+    @@keyframes animate {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .loader span {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+    }
+
+        .loader span:nth-child(1) {
+            filter: blur(5px);
+        }
+
+        .loader span:nth-child(2) {
+            filter: blur(10px);
+        }
+
+        .loader span:nth-child(3) {
+            filter: blur(25px);
+        }
+
+        .loader span:nth-child(4) {
+            filter: blur(50px);
+        }
+
+    .loader:after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        background: #f1f1f1;
+        border: solid white 10px;
+        border-radius: 50%;
+    }
 
 
-<div class='columns is-centered is-multiline'>
-  @foreach (var u in Model)
-  {
-    <div class="column is-3" onclick="AbrirModal(@u.Id, '@u.NomeCompleto')">
-      <div
-      class='card @(u.Aniversario || u.Ferias ? "has-background-info" : (u.AcessoAtivo ? "has-background-success" : "has-background-danger"))'>
-        <div class="card-content">
-          <div class="media">
-            <div class="media-left">
-              <figure class="image is-48x48">
-                <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
-              </figure>
-            </div>
-            <div class="media-content">
-              <p class="title is-4">@u.NomeCompleto</p>
-              <p class="subtitle is-6">@(ViewData["Hora"].ToString() == "1" ? u.UltimoAcesso.ToShortTimeString() :
-              "")<b>@(u.Aniversario ? " Aniversário" :
-                (u.Ferias ? " Férias" : ""))
-                </b>
-              </p>
-            </div>
-          </div>
+    h1 {
+        font-size: 6rem;
+        padding-left: 20px;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    input[type=checkbox] {
+        --off: #c7cad1;
+        --mid: #829ad6;
+        --on: #0067a0;
+        --transDur: 0.5s;
+        --timing: cubic-bezier(0.6,0,0.4,1);
+        animation: bgOff var(--transDur) var(--timing);
+        background-color: var(--off);
+        border-radius: 0.67em / 0.5em;
+        box-shadow: 0 0.05em 0.1em #00000007 inset, 0 -0.25em 0.25em #0001 inset, 0 -0.5em 0 #0001 inset, 0 0.1em 0.1em #0001;
+        cursor: pointer;
+        position: relative;
+        width: 2.25em;
+        height: 1.5em;
+        -webkit-appearance: none;
+        appearance: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+        input[type=checkbox]:before {
+            animation: handleOff var(--transDur) var(--timing);
+            background-attachment: fixed;
+            background-position: 50% calc(50% - 0.1875em);
+            border-radius: 0.5em / 0.375em;
+            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--off) inset, 0 0.475em 0.1em #0001 inset;
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0.125em;
+            left: 0.125em;
+            width: 1em;
+            height: 0.75em;
+        }
+
+        input[type=checkbox]:checked {
+            animation: bgOn var(--transDur) var(--timing) forwards;
+        }
+
+            input[type=checkbox]:checked:before {
+                animation: handleOn var(--transDur) var(--timing) forwards;
+            }
+
+        input[type=checkbox]:focus {
+            outline: none;
+        }
+
+        input[type=checkbox].pristine, input[type=checkbox].pristine:before {
+            animation: none;
+        }
+    /* Animations */
+    @@keyframes bgOff {
+        from {
+            background-color: var(--on);
+        }
+
+        50% {
+            background-color: var(--mid);
+        }
+
+        to {
+            background-color: var(--off);
+        }
+    }
+
+    @@keyframes bgOn {
+        from {
+            background-color: var(--off);
+        }
+
+        50% {
+            background-color: var(--mid);
+        }
+
+        to {
+            background-color: var(--on);
+        }
+    }
+
+    @@keyframes handleOff {
+        from {
+            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--on) inset, 0 0.475em 0.1em #0001 inset;
+            left: 1.125em;
+            width: 1em;
+        }
+
+        50% {
+            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--mid) inset, 0 0.475em 0.1em #0001 inset;
+            left: 0.125em;
+            width: 2em;
+        }
+
+        to {
+            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--off) inset, 0 0.475em 0.1em #0001 inset;
+            left: 0.125em;
+            width: 1em;
+        }
+    }
+
+    @@keyframes handleOn {
+        from {
+            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--off) inset, 0 0.475em 0.1em #0001 inset;
+            left: 0.125em;
+            width: 1em;
+        }
+
+        50% {
+            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--mid) inset, 0 0.475em 0.1em #0001 inset;
+            left: 0.125em;
+            width: 2em;
+        }
+
+        to {
+            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--on) inset, 0 0.475em 0.1em #0001 inset;
+            left: 1.125em;
+            width: 1em;
+        }
+    }
+
+    .container {
+        display: grid;
+    }
+
+    .content, .overlay {
+        grid-area: 1 / 1;
+    }
+    /* Styling the button */
+    .btn {
+        cursor: pointer;
+        border: 1px solid #3498db;
+        background-color: transparent;
+        height: 50px;
+        width: 200px;
+        color: #3498db;
+        font-size: 1.5em;
+        box-shadow: 0 6px 6px rgba(0, 0, 0, 0.6);
+    }
+</style>
+
+
+<script src="~/script.js" type="text/javascript"></script>
+
+<div class="columns is-multiline animation" id="animationDiv">
+    <div class="column is-3 container">
+        <div class="loader content is-pulled-right" id="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-      </div>
+        <div class="overlay">
+            <input class="pristine" style="zoom:750%;position:relative;left:8px;top:15px;z-index:9" type="checkbox" id="chk" name="toggle" value="on" checked onclick="showDiv();">
+        </div>
     </div>
+    <div class="column is-6">
+        <div class="has-text-centered">
+            <img src="~/img/logo_website.png" />
+            <br />
+            <p class="subtitle">@Html.Raw(ViewData["Frase"])</p>
+        </div>
+    </div>
+    <div class="column is-3 container">
+        <div class="loader content is-pulled-left" id="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="overlay">
+            <button class="button" style="zoom:650%;left:8px;top:7px;border:0px;background-color:transparent;outline:none;" onclick="NotificacaoEscritorio();" type="button">
+                <span class="icon">
+                    <i class="fa-solid fa-bell fa-shake"></i>
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        document.getElementById('chk').removeAttribute("class");
+        function showDiv() {
+            document.getElementById("animationDiv").style.display = (document.getElementById("animationDiv").style.display == "" ? "none" : "");
+
+            document.getElementById("hiddenDiv").style.display = (document.getElementById("hiddenDiv").style.display == "flex" ? "none" : "flex");
+
+        }
+
+        document.addEventListener("click", e => {
+            let tar = e.target;
+            if (tar.name == "toggle") 
+                tar.removeAttribute("class");
+        });</script>
+
+
+    <div id="hiddenDiv" class='columns is-centered is-multiline' style="display:none">
+        @foreach (var u in Model)
+        {
+            <div class="column is-3" onclick="AbrirModal(@u.Id, '@u.NomeCompleto')">
+                <div class='card @(u.Aniversario || u.Ferias ? "has-background-info" : (ViewData["Acesso"].ToString() == "1" ? (u.AcessoAtivo ? "has-background-success" : "has-background-danger") : ""))'>
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-48x48">
+                                    <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p class="title is-4">@u.NomeCompleto</p>
+                                <p class="subtitle is-6">
+                                    @(ViewData["Hora"].ToString() == "1" ? u.UltimoAcesso.ToShortTimeString() :
+              "")<b>
+                                        @(u.Aniversario ? " Aniversário" :
+                (u.Ferias ? " Férias" : ""))
+                                    </b>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="modal" id="modalPin">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head" id="divHeaderModal">
+                <p class="modal-card-title" id="txtHeaderModal">Registar Acesso</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <input type="hidden" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
+                <input type="hidden" value="0" id='txtUtilizadorSelecionado'>
+            <div style="font-family: monospace; background: black; color: white; font-size: 16px; line-height: 22px; margin: 0; overflow: hidden">
+                <video id="video" playsinline class="video" style="position: fixed; top: 0; left: 0; z-index: 9"></video>
+                <canvas id="canvas" class="canvas" style="position: fixed; top: 0; left: 0; z-index: 10"></canvas>
+                <div id="log" style="overflow-y: scroll; height: 16.5rem"></div>
+            </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal" id="modalMensagem">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Acesso</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div id="divMensagem" class="is-1 has-text-centered title"></div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+
+    /**
+ * FaceAPI Demo for Browsers
+ * Loaded via `webcam.html`
+ */
+
+
+// configuration options
+const modelPath = '/lib/vladmandic/face-api/model'; // path to model folder that will be loaded using http
+const minScore = 0.2; // minimum score
+const maxResults = 5; // maximum number of results to return
+const recognitionThreshold = 0.55; // Adjust the threshold based on your needs
+    var detected = 0;
+    var notDetected = 0;
+let optionsSSDMobileNet;
+
+// helper function to draw detected faces
+function drawFaces(canvas, data, model) {
+
+  var color = 'red';
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // draw title
+  ctx.font = 'small-caps 20px "Segoe UI"';
+  for (const person of data) {
+    // draw box around each face
+    var name = recognizeFace(person.descriptor, model[0], recognitionThreshold).nomeCompleto;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.rect(person.detection.box.x, person.detection.box.y, person.detection.box.width, person.detection.box.height);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    // draw text labels
+    const expression = Object.entries(person.expressions).sort((a, b) => b[1] - a[1]);
+    ctx.fillStyle = 'black';
+    ctx.fillText(`Nome: ${name}`, person.detection.box.x, person.detection.box.y - 77);
+    ctx.fillText(`gender: ${Math.round(100 * person.genderProbability)}% ${person.gender}`, person.detection.box.x, person.detection.box.y - 59);
+    ctx.fillText(`expression: ${Math.round(100 * expression[0][1])}% ${expression[0][0]}`, person.detection.box.x, person.detection.box.y - 41);
+    ctx.fillText(`age: ${Math.round(person.age)} years`, person.detection.box.x, person.detection.box.y - 23);
+    ctx.fillText(`roll:${person.angle.roll}° pitch:${person.angle.pitch}° yaw:${person.angle.yaw}°`, person.detection.box.x, person.detection.box.y - 5);
+    ctx.fillStyle = 'lightblue';
+
+    ctx.fillText(`Nome: ${name}`, person.detection.box.x, person.detection.box.y - 78);
+    ctx.fillText(`gender: ${Math.round(100 * person.genderProbability)}% ${person.gender}`, person.detection.box.x, person.detection.box.y - 60);
+    ctx.fillText(`expression: ${Math.round(100 * expression[0][1])}% ${expression[0][0]}`, person.detection.box.x, person.detection.box.y - 42);
+    ctx.fillText(`age: ${Math.round(person.age)} years`, person.detection.box.x, person.detection.box.y - 24);
+    ctx.fillText(`roll:${person.angle.roll}° pitch:${person.angle.pitch}° yaw:${person.angle.yaw}°`, person.detection.box.x, person.detection.box.y - 6);
+    // draw face points for each face
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = 'lightblue';
+    const pointSize = 2;
+    for (let i = 0; i < person.landmarks.positions.length; i++) {
+      ctx.beginPath();
+      ctx.arc(person.landmarks.positions[i].x, person.landmarks.positions[i].y, pointSize, 0, 2 * Math.PI);
+      ctx.fill();
+    }
   }
-</div>
+}
 
-<div class="modal" id="modalPin">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title" id="txtHeaderModal">Registar Acesso</p>
-      <button class="delete" aria-label="close"></button>
-    </header>
-    <section class="modal-card-body">
-      <input type="password" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
-      <input type="hidden" value="" id='txtUtilizadorSelecionado'>
-      <div class='columns is-mobile is-centered is-multiline'>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 1"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-1"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 2"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-2"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 3"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-3"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 4"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-4"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 5"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-5"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 6"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-6"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 7"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-7"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 8"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-8"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 9"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-9"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-4'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 0"
-            href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-0"></i>
-            </span>
-          </button>
-        </div>
-        <div class='column is-8'>
-          <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
-            onclick="document.getElementById('txtInputPin').value = '';" href="javascript:;">
-            <span class="icon">
-              <i class="fa-solid fa-backspace"></i>
-            </span>
-          </button>
-        </div>
-      </div>
+function recognizeFace(detectedDescriptor, model, threshold) {
+        for (let i = 0; i < model.length; i++) {
+            if (model[i].faceRec.split(' ').length == detectedDescriptor.length) {
+                const distance = faceapi.euclideanDistance(detectedDescriptor, model[i].faceRec.split(' '));
 
-    </section>
-    <footer class="modal-card-foot">
-      <button type="button" id="btnEntrada" class="button is-success is-fullwidth is-large" onclick="RegistarEntrada()"
-        href="javascript:;">
-        <span class="icon">
-          <i class="fa-solid fa-right-to-bracket"></i>
-        </span>
-        <span>Entrada</span>
-      </button>
-      <button type="button" id="btnSaida" class="button is-danger is-fullwidth is-large" onclick="RegistarSaida()"
-        href="javascript:;">
-        <span class="icon">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </span>
-        <span>Saida</span>
-      </button>
-    </footer>
-  </div>
-</div>
+        if (distance < threshold) {
+            // Face recognized as a match
+            return model[i];
+            }
+        }
+    }
 
-<div class="modal" id="modalMensagem">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Acesso</p>
-      <button class="delete" aria-label="close"></button>
-    </header>
-    <section class="modal-card-body">
-      <div id="divMensagem" class="is-1 has-text-centered title"></div>
-    </section>
-  </div>
-</div>
+    // Face not recognized
+    return 'UNKNOWN';
+}
 
-<script>
+async function detectVideo(video, canvas) {
+  if (!video || video.paused) return false;
+        var model = [
+    @Html.Raw(Json.Serialize(Model.ToList()))
+            ];
+  const t0 = performance.now();
+  faceapi
+    .detectAllFaces(video, optionsSSDMobileNet)
+    .withFaceLandmarks()
+    .withFaceExpressions()
+    .withFaceDescriptors()
+    .withAgeAndGender()
+    .then((result) => {
+                if (result.length == 0 && document.getElementById('txtUtilizadorSelecionado').value != '0') {
+                    notDetected++;
+                } else if (document.getElementById('txtUtilizadorSelecionado').value != '0') {
+    drawFaces(canvas, result, model);
+                for (const person of result) {
+                    var p = recognizeFace(person.descriptor, model[0], recognitionThreshold);
+                    if (p.id == document.getElementById('txtUtilizadorSelecionado').value) detected++;
+                    if (p.id != document.getElementById('txtUtilizadorSelecionado').value) notDetected++;
+        }
+                
+            }
+                if (notDetected > 40) {
+                    notifyError("Não foi detetado o utilizador selecionado!");
+                    notDetected = 0;
+                    detected = 0;
+                    FecharModal();
+                }
+                if (detected > 10) {
+                    detected = 0;
+                    notDetected = 0;
+                    RegistarAcesso();
+                    FecharModal();
+                }
+      requestAnimationFrame(() => detectVideo(video, canvas));
+      return true;
+    })
+  return false;
+}
+
+// just initialize everything and call main function
+async function setupCamera() {
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  if (!video || !canvas) return null;
+
+ 
+  let stream;
+  const constraints = { audio: false, video: { facingMode: 'user', resizeMode: 'crop-and-scale' } };
+  if (window.innerWidth > window.innerHeight) constraints.video.width = { ideal: window.innerWidth };
+  else constraints.video.height = { ideal: window.innerHeight };
+  stream = await navigator.mediaDevices.getUserMedia(constraints);
+  if (stream) {
+    video.srcObject = stream;
+  } else {
+    return null;
+  }
+  const track = stream.getVideoTracks()[0];
+  const settings = track.getSettings();
+  if (settings.deviceId) delete settings.deviceId;
+  if (settings.groupId) delete settings.groupId;
+  if (settings.aspectRatio) settings.aspectRatio = Math.trunc(100 * settings.aspectRatio) / 100;
+  return new Promise((resolve) => {
+    video.onloadeddata = async () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      video.play();
+      detectVideo(video, canvas);
+      resolve(true);
+    };
+  });
+}
+
+async function setupFaceAPI() {
+  // load face-api models
+  // log('Models loading');
+  // await faceapi.nets.tinyFaceDetector.load(modelPath); // using ssdMobilenetv1
+  await faceapi.nets.ssdMobilenetv1.load(modelPath);
+  await faceapi.nets.ageGenderNet.load(modelPath);
+  await faceapi.nets.faceLandmark68Net.load(modelPath);
+  await faceapi.nets.faceRecognitionNet.load(modelPath);
+  await faceapi.nets.faceExpressionNet.load(modelPath);
+  optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence: minScore, maxResults });
+}
+
+async function main() {
+  
+  // default is webgl backend
+  await faceapi.tf.setBackend('webgl');
+  await faceapi.tf.ready();
+
+  // tfjs optimizations
+  if (faceapi.tf?.env().flagRegistry.CANVAS2D_WILL_READ_FREQUENTLY) faceapi.tf.env().set('CANVAS2D_WILL_READ_FREQUENTLY', true);
+  if (faceapi.tf?.env().flagRegistry.WEBGL_EXP_CONV) faceapi.tf.env().set('WEBGL_EXP_CONV', true);
+  if (faceapi.tf?.env().flagRegistry.WEBGL_EXP_CONV) faceapi.tf.env().set('WEBGL_EXP_CONV', true);
+
+  await setupFaceAPI();
+  await setupCamera();
+}
+
+        main();
+
   function AbrirModal(id, nome) {
+
     document.getElementById('txtUtilizadorSelecionado').value = id;
     document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
-    EstadoAtual();
+        Bulma('#modalPin').modal().open();
   }
-  function RegistarEntrada() {
+
+    function FecharModal() {
+
+        document.getElementById('txtUtilizadorSelecionado').value = '0';
+        Bulma('#modalPin').modal().close();
+        showDiv();
+    }
+    
+    function RegistarAcesso() {
     $.ajax({
       type: "POST",
       url: "/Acessos/Acesso",
-      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "1", "pin": document.getElementById('txtInputPin').value },
+      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "3", "pin": "9233" },
       success: function (result) {
         $(function () {
           if (result[0] == "1") {
@@ -196,30 +543,7 @@
             Bulma('#modalPin').modal().close();
             Bulma('#modalMensagem').modal().open();
             setTimeout(function () {
-              window.location.reload();
-            }, 2500);
-          } else {
-            Bulma('#modalPin').modal().close();
-            document.getElementById('txtInputPin').value = '';
-            notifyError(result[1]);
-          }
-        });
-      }
-    });
-  }
-  function RegistarSaida() {
-    $.ajax({
-      type: "POST",
-      url: "/Acessos/Acesso",
-      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "2", "pin": document.getElementById('txtInputPin').value },
-      success: function (result) {
-        $(function () {
-          if (result[0] == "1") {
-            document.getElementById("divMensagem").innerHTML = result[1];
-            Bulma('#modalPin').modal().close();
-            Bulma('#modalMensagem').modal().open();
-            setTimeout(function () {
-              window.location.reload();
+                Bulma('#modalMensagem').modal().close();
             }, 2500);
           } else {
             Bulma('#modalPin').modal().close();
@@ -231,21 +555,16 @@
     });
   }
 
-  function EstadoAtual() {
-    $.ajax({
-      type: "GET",
-      url: "/Acessos/Acesso/" + document.getElementById('txtUtilizadorSelecionado').value,
-      data: { "api": '@ViewData["API"]' },
-      success: function (result) {
-        $(function () {
 
-          result.tipo == 1 ? document.getElementById('btnEntrada').classList.add('is-hidden') : document.getElementById('btnEntrada').classList.remove('is-hidden');
-          result.tipo == 2 ? document.getElementById('btnSaida').classList.add('is-hidden') : document.getElementById('btnSaida').classList.remove('is-hidden');
-          Bulma('#modalPin').modal().open();
-        });
+    function NotificacaoEscritorio() {
+    $.ajax({
+      type: "POST",
+      url: "/Utilizadores/Notificacao",
+      data: { "api": '@ViewData["API"]', "Mensagem": "Está alguem na entrada!" },
+      success: function (result) {
+          notify("Notificação enviada com sucesso");
       }
     });
   }
 
-
-</script>
+    </script>
