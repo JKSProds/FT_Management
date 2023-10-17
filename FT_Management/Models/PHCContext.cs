@@ -1625,7 +1625,8 @@ namespace FT_Management.Models
                 SQL_Query += "@NOME_FICHEIRO = '" + a.NomeFicheiro + "', ";
                 SQL_Query += "@MARCACAO = '" + (a.AnexoMarcacao ? "1" : "0") + "', ";
                 SQL_Query += "@ASSINATURA = '" + (a.AnexoAssinatura ? "1" : "0") + "', ";
-                SQL_Query += "@INSTALACAO = '" + (a.AnexoInstalacao ? "1" : "0") + "', ";
+                SQL_Query += "@INSTALACAO = '" + (a.AnexoInstalacao ? "1" : "0") + "', "; 
+                SQL_Query += "@TIPO = '" + a.TipoDocumento + "', ";
                 SQL_Query += "@PECA = '" + (a.AnexoPeca ? "1" : "0") + "', ";
                 SQL_Query += "@EMAIL = '" + (a.AnexoEmail ? "1" : "0") + "', ";
                 SQL_Query += "@REF = '" + a.RefPeca + "', ";
@@ -1815,7 +1816,7 @@ namespace FT_Management.Models
 
                     if (a.TipoDocumento == "GT")
                     {
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 100, 250, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 475, 250, 0);
                     }else 
                     {
                         ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 475, 190, 0);
