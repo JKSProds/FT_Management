@@ -187,6 +187,7 @@
         public bool AnexoPeca { get; set; }
         public string RefPeca { get; set; }
         public bool AnexoEmail { get; set; }
+        public string TipoDocumento { get; set; }
 
         [Display(Name = "Criado por")]
         public string NomeUtilizador { get; set; }

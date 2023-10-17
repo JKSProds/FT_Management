@@ -1695,7 +1695,8 @@ namespace FT_Management.Models
                         RefPeca = result["ref"].ToString(),
                         DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Split(" ").First() + " " + result["ousrhora"].ToString()),
                         DescricaoFicheiro = result["Titulo"].ToString(),
-                        AnexoEmail = result["email"].ToString() == "True"
+                        AnexoEmail = result["email"].ToString() == "True",
+                        TipoDocumento = result["Tipo"].ToString().Trim(),
 
                     });
                 }
@@ -1798,6 +1799,7 @@ namespace FT_Management.Models
         public void AtualizarAnexosAssinatura(FolhaObra fo)
         {
             foreach (MarcacaoAnexo a in fo.Marcacao.LstAnexos.Where(a => a.AnexoInstalacao)) {
+
                 string pdfFilePath = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
                 string novoPdfFilePath = FicheirosContext.FormatLinuxServer("S:\\WebApp\\" + a.NomeFicheiro.Split("\\").Last());
 
@@ -1810,12 +1812,22 @@ namespace FT_Management.Models
 
                     // Adicionar texto
                     Font font = FontFactory.GetFont(FontFactory.HELVETICA, 12);
-                    ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 100, 225, 0);
 
-                    // Adicionar imagem
+                    if (a.TipoDocumento == "GT")
+                    {
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 100, 250, 0);
+                    }else 
+                    {
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 475, 190, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.Utilizador.NomeCompleto, font), 275, 190, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase("X", font), 65, 190, 0);
+                    }
+
+
+                        // Adicionar imagem
                     Image imagem = Image.GetInstance(ObterRubrica(fo.IdFolhaObra));
                     imagem.ScaleToFit(200, 200);
-                    imagem.SetAbsolutePosition(400, 225);
+                    imagem.SetAbsolutePosition(400, 300);
                     cb.AddImage(imagem);
 
                     stamper.Close();
