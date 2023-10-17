@@ -89,7 +89,7 @@
         {
             get
             {
-                return this.LstMarcacoes == null ? new Marcacao() : this.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Em Curso").DefaultIfEmpty(LstMarcacoes.First()).First();
+                return this.LstMarcacoes == null ? null : this.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Em Curso").DefaultIfEmpty(null).First();
             }
         }
         public Utilizador()

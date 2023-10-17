@@ -376,12 +376,7 @@
                                                             <span>@item.Stock_Fisico</span>
                                                         </td>
                                                         <td>
-                                                            @if (item.Garantia && !item.Ref_Produto.Contains("SRV"))
-                                                            {
-                                                                <a class="button is-fullwidth is-info printqr"
-                                                        onclick="window.open('@Url.Action("EtiquetaGarantia", "Produtos", new { id = Model.StampFO, peca=item.Ref_Produto, target="_blank" })')"><i
-                                                            class="fa-solid fa-qrcode"></i></a>
-                                                            }
+                                                            
                                                         </td>
                                                     </tr>
                                                 }

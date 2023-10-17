@@ -105,12 +105,12 @@ namespace FT_Management.Controllers
             if (fo.Contrato) fo.JustExtraContrato = "";
 
             ModelState.Remove("Utilizador.Password");
-            ModelState.Remove("Utilizador.MarcacaoCurso.Referencia");
-            ModelState.Remove("Utilizador.MarcacaoCurso.ResumoMarcacao");
-            ModelState.Remove("Utilizador.MarcacaoCurso.TipoEquipamento");
-            ModelState.Remove("Utilizador.MarcacaoCurso.PrioridadeMarcacao");
+            ModelState.Remove("Marcacao.ResumoMarcacao");
+            ModelState.Remove("Marcacao.PrioridadeMarcacao");
+            ModelState.Remove("Marcacao.Referencia");
+
             if (ModelState.IsValid)
-            {
+            {   
                 fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
                 fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
                 fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
@@ -123,6 +123,7 @@ namespace FT_Management.Controllers
                 Marcacao m = fo.Marcacao;
                 m.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
                 m.Oficina = fo.RecolhaOficina || (fo.Oficina && !fo.Guia);
+                m.Remoto = (fo.TipoFolhaObra == "Remoto");
 
                 _logger.LogDebug("Utilizador {1} [{2}] a criar uma nova folha de obra: Id Marcacao - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}, N. Int - {7}, N. Pecas {8}, Estado - {9}.", fo.Utilizador.NomeCompleto, fo.Utilizador.Id, m.IdMarcacao, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto, fo.IntervencaosServico.Count(), fo.PecasServico.Count(), fo.EstadoFolhaObra);
 
@@ -134,6 +135,7 @@ namespace FT_Management.Controllers
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
                 if (fo.EstadoFolhaObra == 4) m.EstadoMarcacaoDesc = "Reagendar";
+               
 
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)

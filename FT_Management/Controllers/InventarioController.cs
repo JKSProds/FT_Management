@@ -205,6 +205,7 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            if (id == 0) id = u.IdArmazem;
             Armazem a = phccontext.ObterArmazens().Where(a => a.ArmazemId == id).DefaultIfEmpty(new Armazem()).First();
             if (string.IsNullOrEmpty(inventario) || string.IsNullOrEmpty(a.ArmazemStamp)) return RedirectToAction("Armazem", "Produtos");
 

@@ -2970,6 +2970,32 @@ namespace FT_Management.Models
 
         }
 
+        public MemoryStream PreencherFormularioCertificado(FolhaObra fo)
+        {
+            string pdfTemplate = AppDomain.CurrentDomain.BaseDirectory + "FT_Certificado.pdf";
+            var outputPdfStream = new MemoryStream();
+            PdfReader pdfReader = new PdfReader(pdfTemplate);
+            PdfStamper pdfStamper = new PdfStamper(pdfReader, outputPdfStream) { FormFlattening = true, FreeTextFlattening = true };
+            AcroFields pdfFormFields = pdfStamper.AcroFields;
+
+            foreach (var l in fo.CheckList.Split(";"))
+            {
+                if (!string.IsNullOrEmpty(l)) pdfFormFields.SetField("txtChecklist", pdfFormFields.GetField("txtChecklist") + (l.Split("|").Last() == "1" ? "OK" : "NOK") + " - " + l.Split("|").First() + "\r\n");
+            }
+
+            pdfFormFields.SetField("txtEquipamento", fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento.ToString() + ")");
+            pdfFormFields.SetField("txtData", fo.DataServico.ToShortDateString());
+            pdfFormFields.SetField("txtTecnico", fo.Utilizador.NomeCompleto);
+            pdfFormFields.SetField("txtRelatorio", fo.RelatorioServico);
+
+            pdfStamper.FormFlattening = true;
+            pdfStamper.SetFullCompression();
+            pdfStamper.Close();
+
+            return outputPdfStream;
+
+        }
+
 
         public MemoryStream MemoryStreamToPDF(MemoryStream stream, int w, int h)
         {
