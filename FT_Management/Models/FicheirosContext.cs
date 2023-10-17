@@ -81,7 +81,7 @@
         public static string FormatLinuxServer(string res)
         {
 #if DEBUG
-            return res.Replace("\\", "/").Replace("S:", "/Volumes/phc");
+            return res.Replace("S:", "X:");
 #else
             return res.Replace("\\", "/").Replace("S:", "/server");
 #endif
@@ -160,7 +160,7 @@
 
         private static void MoveFile(string source, string dest)
         {
-            File.Move(source, dest);
+            File.Move(source, dest, true);
         }
 
         public static string CriarFicheiroTemporario(string nome, IFormFile ficheiro)
@@ -179,6 +179,15 @@
             {
                 CriarPasta(FormatLinuxServer(dest));
                 MoveFile(FormatLinuxServer(CaminhoTemporario + source), FormatLinuxServer(dest + source));
+            }
+        }
+
+        public static void MoverFicheiro(string source, string dest)
+        {
+            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source))
+            {
+                CriarPasta(FormatLinuxServer(dest));
+                MoveFile(FormatLinuxServer(source), FormatLinuxServer(dest));
             }
         }
 

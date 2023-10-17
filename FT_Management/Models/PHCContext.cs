@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using iTextSharp.text;
+using System.Collections.Generic;
 
 namespace FT_Management.Models
 {
@@ -1793,6 +1794,38 @@ namespace FT_Management.Models
             }
             return LstAnexos;
         }
+
+        public void AtualizarAnexosAssinatura(FolhaObra fo)
+        {
+            foreach (MarcacaoAnexo a in fo.Marcacao.LstAnexos.Where(a => a.AnexoInstalacao)) {
+                string pdfFilePath = FicheirosContext.FormatLinuxServer(a.NomeFicheiro);
+                string novoPdfFilePath = FicheirosContext.FormatLinuxServer("S:\\WebApp\\" + a.NomeFicheiro.Split("\\").Last());
+
+                using (var fs = new FileStream(novoPdfFilePath, FileMode.Create, FileAccess.Write))
+                {
+                    // Abra o documento original
+                    var reader = new PdfReader(pdfFilePath);
+                    var stamper = new PdfStamper(reader, fs);
+                    var cb = stamper.GetOverContent(1); // A primeira página do PDF
+
+                    // Adicionar texto
+                    Font font = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+                    ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 100, 225, 0);
+
+                    // Adicionar imagem
+                    Image imagem = Image.GetInstance(ObterRubrica(fo.IdFolhaObra));
+                    imagem.ScaleToFit(200, 200);
+                    imagem.SetAbsolutePosition(400, 225);
+                    cb.AddImage(imagem);
+
+                    stamper.Close();
+                    reader.Close();
+                }
+
+                FicheirosContext.MoverFicheiro(novoPdfFilePath, pdfFilePath);
+            }
+        }
+
 
         public Marcacao ObterResponsavelCliente(int IdCliente, int IdLoja, string TipoEquipamento)
         {
