@@ -1821,9 +1821,8 @@ namespace FT_Management.Models
                     {
                         ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.ConferidoPor, font), 450, 170, 0);
                         ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.Utilizador.NomeCompleto, font), 250, 170, 0);
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase("X", font), 65, 165, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase("X", font), 65, 160, 0);
                     }
-
 
                         // Adicionar imagem
                     Image imagem = Image.GetInstance(ObterRubrica(fo.IdFolhaObra));
