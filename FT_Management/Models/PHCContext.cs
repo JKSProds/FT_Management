@@ -1816,12 +1816,12 @@ namespace FT_Management.Models
 
                     if (a.TipoDocumento == "GT")
                     {
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 475, 250, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.ConferidoPor, font), 450, 250, 0);
                     }else 
                     {
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.ConferidoPor, font), 475, 190, 0);
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase(fo.Utilizador.NomeCompleto, font), 275, 190, 0);
-                        ColumnText.ShowTextAligned(cb, Element.ALIGN_CENTER, new Phrase("X", font), 65, 190, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.ConferidoPor, font), 450, 170, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase(fo.Utilizador.NomeCompleto, font), 250, 170, 0);
+                        ColumnText.ShowTextAligned(cb, Element.ALIGN_LEFT, new Phrase("X", font), 65, 165, 0);
                     }
 
 
