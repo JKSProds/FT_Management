@@ -1167,6 +1167,7 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
+                        if (LstFolhaObra.Where(fo => fo.IdFolhaObra == int.Parse(result["nopat"].ToString().Trim())).Count() == 0) { 
                         LstFolhaObra.Add(new FolhaObra()
                         {
                             EquipamentoServico = new Equipamento() { NumeroSerieEquipamento = result["serie"].ToString().Trim() },
@@ -1223,7 +1224,7 @@ namespace FT_Management.Models
                                 LstFolhaObra.Last().RubricaCliente = base64String;
                             }
 
-
+                        }
                         }
                     }
                 }
