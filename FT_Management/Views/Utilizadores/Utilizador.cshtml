@@ -145,11 +145,12 @@
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="button is-info is-success is-large is-fullwidth" onclick="startFaceID();Bulma('#modalFaceId').modal().open();isFaceDetectionEnabled=true;">
+                    <button type="button" class="button is-info @(Model.FaceRec.Length == 0 ? "is-success" : "is-warning") is-large is-fullwidth" onclick="startFaceID();Bulma('#modalFaceId').modal().open();isFaceDetectionEnabled=true;">
                         <span class="icon mr-3"> <i class="fa-regular fa-face-grin"></i></span>
-                        <span> Leitura Facial </span>
+                        <span>@(Model.FaceRec.Length == 0 ? "Inicializar Face ID" : "Repor Face ID")</span>
                     </button>
                     <hr>
+                    <p>Autenticação de 2 Fatores</p>
                     @if (string.IsNullOrEmpty(Model.SecondFactorAuthStamp))
                     {
                         <form method="post" style="width:100%" asp-controller="Utilizadores" asp-action="SecondFA"
