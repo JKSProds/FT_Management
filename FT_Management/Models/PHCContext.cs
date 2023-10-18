@@ -1299,7 +1299,7 @@ namespace FT_Management.Models
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     result.Read();
-                    if (result.HasRows) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
+                    if (result.HasRows & !string.IsNullOrEmpty(result["u_vestigio"].ToString())) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
                 }
             }
             catch (Exception ex)
