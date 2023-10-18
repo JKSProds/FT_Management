@@ -499,7 +499,7 @@ namespace FT_Management.Controllers
 
         //Adicionar Anexo da Marcacao
         [HttpPost]
-        public JsonResult Anexo(int id, IFormFile file)
+        public JsonResult Anexo(int id, int tipo, IFormFile file)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -510,8 +510,11 @@ namespace FT_Management.Controllers
                     MarcacaoStamp = phccontext.ObterMarcacao(id).MarcacaoStamp,
                     IdMarcacao = id,
                     AnexoMarcacao = true,
-                    NomeUtilizador = this.User.ObterNomeCompleto()
+                    NomeUtilizador = this.User.ObterNomeCompleto(),
+                    AnexoInstalacao = tipo > 0,
+                    TipoDocumento = tipo == 1 ? "GT" : tipo == 2 ? "AF" : "AR"
                 };
+                    
                 a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
 
                 string res = phccontext.CriarAnexoMarcacao(a);

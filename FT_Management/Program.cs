@@ -82,9 +82,11 @@ namespace FT_Management
 
             var app = builder.Build();
 
-            System.Globalization.CultureInfo customCulture = new CultureInfo("pt-PT");
-            customCulture.NumberFormat.NumberDecimalSeparator = ".";
-            CultureInfo.DefaultThreadCurrentCulture = customCulture;
+            CultureInfo cultura = new CultureInfo("pt-PT");
+            CultureInfo.DefaultThreadCurrentCulture = cultura;
+            CultureInfo.DefaultThreadCurrentUICulture = cultura;
+
+            cultura.NumberFormat.NumberDecimalSeparator = ".";
 
             app.UseAuthentication();
             app.UseHttpsRedirection();

@@ -448,6 +448,14 @@
                                                                 </span>
                                                             </button>
                                                         </p>
+                                                        <p class="control" style="width:100%">
+                                                            <button class="button is-info is-fullwidth is-outlined" name="btnAssinarGuia"
+                                                                    onclick="AssinarGuias('@item.StampFO')">
+                                                                <span class="icon is-small">
+                                                                    <i class="fas fa-signature"></i>
+                                                                </span>
+                                                            </button>
+                                                        </p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -552,12 +560,19 @@
                                             data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)">
                                                     <span>@a.DataCriacao.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
                                                 <td class="is-actions-cell">
+                                                            @if (!string.IsNullOrEmpty(a.TipoDocumento))
+                                                            {
+                                                        <button type="button" class="button is-info" disabled>
+                                                                    @a.TipoDocumento
+                                                        </button>
+                                                            }
                                                     <a class="button is-primary is-outlined"
                                                 onclick="window.open('@Url.Action("Anexo", "Pedidos", new { id = @a.AnexoStamp})')"><i
                                                     class="fas fa-eye" style="font-size:20px"></i></a>
                                                     <a class="button is-danger"
                                                 onclick="ApagarAnexo('@a.AnexoStamp')" id="btnApagarAnexo_@a.AnexoStamp"><i
                                                     class="fas fa-trash" style="font-size:20px"></i></a>
+ 
                                                 </td>
                                             </tr>
                                                 }
@@ -677,12 +692,21 @@
                  <div class="dz-message needsclick">
                         Largue vários anexos aqui para fazer o upload
                     </div>
+                    <input type="hidden" id="TipoFicheiro" name="tipo" />
                 </form>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="window.location.reload();" id="btnConfirmAddAnexo"
+            <button type="button" class="button is-info is-fullwidth" onclick="window.location.reload();" id="btnConfirmAddAnexo"
                 href="javascript:;">Fechar</button>
+            <div class="select">
+                <select onchange="document.getElementById('TipoFicheiro').value = this.value;">
+                    <option value="0">Marcação</option>
+                    <option value="1">Guia de Transporte</option>
+                    <option value="2">Auto de Formação</option>
+                    <option value="3">Auto de Receção</option>
+                </select>
+            </div>
         </footer>
     </div>
 </div>
@@ -777,6 +801,28 @@
             success: function (result) {
                 $(function () {
                     window.location.reload();
+                });
+            }
+        });
+    }
+
+    function AssinarGuias(stamp) {
+
+        var botoes = document.getElementsByName("btnAssinarGuia");
+        for (var i = 0; i < botoes.length; i++) {
+            botoes[i].classList.add("is-loading");
+        }
+        
+        $.ajax({
+            type: "POST",
+            url: "/FolhasObra/AssinarGuias/" + stamp,
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    notify('Guias Assinadas com Sucesso!');
+                    for (var i = 0; i < botoes.length; i++) {
+                        botoes[i].classList.remove("is-loading");
+                    }
                 });
             }
         });
