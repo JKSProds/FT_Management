@@ -198,7 +198,7 @@ namespace FT_Management.Controllers
         //Atualiza um utilizador em especifico
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         [HttpPut]
-        public ContentResult Utilizador(int id, Utilizador utilizador, int enable, int acessos, int dev, int admin, int dash, int api)
+        public ContentResult Utilizador(int id, Utilizador utilizador, int enable, int acessos, int dev, int admin, int dash, int api, string faceid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador t = context.ObterUtilizador(id);
@@ -226,6 +226,7 @@ namespace FT_Management.Controllers
             if (dev > 0) t.Dev = dev == 1;
             if (dash > 0) t.Dashboard = dash == 1;
             if (admin > 0) t.Admin = admin == 1;
+            if (!string.IsNullOrEmpty(faceid)) t.FaceRec = faceid;
 
             if (api == 1) return Content(context.NovaApiKey(t));
 
