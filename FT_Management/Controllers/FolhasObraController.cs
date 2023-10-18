@@ -178,6 +178,11 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
+            ModelState.Remove("Utilizador.Password");
+            ModelState.Remove("Marcacao.ResumoMarcacao");
+            ModelState.Remove("Marcacao.PrioridadeMarcacao");
+            ModelState.Remove("Marcacao.Referencia");
+
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.ValidarIntervencoes();
             fo.ValidarPecas(phccontext.ObterProdutosArmazem(fo.Utilizador.IdArmazem));
@@ -185,9 +190,11 @@ namespace FT_Management.Controllers
             fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
 
+            String[] res = { string.Join("\r\n", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)), phccontext.ValidarFolhaObra(fo) };
+
             _logger.LogDebug("Utilizador {1} [{2}] a validar uma nova folha de obra: Id Marcacao - {3}, Cliente - {4}, Equipamento - {5}, Tecnico - {6}, N. Int - {7}, N. Pecas {8}, Estado - {9}.", fo.Utilizador.NomeCompleto, fo.Utilizador.Id, fo.Marcacao.IdMarcacao, fo.ClienteServico.NomeCliente, fo.EquipamentoServico.NumeroSerieEquipamento, fo.Utilizador.NomeCompleto, fo.IntervencaosServico.Count(), fo.PecasServico.Count(), fo.EstadoFolhaObra);
 
-            return Content(phccontext.ValidarFolhaObra(fo));
+            return Json(res);
         }
 
         //Obter o email do cliente associado á folha de obra
