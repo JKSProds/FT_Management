@@ -1047,8 +1047,8 @@
         <header class="modal-card-head has-background-danger">
             <p class="modal-card-title">Informação</p>
         </header>
-        <section class="modal-card-body">
-            <div asp-validation-summary="ModelOnly" id="divMensagensErro" style="white-space: pre-line"></div>
+        <section class="modal-card-body" id="txtMensagensErro" style="white-space: pre-line">
+            <div asp-validation-summary="ModelOnly" id="txtMensagensErro" style="white-space: pre-line"></div>
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
@@ -1282,15 +1282,21 @@
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
                 Bulma('#modalValidarCliente').modal().close();
+                console.log(result);
                 $(function () {
-                    document.getElementById("txtMensagens").value = result;
-                    if (result != "") {
-                        Bulma('#modalValidacao').modal().open();
-                    } else {
-                        notify("Folha de Obra sem mensagens de validação!");
-                        document.getElementById('pageloader').classList.add('is-active');
-                        document.getElementById('frmAdicionar').submit();
-                    }
+                    if (result[0]) {
+                        document.getElementById("txtMensagensErro").innerHTML = result[0];
+                        Bulma('#modalMensagensErro').modal().open();
+                    } else { 
+                        document.getElementById("txtMensagens").value = result[1];
+                        if (result[1] != "") {
+                            Bulma('#modalValidacao').modal().open();
+                        } else {
+                            notify("Folha de Obra sem mensagens de validação!");
+                            document.getElementById('pageloader').classList.add('is-active');
+                            document.getElementById('frmAdicionar').submit();
+                        }
+                     }
                 });
             }
         });
@@ -1403,7 +1409,7 @@
             notifyError('Informação insuficiente nas observaçoes. Por favor insira mais informação!');
         } else {
             CriarCodigo('@Model.Marcacao.MarcacaoStamp');
-            time = 5 * 60;
+            time = 10 * 60;
             interval = setInterval(AtualizarTimer, 1000);
             document.getElementById('pb_timer').max = time;
             AtualizarTimer();

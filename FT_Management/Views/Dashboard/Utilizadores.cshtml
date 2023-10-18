@@ -309,10 +309,9 @@
             <section class="modal-card-body">
                 <input type="hidden" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
                 <input type="hidden" value="0" id='txtUtilizadorSelecionado'>
-            <div style="font-family: monospace; background: black; color: white; font-size: 16px; line-height: 22px; margin: 0; overflow: hidden">
-                <video id="video" playsinline class="video" style="position: fixed; top: 0; left: 0; z-index: 9"></video>
-                <canvas id="canvas" class="canvas" style="position: fixed; top: 0; left: 0; z-index: 10"></canvas>
-                <div id="log" style="overflow-y: scroll; height: 16.5rem"></div>
+            <div style="position: relative;">
+                <video id="video" playsinline class="video" width="600" height="337" style="width: 100%; border-radius: 20px;"></video>
+                <canvas id="canvas" class="canvas" style="position: absolute; top: 0; left: 0; z-index: 10"></canvas>
             </div>
             </section>
         </div>
@@ -333,197 +332,106 @@
 
     <script>
 
-    /**
- * FaceAPI Demo for Browsers
- * Loaded via `webcam.html`
- */
+    let isFaceDetectionEnabled = false; // Variável de controle
+    let detected = 0;
+    let nDetected = 0;
 
+    document.addEventListener("DOMContentLoaded", async function () {
+        const webcam = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const model = [@Html.Raw(Json.Serialize(Model.ToList()))];
 
-// configuration options
-const modelPath = '/lib/vladmandic/face-api/model'; // path to model folder that will be loaded using http
-const minScore = 0.2; // minimum score
-const maxResults = 5; // maximum number of results to return
-const recognitionThreshold = 0.55; // Adjust the threshold based on your needs
-    var detected = 0;
-    var notDetected = 0;
-let optionsSSDMobileNet;
-
-// helper function to draw detected faces
-function drawFaces(canvas, data, model) {
-
-  var color = 'red';
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // draw title
-  ctx.font = 'small-caps 20px "Segoe UI"';
-  for (const person of data) {
-    // draw box around each face
-    var name = recognizeFace(person.descriptor, model[0], recognitionThreshold).nomeCompleto;
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.globalAlpha = 0.6;
-    ctx.beginPath();
-    ctx.rect(person.detection.box.x, person.detection.box.y, person.detection.box.width, person.detection.box.height);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-    // draw text labels
-    const expression = Object.entries(person.expressions).sort((a, b) => b[1] - a[1]);
-    ctx.fillStyle = 'black';
-    ctx.fillText(`Nome: ${name}`, person.detection.box.x, person.detection.box.y - 77);
-    ctx.fillText(`gender: ${Math.round(100 * person.genderProbability)}% ${person.gender}`, person.detection.box.x, person.detection.box.y - 59);
-    ctx.fillText(`expression: ${Math.round(100 * expression[0][1])}% ${expression[0][0]}`, person.detection.box.x, person.detection.box.y - 41);
-    ctx.fillText(`age: ${Math.round(person.age)} years`, person.detection.box.x, person.detection.box.y - 23);
-    ctx.fillText(`roll:${person.angle.roll}° pitch:${person.angle.pitch}° yaw:${person.angle.yaw}°`, person.detection.box.x, person.detection.box.y - 5);
-    ctx.fillStyle = 'lightblue';
-
-    ctx.fillText(`Nome: ${name}`, person.detection.box.x, person.detection.box.y - 78);
-    ctx.fillText(`gender: ${Math.round(100 * person.genderProbability)}% ${person.gender}`, person.detection.box.x, person.detection.box.y - 60);
-    ctx.fillText(`expression: ${Math.round(100 * expression[0][1])}% ${expression[0][0]}`, person.detection.box.x, person.detection.box.y - 42);
-    ctx.fillText(`age: ${Math.round(person.age)} years`, person.detection.box.x, person.detection.box.y - 24);
-    ctx.fillText(`roll:${person.angle.roll}° pitch:${person.angle.pitch}° yaw:${person.angle.yaw}°`, person.detection.box.x, person.detection.box.y - 6);
-    // draw face points for each face
-    ctx.globalAlpha = 0.8;
-    ctx.fillStyle = 'lightblue';
-    const pointSize = 2;
-    for (let i = 0; i < person.landmarks.positions.length; i++) {
-      ctx.beginPath();
-      ctx.arc(person.landmarks.positions[i].x, person.landmarks.positions[i].y, pointSize, 0, 2 * Math.PI);
-      ctx.fill();
-    }
-  }
-}
-
-function recognizeFace(detectedDescriptor, model, threshold) {
-        for (let i = 0; i < model.length; i++) {
-            if (model[i].faceRec.split(' ').length == detectedDescriptor.length) {
-                const distance = faceapi.euclideanDistance(detectedDescriptor, model[i].faceRec.split(' '));
-
-        if (distance < threshold) {
-            // Face recognized as a match
-            return model[i];
-            }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video });
+            webcam.srcObject = stream;
+            webcam.play();
+        } catch (err) {
+            console.error("Erro ao acessar a webcam:", err);
         }
-    }
 
-    // Face not recognized
-    return 'UNKNOWN';
-}
-
-async function detectVideo(video, canvas) {
-  if (!video || video.paused) return false;
-        var model = [
-    @Html.Raw(Json.Serialize(Model.ToList()))
-            ];
-  const t0 = performance.now();
-  faceapi
-    .detectAllFaces(video, optionsSSDMobileNet)
-    .withFaceLandmarks()
-    .withFaceExpressions()
-    .withFaceDescriptors()
-    .withAgeAndGender()
-    .then((result) => {
-                if (result.length == 0 && document.getElementById('txtUtilizadorSelecionado').value != '0') {
-                    notDetected++;
-                } else if (document.getElementById('txtUtilizadorSelecionado').value != '0') {
-    drawFaces(canvas, result, model);
-                for (const person of result) {
-                    var p = recognizeFace(person.descriptor, model[0], recognitionThreshold);
-                    if (p.id == document.getElementById('txtUtilizadorSelecionado').value) detected++;
-                    if (p.id != document.getElementById('txtUtilizadorSelecionado').value) notDetected++;
-        }
-                
+        function recognizeFace(detectedDescriptors, model, threshold) {
+            for (let i = 0; i < model.length; i++) {
+                for (const person of detectedDescriptors) {
+                    if (model[i].faceRec.split(' ').length == person.descriptor.length) {
+                        const distance = faceapi.euclideanDistance(person.descriptor, model[i].faceRec.split(' '));
+                        console.log(model[i].faceRec.split(' '));
+                        if (distance < threshold) {
+                            // Face recognized as a match
+                            return model[i];
+                        }
+                    }
+                }
             }
-                if (notDetected > 40) {
-                    notifyError("Não foi detetado o utilizador selecionado!");
-                    notDetected = 0;
-                    detected = 0;
-                    FecharModal();
+
+            // Face not recognized
+            return 'UNKNOWN';
+        }
+
+        const startFaceDetection = async () => {
+            const videoElement = webcam;
+            const canvasElement = canvas;
+            canvasElement.width = videoElement.width;
+            canvasElement.height = videoElement.height;
+            const displaySize = { width: videoElement.width, height: videoElement.height };
+            faceapi.matchDimensions(canvasElement, displaySize);
+
+            // Carregue o modelo de detecção facial
+            await faceapi.nets.tinyFaceDetector.loadFromUri("/lib/vladmandic/face-api/model");
+            await faceapi.loadFaceLandmarkModel("/lib/vladmandic/face-api/model");
+            await faceapi.loadFaceRecognitionModel("/lib/vladmandic/face-api/model");
+
+            const detectionInterval = setInterval(async () => {
+                if (isFaceDetectionEnabled) {
+
+                    if (detected > 10) {
+                        notify("Detetado utilizador com sucesso!");
+                        RegistarAcesso();
+                        FecharModal();
+                    }
+
+                    if (nDetected > 40) {
+                        notifyError("Nao foi detetado o utilizador selecionado!");
+                        FecharModal();
+                    }
+
+                    const detections = await faceapi.detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+                    // Aqui, você pode verificar as detecções faciais e tomar medidas apropriadas
+                    if (resizedDetections.length > 0) {
+                        var p = recognizeFace(resizedDetections, model[0], 0.55);
+                        if (p.id == document.getElementById('txtUtilizadorSelecionado').value) {
+                            detected++;
+                        } else {
+                            nDetected++;
+                        }
+                    } else {
+                        nDetected++;
+                    }
+
+                    canvasElement
+                        .getContext("2d")
+                        .clearRect(0, 0, canvasElement.width, canvasElement.height);
+                    faceapi.draw.drawDetections(canvasElement, resizedDetections);
                 }
-                if (detected > 10) {
-                    detected = 0;
-                    notDetected = 0;
-                    RegistarAcesso();
-                    FecharModal();
-                }
-      requestAnimationFrame(() => detectVideo(video, canvas));
-      return true;
-    })
-  return false;
-}
+            }, 100);
+        };
 
-// just initialize everything and call main function
-async function setupCamera() {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  if (!video || !canvas) return null;
+        startFaceDetection();
+    });
 
- 
-  let stream;
-  const constraints = { audio: false, video: { facingMode: 'user', resizeMode: 'crop-and-scale' } };
-  if (window.innerWidth > window.innerHeight) constraints.video.width = { ideal: window.innerWidth };
-  else constraints.video.height = { ideal: window.innerHeight };
-  stream = await navigator.mediaDevices.getUserMedia(constraints);
-  if (stream) {
-    video.srcObject = stream;
-  } else {
-    return null;
-  }
-  const track = stream.getVideoTracks()[0];
-  const settings = track.getSettings();
-  if (settings.deviceId) delete settings.deviceId;
-  if (settings.groupId) delete settings.groupId;
-  if (settings.aspectRatio) settings.aspectRatio = Math.trunc(100 * settings.aspectRatio) / 100;
-  return new Promise((resolve) => {
-    video.onloadeddata = async () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      video.play();
-      detectVideo(video, canvas);
-      resolve(true);
-    };
-  });
-}
-
-async function setupFaceAPI() {
-  // load face-api models
-  // log('Models loading');
-  // await faceapi.nets.tinyFaceDetector.load(modelPath); // using ssdMobilenetv1
-  await faceapi.nets.ssdMobilenetv1.load(modelPath);
-  await faceapi.nets.ageGenderNet.load(modelPath);
-  await faceapi.nets.faceLandmark68Net.load(modelPath);
-  await faceapi.nets.faceRecognitionNet.load(modelPath);
-  await faceapi.nets.faceExpressionNet.load(modelPath);
-  optionsSSDMobileNet = new faceapi.SsdMobilenetv1Options({ minConfidence: minScore, maxResults });
-}
-
-async function main() {
-  
-  // default is webgl backend
-  await faceapi.tf.setBackend('webgl');
-  await faceapi.tf.ready();
-
-  // tfjs optimizations
-  if (faceapi.tf?.env().flagRegistry.CANVAS2D_WILL_READ_FREQUENTLY) faceapi.tf.env().set('CANVAS2D_WILL_READ_FREQUENTLY', true);
-  if (faceapi.tf?.env().flagRegistry.WEBGL_EXP_CONV) faceapi.tf.env().set('WEBGL_EXP_CONV', true);
-  if (faceapi.tf?.env().flagRegistry.WEBGL_EXP_CONV) faceapi.tf.env().set('WEBGL_EXP_CONV', true);
-
-  await setupFaceAPI();
-  await setupCamera();
-}
-
-        main();
 
   function AbrirModal(id, nome) {
-
     document.getElementById('txtUtilizadorSelecionado').value = id;
     document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
         Bulma('#modalPin').modal().open();
+      isFaceDetectionEnabled = true;
   }
 
     function FecharModal() {
-
+        isFaceDetectionEnabled = false;
+        nDetected = 0;
+        detected = 0;
         document.getElementById('txtUtilizadorSelecionado').value = '0';
         Bulma('#modalPin').modal().close();
         showDiv();

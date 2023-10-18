@@ -1167,6 +1167,7 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
+                        if (LstFolhaObra.Where(fo => fo.IdFolhaObra == int.Parse(result["nopat"].ToString().Trim())).Count() == 0) { 
                         LstFolhaObra.Add(new FolhaObra()
                         {
                             EquipamentoServico = new Equipamento() { NumeroSerieEquipamento = result["serie"].ToString().Trim() },
@@ -1223,7 +1224,7 @@ namespace FT_Management.Models
                                 LstFolhaObra.Last().RubricaCliente = base64String;
                             }
 
-
+                        }
                         }
                     }
                 }
@@ -1299,7 +1300,7 @@ namespace FT_Management.Models
                 using (SqlDataReader result = command.ExecuteReader())
                 {
                     result.Read();
-                    if (result.HasRows) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
+                    if (result.HasRows & !string.IsNullOrEmpty(result["u_vestigio"].ToString())) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
                 }
             }
             catch (Exception ex)

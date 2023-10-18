@@ -145,6 +145,10 @@
                             </div>
                         </div>
                     </div>
+                    <button type="button" class="button is-info is-success is-large is-fullwidth" onclick="startFaceID();Bulma('#modalFaceId').modal().open();isFaceDetectionEnabled=true;">
+                        <span class="icon mr-3"> <i class="fa-regular fa-face-grin"></i></span>
+                        <span> Leitura Facial </span>
+                    </button>
                     <hr>
                     @if (string.IsNullOrEmpty(Model.SecondFactorAuthStamp))
                     {
@@ -544,7 +548,117 @@
     </div>
 </section>
 
+<div class="modal" id="modalFaceId">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head" id="divHeaderModal">
+            <p class="modal-card-title" id="txtHeaderModal">Registar Face ID - @Model.NomeCompleto</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div style="position: relative;">
+                <video id="video" playsinline class="video" width="600" height="337" style="width: 100%; border-radius: 20px;"></video>
+                <canvas id="canvas" class="canvas" style="position: absolute; top: 0; left: 0; z-index: 10"></canvas>
+            </div>
+        </section>
+    </div>
+</div>
+
 <script>
+    let isFaceDetectionEnabled = false; // Variável de controle
+    let detected = 0;
+    let nDetected = 0;
+    let averageDescriptor = new Float32Array(128);
+
+    async function startFaceID() {
+
+        const webcam = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video });
+            webcam.srcObject = stream;
+            webcam.play();
+        } catch (err) {
+            console.error("Erro ao acessar a webcam:", err);
+        }
+
+        const startFaceDetection = async () => {
+            const videoElement = webcam;
+            const canvasElement = canvas;
+            canvasElement.width = videoElement.width;
+            canvasElement.height = videoElement.height;
+            const displaySize = { width: videoElement.width, height: videoElement.height };
+            faceapi.matchDimensions(canvasElement, displaySize);
+
+            // Carregue o modelo de detecção facial
+            await faceapi.nets.tinyFaceDetector.loadFromUri("/lib/vladmandic/face-api/model");
+            await faceapi.loadFaceLandmarkModel("/lib/vladmandic/face-api/model");
+            await faceapi.loadFaceRecognitionModel("/lib/vladmandic/face-api/model");
+
+            const detectionInterval = setInterval(async () => {
+                if (isFaceDetectionEnabled) {
+
+                    if (detected == 1) {
+                        notify("Detetado utilizador com sucesso!");
+                        averageDescriptor = averageDescriptor.map(value => value / detected);
+                        Bulma('#modalFaceId').modal().close();
+                        isFaceDetectionEnabled = false;
+                        console.log(averageDescriptor);
+                        $.ajax({
+                            type: "PUT",
+                            url: "/Utilizadores/Utilizador/@Model.Id",
+                            data: {"faceid": averageDescriptor.join(' ') },
+                            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                            success: function (result) {
+                                $(function () {
+                                    if (result == "1") {
+                                        notify("Utilizador atualizado com sucesso!");
+                                        window.location.reload();
+                                    } else {
+                                        notifyError("Erro ao atualizar o utilizador");
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    if (nDetected > 40) {
+                        notifyError("Nao foi detetado um utilziador com confiança!");
+                        Bulma('#modalFaceId').modal().close();
+                        isFaceDetectionEnabled = false;
+                    }
+
+                    const detections = await faceapi.detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+                    // Aqui, você pode verificar as detecções faciais e tomar medidas apropriadas
+                    if (resizedDetections.length > 0) {
+                        for (const detection of detections) {
+                            const confidenceScore = detection.detection.score;
+                            console.log(detection);
+                            if (confidenceScore > 0.98) {
+                                averageDescriptor = detection.descriptor;
+                                detected = 1;
+                            }
+                        }
+
+                    } else {
+                        nDetected++;
+                    }
+
+                    canvasElement
+                        .getContext("2d")
+                        .clearRect(0, 0, canvasElement.width, canvasElement.height);
+                    faceapi.draw.drawDetections(canvasElement, resizedDetections);
+                }
+            }, 100);
+        };
+
+        startFaceDetection();
+        }
+
+
     function copiarTexto(id) {
 
         notify('Texto copiado com sucesso!');
