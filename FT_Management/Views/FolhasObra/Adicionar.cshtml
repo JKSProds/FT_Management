@@ -1285,8 +1285,8 @@
                 console.log(result);
                 $(function () {
                     if (result[0]) {
-                        Bulma('#modalMensagensErro').modal().open();
                         document.getElementById("txtMensagensErro").innerHTML = result[0];
+                        Bulma('#modalMensagensErro').modal().open();
                     } else { 
                         document.getElementById("txtMensagens").value = result[1];
                         if (result[1] != "") {
@@ -1409,7 +1409,7 @@
             notifyError('Informação insuficiente nas observaçoes. Por favor insira mais informação!');
         } else {
             CriarCodigo('@Model.Marcacao.MarcacaoStamp');
-            time = 5 * 60;
+            time = 10 * 60;
             interval = setInterval(AtualizarTimer, 1000);
             document.getElementById('pb_timer').max = time;
             AtualizarTimer();
