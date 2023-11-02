@@ -1293,14 +1293,17 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select u_vestigio from bo where pastamp = (select pastamp from pa where nopat=" + IdFolhaObra + ");", conn)
+                SqlCommand command = new SqlCommand("select u_vestigio from bo where pastamp = (select pastamp from pa where nopat=" + IdFolhaObra + ") order by ousrinis desc;", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
                 using (SqlDataReader result = command.ExecuteReader())
                 {
-                    result.Read();
-                    if (result.HasRows & !string.IsNullOrEmpty(result["u_vestigio"].ToString())) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
+                    while (result.Read())
+                    {
+                        if (!string.IsNullOrEmpty(result["u_vestigio"].ToString())) return FicheirosContext.ObterCaminhoAssinatura(result["u_vestigio"].ToString());
+                    }
+                    
                 }
             }
             catch (Exception ex)
