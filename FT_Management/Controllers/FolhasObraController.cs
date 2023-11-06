@@ -334,22 +334,5 @@ namespace FT_Management.Controllers
             return Json(c.Estado + "|" + c.ValidadoPor.NomeCompleto);
         }
 
-        //Assinar Guias
-        [HttpPost]
-        public ActionResult AssinarGuias(string id)
-        {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            if (string.IsNullOrEmpty(id)) return StatusCode(500);
-
-            _logger.LogDebug("Utilizador {1} [{2}] a tentar assinar as guias associadas a uma marcação: Codigo - {3}.", u.NomeCompleto, u.Id, id);
-            FolhaObra fo = phccontext.ObterFolhaObra(id);
-            fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
-
-            return StatusCode(phccontext.AtualizarAnexosAssinatura(fo) ? 200 : 500);
-        }
-
     }
 }

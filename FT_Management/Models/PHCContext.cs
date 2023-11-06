@@ -1737,14 +1737,15 @@ namespace FT_Management.Models
                         IdMarcacao = int.Parse(result["num_marcacao"].ToString()),
                         NomeFicheiro = result["nome_ficheiro"].ToString(),
                         NomeUtilizador = result["ousrinis"].ToString(),
-                        AnexoMarcacao = result["marcacao"].ToString() == "1",
-                        AnexoAssinatura = result["assinatura"].ToString() == "1",
-                        AnexoInstalacao = result["instalacao"].ToString() == "1",
+                        AnexoMarcacao = result["marcacao"].ToString() == "True",
+                        AnexoAssinatura = result["assinatura"].ToString() == "True",
+                        AnexoInstalacao = result["instalacao"].ToString() == "True",
                         AnexoPeca = result["peca"].ToString() == "1",
                         RefPeca = result["ref"].ToString(),
-                        DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + result["ousrhora"].ToString()),
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Split(" ").First() + " " + result["ousrhora"].ToString()),
                         DescricaoFicheiro = result["Titulo"].ToString(),
-                        AnexoEmail = result["email"].ToString() == "1"
+                        AnexoEmail = result["email"].ToString() == "True",
+                        TipoDocumento = result["Tipo"].ToString().Trim(),
                     });
                 }
                 conn.Close();
@@ -1788,8 +1789,8 @@ namespace FT_Management.Models
                         RefPeca = result["ref"].ToString(),
                         DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Split(" ").First() + " " + result["ousrhora"].ToString()),
                         DescricaoFicheiro = result["Titulo"].ToString(),
-                        AnexoEmail = result["email"].ToString() == "True"
-
+                        AnexoEmail = result["email"].ToString() == "True",
+                        TipoDocumento = result["Tipo"].ToString().Trim(),
                     });
                 }
                 conn.Close();
@@ -1803,6 +1804,7 @@ namespace FT_Management.Models
 
         public bool AtualizarAnexosAssinatura(FolhaObra fo)
         {
+            bool res = false;
             try
             {
                 foreach (MarcacaoAnexo a in fo.Marcacao.LstAnexos.Where(a => a.AnexoInstalacao))
@@ -1845,6 +1847,7 @@ namespace FT_Management.Models
                     }
 
                     FicheirosContext.MoverFicheiro(novoPdfFilePath, pdfFilePath);
+                    res = true;
                 }
             }
             catch (Exception)
@@ -1852,7 +1855,7 @@ namespace FT_Management.Models
 
                 return false;
             }
-            return true;
+            return res;
         }
 
 

@@ -625,5 +625,28 @@ namespace FT_Management.Controllers
 
             return Redirect(new Uri(url).AbsoluteUri);
         }
+
+        //Assinar Guias
+        [HttpPost]
+        public ActionResult AssinarGuias(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (string.IsNullOrEmpty(id)) return StatusCode(500);
+
+            MarcacaoAnexo a = phccontext.ObterAnexo(id);
+            Marcacao m = phccontext.ObterMarcacao(a.MarcacaoStamp);
+
+            if (m.LstFolhasObra.Count() == 0) return StatusCode(500);
+
+            FolhaObra fo = phccontext.ObterFolhaObraSimples(m.LstFolhasObra.Last().StampFO);
+
+            m.LstAnexos = new List<MarcacaoAnexo> { a };
+            fo.Marcacao = m;
+
+            return StatusCode(phccontext.AtualizarAnexosAssinatura(fo) ? 200 : 500);
+        }
     }
 }
