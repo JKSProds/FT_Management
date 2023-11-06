@@ -1125,7 +1125,7 @@ namespace FT_Management.Models
             //ANEXOS
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
             if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
-            if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3 && fo.FecharMarcacao) res += "É obrigatorio inserir pelo menos 3 anexos ao finalizar uma instalação!\r\n";
+            if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3 && fo.FecharMarcacao && !fo.Marcacao.GuiasInstalacao) res += "É obrigatorio inserir pelo menos 3 anexos ao finalizar uma instalação!\r\n";
 
             //PEÇAS
             if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) res += "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!\r\n";

@@ -148,7 +148,7 @@ namespace FT_Management.Controllers
                     phccontext.AtualizaMarcacao(m);
                     phccontext.FecharFolhaObra(fo);
                     phccontext.CriarAnexosFolhaObra(fo);
-                    if (fo.FecharMarcacao && fo.Instalação) phccontext.AtualizarAnexosAssinatura(fo);
+                    if (fo.FecharMarcacao && fo.Instalação && fo.Marcacao.GuiasInstalacao) phccontext.AtualizarAnexosAssinatura(fo);
                     if (fo.PecasServico.Where(p => p.Garantia).Count() > 0) phccontext.CriarRMAFLinhas(phccontext.CriarRMAF(fo)[2], fo);
                     fo = phccontext.ObterFolhaObra(fo.IdFolhaObra);
 

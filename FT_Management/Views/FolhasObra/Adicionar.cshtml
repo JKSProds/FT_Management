@@ -719,6 +719,7 @@
                                 <span class="check is-info"></span>
                                 <span class="control-label">
                                     Confirmo e declaro-me satisfeito com o serviço efetuado!
+                                    @(Model.Marcacao.GuiasInstalacao && Model.FecharMarcacao && Model.Instalação ? "Ao assinar esta folha de obra, estará também a assinar as guias associadas a esta instalação!" : "")
                                 </span>
                             </label>
                         </div>
@@ -1282,7 +1283,6 @@
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
                 Bulma('#modalValidarCliente').modal().close();
-                console.log(result);
                 $(function () {
                     if (result[0]) {
                         document.getElementById("txtMensagensErro").innerHTML = result[0];
