@@ -95,7 +95,7 @@
         public bool Contrato { get { return (string.IsNullOrEmpty(this.JustExtraContrato) && (this.Cliente == null ? false : this.Cliente.Contrato) && TipoEquipamento == "Pesagem"); } }
         [Display(Name = "Motivo - Extra Contrato")]
         public string JustExtraContrato { get; set; }
-        public bool GuiasInstalacao { get { return LstAnexos.Where(a => a.AnexoInstalacao && !string.IsNullOrEmpty(a.TipoDocumento)).Count() > 0; } }
+        public bool GuiasInstalacao { get { return LstAnexos == null ? false : LstAnexos.Where(a => a.AnexoInstalacao && !string.IsNullOrEmpty(a.TipoDocumento)).Count() > 0; } }
         public int IdTecnico { get; set; }
         [Display(Name = "Técnico")]
         public Utilizador Tecnico { get; set; }

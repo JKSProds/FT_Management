@@ -1310,7 +1310,7 @@ namespace FT_Management.Models
             {
                 Console.WriteLine("Não foi possivel obter a rubrica!\r\n(Exception: " + ex.Message + ")");
             }
-            return "wwwroot/img/no_photo.png";
+            return "";
         }
 
         private List<Intervencao> ObterIntervencoes(string SQL_Query)
