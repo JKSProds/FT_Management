@@ -541,7 +541,7 @@
 
                                                 @foreach (var a in Model.LstAnexos)
                                                 {
-                                            <tr>
+                                            <tr id="rAnexo_@a.AnexoStamp">
                                                 <td
                                             data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().NomeUtilizador)">
                                                     <span>@a.NomeUtilizador</span></td>
@@ -552,12 +552,14 @@
                                             data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().DataCriacao)">
                                                     <span>@a.DataCriacao.ToString("dd-MM-yyyy HH:mm:ss")</span></td>
                                                 <td class="is-actions-cell">
-                                                            @if (!string.IsNullOrEmpty(a.TipoDocumento) && a.AnexoInstalacao)
+                                                            @if (!string.IsNullOrEmpty(a.TipoDocumento))
                                                             {
-                                                            <button type="button" class="button is-info" disabled>
-                                                                        @a.TipoDocumento
-                                                            </button>
-                                                            <button class="button is-info is-outlined" name="btnAssinarGuia"
+                                                                <button type="button" class="button is-info" disabled>
+                                                                    @a.TipoDocumento
+                                                                </button>
+                                                            }
+                                                            @if (a.AnexoInstalacao) {
+                                                            <button class="button is-info is-outlined" id="btnAssinarGuia_@a.AnexoStamp"
                                                                     onclick="AssinarGuias('@a.AnexoStamp')">
                                                                 <span class="icon is-small">
                                                                     <i class="fas fa-signature"></i>
@@ -800,42 +802,32 @@
             traditional: true,
             success: function (result) {
                 $(function () {
-                    window.location.reload();
+                    document.getElementById('rAnexo_' + stamp).remove();
+                    notify('Anexo removido com sucesso!')
                 });
             }
         });
     }
 
     function AssinarGuias(stamp) {
-
-        var botoes = document.getElementsByName("btnAssinarGuia");
-        for (var i = 0; i < botoes.length; i++) {
-            botoes[i].classList.add("is-loading");
-        }
-        
+        document.getElementById('btnAssinarGuia_' + stamp).classList.add("is-loading");
         $.ajax({
             type: "POST",
             url: "/Pedidos/AssinarGuias/" + stamp,
             traditional: true,
             success: function (result) {
                 $(function () {
-                    notify('Guias Assinadas com Sucesso!');
-                    for (var i = 0; i < botoes.length; i++) {
-                        botoes[i].classList.remove("is-loading");
-                    }
+                    notify('Guia Assinada com Sucesso!');
+                    document.getElementById('btnAssinarGuia_' + stamp).remove();
                 });
             },
             error: function (response) {
                 notifyError('Ocorreu um erro ao assinar as guias. Por favor verifique se existem folhas de obra!');
-                for (var i = 0; i < botoes.length; i++) {
-                    botoes[i].classList.remove("is-loading");
-                }
+                document.getElementById('btnAssinarGuia_' + stamp).classList.remove("is-loading");
             },
             failure: function (response) {
                 notifyError('Falha ao assinar as guias!');
-                for (var i = 0; i < botoes.length; i++) {
-                    botoes[i].classList.remove("is-loading");
-                }
+                document.getElementById('btnAssinarGuia_' + stamp).classList.remove("is-loading");
             }
         });
     }

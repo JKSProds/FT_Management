@@ -1835,12 +1835,16 @@ namespace FT_Management.Models
                         }
 
                         // Adicionar imagem
-                        Image imagem = Image.GetInstance(ObterRubrica(fo.IdFolhaObra));
-                        imagem.ScaleToFit(200, 200);
-                        imagem.SetAbsolutePosition(400, 300);
-                        cb.AddImage(imagem);
-
-                        stamper.Close();
+                        string RubricaPath = ObterRubrica(fo.IdFolhaObra);
+                        if (File.Exists(RubricaPath))
+                        {
+                            Image imagem = Image.GetInstance(File.ReadAllBytes(RubricaPath));
+                            imagem.ScaleToFit(200, 200);
+                            imagem.SetAbsolutePosition(400, 300);
+                            cb.AddImage(imagem);
+                        }
+                        
+                       stamper.Close();
                         reader.Close();
 
                         ExecutarQuery("update u_anexos_mar set instalacao='0' where u_anexos_marstamp='" + a.AnexoStamp + "' ");

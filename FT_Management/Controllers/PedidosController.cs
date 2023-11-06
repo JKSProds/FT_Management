@@ -512,7 +512,7 @@ namespace FT_Management.Controllers
                     AnexoMarcacao = true,
                     NomeUtilizador = this.User.ObterNomeCompleto(),
                     AnexoInstalacao = tipo > 0,
-                    TipoDocumento = tipo == 1 ? "GT" : tipo == 2 ? "AF" : "AR"
+                    TipoDocumento = tipo == 1 ? "GT" : tipo == 2 ? "AF" : tipo == 3 ? "AR" : ""
                 };
                     
                 a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
