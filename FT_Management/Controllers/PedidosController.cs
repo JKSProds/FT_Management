@@ -155,7 +155,7 @@ namespace FT_Management.Controllers
                     End = new CalDateTime(d.AddMinutes(30)),
                     LastModified = new CalDateTime(DateTime.Now),
                     Uid = m.IdMarcacao.ToString(),
-                    Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
+                    Description = "### " + m.IdMarcacao + " - " + m.Referencia + " - " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
                     Summary = m.EmojiEstado + m.Cliente.NomeCliente,
                     Url = new Uri(m.GetUrl),
                     Location = m.Cliente.MoradaCliente
