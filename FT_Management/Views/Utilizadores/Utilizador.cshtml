@@ -236,8 +236,9 @@
                         <div class="field-label is-normal"><label class="label">Calendário de Férias</label></div>
                         <div class="field-body">
                             <div class="field" style="width:100%">
-                                <div class="control"><input type="text" class="input" id="txtFerias" disabled
-                                        value="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))">
+                                <div class="control">
+                                    <input type="text" class="input" id="txtFerias" disabled
+                                           value="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))">
                                 </div>
                             </div>
                             <div class="field has-addons">
@@ -248,7 +249,31 @@
                                 </p>
                                 <p class="control">
                                     <a class="button is-primary"
-                                        href="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))">
+                                       href="@(new Uri("http://"+@Context.Request.Host+"/Ferias/Calendario?ApiKey=" + @Model.ApiKey.Key))">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal"><label class="label">Calendário de Instalações</label></div>
+                        <div class="field-body">
+                            <div class="field" style="width:100%">
+                                <div class="control">
+                                    <input type="text" class="input" id="txtInstalacoes" disabled
+                                           value="@(new Uri("http://"+@Context.Request.Host+"/Pedidos/CalendarioInstalacoes?ApiKey=" + @Model.ApiKey.Key))">
+                                </div>
+                            </div>
+                            <div class="field has-addons">
+                                <p class="control">
+                                    <button class="button is-info" onclick="copiarTexto('txtInstalacoes');">
+                                        Copiar
+                                    </button>
+                                </p>
+                                <p class="control">
+                                    <a class="button is-primary"
+                                       href="@(new Uri("http://"+@Context.Request.Host+"/Pedidos/CalendarioInstalacoes?ApiKey" + @Model.ApiKey.Key))">
                                         <i class="fa-solid fa-plus"></i>
                                     </a>
                                 </p>
