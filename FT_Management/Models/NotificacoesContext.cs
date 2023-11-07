@@ -16,6 +16,61 @@ namespace FT_Management.Models
         {
             return c.TipoCliente == "Indústria";
         }
+
+        public static string ObterSoapEnvComentario(string Incidente, string Comentario, string Estado, string NomeUtilizador)
+        {
+            return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
+                        <soapenv:Header>
+                            <urn:AuthenticationInfo>
+                                <urn:userName>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:userName> -- utilizador de integração
+                                <urn:password>"+ ConfigurationManager.AppSetting["Sonae:Password"] + @"</urn:password> -- password do user no ITSM
+                            </urn:AuthenticationInfo>
+                        </soapenv:Header>
+                            <soapenv:Body>
+                            <urn:HelpDesk_Modify_Service>
+                                <urn:Action>MODIFY</urn:Action>
+                                <urn:Integration>FoodTec</urn:Integration> -- chave integração
+                                <urn:Incident_Number>" +Incidente + @"</urn:Incident_Number> -- número do incidente
+                                <urn:AssigneeID>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:AssigneeID> -- userid do assignee do registo
+                                <urn:AssigneeName>FoodTec ITSM (Integracao)</urn:AssigneeName> -- fullname do assignee
+                                <urn:Work_Info_Notes>["+NomeUtilizador+"] (" + Estado.ToUpper() + ") - " + Comentario+@"</urn:Work_Info_Notes> -- descrição do comentário
+                                <urn:Work_Info_Type>General Information</urn:Work_Info_Type>
+                                <urn:Work_Info_View_Access>Public</urn:Work_Info_View_Access> -- tipo do comentário (Internal ou Public)
+                            </urn:HelpDesk_Modify_Service>
+                        </soapenv:Body>
+                    </soapenv:Envelope>";
+        }
+
+        public static string ObterSoapEnvFechar(string Incidente, string Comentario, string NomeUtilizador)
+        {
+            return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
+                       <soapenv:Header>
+                          <urn:AuthenticationInfo>
+                             <urn:userName>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:userName> -- utilizador de integração
+                             <urn:password>"+ ConfigurationManager.AppSetting["Sonae:Password"] + @"</urn:password> -- password do user no ITSM
+                          </urn:AuthenticationInfo>
+                       </soapenv:Header>
+                        <soapenv:Body>
+                          <urn:HelpDesk_Modify_Service>
+                             <urn:Action>MODIFY</urn:Action>
+                             <urn:Integration>FoodTec</urn:Integration> -- chave integração
+                             <urn:Incident_Number>" +Incidente + @"</urn:Incident_Number> -- número do incidente
+                             <urn:AssigneeID>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:AssigneeID> -- userid do assignee do registo
+                             <urn:AssigneeName>FoodTec ITSM (Integracao)</urn:AssigneeName> -- fullname do assignee
+                             <urn:Closure_Product_Category_Tier1>Catalog</urn:Closure_Product_Category_Tier1> -- categoria 1 de produto de resolução
+                             <urn:Closure_Product_Category_Tier2>Bit</urn:Closure_Product_Category_Tier2> -- categoria 2 de produto de resolução
+                             <urn:Closure_Product_Category_Tier3>Product</urn:Closure_Product_Category_Tier3> -- categoria 3 de produto de resolução
+                             <urn:Closure_Product_Model_Version>Balança</urn:Closure_Product_Model_Version> -- nome produto
+                             <urn:Resolution>["+NomeUtilizador+"] " + Comentario+@"</urn:Resolution> -- notas de resolução
+                             <urn:Resolution_Category>Dados Referencia</urn:Resolution_Category> -- root cause nível 1
+                             <urn:Resolution_Category_Tier_2>Assincronismo de informação</urn:Resolution_Category_Tier_2> -- root cause nível 2
+                             <urn:Resolution_Category_Tier_3></urn:Resolution_Category_Tier_3> -- root cause nível 3
+                             <urn:Status>Resolved</urn:Status> -- Status
+                             <urn:Status_Reason>No Further Action Required</urn:Status_Reason> --status reason    
+                           </urn:HelpDesk_Modify_Service>
+                       </soapenv:Body>
+                    </soapenv:Envelope>";
+        }
     }
     public static class ChatContext
     {
@@ -393,7 +448,7 @@ namespace FT_Management.Models
             {
                 string Assunto = "[Ticket#" + fo.ReferenciaServico + "] ";
                 Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
-                EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
+                EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico.ReplaceLineEndings("<br>"), ObterEmailCC(1), fo.Utilizador);
             }
 
             return true;
@@ -406,7 +461,43 @@ namespace FT_Management.Models
             {
                 string Assunto = "[" + fo.ReferenciaServico + "] ";
                 Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
-                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico, ObterEmailCC(1), fo.Utilizador);
+                bool ApiUpdate = (EnviarSoapSonae(Estado == 1 ? NotificacaoContext.ObterSoapEnvFechar(m.Referencia, fo.RelatorioServico, fo.Utilizador.NomeCompleto) : NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, Estado == 2 ? "Encaminhar" : "Pendente", fo.Utilizador.NomeCompleto)).Result) ;
+                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico + "<br><br>" + (ApiUpdate ? "✅" : "😞") + " UPDATE API SONAE", ObterEmailCC(1), fo.Utilizador) ;
+            }
+              
+            return true;
+        }
+
+        public async static Task<bool> EnviarSoapSonae(string soapRequest)
+        {
+            string url = ConfigurationManager.AppSetting["Sonae:URL"];
+            string soapAction = ""; // Replace with your SOAP action
+
+                try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    // Create the HttpContent for the SOAP request
+                    HttpContent content = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+
+                    // Add SOAPAction header
+                    content.Headers.Add("SOAPAction", soapAction);
+
+                    // Make the POST request and get the response
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("SOAP request failed with status code: " + response.StatusCode + ". \r\n\r\n" + responseContent);
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+                return false;
             }
 
             return true;
