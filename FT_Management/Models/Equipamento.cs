@@ -41,6 +41,8 @@
         [Display(Name = "Data de Venda")]
         public DateTime DataVenda { get; set; }
 
+        public bool Movimentar { get { return (this.MarcaEquipamento == "Subic" && this.ModeloEquipamento == "Técnico"); } }
+
         public Equipamento()
         {
             NumeroSerieEquipamento = "";

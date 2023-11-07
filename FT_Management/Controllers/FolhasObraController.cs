@@ -98,10 +98,7 @@ namespace FT_Management.Controllers
 
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
-
-            if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes) && !fo.EmGarantia) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!"); 
             fo.ValidarIntervencoes();
-            if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim");
             if (fo.Contrato) fo.JustExtraContrato = "";
 
             ModelState.Remove("Utilizador.Password");
@@ -135,8 +132,8 @@ namespace FT_Management.Controllers
                 if (fo.EstadoFolhaObra == 2) m.EstadoMarcacaoDesc = "Pedido Peças";
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
                 if (fo.EstadoFolhaObra == 4) m.EstadoMarcacaoDesc = "Reagendar";
-               
 
+                phccontext.ValidarPecas(fo);
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)
                 {
@@ -189,6 +186,16 @@ namespace FT_Management.Controllers
             fo.ClienteServico = phccontext.ObterClienteSimples(fo.ClienteServico.IdCliente, fo.ClienteServico.IdLoja);
             fo.EquipamentoServico = phccontext.ObterEquipamentoSimples(fo.EquipamentoServico.EquipamentoStamp);
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
+
+            if (fo.EmGarantia != fo.EquipamentoServico.Garantia && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Necessario identificar o motivo para alteração de garantia!");
+            if ((fo.EstadoFolhaObra == 4) && string.IsNullOrEmpty(fo.SituacoesPendentes)) ModelState.AddModelError("SituacoesPendentes", "Estado da folha de obra pendente. Necessita de justificar!");
+            if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim.");
+            if (fo.Marcacao.Contrato != fo.Contrato && string.IsNullOrEmpty(fo.JustExtraContrato)) ModelState.AddModelError("JustExtraContrato", "É obrigatório escolher pelo menos um dos motivos para estar fora do contrato!");
+            if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!");
+            if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!");
+            if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3 && fo.FecharMarcacao && !fo.Marcacao.GuiasInstalacao) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 3 anexos ao finalizar uma instalação!");
+            if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!");
+
 
             String[] res = { string.Join("\r\n", ModelState.Where(e => e.Value.Errors.Count() > 0).Select(e => e.Value.Errors.First().ErrorMessage)), phccontext.ValidarFolhaObra(fo) };
 

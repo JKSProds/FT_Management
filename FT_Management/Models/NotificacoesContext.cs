@@ -62,8 +62,8 @@ namespace FT_Management.Models
                              <urn:Closure_Product_Category_Tier3>Product</urn:Closure_Product_Category_Tier3> -- categoria 3 de produto de resolução
                              <urn:Closure_Product_Model_Version>Balança</urn:Closure_Product_Model_Version> -- nome produto
                              <urn:Resolution>["+NomeUtilizador+"] " + Comentario+@"</urn:Resolution> -- notas de resolução
-                             <urn:Resolution_Category>Dados Referencia</urn:Resolution_Category> -- root cause nível 1
-                             <urn:Resolution_Category_Tier_2>Assincronismo de informação</urn:Resolution_Category_Tier_2> -- root cause nível 2
+                             <urn:Resolution_Category>Generic</urn:Resolution_Category> -- root cause nível 1
+                             <urn:Resolution_Category_Tier_2>Causa não identificada</urn:Resolution_Category_Tier_2> -- root cause nível 2
                              <urn:Resolution_Category_Tier_3></urn:Resolution_Category_Tier_3> -- root cause nível 3
                              <urn:Status>Resolved</urn:Status> -- Status
                              <urn:Status_Reason>No Further Action Required</urn:Status_Reason> --status reason    
@@ -441,6 +441,17 @@ namespace FT_Management.Models
 
             return true;
         }
+
+        public static bool EnviarEmailFolhaObraPecasSemStock(string EmailDestino, FolhaObra fo, string Pecas)
+        {
+            string Assunto = "Folha de Obra (Peças Sem Stock) - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            string Mensagem = "Foi realizada uma folha de obra no dia: <b>" + fo.DataServico.ToShortDateString() + "</b> onde foram inseridas peças sem stock no armazém do técnico.<br><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico).Distinct()) + "</b><br>Cliente: <b>" + fo.ClienteServico.NomeCliente + "(" + fo.ClienteServico.IdCliente + " - " + fo.ClienteServico.IdLoja+ ")</b>.";
+            Mensagem += "<br><br>Lista de Peças:<br>" + Pecas.ReplaceLineEndings("<br>");
+            EnviarMail(EmailDestino, Assunto, Mensagem, null, ObterEmailCC(1));
+
+            return true;
+        }
+
         public static bool EnviarEmailMarcacaoPD(FolhaObra fo, Marcacao m, int Estado)
         {
             //Estado 1 - Concluido | 2 - Encaminhar | 3 - Pendente
