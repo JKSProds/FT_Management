@@ -1125,7 +1125,7 @@ namespace FT_Management.Models
             //ANEXOS
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) res += "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!\r\n";
             if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) res += "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!\r\n";
-            if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3 && fo.FecharMarcacao) res += "É obrigatorio inserir pelo menos 3 anexos ao finalizar uma instalação!\r\n";
+            if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3 && fo.FecharMarcacao && !fo.Marcacao.GuiasInstalacao) res += "É obrigatorio inserir pelo menos 3 anexos ao finalizar uma instalação!\r\n";
 
             //PEÇAS
             if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) res += "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!\r\n";
@@ -1310,7 +1310,7 @@ namespace FT_Management.Models
             {
                 Console.WriteLine("Não foi possivel obter a rubrica!\r\n(Exception: " + ex.Message + ")");
             }
-            return "wwwroot/img/no_photo.png";
+            return "";
         }
 
         private List<Intervencao> ObterIntervencoes(string SQL_Query)
@@ -1737,14 +1737,15 @@ namespace FT_Management.Models
                         IdMarcacao = int.Parse(result["num_marcacao"].ToString()),
                         NomeFicheiro = result["nome_ficheiro"].ToString(),
                         NomeUtilizador = result["ousrinis"].ToString(),
-                        AnexoMarcacao = result["marcacao"].ToString() == "1",
-                        AnexoAssinatura = result["assinatura"].ToString() == "1",
-                        AnexoInstalacao = result["instalacao"].ToString() == "1",
+                        AnexoMarcacao = result["marcacao"].ToString() == "True",
+                        AnexoAssinatura = result["assinatura"].ToString() == "True",
+                        AnexoInstalacao = result["instalacao"].ToString() == "True",
                         AnexoPeca = result["peca"].ToString() == "1",
                         RefPeca = result["ref"].ToString(),
-                        DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + result["ousrhora"].ToString()),
+                        DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Split(" ").First() + " " + result["ousrhora"].ToString()),
                         DescricaoFicheiro = result["Titulo"].ToString(),
-                        AnexoEmail = result["email"].ToString() == "1"
+                        AnexoEmail = result["email"].ToString() == "True",
+                        TipoDocumento = result["Tipo"].ToString().Trim(),
                     });
                 }
                 conn.Close();
@@ -1788,8 +1789,8 @@ namespace FT_Management.Models
                         RefPeca = result["ref"].ToString(),
                         DataCriacao = DateTime.Parse(result["ousrdata"].ToString().Split(" ").First() + " " + result["ousrhora"].ToString()),
                         DescricaoFicheiro = result["Titulo"].ToString(),
-                        AnexoEmail = result["email"].ToString() == "True"
-
+                        AnexoEmail = result["email"].ToString() == "True",
+                        TipoDocumento = result["Tipo"].ToString().Trim(),
                     });
                 }
                 conn.Close();
@@ -1803,6 +1804,7 @@ namespace FT_Management.Models
 
         public bool AtualizarAnexosAssinatura(FolhaObra fo)
         {
+            bool res = false;
             try
             {
                 foreach (MarcacaoAnexo a in fo.Marcacao.LstAnexos.Where(a => a.AnexoInstalacao))
@@ -1833,18 +1835,23 @@ namespace FT_Management.Models
                         }
 
                         // Adicionar imagem
-                        Image imagem = Image.GetInstance(ObterRubrica(fo.IdFolhaObra));
-                        imagem.ScaleToFit(200, 200);
-                        imagem.SetAbsolutePosition(400, 300);
-                        cb.AddImage(imagem);
-
-                        stamper.Close();
+                        string RubricaPath = ObterRubrica(fo.IdFolhaObra);
+                        if (File.Exists(RubricaPath))
+                        {
+                            Image imagem = Image.GetInstance(File.ReadAllBytes(RubricaPath));
+                            imagem.ScaleToFit(200, 200);
+                            imagem.SetAbsolutePosition(400, 300);
+                            cb.AddImage(imagem);
+                        }
+                        
+                       stamper.Close();
                         reader.Close();
 
                         ExecutarQuery("update u_anexos_mar set instalacao='0' where u_anexos_marstamp='" + a.AnexoStamp + "' ");
                     }
 
                     FicheirosContext.MoverFicheiro(novoPdfFilePath, pdfFilePath);
+                    res = true;
                 }
             }
             catch (Exception)
@@ -1852,7 +1859,7 @@ namespace FT_Management.Models
 
                 return false;
             }
-            return true;
+            return res;
         }
 
 
@@ -2007,6 +2014,10 @@ namespace FT_Management.Models
         public List<Marcacao> ObterMarcacoes(int IdTecnico, DateTime DataInicio, DateTime DataFim)
         {
             return ObterMarcacoes("select * from v_marcacoes where tecnno=" + IdTecnico + " and data between '" + DataInicio.ToString("yyyyMMdd") + "' and '" + DataFim.ToString("yyyyMMdd") + "'", false, false, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
+        }
+        public List<Marcacao> ObterMarcacoesInstalacao(DateTime DataInicio, DateTime DataFim)
+        {
+            return ObterMarcacoes("select * from v_marcacoes where tipos='Instalação' and data between '" + DataInicio.ToString("yyyyMMdd") + "' and '" + DataFim.ToString("yyyyMMdd") + "'", false, false, true, false, false, false).OrderBy(m => m.IdMarcacao).ToList();
         }
         public List<Marcacao> ObterMarcacoes(Cliente c)
         {
@@ -3621,6 +3632,16 @@ namespace FT_Management.Models
         public List<Dossier> ObterDossiersRMA()
         {
             return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
+        }
+
+        //Stocks Minimos
+        public List<Dossier> ObterDossiersStocksMinimos()
+        {
+            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101;", true, false, false, true);
+        }
+        public Dossier ObterDossierStocksMinimos(int t)
+        {
+            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and u_tecnico="+t+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)

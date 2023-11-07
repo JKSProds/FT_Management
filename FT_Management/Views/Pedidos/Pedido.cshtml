@@ -448,14 +448,6 @@
                                                                 </span>
                                                             </button>
                                                         </p>
-                                                        <p class="control" style="width:100%">
-                                                            <button class="button is-info is-fullwidth is-outlined" name="btnAssinarGuia"
-                                                                    onclick="AssinarGuias('@item.StampFO')">
-                                                                <span class="icon is-small">
-                                                                    <i class="fas fa-signature"></i>
-                                                                </span>
-                                                            </button>
-                                                        </p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -549,7 +541,7 @@
 
                                                 @foreach (var a in Model.LstAnexos)
                                                 {
-                                            <tr>
+                                            <tr id="rAnexo_@a.AnexoStamp">
                                                 <td
                                             data-label="@Html.DisplayNameFor(model => model.LstAnexos.First().NomeUtilizador)">
                                                     <span>@a.NomeUtilizador</span></td>
@@ -562,9 +554,17 @@
                                                 <td class="is-actions-cell">
                                                             @if (!string.IsNullOrEmpty(a.TipoDocumento))
                                                             {
-                                                        <button type="button" class="button is-info" disabled>
+                                                                <button type="button" class="button is-info" disabled>
                                                                     @a.TipoDocumento
-                                                        </button>
+                                                                </button>
+                                                            }
+                                                            @if (a.AnexoInstalacao) {
+                                                            <button class="button is-info is-outlined" id="btnAssinarGuia_@a.AnexoStamp"
+                                                                    onclick="AssinarGuias('@a.AnexoStamp')">
+                                                                <span class="icon is-small">
+                                                                    <i class="fas fa-signature"></i>
+                                                                </span>
+                                                            </button>
                                                             }
                                                     <a class="button is-primary is-outlined"
                                                 onclick="window.open('@Url.Action("Anexo", "Pedidos", new { id = @a.AnexoStamp})')"><i
@@ -572,7 +572,9 @@
                                                     <a class="button is-danger"
                                                 onclick="ApagarAnexo('@a.AnexoStamp')" id="btnApagarAnexo_@a.AnexoStamp"><i
                                                     class="fas fa-trash" style="font-size:20px"></i></a>
- 
+                                                    <p class="control" style="width:100%">
+                                                       
+                                                    </p>
                                                 </td>
                                             </tr>
                                                 }
@@ -800,30 +802,32 @@
             traditional: true,
             success: function (result) {
                 $(function () {
-                    window.location.reload();
+                    document.getElementById('rAnexo_' + stamp).remove();
+                    notify('Anexo removido com sucesso!')
                 });
             }
         });
     }
 
     function AssinarGuias(stamp) {
-
-        var botoes = document.getElementsByName("btnAssinarGuia");
-        for (var i = 0; i < botoes.length; i++) {
-            botoes[i].classList.add("is-loading");
-        }
-        
+        document.getElementById('btnAssinarGuia_' + stamp).classList.add("is-loading");
         $.ajax({
             type: "POST",
-            url: "/FolhasObra/AssinarGuias/" + stamp,
+            url: "/Pedidos/AssinarGuias/" + stamp,
             traditional: true,
             success: function (result) {
                 $(function () {
-                    notify('Guias Assinadas com Sucesso!');
-                    for (var i = 0; i < botoes.length; i++) {
-                        botoes[i].classList.remove("is-loading");
-                    }
+                    notify('Guia Assinada com Sucesso!');
+                    document.getElementById('btnAssinarGuia_' + stamp).remove();
                 });
+            },
+            error: function (response) {
+                notifyError('Ocorreu um erro ao assinar as guias. Por favor verifique se existem folhas de obra!');
+                document.getElementById('btnAssinarGuia_' + stamp).classList.remove("is-loading");
+            },
+            failure: function (response) {
+                notifyError('Falha ao assinar as guias!');
+                document.getElementById('btnAssinarGuia_' + stamp).classList.remove("is-loading");
             }
         });
     }

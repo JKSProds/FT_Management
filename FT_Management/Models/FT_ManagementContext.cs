@@ -1247,7 +1247,7 @@ namespace FT_Management.Models
                     start = item.DataInicio,
                     end = item.DataInicio != item.DataFim ? item.DataFim.AddDays(1) : item.DataInicio.AddDays(1),
                     isAllDay = true,
-                    url = "Detalhes/" + item.IdUtilizador,
+                    url = "Utilizador/" + item.IdUtilizador,
                     category = "time",
                     dueDateClass = "",
                     editable = false,

@@ -668,7 +668,7 @@
                 </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalValidarCliente2').modal().open();resizeCanvas();">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalValidarCliente2').modal().open(); document.getElementById('divGuiasAssinar').hidden = !(document.getElementById('chkFecharMarcacao').checked && '@Model.Instalação' == 'True' && '@Model.Marcacao.GuiasInstalacao' == 'True'); resizeCanvas();">
                     <span class="icon">
                         <i class="fa-solid fa-circle-check"></i>
                     </span>
@@ -722,6 +722,7 @@
                                 </span>
                             </label>
                         </div>
+                        <div id="divGuiasAssinar" class="field has-text-centered p-2" style="border:5px solid Tomato;"><p><b>Ao assinar esta folha de obra, estará também a assinar as guias associadas a esta instalação!</b></p></div>
                         <div class="wrapper" style="width: 100%;" id="divRubrica">
                             <canvas id="signature-pad" class="signature-pad disable-dbl-tap-zoom"
                                     style="width:100%;border:2px solid #000000;"></canvas>
@@ -1052,7 +1053,7 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                    onclick="Bulma('#modalMensagensErro').modal().close();" id="btnConfirmAddAnexo"
+                    onclick="Bulma('#modalMensagensErro').modal().close();" id=""
                     href="javascript:;">
                 Fechar
             </button>
@@ -1282,7 +1283,6 @@
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: function (result) {
                 Bulma('#modalValidarCliente').modal().close();
-                console.log(result);
                 $(function () {
                     if (result[0]) {
                         document.getElementById("txtMensagensErro").innerHTML = result[0];

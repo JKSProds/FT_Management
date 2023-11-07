@@ -130,6 +130,62 @@ namespace FT_Management.Controllers
             return File(ms, "text/calendar");
         }
 
+        //Obter ICS do calendario
+        [AllowAnonymous]
+        [HttpGet]
+        public virtual ActionResult CalendarioInstalacoes(string ApiKey)
+        {
+            DateTime d = DateTime.Now;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
+            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            if (IdUtilizador == 0) return Forbid();
+
+            var calendar = new Calendar();
+            List<Marcacao> LstMarcacoes = phccontext.ObterMarcacoesInstalacao(DateTime.Now.AddDays(-7), DateTime.Now.AddDays(365)).OrderBy(d => d.DataMarcacao).ToList();
+
+            foreach (Marcacao m in LstMarcacoes)
+            {
+                if (d.ToShortDateString() != m.DataMarcacao.ToShortDateString()) d = m.DataMarcacao.Add(TimeSpan.FromHours(8));
+                var e = new CalendarEvent
+                {
+                    Start = new CalDateTime(d),
+                    End = new CalDateTime(d.AddMinutes(30)),
+                    LastModified = new CalDateTime(DateTime.Now),
+                    Uid = m.IdMarcacao.ToString(),
+                    Description = "### Estado do Pedido: " + m.EstadoMarcacaoDesc + " ###" + Environment.NewLine + Environment.NewLine + m.ResumoMarcacao,
+                    Summary = m.EmojiEstado + m.Cliente.NomeCliente,
+                    Url = new Uri(m.GetUrl),
+                    Location = m.Cliente.MoradaCliente
+                };
+                calendar.Events.Add(e);
+                d = d.AddMinutes(30);
+            }
+
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(calendar);
+            var bytesCalendar = new UTF8Encoding(false).GetBytes(serializedCalendar);
+
+            MemoryStream ms = new MemoryStream(bytesCalendar);
+
+            ms.Write(bytesCalendar, 0, bytesCalendar.Length);
+            ms.Position = 0;
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "Instalacoes.ics",
+                Inline = false,
+                Size = bytesCalendar.Length,
+                CreationDate = DateTime.Now
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+
+            return File(ms, "text/calendar");
+        }
+
         //Obter calendario de agendamentos
         public ActionResult Agendamento(int id, int zona, int tipo)
         {
@@ -512,7 +568,7 @@ namespace FT_Management.Controllers
                     AnexoMarcacao = true,
                     NomeUtilizador = this.User.ObterNomeCompleto(),
                     AnexoInstalacao = tipo > 0,
-                    TipoDocumento = tipo == 1 ? "GT" : tipo == 2 ? "AF" : "AR"
+                    TipoDocumento = tipo == 1 ? "GT" : tipo == 2 ? "AF" : tipo == 3 ? "AR" : ""
                 };
                     
                 a.NomeFicheiro = a.ObterNomeUnico() + (file.FileName.Contains(".") ? "." + file.FileName.Split(".").Last() : "");
@@ -624,6 +680,29 @@ namespace FT_Management.Controllers
             }
 
             return Redirect(new Uri(url).AbsoluteUri);
+        }
+
+        //Assinar Guias
+        [HttpPost]
+        public ActionResult AssinarGuias(string id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (string.IsNullOrEmpty(id)) return StatusCode(500);
+
+            MarcacaoAnexo a = phccontext.ObterAnexo(id);
+            Marcacao m = phccontext.ObterMarcacao(a.MarcacaoStamp);
+
+            if (m.LstFolhasObra.Count() == 0) return StatusCode(500);
+
+            FolhaObra fo = phccontext.ObterFolhaObraSimples(m.LstFolhasObra.Last().StampFO);
+
+            m.LstAnexos = new List<MarcacaoAnexo> { a };
+            fo.Marcacao = m;
+
+            return StatusCode(phccontext.AtualizarAnexosAssinatura(fo) ? 200 : 500);
         }
     }
 }
