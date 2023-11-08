@@ -1073,10 +1073,11 @@ namespace FT_Management.Models
             return true;
         }
 
-        public void ValidarPecas(FolhaObra fo)
+        public List<Produto> ValidarStockPecas(FolhaObra fo)
         {
+            List<Produto> LstProdutos = new();
+            
             //PEÇAS SEM STOCK
-            string res = "";
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico).GroupBy(l => l.StampProduto).Select(cl => new Produto
             {
                 StampProduto = cl.First().StampProduto,
@@ -1084,9 +1085,11 @@ namespace FT_Management.Models
             }))
             {
                 Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
-                if (p.Stock_Atual < item.Stock_Fisico) res += p.Ref_Produto.Trim() + " | Stock Atual: " + p.Stock_Atual + " / Stock Requisitado: " + item.Stock_Fisico + "\r\n";
+                p.Stock_Fisico = item.Stock_Fisico;
+                if (p.Stock_Atual < item.Stock_Fisico) LstProdutos.Add(p);
             }
-            if (!string.IsNullOrEmpty(res)) MailContext.EnviarEmailFolhaObraPecasSemStock("cperes@food-tech.pt;jmonteiro@food-tech.pt", fo, res);
+            
+            return LstProdutos;
 
         }
 

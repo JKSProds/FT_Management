@@ -293,7 +293,8 @@
                             <div class="field">
                                 <label asp-for="PecasServico" class="label"></label>
                                 <p class="control has-icons-left has-icons-right">
-                                    <input type="hidden" class="input" id="txtStampPeca">
+                                    <input type="hidden" class="input" id="txtStampPeca"> 
+                                    <input type="hidden" class="input" id="txtQtdPeca">
                                     <input type="text" class="input is-rounded" placeholder="Insira a referência" id="txtPecas">
                                     <span class="icon is-small is-left">
                                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -340,9 +341,8 @@
                             </div>
                             <div class="control buttons">
                                 <button class="button is-info is-fullwidth" type="button"
-                                        onclick="if (document.getElementById('chkGarantiaSelecionadaPeca').checked || document.getElementById('chkGarantia').checked) { document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;Bulma('#modalPecaGarantia').modal().open(); } else {
-        ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, false, '', '');
-                                        }"
+                                        onclick="if (document.getElementById('txtQtdPeca').value < document.getElementById('txtQtd').value) {Bulma('#modalPecaSemStock').modal().open();} else if (document.getElementById('chkGarantiaSelecionadaPeca').checked || document.getElementById('chkGarantia').checked) { document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;Bulma('#modalPecaGarantia').modal().open(); } else 
+                                         { ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, false, '', ''); }"
                                         disabled id="btnAdicionarPeca">
                                     <span class="icon">
                                         <i class="fa-solid fa-check"></i>
@@ -1053,9 +1053,42 @@
         </section>
         <footer class="modal-card-foot">
             <button type="button" class="button is-info is-large is-fullwidth"
-                    onclick="Bulma('#modalMensagensErro').modal().close();" id=""
+                    onclick="Bulma('#modalMensagensErro').modal().close();"
                     href="javascript:;">
                 Fechar
+            </button>
+        </footer>
+    </div>
+</div>
+
+<div id="modalPecaSemStock" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head has-background-danger">
+            <p class="modal-card-title">Informação - Stock</p>
+        </header>
+        <section class="modal-card-body">
+           <p>Não tem stock suficiente da peça selecionada. <b>Se prosseguir será enviado um email com esta informação para o Departamento de Peças.</b> <br><br>
+           Deseja prosseguir e adicionar a peça? 
+           </p>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                    onclick="Bulma('#modalPecaSemStock').modal().close();if (document.getElementById('chkGarantiaSelecionadaPeca').checked || document.getElementById('chkGarantia').checked) { document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;Bulma('#modalPecaGarantia').modal().open(); } else 
+                                         { ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, false, '', ''); }"
+                    href="javascript:;">
+                <span class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span>Sim</span>
+            </button>
+            <button type="button" class="button is-danger is-large is-fullwidth"
+                    onclick="LimparPecas();Bulma('#modalPecaSemStock').modal().close();"
+                    href="javascript:;">
+                                <span class="icon">
+                        <i class="fa-regular fa-circle-xmark"></i>
+                    </span>
+                    <span>Não</span>
             </button>
         </footer>
     </div>
@@ -1552,6 +1585,7 @@
             },
             select: function (e, i) {
                 $("#txtStampPeca").val(i.item.val);
+                $("#txtQtdPeca").val(i.item.qtd);
                 document.getElementById("btnAdicionarPeca").disabled = false;
             },
             minLength: 1
@@ -1638,6 +1672,7 @@
 
     function LimparPecas() {
         document.getElementById('txtPecas').value = '';
+        document.getElementById('txtQtdPeca').value = '';
         document.getElementById('txtStampPeca').value = '';
         document.getElementById("btnAdicionarPeca").disabled = true;
         document.getElementById("txtQtd").value = '1';

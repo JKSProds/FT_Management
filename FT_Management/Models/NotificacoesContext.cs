@@ -386,7 +386,7 @@ namespace FT_Management.Models
         {
             foreach (var u in LstUtilizadores)
             {
-                string Assunto = "Aniversário - " + u.NomeCompleto;
+                string Assunto = "🎉🎂✨🍰🥳 Aniversário - " + u.NomeCompleto;
                 string Mensagem = u.NomeCompleto + " MUITOS PARABÉNS!!!<br><br>Amanhã é o teu dia. Não queremos passar ao lado deste momento tão especial e por isso queremos ser os primeiros a desejar-te um feliz aniversário.<br><br>Está na hora de assinalar esta data importante e oferecer-te o próximo dia de trabalho. Aproveita o dia com os teus e as maiores felicidades.";
                 EnviarMail(u.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(5));
             }
@@ -396,7 +396,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailFeriasAprovadas(Utilizador u, Ferias f)
         {
-            string Assunto = "Aprovação de Férias - " + u.NomeCompleto;
+            string Assunto = "👌 Aprovação de Férias - " + u.NomeCompleto;
             string Mensagem = "Serve o presente para informar que os seguintes dias foram aprovados: <b>" + f.DataInicio.ToString("dd-MM-yyyy") + " a " + f.DataFim.ToString("dd-MM-yyyy") + "</b> pelo utilizador: <b>" + f.ValidadoPorNome + "</b>." + ((f.Obs.Count() > 0) ? "<br><br>Observações: " + f.Obs : "");
             string EmailDestino = u.EmailUtilizador;
 
@@ -406,7 +406,7 @@ namespace FT_Management.Models
         }
         public static bool EnviarEmailFeriasNaoAprovadas(Utilizador u, Ferias f)
         {
-            string Assunto = "Férias Não Aprovadas - " + u.NomeCompleto;
+            string Assunto = "🙅 Férias Não Aprovadas - " + u.NomeCompleto;
             string Mensagem = "Serve o presente para informar que os seguintes dias <b>NÃO</b> foram aprovados: <b>" + f.DataInicio.ToString("dd-MM-yyyy") + " a " + f.DataFim.ToString("dd-MM-yyyy") + "</b> pelo utilizador: <b>" + f.ValidadoPorNome + ".</b>" + ((f.Obs.Count() > 0) ? "<br><br>Observações: " + f.Obs : "");
             string EmailDestino = u.EmailUtilizador;
 
@@ -416,7 +416,7 @@ namespace FT_Management.Models
         }
         public static bool EnviarEmailFeriasPendentes(string EmailDestino, List<Ferias> LstFerias)
         {
-            string Assunto = "Férias Pendentes - " + DateTime.Now.ToShortDateString();
+            string Assunto = "🏖️ Férias Pendentes - " + DateTime.Now.ToShortDateString();
             string Mensagem = "Segue abaixo listagem de férias por validar:<br>";
 
             Mensagem += "<table style='width:100%;border-width:3px;' border='1'><th>Utilizador</th><th>Inicio</th><th>Fim</th>";
@@ -435,18 +435,23 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailFolhaObra(string EmailDestino, FolhaObra fo, Attachment anexo)
         {
-            string Assunto = "Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            string Assunto = "📄 Folha de Obra - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             string Mensagem = "Segue em anexo a folha de obra de acordo com o serviço realizado do dia: <b>" + fo.DataServico.ToShortDateString() + "</b><br><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico).Distinct()) + "</b>.";
             EnviarMail(EmailDestino + ";" + fo.Utilizador.EmailUtilizador, Assunto, Mensagem, anexo, ObterEmailCC(1));
 
             return true;
         }
 
-        public static bool EnviarEmailFolhaObraPecasSemStock(string EmailDestino, FolhaObra fo, string Pecas)
+        public static bool EnviarEmailFolhaObraPecasSemStock(string EmailDestino, FolhaObra fo, List<Produto> Pecas)
         {
-            string Assunto = "Folha de Obra (Peças Sem Stock) - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-            string Mensagem = "Foi realizada uma folha de obra no dia: <b>" + fo.DataServico.ToShortDateString() + "</b> onde foram inseridas peças sem stock no armazém do técnico.<br><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico).Distinct()) + "</b><br>Cliente: <b>" + fo.ClienteServico.NomeCliente + "(" + fo.ClienteServico.IdCliente + " - " + fo.ClienteServico.IdLoja+ ")</b>.";
-            Mensagem += "<br><br>Lista de Peças:<br>" + Pecas.ReplaceLineEndings("<br>");
+            string Assunto = "🔩 Folha de Obra (Peças Sem Stock) - " + fo.Utilizador.NomeCompleto;
+            string Mensagem = "Foi realizada uma folha de obra no dia: <b>" + fo.DataServico.ToShortDateString() + "</b> onde foram inseridas peças sem stock do armazém do técnico.<br><br>PAT Nº: <b>" + fo.IdFolhaObra +" </b><br>Assistência Técnica Nº: <b>" + fo.IdAT +" </b><br>Marcação Nº: <b>" + fo.IdMarcacao +" </b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico).Distinct()) + "("+fo.Utilizador.IdArmazem+")</b><br>Cliente: <b>" + fo.ClienteServico.NomeCliente + "(" + fo.ClienteServico.IdCliente + " - " + fo.ClienteServico.IdLoja+ ")</b>.";
+            Mensagem += "Link: " + fo.GetUrl + "<br><br><br>Lista de Peças:<br>";
+
+            foreach(var p in Pecas) {
+                Mensagem += p.Ref_Produto + " - Stock Armazém: <b>" + p.Stock_Atual + "</b> | Stock Requisitado: <b>" + p.Stock_Fisico + "</b><br>";
+            }
+
             EnviarMail(EmailDestino, Assunto, Mensagem, null, ObterEmailCC(1));
 
             return true;
@@ -526,7 +531,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailFechoPicking(Utilizador u, Picking p, Attachment anexo)
         {
-            string Assunto = p.NomeDossier + " - " + p.IdPicking + " - " + p.Encomenda.NomeCliente;
+            string Assunto = "📦 " + p.NomeDossier + " - " + p.IdPicking + " - " + p.Encomenda.NomeCliente;
             string Mensagem = "Foi criado um novo documento de picking!<br><br><b>Dados adicionais:</b><br>Cliente: " + p.NomeCliente + "<br>" + (p.NomeCliente != p.Encomenda.NomeCliente ? "Loja: " + p.Encomenda.NomeCliente + "<br>" : "") + "Encomenda: " + p.Encomenda.Id + "<br>Utilizador: " + u.NomeCompleto + "<br>Data: " + p.DataDossier.ToShortDateString() + "<br>" + p.NomeDossier + ": " + p.IdPicking + "<br><br>";
 
             if (!string.IsNullOrEmpty(p.Encomenda.Obs)) Mensagem += "<b>Observações da Encomenda:</b><br>" + p.Encomenda.Obs.Replace("\r\n", "<br>").ToString() + "<br><br>";
@@ -562,7 +567,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailDossier(Utilizador u, Dossier d)
         {
-            string Assunto = d.SerieNome + " Nº " + d.IdDossier + " - " + d.Tecnico.NomeCompleto;
+            string Assunto = "📋" + d.SerieNome + " Nº " + d.IdDossier + " - " + d.Tecnico.NomeCompleto;
             string Mensagem = "Foi criado um novo dossier pelo utilizador " + u.NomeCompleto + "!<br><br><b>Dados adicionais:</b><br>" + d.NomeDossier + ": " + d.IdDossier + "<br>Cliente: " + d.Cliente.NomeCliente + "<br>Equipamento: " + d.FolhaObra.EquipamentoServico.NumeroSerieEquipamento + "<br>Nº da Marcação: " + d.Marcacao.IdMarcacao + "<br>Nº da Folha de Obra: " + d.FolhaObra.IdFolhaObra + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>Link: " + d.GetUrl + "<br><br>";
 
             if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
@@ -581,7 +586,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailPedidoTransferencia(Utilizador u, Dossier d)
         {
-            string Assunto = d.SerieNome + " Nº " + d.IdDossier + " - " + d.Tecnico.NomeCompleto;
+            string Assunto = "🚚 "+ d.SerieNome + " Nº " + d.IdDossier + " - " + d.Tecnico.NomeCompleto;
             string Mensagem = "Foi criado um novo pedido de transferência pelo utilizador " + u.NomeCompleto + "!<br><br><b>Dados adicionais:</b><br>" + d.NomeDossier + ": " + d.IdDossier + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>Link: " + d.GetUrl + "<br><br>";
 
             if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
@@ -600,7 +605,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailInventarioTecnico(Utilizador u, List<Produto> Produtos, Armazem a)
         {
-            string Assunto = "Inventário de Armazém - " + a.ArmazemNome;
+            string Assunto = "🚚 Inventário de Armazém - " + a.ArmazemNome;
             string Mensagem = "Foi efetuado um novo inventario pelo utilizador " + u.NomeCompleto + " do armazém nº <b>" + a.ArmazemId + "</b>!<br><br>";
 
             Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Stock em PHC</th><th>Stock Fisico</th><th></th></tr>";
@@ -618,7 +623,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailCheckListInstalacao(Utilizador u, FolhaObra fo, Attachment anexo)
         {
-            string Assunto = "CheckList Instalação - "+fo.Marcacao.TipoEquipamento+" - "+fo.ClienteServico.NomeCliente;
+            string Assunto = "✅ CheckList Instalação - "+fo.Marcacao.TipoEquipamento+" - "+fo.ClienteServico.NomeCliente;
             string Mensagem = "Foi finalizada uma instalação pelo utilizador " + u.NomeCompleto + " do equipamento <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + "( " + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b>!<br><br>";
 
             Mensagem += "<table style='width:100%;border-width:3px;' border='1'>";
@@ -636,7 +641,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailInventarioLoja(Utilizador u, List<Equipamento> Equipamentos, Cliente c)
         {
-            string Assunto = "Inventário do Cliente - " + c.NomeCliente;
+            string Assunto = "🛒 Inventário do Cliente - " + c.NomeCliente;
             string Mensagem = "Foi efetuado um novo inventario pelo utilizador " + u.NomeCompleto + " do Cliente <b>" + c.NomeCliente + "</b>!<br><br>";
 
             Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Marca</th><th>Modelo</th><th>Número de Série</th><th>Secção</th></tr>";
@@ -654,7 +659,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailError(Utilizador u, string id, string Mensagem)
         {
-            string Assunto = "Error - " + u.NomeCompleto + " [" + id + "]";
+            string Assunto = "❌ Erro - " + u.NomeCompleto + " [" + id + "]";
 
             EnviarMail("jmonteiro@food-tech.pt", Assunto, Mensagem, null, new List<string>());
 
