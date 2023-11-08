@@ -286,5 +286,18 @@
             return StatusCode(500);
         }
 
+        //Email
+        [HttpGet]
+        public ActionResult Email(string id, string name, string email)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email)) return StatusCode(500);
+
+            
+
+            return StatusCode(200);
+        }
+
+
     }
 }
