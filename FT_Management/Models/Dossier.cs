@@ -57,7 +57,6 @@ namespace FT_Management.Models
         public string Referencia { get; set; }
         public string Designacao { get; set; }
         public double Quantidade { get; set; }        
-        public double QuantidadeSatisfeita { get; set; }
         public string Serie { get; set; }
         public string CriadoPor { get; set; }
 
@@ -66,7 +65,6 @@ namespace FT_Management.Models
             this.Referencia = "";
             this.Designacao = "";
             this.Quantidade = 0;
-            this.QuantidadeSatisfeita = 0;
             this.CriadoPor = "N/D";
         }
     }

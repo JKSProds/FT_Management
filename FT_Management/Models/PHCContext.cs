@@ -3682,7 +3682,6 @@ namespace FT_Management.Models
                                 Referencia = result["ref"].ToString().Trim(),
                                 Designacao = result["design"].ToString().Trim(),
                                 Quantidade = Double.Parse(result["qtt"].ToString()),
-                                QuantidadeSatisfeita = Double.Parse(result["qtt2"].ToString()),
                                 CriadoPor = result["ousrinis"].ToString()
                             });
                         }
@@ -3705,6 +3704,11 @@ namespace FT_Management.Models
         public List<Linha_Dossier> ObterLinhasDossier(string STAMP)
         {
             return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '" + STAMP + "' order by lordem", true);
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossierAbertas(int NumDossier, Utilizador t)
+        {
+            return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and qtt>qtt2 and a.fechada=0 order by ousrinis, lordem", true);
         }
 
         public Linha_Dossier ObterLinhaDossier(string STAMP)

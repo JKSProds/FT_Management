@@ -62,6 +62,34 @@
             return View(phccontext.ObterFornecedor(id));
         }
 
+        //Obter todos os tecnicos
+        [HttpGet]
+        public IActionResult Tecnicos()
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas os tecnicos.", u.NomeCompleto, u.Id);
+
+            return View(context.ObterListaTecnicos(true, false));
+        }
+
+        //Obter um tecnico e as suas peças pedidas
+        [HttpGet]
+        public IActionResult Tecnico(int id)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterUtilizador(id);
+            t.Linhas = phccontext.ObterLinhasDossierAbertas(36, t);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter um tecnico em especifico e as suas linhas: {3}.", u.NomeCompleto, u.Id, id);
+
+            return View(t);
+        }
+
         //Obter uma encomenda em especifico
         [HttpGet]
         public JsonResult Encomenda(string stamp)
