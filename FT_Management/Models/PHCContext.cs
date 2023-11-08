@@ -3639,9 +3639,9 @@ namespace FT_Management.Models
         {
             return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101;", true, false, false, true);
         }
-        public Dossier ObterDossierStocksMinimos(int t)
+        public Dossier ObterDossierStocksMinimos(Utilizador t)
         {
-            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and u_tecnico="+t+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
+            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and cm3.u_tecnico="+t.IdPHC+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
@@ -3682,6 +3682,7 @@ namespace FT_Management.Models
                                 Referencia = result["ref"].ToString().Trim(),
                                 Designacao = result["design"].ToString().Trim(),
                                 Quantidade = Double.Parse(result["qtt"].ToString()),
+                                QuantidadeSatisfeita = Double.Parse(result["qtt2"].ToString()),
                                 CriadoPor = result["ousrinis"].ToString()
                             });
                         }
