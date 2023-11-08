@@ -1,5 +1,8 @@
 {
     "dataworkspace.excludedProjects": [
         "1/1.sqlproj"
+    ],
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "master"
     ]
 }
