@@ -30,7 +30,7 @@ namespace FT_Management.Models
                             <urn:HelpDesk_Modify_Service>
                                 <urn:Action>MODIFY</urn:Action>
                                 <urn:Integration>FoodTec</urn:Integration> -- chave integração
-                                <urn:Incident_Number>" +Incidente + @"</urn:Incident_Number> -- número do incidente
+                                <urn:Incident_Number>" + Incidente + @"</urn:Incident_Number> -- número do incidente
                                 <urn:AssigneeID>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:AssigneeID> -- userid do assignee do registo
                                 <urn:AssigneeName>FoodTec ITSM (Integracao)</urn:AssigneeName> -- fullname do assignee
                                 <urn:Work_Info_Notes>["+NomeUtilizador+"] (" + Estado.ToUpper() + ") - " + Comentario+@"</urn:Work_Info_Notes> -- descrição do comentário
@@ -54,7 +54,7 @@ namespace FT_Management.Models
                           <urn:HelpDesk_Modify_Service>
                              <urn:Action>MODIFY</urn:Action>
                              <urn:Integration>FoodTec</urn:Integration> -- chave integração
-                             <urn:Incident_Number>" +Incidente + @"</urn:Incident_Number> -- número do incidente
+                             <urn:Incident_Number>" + Incidente + @"</urn:Incident_Number> -- número do incidente
                              <urn:AssigneeID>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:AssigneeID> -- userid do assignee do registo
                              <urn:AssigneeName>FoodTec ITSM (Integracao)</urn:AssigneeName> -- fullname do assignee
                              <urn:Closure_Product_Category_Tier1>Catalog</urn:Closure_Product_Category_Tier1> -- categoria 1 de produto de resolução
@@ -478,7 +478,7 @@ namespace FT_Management.Models
                 string Assunto = "[" + fo.ReferenciaServico + "] ";
                 Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
                 bool ApiUpdate = (EnviarSoapSonae(Estado == 1 ? NotificacaoContext.ObterSoapEnvFechar(m.Referencia, fo.RelatorioServico, fo.Utilizador.NomeCompleto) : NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, Estado == 2 ? "Encaminhar" : "Pendente", fo.Utilizador.NomeCompleto)).Result) ;
-                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico + "<br><br>" + (ApiUpdate ? "✅" : "😞") + " UPDATE API SONAE", ObterEmailCC(1), fo.Utilizador) ;
+                if (!ApiUpdate) EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico + "<br><br>" + (ApiUpdate ? "✅" : "😞") + " UPDATE API SONAE", ObterEmailCC(1), fo.Utilizador) ;
             }
               
             return true;
