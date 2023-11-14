@@ -39,23 +39,28 @@
                     <tbody>
                         @foreach (var linha in Model.Linhas)
                             {
-                            <tr>
-                                
-                                <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)">@linha.Referencia                                                    </td>
+                            <tr id="@linha.Stamp_Linha">
+                                <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)">@linha.Referencia</td>
                                 <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)">@linha.Designacao</td>
                                 <td data-label="Pedido">@linha.Quantidade</td>
                                 <td data-label="Fornecer">
                                     <div class="control">
-                                            <input type="number" class="input is-large is-rounded" value="@linha.Quantidade"/>
+                                            <input type="number" class="input is-rounded" value="@linha.Quantidade"/>
                                     </div>
                                 </td>
                                 <td class="is-actions-cell">
-                                    <button type="button" class="button is-success is-large is-rounded">
+                                    <button type="button" class="button is-success is-rounded is-fullwidth" onclick="this.classList.add('is-hidden'); this.nextElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = true;this.parentElement.parentElement.classList.add('has-background-success-light');">
                                         <span class="icon">
                                    <i class="fa-solid fa-check"></i>
                                 </span>
                                     </button>
+                                <button type="button" class="button is-danger is-rounded is-fullwidth is-hidden" onclick="this.classList.add('is-hidden'); this.previousElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = false;this.parentElement.parentElement.classList.remove('has-background-success-light');">
+                                        <span class="icon">
+                                   <i class="fa-solid fa-xmark"></i>
+                                </span>
+                                    </button>
                                 </td>
+                                
                             </tr>
                             }
                     </tbody>
@@ -74,7 +79,9 @@
 
 <script>
 
-
+function ValidarCriarTV() {
+    notifyError('Por desenvolver!')
+}
    
 
 </script>
