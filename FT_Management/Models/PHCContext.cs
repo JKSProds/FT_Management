@@ -1064,9 +1064,9 @@ namespace FT_Management.Models
             if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 3);
 
             //SONAE
-            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 1);
-            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
-            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
+            if ((fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1568) && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 1);
+            if ((fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1568) && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
+            if ((fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1568) && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
 
             //if (fo.Guia) GerarGuiaTransporte(fo, fo.Marcacao, fo.Utilizador);
 
