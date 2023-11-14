@@ -41,6 +41,26 @@ namespace FT_Management.Models
                     </soapenv:Envelope>";
         }
 
+        public static string ObterSoapEnvEncaminhar(string Incidente)
+        {
+            return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
+                        <soapenv:Header>
+                            <urn:AuthenticationInfo>
+                                <urn:userName>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:userName> -- utilizador de integração
+                                <urn:password>"+ ConfigurationManager.AppSetting["Sonae:Password"] + @"</urn:password> -- password do user no ITSM
+                            </urn:AuthenticationInfo>
+                        </soapenv:Header>
+                            <soapenv:Body>
+                            <urn:HelpDesk_Modify_Service>
+                                <urn:Action>MODIFY</urn:Action>
+                                <urn:Integration>FoodTec</urn:Integration> -- chave integração
+                                <urn:Incident_Number>" + Incidente + @"</urn:Incident_Number> -- número do incidente
+                                <urn:Assigned_Group>HD Central</urn:Assigned_Group> 
+                            </urn:HelpDesk_Modify_Service>
+                        </soapenv:Body>
+                    </soapenv:Envelope>";
+        }
+
         public static string ObterSoapEnvFechar(string Incidente, string Comentario, string NomeUtilizador)
         {
             return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
@@ -475,9 +495,17 @@ namespace FT_Management.Models
             //Estado 1 - Concluido | 2 - Encaminhar | 3 - Pendente
             if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
             {
+                bool ApiUpdate= false;
                 string Assunto = "[" + fo.ReferenciaServico + "] ";
                 Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
-                bool ApiUpdate = (EnviarSoapSonae(Estado == 1 ? NotificacaoContext.ObterSoapEnvFechar(m.Referencia, fo.RelatorioServico, fo.Utilizador.NomeCompleto) : NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, Estado == 2 ? "Encaminhar" : "Pendente", fo.Utilizador.NomeCompleto)).Result) ;
+                if (Estado==1){
+                    ApiUpdate = EnviarSoapSonae(NotificacaoContext.ObterSoapEnvFechar(m.Referencia, fo.RelatorioServico, fo.Utilizador.NomeCompleto)).Result ;
+                }else if(Estado==2){
+                    ApiUpdate = (EnviarSoapSonae(NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, "Encaminhar", fo.Utilizador.NomeCompleto)).Result && EnviarSoapSonae(NotificacaoContext.ObterSoapEnvEncaminhar(m.Referencia)).Result);
+                }else{
+                    ApiUpdate = EnviarSoapSonae(NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, "Pendente", fo.Utilizador.NomeCompleto)).Result;
+                }
+
                 if (!ApiUpdate) EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico + "<br><br>" + (ApiUpdate ? "✅" : "😞") + " UPDATE API SONAE", ObterEmailCC(1), fo.Utilizador) ;
             }
               
