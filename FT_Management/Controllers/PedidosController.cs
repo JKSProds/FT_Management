@@ -500,7 +500,7 @@ namespace FT_Management.Controllers
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
                 if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoPD(fo, m, 1);
-                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 1);
+                if (m.Cliente.IdCliente == 561 || m.Cliente.IdCliente == 1568) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 1);
             }
             else if (encaminhar == 1)
             {
@@ -508,7 +508,7 @@ namespace FT_Management.Controllers
                 m.EstadoMarcacaoDesc = "Finalizado";
                 m.Utilizador = c.Utilizador;
                 if (m.Cliente.IdCliente == 878) MailContext.EnviarEmailMarcacaoPD(fo, m, 2);
-                if (m.Cliente.IdCliente == 561) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 2);
+                if (m.Cliente.IdCliente == 561 || m.Cliente.IdCliente == 1568) MailContext.EnviarEmailMarcacaoSONAE(fo, m, 2);
             }
             else if (reagendar == 1)
             {
@@ -517,7 +517,7 @@ namespace FT_Management.Controllers
                 if (m.Cliente.IdCliente == 878) {
                     MailContext.EnviarEmailMarcacaoPD(fo, m, 3);
                 }
-                else
+                if (m.Cliente.IdCliente == 1568 || m.Cliente.IdCliente == 561)
                 {
                     MailContext.EnviarEmailMarcacaoSONAE(fo, m, 3);
                 }
