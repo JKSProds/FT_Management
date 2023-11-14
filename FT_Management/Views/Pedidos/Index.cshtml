@@ -6,7 +6,7 @@
 }
 
 <div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
-<form asp-action="Index" method="get">
+<form id="frmFiltrar">
     <div class="container">
         <div class="columns">
             <div class="column is-5">
@@ -26,29 +26,26 @@
             <div class="column">
                 <div class="field has-addons has-addons-right mx-1 is-flex-wrap-wrap">
                     <p class="control has-icons-left">
-                        <input type="number" class="input" placeholder="Num. da Marcação" id="txtNumMarcacao"
-                            name="numMarcacao" value="@ViewData["numMarcacao"]" aria-describedby="basic-addon2">
+                        <input type="number" class="input" placeholder="Num. da Marcação" id="txtNumMarcacao" value="@ViewData["numMarcacao"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-1-9"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Nome do Cliente" id="txtNomeCliente"
-                            name="nomeCliente" value="@ViewData["nomeCliente"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Nome do Cliente" id="txtNomeCliente" value="@ViewData["nomeCliente"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
-                        <input type="text" class="input" placeholder="Num. de Incidente" id="txtReferencia"
-                            name="referencia" value="@ViewData["referencia"]" aria-describedby="basic-addon2">
+                        <input type="text" class="input" placeholder="Num. de Incidente" id="txtReferencia" value="@ViewData["referencia"]" aria-describedby="basic-addon2">
                         <span class="icon is-small is-left">
                             <i class="fa-solid fa-arrow-down-a-z"></i>
                         </span>
                     </p>
                     <p class="control has-icons-left">
                         <span class="select">
-                            <select class="select" id="lstestados" name="estado" style="height: auto; max-width:250px"
+                            <select class="select" id="lstestados" style="height: auto; max-width:250px"
                                 onchange="filtrar()"
                                 asp-items="@(new SelectList(@ViewBag.Estados, "Value", "Text", @ViewData["estado"]))">
                             </select>
@@ -59,7 +56,7 @@
                     </p>
                     <p class="control has-icons-left">
                         <span class="select">
-                            <select class="select" id="lsttipoe" name="tipoe" style="height: auto" onchange="filtrar()"
+                            <select class="select" id="lsttipoe" style="height: auto" onchange="filtrar()"
                                 asp-items="@(new SelectList(@ViewBag.TipoEquipamento, "Value", "Text", @ViewData["tipoe"]))">
                             </select>
                         </span>
@@ -69,7 +66,7 @@
                     </p>
                     <p class="control has-addons has-icons-left">
                         <span class="select" style="max-width:150px">
-                            <select class="select" id="idtecnico" name="idtecnico" style="height: auto"
+                            <select class="select" id="idtecnico" style="height: auto"
                                 onchange="filtrar()"
                                 asp-items="@(new SelectList(@ViewBag.ListaTecnicos, "IdPHC", "NomeCompleto", @ViewData["idtecnico"]))">
                             </select>
@@ -87,7 +84,7 @@
                 </div>
                 <div class="buttons is-right">
                     <p class="control">
-                        <button type="button" onclick="filtrar();" class="button is-info is-outlined">
+                        <button type="submit" onclick="filtrar();" class="button is-info is-outlined">
                             <span class="icon">
                                 <i class="fas fa-search fa-lg"></i>
                             </span>
@@ -319,12 +316,20 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle form submission
+  document.getElementById('frmFiltrar').addEventListener('submit', function(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault();
+  });
+});
+
     document.getElementById('LstEstados').remove(0);
     document.getElementById('LstTecnicos').remove(0);
 
     function copiarTexto(id) {
 
-        notify('Textfo copiado com sucesso!');
+        notify('Texto copiado com sucesso!');
 
         // text area method
         let textArea = document.createElement("textarea");
@@ -357,7 +362,7 @@
         if (document.getElementById("lsttipoe").selectedIndex == "0") tipoe = "";
         if (document.getElementById("lstestados").selectedIndex == "0") estado = "";
         if (document.getElementById("idtecnico").selectedIndex == "0") tecnico = 0;
-
+        
         window.location.href = "/Pedidos?numMarcacao=" + num + "&nomeCliente=" + nome + "&referencia=" + referencia + "&tipoe=" + tipoe + "&idtecnico=" + tecnico + "&estado=" + estado;
     }
 

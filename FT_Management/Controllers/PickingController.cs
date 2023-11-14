@@ -71,8 +71,10 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todas os tecnicos.", u.NomeCompleto, u.Id);
+            List<Utilizador> Tecnicos = context.ObterListaTecnicos(true, false);
+            Tecnicos.ForEach(t => t.Linhas = phccontext.ObterLinhasDossierAbertas(36, t));
 
-            return View(context.ObterListaTecnicos(true, false));
+            return View(Tecnicos.Where(t => t.Linhas.Count() > 0));
         }
 
         //Obter um tecnico e as suas peças pedidas
@@ -82,6 +84,9 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            if (id==0) return StatusCode(500);
+
             Utilizador t = context.ObterUtilizador(id);
             t.Linhas = phccontext.ObterLinhasDossierAbertas(36, t);
 
