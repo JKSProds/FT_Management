@@ -50,18 +50,17 @@
                                     </div>
                                 </td>
                                 <td class="is-actions-cell">
-                                    <button type="button" class="button is-success is-rounded is-fullwidth" onclick="this.classList.add('is-hidden'); this.nextElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = true;this.parentElement.parentElement.classList.add('has-background-success-light');">
+                                    <button type="button" class="button is-success is-rounded is-fullwidth" onclick="this.classList.add('is-hidden'); this.nextElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = true;this.parentElement.parentElement.classList.add('has-background-success-light');this.parentElement.parentElement.classList.add('checked');">
                                         <span class="icon">
                                    <i class="fa-solid fa-check"></i>
                                 </span>
                                     </button>
-                                <button type="button" class="button is-danger is-rounded is-fullwidth is-hidden" onclick="this.classList.add('is-hidden'); this.previousElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = false;this.parentElement.parentElement.classList.remove('has-background-success-light');">
+                                <button type="button" class="button is-danger is-rounded is-fullwidth is-hidden" onclick="this.classList.add('is-hidden'); this.previousElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = false;this.parentElement.parentElement.classList.remove('has-background-success-light');this.parentElement.parentElement.classList.remove('checked');">
                                         <span class="icon">
                                    <i class="fa-solid fa-xmark"></i>
                                 </span>
                                     </button>
                                 </td>
-                                
                             </tr>
                             }
                     </tbody>
@@ -80,8 +79,31 @@
 
 <script>
 
-function ValidarCriarTV() {
-    notifyError('Por desenvolver!')
+function ValidarCriarTV(id) {
+    var res="";
+    // Step 1: Get all rows with a specific class
+    var rows = document.getElementsByClassName('checked');
+
+    if (rows.length == 0) notifyError("Tem de validar pelo menos uma peça!")
+    // Step 2: Iterate through the rows
+    for (var i = 0; i < rows.length; i++) {
+        if (isNaN(parseFloat(rows[i].querySelector('input').value))) rows[i].querySelector('input').value = 0;
+        res+=rows[i].getAttribute('id') + "|" + parseFloat(rows[i].querySelector('input').value) + ";";
+    }
+    $.ajax({
+        url: '/Picking/Tecnico/',
+        data: { "id": id, "linhas": res },
+        type: "POST",
+        success: function (data) {
+                window.location.href = "/Picking/Tecnicos/";
+        },
+        error: function (response) {
+            notifyError("Ocorreu um erro ao gerar a transferencia em viagem!")
+        },
+        failure: function (response) {
+            notifyError("Falha ao gerar a transferencia em viagem!")
+        }
+    });
 }
    
 

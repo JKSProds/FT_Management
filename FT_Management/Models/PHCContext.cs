@@ -2828,6 +2828,29 @@ namespace FT_Management.Models
             return res;
         }
 
+        public List<string> CriarTransferenciaViagem(string id, string linhas, Utilizador u)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                string SQL_Query = "EXEC WEB_OR_Gera ";
+
+                SQL_Query += "@STAMPS = '" + linhas + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "', ";
+                SQL_Query += "@STAMP_OR = '" + id + "'; ";
+
+                //res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar a OR no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
         public string FecharPicking(Picking p)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };

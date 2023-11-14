@@ -95,6 +95,24 @@
             return View(t);
         }
 
+        //Criar uma transferencia em viagem
+        [HttpPost]
+        public IActionResult Tecnico(string id, string linhas)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(linhas)) return StatusCode(500);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar uma transferencia em viagem do utilizador nº {3}: {4}", u.NomeCompleto, u.Id, id, linhas);
+
+             List<string> res = phccontext.CriarTransferenciaViagem(id, linhas, u);
+
+            return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
+        }
+
+
         //Obter uma encomenda em especifico
         [HttpGet]
         public JsonResult Encomenda(string stamp)
