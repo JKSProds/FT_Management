@@ -133,7 +133,7 @@ namespace FT_Management.Controllers
                 if (fo.EstadoFolhaObra == 3) m.EstadoMarcacaoDesc = "Pedido Orçamento";
                 if (fo.EstadoFolhaObra == 4) m.EstadoMarcacaoDesc = "Reagendar";
 
-                phccontext.ValidarPecas(fo);
+                List<Produto> LstPecasSemStock = phccontext.ValidarStockPecas(fo);
                 List<string> res = phccontext.CriarFolhaObra(fo);
                 if (int.Parse(res[0]) > 0)
                 {
@@ -148,6 +148,8 @@ namespace FT_Management.Controllers
                     if (fo.FecharMarcacao && fo.Instalação && fo.Marcacao.GuiasInstalacao) phccontext.AtualizarAnexosAssinatura(fo);
                     if (fo.PecasServico.Where(p => p.Garantia).Count() > 0) phccontext.CriarRMAFLinhas(phccontext.CriarRMAF(fo)[2], fo);
                     fo = phccontext.ObterFolhaObra(fo.IdFolhaObra);
+
+                    if (LstPecasSemStock.Count() > 0) MailContext.EnviarEmailFolhaObraPecasSemStock("cperes@food-tech.pt", fo, LstPecasSemStock);
 
                     if (Estado == 2) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/Pedidos/" + fo.Utilizador.IdPHC });
                     if (Estado == 3) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 97, ReturnUrl = "/Pedidos/Pedidos/" + fo.Utilizador.IdPHC });

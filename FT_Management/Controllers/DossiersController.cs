@@ -114,7 +114,7 @@
 
         //Criar um documento de transferencia
         [HttpGet]
-        public ActionResult Transferencia(string id, int armazem, int load)
+        public ActionResult Transferencia(string id, int armazem, int load, int minimo)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
@@ -159,6 +159,27 @@
                 foreach (Linha_Dossier l in Linhas)
                 {
                     phccontext.CriarLinhaDossier(l);
+                }
+
+            }
+
+            if (minimo == 1)
+            {
+                d.Linhas = phccontext.ObterLinhasDossier(d.StampDossier);
+                Dossier sM = phccontext.ObterDossierStocksMinimos(t);
+                List<Produto> LstStock = phccontext.ObterProdutosArmazem(t.IdArmazem);
+
+                foreach (Linha_Dossier l in sM.Linhas)
+                {
+                    Produto p = LstStock.Where(p => p.Ref_Produto == l.Referencia).DefaultIfEmpty(new Produto()).First();
+                    Linha_Dossier l2 = d.Linhas.Where(l2 => l2.Referencia == l.Referencia).DefaultIfEmpty(new Linha_Dossier()).First();
+                    l.Stamp_Dossier = d.StampDossier;
+                    l.CriadoPor = u.Iniciais;
+
+                    if ((p.Stock_Atual + l2.Quantidade) < l.Quantidade) {
+                        l.Quantidade = l.Quantidade - (p.Stock_Atual - l2.Quantidade);
+                        phccontext.CriarLinhaDossier(l);
+                    }
                 }
 
             }
@@ -285,6 +306,19 @@
 
             return StatusCode(500);
         }
+
+        //Email
+        [HttpGet]
+        public ActionResult Email(string id, string name, string email)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email)) return StatusCode(500);
+
+            
+
+            return StatusCode(200);
+        }
+
 
     }
 }

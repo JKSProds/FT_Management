@@ -1064,19 +1064,20 @@ namespace FT_Management.Models
             if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 3);
 
             //SONAE
-            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 1);
-            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
-            if (fo.ClienteServico.IdCliente == 561 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
+            if ((fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1568) && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 1);
+            if ((fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1568) && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 2);
+            if ((fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1568) && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 3);
 
             //if (fo.Guia) GerarGuiaTransporte(fo, fo.Marcacao, fo.Utilizador);
 
             return true;
         }
 
-        public void ValidarPecas(FolhaObra fo)
+        public List<Produto> ValidarStockPecas(FolhaObra fo)
         {
+            List<Produto> LstProdutos = new();
+            
             //PEÇAS SEM STOCK
-            string res = "";
             foreach (Produto item in fo.PecasServico.Where(p => !p.Servico).GroupBy(l => l.StampProduto).Select(cl => new Produto
             {
                 StampProduto = cl.First().StampProduto,
@@ -1084,9 +1085,11 @@ namespace FT_Management.Models
             }))
             {
                 Produto p = ObterProdutosArmazem(fo.Utilizador.IdArmazem).Where(prod => prod.StampProduto == item.StampProduto).DefaultIfEmpty(new Produto()).First();
-                if (p.Stock_Atual < item.Stock_Fisico) res += p.Ref_Produto.Trim() + " | Stock Atual: " + p.Stock_Atual + " / Stock Requisitado: " + item.Stock_Fisico + "\r\n";
+                p.Stock_Fisico = item.Stock_Fisico;
+                if (p.Stock_Atual < item.Stock_Fisico) LstProdutos.Add(p);
             }
-            if (!string.IsNullOrEmpty(res)) MailContext.EnviarEmailFolhaObraPecasSemStock("cperes@food-tech.pt;jmonteiro@food-tech.pt", fo, res);
+            
+            return LstProdutos;
 
         }
 
@@ -3636,9 +3639,9 @@ namespace FT_Management.Models
         {
             return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101;", true, false, false, true);
         }
-        public Dossier ObterDossierStocksMinimos(int t)
+        public Dossier ObterDossierStocksMinimos(Utilizador t)
         {
-            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and u_tecnico="+t+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
+            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and cm3.u_tecnico="+t.IdPHC+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
@@ -3701,6 +3704,11 @@ namespace FT_Management.Models
         public List<Linha_Dossier> ObterLinhasDossier(string STAMP)
         {
             return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '" + STAMP + "' order by lordem", true);
+        }
+
+        public List<Linha_Dossier> ObterLinhasDossierAbertas(int NumDossier, Utilizador t)
+        {
+            return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and qtt>qtt2 and a.fechada=0 order by ousrinis, lordem", true);
         }
 
         public Linha_Dossier ObterLinhaDossier(string STAMP)

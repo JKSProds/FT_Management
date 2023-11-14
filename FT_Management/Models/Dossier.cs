@@ -56,7 +56,7 @@ namespace FT_Management.Models
         public string Stamp_Linha { get; set; }
         public string Referencia { get; set; }
         public string Designacao { get; set; }
-        public double Quantidade { get; set; }
+        public double Quantidade { get; set; }        
         public string Serie { get; set; }
         public string CriadoPor { get; set; }
 

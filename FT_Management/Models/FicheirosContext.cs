@@ -81,7 +81,7 @@
         public static string FormatLinuxServer(string res)
         {
 #if DEBUG
-            return res.Replace("S:", "X:");
+            return res.Replace("\\", "/").Replace("S:", "/Volumes/PHC");
 #else
             return res.Replace("\\", "/").Replace("S:", "/server");
 #endif

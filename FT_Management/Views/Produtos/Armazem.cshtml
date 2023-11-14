@@ -238,10 +238,10 @@ else
                     <span class="control-label">Pre-carregar com as peças selecionadas?</span>
                 </label>
             </div>
-            <div class="form-check form-group col">
+            <div class="form-check form-group col mt-2">
                 <label class="switch is-rounded">
-                    <input type="checkbox" id="chkStockMinimo">
-                    <span class="check is-info"></span>
+                    <input type="checkbox" id="chkStockMinimo" checked>
+                    <span class="check is-warning"></span>
                     <span class="control-label">Pre-carregar com as peças do seu stock minimo?</span>
                 </label>
             </div>
@@ -304,8 +304,9 @@ else
 
         var id = '@ViewData["GT"].ToString().Replace("/", "|")';
         var load = document.getElementById('chkPecas').checked ? 1 : 0;
+        var minimo = document.getElementById('chkStockMinimo').checked ? 1 : 0;
         document.getElementById('pageloader').classList.remove('is-active');
-        window.location.href = "/Dossiers/Transferencia/" + id + "?armazem=" + armazem + "&load=" + load;
+        window.location.href = "/Dossiers/Transferencia/" + id + "?armazem=" + armazem + "&load=" + load+ "&minimo=" + minimo;
     }
 
     function ObterGarantias(id) {
