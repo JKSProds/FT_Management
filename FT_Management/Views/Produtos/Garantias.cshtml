@@ -67,7 +67,7 @@ else
                             {
                             @foreach (var l in item.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
                                 {
-                                <tr style="width:auto">
+                                <tr style="width:auto" class="@(item.Estado == "Maia" ? "has-background-success" : "")">
                                     <td data-label="@Html.DisplayNameFor(model => model.First().IdDossier)">
                                         <span>@item.IdDossier</span>
                                     </td>
@@ -93,11 +93,13 @@ else
                                                     <i class="fa-solid fa-qrcode"></i>
                                                 </span>
                                             </button>
-                                            <button class="button is-success is-fullwidth" type="button" onclick="document.getElementById('txtHiddenStamp').value = '@item.StampDossier'; Bulma('#modalConfirmarAtualizarGarantia').modal().open();">
+                                            @if (!(item.Estado == "Maia")) {
+                                            <button class="button is-success-light is-fullwidth" type="button" onclick="document.getElementById('txtHiddenStamp').value = '@item.StampDossier'; Bulma('#modalConfirmarAtualizarGarantia').modal().open();">
                                                 <span class="icon is-small">
                                                     <i class="fa-solid fa-check"></i>
                                                 </span>
                                             </button>
+                                            }
                                         </div>
                                     </td>
                                 </tr>

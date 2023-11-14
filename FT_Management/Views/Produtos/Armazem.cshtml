@@ -315,11 +315,12 @@ else
             url: '/Produtos/Garantia/' + id,
             type: "GET",
             success: function (response) {
-                var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th>Cliente</th><th style=\"width: 110px\">Equipamento</th><th>Peça</th><th>Estado</th><th></th></tr></thead><tbody>";
+                var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th>Cliente</th><th style=\"width: 110px\">Equipamento</th><th>Peça</th><th>Estado</th></tr></thead><tbody>";
                 $(response).each(function () {
                     var s = this;
                     $(this.linhas).each(function () {
-                        if (this.referencia != '') html += "<tr><td data-label='Cliente'>" + s.folhaObra.clienteServico.nomeCliente + "</td><td data-label='Equipamento'>" + s.folhaObra.equipamentoServico.numeroSerieEquipamento + "</td><td data-label='Peça'>" + this.designacao + "</td><td data-label='Estado'>" + s.estado + "</td><td class='is-actions-cell' style='display: none'><div class=\"buttons\" style=\"width:100%\"><button class='button is-info is-fullwidth' type='button' onclick='window.open(\"/Produtos/EtiquetaGarantia/" + s.stampDossier + "?peca=" + this.referencia + "\")'><span class='icon is-small'><i class='fa-solid fa-qrcode'></i></span></button><button class='button is-success is-fullwidth' type='button' onclick='AtualizarEstadoGarantia(\""+s.stampDossier+"\")'><span class='icon is-small'><i class='fa-solid fa-check'></i></span></button></div></td></tr>";
+                        var background = (s.estado ? "has-background-success" : "");
+                        if (this.referencia != '') html += "<tr class='"+background+"'><td data-label='Cliente'>" + s.folhaObra.clienteServico.nomeCliente + "</td><td data-label='Equipamento'>" + s.folhaObra.equipamentoServico.numeroSerieEquipamento + "</td><td data-label='Peça'>" + this.designacao + "</td><td data-label='Estado'>" + s.estado + "</td><td class='is-actions-cell' style='display: none'><div class=\"buttons\" style=\"width:100%\"><button class='button is-info is-fullwidth' type='button' onclick='window.open(\"/Produtos/EtiquetaGarantia/" + s.stampDossier + "?peca=" + this.referencia + "\")'><span class='icon is-small'><i class='fa-solid fa-qrcode'></i></span></button><button class='button is-success is-fullwidth' type='button' onclick='AtualizarEstadoGarantia(\""+s.stampDossier+"\")'><span class='icon is-small'><i class='fa-solid fa-check'></i></span></button></div></td></tr>";
                     });
                 });
                 html += "</tbody></table></div></div>"

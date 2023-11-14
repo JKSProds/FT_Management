@@ -146,7 +146,7 @@
         //Obter peças em garantia
         [HttpGet]
         [Authorize(Roles = "Admin, Escritorio, Outros")]
-        public ActionResult Garantias()
+        public ActionResult Garantias(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
