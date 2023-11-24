@@ -107,7 +107,24 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a criar uma transferencia em viagem do utilizador nº {3}: {4}", u.NomeCompleto, u.Id, id, linhas);
 
-             List<string> res = phccontext.CriarTransferenciaViagem(id, linhas, u);
+             List<string> res = phccontext.CriarTransferenciaViagem(u);
+             if (res[0] == "-1") return StatusCode(500);
+
+             //Dossier d = phccontext.ObterDossier(res[2]);
+            Dossier d = new Dossier() {StampDossier = res[2]};
+
+            List<Linha_Dossier> LstLinhas = linhas.Split(';')
+            .Select(l => l.Split('|'))
+            .Where(p => p.Length == 2)
+            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Quantidade = int.Parse(p[1]), Stamp_Dossier = d.StampDossier })
+            .ToList();
+
+            foreach (var l in LstLinhas) {
+                res = phccontext.CriarLinhaTransferenciaViagem(l, u);
+                if (res[0] == "-1") return StatusCode(500);
+            }
+
+            res = phccontext.FecharTransferenciaViagem(d,u);
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
         }
