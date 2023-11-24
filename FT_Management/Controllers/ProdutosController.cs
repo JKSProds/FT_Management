@@ -103,6 +103,22 @@
             return Json(phccontext.ObterProdutosArmazem(armazem).Where(p => p.Ref_Produto.ToLower().Contains(filter.ToLower()) || p.Designacao_Produto.ToLower().Contains(filter.ToLower())).ToList());
         }
 
+        //Obter Transferencia em Viagem do Técnico
+        [HttpGet]
+        public ActionResult Viagens(int id) {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterListaUtilizadores(true, false).Where(u => u.IdArmazem == id).DefaultIfEmpty(new Utilizador()).First();
+
+            if (!u.Admin && u.IdArmazem != id) return StatusCode(500);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todas as transferencias em viagem em especifico: Filtro - {3}, Armazem - {4}.", u.NomeCompleto, u.Id, u.IdArmazem, id);
+
+            return Json(phccontext.ObterTransferenciaViagemAbertas(t));
+        }
+        
         //Obter peças em uso num armazem
         [HttpGet]
         public ActionResult Armazem(int id, string gt)

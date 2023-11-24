@@ -3232,6 +3232,81 @@ namespace FT_Management.Models
 
             return res;
         }
+
+         public List<Dossier> ObterTransferenciaViagemAbertas(Utilizador u)
+        {
+            List<Dossier> res = new List<Dossier>();
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bo where bo.ndos=98 and bo.emconf=1 and bo.fechada=0 and (select top 1 ar2mazem from bi where bi.bostamp=bo.bostamp and ar2mazem>0 and ref<>'')="+u.IdArmazem+";", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(new Dossier()
+                        {
+                            StampDossier = result["bostamp"].ToString(),
+                            IdDossier = int.Parse(result["obrano"].ToString()),
+                            NomeDossier = result["nmdos"].ToString()
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas em transferencia do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<Produto> ObterLinhasViagem(Utilizador u)
+        {
+            List<Produto> res = new List<Produto>();
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bi join bo on bo.bostamp=bi.bostamp where bo.fechada=0 and bi.emconf=1 and ar2mazem = "+u.IdArmazem+" and bo.ndos=98", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(new Produto()
+                        {
+                            StampProduto = result["bistamp"].ToString(),
+                            Ref_Produto = result["ref"].ToString(),
+                            Designacao_Produto = result["design"].ToString(),
+                            Stock_PHC = double.Parse(result["qtt"].ToString()),
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas em transferencia do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
         #endregion
 
         //INVENTARIO
