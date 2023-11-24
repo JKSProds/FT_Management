@@ -3270,9 +3270,9 @@ namespace FT_Management.Models
             return res;
         }
 
-        public List<Produto> ObterLinhasViagem(Utilizador u)
+        public List<Linha_Dossier> ObterLinhasViagem(string Stamp)
         {
-            List<Produto> res = new List<Produto>();
+            List<Linha_Dossier> res = new List<Linha_Dossier>();
             try
             {
 
@@ -3280,7 +3280,7 @@ namespace FT_Management.Models
 
                 conn.Open();
 
-                SqlCommand command = new SqlCommand("select * from bi join bo on bo.bostamp=bi.bostamp where bo.fechada=0 and bi.emconf=1 and ar2mazem = "+u.IdArmazem+" and bo.ndos=98", conn)
+                SqlCommand command = new SqlCommand("select * from bi join bo on bo.bostamp=bi.bostamp where bo.fechada=0 and bi.emconf=1 and design<>'' and bo.bostamp = '"+Stamp+"' and bo.ndos=98", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -3288,12 +3288,13 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        res.Add(new Produto()
+                        res.Add(new Linha_Dossier()
                         {
-                            StampProduto = result["bistamp"].ToString(),
-                            Ref_Produto = result["ref"].ToString(),
-                            Designacao_Produto = result["design"].ToString(),
-                            Stock_PHC = double.Parse(result["qtt"].ToString()),
+                            Stamp_Dossier = result["bostamp"].ToString(),
+                            Stamp_Linha = result["bistamp"].ToString(),
+                            Referencia = result["ref"].ToString(),
+                            Designacao = result["design"].ToString(),
+                            Quantidade = double.Parse(result["qtt"].ToString()),
                         });
                     }
                 }

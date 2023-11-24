@@ -1,0 +1,109 @@
+﻿@model FT_Management.Models.Dossier
+
+@{
+    ViewData["Title"] = "Transferência em Viagem - " + Model.IdDossier;
+}
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                   <i class="fa-solid fa-barcode"></i>
+                                </span>
+                                <span>Transferência em Viagem - @Model.IdDossier</span>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<hr />
+
+    <div class="container">
+        <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                            
+                            <th>@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)</th>
+                            <th>@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)</th>
+                            <th>@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Quantidade)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var linha in Model.Linhas)
+                            {
+                            <tr id="@linha.Stamp_Linha">
+                                @if(linha.Quantidade==0){
+                                    <td colspan="4" class="has-text-centered is-uppercase has-text-weight-bold" data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)">@linha.Designacao</td>
+                                }else{
+                                <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)">@linha.Referencia</td>
+                                <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)">@linha.Designacao</td>
+                                <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Quantidade)">@linha.Quantidade</td>
+                                <td class="is-actions-cell">
+                                    <button type="button" class="button is-success is-rounded is-fullwidth" onclick="this.classList.add('is-hidden'); this.nextElementSibling.classList.remove('is-hidden');this.parentElement.parentElement.classList.add('has-background-success-light');this.parentElement.parentElement.classList.add('checked');">
+                                        <span class="icon">
+                                   <i class="fa-solid fa-check"></i>
+                                </span>
+                                    </button>
+                                <button type="button" class="button is-danger is-rounded is-fullwidth is-hidden" onclick="this.classList.add('is-hidden'); this.previousElementSibling.classList.remove('is-hidden');this.parentElement.parentElement.classList.remove('has-background-success-light');this.parentElement.parentElement.classList.remove('checked');">
+                                        <span class="icon">
+                                   <i class="fa-solid fa-xmark"></i>
+                                </span>
+                                    </button>
+                                </td>
+                                }
+                               
+                            </tr>
+                            }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<br>
+<a class="button is-large is-info is-rounded is-fullwidth" onclick="ValidarTV('@Model.StampDossier')">
+    <span class="icon is-small">
+        <i class="fa-solid fa-check"></i>
+    </span>
+    <span>Validar Transferência em Viagem</span>
+</a>
+
+
+<script>
+
+function ValidarTV(id) {
+    var res="";
+    // Step 1: Get all rows with a specific class
+    var rows = document.getElementsByClassName('checked');
+
+    if (rows.length == 0) notifyError("Tem de validar pelo menos uma peça!")
+    // Step 2: Iterate through the rows
+    for (var i = 0; i < rows.length; i++) {
+        if (isNaN(parseFloat(rows[i].querySelector('input').value))) rows[i].querySelector('input').value = 0;
+        res+=rows[i].getAttribute('id') + "|" + parseFloat(rows[i].querySelector('input').value) + ";";
+    }
+    $.ajax({
+        url: '/Produtos/Viagem/',
+        data: { "id": id, "linhas": res },
+        type: "POST",
+        success: function (data) {
+                window.location.href = "/Produtos/Armazem/";
+        },
+        error: function (response) {
+            notifyError("Ocorreu um erro ao validar a transferencia em viagem!")
+        },
+        failure: function (response) {
+            notifyError("Falha ao validar a transferencia em viagem!")
+        }
+    });
+}
+   
+
+</script>

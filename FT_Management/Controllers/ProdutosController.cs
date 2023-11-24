@@ -118,6 +118,24 @@
 
             return Json(phccontext.ObterTransferenciaViagemAbertas(t));
         }
+
+        //validar Transferencia em Viagem do Técnico
+        [HttpGet]
+        public ActionResult Viagem(string id) {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (string.IsNullOrEmpty(id)) return StatusCode(500);
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter uma transferencia em viagem em especifico: Armazem - {3}, Linhas - {4}.", u.NomeCompleto, u.Id, u.IdArmazem, id);
+            
+            Dossier d = phccontext.ObterDossier(id);
+            d.Linhas = phccontext.ObterLinhasViagem(id);
+
+            return View(d);
+        }
         
         //Obter peças em uso num armazem
         [HttpGet]
