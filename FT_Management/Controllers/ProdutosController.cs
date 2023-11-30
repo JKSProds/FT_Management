@@ -297,6 +297,7 @@
 
         //Adiciona um anexo
         [HttpPost]
+        [Authorize(Roles = "Admin, Escritorio, Outros")]
         public IActionResult Anexo(string id, IFormFile file)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
