@@ -3048,7 +3048,7 @@ namespace FT_Management.Models
             return Linha_Serie;
 
         }
-        public List<string> AtualizarLinhaPicking(Linha_Picking linha)
+        public List<string> AtualizarLinhaPicking(Linha_Picking linha, Armazem a)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
@@ -3063,7 +3063,8 @@ namespace FT_Management.Models
                     SQL_Query += "@SERIE = '" + linha.Lista_Ref.First().NumSerie + "', ";
                     SQL_Query += "@BOMASTAMP = '" + linha.Lista_Ref.First().BOMA_STAMP + "', ";
                 }
-                SQL_Query += "@NOME_UTILIZADOR = '" + linha.EditadoPor + "'; ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + linha.EditadoPor + "', ";
+                SQL_Query += "@ARMAZEMSTAMP = '" + a.ArmazemStamp + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
             }

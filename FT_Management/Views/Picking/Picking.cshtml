@@ -70,7 +70,12 @@
                                                     <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Ref_linha)">@item.Ref_linha                                                    </td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Nome_Linha)">@item.Nome_Linha</td>
                                                     <td data-label="@Html.DisplayNameFor(model => model.Linhas.FirstOrDefault().Lista_Ref)"><input class="input" type="text" @(item.Lista_Ref[i].Validado ? "disabled" : "") value="@item.Lista_Ref[i].NumSerie" id="txtSerie_@item.Lista_Ref[i].Picking_Linha_Stamp@i"/></td>
-                                                    <td class="is-actions-cell">
+                                                    <td class="is-actions-cell field is-grouped">
+                                                        <div class="control">
+                                                                <div class="select">
+                                                                    <select id="lstArmazem_@item.Picking_Linha_Stamp" class="form-control armazem-classe" asp-items="ViewBag.Armazens"></select>
+                                                            </div>
+                                                        </div>
                                                         <a class="button is-success is-rounded is-fullwidth" style="display: @(!item.Lista_Ref[i].Validado ? "block" : "none");" id="btnValidar_@item.Lista_Ref[i].Picking_Linha_Stamp@i" onclick="ValidarSerie('@item.Lista_Ref[i].Picking_Linha_Stamp', @i)">
                                                             <span class="icon is-small">
                                                                 <i class="fa-solid fa-check"></i>
@@ -139,7 +144,12 @@
                                                       </p>
                                                     </div>
                                                     </td>
-                                                <td class="is-actions-cell">
+                                                <td class="is-actions-cell field is-grouped">
+                                                     <div class="control">
+                                                            <div class="select">
+                                                                <select id="lstArmazem_@item.Picking_Linha_Stamp" class="form-control armazem-classe" asp-items="ViewBag.Armazens"></select>
+                                                        </div>
+                                                    </div>
                                                     <a class="button is-success is-rounded is-fullwidth" onclick="ValidarQuantidade('@item.Picking_Linha_Stamp')">
                                                         <span class="icon is-small">
                                                             <i class="fa-solid fa-check"></i>
@@ -165,7 +175,7 @@
     <span class="icon is-small">
         <i class="fa-solid fa-check"></i>
     </span>
-    <span>Fechar Picking</span>
+    <span>Finalizar Picking</span>
 </a> 
 
 <div class="modal" id="modalMensagem">
@@ -199,13 +209,6 @@
       <div class="control"><textarea type="text" class="textarea" disabled id="txtMensagens" readonly rows=4 value=""></textarea></div>
             <hr />  
       <div class="control"><label class="label">Observações</label><textarea type="text" class="textarea" id="txtObs" rdonly rows=2 value=""></textarea></div>
-        &nbsp;
-      <div class="control" id="divArmazem">
-        <label class="label">Armazém</label>
-            <div class="select" style="width:100%">
-                <select id="lstArmazensModal" class="form-control" asp-items="ViewBag.Armazens" style="width:100%"></select>
-        </div>
-    </div>
   </section>
     <footer class="modal-card-foot">
         <button class="button is-success is-large is-fullwidth" onclick="FecharPicking('@Model.Picking_Stamp')">
@@ -219,6 +222,31 @@
                 <i class="fa-solid fa-circle-xmark"></i>
             </span>
             <span>Não</span>
+        </button>
+    </footer>
+  </div>
+</div>
+
+<div class="modal" id="modalEscolherArmazem">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Armazém</p>
+    </header>
+    <section class="modal-card-body">
+      <p class="title is-5">Escolha o armazém geral do Picking: </p> 
+      <div class="control" id="divArmazem">
+            <div class="select" style="width:100%">
+                <select id="lstArmazensModal" class="form-control" asp-items="ViewBag.Armazens" style="width:100%"></select>
+        </div>
+    </div>
+  </section>
+    <footer class="modal-card-foot">
+        <button class="button is-success is-large is-fullwidth" onclick="document.querySelectorAll('.armazem-classe').forEach(select => {select.value = document.getElementById('lstArmazensModal').value;});Bulma('#modalEscolherArmazem').modal().close();">
+            <span class="icon">
+                <i class="fa-solid fa-floppy-disk"></i>
+            </span>
+            <span>Continuar</span>
         </button>
     </footer>
   </div>
@@ -304,12 +332,14 @@
 
 
 <script>
+    Bulma('#modalEscolherArmazem').modal().open();
+
 function ValidarSerie(id, l) {
     
     var l_stamp = document.getElementById('txtBomaStamp_' + id + l).value;
     $.ajax({
         url: '/Picking/Linha/',
-        data: { "stamp": id, "qtd": 1, "serie": document.getElementById('txtSerie_' + id + l).value, "bomastamp": l_stamp },
+        data: { "stamp": id, "qtd": 1, "serie": document.getElementById('txtSerie_' + id + l).value, "bomastamp": l_stamp, "armazem": document.getElementById('lstArmazem_' + id).value },
         type: "PUT",
         success: function(data) {
             if (data[0] == "1") {
@@ -370,7 +400,7 @@ function ValidarSerie(id, l) {
     function ValidarQuantidade(id) {
        $.ajax({
             url: '/Picking/Linha/',
-            data: { "stamp": id, "qtd": document.getElementById('txtQtd_' + id).value},
+            data: { "stamp": id, "qtd": document.getElementById('txtQtd_' + id).value, "armazem": document.getElementById('lstArmazem_' + id).value},
             type: "PUT",
             success: function (data) {
                 document.getElementById('txtQtd_' + id).closest('.card').childNodes[1].classList.add('has-background-success');
@@ -403,8 +433,7 @@ function ValidarSerie(id, l) {
                     } else {
                         document.getElementById("txtMensagens").value = "Não foram encontrados problemas!";
                     }
-                     document.getElementById("divArmazem").hidden = (@Model.Encomenda.NumDossier != 2);
-                     Bulma('#modalFecharPicking').modal().open();
+                    Bulma('#modalFecharPicking').modal().open();
                 });
             }
         });
