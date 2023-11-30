@@ -73,7 +73,7 @@
                                                     <td class="is-actions-cell field is-grouped">
                                                         <div class="control">
                                                                 <div class="select">
-                                                                    <select id="lstArmazem_@item.Picking_Linha_Stamp" class="form-control armazem-classe" asp-items="ViewBag.Armazens"></select>
+                                                                    <select id="lstArmazem_@item.Lista_Ref[i].Picking_Linha_Stamp" class="form-control armazem-classe" asp-items="ViewBag.Armazens"></select>
                                                             </div>
                                                         </div>
                                                         <a class="button is-success is-rounded is-fullwidth" style="display: @(!item.Lista_Ref[i].Validado ? "block" : "none");" id="btnValidar_@item.Lista_Ref[i].Picking_Linha_Stamp@i" onclick="ValidarSerie('@item.Lista_Ref[i].Picking_Linha_Stamp', @i)">
