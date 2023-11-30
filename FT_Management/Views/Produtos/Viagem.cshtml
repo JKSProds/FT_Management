@@ -1,7 +1,7 @@
-﻿@model FT_Management.Models.Utilizador
+﻿@model FT_Management.Models.Dossier
 
 @{
-    ViewData["Title"] = "Picking - " + Model.NomeCompleto;
+    ViewData["Title"] = "Transferência em Viagem - " + Model.IdDossier;
 }
     <div class="container">
         <div class="columns">
@@ -13,7 +13,7 @@
                                 <span class="icon mr-3">
                                    <i class="fa-solid fa-barcode"></i>
                                 </span>
-                                <span>Picking - @Model.NomeCompleto</span>
+                                <span>Transferência em Viagem - @Model.IdDossier</span>
                             </p>
                         </article>
                     </div>
@@ -32,8 +32,7 @@
                             
                             <th>@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)</th>
                             <th>@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)</th>
-                            <th>Pedido</th>
-                            <th>Fornecer</th>
+                            <th>@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Quantidade)</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -41,26 +40,26 @@
                         @foreach (var linha in Model.Linhas)
                             {
                             <tr id="@linha.Stamp_Linha">
+                                @if(linha.Quantidade==0){
+                                    <td colspan="4" class="has-text-centered is-uppercase has-text-weight-bold" data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)">@linha.Designacao</td>
+                                }else{
                                 <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)">@linha.Referencia</td>
                                 <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)">@linha.Designacao</td>
-                                <td data-label="Pedido">@linha.Quantidade</td>
-                                <td data-label="Fornecer">
-                                    <div class="control">
-                                            <input type="number" class="input is-rounded" value="@linha.Quantidade"/>
-                                    </div>
-                                </td>
+                                <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Quantidade)">@linha.Quantidade</td>
                                 <td class="is-actions-cell">
-                                    <button type="button" class="button is-success is-rounded is-fullwidth" onclick="this.classList.add('is-hidden'); this.nextElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = true;this.parentElement.parentElement.classList.add('has-background-success-light');this.parentElement.parentElement.classList.add('checked');">
+                                    <button type="button" class="button is-success is-rounded is-fullwidth" onclick="this.classList.add('is-hidden'); this.nextElementSibling.classList.remove('is-hidden');this.parentElement.parentElement.classList.add('has-background-success-light');this.parentElement.parentElement.classList.add('checked');">
                                         <span class="icon">
                                    <i class="fa-solid fa-check"></i>
                                 </span>
                                     </button>
-                                <button type="button" class="button is-danger is-rounded is-fullwidth is-hidden" onclick="this.classList.add('is-hidden'); this.previousElementSibling.classList.remove('is-hidden');this.parentElement.previousElementSibling.children[0].children[0].disabled = false;this.parentElement.parentElement.classList.remove('has-background-success-light');this.parentElement.parentElement.classList.remove('checked');">
+                                <button type="button" class="button is-danger is-rounded is-fullwidth is-hidden" onclick="this.classList.add('is-hidden'); this.previousElementSibling.classList.remove('is-hidden');this.parentElement.parentElement.classList.remove('has-background-success-light');this.parentElement.parentElement.classList.remove('checked');">
                                         <span class="icon">
                                    <i class="fa-solid fa-xmark"></i>
                                 </span>
                                     </button>
                                 </td>
+                                }
+                               
                             </tr>
                             }
                     </tbody>
@@ -69,17 +68,17 @@
         </div>
     </div>
 <br>
-<a class="button is-large is-info is-rounded is-fullwidth" onclick="ValidarCriarTV('@Model.Id')">
+<a class="button is-large is-info is-rounded is-fullwidth" onclick="ValidarTV('@Model.StampDossier')">
     <span class="icon is-small">
         <i class="fa-solid fa-check"></i>
     </span>
-    <span>Criar Transferência em Viagem</span>
+    <span>Validar Transferência em Viagem</span>
 </a>
 
 
 <script>
 
-function ValidarCriarTV(id) {
+function ValidarTV(id) {
     var res="";
     // Step 1: Get all rows with a specific class
     var rows = document.getElementsByClassName('checked');
@@ -91,17 +90,17 @@ function ValidarCriarTV(id) {
         res+=rows[i].getAttribute('id') + "|" + parseFloat(rows[i].querySelector('input').value) + ";";
     }
     $.ajax({
-        url: '/Picking/Tecnico/',
+        url: '/Produtos/Viagem/',
         data: { "id": id, "linhas": res },
         type: "POST",
         success: function (data) {
-                window.location.href = "/Picking/Tecnicos/";
+                window.location.href = "/Produtos/Armazem/";
         },
         error: function (response) {
-            notifyError("Ocorreu um erro ao gerar a transferencia em viagem!")
+            notifyError("Ocorreu um erro ao validar a transferencia em viagem!")
         },
         failure: function (response) {
-            notifyError("Falha ao gerar a transferencia em viagem!")
+            notifyError("Falha ao validar a transferencia em viagem!")
         }
     });
 }

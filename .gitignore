@@ -341,3 +341,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /Outros/mysql-5.7.35-winx64.zip
+.DS_Store

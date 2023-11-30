@@ -2828,6 +2828,7 @@ namespace FT_Management.Models
             return res;
         }
 
+
         public string FecharPicking(Picking p)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
@@ -3047,7 +3048,7 @@ namespace FT_Management.Models
             return Linha_Serie;
 
         }
-        public List<string> AtualizarLinhaPicking(Linha_Picking linha)
+        public List<string> AtualizarLinhaPicking(Linha_Picking linha, Armazem a)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
@@ -3062,7 +3063,8 @@ namespace FT_Management.Models
                     SQL_Query += "@SERIE = '" + linha.Lista_Ref.First().NumSerie + "', ";
                     SQL_Query += "@BOMASTAMP = '" + linha.Lista_Ref.First().BOMA_STAMP + "', ";
                 }
-                SQL_Query += "@NOME_UTILIZADOR = '" + linha.EditadoPor + "'; ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + linha.EditadoPor + "', ";
+                SQL_Query += "@ARMAZEMSTAMP = '" + a.ArmazemStamp + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
             }
@@ -3156,6 +3158,153 @@ namespace FT_Management.Models
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel validar a ordem de rececao do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        //Transferencia Viagem
+
+        public List<string> CriarTransferenciaViagem(Utilizador u)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                string SQL_Query = "EXEC WEB_TV_Gera ";
+
+                SQL_Query += "@TECNICO = '" + u.IdPHC + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar a TV no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+
+        public List<string> CriarLinhaTransferenciaViagem(Linha_Dossier l, Utilizador u)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                string SQL_Query = "EXEC WEB_TV_Cria_Linha ";
+
+                SQL_Query += "@STAMP = '" + l.Stamp_Dossier + "', ";
+                SQL_Query += "@STAMP_LIN_ORI = '" + l.Stamp_Linha + "', ";
+                SQL_Query += "@QTT = '" + l.Quantidade + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar a linha na TV no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> FecharTransferenciaViagem(Dossier d, Utilizador u)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                string SQL_Query = "EXEC WEB_TV_Fecha ";
+
+                SQL_Query += "@STAMP = '" + d.StampDossier + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar a linha na TV no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+         public List<Dossier> ObterTransferenciaViagemAbertas(Utilizador u)
+        {
+            List<Dossier> res = new List<Dossier>();
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bo where bo.ndos=98 and bo.emconf=1 and bo.fechada=0 and (select top 1 ar2mazem from bi where bi.bostamp=bo.bostamp and ar2mazem>0 and ref<>'')="+u.IdArmazem+";", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(new Dossier()
+                        {
+                            StampDossier = result["bostamp"].ToString(),
+                            IdDossier = int.Parse(result["obrano"].ToString()),
+                            NomeDossier = result["nmdos"].ToString()
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas em transferencia do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<Linha_Dossier> ObterLinhasViagem(string Stamp)
+        {
+            List<Linha_Dossier> res = new List<Linha_Dossier>();
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from bi join bo on bo.bostamp=bi.bostamp where bo.fechada=0 and bi.emconf=1 and design<>'' and bo.bostamp = '"+Stamp+"' and bo.ndos=98", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(new Linha_Dossier()
+                        {
+                            Stamp_Dossier = result["bostamp"].ToString(),
+                            Stamp_Linha = result["bistamp"].ToString(),
+                            Referencia = result["ref"].ToString(),
+                            Designacao = result["design"].ToString(),
+                            Quantidade = double.Parse(result["qtt"].ToString()),
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas em transferencia do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;

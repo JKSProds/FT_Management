@@ -174,9 +174,17 @@ else
             <p>Tem a certeza que deseja gerar um documento de Picking?</p>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-success"
-                onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">Sim</button>
-            <button class="button" onclick="Bulma('#modalNovoPicking').modal().close();">Não</button>
+            <button class="button is-success is-large is-fullwidth"
+                onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)"> 
+                <span class="icon">
+                <i class="fa-regular fa-folder-open"></i>
+            </span>
+            <span>Abrir Picking</span></button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#modalNovoPicking').modal().close();">
+                <span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Fechar</span></button>
         </footer>
     </div>
 </div>
@@ -222,9 +230,16 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-success"
-                onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">Abrir Picking</button>
-            <button class="button" onclick="Bulma('#modalVerPicking').modal().close();">Fechar</button>
+            <button class="button is-success is-large is-fullwidth"
+                onclick="NovoPicking(document.getElementById('txtIdEncomenda').value)">
+                <span class="icon">
+                <i class="fa-regular fa-folder-open"></i>
+            </span>
+            <span>Abrir Picking</span></button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#modalVerPicking').modal().close();"><span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Fechar</span></button>
         </footer>
     </div>
 </div>

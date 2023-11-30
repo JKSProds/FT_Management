@@ -95,6 +95,41 @@
             return View(t);
         }
 
+        //Criar uma transferencia em viagem
+        [HttpPost]
+        public IActionResult Tecnico(string id, string linhas)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(linhas)) return StatusCode(500);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a criar uma transferencia em viagem do utilizador nº {3}: {4}", u.NomeCompleto, u.Id, id, linhas);
+
+             List<string> res = phccontext.CriarTransferenciaViagem(u);
+             if (res[0] == "-1") return StatusCode(500);
+
+             //Dossier d = phccontext.ObterDossier(res[2]);
+            Dossier d = new Dossier() {StampDossier = res[2]};
+
+            List<Linha_Dossier> LstLinhas = linhas.Split(';')
+            .Select(l => l.Split('|'))
+            .Where(p => p.Length == 2)
+            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Quantidade = int.Parse(p[1]), Stamp_Dossier = d.StampDossier })
+            .ToList();
+
+            foreach (var l in LstLinhas) {
+                res = phccontext.CriarLinhaTransferenciaViagem(l, u);
+                if (res[0] == "-1") return StatusCode(500);
+            }
+
+            res = phccontext.FecharTransferenciaViagem(d,u);
+
+            return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
+        }
+
+
         //Obter uma encomenda em especifico
         [HttpGet]
         public JsonResult Encomenda(string stamp)
@@ -203,7 +238,7 @@
 
             p.EditadoPor = u.Iniciais;
             p.Obs = (string.IsNullOrEmpty(obs) ? "" : (obs + "\r\n\r\n")) + "<b>" + (p.Serie == 10 ? phccontext.ValidarOrdemRececao(p) : phccontext.ValidarPicking(p)) + "</b>";
-            p.ArmazemDestino = p.Encomenda.NumDossier == 2 ? phccontext.ObterArmazem(armazem) : new Armazem();
+            p.ArmazemDestino = phccontext.ObterArmazem(armazem);
 
             phccontext.FecharPicking(p);
             context.AdicionarLog(u.Id, "Foi fechado um picking com sucesso! - Picking Nº " + p.IdPicking + ", " + p.NomeCliente + " pelo utilizador " + u.NomeCompleto, 6);
@@ -230,14 +265,14 @@
 
         //Atualizar uma linha
         [HttpPut]
-        public JsonResult Linha(string stamp, Double qtd, string serie, string bomastamp)
+        public JsonResult Linha(string stamp, Double qtd, string serie, string bomastamp, string armazem)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a atualizar uma linha de um picking em especifico: Stamp - {3}, Qtd - {4}, Serie - {5}, BOMA STAMP - {6}.", u.NomeCompleto, u.Id, stamp, qtd, serie, bomastamp);
+            _logger.LogDebug("Utilizador {1} [{2}] a atualizar uma linha de um picking em especifico: Stamp - {3}, Qtd - {4}, Serie - {5}, BOMA STAMP - {6}, Armazem STAMP - {7}.", u.NomeCompleto, u.Id, stamp, qtd, serie, bomastamp, armazem);
 
             Linha_Picking linha_picking = new Linha_Picking()
             {
@@ -256,7 +291,7 @@
                 });
             }
 
-            return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking));
+            return new JsonResult(phccontext.AtualizarLinhaPicking(linha_picking, phccontext.ObterArmazem(armazem)));
         }
 
 
