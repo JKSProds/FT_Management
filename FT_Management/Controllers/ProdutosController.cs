@@ -294,5 +294,23 @@
 
             return File(context.MemoryStreamToPDF(context.DesenharEtiquetaPecaGarantia(d, d.FolhaObra.PecasServico.Where(p => p.Ref_Produto == peca).First()), 801, 504), "application/pdf");
         }
+
+        //Adiciona um anexo
+        [HttpPost]
+        public IActionResult Anexo(string id, IFormFile file)
+        {
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            if (file == null) return StatusCode(500);
+
+            string extensao = (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
+            string nome = id + extensao;
+            
+            res[0] = FicheirosContext.CriarAnexo(FicheirosContext.FormatLinuxServer("S:\\Imagens\\EQUIPAMENTOS\\"), nome, file);
+            if (string.IsNullOrEmpty(res[0])) return StatusCode(500);
+            return Ok();
+        }
     }
 }
