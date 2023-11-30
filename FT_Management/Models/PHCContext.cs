@@ -227,14 +227,6 @@ namespace FT_Management.Models
             return !string.IsNullOrEmpty(FicheirosContext.CriarAnexo(FicheirosContext.FormatLinuxServer("S:\\Imagens\\EQUIPAMENTOS\\"), nome, file));
     }
 
-    // Helper method to check if two colors are similar
-    static bool IsSimilarColor(SKColor color1, SKColor color2, int tolerance)
-    {
-        return Math.Abs(color1.Red - color2.Red) <= tolerance &&
-               Math.Abs(color1.Green - color2.Green) <= tolerance &&
-               Math.Abs(color1.Blue - color2.Blue) <= tolerance;
-    }
-
         public List<string> GerarGuiaGlobal(int IdArmazem, Utilizador u)
         {
             List<string> res = new List<string>() { "-1", "Erro", "" };
