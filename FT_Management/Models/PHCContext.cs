@@ -1,5 +1,4 @@
 ﻿using iTextSharp.text;
-using System.Collections.Generic;
 
 namespace FT_Management.Models
 {
@@ -166,6 +165,75 @@ namespace FT_Management.Models
 
             return Convert.ToBase64String(imageBytes); ;
         }
+
+        public bool AtualizarProdutoImagem(Produto p, IFormFile file) {
+            string extensao = (file.FileName.Split(".").Count() > 0 ? "." + file.FileName.Split(".").Last() : "");
+            string nome = p.Ref_Produto + extensao;
+
+/*             // Load the image
+            using (SKBitmap originalBitmap = SKBitmap.Decode(file.OpenReadStream()))
+            {
+                // Define the color to be treated as the background (you may need to adjust this)
+                SKColor backgroundColor = new SKColor(255, 255, 255); // White
+
+                // Create a new bitmap to store the result
+                using (SKBitmap resultBitmap = new SKBitmap(originalBitmap.Info))
+                {
+                    // Loop through each pixel of the original image
+                    for (int x = 0; x < originalBitmap.Width; x++)
+                    {
+                        for (int y = 0; y < originalBitmap.Height; y++)
+                        {
+                            // Get the color of the current pixel
+                            SKColor pixelColor = originalBitmap.GetPixel(x, y);
+
+                            // Check if the pixel color is close to the background color
+                            if (IsSimilarColor(pixelColor, backgroundColor, 30))
+                            {
+                                // Set the pixel to be transparent
+                                resultBitmap.SetPixel(x, y, SKColors.Transparent);
+                            }
+                            else
+                            {
+                                // Copy the pixel from the original image to the result image
+                                resultBitmap.SetPixel(x, y, pixelColor);
+                            }
+                        }
+                    }
+
+                    // Save or process the result bitmap
+                    using (SKImage resultImage = SKImage.FromBitmap(resultBitmap))
+                    using (SKData encoded = resultImage.Encode(SKEncodedImageFormat.Png, 100))
+                    using (Stream outputStream = encoded.AsStream())
+                    {
+                        encoded.SaveTo(outputStream);
+
+                        var memoryStream = new MemoryStream();
+                        outputStream.CopyTo(memoryStream);
+                        memoryStream.Position = 0; // Reset the stream position to the beginning
+
+                        // Create an IFormFile instance using the Stream
+                        file = new FormFile(memoryStream, 0, memoryStream.Length, null, nome)
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentDisposition = $"form-data; name=file; filename={nome}"
+                        };
+                    }
+
+
+                }
+            } */
+            ExecutarQuery("UPDATE st set Imagem='S:\\IMAGENS\\EQUIPAMENTOS\\"+nome+"' where ref='"+p.Ref_Produto+"';");
+            return !string.IsNullOrEmpty(FicheirosContext.CriarAnexo(FicheirosContext.FormatLinuxServer("S:\\Imagens\\EQUIPAMENTOS\\"), nome, file));
+    }
+
+    // Helper method to check if two colors are similar
+    static bool IsSimilarColor(SKColor color1, SKColor color2, int tolerance)
+    {
+        return Math.Abs(color1.Red - color2.Red) <= tolerance &&
+               Math.Abs(color1.Green - color2.Green) <= tolerance &&
+               Math.Abs(color1.Blue - color2.Blue) <= tolerance;
+    }
 
         public List<string> GerarGuiaGlobal(int IdArmazem, Utilizador u)
         {
