@@ -26,8 +26,34 @@ namespace FT_Management.Controllers
 
         //Obtem view para login
         [HttpGet]
-        public IActionResult Login(string ReturnUrl)
+        public async Task<IActionResult> Login(string ReturnUrl)
         {
+            if (Request.Headers.ContainsKey("Authorization"))
+                {
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                // If authorization header doesn't start with basic, throw no result.
+                if (!authorizationHeader.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Content("Authorization header does not start with 'Basic'");
+                }
+
+                // Decrypt the authorization header and split out the client id/secret which is separated by the first ':'
+                var authBase64Decoded = Encoding.UTF8.GetString(Convert.FromBase64String(authorizationHeader.Replace("Basic ", "", StringComparison.OrdinalIgnoreCase)));
+                var authSplit = authBase64Decoded.Split(new[] { ':' }, 2);
+
+                // No username and password, so throw no result.
+                if (authSplit.Length != 2)
+                {
+                    return Content("Invalid Authorization header format");
+                }
+
+                // Store the client ID and secret
+                var clientId = authSplit[0];
+                var clientSecret = authSplit[1];
+                await Login(new Utilizador(){NomeUtilizador=clientId, Password=clientSecret}, ReturnUrl, 0,0,0,0,0,0);
+			}
+
             ViewData["ReturnUrl"] = ReturnUrl;
             return View();
         }
