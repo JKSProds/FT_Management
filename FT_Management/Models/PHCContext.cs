@@ -3688,7 +3688,7 @@ namespace FT_Management.Models
                             Qtd_Separar = Double.Parse(result["qtt"].ToString()),
                             BOMA_STAMP = result["BOMASTAMP"].ToString(),
                             NumSerie = result["serie"].ToString(),
-                            CriadoA = DateTime.Parse(DateTime.Parse(result["usrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["usrhora"].ToString()).ToShortTimeString()),
+                            CriadoA = DateTime.Parse(DateTime.Parse(result["usrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["usrhora"].ToString()).ToLongTimeString()),
                             CriadoPor = result["usrinis"].ToString()
                         });
                     }

@@ -89,9 +89,15 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-info" onclick="Bulma('#modalConfirmNovoDossier').modal().open();">Criar
-                Dossier</button>
-            <button class="button" onclick="Bulma('#modalDossiersInventario').modal().close();">Fechar</button>
+            <button class="button is-info is-large is-fullwidth" onclick="Bulma('#modalConfirmNovoDossier').modal().open();">
+                 <span class="icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <span>Criar</span></button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#modalDossiersInventario').modal().close();"> <span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Fechar</span></button>
         </footer>
     </div>
 </div>
@@ -108,9 +114,15 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-info"
-                onclick="CriarDossier(document.getElementById('txtHiddenNumArmazem').value);">Confirmar</button>
-            <button class="button" onclick="Bulma('#modalConfirmNovoDossier').modal().close();">Não</button>
+            <button class="button is-info is-large is-fullwidth"
+                onclick="CriarDossier(document.getElementById('txtHiddenNumArmazem').value);"> <span class="icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <span>Criar</span></button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#modalConfirmNovoDossier').modal().close();"> <span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Fechar</span></button>
         </footer>
     </div>
 </div>
