@@ -75,7 +75,6 @@ namespace FT_Management.Controllers
         }
 
         //Obter ICS do calendario
-        [AllowAnonymous]
         [HttpGet]
         public virtual ActionResult Calendario(string ApiKey)
         {
@@ -83,8 +82,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
-            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Forbid();
 
             var calendar = new Calendar();
@@ -131,7 +129,6 @@ namespace FT_Management.Controllers
         }
 
         //Obter ICS do calendario
-        [AllowAnonymous]
         [HttpGet]
         public virtual ActionResult CalendarioInstalacoes(string ApiKey)
         {
@@ -139,8 +136,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
-            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             if (IdUtilizador == 0) return Forbid();
 
             var calendar = new Calendar();

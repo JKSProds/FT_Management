@@ -484,7 +484,6 @@ namespace FT_Management.Controllers
         }
 
         //Obtem os logs do utilziador numa data em especifico
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult Notificacao(int id, string Mensagem, string Api)
         {
@@ -492,8 +491,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
            
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
-            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             Utilizador u2 = context.ObterUtilizador(id);
             if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();

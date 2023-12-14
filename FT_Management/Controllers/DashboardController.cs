@@ -11,15 +11,13 @@
         }
 
         //Obter dashboard com todas as encomendas
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Encomendas(string Api)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
-            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
@@ -29,15 +27,13 @@
         }
 
         //Obter dashboard com todos os utilizadores realizarem acesso
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Utilizadores(string Api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
-            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
@@ -63,15 +59,13 @@
         }
 
         //Obter dashboard das marcacoes pendentes
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Pendentes(string Api)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
-            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
@@ -81,15 +75,14 @@
         }
 
         //Obter dashboard das marcacoes atuais e estados
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Marcacoes(string Api)
         {
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            return Forbid();
+            /* FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
-            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
 
@@ -115,7 +108,7 @@
             ViewData["Finalizados90"] = LstMarcacaosPendentes[8];
 
 
-            return View(LstUtilizadores);
+            return View(LstUtilizadores); */
         }
 
 
