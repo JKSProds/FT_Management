@@ -347,7 +347,7 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailManual(string Destino, string Assunto, string Mensagem)
         {
-             EnviarMailSimples(Destino, Assunto, Mensagem, null, null);
+             EnviarMailSimples(Destino, Assunto, Mensagem, new List<string>(), null);
 
             return true;
         }

@@ -28,6 +28,7 @@ namespace FT_Management.Controllers
         [HttpGet]
         public async Task<IActionResult> Login(string ReturnUrl)
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             if (Request.Headers.ContainsKey("Authorization"))
                 {
                 var authorizationHeader = Request.Headers["Authorization"].ToString();
@@ -52,7 +53,16 @@ namespace FT_Management.Controllers
                 var clientId = authSplit[0];
                 var clientSecret = authSplit[1];
                 await Login(new Utilizador(){NomeUtilizador=clientId, Password=clientSecret}, ReturnUrl, 0,0,0,0,0,0);
-			}
+			}else if (Request.Headers.ContainsKey("X-API-Key")) {
+                var id = context.ObterIdUtilizadorApiKey(Request.Headers["X-API-Key"].ToString());
+                if (id > 0) {
+                    Utilizador u = context.ObterUtilizador(id);
+                     var passwordHasher = new PasswordHasher<string>();
+                    await Login(new Utilizador(){NomeUtilizador=u.NomeUtilizador, Password=u.Password}, ReturnUrl, 0,0,0,0,0,0);
+                }else{
+                    return Content("Invalid API Key");
+                }
+            }
 
             ViewData["ReturnUrl"] = ReturnUrl;
             return View();
@@ -109,7 +119,7 @@ namespace FT_Management.Controllers
                     context.NovoUtilizador(user);
                 }
 
-                if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
+                if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success || user.Password==utilizador.Password)
                 {
                     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" && !user.Dev) return Forbid();
 
