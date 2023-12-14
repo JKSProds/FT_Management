@@ -29,7 +29,7 @@ namespace FT_Management.Controllers
         public async Task<IActionResult> Login(string ReturnUrl)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            System.Collections.Specialized.NameValueCollection urlParams = HttpUtility.ParseQueryString(new Uri(Request.Host.Value + ReturnUrl).Query);
+            System.Collections.Specialized.NameValueCollection urlParams = HttpUtility.ParseQueryString(new Uri("http://" + Request.Host + ReturnUrl).Query);
 
             if (Request.Headers.ContainsKey("Authorization"))
                 {
