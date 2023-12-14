@@ -73,7 +73,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a para a aplicação manualmente!", u.NomeCompleto, u.Id);
+            _logger.LogDebug("Utilizador {1} [{2}] a parar a aplicação manualmente!", u.NomeCompleto, u.Id);
 
             applicationLifetime.StopApplication();
             return View();

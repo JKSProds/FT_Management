@@ -20,7 +20,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todos os armazens.", u.NomeCompleto, u.Id);
 
-            return View(phccontext.ObterArmazensFixos());
+            return View(phccontext.ObterArmazens());
         }
 
         //Obter todos os dossiers associados ao um armazem

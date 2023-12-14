@@ -223,16 +223,13 @@ namespace FT_Management.Controllers
         }
 
         //Obter o calendario ICS
-        [AllowAnonymous]
         [HttpGet]
-        public virtual ActionResult Calendario(string ApiKey)
+        public virtual ActionResult Calendario()
         {
             var calendar = new Calendar();
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(ApiKey);
-            if (String.IsNullOrEmpty(ApiKey) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
-            if (IdUtilizador == 0) return Forbid();
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
 
             Utilizador u = context.ObterUtilizador(IdUtilizador);
 

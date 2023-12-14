@@ -166,9 +166,15 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-danger"
-                onclick="ApagarLinha(document.getElementById('txtHiddenStampLinha').value);">Confirmar</button>
-            <button class="button" onclick="Bulma('#ModalConfirmApagarLinha').modal().close();">Não</button>
+            <button class="button is-danger is-large is-fullwidth"
+                onclick="ApagarLinha(document.getElementById('txtHiddenStampLinha').value);"><span class="icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <span>Sim</span></button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#ModalConfirmApagarLinha').modal().close();"><span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Cancelar</span></button>
         </footer>
     </div>
 </div>
@@ -185,8 +191,14 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-danger" onclick="ApagarLinhaSerie();">Confirmar</button>
-            <button class="button" onclick="Bulma('#ModalConfirmApagarLinhaSerie').modal().close();">Não</button>
+            <button class="button is-danger is-large is-fullwidth" onclick="ApagarLinhaSerie();"><span class="icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <span>Sim</span></button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#ModalConfirmApagarLinhaSerie').modal().close();"><span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Cancelar</span></button>
         </footer>
     </div>
 </div>
@@ -203,8 +215,14 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-danger" onclick="FecharInventario();">Confirmar</button>
-            <button class="button" onclick="Bulma('#ModalConfirmFecharInventario').modal().close();">Não</button>
+            <button class="button is-danger is-large is-fullwidth" onclick="FecharInventario();"><span class="icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <span>Sim</span></button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#ModalConfirmFecharInventario').modal().close();"><span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Cancelar</span></button>
         </footer>
     </div>
 </div>
@@ -221,7 +239,10 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button" onclick="Bulma('#ModalSerie').modal().close();">Fechar</button>
+            <button class="button is-large is-fullwidth" onclick="Bulma('#ModalSerie').modal().close();"><span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Fechar</span></button>
         </footer>
     </div>
 </div>
@@ -334,9 +355,15 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-info is-large is-fullwidth" type="button" onclick="resetModal();">Validar</button>
+            <button class="button is-info is-large is-fullwidth" type="button" onclick="resetModal();"><span class="icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <span>Guardar</span></button>
             <button class="button is-primary is-large is-fullwidth" type="button"
-                onclick="Bulma('#ModalAdicionarLinha').modal().close();">Fechar</button>
+                onclick="Bulma('#ModalAdicionarLinha').modal().close();"><span class="icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </span>
+            <span>Fechar</span></button>
         </footer>
     </div>
 </div>

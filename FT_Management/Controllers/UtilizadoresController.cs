@@ -26,8 +26,55 @@ namespace FT_Management.Controllers
 
         //Obtem view para login
         [HttpGet]
-        public IActionResult Login(string ReturnUrl)
+        public async Task<IActionResult> Login(string ReturnUrl)
         {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            System.Collections.Specialized.NameValueCollection urlParams = HttpUtility.ParseQueryString(new Uri(Request.Host.Value + ReturnUrl).Query);
+
+            if (Request.Headers.ContainsKey("Authorization"))
+                {
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+
+                // If authorization header doesn't start with basic, throw no result.
+                if (!authorizationHeader.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Content("Authorization header does not start with 'Basic'");
+                }
+
+                // Decrypt the authorization header and split out the client id/secret which is separated by the first ':'
+                var authBase64Decoded = Encoding.UTF8.GetString(Convert.FromBase64String(authorizationHeader.Replace("Basic ", "", StringComparison.OrdinalIgnoreCase)));
+                var authSplit = authBase64Decoded.Split(new[] { ':' }, 2);
+
+                // No username and password, so throw no result.
+                if (authSplit.Length != 2)
+                {
+                    return Content("Invalid Authorization header format");
+                }
+
+                // Store the client ID and secret
+                var clientId = authSplit[0];
+                var clientSecret = authSplit[1];
+                await Login(new Utilizador(){NomeUtilizador=clientId, Password=clientSecret}, ReturnUrl, 0,0,0,0,0,0);
+			}else if (Request.Headers.ContainsKey("X-API-Key")) {
+                var id = context.ObterIdUtilizadorApiKey(Request.Headers["X-API-Key"].ToString());
+                if (id > 0) {
+                    Utilizador u = context.ObterUtilizador(id);
+                     var passwordHasher = new PasswordHasher<string>();
+                    await Login(new Utilizador(){NomeUtilizador=u.NomeUtilizador, Password=u.Password}, ReturnUrl, 0,0,0,0,0,0);
+                }else{
+                    return Content("Invalid X-API Key");
+                }
+            }else if (!string.IsNullOrEmpty(urlParams["ApiKey"])) {
+                var id = context.ObterIdUtilizadorApiKey(urlParams["ApiKey"]);
+                if (id > 0) {
+                    Utilizador u = context.ObterUtilizador(id);
+                     var passwordHasher = new PasswordHasher<string>();
+                    await Login(new Utilizador(){NomeUtilizador=u.NomeUtilizador, Password=u.Password}, ReturnUrl, 0,0,0,0,0,0);
+                }else{
+                    return Content("Invalid API Key");
+                }
+            }
+
             ViewData["ReturnUrl"] = ReturnUrl;
             return View();
         }
@@ -83,7 +130,7 @@ namespace FT_Management.Controllers
                     context.NovoUtilizador(user);
                 }
 
-                if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success)
+                if (passwordHasher.VerifyHashedPassword(null, user.Password, utilizador.Password) == PasswordVerificationResult.Success || user.Password==utilizador.Password)
                 {
                     if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" && !user.Dev) return Forbid();
 
@@ -437,7 +484,6 @@ namespace FT_Management.Controllers
         }
 
         //Obtem os logs do utilziador numa data em especifico
-        [AllowAnonymous]
         [HttpPost]
         public IActionResult Notificacao(int id, string Mensagem, string Api)
         {
@@ -445,8 +491,7 @@ namespace FT_Management.Controllers
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
            
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
-            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             Utilizador u2 = context.ObterUtilizador(id);
             if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();

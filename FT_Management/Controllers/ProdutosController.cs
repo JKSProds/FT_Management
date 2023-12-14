@@ -212,15 +212,13 @@
         }
 
         //Gerar guia global
-        [AllowAnonymous]
         [HttpPost]
         public JsonResult GuiaGlobal(int id, string Api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(Api);
-            if (String.IsNullOrEmpty(Api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             if (u.Id == 0) return Json("Acesso Negado - " + Api);
 

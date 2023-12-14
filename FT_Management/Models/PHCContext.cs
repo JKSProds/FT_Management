@@ -3688,7 +3688,7 @@ namespace FT_Management.Models
                             Qtd_Separar = Double.Parse(result["qtt"].ToString()),
                             BOMA_STAMP = result["BOMASTAMP"].ToString(),
                             NumSerie = result["serie"].ToString(),
-                            CriadoA = DateTime.Parse(DateTime.Parse(result["usrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["usrhora"].ToString()).ToShortTimeString()),
+                            CriadoA = DateTime.Parse(DateTime.Parse(result["usrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["usrhora"].ToString()).ToLongTimeString()),
                             CriadoPor = result["usrinis"].ToString()
                         });
                     }
@@ -4846,5 +4846,51 @@ namespace FT_Management.Models
         }
 
         #endregion
+
+        public Notificacao ObterEmail(string id) {
+            Notificacao n = new Notificacao();
+
+             try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from u_mails where mailstamp = '"+id+"'", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                            n = new Notificacao
+                            {
+                                Assunto = result["assunto"].ToString().Trim(),
+                                Mensagem = result["corpo"].ToString().Trim(),
+                                UtilizadorDestino = new Utilizador() {EmailUtilizador=result["para"].ToString().Trim()},
+                                Cc = !string.IsNullOrEmpty(result["cc"].ToString()) ? result["cc"].ToString().Split(";").ToList() : new List<string>()
+                            };
+                    }
+                }
+
+                conn.Close();
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as linhas dos emails do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return n;
+        }
+
+        public List<string> FecharEmail(string id)
+        {
+            string SQLQuery = "UPDATE u_mails set enviado=1, data_envio='" + DateTime.Now.ToString("yyyyMMdd") + "', hora_envio='" + DateTime.Now.ToString("HH:mm:ss") + "' WHERE mailstamp='"+id+"';";
+           
+            return ExecutarQuery(SQLQuery);
+        }
     }
 }

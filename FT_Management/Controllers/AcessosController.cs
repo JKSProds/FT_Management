@@ -29,15 +29,12 @@
 
         //Obter ultimo acesso de um utilizador em especifico
         [HttpGet]
-        [AllowAnonymous]
         public JsonResult Acesso(string api, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
-            if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
-            if (IdUtilizador == 0) return Json("Acesso negado!");
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
 
             Utilizador u = context.ObterUtilizador(id);
 
@@ -48,15 +45,12 @@
 
         //Criar um acesso
         [HttpPost]
-        [AllowAnonymous]
         public JsonResult Acesso(string api, int id, int tipo, int pin)
         {
             List<string> res = new List<string>() { "0", "Erro" };
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            int IdUtilizador = context.ObterIdUtilizadorApiKey(api);
-            if (String.IsNullOrEmpty(api) && User.Identity.IsAuthenticated) IdUtilizador = int.Parse(this.User.Claims.First().Value);
-            if (IdUtilizador == 0) return Json(res);
+            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
 
             Utilizador u = context.ObterUtilizador(id);
 
