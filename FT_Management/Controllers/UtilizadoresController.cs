@@ -29,6 +29,8 @@ namespace FT_Management.Controllers
         public async Task<IActionResult> Login(string ReturnUrl)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            System.Collections.Specialized.NameValueCollection urlParams = HttpUtility.ParseQueryString(new Uri(Request.Host.Value + ReturnUrl).Query);
+
             if (Request.Headers.ContainsKey("Authorization"))
                 {
                 var authorizationHeader = Request.Headers["Authorization"].ToString();
@@ -55,6 +57,15 @@ namespace FT_Management.Controllers
                 await Login(new Utilizador(){NomeUtilizador=clientId, Password=clientSecret}, ReturnUrl, 0,0,0,0,0,0);
 			}else if (Request.Headers.ContainsKey("X-API-Key")) {
                 var id = context.ObterIdUtilizadorApiKey(Request.Headers["X-API-Key"].ToString());
+                if (id > 0) {
+                    Utilizador u = context.ObterUtilizador(id);
+                     var passwordHasher = new PasswordHasher<string>();
+                    await Login(new Utilizador(){NomeUtilizador=u.NomeUtilizador, Password=u.Password}, ReturnUrl, 0,0,0,0,0,0);
+                }else{
+                    return Content("Invalid X-API Key");
+                }
+            }else if (!string.IsNullOrEmpty(urlParams["ApiKey"])) {
+                var id = context.ObterIdUtilizadorApiKey(urlParams["ApiKey"]);
                 if (id > 0) {
                     Utilizador u = context.ObterUtilizador(id);
                      var passwordHasher = new PasswordHasher<string>();
