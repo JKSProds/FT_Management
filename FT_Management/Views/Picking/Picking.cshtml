@@ -469,7 +469,7 @@ function ValidarSerie(id, l) {
     Array.from(elts).forEach(function(elt){
       elt.addEventListener("keyup", function(event) {
         if (event.keyCode === 13 && elt.value.length > 0) {
-            elt.parentElement.nextElementSibling.childNodes[1].click();
+            elt.parentElement.nextElementSibling.childNodes[3].click();
             
             //Passar para o proximo elemento
             if (elt.parentElement.parentElement.nextElementSibling == null) {
