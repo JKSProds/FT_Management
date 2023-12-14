@@ -73,7 +73,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
-            _logger.LogDebug("Utilizador {1} [{2}] a para a aplicação manualmente!", u.NomeCompleto, u.Id);
+            _logger.LogDebug("Utilizador {1} [{2}] a parar a aplicação manualmente!", u.NomeCompleto, u.Id);
 
             applicationLifetime.StopApplication();
             return View();
@@ -133,6 +133,20 @@
             _logger.LogDebug("Utilizador {1} [{2}] a apagar uma notificacao.", u.NomeCompleto, u.Id);
 
             return Json(context.ApagarNotificacao(id) ? StatusCode(200) : StatusCode(500));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Mail(string to, string subject, string content)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            if (string.IsNullOrEmpty(to) || string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(content)) return StatusCode(500);
+
+            _logger.LogDebug("Utilizador {1} [{2}] a enviar um email!", u.NomeCompleto, u.Id);
+
+            return MailContext.EnviarEmailManual(to,subject,content) ? StatusCode(200) : StatusCode(500);
         }
     }
 }

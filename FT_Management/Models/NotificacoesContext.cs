@@ -344,6 +344,14 @@ namespace FT_Management.Models
             return context.ObterEmailsCC(tipo);
         }
 
+
+        public static bool EnviarEmailManual(string Destino, string Assunto, string Mensagem)
+        {
+             EnviarMailSimples(Destino, Assunto, Mensagem, null, null);
+
+            return true;
+        }
+
         public static bool EnviarEmailSugestao(Utilizador u, string Obs, Attachment anexo)
         {
             string Assunto = "Nova Sugestão - Utilizador - " + u.NomeCompleto;
