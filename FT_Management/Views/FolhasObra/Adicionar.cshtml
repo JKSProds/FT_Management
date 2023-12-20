@@ -221,6 +221,14 @@
                         </div>
                         <div class="column is-4">
                             <div class="field">
+                            <label class="label">Técnicos</label>
+                            <div class="list has-visible-pointer-controls">
+                                @foreach(var t in Model.Marcacao.LstTecnicos){
+                                    <div class="list-item"><div class="list-item-title" style="width:100%">@t.NomeCompleto</div></div>
+                                }
+                            </div>
+                        </div>
+                            <div class="field">
                                 <div class="control">
                                     <input type="date" class="input "
                                            value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
@@ -236,6 +244,7 @@
                                 </div>
                                 <span asp-validation-for="DataServico" class="has-text-danger"></span>
                             </div>
+                            
                         </div>
                         <div class="column is-4">
                             <div class="field">

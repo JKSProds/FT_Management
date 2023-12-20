@@ -144,16 +144,19 @@
             {
                 if (item != "")
                 {
-                    this.IntervencaosServico.Add(new Intervencao
-                    {
-                        DataServiço = DateTime.Parse(item.Split(" ").First()),
-                        HoraInicio = DateTime.Parse(item.Split(" ").Last().Split("|").First()),
-                        HoraFim = DateTime.Parse(item.Split(" ").Last().Split("|").Last()),
-                        RelatorioServico = this.RelatorioServico,
-                        IdTecnico = this.Utilizador.IdPHC,
-                        NomeTecnico = this.Utilizador.NomeCompleto,
-                        IdFolhaObra = this.IdFolhaObra
-                    });
+                    foreach(var t in this.Marcacao.LstTecnicos) {
+                        this.IntervencaosServico.Add(new Intervencao
+                            {
+                                DataServiço = DateTime.Parse(item.Split(" ").First()),
+                                HoraInicio = DateTime.Parse(item.Split(" ").Last().Split("|").First()),
+                                HoraFim = DateTime.Parse(item.Split(" ").Last().Split("|").Last()),
+                                RelatorioServico = this.RelatorioServico,
+                                IdTecnico = t.IdPHC,
+                                NomeTecnico = t.NomeCompleto,
+                                IdFolhaObra = this.IdFolhaObra
+                            });
+                    }
+                    
                 }
             }
             this.DataServico = DateTime.Now;
