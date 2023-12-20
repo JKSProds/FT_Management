@@ -563,7 +563,7 @@
                 </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close(); if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} ">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close(); if (document.getElementById('ListaPecas').value == '') { Bulma('#modalSemPecas').modal().open();} else if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} ">
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
                     </span>
@@ -1214,6 +1214,45 @@
     </div>
 </div>
 
+<div class="modal" id="modalSemPecas">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Peças</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field" style="width:100%">
+                        <p class="title has-text-centered has-text-weight-bold">
+                            Não tem acessórios selecionados. <br>Deseja avançar?
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                    onclick="Bulma('#modalSemPecas').modal().close(); if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} "
+                    href="javascript:;">
+                <span class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span>Avançar</span>
+            </button>
+            <button type="button" class="button is-danger is-large is-fullwidth"
+                    onclick="Bulma('#modalSemPecas').modal().close();"
+                    href="javascript:;">
+                                <span class="icon">
+                        <i class="fa-regular fa-circle-xmark"></i>
+                    </span>
+                    <span>Cancelar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
 <div id="modalObterHistorico" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -1457,6 +1496,7 @@
     //VALIDACOES FINAIS DA FOLHA DE OBRA
     function AbrirMensagens() {
         if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
+        if (document.getElementById('txtStampPeca').value != "") document.getElementById("btnAdicionarPeca").onclick();
         document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
 
         $('#divFinalChk').find('input[type=checkbox]').each(function () {
