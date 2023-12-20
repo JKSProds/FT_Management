@@ -136,6 +136,30 @@
 
             return View(d);
         }
+
+                //validar Transferencia em Viagem do Técnico
+        [HttpPost]
+        public ActionResult Viagem(string id, string linhas) {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            if (string.IsNullOrEmpty(id)) return StatusCode(500);
+
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a validar uma transferencia em viagem em especifico: Armazem - {3}, ID TV - {4}.", u.NomeCompleto, u.Id, u.IdArmazem, id);
+            
+            Dossier d = phccontext.ObterDossier(id);
+
+            List<Linha_Dossier> LstLinhas = linhas.Split(';')
+            .Select(l => l.Split('|'))
+            .Where(p => p.Length == 2)
+            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Quantidade = int.Parse(p[1]), Stamp_Dossier = d.StampDossier })
+            .ToList();
+            
+            d.Linhas = LstLinhas;
+            return StatusCode(200);
+        }
         
         //Obter peças em uso num armazem
         [HttpGet]
