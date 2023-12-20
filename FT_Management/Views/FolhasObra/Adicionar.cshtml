@@ -1584,9 +1584,7 @@
                 });
             },
             select: function (e, i) {
-                $("#txtStampPeca").val(i.item.val);
-                $("#txtQtdPeca").val(i.item.qtd);
-                document.getElementById("btnAdicionarPeca").disabled = false;
+                PreencherPeca(i.item.label, i.item.val, i.item.qtd);
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -1606,7 +1604,7 @@
             success: function (response) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th style=\"width: 110px\">Referência</th><th>Designação</th><th>Quantidade</th><th></th></tr></thead><tbody>";
                 $(response).each(function () {
-                    html += "<tr><td data-label='Referência'>" + this.ref_Produto + "</td><td data-label='Designação'>" + this.designacao_Produto.trim() + "</td><td data-label='Quantidade'>" + this.stock_Atual + " / " + this.stock_PHC + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherPeca(\"" + this.ref_Produto + " - " + this.designacao_Produto + "\", \"" + this.stampProduto + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
+                    html += "<tr><td data-label='Referência'>" + this.ref_Produto + "</td><td data-label='Designação'>" + this.designacao_Produto.trim() + "</td><td data-label='Quantidade'>" + this.stock_Atual + " / " + this.stock_PHC + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherPeca(\"" + this.ref_Produto + " - " + this.designacao_Produto + "\", \"" + this.stampProduto + "\", \"" + this.stock_Atual + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
 
                 });
                 html += "</tbody></table></div></div>"
@@ -1621,9 +1619,10 @@
         });
     }
 
-    function PreencherPeca(designacao, stamp) {
+    function PreencherPeca(designacao, stamp, qtd) {
         $("#txtStampPeca").val(stamp);
         $("#txtPecas").val(designacao);
+        $("#txtQtdPeca").val(qtd);
         document.getElementById("btnAdicionarPeca").disabled = false;
         Bulma('#modalPecas').modal().close();
     }
@@ -1656,7 +1655,7 @@
                     if (response.stampProduto == null) {
                         notifyError('Ocorreu um erro ao obter a informação da peça! Verifique o seu stock!');
                     } else {
-                        PreencherPeca(response.ref_Produto + " - " + response.designacao_Produto.trim(), response.stampProduto);
+                        PreencherPeca(response.ref_Produto + " - " + response.designacao_Produto.trim(), response.stampProduto, response.stock_Atual);
                     }
 
                 },
