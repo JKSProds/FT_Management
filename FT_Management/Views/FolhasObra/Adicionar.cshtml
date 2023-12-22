@@ -467,6 +467,7 @@
                 <input type="checkbox" asp-for="Avisar" id="chkAvisar">
                 <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
                 <input type="checkbox" id="chkEnviarEmail" asp-for="EnviarEmail">
+                <input type="checkbox" id="chkEnviarEmailGuias" asp-for="EnviarEmailGuias">
                 <input type="checkbox" id="chkRecolhaOficina" asp-for="RecolhaOficina">
                 <input type="checkbox" id="chkGuia" asp-for="Guia">
                 <input type="checkbox" id="chkCobrarDeslocacao" asp-for="CobrarDeslocacao">
@@ -562,13 +563,25 @@
                 </div>
                 <div id="divFechar" hidden class="field">
                     <label class="switch is-rounded">
-                        <input type="checkbox" onchange="document.getElementById('chkFecharMarcacao').checked = this.checked;">
+                        <input type="checkbox" onchange="document.getElementById('chkFecharMarcacao').checked = this.checked;document.getElementById('divEmailGuias').hidden = !(document.getElementById('chkFecharMarcacao').checked && '@Model.Instalação' == 'True' && '@Model.Marcacao.GuiasInstalacao' == 'True');">
                         <span class="check is-info"></span>
                         <span class="control-label">
                             Deseja dar como concluida a assistência atual?
                         </span>
                     </label>
                     <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
+                </div>
+                <div id="divEmailGuias" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkEnviarEmailGuias').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja enviar um email com as guias para o cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
                 </div>
             </section>
             <footer class="modal-card-foot">
@@ -1534,6 +1547,8 @@
         }
 
         document.getElementById('divFechar').hidden = !(document.getElementById("lstEstadoFO").value == "1");
+
+        document.getElementById('divEmailGuias').hidden = !(document.getElementById('chkFecharMarcacao').checked && '@Model.Instalação' == 'True' && '@Model.Marcacao.GuiasInstalacao' == 'True');
 
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalFinal').modal().open();

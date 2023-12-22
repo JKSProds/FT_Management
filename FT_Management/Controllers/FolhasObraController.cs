@@ -146,6 +146,7 @@ namespace FT_Management.Controllers
                     phccontext.FecharFolhaObra(fo);
                     phccontext.CriarAnexosFolhaObra(fo);
                     if (fo.FecharMarcacao && fo.Instalação && fo.Marcacao.GuiasInstalacao) phccontext.AtualizarAnexosAssinatura(fo);
+                    if (fo.FecharMarcacao && fo.Instalação && fo.Marcacao.GuiasInstalacao && fo.EnviarEmailGuias) MailContext.EnviarEmailGuias(fo.EmailCliente, fo.Marcacao.LstAnexos.Where(a => a.AnexoInstalacao).ToList());
                     if (fo.PecasServico.Where(p => p.Garantia).Count() > 0) phccontext.CriarRMAFLinhas(phccontext.CriarRMAF(fo)[2], fo);
                     fo = phccontext.ObterFolhaObra(fo.IdFolhaObra);
 

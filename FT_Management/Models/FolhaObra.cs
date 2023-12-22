@@ -85,6 +85,7 @@
         [Display(Name = "Motivo - Fora de Contrato")]
         public string JustExtraContrato { get; set; }
         public string CheckList { get; set; }
+        public bool EnviarEmailGuias { get; set; }
 
         public FolhaObra()
         {
