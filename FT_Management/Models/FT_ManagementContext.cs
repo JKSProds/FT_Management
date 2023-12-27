@@ -2915,7 +2915,7 @@ namespace FT_Management.Models
             pdfFormFields.SetField("ID", folhaobra.ClienteServico.IdCliente.ToString() + " / " + folhaobra.ClienteServico.IdLoja.ToString());
             pdfFormFields.SetField("Relatório", folhaobra.RelatorioServico);
             pdfFormFields.SetField("Referencia", folhaobra.ReferenciaServico);
-            pdfFormFields.SetField("Tecnico", folhaobra.IntervencaosServico.Last().NomeTecnico);
+            pdfFormFields.SetField("Tecnico", folhaobra.Utilizador.NomeCompleto);
             pdfFormFields.SetField("Cliente", folhaobra.ConferidoPor);
             pdfFormFields.SetField("Guia", folhaobra.GuiaTransporteAtual);
             pdfFormFields.SetField("Obs", (folhaobra.AssistenciaRemota ? "REMOTO " : "") + (folhaobra.Piquete ? "PIQUETE " : "") + (folhaobra.Instalação ? "INSTALAÇÃO " : "") + (folhaobra.Contrato ? "CONTRATO " : ""));

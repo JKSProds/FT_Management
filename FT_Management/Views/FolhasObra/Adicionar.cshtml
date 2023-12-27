@@ -221,6 +221,14 @@
                         </div>
                         <div class="column is-4">
                             <div class="field">
+                            <label class="label">Técnicos</label>
+                            <div class="list has-visible-pointer-controls">
+                                @foreach(var t in Model.Marcacao.LstTecnicos){
+                                    <div class="list-item"><div class="list-item-title" style="width:100%">@t.NomeCompleto</div></div>
+                                }
+                            </div>
+                        </div>
+                            <div class="field">
                                 <div class="control">
                                     <input type="date" class="input "
                                            value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
@@ -236,6 +244,7 @@
                                 </div>
                                 <span asp-validation-for="DataServico" class="has-text-danger"></span>
                             </div>
+                            
                         </div>
                         <div class="column is-4">
                             <div class="field">
@@ -458,6 +467,7 @@
                 <input type="checkbox" asp-for="Avisar" id="chkAvisar">
                 <input type="checkbox" asp-for="FecharMarcacao" id="chkFecharMarcacao">
                 <input type="checkbox" id="chkEnviarEmail" asp-for="EnviarEmail">
+                <input type="checkbox" id="chkEnviarEmailGuias" asp-for="EnviarEmailGuias">
                 <input type="checkbox" id="chkRecolhaOficina" asp-for="RecolhaOficina">
                 <input type="checkbox" id="chkGuia" asp-for="Guia">
                 <input type="checkbox" id="chkCobrarDeslocacao" asp-for="CobrarDeslocacao">
@@ -553,7 +563,7 @@
                 </div>
                 <div id="divFechar" hidden class="field">
                     <label class="switch is-rounded">
-                        <input type="checkbox" onchange="document.getElementById('chkFecharMarcacao').checked = this.checked;">
+                        <input type="checkbox" onchange="document.getElementById('chkFecharMarcacao').checked = this.checked;document.getElementById('divEmailGuias').hidden = !(document.getElementById('chkFecharMarcacao').checked && '@Model.Instalação' == 'True' && '@Model.Marcacao.GuiasInstalacao' == 'True');">
                         <span class="check is-info"></span>
                         <span class="control-label">
                             Deseja dar como concluida a assistência atual?
@@ -561,9 +571,21 @@
                     </label>
                     <span asp-validation-for="FecharMarcacao" class="has-text-danger"></span>
                 </div>
+                <div id="divEmailGuias" hidden class="field">
+                    <div class="field">
+                        <label class="switch is-rounded">
+                            <input type="checkbox" onchange="document.getElementById('chkEnviarEmailGuias').checked = this.checked;">
+                            <span class="check is-info"></span>
+                            <span class="control-label">
+                                Deseja enviar um email com as guias para o cliente?
+                            </span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="EnviarEmail" class="has-text-danger"></span>
+                </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close(); if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} ">
+                <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close(); if (document.getElementById('ListaPecas').value == '') { Bulma('#modalSemPecas').modal().open();} else if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} ">
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
                     </span>
@@ -1214,6 +1236,45 @@
     </div>
 </div>
 
+<div class="modal" id="modalSemPecas">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Peças</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field" style="width:100%">
+                        <p class="title has-text-centered has-text-weight-bold">
+                            Não tem acessórios selecionados. <br>Deseja avançar?
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button type="button" class="button is-info is-large is-fullwidth"
+                    onclick="Bulma('#modalSemPecas').modal().close(); if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} "
+                    href="javascript:;">
+                <span class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span>Avançar</span>
+            </button>
+            <button type="button" class="button is-danger is-large is-fullwidth"
+                    onclick="Bulma('#modalSemPecas').modal().close();"
+                    href="javascript:;">
+                                <span class="icon">
+                        <i class="fa-regular fa-circle-xmark"></i>
+                    </span>
+                    <span>Cancelar</span>
+            </button>
+        </footer>
+    </div>
+</div>
+
 <div id="modalObterHistorico" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -1457,6 +1518,7 @@
     //VALIDACOES FINAIS DA FOLHA DE OBRA
     function AbrirMensagens() {
         if (document.getElementById('ListaIntervencoes').value == "") AdicionarIntervencao();
+        if (document.getElementById('txtStampPeca').value != "") document.getElementById("btnAdicionarPeca").onclick();
         document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1];
 
         $('#divFinalChk').find('input[type=checkbox]').each(function () {
@@ -1485,6 +1547,8 @@
         }
 
         document.getElementById('divFechar').hidden = !(document.getElementById("lstEstadoFO").value == "1");
+
+        document.getElementById('divEmailGuias').hidden = !(document.getElementById('chkFecharMarcacao').checked && '@Model.Instalação' == 'True' && '@Model.Marcacao.GuiasInstalacao' == 'True');
 
         Bulma('#modalValidacao').modal().close();
         Bulma('#modalFinal').modal().open();
@@ -1584,9 +1648,7 @@
                 });
             },
             select: function (e, i) {
-                $("#txtStampPeca").val(i.item.val);
-                $("#txtQtdPeca").val(i.item.qtd);
-                document.getElementById("btnAdicionarPeca").disabled = false;
+                PreencherPeca(i.item.label, i.item.val, i.item.qtd);
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -1606,7 +1668,7 @@
             success: function (response) {
                 var html = "<div class=\"b-table\"><div class=\"table-wrapper has-mobile-cards\"><table class=\"table table-hover is-fullwidth\"> <thead><tr><th style=\"width: 110px\">Referência</th><th>Designação</th><th>Quantidade</th><th></th></tr></thead><tbody>";
                 $(response).each(function () {
-                    html += "<tr><td data-label='Referência'>" + this.ref_Produto + "</td><td data-label='Designação'>" + this.designacao_Produto.trim() + "</td><td data-label='Quantidade'>" + this.stock_Atual + " / " + this.stock_PHC + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherPeca(\"" + this.ref_Produto + " - " + this.designacao_Produto + "\", \"" + this.stampProduto + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
+                    html += "<tr><td data-label='Referência'>" + this.ref_Produto + "</td><td data-label='Designação'>" + this.designacao_Produto.trim() + "</td><td data-label='Quantidade'>" + this.stock_Atual + " / " + this.stock_PHC + "</td><td class='is-actions-cell'><button class='button is-success is-fullwidth' type='button' onclick='PreencherPeca(\"" + this.ref_Produto + " - " + this.designacao_Produto + "\", \"" + this.stampProduto + "\", \"" + this.stock_Atual + "\")'><span class='icon is-small'><i class='fas fa-check'></i></span><span>Selecionar</span></button></td></tr>";
 
                 });
                 html += "</tbody></table></div></div>"
@@ -1621,9 +1683,10 @@
         });
     }
 
-    function PreencherPeca(designacao, stamp) {
+    function PreencherPeca(designacao, stamp, qtd) {
         $("#txtStampPeca").val(stamp);
         $("#txtPecas").val(designacao);
+        $("#txtQtdPeca").val(qtd);
         document.getElementById("btnAdicionarPeca").disabled = false;
         Bulma('#modalPecas').modal().close();
     }
@@ -1656,7 +1719,7 @@
                     if (response.stampProduto == null) {
                         notifyError('Ocorreu um erro ao obter a informação da peça! Verifique o seu stock!');
                     } else {
-                        PreencherPeca(response.ref_Produto + " - " + response.designacao_Produto.trim(), response.stampProduto);
+                        PreencherPeca(response.ref_Produto + " - " + response.designacao_Produto.trim(), response.stampProduto, response.stock_Atual);
                     }
 
                 },

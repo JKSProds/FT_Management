@@ -65,7 +65,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a criar um invetario novo para o armazém: {3}.", u.NomeCompleto, u.Id, id);
 
-            List<string> res = phccontext.CriarInventario(id, this.User.ObterNomeCompleto());
+            List<string> res = phccontext.CriarInventario(id, u.Iniciais);
             res[2] = (!string.IsNullOrEmpty(res[2])) ? "/Inventario/Dossier/" + res[2] : "";
 
             return new JsonResult(res);
