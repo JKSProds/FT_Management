@@ -274,6 +274,9 @@
                         <div class="control" style="width:100%">
                             <input type="text" class="input" id="txtDesignacao">
                         </div>
+                        <div class="control">
+                            <input type="text" class="input" id="txtUnidade">
+                        </div>
                     </div>
                 </fieldset>
                 <hr />
@@ -464,6 +467,7 @@
     function resetModal() {
         document.getElementById('txtRef').value = '';
         document.getElementById('txtDesignacao').value = '';
+        document.getElementById('txtUnidade').value = '';
         document.getElementById('btnSearchRef').disabled = false;
         document.getElementById('txtRef').disabled = false;
 
@@ -543,6 +547,7 @@
             success: function (data) {
                 if (data.ref_Produto != null) {
                     document.getElementById('txtDesignacao').value = data.designacao_Produto;
+                    document.getElementById('txtUnidade').value = data.tipoUn;
                     document.getElementById('btnSearchRef').disabled = true;
                     document.getElementById('btnSearchRef').classList.remove("is-loading");
                     document.getElementById('txtRef').disabled = true;
