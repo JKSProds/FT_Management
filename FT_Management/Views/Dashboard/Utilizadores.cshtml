@@ -217,8 +217,8 @@
 </style>
 
 
-<div class="columns is-multiline animation" id="animationDiv">
-    <div class="column is-3 container">
+<div class="columns is-multiline animation ml-5" id="animationDiv">
+    <div class="column is-2 container ml-1">
         <div class="loader content is-pulled-right" id="loader">
             <span></span>
             <span></span>
@@ -226,17 +226,17 @@
             <span></span>
         </div>
         <div class="overlay">
-            <input class="pristine" style="zoom:750%;position:relative;left:8px;top:15px;z-index:9" type="checkbox" id="chk" name="toggle" value="on" checked onclick="showDiv();">
+            <input class="pristine" style="zoom:750%;position:relative;left:11px;top:15px;z-index:9" type="checkbox" id="chk" name="toggle" value="on" checked onclick="showDiv();">
         </div>
     </div>
-    <div class="column is-6">
+    <div class="column is-4">
         <div class="has-text-centered">
             <img src="~/img/logo_website.png" />
             <br />
             <p class="subtitle">@Html.Raw(ViewData["Frase"])</p>
         </div>
     </div>
-    <div class="column is-3 container">
+    <div class="column is-2 container ml-6">
         <div class="loader content is-pulled-left" id="loader">
             <span></span>
             <span></span>
@@ -246,7 +246,7 @@
         <div class="overlay">
             <button class="button" style="zoom:650%;left:8px;top:7px;border:0px;background-color:transparent;outline:none;" onclick="NotificacaoEscritorio();" type="button">
                 <span class="icon">
-                    <i class="fa-solid fa-bell fa-shake"></i>
+                    <i class="fa-solid fa-bell fa-shake" style="zoom:100%;""></i>
                 </span>
             </button>
         </div>
