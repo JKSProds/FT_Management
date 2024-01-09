@@ -485,7 +485,6 @@
         }
 
         function recognizeFace(detectedDescriptors, model, threshold) {
-                        console.log(model);
             for (let i = 0; i < model.length; i++) {
                 for (const person of detectedDescriptors) {
                     if (model[i].faceRec.split(' ').length == person.descriptor.length) {

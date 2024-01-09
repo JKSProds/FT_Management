@@ -1,6 +1,6 @@
 ﻿namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin, Escritorio")]
+    [Authorize(Roles = "Admin, Escritorio, Dashboard")]
     public class DashboardController : Controller
     {
         private readonly ILogger<DashboardController> _logger;
