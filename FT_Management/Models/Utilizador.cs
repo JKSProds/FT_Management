@@ -68,7 +68,6 @@
         [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
         public bool Aniversario { get { return DataNascimento.ToString("ddMM") == DateTime.Now.ToString("ddMM"); } }
-        public Viatura Viatura { get; set; }
         [Display(Name = "Ultimo Acesso")]
         public DateTime UltimoAcesso { get; set; }
         public bool AcessoAtivo { get; set; }
@@ -84,15 +83,6 @@
         public string SecondFactorImgUrl { get; set; }
         public string SecondFactorAuthCode { get; set; }
         public bool Ferias { get; set; }
-        public List<Marcacao> LstMarcacoes { get; set; }
-        public List<Linha_Dossier> Linhas { get; set; }
-        public Marcacao MarcacaoCurso
-        {
-            get
-            {
-                return this.LstMarcacoes == null ? null : this.LstMarcacoes.Where(m => m.EstadoMarcacaoDesc == "Em Curso").DefaultIfEmpty(null).First();
-            }
-        }
         public Utilizador()
         {
             this.Id = 0;
@@ -108,11 +98,6 @@
             this.AcessoAtivo = false;
         }
 
-        public List<Marcacao> ObterMarcacoes(DateTime data, bool concluido)
-        {
-            if (concluido) return this.LstMarcacoes.Where(m => m.DataMarcacao.ToShortDateString() == data.ToShortDateString() && (m.EstadoMarcacaoDesc == "Finalizado" || m.EstadoMarcacaoDesc == "Cancelado")).ToList();
-            return this.LstMarcacoes.Where(m => m.DataMarcacao.ToShortDateString() == data.ToShortDateString() && (m.EstadoMarcacaoDesc != "Finalizado" && m.EstadoMarcacaoDesc != "Cancelado")).ToList();
-        }
         public string ObterTelemovelFormatado(bool Indicativo)
         {
             string res = "";
@@ -151,24 +136,6 @@
 
             return res;
 
-        }
-
-        public static string ObterLinkMapa(Cliente c, string valor)
-        {
-            if (string.IsNullOrEmpty(c.Latitude) || string.IsNullOrEmpty(c.Longitude))
-            {
-                if (valor == "Waze") return "waze://?q=" + c.ObterMoradaDirecoes().Replace(" ", "%20") + "&navigate=yes";
-                if (valor == "Apple") return "https://maps.apple.com/?q=" + c.ObterMoradaDirecoes();
-                return "https://maps.google.com/?daddr=" + c.ObterMoradaDirecoes();
-
-            }
-            else
-            {
-                if (valor == "Waze") return "waze://?ll=" + c.Latitude + "," + c.Longitude + "&navigate=yes";
-                if (valor == "Apple") return "https://maps.apple.com/?q=" + c.NomeCliente + "&ll=" + c.Latitude + "," + c.Longitude;
-                return "https://maps.google.com/?q=" + c.Latitude + "," + c.Longitude;
-
-            }
         }
     }
 

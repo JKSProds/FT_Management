@@ -3,8 +3,6 @@
     public static class FicheirosContext
     {
 
-        private static string CaminhoServerAnexos = "S:\\Assistencias_Tecnicas\\";
-        private static string CaminhoImagensProduto = "S:\\Imagens\\EQUIPAMENTOS\\";
         private static string CaminhoImagensUtilizador = "S:\\Imagens\\UTILIZADORES\\";
         private static string CaminhoTemporario = "S:\\WebApp\\";
 
@@ -88,31 +86,6 @@
 
         }
 
-        public static bool CriarAnexoMarcacao(MarcacaoAnexo a, IFormFile ficheiro)
-        {
-            return CriarFicheiro(FormatLinuxServer(a.NomeFicheiro), ficheiro);
-        }
-        public static bool CriarAnexoAssinatura(MarcacaoAnexo a, IFormFile ficheiro)
-        {
-            CriarPasta(FormatLinuxServer(CaminhoServerAnexos));
-            return CriarFicheiro(FormatLinuxServer(CaminhoServerAnexos + a.NomeFicheiro), ficheiro);
-        }
-        public static bool ApagarAnexoMarcacao(MarcacaoAnexo a)
-        {
-            return ApagarFicheiro(FormatLinuxServer(a.NomeFicheiro));
-        }
-        public static bool ApagarFicheiroTemporario(string Nome)
-        {
-            return ApagarFicheiro(FormatLinuxServer(CaminhoTemporario + Nome));
-        }
-        public static string ObterCaminhoProdutoImagem(string Ref_Produto)
-        {
-            return FormatLinuxServer(CaminhoImagensProduto) + Ref_Produto + ".jpg";
-        }
-        public static string ObterCaminhoAssinatura(string res)
-        {
-            return FormatLinuxServer(res);
-        }
         public static bool CriarImagemUtilizador(IFormFile ficheiro, string NomeUtilizador)
         {
             string FullPath = CaminhoImagensUtilizador + NomeUtilizador + "\\";
@@ -161,45 +134,6 @@
         private static void MoveFile(string source, string dest)
         {
             File.Move(source, dest, true);
-        }
-
-        public static string CriarFicheiroTemporario(string nome, IFormFile ficheiro)
-        {
-            string res = FormatLinuxServer(CaminhoTemporario + nome);
-            CriarPasta(FormatLinuxServer(CaminhoTemporario));
-            return CriarFicheiro(res, ficheiro) ? nome : "";
-        }
-        public static bool ExisteFicheiroTemporario(string nome)
-        {
-            return File.Exists(FormatLinuxServer(CaminhoTemporario + nome));
-        }
-        public static void MoverFicheiroTemporario(string source, string dest)
-        {
-            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source))
-            {
-                CriarPasta(FormatLinuxServer(dest));
-                MoveFile(FormatLinuxServer(CaminhoTemporario + source), FormatLinuxServer(dest + source));
-            }
-        }
-
-        public static void MoverFicheiro(string source, string dest)
-        {
-            if (!string.IsNullOrEmpty(dest) && !string.IsNullOrEmpty(source))
-            {
-                CriarPasta(FormatLinuxServer(dest));
-                MoveFile(FormatLinuxServer(source), FormatLinuxServer(dest));
-            }
-        }
-
-        public static string CriarAnexo(string dest, string nome, IFormFile ficheiro)
-        {
-            string res = FormatLinuxServer(dest + nome);
-            CriarPasta(FormatLinuxServer(dest));
-            return CriarFicheiro(res, ficheiro) ? nome : "";
-        }
-        public static bool ApagarAnexo(string Ficheiro_Caminho)
-        {
-            return ApagarFicheiro(FormatLinuxServer(Ficheiro_Caminho));
         }
 
     }

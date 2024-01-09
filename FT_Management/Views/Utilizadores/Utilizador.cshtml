@@ -89,16 +89,6 @@
                     </div>
                     <div class="field is-horizontal">
                         <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
-                                model.Viatura)</label></div>
-                        <div class="field-body">
-                            <div class="field">
-                                <div class="control"><input type="text" class="input" readonly
-                                        asp-for="Viatura.Matricula"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(model =>
                                 model.TipoUtilizador)</label></div>
                         <div class="field-body">
                             <div class="field">
@@ -412,62 +402,6 @@
                                         <select asp-for="TipoTecnico" asp-items="ViewBag.TipoTecnico"
                                             class="form-control" style="width:100%">
                                         </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">Utilizador NextCloud</label></div>
-                            <div class="field-body">
-                                <div class="field">
-                                    <div class="select mb-1" style="width:100%">
-                                        <select asp-for="ChatToken" asp-items="ViewBag.Chats" class="form-control"
-                                            style="width:100%">
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field is-horizontal">
-                            <div class="field-label is-normal"><label class="label">Notificação Automática</label></div>
-                            <div class="field-body">
-                                <div class="field">
-                                    <div class="select mb-1" style="width:100%">
-                                        <select asp-for="NotificacaoAutomatica" asp-items="ViewBag.Notificacoes"
-                                            class="form-control" style="width:100%">
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="field is-horizontal">
-                            <div class="field-body">
-                                <div class="field">
-                                    <div class="field">
-                                        <div class="field-body">
-                                            <div class="field is-grouped">
-                                                <div class="control" style="width:50%">
-                                                    <a class="button is-black is-large is-fullwidth"
-                                                        href="https://apps.apple.com/us/app/nextcloud-talk/id1296825574">
-                                                        <span class="mr-2"><i class="fa-brands fa-apple"></i></span>
-                                                        <p class="is-size-6">Disponivel na <br> <span
-                                                                class="has-text-weight-bold is-size-5">App Store</span>
-                                                        </p>
-                                                    </a>
-                                                </div>
-                                                <div class="control" style="width:50%">
-                                                    <a class="button is-black is-large is-fullwidth"
-                                                        href="https://play.google.com/store/apps/details?id=com.nextcloud.talk2&hl=en&gl=US">
-                                                        <span class="mr-2"><i
-                                                                class="fa-brands fa-google-play"></i></span>
-                                                        <p class="is-size-6">Obter na <br> <span
-                                                                class="has-text-weight-bold is-size-5">Play Store</span>
-                                                        </p>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

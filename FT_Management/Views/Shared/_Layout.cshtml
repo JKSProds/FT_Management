@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <title>@ViewData["Title"] - Gestor Food-Tech</title>
+    <title>@ViewData["Title"] - ASGO</title>
 
     @*<link rel="stylesheet" href="~/css/site.css" />*@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
@@ -106,7 +106,7 @@
              role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
-                    <img src="~/img/ft_logo.png" width="50" height="28">
+                    <img src="~/img/asgo.png" width="200">
                 </a>
 
                 <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
@@ -133,30 +133,6 @@
 
                                 <div class="navbar-dropdown buttons">
                                     <p class="control mx-1">
-                                        <a class="button is-info is-rounded  is-fullwidth" href="~/Dashboard/Encomendas">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-boxes-stacked"></i>
-                                            </span>
-                                            <span>Encomendas</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Dashboard/Pendentes">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-hourglass-half"></i>
-                                            </span>
-                                            <span>Pendentes</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Dashboard/Marcacoes">
-                                            <span class="icon">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </span>
-                                            <span>Marcações</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
                                         <a class="button is-info is-rounded is-fullwidth" href="~/Dashboard/Utilizadores">
                                             <span class="icon">
                                                 <i class="fas fa-user"></i>
@@ -167,211 +143,7 @@
                                 </div>
                             </div>
                         }
-                        @if (User.IsInRole("Escritorio") || User.IsInRole("Admin"))
-                        {
-                            <div class="navbar-item has-dropdown is-hoverable">
-                                <a class="navbar-link">
-                                    Stocks
-                                </a>
-
-                                <div class="navbar-dropdown buttons">
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded  is-fullwidth" href="~/Produtos">
-                                            <span class="icon">
-                                                <i class="fas  fa-dolly-flatbed"></i>
-                                            </span>
-                                            <span>Referências</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Picking">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-barcode"></i>
-                                            </span>
-                                            <span>Picking</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Picking/Fornecedores">
-                                            <span class="icon mb-2">
-                                                <i class="fa-solid fa-pallet"></i>
-                                            </span>
-                                            <span>Ordens de Receção</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Picking/Tecnicos">
-                                            <span class="icon mb-2">
-                                                <i class="fa-solid fa-user-gear"></i>
-                                            </span>
-                                            <span>Técnicos</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Inventario">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-dolly"></i>
-                                            </span>
-                                            <span>Inventário</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Dossiers">
-                                            <span class="icon">
-                                                <i class="fas fa-file-alt"></i>
-                                            </span>
-                                            <span>Dossiers</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Produtos/Garantias">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-house-medical"></i>
-                                            </span>
-                                            <span>Garantias</span>
-                                        </a>
-                                    </p>
-                                </div>
-                            </div>
-                        }
-                        @if (User.IsInRole("Escritorio") || User.IsInRole("Tech") || User.IsInRole("Admin"))
-                        {
-                            <div class="navbar-item has-dropdown is-hoverable">
-                                <a class="navbar-link">
-                                    Técnicos
-                                </a>
-
-                                <div class="navbar-dropdown buttons">
-                                    @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
-                                    {
-                                        <p class="control mx-1">
-                                            <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Adicionar">
-                                                <span class="icon">
-                                                    <i class="fas fa-plus"></i>
-                                                </span>
-                                                <span>Nova Marcação</span>
-                                            </a>
-                                        </p>
-                                        <p class="control mx-1">
-                                            <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos">
-                                                <span class="icon">
-                                                    <i class="fas fa-calendar-alt"></i>
-                                                </span>
-                                                <span>Marcações</span>
-                                            </a>
-                                        </p>
-                                    }
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Pedidos">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-calendar-check"></i>
-                                            </span>
-                                            <span>Minhas Marcações</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded  is-fullwidth" href="~/Produtos/Armazem">
-                                            <span class="icon">
-                                                <i class="fas  fa-dolly-flatbed"></i>
-                                            </span>
-                                            <span>Meu Armazém</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/FolhasObra">
-                                            <span class="icon">
-                                                <i class="fas  fa-file-alt"></i>
-                                            </span>
-                                            <span>Folhas de Obra</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Equipamentos">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-desktop"></i>
-                                            </span>
-                                            <span>Equipamentos</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Agendamento">
-                                            <span class="icon">
-                                                <i class="fas fa-calendar-day"></i>
-                                            </span>
-                                            <span>Calendário</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
-                                            <span class="icon">
-                                                <i class="fas  fa-umbrella-beach"></i>
-                                            </span>
-                                            <span>Mapa de Férias</span>
-                                        </a>
-                                    </p>
-                                </div>
-                            </div>
-                        }
-                        @if (User.IsInRole("Escritorio") || User.IsInRole("Comercial") || User.IsInRole("Admin"))
-                        {
-                            <div class="navbar-item has-dropdown is-hoverable">
-                                <a class="navbar-link">
-                                    Comerciais
-                                </a>
-
-                                <div class="navbar-dropdown buttons">
-
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/Adicionar">
-                                            <span class="icon">
-                                                <i class="fas fa-plus"></i>
-                                            </span>
-                                            <span>Nova Visita</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/CalendarioView">
-                                            <span class="icon">
-                                                <i class="fas fa-calendar-day"></i>
-                                            </span>
-                                            <span>Calendário</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Visitas">
-                                            <span class="icon">
-                                                <i class="fas fa-calendar-alt"></i>
-                                            </span>
-                                            <span>Visitas</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Contactos">
-                                            <span class="icon">
-                                                <i class="fas fa-address-card"></i>
-                                            </span>
-                                            <span>Contactos</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Clientes">
-                                            <span class="icon">
-                                                <i class="fas fa-user"></i>
-                                            </span>
-                                            <span>Clientes</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
-                                            <span class="icon">
-                                                <i class="fas  fa-umbrella-beach"></i>
-                                            </span>
-                                            <span>Mapa de Férias</span>
-                                        </a>
-                                    </p>
-                                </div>
-                            </div>
-                        }
+                        
                         @if (User.IsInRole("Escritorio") || User.IsInRole("Admin"))
                         {
                             <div class="navbar-item has-dropdown is-hoverable">
@@ -381,27 +153,11 @@
 
                                 <div class="navbar-dropdown buttons">
                                     <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
-                                            <span class="icon">
-                                                <i class="fas  fa-umbrella-beach"></i>
-                                            </span>
-                                            <span>Mapa de Férias</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
                                         <a class="button is-info is-rounded is-fullwidth" href="~/Acessos">
                                             <span class="icon">
                                                 <i class="fas fa-clock"></i>
                                             </span>
                                             <span>Acessos</span>
-                                        </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Viaturas">
-                                            <span class="icon">
-                                                <i class="fas fa-car"></i>
-                                            </span>
-                                            <span>Viaturas</span>
                                         </a>
                                     </p>
                                 </div>
@@ -413,16 +169,6 @@
                 <div class="navbar-end">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <div class="navbar-item">
-                            <p class="control">
-                                <a class="button is-info is-rounded" onclick="AbrirNotificacoes()">
-                                    <span class="icon">
-                                        <i class="fa-regular fa-bell"></i>
-                                        <span title="Badge top right" class="badge is-info" id="badgeNotificacao" hidden></span>
-                                    </span>
-                                </a>
-                            </p>
-                        </div>
                         <div class="navbar-item has-dropdown">
                             <a class="navbar-link">
                                 <figure class="mr-3 image is-inline-block is-48x48">
@@ -467,15 +213,6 @@
                                     </div>
                                 }
                                 <div class="navbar-item">
-                                    <a class="button is-info is-light is-fullwidth"
-                                       onclick="Bulma('#modalSugestoes').modal().open();">
-                                        <span class="icon">
-                                            <i class="fa-solid fa-lightbulb"></i>
-                                        </span>
-                                        <span>Sugestões</span>
-                                    </a>
-                                </div>
-                                <div class="navbar-item">
                                     <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
                                         <span class="icon">
                                             <i class="fas fa-sign-out-alt"></i>
@@ -511,50 +248,7 @@
             @RenderBody()
         </main>
     </div>
-    <div class="modal" id="modalSugestoes">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Sugestões</p>
-            </header>
-            <section class="modal-card-body">
-                <div class="control">
-                    <label class="label">Sugestões</label><textarea type="text" class="textarea"
-                                                                    id="txtObs" rows=4 value=""></textarea>
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button class="button is-success" onclick="captura();">Enviar</button>
-                <button class="button" onclick="Bulma('#modalSugestoes').modal().close();">Cancelar</button>
-            </footer>
-        </div>
-    </div>
-    <div class="modal" id="modalNotificacoes">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">
-                    <span class="icon">
-                        <i class="fa-regular fa-bell"></i>
-                    </span>
-                    <span>Notificações</span>
-                </p>
-            </header>
-            <section class="modal-card-body">
-                <div class="control" id="txtNotificacoesModal">
-
-                </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button class="button is-large is-fullwidth is-info" onclick="Bulma('#modalNotificacoes').modal().close();">
-                    <span class="icon">
-                        <i class="fa-regular fa-xmark"></i>
-                    </span>
-                    <span>Fechar</span>
-                </button>
-            </footer>
-        </div>
-    </div>
+   
     <br />
     <br />
     <br />
@@ -595,122 +289,4 @@
         });
     }</script>
 
-@if (User.Identity.IsAuthenticated)
-    {
-    <script>
 
-        VerificarNotificacoes();
-        function post(path, params, method = 'post') {
-
-            // The rest of this code assumes you are not using a library.
-            // It can be made less verbose if you use one.
-            const form = document.createElement('form');
-            form.method = method;
-            form.action = path;
-
-            for (const key in params) {
-                if (params.hasOwnProperty(key)) {
-                    const hiddenField = document.createElement('input');
-                    hiddenField.type = 'hidden';
-                    hiddenField.name = key;
-                    hiddenField.value = params[key];
-
-                    form.appendChild(hiddenField);
-                }
-            }
-
-            document.body.appendChild(form);
-            form.submit();
-        }
-
-        var printscreenData = "";
-        function captura() {
-            Bulma('#modalSugestoes').modal().close();
-            html2canvas(document.body).then((canvas) => {
-                EnviarSugestao(canvas.toDataURL("image/png"));
-            });
-        }
-    function AbrirNotificacoes() {
-        $.ajax({
-            url: '/Home/Notificacoes',
-            type: "GET",
-            data: { "id": @User.Claims.First().Value },
-            success: function (data) {
-                var html = "<button class='button is-danger is-large is-fullwidth' disabled>Nenhuma notificacao por ler!</button>";
-                if (data.length > 0) html = '';
-
-                data.forEach(function (item) {
-                    html += "<div class='notification is-primary' id='notificacao_"+item.id+"'>";
-                    html += "<button class='button is-danger delete' onclick='ApagarNotificacao("+item.id+")'></button>"
-                    html += "<span><strong>(" + item.utilizadorOrigem.nomeCompleto + ")</strong> - " + item.mensagem + "</span></div>";
-                }
-                );
-                document.getElementById('txtNotificacoesModal').innerHTML = html;
-                Bulma('#modalNotificacoes').modal().open();
-            },
-            error: function (data) {
-                notifyError('Ocorreu um erro ao obter as suas notificacoes. Por favor tente novamente!');
-            },
-            failure: function (data) {
-                notifyError('Falha ao obter as suas notificacoes. Por favor tente novamente!');
-            }
-        });
-    }
-
-    function ApagarNotificacao(id) {
-        $.ajax({
-            url: '/Home/Notificacoes',
-            type: "DELETE",
-            data: { "id": id },
-            success: function (data) {
-                document.getElementById('notificacao_' + id).hidden = true;
-                notify('Notificação marcada como lida com sucesso!');
-            },
-            error: function (data) {
-                notifyError('Ocorreu um erro ao apagar as suas notificacoes. Por favor tente novamente!');
-            },
-            failure: function (data) {
-                notifyError('Falha ao apagar as suas notificacoes. Por favor tente novamente!');
-            }
-        });
-    }
-
-    function VerificarNotificacoes() {
-        $.ajax({
-            url: '/Home/Notificacoes',
-            type: "GET",
-            data: { "id": @User.Claims.First().Value },
-            success: function (data) {
-                document.getElementById('badgeNotificacao').hidden = !(data.length > 0);
-            },
-            error: function (data) {
-                notifyError('Ocorreu um erro ao obter as suas notificacoes. Por favor tente novamente!');
-            },
-            failure: function (data) {
-                notifyError('Falha ao obter as suas notificacoes. Por favor tente novamente!');
-            }
-        });
-    }
-
-    function EnviarSugestao(base64) {
-
-        $.ajax({
-            url: '/Home/Sugestao',
-            type: "POST",
-            data: { "obs": document.getElementById('txtObs').value, "file": base64 },
-            success: function (data) {
-                if (data == "Ok") {
-                    notify('Sugestão enviada com sucesso!');
-                }
-            },
-            error: function (data) {
-                notifyError('Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!');
-            },
-            failure: function (data) {
-                notifyError('Ocorreu um erro ao enviar a sugestão. Por favor tente novamente!');
-            }
-        });
-    }
-        
-    </script>
-    }

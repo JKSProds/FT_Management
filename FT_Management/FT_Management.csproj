@@ -28,29 +28,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Views\Formulario\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="FT_Ferias.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FT_FolhaObra.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="FT_Presencas.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="FT_Certificado.pdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Formulario\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Extensions\BasicAuthenticationDefaults.cs" />
-    <Compile Remove="Extensions\BasicAuthenticationClient.cs" />
-    <Compile Remove="Extensions\BasicAuthorizationAttribute.cs" />
-    <Compile Remove="Extensions\BasicAuthenticationHandler.cs" />
   </ItemGroup>
 </Project>

@@ -14,53 +14,10 @@ namespace FT_Management
             builder.Services.AddMvc();
 
             builder.Services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(builder.Configuration.GetConnectionString("DefaultConnection"))));
-            builder.Services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(builder.Configuration.GetConnectionString("PHCConnection"), builder.Configuration.GetConnectionString("DefaultConnection"))));
 
-            // Add Quartz builder.Services
-            builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
-            builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
-
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
-            {
-                if (FT_ManagementContext.ObterParam("EnvioEmailFerias", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
-                {
-                    // Add our job
-                    builder.Services.AddSingleton<CronJobFerias>();
-                    builder.Services.AddSingleton(new JobSchedule(
-                        jobType: typeof(CronJobFerias),
-                        cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailFerias", builder.Configuration.GetConnectionString("DefaultConnection"))));
-                }
-
-                if (FT_ManagementContext.ObterParam("EnvioEmailAgendamentoComercial", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
-                {
-                    builder.Services.AddSingleton<CronJobAgendamentoCRM>();
-                    builder.Services.AddSingleton(new JobSchedule(
-                        jobType: typeof(CronJobAgendamentoCRM),
-                        cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAgendamentoComercial", builder.Configuration.GetConnectionString("DefaultConnection"))));
-                }
-
-
-                if (FT_ManagementContext.ObterParam("EnvioEmailAniversario", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
-                {
-                    builder.Services.AddSingleton<CronJobAniversario>();
-                    builder.Services.AddSingleton(new JobSchedule(
-                        jobType: typeof(CronJobAniversario),
-                        cronExpression: FT_ManagementContext.ObterParam("DataEnvioEmailAniversario", builder.Configuration.GetConnectionString("DefaultConnection"))));
-                }
-
-                if (FT_ManagementContext.ObterParam("SaidaAutomatica", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
-                {
-                    builder.Services.AddSingleton<CronJobSaida>();
-                    builder.Services.AddSingleton(new JobSchedule(
-                        jobType: typeof(CronJobSaida),
-                        cronExpression: FT_ManagementContext.ObterParam("DataSaidaAutomatica", builder.Configuration.GetConnectionString("DefaultConnection"))));
-                }
-            }
 
             //COPIAR IMAGENS UTILIZADOR && APAGAR FILES DA PASTE TEMPORARIA
             FicheirosContext.GestaoFicheiros(true, true);
-
-            builder.Services.AddHostedService<QuartzHostedService>();
 
             builder.Services.Configure<CookiePolicyOptions>(options =>
             {
@@ -76,8 +33,8 @@ namespace FT_Management
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 #if !DEBUG
-            builder.Services.AddDataProtection().SetApplicationName("FT_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));
-                 builder.Services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
+            builder.Services.AddDataProtection().SetApplicationName("Asgo_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));
+                 builder.Services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "ft@2024");
 #endif
 
             var app = builder.Build();
@@ -92,7 +49,6 @@ namespace FT_Management
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.ConfigureExceptionHandler(app.Logger, app.Services.GetRequiredService<IHttpContextAccessor>());
             app.UseRouting();
 
             app.UseAuthorization();

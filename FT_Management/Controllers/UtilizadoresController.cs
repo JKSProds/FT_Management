@@ -86,39 +86,7 @@ namespace FT_Management.Controllers
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.NomeUtilizador == utilizador.NomeUtilizador).ToList();
-
-            if (LstUtilizadores.Count == 0)
-            {
-                Cliente c = phccontext.ObterClienteNIF(utilizador.NomeUtilizador);
-                if (c.IdCliente != 0)
-                {
-                    if (c.Senha == utilizador.Password)
-                    {
-                        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") return Forbid();
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, c.NumeroContribuinteCliente),
-                            new Claim(ClaimTypes.GivenName, c.NomeCliente),
-                            new Claim(ClaimTypes.Role, "Cliente")
-                        };
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
-                        context.AdicionarLog(c.IdCliente, "Cliente login com sucesso!", 4);
-                        return RedirectToAction("Adicionar", "RMA");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Password errada!");
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Não foram encontrados utlizadores com esse nome!");
-                }
-            }
 
             foreach (var user in LstUtilizadores)
             {
@@ -203,10 +171,6 @@ namespace FT_Management.Controllers
             LstTipoTecnicos.Insert(0, new TipoTecnico() { Id = 0, Valor = "N/D" });
             ViewBag.TipoTecnico = LstTipoTecnicos.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
 
-            List<KeyValuePair<string, string>> LstChats = ChatContext.ObterChatsAtivos();
-            LstChats.Insert(0, new KeyValuePair<string, string>("", "N/D"));
-            ViewBag.Chats = LstChats.Select(l => new SelectListItem() { Value = l.Key, Text = l.Value });
-
             List<KeyValuePair<int, string>> LstNotificacoes = new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(0, "Desativado"), new KeyValuePair<int, string>(1, "Email"), new KeyValuePair<int, string>(2, "Nextcloud"), new KeyValuePair<int, string>(3, "Ambos") };
             ViewBag.Notificacoes = LstNotificacoes.Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
 
@@ -279,7 +243,6 @@ namespace FT_Management.Controllers
             if (api == 1) return Content(context.NovaApiKey(t));
 
             context.NovoUtilizador(t);
-            if (!string.IsNullOrEmpty(t.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", t);
 
             return Content("1");
         }
@@ -385,7 +348,6 @@ namespace FT_Management.Controllers
             if (tfa.ValidateTwoFactorPIN(stamp, code))
             {
                 t.SecondFactorAuthStamp = stamp;
-                if (!string.IsNullOrEmpty(t.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
                 context.NovoUtilizador(t);
             }
 
@@ -405,7 +367,6 @@ namespace FT_Management.Controllers
 
             t.SecondFactorAuthStamp = "";
 
-            if (!string.IsNullOrEmpty(t.ChatToken)) ChatContext.EnviarNotificacao("Foram atualizadas as suas informações de utilizador!", u);
             context.NovoUtilizador(t);
 
             return RedirectToAction("Editar", new { id = t.Id });
@@ -484,31 +445,5 @@ namespace FT_Management.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //Obtem os logs do utilziador numa data em especifico
-        [HttpPost]
-        public IActionResult Notificacao(int id, string Mensagem, string Api)
-        {
-            if (Mensagem == string.Empty) return StatusCode(500);
-
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-           
-            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
-            Utilizador u = context.ObterUtilizador(IdUtilizador);
-            Utilizador u2 = context.ObterUtilizador(id);
-            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
-
-            _logger.LogDebug("Utilizador {1} [{2}] a enviar uma notificacao: {3}.", u.NomeCompleto, u.Id, Mensagem);
-
-            if (id == 0)
-            {
-                foreach (var usr in context.ObterListaUtilizadores(true, false).Where(u => u.TipoUtilizador == 3 && !string.IsNullOrEmpty(u.ChatToken) && u.NotificacaoAutomatica == 2))
-                {
-                   if (!ChatContext.EnviarNotificacao(Mensagem, usr)) return StatusCode(500);
-                }
-                return StatusCode(200);
-            }
-
-            return ChatContext.EnviarNotificacao(Mensagem,u2) ? StatusCode(200) : StatusCode(500);
-        }
     }
 }
