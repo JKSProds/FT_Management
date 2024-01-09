@@ -269,8 +269,8 @@
                 tar.removeAttribute("class");
         });</script>
 
-
     <div id="hiddenDiv" class='columns is-centered is-multiline' style="display:none">
+
         @foreach (var u in Model)
         {
             <div class="column is-3" onclick="AbrirModal(@u.Id, '@u.NomeCompleto')">
@@ -297,9 +297,10 @@
                 </div>
             </div>
         }
+
     </div>
 
-    <div class="modal" id="modalPin">
+    <div class="modal" id="modalFaceId">
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head" id="divHeaderModal">
@@ -307,15 +308,149 @@
                 <button class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
-                <input type="hidden" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
+                <input type="hidden" class="input is-large my-2 has-text-centered" value="">
                 <input type="hidden" value="0" id='txtUtilizadorSelecionado'>
             <div style="position: relative;">
                 <video id="video" playsinline class="video" width="600" height="337" style="width: 100%; border-radius: 20px;"></video>
                 <canvas id="canvas" class="canvas" style="position: absolute; top: 0; left: 0; z-index: 10"></canvas>
             </div>
             </section>
+            <footer class="modal-card-foot">
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="isFaceDetectionEnabled = false;Bulma('#modalPin').modal().open();"
+                        href="javascript:;">
+                    <span class="icon">
+                       <i class="fa-solid fa-keyboard"></i>
+                    </span>
+                    <span>PIN</span>
+                </button>
+            </footer>
         </div>
     </div>
+
+        <div class="modal" id="modalPin">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Registar Acesso</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <input type="password" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
+                <input type="hidden" value="" id='txtUtilizadorSelecionado'>
+                <div class='columns is-mobile is-centered is-multiline'>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 1"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-1"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 2"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-2"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 3"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-3"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 4"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-4"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 5"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-5"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 6"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-6"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 7"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-7"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 8"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-8"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 9"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-9"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = document.getElementById('txtInputPin').value + 0"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-0"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-8'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPin').value = '';" href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-backspace"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+            <footer class="modal-card-foot">
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="RegistarAcesso()"
+                        href="javascript:;">
+                    <span class="icon">
+                        <i class="fa-solid fa-check-to-slot"></i>
+                    </span>
+                    <span>Gravar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
 
     <div class="modal" id="modalMensagem">
         <div class="modal-background"></div>
@@ -424,7 +559,7 @@
   function AbrirModal(id, nome) {
     document.getElementById('txtUtilizadorSelecionado').value = id;
     document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
-        Bulma('#modalPin').modal().open();
+    Bulma('#modalFaceId').modal().open();
       isFaceDetectionEnabled = true;
   }
 
@@ -433,6 +568,7 @@
         nDetected = 0;
         detected = 0;
         document.getElementById('txtUtilizadorSelecionado').value = '0';
+        Bulma('#modalFaceId').modal().close();
         Bulma('#modalPin').modal().close();
         showDiv();
     }
@@ -446,12 +582,13 @@
         $(function () {
           if (result[0] == "1") {
             document.getElementById("divMensagem").innerHTML = result[1];
-            Bulma('#modalPin').modal().close();
+            Bulma('#modalFaceId').modal().close();
             Bulma('#modalMensagem').modal().open();
             setTimeout(function () {
                 Bulma('#modalMensagem').modal().close();
             }, 2500);
           } else {
+            Bulma('#modalFaceId').modal().close();
             Bulma('#modalPin').modal().close();
             document.getElementById('txtInputPin').value = '';
             notifyError(result[1]);
