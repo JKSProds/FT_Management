@@ -336,7 +336,6 @@
             </header>
             <section class="modal-card-body">
                 <input type="password" class="input is-large my-2 has-text-centered" value="" id='txtInputPin'>
-                <input type="hidden" value="" id='txtUtilizadorSelecionado'>
                 <div class='columns is-mobile is-centered is-multiline'>
                     <div class='column is-4'>
                         <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
@@ -470,6 +469,7 @@
     let isFaceDetectionEnabled = false; // Variável de controle
     let detected = 0;
     let nDetected = 0;
+        
 
     document.addEventListener("DOMContentLoaded", async function () {
         const webcam = document.getElementById("video");
@@ -485,11 +485,13 @@
         }
 
         function recognizeFace(detectedDescriptors, model, threshold) {
+                        console.log(model);
             for (let i = 0; i < model.length; i++) {
                 for (const person of detectedDescriptors) {
                     if (model[i].faceRec.split(' ').length == person.descriptor.length) {
                         const distance = faceapi.euclideanDistance(person.descriptor, model[i].faceRec.split(' '));
-                        console.log(model[i].faceRec.split(' '));
+                        //console.log(model[i].faceRec.split(' '));
+                        //console.log(distance);
                         if (distance < threshold) {
                             // Face recognized as a match
                             return model[i];
@@ -514,10 +516,12 @@
             await faceapi.nets.tinyFaceDetector.loadFromUri("/lib/vladmandic/face-api/model");
             await faceapi.loadFaceLandmarkModel("/lib/vladmandic/face-api/model");
             await faceapi.loadFaceRecognitionModel("/lib/vladmandic/face-api/model");
+            //console.log(model);            
 
             const detectionInterval = setInterval(async () => {
                 if (isFaceDetectionEnabled) {
 
+            //console.log(document.getElementById('txtUtilizadorSelecionado').value);
                     if (detected > 10) {
                         notify("Detetado utilizador com sucesso!");
                         RegistarAcesso();
@@ -530,11 +534,10 @@
                     }
 
                     const detections = await faceapi.detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
-                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
                     // Aqui, você pode verificar as detecções faciais e tomar medidas apropriadas
-                    if (resizedDetections.length > 0) {
-                        var p = recognizeFace(resizedDetections, model[0], 0.55);
+                    if (detections.length > 0) {
+                        var p = recognizeFace(detections, model[0].filter(obj => obj.id === parseInt(document.getElementById('txtUtilizadorSelecionado').value)), 0.50);
                         if (p.id == document.getElementById('txtUtilizadorSelecionado').value) {
                             detected++;
                         } else {
@@ -547,7 +550,7 @@
                     canvasElement
                         .getContext("2d")
                         .clearRect(0, 0, canvasElement.width, canvasElement.height);
-                    faceapi.draw.drawDetections(canvasElement, resizedDetections);
+                    faceapi.draw.drawDetections(canvasElement, detections);
                 }
             }, 100);
         };
