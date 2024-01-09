@@ -34,7 +34,7 @@ namespace FT_Management
 
 #if !DEBUG
             builder.Services.AddDataProtection().SetApplicationName("Asgo_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));
-                 builder.Services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "ft@2024");
+                 builder.Services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
 #endif
 
             var app = builder.Build();
