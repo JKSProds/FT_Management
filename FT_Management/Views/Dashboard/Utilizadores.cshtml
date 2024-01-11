@@ -439,7 +439,7 @@
 
             </section>
             <footer class="modal-card-foot">
-                <button type="button" class="button is-success is-fullwidth is-large" onclick="RegistarAcesso()"
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="RegistarAcesso(document.getElementById('txtInputPin').value)"
                         href="javascript:;">
                     <span class="icon">
                         <i class="fa-solid fa-check-to-slot"></i>
@@ -523,7 +523,7 @@
             //console.log(document.getElementById('txtUtilizadorSelecionado').value);
                     if (detected > 10) {
                         notify("Detetado utilizador com sucesso!");
-                        RegistarAcesso();
+                        RegistarAcesso('9233');
                         FecharModal();
                     }
 
@@ -570,29 +570,30 @@
         nDetected = 0;
         detected = 0;
         document.getElementById('txtUtilizadorSelecionado').value = '0';
+        document.getElementById('txtInputPin').value = '';
         Bulma('#modalFaceId').modal().close();
         Bulma('#modalPin').modal().close();
         showDiv();
     }
     
-    function RegistarAcesso() {
+    function RegistarAcesso(pin) {
     $.ajax({
       type: "POST",
       url: "/Acessos/Acesso",
-      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "3", "pin": "9233" },
+      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "3", "pin": pin },
       success: function (result) {
         $(function () {
           if (result[0] == "1") {
             document.getElementById("divMensagem").innerHTML = result[1];
-            Bulma('#modalFaceId').modal().close();
+            notify("Registo efetuado com sucesso!");
+            FecharModal();
             Bulma('#modalMensagem').modal().open();
             setTimeout(function () {
                 Bulma('#modalMensagem').modal().close();
             }, 2500);
           } else {
-            Bulma('#modalFaceId').modal().close();
-            Bulma('#modalPin').modal().close();
-            document.getElementById('txtInputPin').value = '';
+            FecharModal();
+            notify("Erro ao efetuar o registo de acesso!");
             notifyError(result[1]);
           }
         });

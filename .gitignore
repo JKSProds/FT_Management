@@ -342,3 +342,5 @@ ASALocalRun/
 healthchecksdb
 /Outros/mysql-5.7.35-winx64.zip
 .DS_Store
+FT_Management/.DS_Store
+.DS_Store
