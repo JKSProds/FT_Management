@@ -1,6 +1,6 @@
 ﻿namespace FT_Management.Controllers
 {
-    [Authorize(Roles = "Admin, Escritorio")]
+    [Authorize(Roles = "Admin, Escritorio, Dashboard")]
     public class AcessosController : Controller
     {
         private readonly ILogger<AcessosController> _logger;
@@ -17,6 +17,7 @@
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todos os acessos do seguinte dia: {3}", u.NomeCompleto, u.Id, Data);
@@ -31,6 +32,7 @@
         public JsonResult Acesso(string api, int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             int IdUtilizador = int.Parse(this.User.Claims.First().Value);
 
