@@ -36,6 +36,7 @@
         public double Qtd_Linha { get; set; }
         [Display(Name = "Quantidade a Separar")]
         public double Qtd_Separar { get; set; }
+        public double Qtd_Diff { get{ return Qtd_Separar - Qtd_Linha;} }
         public string TipoUnidade { get; set; }
         [Display(Name = "Núm. de Série")]
         public List<Ref_Linha_Picking> Lista_Ref { get; set; }
