@@ -37,6 +37,9 @@
     <None Update="FT_FolhaObra.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="FT_FolhaObra_Asgo.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="FT_Presencas.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
