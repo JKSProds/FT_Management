@@ -3044,6 +3044,7 @@ namespace FT_Management.Models
                         else
                         {
                             Linha_Picking Linha = LstPickingLinhas.Where(p => p.Ref_linha == result["ref"].ToString()).First();
+                            Linha.Picking_Linha_Stamp += ";" + result["BISTAMP"].ToString().Trim();
                             Linha.Qtd_Separar += Double.Parse(result["QTT_SEPARAR"].ToString());
                             Linha.Qtd_Linha += Double.Parse(result["qtt"].ToString());
 
@@ -3116,7 +3117,8 @@ namespace FT_Management.Models
             {
                 string SQL_Query = "EXEC WEB_Picking_Atualiza_Linha ";
 
-                SQL_Query += "@STAMP = '" + linha.Picking_Linha_Stamp + "', ";
+                SQL_Query += "@STAMP = '" + linha.Picking_Linha_Stamp.Split(";").First() + "', ";
+                SQL_Query += "@STAMPS = '" + (linha.Picking_Linha_Stamp.Split(";").Count() > 1 ? linha.Picking_Linha_Stamp : "") + "', ";
                 SQL_Query += "@QTT = '" + linha.Qtd_Linha + "', ";
                 if (linha.Serie)
                 {

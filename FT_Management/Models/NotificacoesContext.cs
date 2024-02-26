@@ -472,6 +472,15 @@ namespace FT_Management.Models
             return true;
         }
 
+        public static bool EnviarEmailFolhaObraAtrasada(string EmailDestino, FolhaObra fo)
+        {
+            string Assunto = "📄 Folha de Obra [ATRASADA] - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            string Mensagem = "Serve o presente email para enviar que foi realizada uma folha de obra atrasada registada no dia: <b>" + fo.DataServico.ToShortDateString() + "</b><br><br><br>Cliente: <b>" + fo.ClienteServico.NomeCliente + "</b><br>Equipamento:  <b>" + fo.EquipamentoServico.MarcaEquipamento + " " + fo.EquipamentoServico.ModeloEquipamento + " (" + fo.EquipamentoServico.NumeroSerieEquipamento + ")</b><br>Técnico(s): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.NomeTecnico).Distinct()) + "</b><br>Intervenção(ões): <b>" + string.Join(", ", fo.IntervencaosServico.Select(i => i.DataServiço.Date.ToShortDateString()).Distinct()) + "</b><br>AT Nº: <b>" + fo.IdAT + "</b><br>PAT Nº: <b>" + fo.IdFolhaObra + "</b><br><br><br><a style=\"background-color:#0a0a23;color: #fff;border:none; border-radius:10px; padding:15px; min-width: 120px;\"  href=\""+fo.GetUrl+"\">Abrir Folha de Obra</a><br>";
+            EnviarMail(EmailDestino + ";" + fo.Utilizador.EmailUtilizador, Assunto, Mensagem, null, ObterEmailCC(1));
+
+            return true;
+        }
+
         public static bool EnviarEmailGuias(string EmailDestino, List<MarcacaoAnexo>LstAnexos)
         {
             string Assunto = "📄 Guias - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm");
