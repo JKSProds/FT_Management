@@ -198,7 +198,7 @@ namespace FT_Management.Controllers
 
             u.NomeUtilizador = u.NomeUtilizador.ToLower().Trim();
             u.Password = passwordHasher.HashPassword(null, u.Password);
-            u.Iniciais = "ND";
+            u.Iniciais = u.NomeCompleto.Split(' ').Length >= 2 ? $"{u.NomeCompleto.Split(' ')[0][0]}{u.NomeCompleto.Split(' ')[^1][0]}".ToUpper() : "ND";;
             u.Pin = "";
             u.Enable = true;
 

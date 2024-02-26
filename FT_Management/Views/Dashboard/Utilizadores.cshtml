@@ -3,274 +3,23 @@
 @{
     ViewData["Title"] = "Utilizadores";
 }
+    <style>
 
-<style>
-    .animation {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: right;
-        align-items: center;
-        height: 100vh;
-        background: #ffffff;
-    }
-
-    .loader {
-        position: relative;
-        width: 350px;
-        height: 350px;
-        border-radius: 50%;
-        background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
-        animation: animate 1.2s linear infinite;
-    }
-
-    @@keyframes animate {
-        0% {
-            transform: rotate(0deg);
+        #timer {
+            font-size: 48px;
+            color: #333;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out, color 0.5s ease-in-out;
         }
+    </style>
 
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    .loader span {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
-    }
-
-        .loader span:nth-child(1) {
-            filter: blur(5px);
-        }
-
-        .loader span:nth-child(2) {
-            filter: blur(10px);
-        }
-
-        .loader span:nth-child(3) {
-            filter: blur(25px);
-        }
-
-        .loader span:nth-child(4) {
-            filter: blur(50px);
-        }
-
-    .loader:after {
-        content: '';
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
-        background: #f1f1f1;
-        border: solid white 10px;
-        border-radius: 50%;
-    }
-
-
-    h1 {
-        font-size: 6rem;
-        padding-left: 20px;
-        color: #fff;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
-
-    input[type=checkbox] {
-        --off: #c7cad1;
-        --mid: #829ad6;
-        --on: #0067a0;
-        --transDur: 0.5s;
-        --timing: cubic-bezier(0.6,0,0.4,1);
-        animation: bgOff var(--transDur) var(--timing);
-        background-color: var(--off);
-        border-radius: 0.67em / 0.5em;
-        box-shadow: 0 0.05em 0.1em #00000007 inset, 0 -0.25em 0.25em #0001 inset, 0 -0.5em 0 #0001 inset, 0 0.1em 0.1em #0001;
-        cursor: pointer;
-        position: relative;
-        width: 2.25em;
-        height: 1.5em;
-        -webkit-appearance: none;
-        appearance: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-        input[type=checkbox]:before {
-            animation: handleOff var(--transDur) var(--timing);
-            background-attachment: fixed;
-            background-position: 50% calc(50% - 0.1875em);
-            border-radius: 0.5em / 0.375em;
-            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--off) inset, 0 0.475em 0.1em #0001 inset;
-            content: "";
-            display: block;
-            position: absolute;
-            top: 0.125em;
-            left: 0.125em;
-            width: 1em;
-            height: 0.75em;
-        }
-
-        input[type=checkbox]:checked {
-            animation: bgOn var(--transDur) var(--timing) forwards;
-        }
-
-            input[type=checkbox]:checked:before {
-                animation: handleOn var(--transDur) var(--timing) forwards;
-            }
-
-        input[type=checkbox]:focus {
-            outline: none;
-        }
-
-        input[type=checkbox].pristine, input[type=checkbox].pristine:before {
-            animation: none;
-        }
-    /* Animations */
-    @@keyframes bgOff {
-        from {
-            background-color: var(--on);
-        }
-
-        50% {
-            background-color: var(--mid);
-        }
-
-        to {
-            background-color: var(--off);
-        }
-    }
-
-    @@keyframes bgOn {
-        from {
-            background-color: var(--off);
-        }
-
-        50% {
-            background-color: var(--mid);
-        }
-
-        to {
-            background-color: var(--on);
-        }
-    }
-
-    @@keyframes handleOff {
-        from {
-            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--on) inset, 0 0.475em 0.1em #0001 inset;
-            left: 1.125em;
-            width: 1em;
-        }
-
-        50% {
-            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--mid) inset, 0 0.475em 0.1em #0001 inset;
-            left: 0.125em;
-            width: 2em;
-        }
-
-        to {
-            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--off) inset, 0 0.475em 0.1em #0001 inset;
-            left: 0.125em;
-            width: 1em;
-        }
-    }
-
-    @@keyframes handleOn {
-        from {
-            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--off) inset, 0 0.475em 0.1em #0001 inset;
-            left: 0.125em;
-            width: 1em;
-        }
-
-        50% {
-            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--mid) inset, 0 0.475em 0.1em #0001 inset;
-            left: 0.125em;
-            width: 2em;
-        }
-
-        to {
-            box-shadow: 0 0.175em 0.175em 0 #0001 inset, 0 0.375em 0 #0002 inset, 0 0.375em 0 var(--on) inset, 0 0.475em 0.1em #0001 inset;
-            left: 1.125em;
-            width: 1em;
-        }
-    }
-
-    .container {
-        display: grid;
-    }
-
-    .content, .overlay {
-        grid-area: 1 / 1;
-    }
-    /* Styling the button */
-    .btn {
-        cursor: pointer;
-        border: 1px solid #3498db;
-        background-color: transparent;
-        height: 50px;
-        width: 200px;
-        color: #3498db;
-        font-size: 1.5em;
-        box-shadow: 0 6px 6px rgba(0, 0, 0, 0.6);
-    }
-</style>
-
-
-<div class="columns is-multiline animation ml-5" id="animationDiv">
-    <div class="column is-2 container ml-1">
-        <div class="loader content is-pulled-right" id="loader">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div class="overlay">
-            <input class="pristine" style="zoom:750%;position:relative;left:11px;top:15px;z-index:9" type="checkbox" id="chk" name="toggle" value="on" checked onclick="showDiv();">
-        </div>
-    </div>
-    <div class="column is-4">
-        <div class="has-text-centered">
-            <img src="~/img/logo_website.png" />
-            <br />
-            <p class="subtitle">@Html.Raw(ViewData["Frase"])</p>
-        </div>
-    </div>
-    <div class="column is-2 container ml-6">
-        <div class="loader content is-pulled-left" id="loader">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div class="overlay">
-            <button class="button" style="zoom:650%;left:8px;top:7px;border:0px;background-color:transparent;outline:none;" onclick="NotificacaoEscritorio();" type="button">
-                <span class="icon">
-                    <i class="fa-solid fa-bell fa-shake" style="zoom:100%;""></i>
-                </span>
-            </button>
-        </div>
-    </div>
-</div>
-
-
-    <script>
-        document.getElementById('chk').removeAttribute("class");
-        function showDiv() {
-            document.getElementById("animationDiv").style.display = (document.getElementById("animationDiv").style.display == "" ? "none" : "");
-
-            document.getElementById("hiddenDiv").style.display = (document.getElementById("hiddenDiv").style.display == "flex" ? "none" : "flex");
-
-        }
-
-        document.addEventListener("click", e => {
-            let tar = e.target;
-            if (tar.name == "toggle") 
-                tar.removeAttribute("class");
-        });</script>
-
-    <div id="hiddenDiv" class='columns is-centered is-multiline' style="display:none">
-
+    <div class='columns is-centered is-multiline'>
+        <div class="column is-1"></div>
+        <div class="column is-7"><p class="subtitle" style="text-align: center;">@Html.Raw(ViewData["Frase"])</p></div>    
+        <div class="column is-1"></div>
+        <div class="column is-2"><div id="timer"></div></div>
+        <div class="column is-1"></div>
+        <div class="column is-12 p-0 m-0"><hr></div>
         @foreach (var u in Model)
         {
             <div class="column is-3" onclick="AbrirModal(@u.Id, '@u.NomeCompleto')">
@@ -298,6 +47,36 @@
             </div>
         }
 
+    </div>
+
+    <div class="modal" id="modalNoFaceId">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head" id="divHeaderModal">
+                <p class="modal-card-title" id="txtHeaderModal">Registar Face ID</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+            <div>
+               <p>O utilizador selecionado nao tem <b>FACE ID</b> associado. Deseja registar o <b>FACE ID</b> deste utilizador?</p>
+            </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="window.location.href='../Utilizadores/Utilizador/' + document.getElementById('txtUtilizadorSelecionado').value">
+                    <span class="icon">
+                       <i class="fa-solid fa-check"></i>
+                    </span>
+                    <span>Sim</span>
+                </button>
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="FecharModal()"
+                        href="javascript:;">
+                    <span class="icon">
+                       <i class="fa-solid fa-xmark"></i>
+                    </span>
+                    <span>Fechar</span>
+                </button>
+            </footer>
+        </div>
     </div>
 
     <div class="modal" id="modalFaceId">
@@ -469,12 +248,11 @@
     let isFaceDetectionEnabled = false; // Variável de controle
     let detected = 0;
     let nDetected = 0;
-        
+    const model = [@Html.Raw(Json.Serialize(Model.ToList()))];
 
     document.addEventListener("DOMContentLoaded", async function () {
         const webcam = document.getElementById("video");
         const canvas = document.getElementById("canvas");
-        const model = [@Html.Raw(Json.Serialize(Model.ToList()))];
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video });
@@ -560,9 +338,13 @@
 
   function AbrirModal(id, nome) {
     document.getElementById('txtUtilizadorSelecionado').value = id;
-    document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
-    Bulma('#modalFaceId').modal().open();
-      isFaceDetectionEnabled = true;
+    if (model[0].filter(obj => obj.id === parseInt(document.getElementById('txtUtilizadorSelecionado').value))[0].faceRec === '') {
+        Bulma('#modalNoFaceId').modal().open();
+    }else{
+        document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
+        Bulma('#modalFaceId').modal().open();
+        isFaceDetectionEnabled = true;
+    }
   }
 
     function FecharModal() {
@@ -572,6 +354,7 @@
         document.getElementById('txtUtilizadorSelecionado').value = '0';
         document.getElementById('txtInputPin').value = '';
         Bulma('#modalFaceId').modal().close();
+        Bulma('#modalNoFaceId').modal().close();
         Bulma('#modalPin').modal().close();
         showDiv();
     }
@@ -613,4 +396,41 @@
     });
   }
 
+ function updateTimer() {
+        const timerElement = document.getElementById('timer');
+        const currentTime = new Date();
+        const hours = currentTime.getHours().toString().padStart(2, '0');
+        const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+        const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+
+        const currentTimeString = `${hours}:${minutes}:${seconds}`;
+        timerElement.textContent = currentTimeString;
+
+        // Trigger a reflow by reading the offsetHeight property
+        void timerElement.offsetHeight;
+
+        // Apply color and fade-out animation
+        timerElement.style.color = '#ff6347'; // Tomato color
+        timerElement.style.opacity = 0;
+    }
+
+    function fadeInTimer() {
+        const timerElement = document.getElementById('timer');
+        // Apply fade-in animation after a short delay
+        setTimeout(() => {
+            timerElement.style.color = '#333'; // Reset color to default
+            timerElement.style.opacity = 1;
+        }, 100);
+    }
+
+    function startTimer() {
+        updateTimer(); // Update the timer immediately
+        setInterval(() => {
+            updateTimer(); // Update the timer every second
+            fadeInTimer(); // Trigger fade-in animation
+        }, 1000);
+    }
+
+    // Start the timer when the page loads
+    window.onload = startTimer;
     </script>
