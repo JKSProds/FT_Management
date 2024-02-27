@@ -17,7 +17,7 @@
         <div class="column is-1"></div>
         <div class="column is-7"><p class="subtitle" style="text-align: center;">@Html.Raw(ViewData["Frase"])</p></div>    
         <div class="column is-1"></div>
-        <div class="column is-2"><div id="timer"></div></div>
+        <div class="column is-2"><div id="timer" onclick="Bulma('#modalReadFaceIdPin').modal().open();"></div></div>
         <div class="column is-1"></div>
         <div class="column is-12 p-0 m-0"><hr></div>
         @foreach (var u in Model)
@@ -58,16 +58,10 @@
             </header>
             <section class="modal-card-body">
             <div>
-               <p>O utilizador selecionado nao tem <b>FACE ID</b> associado. Deseja registar o <b>FACE ID</b> deste utilizador?</p>
+               <p>O utilizador selecionado nao tem <b>FACE ID</b> associado. Terá de requisitar ao um administrador para registar o seu FaceID, ou poderá fazê-lo no seu perfil!</p>
             </div>
             </section>
             <footer class="modal-card-foot">
-                <button type="button" class="button is-success is-fullwidth is-large" onclick="window.location.href='../Utilizadores/Utilizador/' + document.getElementById('txtUtilizadorSelecionado').value">
-                    <span class="icon">
-                       <i class="fa-solid fa-check"></i>
-                    </span>
-                    <span>Sim</span>
-                </button>
                 <button type="button" class="button is-success is-fullwidth is-large" onclick="FecharModal()"
                         href="javascript:;">
                     <span class="icon">
@@ -88,8 +82,8 @@
             </header>
             <section class="modal-card-body">
                 <input type="hidden" class="input is-large my-2 has-text-centered" value="">
-                <input type="hidden" value="0" id='txtUtilizadorSelecionado'>
-            <div style="position: relative;">
+                <input type="hidden" value="0" id='txtUtilizadorSelecionado'>  
+            <div  style="position: relative;">
                 <video id="video" playsinline class="video" width="600" height="337" style="width: 100%; border-radius: 20px;"></video>
                 <canvas id="canvas" class="canvas" style="position: absolute; top: 0; left: 0; z-index: 10"></canvas>
             </div>
@@ -105,8 +99,169 @@
             </footer>
         </div>
     </div>
+     <div class="modal" id="modalLoadingFaceId">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">A carregar ... </p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div width="600" height="337" style="width: 100%; border-radius: 20px;">
+                    <img src="https://i.pinimg.com/originals/1c/13/f3/1c13f3fe7a6bba370007aea254e195e3.gif" style="width:600px;">
+                </div>
+            </section>
+            <footer class="modal-card-foot">
 
-        <div class="modal" id="modalPin">
+            </footer>
+        </div>
+    </div>
+     <div class="modal" id="modalFaceIdSuccess">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Sucesso</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div width="600" height="337" style="width: 100%; border-radius: 20px;">
+                    <img id="faceidSuccess" src="https://assets-v2.lottiefiles.com/a/b3497a14-1150-11ee-8f36-0f83069a3c82/9BUtul0Vz2.gif">
+                    <div id="divMensagem" class="is-1 has-text-centered title"></div></div>
+            </section>
+            <footer class="modal-card-foot">
+
+            </footer>
+        </div>
+    </div>
+
+    <div class="modal" id="modalReadFaceId">
+        
+    </div>
+
+    <div class="modal" id="modalReadFaceIdPin">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Registar FaceID</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <input type="password" class="input is-large my-2 has-text-centered" value="" id='txtInputPinFaceID'>
+                <div class='columns is-mobile is-centered is-multiline'>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 1"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-1"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 2"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-2"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 3"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-3"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 4"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-4"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 5"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-5"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 6"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-6"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInptxtInputPinFaceIDutPin').value = document.getElementById('txtInputPinFaceID').value + 7"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-7"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 8"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-8"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 9"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-9"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-4'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = document.getElementById('txtInputPinFaceID').value + 0"
+                                href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-0"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class='column is-8'>
+                        <button type="button" class="button is-fullwidth is-large disable-dbl-tap-zoom"
+                                onclick="document.getElementById('txtInputPinFaceID').value = '';" href="javascript:;">
+                            <span class="icon">
+                                <i class="fa-solid fa-backspace"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+            <footer class="modal-card-foot">
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="if(new Date().getHours()*new Date().getMinutes() ==document.getElementById('txtInputPinFaceID').value){ isFaceReadEnabled=true;Bulma('#modalReadFaceIdPin').modal().close();notify('Gravar FaceID Ativo')}"
+                        href="javascript:;">
+                    <span class="icon">
+                        <i class="fa-solid fa-check-to-slot"></i>
+                    </span>
+                    <span>Gravar</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <div class="modal" id="modalPin">
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
@@ -229,25 +384,13 @@
         </div>
     </div>
 
-
-    <div class="modal" id="modalMensagem">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Acesso</p>
-                <button class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-                <div id="divMensagem" class="is-1 has-text-centered title"></div>
-            </section>
-        </div>
-    </div>
-
     <script>
 
     let isFaceDetectionEnabled = false; // Variável de controle
     let detected = 0;
     let nDetected = 0;
+    let isFaceReadEnabled = false; 
+    let averageDescriptor = new Float32Array(128);
     const model = [@Html.Raw(Json.Serialize(Model.ToList()))];
 
     document.addEventListener("DOMContentLoaded", async function () {
@@ -293,16 +436,42 @@
             await faceapi.nets.tinyFaceDetector.loadFromUri("/lib/vladmandic/face-api/model");
             await faceapi.loadFaceLandmarkModel("/lib/vladmandic/face-api/model");
             await faceapi.loadFaceRecognitionModel("/lib/vladmandic/face-api/model");
-            //console.log(model);            
 
             const detectionInterval = setInterval(async () => {
-                if (isFaceDetectionEnabled) {
-
-            //console.log(document.getElementById('txtUtilizadorSelecionado').value);
-                    if (detected > 10) {
+        if (isFaceDetectionEnabled) { 
+                if (detected == 1 && isFaceReadEnabled) {
+                    if (detected == 1) {
                         notify("Detetado utilizador com sucesso!");
+                        averageDescriptor = averageDescriptor.map(value => value / detected);
+                        Bulma('#modalFaceId').modal().close();
+                        isFaceDetectionEnabled = false;
+                        console.log(averageDescriptor);
+                        $.ajax({
+                            type: "PUT",
+                            url: "/Utilizadores/Utilizador/" + parseInt(document.getElementById('txtUtilizadorSelecionado').value),
+                            data: {"faceid": averageDescriptor.join(' ') },
+                            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                            success: function (result) {
+                                $(function () {
+                                    if (result == "1") {
+                                        notify("Utilizador atualizado com sucesso!");
+                                        window.location.reload();
+                                    } else {
+                                        notifyError("Erro ao atualizar o utilizador");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }else if (detected > 10) {
+                        isFaceDetectionEnabled = false;
                         RegistarAcesso('9233');
-                        FecharModal();
+                        document.getElementById('faceidSuccess').src = document.getElementById('faceidSuccess').src;
+                        Bulma('#modalFaceId').modal().close();
+                        Bulma('#modalFaceIdSuccess').modal().open();
+                        setTimeout(function() {
+                            FecharModal();
+                        }, 3200);
                     }
 
                     if (nDetected > 40) {
@@ -312,8 +481,23 @@
 
                     const detections = await faceapi.detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
 
-                    // Aqui, você pode verificar as detecções faciais e tomar medidas apropriadas
-                    if (detections.length > 0) {
+                    if (isFaceReadEnabled) {
+                        const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+                   
+                    if (resizedDetections.length > 0) {
+                        for (const detection of detections) {
+                            const confidenceScore = detection.detection.score;
+                            if (confidenceScore > 0.98) {
+                                averageDescriptor = detection.descriptor;
+                                detected = 1;
+                            }
+                        }
+
+                    } else {
+                        nDetected++;
+                    }
+                    }else if (detections.length > 0) {
                         var p = recognizeFace(detections, model[0].filter(obj => obj.id === parseInt(document.getElementById('txtUtilizadorSelecionado').value)), 0.50);
                         if (p.id == document.getElementById('txtUtilizadorSelecionado').value) {
                             detected++;
@@ -338,17 +522,22 @@
 
   function AbrirModal(id, nome) {
     document.getElementById('txtUtilizadorSelecionado').value = id;
-    if (model[0].filter(obj => obj.id === parseInt(document.getElementById('txtUtilizadorSelecionado').value))[0].faceRec === '') {
+    if (model[0].filter(obj => obj.id === parseInt(document.getElementById('txtUtilizadorSelecionado').value))[0].faceRec === '' && !isFaceReadEnabled) {
         Bulma('#modalNoFaceId').modal().open();
     }else{
+        Bulma('#modalLoadingFaceId').modal().open();
+        setTimeout(function() {
+            Bulma('#modalLoadingFaceId').modal().close();
+            Bulma('#modalFaceId').modal().open();
+        }, 1000);
         document.getElementById('txtHeaderModal').innerHTML = "Registar Acesso - " + nome;
-        Bulma('#modalFaceId').modal().open();
         isFaceDetectionEnabled = true;
     }
   }
 
     function FecharModal() {
         isFaceDetectionEnabled = false;
+        isFaceReadEnabled=false;
         nDetected = 0;
         detected = 0;
         document.getElementById('txtUtilizadorSelecionado').value = '0';
@@ -356,7 +545,8 @@
         Bulma('#modalFaceId').modal().close();
         Bulma('#modalNoFaceId').modal().close();
         Bulma('#modalPin').modal().close();
-        showDiv();
+        Bulma('#modalLoadingFaceId').modal().close(); 
+        Bulma('#modalFaceIdSuccess').modal().close(); 
     }
     
     function RegistarAcesso(pin) {
@@ -368,12 +558,6 @@
         $(function () {
           if (result[0] == "1") {
             document.getElementById("divMensagem").innerHTML = result[1];
-            notify("Registo efetuado com sucesso!");
-            FecharModal();
-            Bulma('#modalMensagem').modal().open();
-            setTimeout(function () {
-                Bulma('#modalMensagem').modal().close();
-            }, 2500);
           } else {
             FecharModal();
             notify("Erro ao efetuar o registo de acesso!");
