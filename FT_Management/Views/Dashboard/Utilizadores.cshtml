@@ -17,7 +17,7 @@
         <div class="column is-1"></div>
         <div class="column is-7"><p class="subtitle" style="text-align: center;">@Html.Raw(ViewData["Frase"])</p></div>    
         <div class="column is-1"></div>
-        <div class="column is-2"><div id="timer" onclick="Bulma('#modalReadFaceIdPin').modal().open();"></div></div>
+        <div class="column is-2"><div id="timer" onclick="CriarCodigo();Bulma('#modalReadFaceIdPin').modal().open();"></div></div>
         <div class="column is-1"></div>
         <div class="column is-12 p-0 m-0"><hr></div>
         @foreach (var u in Model)
@@ -89,7 +89,7 @@
             </div>
             </section>
             <footer class="modal-card-foot">
-                <button type="button" class="button is-success is-fullwidth is-large" onclick="isFaceDetectionEnabled = false;Bulma('#modalPin').modal().open();"
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="CriarCodigo();isFaceDetectionEnabled = false;Bulma('#modalPin').modal().open();"
                         href="javascript:;">
                     <span class="icon">
                        <i class="fa-solid fa-keyboard"></i>
@@ -132,10 +132,22 @@
 
             </footer>
         </div>
-    </div>
+    </div>     <div class="modal" id="modalFaceIdError">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Erro</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <div width="600" height="337" style="width: 100%; border-radius: 20px;">
+                    <img id="faceidError" src="https://i.pinimg.com/originals/39/27/d2/3927d27b60d5e4d11c064c09b4e273f0.gif" style="width:100%">
+                    <div class="is-1 has-text-centered title">Face ID nao detetado!</div></div>
+            </section>
+            <footer class="modal-card-foot">
 
-    <div class="modal" id="modalReadFaceId">
-        
+            </footer>
+        </div>
     </div>
 
     <div class="modal" id="modalReadFaceIdPin">
@@ -250,7 +262,7 @@
 
             </section>
             <footer class="modal-card-foot">
-                <button type="button" class="button is-success is-fullwidth is-large" onclick="if(new Date().getHours()*new Date().getMinutes() ==document.getElementById('txtInputPinFaceID').value){ isFaceReadEnabled=true;Bulma('#modalReadFaceIdPin').modal().close();notify('Gravar FaceID Ativo')}"
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="ObterCodigo(document.getElementById('txtInputPinFaceID').value, function (result){if (result) { isFaceReadEnabled=true;Bulma('#modalReadFaceIdPin').modal().close();notify('Gravar FaceID Ativo');}});"
                         href="javascript:;">
                     <span class="icon">
                         <i class="fa-solid fa-check-to-slot"></i>
@@ -373,7 +385,7 @@
 
             </section>
             <footer class="modal-card-foot">
-                <button type="button" class="button is-success is-fullwidth is-large" onclick="RegistarAcesso(document.getElementById('txtInputPin').value)"
+                <button type="button" class="button is-success is-fullwidth is-large" onclick="ObterCodigo(document.getElementById('txtInputPin').value, function (result){if (result) RegistarAcesso()});"
                         href="javascript:;">
                     <span class="icon">
                         <i class="fa-solid fa-check-to-slot"></i>
@@ -392,6 +404,7 @@
     let isFaceReadEnabled = false; 
     let averageDescriptor = new Float32Array(128);
     const model = [@Html.Raw(Json.Serialize(Model.ToList()))];
+    let stamp = '';
 
     document.addEventListener("DOMContentLoaded", async function () {
         const webcam = document.getElementById("video");
@@ -465,7 +478,7 @@
                     }
                 }else if (detected > 10) {
                         isFaceDetectionEnabled = false;
-                        RegistarAcesso('9233');
+                        RegistarAcesso();
                         document.getElementById('faceidSuccess').src = document.getElementById('faceidSuccess').src;
                         Bulma('#modalFaceId').modal().close();
                         Bulma('#modalFaceIdSuccess').modal().open();
@@ -475,8 +488,12 @@
                     }
 
                     if (nDetected > 40) {
-                        notifyError("Nao foi detetado o utilizador selecionado!");
-                        FecharModal();
+                        document.getElementById('faceidError').src = document.getElementById('faceidError').src;
+                        Bulma('#modalFaceId').modal().close();
+                        Bulma('#modalFaceIdError').modal().open();
+                        setTimeout(function() {
+                            FecharModal();
+                        }, 3200);
                     }
 
                     const detections = await faceapi.detectAllFaces(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
@@ -547,26 +564,61 @@
         Bulma('#modalPin').modal().close();
         Bulma('#modalLoadingFaceId').modal().close(); 
         Bulma('#modalFaceIdSuccess').modal().close(); 
+        Bulma('#modalFaceIdError').modal().close();
     }
     
-    function RegistarAcesso(pin) {
+    function RegistarAcesso() {
     $.ajax({
       type: "POST",
       url: "/Acessos/Acesso",
-      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "3", "pin": pin },
+      data: { "api": '@ViewData["API"]', "id": document.getElementById('txtUtilizadorSelecionado').value, "tipo": "3", "pin": '9233' },
       success: function (result) {
         $(function () {
           if (result[0] == "1") {
             document.getElementById("divMensagem").innerHTML = result[1];
+            document.getElementById('faceidSuccess').src = document.getElementById('faceidSuccess').src;
+            Bulma('#modalPin').modal().close();
+            Bulma('#modalFaceIdSuccess').modal().open();
+            setTimeout(function() {
+                FecharModal();
+            }, 3200);
           } else {
-            FecharModal();
-            notify("Erro ao efetuar o registo de acesso!");
-            notifyError(result[1]);
+            Bulma('#modalPin').modal().close();
+            Bulma('#modalFaceIdError').modal().open();
+            setTimeout(function() {
+                FecharModal();
+            }, 3200);
           }
         });
       }
     });
   }
+
+  function CriarCodigo() {
+    $.ajax({
+      type: "POST",
+      url: "/Home/Codigo",
+      success: function (result) {
+        $(function () {
+            console.log(result);
+          stamp = result;
+        });
+      }
+    });
+  }  
+  function ObterCodigo(pin,callback) {
+    $.ajax({
+      type: "GET",
+      url: "/Home/Codigo",
+      data: {"stamp": stamp, "pin": pin},
+      success: function (result) {
+        $(function () {
+            callback(true);
+        });
+      }
+    });
+  }
+
 
 
     function NotificacaoEscritorio() {

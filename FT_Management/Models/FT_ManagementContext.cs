@@ -485,12 +485,12 @@ namespace FT_Management.Models
                         {
                             if (Lst.Count() == 0)
                             {
-                                workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
-                                workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
-                                workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
-                                workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+                                //workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
+                                //workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                //workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+                                //workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
+                                //workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                //workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
                             }
                             else
                             {
@@ -699,6 +699,42 @@ namespace FT_Management.Models
             {
                 return false;
             }
+        }
+
+
+        public void CriarCodigo(Codigo c)
+        {
+
+            string sql = "INSERT INTO dat_codigos (CodigoValidacao, EstadoCodigo, ObsInternas, Observacoes, Utilizador, ValidadeCodigo) VALUES ('" + c.Stamp + "', '" + c.Estado + "', '" + c.ObsInternas + "','" + c.Obs + "', '" + c.utilizador.Id + "', '" + c.ValidadeCodigo.ToString("yyyy-MM-dd HH:mm:ss") + "') ;";
+
+            Database db = ConnectionString;
+
+            db.Execute(sql);
+            db.Connection.Close();
+        }
+        public Codigo ObterCodigo(string stamp)
+        {
+            Codigo c = new Codigo();
+            string sqlQuery = "SELECT * FROM dat_codigos where CodigoValidacao='" + stamp + "';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    c = new Codigo()
+                    {
+                        Stamp = result["CodigoValidacao"],
+                        Estado = result["EstadoCodigo"],
+                        ObsInternas = result["ObsInternas"],
+                        Obs = result["Observacoes"],
+                        ValidadeCodigo = result["ValidadeCodigo"],
+                        utilizador = this.ObterUtilizador(int.Parse(result["Utilizador"])),
+                        ValidadoPor = this.ObterUtilizador(int.Parse(result["ValidadoPor"]))
+                    };
+                }
+            }
+            return c;
         }
         #endregion
     }
