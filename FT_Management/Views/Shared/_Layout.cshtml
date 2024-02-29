@@ -118,7 +118,7 @@
             </div>
 
             <div id="navbarBasicExample" class="navbar-menu">
-                @if (User.Identity.IsAuthenticated && !User.IsInRole("Cliente") && User.ObterNomeCompleto()!="Dashboard")
+                @if (User.Identity.IsAuthenticated && !User.IsInRole("Cliente") && !User.IsInRole("Dashboard"))
                 {
                     <div class="navbar-start">
                         @if (User.IsInRole("Escritorio") || User.IsInRole("Admin"))

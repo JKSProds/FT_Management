@@ -32,6 +32,19 @@ namespace FT_Management
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            // Add Quartz builder.Services
+            builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            if (FT_ManagementContext.ObterParam("FecharAcessoAutomatico", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
+            {
+                builder.Services.AddSingleton<CronJobAcessos>();
+                builder.Services.AddSingleton(new JobSchedule(
+                    jobType: typeof(CronJobAcessos),
+                    cronExpression: FT_ManagementContext.ObterParam("DataFecharAcessoAutomatico", builder.Configuration.GetConnectionString("DefaultConnection"))));
+            }
+
+            builder.Services.AddHostedService<QuartzHostedService>();
 #if !DEBUG
             builder.Services.AddDataProtection().SetApplicationName("ASGO_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));
             builder.Services.AddLettuceEncrypt().PersistDataToDirectory(new DirectoryInfo("/https/"), "Password123");
