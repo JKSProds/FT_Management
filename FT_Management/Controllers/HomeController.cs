@@ -48,7 +48,7 @@
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter um código", u.NomeCompleto, u.Id);
-
+            
             return context.ObterCodigo(stamp).ObsInternas == pin.ToString() ? StatusCode(200) : StatusCode(403);
         }
         [HttpPost]
@@ -65,6 +65,8 @@
             
             context.CriarCodigo(new Models.Codigo() {Stamp = stamp, Estado=0, ObsInternas=codigo.ToString(), utilizador=u, ValidadeCodigo=DateTime.Now.AddMinutes(5) });
             
+            foreach (var t in context.ObterListaUtilizadores(true, false).Where(v => v.Admin)) { MailContext.EnviarEmailCodigo(codigo.ToString(), t); }
+
             return Content(stamp);
         }
 
