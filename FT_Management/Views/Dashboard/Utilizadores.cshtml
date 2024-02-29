@@ -11,14 +11,21 @@
             opacity: 1;
             transition: opacity 0.5s ease-in-out, color 0.5s ease-in-out;
         }
-         body, html {
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
+        body, html {
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        }
+
+        .content {
+            /* Your content styles go here */
+            width: 100%;
+            height: 100%;
+            overflow-y: auto; /* If you have a specific scrollable area within the content */
             }
     </style>
 
-    <div class='columns is-centered is-multiline'>
+    <div class='columns is-centered is-multiline content'>
         <div class="column is-1"></div>
         <div class="column is-7"><p class="subtitle" style="text-align: center;">@Html.Raw(ViewData["Frase"])</p></div>    
         <div class="column is-1"></div>
