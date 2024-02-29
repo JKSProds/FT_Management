@@ -105,7 +105,7 @@
         <nav class='navbar @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-warning" : "is-light")  has-shadow'
              role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <a class="navbar-item" href="~/">
+                <a class="navbar-item" href=@(!User.IsInRole("Dashboard") ? "~/" : "")>
                     <img src="~/img/asgo.png" width="200">
                 </a>
 
@@ -167,76 +167,78 @@
 
                 }
                 <div class="navbar-end">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div class="navbar-item has-dropdown">
-                            <a class="navbar-link">
-                                <figure class="mr-3 image is-inline-block is-48x48">
-                                    <img class="is-rounded" src="@this.User.ObterImgUtilizador()" alt="user_image">
-                                </figure>
-                                <span>@this.User.ObterNomeCompleto()</span>
-                            </a>
+                    @if (!User.IsInRole("Dashboard")) {
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="navbar-item has-dropdown">
+                                <a class="navbar-link">
+                                    <figure class="mr-3 image is-inline-block is-48x48">
+                                        <img class="is-rounded" src="@this.User.ObterImgUtilizador()" alt="user_image">
+                                    </figure>
+                                    <span>@this.User.ObterNomeCompleto()</span>
+                                </a>
 
-                            <div class="navbar-dropdown">
-                                @if (!User.IsInRole("Cliente"))
-                                {
+                                <div class="navbar-dropdown">
+                                    @if (!User.IsInRole("Cliente"))
+                                    {
+                                        <div class="navbar-item">
+                                            <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Utilizador">
+                                                <span class="icon">
+                                                    <i class="fas fa-user"></i>
+                                                </span>
+                                                <span>Meu Perfil</span>
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <button class="mx-3 button is-danger">@this.User.ObterNomeCompleto()</button>
+                                    }
+                                    @if (this.User.IsInRole("Admin"))
+                                    {
+                                        <div class="navbar-item">
+                                            <a class="button is-light is-fullwidth" href="~/Utilizadores">
+                                                <span class="icon">
+                                                    <i class="fas fa-gear"></i>
+                                                </span>
+                                                <span>Utilizadores</span>
+                                            </a>
+                                        </div>
+                                        <div class="navbar-item">
+                                            <a class="button is-danger is-fullwidth" href="~/Home/Restart">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-power-off"></i>
+                                                </span>
+                                                <span>Reiniciar</span>
+                                            </a>
+                                        </div>
+                                    }
                                     <div class="navbar-item">
-                                        <a class="button is-primary is-light is-fullwidth" href="~/Utilizadores/Utilizador">
+                                        <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
                                             <span class="icon">
-                                                <i class="fas fa-user"></i>
+                                                <i class="fas fa-sign-out-alt"></i>
                                             </span>
-                                            <span>Meu Perfil</span>
+                                            <span>Terminar Sessão</span>
                                         </a>
                                     </div>
-                                }
-                                else
-                                {
-                                    <button class="mx-3 button is-danger">@this.User.ObterNomeCompleto()</button>
-                                }
-                                @if (this.User.IsInRole("Admin"))
-                                {
-                                    <div class="navbar-item">
-                                        <a class="button is-light is-fullwidth" href="~/Utilizadores">
-                                            <span class="icon">
-                                                <i class="fas fa-gear"></i>
-                                            </span>
-                                            <span>Utilizadores</span>
-                                        </a>
+                                    <hr class="navbar-divider">
+                                    <div class="navbar-item has-text-centered">
+                                        Versão @GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ?" - DEV" : "")
                                     </div>
-                                    <div class="navbar-item">
-                                        <a class="button is-danger is-fullwidth" href="~/Home/Restart">
-                                            <span class="icon">
-                                                <i class="fa-solid fa-power-off"></i>
-                                            </span>
-                                            <span>Reiniciar</span>
-                                        </a>
-                                    </div>
-                                }
-                                <div class="navbar-item">
-                                    <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
-                                        <span class="icon">
-                                            <i class="fas fa-sign-out-alt"></i>
-                                        </span>
-                                        <span>Terminar Sessão</span>
-                                    </a>
-                                </div>
-                                <hr class="navbar-divider">
-                                <div class="navbar-item has-text-centered">
-                                    Versão @GetType().Assembly.GetName().Version.ToString()@(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ?" - DEV" : "")
                                 </div>
                             </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="navbar-item">
-                            <a class="button is-info is-light" href="~/Utilizadores/Login">
-                                <span class="icon">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                </span>
-                                <span>Iniciar Sessão</span>
-                            </a>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="navbar-item">
+                                <a class="button is-info is-light" href="~/Utilizadores/Login">
+                                    <span class="icon">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </span>
+                                    <span>Iniciar Sessão</span>
+                                </a>
+                            </div>
+                        }
                     }
                 </div>
             </div>
