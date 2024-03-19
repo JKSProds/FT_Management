@@ -98,7 +98,7 @@
 
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
-
+            
             return File(context.GerarMapaPresencas(DateTime.Parse(data)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
