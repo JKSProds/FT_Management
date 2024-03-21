@@ -44,6 +44,14 @@ namespace FT_Management
                     cronExpression: FT_ManagementContext.ObterParam("DataFecharAcessoAutomatico", builder.Configuration.GetConnectionString("DefaultConnection"))));
             }
 
+            if (FT_ManagementContext.ObterParam("EnviarAcessoAutomatico", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
+            {
+                builder.Services.AddSingleton<CronJobEnviarAcessos>();
+                builder.Services.AddSingleton(new JobSchedule(
+                    jobType: typeof(CronJobEnviarAcessos),
+                    cronExpression: FT_ManagementContext.ObterParam("DataEnviarAcessoAutomatico", builder.Configuration.GetConnectionString("DefaultConnection"))));
+            }
+
             builder.Services.AddHostedService<QuartzHostedService>();
 #if !DEBUG
             builder.Services.AddDataProtection().SetApplicationName("ASGO_Management").PersistKeysToFileSystem(new DirectoryInfo("/https/"));

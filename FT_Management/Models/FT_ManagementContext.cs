@@ -449,6 +449,32 @@ namespace FT_Management.Models
             return LstAcessos;
 
         }
+
+        public List<Acesso> ObterListaAcessos(DateTime dInicio, DateTime dFim)
+        {
+            List<Acesso> LstAcessos = new List<Acesso>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_acessos where DataHoraAcesso>'" + dInicio.ToString("yyyy-MM-dd 00:00:00") +"' AND DataHoraAcesso<'" + dFim.ToString("yyyy-MM-dd 23:59:59") + "' order by DataHoraAcesso;");
+                while (result.Read())
+                {
+                    LstAcessos.Add(new Acesso()
+                    {
+                        Id = result["Id"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                        Data = result["DataHoraAcesso"],
+                        Temperatura = result["Temperatura"],
+                        Tipo = result["Tipo"],
+                        App = result["App"] == 1
+                    });
+                }
+            }
+
+            return LstAcessos;
+
+        }
+
         public byte[] GerarMapaPresencas(DateTime Data)
         {
             using ExcelPackage package = new ExcelPackage(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "FT_Presencas.xlsx"));
@@ -503,6 +529,69 @@ namespace FT_Management.Models
                         }
                         y += 4;
                     }
+                }
+            }
+           
+            return package.GetAsByteArray();
+        }
+
+        public byte[] GerarMapaPresencas(DateTime dInicio, DateTime dFim)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using ExcelPackage package = new ExcelPackage(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "Asgo_Presencas.xlsx"));
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            int totalRows = workSheet.Dimension.Rows;
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
+            List<Acesso> LstAcessos = ObterListaAcessos(dInicio, dFim);
+
+            int y = 5;
+            int x = 1;
+
+            workSheet.Cells[4, 1].Value = dInicio.ToString("dd-MM") + " - " + dFim.ToString("dd-MM");
+
+
+            foreach (var utilizador in LstUtilizadores)
+            {
+                workSheet.Cells[y, x].Value = utilizador.NomeCompleto;
+                y += 4;
+            }
+
+            if (LstAcessos.Count > 0)
+            {
+                foreach (var data in LstAcessos.GroupBy(d => new { d.Data.Date }) )
+                {
+                    y = 5;
+                    workSheet.Cells[y-1, x + 1].Value = data.Key.Date.Day;
+                    
+                    foreach (Utilizador utilizador in LstUtilizadores)
+                    {
+                        int j = y;
+                        DateTime dataAtual = data.Key.Date;
+                        List<Acesso> Lst = LstAcessos.Where(u => u.Data.ToShortDateString() == dataAtual.ToShortDateString()).Where(u => u.Utilizador.Id == utilizador.Id).ToList();
+
+                        if (!(dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday))
+                        {
+                            if (Lst.Count() == 0)
+                            {
+                                //workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
+                                //workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                //workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+                                //workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
+                                //workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                //workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+                            }
+                            else
+                            {
+                                foreach (var acesso in Lst)
+                                {
+                                    workSheet.Cells[j, x + 1].Value = acesso.TipoAcesso.Substring(0, 1) + ": " + acesso.Data.ToShortTimeString();
+                                    j++;
+                                }
+                            }
+                        }
+                        y += 4;
+                    }
+                    x+=1;
                 }
             }
            

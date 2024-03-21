@@ -28,7 +28,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Update="FT_Presencas.xlsx">
+    <None Update="Asgo_Presencas.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

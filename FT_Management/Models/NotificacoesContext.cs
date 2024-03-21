@@ -156,5 +156,14 @@ namespace FT_Management.Models
 
             return true;
         }
+
+        public static bool EnviarEmailAcessos(DateTime dInicio, DateTime dFim, Utilizador u, Attachment a)
+        {
+            string Assunto = "[ASGO] Acessos";
+            string Mensagem = "Abaixo seguem os acessos dos seguintes dias: <b>" + dInicio.ToShortDateString() + " -> " + dFim.ToShortDateString() + "</b><br><br>";
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, new List<Attachment>() {a}, new List<string>());
+
+            return true;
+        }
     }
 }
