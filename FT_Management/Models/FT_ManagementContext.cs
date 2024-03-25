@@ -560,7 +560,7 @@ namespace FT_Management.Models
 
             if (LstAcessos.Count > 0)
             {
-                while (dataAtual.Date < dFim.Date)
+                while (dataAtual.Date <= dFim.Date)
                 {
                     y = 5;
                     workSheet.Cells[y-1, x + 1].Value = dataAtual.Date.Day;
