@@ -541,6 +541,8 @@ namespace FT_Management.Models
             using ExcelPackage package = new ExcelPackage(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "Asgo_Presencas.xlsx"));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             int totalRows = workSheet.Dimension.Rows;
+
+            DateTime dataAtual = dInicio;
             List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
             List<Acesso> LstAcessos = ObterListaAcessos(dInicio, dFim);
 
@@ -558,19 +560,16 @@ namespace FT_Management.Models
 
             if (LstAcessos.Count > 0)
             {
-                foreach (var data in LstAcessos.GroupBy(d => new { d.Data.Date }) )
+                while (dataAtual.Date < dFim.Date)
                 {
                     y = 5;
-                    workSheet.Cells[y-1, x + 1].Value = data.Key.Date.Day;
+                    workSheet.Cells[y-1, x + 1].Value = dataAtual.Date.Day;
                     
                     foreach (Utilizador utilizador in LstUtilizadores)
                     {
                         int j = y;
-                        DateTime dataAtual = data.Key.Date;
                         List<Acesso> Lst = LstAcessos.Where(u => u.Data.ToShortDateString() == dataAtual.ToShortDateString()).Where(u => u.Utilizador.Id == utilizador.Id).ToList();
 
-                        if (!(dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday))
-                        {
                             if (Lst.Count() == 0)
                             {
                                 //workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
@@ -588,10 +587,10 @@ namespace FT_Management.Models
                                     j++;
                                 }
                             }
-                        }
                         y += 4;
                     }
                     x+=1;
+                    dataAtual = dataAtual.AddDays(1);
                 }
             }
            

@@ -98,7 +98,7 @@
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(context.GerarMapaPresencas(DateTime.Parse(data)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            return File(context.GerarMapaPresencas(DateTime.Parse(DateTime.Parse(data).ToString("01/MM/yyyy")), DateTime.Parse(DateTime.Parse(data).ToString("31/MM/yyyy"))), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         [HttpGet]
