@@ -38,7 +38,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             
-            8
+            var d = phccontext.ObterEstatisticas(phccontext.ObterCliente(c,0), cl, dInicio, dFim);
             var data = new {
                 labels = d.Keys,
                 values = d.Values
