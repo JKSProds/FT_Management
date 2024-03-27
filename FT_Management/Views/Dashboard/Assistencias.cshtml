@@ -247,6 +247,9 @@ function criarGrafico(data, element, title, tipo, legend) {
                         display: legend,
                         position: 'top', // Position legend above the chart
                         labels: {
+                            font: {
+                                size: 14
+                            },
                             generateLabels: function(chart) {
                                 var data = chart.data;
                                 if (data.labels.length && data.datasets.length) {

@@ -2159,7 +2159,7 @@ namespace FT_Management.Models
         public Dictionary<string, int> ObterEstatisticas(Cliente c, string cl, DateTime dInicio, DateTime dFim)
         {
         Dictionary<string, int> data = new Dictionary<string, int>();
-        string sql = "select "+cl+", COUNT(*) from v_at where data between '"+dInicio.ToString("yyyyMMdd")+"' and '"+dFim.ToString("yyyyMMdd")+"' and no="+c.IdCliente+" and "+cl+" <> '' group by "+cl+";";
+        string sql = "select "+cl+", COUNT(*) from v_at where data between '"+dInicio.ToString("yyyyMMdd")+"' and '"+dFim.ToString("yyyyMMdd")+"' and no="+c.IdCliente+" and "+cl+" <> '' group by "+cl+" order by "+cl+";";
         try
             {
                 SqlConnection conn = new SqlConnection(ConnectionString);
@@ -2173,7 +2173,7 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                        data.Add(result[0].ToString(), int.Parse(result[1].ToString()));
+                        data.Add(cl == "data" ? DateTime.Parse(result[0].ToString()).ToString("yyyy-MM-dd") : result[0].ToString(), int.Parse(result[1].ToString()));
                     }
                 }
                 conn.Close();
