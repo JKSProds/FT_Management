@@ -47,30 +47,40 @@
 </div>
 <hr />
 
-<div class="columns is-gapless">
-    <div class="column is-6 mx-1">
+<div class="columns is-multiline">
+    <div class="column is-12">
         <div class="card has-table has-mobile-sort-spaced">
             <header class="card-header">
                 <p class="card-header-title">
-                   
                     Assistências
                 </p>
             </header>
             <div class="card-content">
-                <canvas id="pieChart" width="400" height="400"></canvas>
+                <canvas id="bAssistencias" width="400" height="400"></canvas>
             </div>
         </div>
     </div>
-    <div class="column is-6 mx-1">
+    <div class="column is-6">
         <div class="card has-table has-mobile-sort-spaced">
             <header class="card-header">
                 <p class="card-header-title">
-                    
+                    Contrato
+                </p>
+            </header>
+            <div class="card-content">
+                <canvas id="pcContrato" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="column is-6">
+        <div class="card has-table has-mobile-sort-spaced">
+            <header class="card-header">
+                <p class="card-header-title">
                     Fora de Contrato
                 </p>
             </header>
             <div class="card-content">
-                <canvas id="pieChartFC" width="400" height="400"></canvas>
+                <canvas id="pcFContrato" width="400" height="400"></canvas>
             </div>
         </div>
     </div>
@@ -130,11 +140,20 @@
     updateCharts();
 
     function updateCharts() {
+        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+parseInt(@ViewData["IdCliente"])+'&cl=data')
+        .then(response => response.json())
+        .then(data => {
+            // Process the data and create your chart
+            criarGrafico(data, 'bAssistencias', 'data', 'bar', false);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+
         fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+parseInt(@ViewData["IdCliente"])+'&cl=Contrato')
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
-            criarGrafico(data, 'pieChart', 'Contrato');
+            criarGrafico(data, 'pcContrato', 'Contrato', 'pie', true);
         })
         .catch(error => console.error('Error fetching data:', error));
 
@@ -142,7 +161,7 @@
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
-            criarGrafico(data, 'pieChartFC', 'Motivo');
+            criarGrafico(data, 'pcFContrato', 'Motivo', 'pie', true);
         })
         .catch(error => console.error('Error fetching data:', error));
 
@@ -178,7 +197,7 @@
         }
     }
 
-function criarGrafico(data, element, title) {
+function criarGrafico(data, element, title, tipo, legend) {
     var ctx = document.getElementById(element);
 
     if (Chart.getChart(ctx)) {
@@ -187,7 +206,7 @@ function criarGrafico(data, element, title) {
         Chart.getChart(ctx).update();
     }else{
         var chart = new Chart(ctx.getContext('2d'), {
-            type: 'pie',
+            type: tipo,
             data: {
                 labels: data.labels,
                 datasets: [{
@@ -207,12 +226,14 @@ function criarGrafico(data, element, title) {
                 }]
             },
             options: {
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: false,
                         text: title
                     },
                     tooltip: {
+                        enabled: legend,
                         callbacks: {
                             label: function(context) {
                                 var label = context.label || '';
@@ -222,6 +243,7 @@ function criarGrafico(data, element, title) {
                         }
                     },
                     legend: {
+                        display: legend,
                         position: 'top', // Position legend above the chart
                         labels: {
                             generateLabels: function(chart) {
@@ -247,7 +269,7 @@ function criarGrafico(data, element, title) {
                 },
                 onClick: function(event, elements) {
                     if (elements.length > 0) {
-                        var vl = event.chart.tooltip.dataPoints[0].label;
+                        var vl = event.chart.config._config.data.labels[elements[0].index];
                          var cl = event.chart.config._config.options.plugins.title.text;
 
                         fetch('/API/Dados/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c=878&cl=' + cl+ '&vl=' + vl)
