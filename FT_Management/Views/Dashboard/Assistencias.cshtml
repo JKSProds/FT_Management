@@ -1,0 +1,345 @@
+﻿@model FT_Management.Models.Cliente
+
+@{
+    ViewData["Title"] = "Assistências";
+}
+
+<style>
+
+    .loader-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity .3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    
+    .loader {
+        height: 80px;
+        width: 80px;
+    }
+    
+    &.is-active {
+        opacity: 1;
+        z-index: 1;
+    }
+    }
+
+    .is-loading {
+    position: relative;
+    }
+
+</style>
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-info">
+                        <p class="title">
+                            <span class="icon mr-3">
+                                <i class="fas fa-file-alt"></i>
+                            </span>
+                            <span>Dashboard - Assistências</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <div class="column is-right my-auto">
+            <div class="control">
+                 <input type="text" class="input" id="txtCliente" disabled value="@Model.IdCliente - @Model.NomeCliente">
+                <input type="date" class="input" id="txtDatas" disabled>
+                <script>
+                    bulmaCalendar.attach('#txtDatas', {
+                        color: 'info',
+                        isRange: true,
+                        lang: 'pt',
+                        labelFrom: 'De ',
+                        labelTo: 'A',
+                        displayMode: 'default',
+                        dateFormat: 'dd/MM/yyyy',
+                        todayLabel: 'Hoje',
+                        clearLabel: 'Limpar',
+                        cancelLabel: 'Cancelar',
+                        startDate: '@DateTime.Now.AddDays(-31).ToString("yyyy-MM-dd")',
+                        endDate: '@DateTime.Now.ToString("yyyy-MM-dd")'
+                    });
+                    document.getElementById('txtDatas').bulmaCalendar.on('select', function (datepicker) {
+                        updateCharts();
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+
+<div class="columns is-multiline">
+    <div class="column is-12">
+        <div class="card has-table has-mobile-sort-spaced">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Assistências
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="loader-wrapper" id="lAssistencias">
+                    <div class="loader is-loading"></div>
+                </div>
+                <canvas id="bAssistencias" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="column is-6">
+        <div class="card has-table has-mobile-sort-spaced">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Contrato
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="loader-wrapper" id="lContrato">
+                    <div class="loader is-loading"></div>
+                </div>
+                <canvas id="pcContrato" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="column is-6">
+        <div class="card has-table has-mobile-sort-spaced">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Fora de Contrato
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="loader-wrapper" id="lFContrato">
+                    <div class="loader is-loading"></div>
+                </div>
+                <canvas id="pcFContrato" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+     <div class="column is-12">
+        <div class="card has-table has-mobile-sort-spaced">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Folhas de Obra
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="b-table" id="tblHeader">
+                <div class="table-wrapper has-mobile-cards">
+                    <table class="table is-hoverable is-fullwidth" id="tblFolhasObra">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Data
+                                </th>
+                                <th>
+                                    Nº PAT
+                                </th>
+                                <th>
+                                    Loja
+                                </th>
+                                <th>
+                                    Número de Série
+                                </th>
+                                <th>
+                                    Técnico
+                                </th>
+                                <th>
+
+                                </th>
+                            </tr>
+                        </thead>
+                            <tbody>
+                                <tr class="is-empty">
+                                    <td colspan="7">
+                                        <section class="section">
+                                            <div class="content has-text-grey has-text-centered">
+                                            <p><span class="icon is-large"><i class="fa-solid fa-face-frown-open"></i></span></p>
+                                            <p>Nada aqui ....</p>
+                                            </div>
+                                        </section>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    updateCharts();
+
+    function updateCharts() {
+        $('.loader-wrapper').addClass('is-active');
+
+        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=data')
+        .then(response => response.json())
+        .then(data => {
+            // Process the data and create your chart
+            criarGrafico(data, 'bAssistencias', 'data', 'bar', false);
+            document.getElementById('lAssistencias').classList.remove('is-active');
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=Contrato')
+        .then(response => response.json())
+        .then(data => {
+            // Process the data and create your chart
+            criarGrafico(data, 'pcContrato', 'Contrato', 'pie', true);
+            document.getElementById('lContrato').classList.remove('is-active');
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=Motivo')
+        .then(response => response.json())
+        .then(data => {
+            // Process the data and create your chart
+            criarGrafico(data, 'pcFContrato', 'Motivo', 'pie', true);
+            document.getElementById('lFContrato').classList.remove('is-active');
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+
+    }
+
+    function populateModalFO(data) {
+        var table = document.getElementById("tblFolhasObra");
+        var tbody = table.getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+
+        for (var i = 0; i < data.length; i++) {
+            var d = data[i];
+            
+            var newRow = tbody.insertRow(); // Create a new row
+
+            // Insert cells into the row if needed
+            var cell1 = newRow.insertCell(0); 
+            var cell2 = newRow.insertCell(1); 
+            var cell3 = newRow.insertCell(2); 
+            var cell4 = newRow.insertCell(3); 
+            var cell5 = newRow.insertCell(4); 
+            var cell6 = newRow.insertCell(5); 
+
+            // Set cell content
+            cell1.innerHTML = new Date(d.dataServico).toLocaleDateString('pt-PT');
+            cell2.innerHTML = d.idFolhaObra;
+            cell3.innerHTML = d.clienteServico.nomeCliente;
+            cell4.innerHTML = d.equipamentoServico.numeroSerieEquipamento;
+            cell5.innerHTML = d.utilizador.nomeCompleto;
+            
+            cell6.innerHTML = '<div class="buttons"><a href="'+d.getUrl+'" class="button is-info"> <i class="fas  fa-file-alt"></i></a><a href="" class="button is-warning"> <i class="fas fa-link"></i></a></div>';
+     
+        }
+    }
+
+function criarGrafico(data, element, title, tipo, legend) {
+    var ctx = document.getElementById(element);
+
+    if (Chart.getChart(ctx)) {
+        Chart.getChart(ctx).data.datasets[0].data = data.values; 
+        Chart.getChart(ctx).data.labels = data.labels; 
+        Chart.getChart(ctx).update();
+    }else{
+        var chart = new Chart(ctx.getContext('2d'), {
+            type: tipo,
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.values,
+                    backgroundColor: [
+                        '#ff6f61', // Red
+                        '#6b5b95', // Purple
+                        '#feb236', // Orange
+                        '#d64161', // Pink
+                        '#bad7df', // Light blue
+                        '#485696', // Dark blue
+                        '#80ced6', // Turquoise
+                        '#f4d35e', // Yellow
+                        '#90be6d', // Green
+                        '#f18973'  // Coral
+                    ], 
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: false,
+                        text: title
+                    },
+                    tooltip: {
+                        enabled: legend,
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                var value = context.parsed / context.dataset.data.reduce((a, b) => a + b) * 100;
+                                return label + ': ' + value.toFixed(2) + '%';
+                            }
+                        }
+                    },
+                    legend: {
+                        display: legend,
+                        position: 'top', // Position legend above the chart
+                        labels: {
+                            font: {
+                                size: 14
+                            },
+                            generateLabels: function(chart) {
+                                var data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map(function(label, i) {
+                                        var value = data.datasets[0].data[i];
+                                        var sum = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                        var percentage = ((value / sum) * 100).toFixed(2);
+                                
+                                        return {
+                                            text: `${label}: ${value} (${percentage}%)`, // Combine label, value, and percentage
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            hidden: false,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    }
+                },
+                onClick: function(event, elements) {
+                    if (elements.length > 0) {
+                        var vl = event.chart.config._config.data.labels[elements[0].index];
+                         var cl = event.chart.config._config.options.plugins.title.text;
+                        document.getElementById('tblHeader').classList.add('is-loading');
+
+                        fetch('/API/Dados/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c=878&cl=' + cl+ '&vl=' + vl)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Process the data and create your chart
+                            populateModalFO(data);
+                            document.getElementById('tblHeader').classList.remove('is-loading');
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+
+                    }
+                }
+            }
+        });
+    }
+}
+
+</script>

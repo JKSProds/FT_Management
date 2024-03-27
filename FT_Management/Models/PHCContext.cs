@@ -1,4 +1,6 @@
-﻿using iTextSharp.text;
+﻿using System.Xml.XPath;
+using iTextSharp.text;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace FT_Management.Models
 {
@@ -2154,40 +2156,91 @@ namespace FT_Management.Models
 
         }
 
-        public List<int> ObterPercentagemMarcacoes()
+        public Dictionary<string, int> ObterEstatisticas(Cliente c, string cl, DateTime dInicio, DateTime dFim)
         {
-            List<int> res = new List<int>();
+        Dictionary<string, int> data = new Dictionary<string, int>();
+        string sql = "select "+cl+", COUNT(*) from v_at where data between '"+dInicio.ToString("yyyyMMdd")+"' and '"+dFim.ToString("yyyyMMdd")+"' and no="+c.IdCliente+" and "+cl+" <> '' group by "+cl+" order by "+cl+";";
+        try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand(sql, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
 
-            //Pedido de Pecas
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Pedido Peças') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        data.Add(cl == "data" ? DateTime.Parse(result[0].ToString()).ToString("yyyy-MM-dd") : result[0].ToString(), int.Parse(result[1].ToString()));
+                    }
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as estatisticas da view de At's!\r\n(Exception: " + ex.Message + ")");
+            }
 
-            //Pedido de Orçamento
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Pedido Orçamento') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+            return data;
+        }
 
-            //Pendentes 30 dias
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado not in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+        public List<FolhaObra> ObterFolhasObraEstatisticas(Cliente c, string cl, string vl, DateTime dInicio, DateTime dFim)
+        {
+        List<FolhaObra> LstFO = new List<FolhaObra>();
 
-            //Finalizados 30 dias
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+        string sql = "select * from v_at where data between '"+dInicio.ToString("yyyyMMdd")+"' and '"+dFim.ToString("yyyyMMdd")+"' and no="+c.IdCliente+" and "+cl+"='"+vl+"' order by data;";
+        try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+                conn.Open();
+                SqlCommand command = new SqlCommand(sql, conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
 
-            //Oficina
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE Oficina='True' and estado not in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data <= '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstFO.Add(new FolhaObra() {
+                            ReferenciaServico = result["incidente"].ToString(),
+                            IdFolhaObra = int.Parse(result["nopat"].ToString()),
+                            IdMarcacao = int.Parse(result["marcacao"].ToString()),
+                            IdAT = result["obrano"].ToString(),
+                            TipoFolhaObra = result["tipo"].ToString(),
+                            DataServico = DateTime.Parse(result["data"].ToString()),
+                            EquipamentoServico = new Equipamento() {
+                                TipoEquipamento = result["equipamento"].ToString(),
+                                ModeloEquipamento = result["modelo"].ToString(),
+                                NumeroSerieEquipamento = result["serie"].ToString()
+                            },
+                            ClienteServico = new Cliente() {
+                                IdCliente = int.Parse(result["no"].ToString()),
+                                IdLoja = int.Parse(result["estab"].ToString()),
+                                NomeCliente = result["loja"].ToString()
+                            },
+                            Utilizador = new Utilizador() {
+                                NomeCompleto = result["tecnico"].ToString()
+                            },
+                            IntervencaosServico = new List<Intervencao>() { new Intervencao() {
+                                NomeTecnico = result["tecnico"].ToString(),
+                                RelatorioServico = result["relatorio"].ToString()
+                            }},
+                            Contrato = result["Contrato"].ToString() == "Contrato",
+                            JustExtraContrato = result["motivo"].ToString()
+                        });
+                    }
+                }
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler as estatisticas da view de At's!\r\n(Exception: " + ex.Message + ")");
+            }
 
-            //Finalizados 7 dias
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
-
-            //Totais
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE data between '" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
-
-            //Pendentes 90 dias
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado not in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-90).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
-
-            //Finalizados 90 dias
-            res.Add(int.Parse(ExecutarQuery("SELECT COUNT(*) FROM v_marcacoes WHERE estado in ('Cancelado', 'Finalizado', 'AT Validada', 'Aguarda Ped. Compra') and data between '" + DateTime.Now.AddDays(-90).ToString("yyyy-MM-dd") + "' and '" + DateTime.Now.ToString("yyyy-MM-dd") + "';")[0]));
-
-
-            return res;
-
+            return LstFO;
         }
 
         public bool AtualizarMarcacaoEmCurso(Marcacao m)

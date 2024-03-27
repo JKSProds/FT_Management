@@ -76,39 +76,17 @@
 
         //Obter dashboard das marcacoes atuais e estados
         [HttpGet]
-        public IActionResult Marcacoes(string Api)
+        public IActionResult Assistencias(int id)
         {
-            return Forbid();
-            /* FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+
             int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
-            if (u.Id == 0 || (!u.Admin && u.TipoUtilizador != 3)) return Forbid();
+            if (u.Id == 0) return Forbid();
 
-            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das Marcacoes.", u.NomeCompleto, u.Id);
-
-            List<Utilizador> LstUtilizadores = context.ObterListaTecnicos(true, false).Where(u => u.Dashboard).ToList();
-            List<Marcacao> LstMarcacao = phccontext.ObterMarcacoes(DateTime.Now.AddDays(-7), DateTime.Now);
-            List<int> LstMarcacaosPendentes = phccontext.ObterPercentagemMarcacoes();
-
-            for (int i = 0; i <= LstUtilizadores.Count() - 1; i++)
-            {
-                LstUtilizadores[i].LstMarcacoes = LstMarcacao.Where(m => m.Tecnico.Id == LstUtilizadores[i].Id).ToList();
-            }
-
-            ViewData["Pecas"] = LstMarcacaosPendentes[0];
-            ViewData["Orcamento"] = LstMarcacaosPendentes[1];
-            ViewData["Pendentes30"] = LstMarcacaosPendentes[2];
-            ViewData["Finalizados30"] = LstMarcacaosPendentes[3];
-            ViewData["Oficina"] = LstMarcacaosPendentes[4];
-            ViewData["FinalizadosSemana"] = LstMarcacaosPendentes[5];
-            ViewData["TotaisSemana"] = LstMarcacaosPendentes[6];
-            ViewData["Pendentes90"] = LstMarcacaosPendentes[7];
-            ViewData["Finalizados90"] = LstMarcacaosPendentes[8];
-
-
-            return View(LstUtilizadores); */
+            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das assistencias. - {3}", u.NomeCompleto, u.Id, id);
+            return View(phccontext.ObterCliente(id, 0));
         }
 
 
