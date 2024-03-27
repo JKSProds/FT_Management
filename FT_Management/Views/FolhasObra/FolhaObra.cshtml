@@ -44,8 +44,11 @@
                             </article>
                         </div>
                     </div>
+                    @if (!Model.Contrato) {
+                        <input class="input" type="text" value="@(Model.JustExtraContrato)" disabled>   
+                    }   
                 </div>
-                    }
+            }
             </div>
 </div>
 <hr />
