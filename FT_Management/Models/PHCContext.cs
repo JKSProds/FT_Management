@@ -1332,7 +1332,7 @@ namespace FT_Management.Models
         }
         public FolhaObra ObterFolhaObra(int IdFolhaObra)
         {
-            return ObterFolhaObra("select TOP 1 num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.nopat=" + IdFolhaObra + " order by pa.nopat, u_intervencao.data desc;", true);
+            return ObterFolhaObra("select TOP 1 (select MAX(CAST(u_excluict as NUMERIC(1,0))) from bo join bo2 on bo2.bo2stamp=bo.bostamp where bo.orinopat=pa.nopat GROUP by bo.orinopat) as u_excluict,  num, logi2, obrano as id_at, * from pa full outer join u_intervencao on u_intervencao.STAMP_DEST=pa.pastamp join u_marcacao on u_intervencao.u_marcacaostamp=u_marcacao.u_marcacaostamp full outer join bo on bo.orinopat=pa.nopat join bo2 on bo2.bo2stamp=bo.bostamp join bo3 on bo3.bo3stamp=bo.bostamp where pa.nopat=" + IdFolhaObra + " order by pa.nopat, u_intervencao.data desc;", true);
 
         }
         public FolhaObra ObterFolhaObra(string STAMP)
