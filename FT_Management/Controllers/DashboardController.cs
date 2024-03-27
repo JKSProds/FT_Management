@@ -81,14 +81,12 @@
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
 
-            ViewData["IdCliente"] = id;
-
             int IdUtilizador = int.Parse(this.User.Claims.First().Value);
             Utilizador u = context.ObterUtilizador(IdUtilizador);
             if (u.Id == 0) return Forbid();
 
-            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das assistencias.", u.NomeCompleto, u.Id);
-            return View();
+            _logger.LogDebug("Utilizador {1} [{2}] a obter dashboard das assistencias. - {3}", u.NomeCompleto, u.Id, id);
+            return View(phccontext.ObterCliente(id, 0));
         }
 
 

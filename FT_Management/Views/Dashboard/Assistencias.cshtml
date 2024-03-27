@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FT_Management.Models.Utilizador>
+﻿@model FT_Management.Models.Cliente
 
 @{
     ViewData["Title"] = "Assistências";
@@ -21,6 +21,7 @@
         </div>
         <div class="column is-right my-auto">
             <div class="control">
+                 <input type="text" class="input" id="txtCliente" disabled value="@Model.IdCliente - @Model.NomeCliente">
                 <input type="date" class="input" id="txtDatas" disabled>
                 <script>
                     bulmaCalendar.attach('#txtDatas', {
@@ -140,7 +141,7 @@
     updateCharts();
 
     function updateCharts() {
-        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+parseInt(@ViewData["IdCliente"])+'&cl=data')
+        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=data')
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
@@ -149,7 +150,7 @@
         .catch(error => console.error('Error fetching data:', error));
 
 
-        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+parseInt(@ViewData["IdCliente"])+'&cl=Contrato')
+        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=Contrato')
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
@@ -157,7 +158,7 @@
         })
         .catch(error => console.error('Error fetching data:', error));
 
-        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+parseInt(@ViewData["IdCliente"])+'&cl=Motivo')
+        fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=Motivo')
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
