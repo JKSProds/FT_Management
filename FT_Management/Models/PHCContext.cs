@@ -2208,9 +2208,9 @@ namespace FT_Management.Models
                             ReferenciaServico = result["incidente"].ToString(),
                             IdFolhaObra = int.Parse(result["nopat"].ToString()),
                             IdMarcacao = int.Parse(result["marcacao"].ToString()),
-                            IdAT = result["obrano"].ToString(),
+                            IdAT = result["Stamp_AT"].ToString(),
                             TipoFolhaObra = result["tipo"].ToString(),
-                            DataServico = DateTime.Parse(result["data"].ToString()),
+                            DataServico = DateTime.Parse(result["Data_AT"].ToString()),
                             EquipamentoServico = new Equipamento() {
                                 TipoEquipamento = result["equipamento"].ToString(),
                                 ModeloEquipamento = result["modelo"].ToString(),
@@ -2229,7 +2229,7 @@ namespace FT_Management.Models
                                 RelatorioServico = result["relatorio"].ToString()
                             }},
                             Contrato = result["Contrato"].ToString() == "Contrato",
-                            JustExtraContrato = result["motivo"].ToString()
+                            JustExtraContrato = result["motivo"].ToString(),
                         });
                     }
                 }

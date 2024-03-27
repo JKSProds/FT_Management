@@ -58,6 +58,7 @@
         public string RubricaCliente { get; set; }
         public bool Piquete { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/FolhasObra/FolhaObra/" + IdFolhaObra; } }
+        public string GetUrlAT { get { return "http://webapp.food-tech.pt/Dossiers/Dossier/" + IdAT + "?ecra=BO&anexar=1"; } }
         [Display(Name = "Estado do Serviço")]
         public int EstadoFolhaObra { get; set; }
         [Display(Name = "Tipo de Serviço")]
