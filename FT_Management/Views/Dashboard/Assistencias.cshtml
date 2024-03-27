@@ -3,6 +3,40 @@
 @{
     ViewData["Title"] = "Assistências";
 }
+
+<style>
+
+    .loader-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity .3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    
+    .loader {
+        height: 80px;
+        width: 80px;
+    }
+    
+    &.is-active {
+        opacity: 1;
+        z-index: 1;
+    }
+    }
+
+    .is-loading {
+    position: relative;
+    }
+
+</style>
 <div class="container">
     <div class="columns">
         <div class="column">
@@ -57,6 +91,9 @@
                 </p>
             </header>
             <div class="card-content">
+                <div class="loader-wrapper" id="lAssistencias">
+                    <div class="loader is-loading"></div>
+                </div>
                 <canvas id="bAssistencias" width="400" height="400"></canvas>
             </div>
         </div>
@@ -69,6 +106,9 @@
                 </p>
             </header>
             <div class="card-content">
+                <div class="loader-wrapper" id="lContrato">
+                    <div class="loader is-loading"></div>
+                </div>
                 <canvas id="pcContrato" width="400" height="400"></canvas>
             </div>
         </div>
@@ -81,80 +121,87 @@
                 </p>
             </header>
             <div class="card-content">
+                <div class="loader-wrapper" id="lFContrato">
+                    <div class="loader is-loading"></div>
+                </div>
                 <canvas id="pcFContrato" width="400" height="400"></canvas>
             </div>
         </div>
     </div>
-</div>
+     <div class="column is-12">
+        <div class="card has-table has-mobile-sort-spaced">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Folhas de Obra
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="b-table" id="tblHeader">
+                <div class="table-wrapper has-mobile-cards">
+                    <table class="table is-hoverable is-fullwidth" id="tblFolhasObra">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Data
+                                </th>
+                                <th>
+                                    Nº PAT
+                                </th>
+                                <th>
+                                    Loja
+                                </th>
+                                <th>
+                                    Número de Série
+                                </th>
+                                <th>
+                                    Técnico
+                                </th>
+                                <th>
 
-<div class="modal" id="modalFolhasObra">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Folhas Obra</p>
-    </header>
-    <section class="modal-card-body">
-      <div class="b-table">
-        <div class="table-wrapper has-mobile-cards">
-            <table class="table is-hoverable is-fullwidth" id="tblFolhasObra">
-                <thead>
-                    <tr>
-                        <th>
-                            Data
-                        </th>
-                        <th>
-                            Nº PAT
-                        </th>
-                        <th>
-                            Loja
-                        </th>
-                        <th>
-                            Número de Série
-                        </th>
-                        <th>
-                            Técnico
-                        </th>
-                        <th>
-
-                        </th>
-                    </tr>
-                </thead>
-                    <tbody>
-                        
-                    </tbody>
-                </table>
+                                </th>
+                            </tr>
+                        </thead>
+                            <tbody>
+                                <tr class="is-empty">
+                                    <td colspan="7">
+                                        <section class="section">
+                                            <div class="content has-text-grey has-text-centered">
+                                            <p><span class="icon is-large"><i class="fa-solid fa-face-frown-open"></i></span></p>
+                                            <p>Nada aqui ....</p>
+                                            </div>
+                                        </section>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-  </section>
-    <footer class="modal-card-foot">
-        <button class="button is-success is-large is-fullwidth" onclick="Bulma('#modalFolhasObra').modal().close();">
-            <span class="icon">
-                <i class="fa-solid fa-floppy-disk"></i>
-            </span>
-            <span>Fechar</span>
-        </button>
-    </footer>
-  </div>
+    </div>
 </div>
 
 <script>
     updateCharts();
 
     function updateCharts() {
+        $('.loader-wrapper').addClass('is-active');
+
         fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=data')
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
             criarGrafico(data, 'bAssistencias', 'data', 'bar', false);
+            document.getElementById('lAssistencias').classList.remove('is-active');
         })
         .catch(error => console.error('Error fetching data:', error));
-
 
         fetch('/API/Graficos/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c='+@Model.IdCliente+'&cl=Contrato')
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
             criarGrafico(data, 'pcContrato', 'Contrato', 'pie', true);
+            document.getElementById('lContrato').classList.remove('is-active');
         })
         .catch(error => console.error('Error fetching data:', error));
 
@@ -163,8 +210,10 @@
         .then(data => {
             // Process the data and create your chart
             criarGrafico(data, 'pcFContrato', 'Motivo', 'pie', true);
+            document.getElementById('lFContrato').classList.remove('is-active');
         })
         .catch(error => console.error('Error fetching data:', error));
+
 
     }
 
@@ -275,13 +324,14 @@ function criarGrafico(data, element, title, tipo, legend) {
                     if (elements.length > 0) {
                         var vl = event.chart.config._config.data.labels[elements[0].index];
                          var cl = event.chart.config._config.options.plugins.title.text;
+                        document.getElementById('tblHeader').classList.add('is-loading');
 
                         fetch('/API/Dados/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c=878&cl=' + cl+ '&vl=' + vl)
                         .then(response => response.json())
                         .then(data => {
                             // Process the data and create your chart
                             populateModalFO(data);
-                            Bulma('#modalFolhasObra').modal().open();
+                            document.getElementById('tblHeader').classList.remove('is-loading');
                         })
                         .catch(error => console.error('Error fetching data:', error));
 
