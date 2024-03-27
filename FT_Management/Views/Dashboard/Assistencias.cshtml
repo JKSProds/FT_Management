@@ -157,6 +157,9 @@
                                     Técnico
                                 </th>
                                 <th>
+                                    Motivo
+                                </th>
+                                <th>
 
                                 </th>
                             </tr>
@@ -234,6 +237,7 @@
             var cell4 = newRow.insertCell(3); 
             var cell5 = newRow.insertCell(4); 
             var cell6 = newRow.insertCell(5); 
+            var cell7 = newRow.insertCell(6); 
 
             // Set cell content
             cell1.innerHTML = new Date(d.dataServico).toLocaleDateString('pt-PT');
@@ -241,8 +245,8 @@
             cell3.innerHTML = d.clienteServico.nomeCliente;
             cell4.innerHTML = d.equipamentoServico.numeroSerieEquipamento;
             cell5.innerHTML = d.utilizador.nomeCompleto;
-            
-            cell6.innerHTML = '<div class="buttons"><a href="'+d.getUrl+'" class="button is-info"> <i class="fas  fa-file-alt"></i></a><a href="'+d.getUrlAT+'" class="button is-warning"> <i class="fas fa-link"></i></a></div>';
+            cell6.innerHTML = d.justExtraContrato;
+            cell7.innerHTML = '<div class="buttons" style="min-width:125px"><a href="'+d.getUrl+'" class="button is-info"> <i class="fas  fa-file-alt"></i></a><a href="'+d.getUrlAT+'" class="button is-warning"> <i class="fas fa-link"></i></a></div>';
      
         }
     }
