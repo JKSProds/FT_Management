@@ -212,7 +212,7 @@
         .then(response => response.json())
         .then(data => {
             // Process the data and create your chart
-            criarGrafico(data, 'pcFContrato', 'Motivo', 'pie', true);
+            criarGrafico(data, 'pcFContrato', 'Motivo', 'doughnut', true);
             document.getElementById('lFContrato').classList.remove('is-active');
         })
         .catch(error => console.error('Error fetching data:', error));
@@ -277,6 +277,9 @@ function criarGrafico(data, element, title, tipo, legend) {
                         '#90be6d', // Green
                         '#f18973'  // Coral
                     ], 
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
                 }]
             },
             options: {
@@ -330,7 +333,7 @@ function criarGrafico(data, element, title, tipo, legend) {
                          var cl = event.chart.config._config.options.plugins.title.text;
                         document.getElementById('tblHeader').classList.add('is-loading');
 
-                        fetch('/API/Dados/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c=878&cl=' + cl+ '&vl=' + vl)
+                        fetch('/API/Dados/Assistencias?dInicio='+document.getElementById('txtDatas').bulmaCalendar.startDate.toISOString()+'&dFim='+document.getElementById('txtDatas').bulmaCalendar.endDate.toISOString()+'&c=@Model.IdCliente&cl=' + cl+ '&vl=' + vl)
                         .then(response => response.json())
                         .then(data => {
                             // Process the data and create your chart
