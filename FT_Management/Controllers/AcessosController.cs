@@ -99,7 +99,29 @@
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
             
-            return File(context.GerarMapaPresencas(DateTime.Parse(data)), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            DateTime d = DateTime.Parse(data);
+            return File(context.GerarMapaPresencas(DateTime.Parse(d.ToString("01/MM/yyyy")), DateTime.Parse(d.ToString(DateTime.DaysInMonth(d.Year, d.Month) + "/MM/yyyy"))), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+
+         [HttpGet]
+        public virtual ActionResult AcessosAutomaticos(DateTime dInicio, DateTime dFim)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            dInicio = DateTime.Now.AddDays(-31);
+            dFim = dInicio.AddDays(31);
+            _logger.LogDebug("Utilizador {1} [{2}] a gerar uma Mapa de Presenças para a seguinte data: {3} - {4}", u.NomeCompleto, u.Id, dInicio.ToShortDateString(), dFim.ToShortDateString());
+
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = "MapaPresencas_" + dInicio.ToString("ddMMyy") + "_" + dFim.ToString("ddMMyy") +".xlsx",
+                Inline = false,
+                CreationDate = DateTime.Now,
+
+            };
+            Response.Headers.Add("Content-Disposition", cd.ToString());
+
+            return File(context.GerarMapaPresencas(dInicio, dFim), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         //Apagar um acesso em especifico
