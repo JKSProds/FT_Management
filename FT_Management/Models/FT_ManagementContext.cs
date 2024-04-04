@@ -1544,6 +1544,7 @@ namespace FT_Management.Models
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             int totalRows = workSheet.Dimension.Rows;
             List<Acesso> LstAcessos = ObterListaAcessosMes(Data);
+            List<Feriado> LstFeriados = ObterListaFeriados(Data.Year.ToString()).ToList();
             List<Utilizador> LstUtilizadores = LstAcessos.Select(access => access.Utilizador) // Select the user from each access object
             .GroupBy(user => user.Id).Select(group => group.First()).OrderBy(user => user.NomeCompleto).Where(a => a.Acessos).ToList();
 
@@ -1578,7 +1579,12 @@ namespace FT_Management.Models
                         workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
                     }
                     else
-                    if (!(dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday))
+                    if (LstFeriados.Where(f => f.DataFeriado == dataAtual).Count() > 0) {
+                        workSheet.Cells[j, i + 1].Value = LstFeriados.Where(f => f.DataFeriado == dataAtual).First().DescFeriado;
+                        workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Orange);
+                            
+                    } else if (!(dataAtual.DayOfWeek == DayOfWeek.Saturday || dataAtual.DayOfWeek == DayOfWeek.Sunday))
                     {
                         if (Lst.Count() == 0)
                         {
