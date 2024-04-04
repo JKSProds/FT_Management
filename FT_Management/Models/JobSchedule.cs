@@ -108,6 +108,31 @@ public class CronJobAgendamentoCRM : IJob
     }
 }
 
+public class CronJobEnviarAcessos : IJob
+{
+
+
+    public Task Execute(IJobExecutionContext context)
+    {
+        try
+        {
+            FT_ManagementContext dbContext = new FT_ManagementContext(Custom.ConfigurationManager.AppSetting["ConnectionStrings:DefaultConnection"]);
+            
+            DateTime dI = DateTime.Parse(DateTime.Now.AddMonths(-1).ToString("yyyy/MM")+ "/01");
+            DateTime dF = DateTime.Parse(DateTime.Now.AddMonths(-1).ToString("yyyy/MM")+ "/" + DateTime.DaysInMonth(DateTime.Now.AddMonths(-1).Year, DateTime.Now.AddMonths(-1).Month).ToString());
+
+            List<Utilizador> lstU = dbContext.ObterListaUtilizadores(true, false).Where(u => u.Admin).ToList();
+            Attachment a = new Attachment((new MemoryStream(dbContext.GerarMapaPresencas(dI,dF).ToArray())), "MapaPresencas_" + dI.ToString("ddMMyy") + "_" + dF.ToString("ddMMyy") +".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            
+            MailContext.EnviarEmailAcessos(dI, dF, dbContext.ObterUtilizador(26), new Attachment((new MemoryStream(dbContext.GerarMapaPresencas(dI,dF).ToArray())), "MapaPresencas_" + dI.ToString("ddMMyy") + "_" + dF.ToString("ddMMyy") +".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+          
+        }
+        catch
+        {
+        }
+        return Task.CompletedTask;
+    }
+}
 
 namespace Custom
 {
