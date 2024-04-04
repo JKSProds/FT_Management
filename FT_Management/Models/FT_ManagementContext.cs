@@ -1556,6 +1556,8 @@ namespace FT_Management.Models
             if (Data.Month < 05 && Data.Year < 2023) LstUtilizadores.Remove(LstUtilizadores.Where(u => u.Id==29).First());
             if (Data.Month < 05 && Data.Year < 2023) LstUtilizadores.Remove(LstUtilizadores.Where(u => u.Id==30).First());
             if (Data.Month < 12 && Data.Year < 2023) LstUtilizadores.Where(u => u.Id==4).First().NomeCompleto = "Ricardo Almeida";
+            if (Data.Month < 6 && Data.Year < 2024) LstUtilizadores.Remove(LstUtilizadores.Where(u => u.Id==35).First());
+            if (Data.Month > 4 && Data.Year > 2023) LstUtilizadores.Remove(LstUtilizadores.Where(u => u.Id==23).First());
                 
             foreach (var utilizador in LstUtilizadores)
             {
