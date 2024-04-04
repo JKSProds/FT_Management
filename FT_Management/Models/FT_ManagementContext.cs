@@ -1543,15 +1543,19 @@ namespace FT_Management.Models
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             int totalRows = workSheet.Dimension.Rows;
-            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
             List<Acesso> LstAcessos = ObterListaAcessosMes(Data);
+            List<Utilizador> LstUtilizadores = LstAcessos.Select(access => access.Utilizador) // Select the user from each access object
+            .GroupBy(user => user.Id).Select(group => group.First()).OrderBy(user => user.NomeCompleto).Where(a => a.Acessos).ToList();
 
             int y = 5;
             int x = 1;
 
             workSheet.Cells[4, 1].Value = Data.ToString("MMMM yyyy");
 
-
+            if (Data.Month < 05 && Data.Year < 2023) LstUtilizadores.Remove(LstUtilizadores.Where(u => u.Id==29).First());
+            if (Data.Month < 05 && Data.Year < 2023) LstUtilizadores.Remove(LstUtilizadores.Where(u => u.Id==30).First());
+            if (Data.Month < 12 && Data.Year < 2023) LstUtilizadores.Where(u => u.Id==4).First().NomeCompleto = "Ricardo Almeida";
+                
             foreach (var utilizador in LstUtilizadores)
             {
                 workSheet.Cells[y, x].Value = utilizador.NomeCompleto;
@@ -1559,11 +1563,11 @@ namespace FT_Management.Models
             }
 
             for (int i = 1; i < DateTime.DaysInMonth(Data.Year, Data.Month); i++)
-            {
+            {   
                 y = 5;
-
                 foreach (Utilizador utilizador in LstUtilizadores)
-                {
+                {   
+                    
                     int j = y;
                     List<Acesso> Lst = LstAcessos.Where(u => u.Data.Day == i).Where(u => u.Utilizador.Id == utilizador.Id).ToList();
                     DateTime dataAtual = DateTime.Parse(i + "-" + Data.ToString("MM-yyyy"));
@@ -1584,8 +1588,22 @@ namespace FT_Management.Models
                             workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
                             workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
                             workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
-                        }
-                        else
+                        }else if (Lst.Count() == 1 && Lst.First().TipoAcesso.Substring(0, 1) == "S") {
+                            workSheet.Cells[j, i + 1].Value = utilizador.TipoUtilizador == 1 ? "E: 9:00 Externo" : utilizador.TipoUtilizador == 2 ? "E: 9:00 Comercial" : "E: 09:00";
+                            workSheet.Cells[j, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            workSheet.Cells[j, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+                        }else if (Lst.Count() == 1 && Lst.First().TipoAcesso.Substring(0, 1) != "S") {
+                            Acesso a = Lst.First();
+                            workSheet.Cells[j, i + 1].Value = a.TipoAcesso.Substring(0, 1) + ": " + a.Data.ToShortTimeString();
+                            workSheet.Cells[j + 1, i + 1].Value = utilizador.TipoUtilizador == 1 ? "S: 18:30 Externo" : utilizador.TipoUtilizador == 2 ? "S: 18:30 Comercial" : "S: 18:30 ";
+                            workSheet.Cells[j + 1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            workSheet.Cells[j + 1, i + 1].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Yellow);
+                        }else if (Lst.Count > 4 || Lst.Count() == 3) {
+                                workSheet.Cells[j, i + 1].Value = Lst.First().TipoAcesso.Substring(0, 1) + ": " + Lst.First().Data.ToShortTimeString();
+                                j++;
+                                 workSheet.Cells[j, i + 1].Value = Lst.Last().TipoAcesso.Substring(0, 1) + ": " + Lst.First().Data.ToShortTimeString();
+                                j++;
+                        }else
                         {
                             foreach (var acesso in Lst)
                             {
@@ -1596,6 +1614,8 @@ namespace FT_Management.Models
                     }
                     y += 4;
                 }
+
+                //i=DateTime.DaysInMonth(Data.Year, Data.Month);
             }
            
             return package.GetAsByteArray();
