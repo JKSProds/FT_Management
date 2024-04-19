@@ -4904,7 +4904,7 @@ namespace FT_Management.Models
 
         public Notificacao ObterEmail(string id) {
             Notificacao n = new Notificacao();
-
+            Console.WriteLine("TESTE1");
              try
             {
 
@@ -4930,6 +4930,7 @@ namespace FT_Management.Models
                     }
                 }
 
+            Console.WriteLine("TESTE2");
                 conn.Close();
             }
 
@@ -4943,8 +4944,11 @@ namespace FT_Management.Models
 
         public List<string> FecharEmail(string id)
         {
+
+            Console.WriteLine("TESTE11");
             string SQLQuery = "UPDATE u_mails set enviado=1, data_envio='" + DateTime.Now.ToString("yyyyMMdd") + "', hora_envio='" + DateTime.Now.ToString("HH:mm:ss") + "' WHERE mailstamp='"+id+"';";
            
+            Console.WriteLine("TESTE12");
             return ExecutarQuery(SQLQuery);
         }
     }
