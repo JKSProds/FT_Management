@@ -4919,6 +4919,10 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
+                                Console.WriteLine(result["assunto"].ToString().Trim());
+                                Console.WriteLine(result["corpo"].ToString().Trim());
+                                Console.WriteLine(result["para"].ToString().Trim());
+                                Console.WriteLine(result["cc"].ToString().Trim());
                             n = new Notificacao
                             {
                                 Assunto = result["assunto"].ToString().Trim(),
@@ -4928,10 +4932,7 @@ namespace FT_Management.Models
                             };
                     }
                 }
-                Console.WriteLine(n.Assunto);
-                Console.WriteLine(n.Mensagem);
-                Console.WriteLine(n.UtilizadorDestino.EmailUtilizador);
-                Console.WriteLine(n.Cc);
+ 
                 conn.Close();
             }
 
