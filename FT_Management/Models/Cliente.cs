@@ -94,7 +94,7 @@
         {
             if (string.IsNullOrEmpty(this.Latitude) || string.IsNullOrEmpty(this.Longitude))
             {
-                if (IdCliente == 878) return "Pingo Doce " + NomeCliente.Replace("PD", "");
+                if (IdCliente == 878 || IdCliente == 297) return "Pingo Doce " + NomeCliente.Replace("PD", "");
                 if (IdCliente == 561)
                 {
                     if (NomeCliente.Contains("CNT")) return NomeCliente.Replace("CNT", "Continente");
