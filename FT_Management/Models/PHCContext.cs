@@ -4904,15 +4904,14 @@ namespace FT_Management.Models
 
         public Notificacao ObterEmail(string id) {
             Notificacao n = new Notificacao();
-            Console.WriteLine("TESTE1");
              try
             {
 
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
                 conn.Open();
-
-                SqlCommand command = new SqlCommand("select * from u_mails where mailstamp = '"+id+"'", conn)
+                Console.WriteLine("select * from u_mails where mailstamp = '"+id+"';");
+                SqlCommand command = new SqlCommand("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
@@ -4929,8 +4928,10 @@ namespace FT_Management.Models
                             };
                     }
                 }
-
-            Console.WriteLine("TESTE2");
+                Console.WriteLine(n.Assunto);
+                Console.WriteLine(n.Mensagem);
+                Console.WriteLine(n.UtilizadorDestino.EmailUtilizador);
+                Console.WriteLine(n.Cc);
                 conn.Close();
             }
 
