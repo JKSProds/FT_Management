@@ -50,8 +50,6 @@ namespace FT_Management.Models
                     {
                         if (result.HasRows)
                         {
-
-                            Console.WriteLine(result.GetString(0));
                             for (int j = 0; j < result.FieldCount; j++)
                             {
                                 if (res.Count() <= i)
