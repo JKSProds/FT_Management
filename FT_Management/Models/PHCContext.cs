@@ -1,6 +1,7 @@
 ﻿using System.Xml.XPath;
 using iTextSharp.text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using MySqlX.XDevAPI.Common;
 
 namespace FT_Management.Models
 {
@@ -49,6 +50,8 @@ namespace FT_Management.Models
                     {
                         if (result.HasRows)
                         {
+
+                            Console.WriteLine(result.GetString(0));
                             for (int j = 0; j < result.FieldCount; j++)
                             {
                                 if (res.Count() <= i)
@@ -65,7 +68,7 @@ namespace FT_Management.Models
                     }
                     if (!result.HasRows && result.RecordsAffected > 0) res[0] = "1";
                 }
-                
+
                 conn.Close();
             }
             catch (Exception ex)
