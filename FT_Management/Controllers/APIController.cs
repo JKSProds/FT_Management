@@ -27,6 +27,12 @@ namespace FT_Management.Controllers
             Notificacao n = phccontext.ObterEmail(id);
 
             Console.WriteLine("TESTE3");
+            Console.WriteLine(n.Assunto);
+            Console.WriteLine(n.Mensagem);
+            Console.WriteLine(n.Cc);
+            Console.WriteLine(n.UtilizadorDestino.EmailUtilizador);
+
+            Console.WriteLine("TESTE3.5");
             return MailContext.EnviarEmailManual(n.UtilizadorDestino.EmailUtilizador,n.Assunto,n.Mensagem,n.Cc) ? (phccontext.FecharEmail(id)[0] != "0" ? StatusCode(200) : StatusCode(500)) : StatusCode(500);
         }
 
