@@ -4910,7 +4910,7 @@ namespace FT_Management.Models
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
                 conn.Open();
-                Console.WriteLine("select * from u_mails where mailstamp = '"+id+"';");
+                Console.WriteLine("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';");
                 SqlCommand command = new SqlCommand("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';", conn)
                 {
                     CommandTimeout = TIMEOUT
@@ -4924,7 +4924,7 @@ namespace FT_Management.Models
                                 Assunto = result["assunto"].ToString().Trim(),
                                 Mensagem = result["corpo"].ToString().Trim(),
                                 UtilizadorDestino = new Utilizador() {EmailUtilizador=result["para"].ToString().Trim()},
-                                Cc = !string.IsNullOrEmpty(result["cc"].ToString()) ? result["cc"].ToString().Split(";").ToList() : new List<string>()
+                                Cc = string.IsNullOrEmpty(result["cc"].ToString()) ? new List<string>() : (result["cc"].ToString().Contains(";") ? result["cc"].ToString().Split(";").ToList() : new List<string>() {result["cc"].ToString()})
                             };
                     }
                 }
