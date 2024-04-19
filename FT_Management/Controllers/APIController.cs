@@ -27,7 +27,7 @@ namespace FT_Management.Controllers
             try {
                 Notificacao n = phccontext.ObterEmail(id);
 
-                if (n == null) Console.WriteLine("NOT POSSIBLE TO GET NOTIF");
+                if (n.Assunto == null) Console.WriteLine("NOT POSSIBLE TO GET NOTIF");
                 return MailContext.EnviarEmailManual(n.UtilizadorDestino.EmailUtilizador,n.Assunto,n.Mensagem,n.Cc) ? (phccontext.FecharEmail(id)[0] != "0" ? StatusCode(200) : StatusCode(500)) : StatusCode(500);
         
             }
