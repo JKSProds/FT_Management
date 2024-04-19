@@ -23,8 +23,10 @@ namespace FT_Management.Controllers
 
             if (string.IsNullOrEmpty(id)) return StatusCode(500);
             
+            Console.WriteLine("TESTE0");
             Notificacao n = phccontext.ObterEmail(id);
 
+            Console.WriteLine("TESTE3");
             return MailContext.EnviarEmailManual(n.UtilizadorDestino.EmailUtilizador,n.Assunto,n.Mensagem,n.Cc) ? (phccontext.FecharEmail(id)[0] != "0" ? StatusCode(200) : StatusCode(500)) : StatusCode(500);
         }
 
