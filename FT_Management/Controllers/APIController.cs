@@ -20,7 +20,6 @@ namespace FT_Management.Controllers
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             if (string.IsNullOrEmpty(id)) return StatusCode(500);
             
