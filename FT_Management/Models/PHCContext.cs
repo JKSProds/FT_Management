@@ -1121,9 +1121,9 @@ namespace FT_Management.Models
             if (fo.Instalação && fo.FecharMarcacao) MailContext.EnviarEmailCheckListInstalacao(fo.Utilizador, fo, new Attachment((new MemoryStream(FT_ManagementContext.PreencherFormularioCertificado(fo).ToArray())), "CE_" + fo.IdFolhaObra + ".pdf", System.Net.Mime.MediaTypeNames.Application.Pdf));
 
             //PD
-            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 1);
-            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 2);
-            if (fo.ClienteServico.IdCliente == 878 && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 3);
+            if ((fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 297) && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 1);
+            if ((fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 297) && fo.IntervencaosServico.Count > 0 && fo.Avisar) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 2);
+            if ((fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 297) && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra != 1) MailContext.EnviarEmailMarcacaoPD(fo, fo.Marcacao, 3);
 
             //SONAE
             if ((fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1568) && fo.IntervencaosServico.Count > 0 && !fo.Avisar && fo.EstadoFolhaObra == 1) MailContext.EnviarEmailMarcacaoSONAE(fo, fo.Marcacao, 1);
@@ -1202,7 +1202,7 @@ namespace FT_Management.Models
             if (fo.ClienteServico.Contrato && !fo.EquipamentoServico.Contrato && fo.Contrato) res += "O equipamento selecionado ("+fo.EquipamentoServico.MarcaEquipamento+" "+fo.EquipamentoServico.ModeloEquipamento+" - "+fo.EquipamentoServico.NumeroSerieEquipamento+") encontra-se fora de contrato. Deseja inserir este equipamento na Tabela de Contratos associada a este cliente?\r\n";
 
             //PEÇAS
-            if (fo.ValorTotal > 500 && !fo.Contrato && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
+            if (fo.ValorTotal > 500 && !fo.Contrato && (fo.ClienteServico.IdCliente == 878 || fo.ClienteServico.IdCliente == 297 || fo.ClienteServico.IdCliente == 890 || fo.ClienteServico.IdCliente == 561 || fo.ClienteServico.IdCliente == 1560)) res += "O valor da reparação excede o valor máximo definido para esse cliente! Valor Total: " + Math.Round(fo.ValorTotal, 2) + "€\r\n";
 
             if (!string.IsNullOrEmpty(res)) res += "\r\nDeseja proseguir?";
             return res;
@@ -1661,7 +1661,7 @@ namespace FT_Management.Models
             }
 
             //Quando é cliente pingo doce tem obrigatoriamente de ter quem pediu para avancar
-            if (m.Cliente.IdCliente == 878 && String.IsNullOrEmpty(m.QuemPediuNome))
+            if ((m.Cliente.IdCliente == 878 || m.Cliente.IdCliente == 297) && String.IsNullOrEmpty(m.QuemPediuNome))
             {
                 res[2] += "Tem que indicar Quem Pediu!\r\n";
             }

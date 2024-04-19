@@ -117,7 +117,7 @@
             if (m.TipoServico == "Instalação") this.TipoFolhaObra = "Instalação";
             this.ReferenciaServico = m.Referencia;
             this.IdMarcacao = m.IdMarcacao;
-            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && this.ClienteServico.IdCliente != 878 ? m.QuemPediuEmail : m.Cliente.EmailCliente;
+            this.EmailCliente = string.IsNullOrEmpty(m.Cliente.EmailCliente) && (this.ClienteServico.IdCliente != 878 || m.Cliente.IdCliente == 297) ? m.QuemPediuEmail : m.Cliente.EmailCliente;
             this.Piquete = m.Piquete;
             if (!m.Oficina && !m.Remoto) this.TipoFolhaObra = m.TipoServico;
             this.Contrato = m.Contrato;
