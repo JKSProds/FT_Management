@@ -310,23 +310,18 @@ namespace FT_Management.Models
                     MailAddress from = new MailAddress(ConfigurationManager.AppSetting["Email:EmailOrigem"], ConfigurationManager.AppSetting["Email:NomeOrigem"] + (u != null ? " - " + u.NomeCompleto : ""));
                     MailMessage myMail = new MailMessage();
 
-            Console.WriteLine("TESTE5");
                     foreach (var item in EmailDestino.Split(";").Where(s => !string.IsNullOrEmpty(s)))
                     {
                         myMail.To.Add(item);
                     }
-
-            Console.WriteLine("TESTE6");
                     myMail.From = from;
                     myMail.Bcc.Add(new MailAddress(ConfigurationManager.AppSetting["Email:EmailBCC"]));
 
-            Console.WriteLine("TESTE7");
                     foreach (var item in EmailCC)
                     {
                         myMail.CC.Add(new MailAddress(item));
                     }
 
-            Console.WriteLine("TESTE8");
                     myMail.Subject = Assunto;
                     myMail.SubjectEncoding = System.Text.Encoding.UTF8;
 
@@ -334,10 +329,7 @@ namespace FT_Management.Models
                     myMail.BodyEncoding = System.Text.Encoding.UTF8;
                     myMail.IsBodyHtml = true;
 
-            Console.WriteLine("TESTE9");
                     mySmtpClient.SendMailAsync(myMail);
-
-            Console.WriteLine("TESTE10");
                 }
                 catch (SmtpException ex)
                 {
@@ -357,8 +349,6 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailManual(string Destino, string Assunto, string Mensagem, List<string> Cc)
         {
-
-            Console.WriteLine("TESTE4");
              EnviarMailSimples(Destino, Assunto, Mensagem, Cc, null);
 
             return true;
