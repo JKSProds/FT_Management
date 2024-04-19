@@ -4911,7 +4911,7 @@ namespace FT_Management.Models
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
                 conn.Open();
-                this.ExecutarQuery("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';");
+                
                 SqlCommand command = new SqlCommand("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';", conn)
                 {
                     CommandTimeout = TIMEOUT
@@ -4920,10 +4920,6 @@ namespace FT_Management.Models
                 {
                     while (result.Read())
                     {
-                                Console.WriteLine(result["assunto"].ToString().Trim());
-                                Console.WriteLine(result["corpo"].ToString().Trim());
-                                Console.WriteLine(result["para"].ToString().Trim());
-                                Console.WriteLine(result["cc"].ToString().Trim());
                             n = new Notificacao
                             {
                                 Assunto = result["assunto"].ToString().Trim(),
