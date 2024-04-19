@@ -4910,7 +4910,7 @@ namespace FT_Management.Models
                 SqlConnection conn = new SqlConnection(ConnectionString);
 
                 conn.Open();
-                Console.WriteLine("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';");
+                this.ExecutarQuery("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';");
                 SqlCommand command = new SqlCommand("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';", conn)
                 {
                     CommandTimeout = TIMEOUT
