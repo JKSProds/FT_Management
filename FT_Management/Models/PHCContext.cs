@@ -1477,7 +1477,7 @@ namespace FT_Management.Models
         }
         public List<Produto> ObterPecas(int IdFolhaObra)
         {
-            return ObterPecas("select bi.ndos, pa.nopat, bi.ref, bi.design, bi.qtt, bi.lobs, (SELECT TOP 1 CONCAT(obrano, ' - AT ', atcodeid) from V_DOCS_GLOBAL WHERE ar2mazem=bi.armazem and dataobra<bi.dataobra and bi.ref not like '%SRV%' order by dataobra desc) as guiatransporte from bi inner JOIN bo on bo.bostamp=bi.bostamp inner join pa on pa.pastamp=bo.pastamp where pa.nopat="+ IdFolhaObra +" and ref != '' order by ref, ndos;");
+            return ObterPecas("select bi.ndos, pa.nopat, bi.ref, bi.design, bi.qtt, bi.lobs, (SELECT TOP 1 CONCAT(obrano, ' - AT ', atcodeid) from V_DOCS_GLOBAL WHERE ar2mazem=bi.armazem and dataobra<bi.dataobra and bi.ref not like '%SRV%' order by dataobra desc) as guiatransporte from bi inner JOIN bo on bo.bostamp=bi.bostamp inner join pa on pa.pastamp=bo.pastamp where pa.nopat="+ IdFolhaObra +" and ref != '' and bi.ndos=49 order by ref, ndos;");
         }
         public List<Movimentos> ObterPecasGuiaTransporte(string GuiaTransporte, Utilizador u)
         {
