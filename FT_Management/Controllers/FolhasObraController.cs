@@ -196,7 +196,7 @@ namespace FT_Management.Controllers
             if (fo.IntervencaosServico.Where(i => i.HoraInicio > i.HoraFim).Count() > 0) ModelState.AddModelError("ListaIntervencoes", "Existe pelo menos uma intervenção em que a hora de inicio é maior que a hora de fim.");
             if (fo.Marcacao.Contrato != fo.Contrato && string.IsNullOrEmpty(fo.JustExtraContrato)) ModelState.AddModelError("JustExtraContrato", "É obrigatório escolher pelo menos um dos motivos para estar fora do contrato!");
             if (fo.ClienteServico.IdCliente == 3269 && fo.FicheirosAnexo.Split(";").Count() < 2) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 2 anexos para o Cliente LIDL!");
-            if (fo.ClienteServico.IdCliente == 5829 && fo.FicheirosAnexo.Split(";").Count() < 1) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 1 anexos para o Cliente ALDI!");
+            if ((fo.ClienteServico.IdCliente == 5828 || fo.ClienteServico.IdCliente == 5829) && fo.FicheirosAnexo.Split(";").Count() < 1) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 1 anexo para o Cliente ALDI!");
             if (fo.TipoFolhaObra == "Instalação" && fo.FicheirosAnexo.Split(";").Count() < 3 && fo.FecharMarcacao && !fo.Marcacao.GuiasInstalacao) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 3 anexos ao finalizar uma instalação!");
             if (fo.PecasServico.Where(p => p.Ref_Produto == "SRV.156").Count() > fo.FicheirosAnexo.Split(";").Count() - 1) ModelState.AddModelError("", "É obrigatorio inserir pelo menos 1 anexo para cada referencia SRV!");
 
