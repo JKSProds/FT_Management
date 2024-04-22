@@ -151,7 +151,7 @@ namespace FT_Management.Controllers
                     fo = phccontext.ObterFolhaObra(fo.IdFolhaObra);
 
                     if (LstPecasSemStock.Count() > 0) MailContext.EnviarEmailFolhaObraPecasSemStock("cperes@food-tech.pt", fo, LstPecasSemStock);
-                    if (fo.IntervencaosServico.Any(d => d.DataServiço.Date < DateTime.Now.Date)) MailContext.EnviarEmailFolhaObraAtrasada("faturacao@food-tech.pt", fo);
+                    if (!fo.IntervencaosServico.Any(d => d.DataServiço.Date == DateTime.Now.Date)) MailContext.EnviarEmailFolhaObraAtrasada("faturacao@food-tech.pt", fo);
 
                     if (Estado == 2) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 96, ReturnUrl = "/Pedidos/Pedidos/" + fo.Utilizador.IdPHC });
                     if (Estado == 3) return RedirectToAction("Pedido", "Dossiers", new { id = fo.StampFO, serie = 97, ReturnUrl = "/Pedidos/Pedidos/" + fo.Utilizador.IdPHC });
