@@ -45,7 +45,7 @@
                                 }else{
                                 <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)">@linha.Referencia</td>
                                 <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)">@linha.Designacao</td>
-                                <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Quantidade)">@linha.Quantidade</td>
+                                <td class="qtt" data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Quantidade)">@linha.Quantidade</td>
                                 <td class="is-actions-cell">
                                     <button type="button" class="button is-success is-rounded is-fullwidth" onclick="this.classList.add('is-hidden'); this.nextElementSibling.classList.remove('is-hidden');this.parentElement.parentElement.classList.add('has-background-success-light');this.parentElement.parentElement.classList.add('checked');">
                                         <span class="icon">
@@ -86,8 +86,8 @@ function ValidarTV(id) {
     if (rows.length == 0) notifyError("Tem de validar pelo menos uma peça!")
     // Step 2: Iterate through the rows
     for (var i = 0; i < rows.length; i++) {
-        if (isNaN(parseFloat(rows[i].querySelector('input').value))) rows[i].querySelector('input').value = 0;
-        res+=rows[i].getAttribute('id') + "|" + parseFloat(rows[i].querySelector('input').value) + ";";
+        if (isNaN(parseFloat(rows[i].querySelector('.qtt').textContent))) rows[i].querySelector('.qtt').textContent = 0;
+        res+=rows[i].getAttribute('id') + "|" + parseFloat(rows[i].querySelector('.qtt').textContent) + ";";
     }
     $.ajax({
         url: '/Produtos/Viagem/',

@@ -3351,6 +3351,29 @@ namespace FT_Management.Models
             return res;
         }
 
+                public List<string> ValidarTransferenciaViagem(Linha_Dossier l, Utilizador u)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                string SQL_Query = "EXEC WEB_TV_Valida_Linha ";
+
+                SQL_Query += "@TECNICO = '" + u.IdPHC + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "', ";
+                SQL_Query += "@STAMP_LIN = '" + l.Stamp_Linha + "'; ";
+
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel criar a linha na TV no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
          public List<Dossier> ObterTransferenciaViagemAbertas(Utilizador u)
         {
             List<Dossier> res = new List<Dossier>();

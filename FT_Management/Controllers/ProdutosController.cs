@@ -158,6 +158,10 @@
             .ToList();
             
             d.Linhas = LstLinhas;
+
+            foreach (var l in d.Linhas) {
+                phccontext.ValidarTransferenciaViagem(l, u);
+            }
             return StatusCode(200);
         }
         
