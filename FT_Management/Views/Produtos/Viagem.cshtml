@@ -83,12 +83,14 @@ function ValidarTV(id) {
     // Step 1: Get all rows with a specific class
     var rows = document.getElementsByClassName('checked');
 
-    if (rows.length == 0) notifyError("Tem de validar pelo menos uma peça!")
-    // Step 2: Iterate through the rows
-    for (var i = 0; i < rows.length; i++) {
-        if (isNaN(parseFloat(rows[i].querySelector('.qtt').textContent))) rows[i].querySelector('.qtt').textContent = 0;
-        res+=rows[i].getAttribute('id') + "|" + parseFloat(rows[i].querySelector('.qtt').textContent) + ";";
-
+    if (rows.length == 0) {
+        notifyError("Tem de validar pelo menos uma peça!")
+    }else{
+        // Step 2: Iterate through the rows
+        for (var i = 0; i < rows.length; i++) {
+            if (isNaN(parseFloat(rows[i].querySelector('.qtt').textContent))) rows[i].querySelector('.qtt').textContent = 0;
+            res+=rows[i].getAttribute('id') + "|" + parseFloat(rows[i].querySelector('.qtt').textContent) + ";";
+        }
         $.ajax({
             url: '/Produtos/Viagem/',
             data: { "id": id, "linhas": res },
