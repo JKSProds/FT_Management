@@ -72,7 +72,11 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todas os tecnicos.", u.NomeCompleto, u.Id);
             List<Utilizador> Tecnicos = context.ObterListaTecnicos(true, false);
-            Tecnicos.ForEach(t => t.Linhas = phccontext.ObterLinhasDossierAbertas(36, t));
+
+            Parallel.ForEach(Tecnicos, t =>
+            {
+                (t.Linhas ??= new List<Linha_Dossier>()).AddRange(phccontext.ObterLinhasDossierAbertas(36, t).Concat(phccontext.ObterLinhasDossierAbertas(96, t)));
+            });
 
             return View(Tecnicos.Where(t => t.Linhas.Count() > 0));
         }
@@ -89,6 +93,7 @@
 
             Utilizador t = context.ObterUtilizador(id);
             t.Linhas = phccontext.ObterLinhasDossierAbertas(36, t);
+            t.Linhas.AddRange(phccontext.ObterLinhasDossierAbertas(96, t));
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter um tecnico em especifico e as suas linhas: {3}.", u.NomeCompleto, u.Id, id);
 
