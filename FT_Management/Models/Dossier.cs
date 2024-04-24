@@ -56,7 +56,9 @@ namespace FT_Management.Models
         public string Stamp_Linha { get; set; }
         public string Referencia { get; set; }
         public string Designacao { get; set; }
-        public double Quantidade { get; set; }        
+        public double Quantidade { get; set; }    
+        public double QuantidadeFornecida { get; set; }    
+        public double QuantidadePendente { get{return Quantidade - QuantidadeFornecida;} }
         public string Serie { get; set; }
         public string CriadoPor { get; set; }
 
@@ -65,6 +67,7 @@ namespace FT_Management.Models
             this.Referencia = "";
             this.Designacao = "";
             this.Quantidade = 0;
+            this.QuantidadeFornecida = 0;
             this.CriadoPor = "N/D";
         }
     }

@@ -43,10 +43,10 @@
                             <tr id="@linha.Stamp_Linha">
                                 <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Referencia)">@linha.Referencia</td>
                                 <td data-label="@Html.DisplayNameFor(model => Model.Linhas.FirstOrDefault().Designacao)">@linha.Designacao</td>
-                                <td data-label="Pedido">@linha.Quantidade</td>
+                                <td data-label="Pedido">@linha.QuantidadePendente</td>
                                 <td data-label="Fornecer">
                                     <div class="control">
-                                            <input type="number" class="input is-rounded" value="@linha.Quantidade"/>
+                                            <input type="number" class="input is-rounded" value="@linha.QuantidadePendente"/>
                                     </div>
                                 </td>
                                 <td class="is-actions-cell">

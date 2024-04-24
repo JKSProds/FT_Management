@@ -3290,6 +3290,7 @@ namespace FT_Management.Models
                 string SQL_Query = "EXEC WEB_TV_Gera ";
 
                 SQL_Query += "@TECNICO = '" + u.IdPHC + "', ";
+                SQL_Query += "@ARM_ORI = '" + 3 + "', ";
                 SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
@@ -3947,6 +3948,7 @@ namespace FT_Management.Models
                                 Referencia = result["ref"].ToString().Trim(),
                                 Designacao = result["design"].ToString().Trim(),
                                 Quantidade = Double.Parse(result["qtt"].ToString()),
+                                QuantidadeFornecida = Double.Parse(result["qtt2"].ToString()),
                                 CriadoPor = result["ousrinis"].ToString()
                             });
                         }
