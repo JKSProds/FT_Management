@@ -32,7 +32,7 @@
                     <div class="card has-table has-mobile-sort-spaced">
                         <header class="card-header">
                             <p class="card-header-title" style="color:#000000">@item.NomeDossier - @item.IdDossier - @item.Cliente.NomeCliente</p>
-                            <a class="card-header-icon button is-success m-1 is-disabled">@item.Linhas.Sum(l => l.Quantidade)</a>
+                            <a class="card-header-icon button is-success m-1 is-disabled">@item.Linhas.Sum(l => l.QuantidadePendente)</a>
                         </header>
                         <div class="card-content">
                             <div class="b-table">
@@ -44,7 +44,8 @@
                                                 <th>@Html.DisplayNameFor(model => item.Linhas.FirstOrDefault().Designacao)</th>
                                                 <th>Quantidade</th>
                                                 <th></th>
-                                            </tr>
+                                                <th></th>
+                                                                                            </tr>
                                         </thead>
                                         <tbody>
                                             @foreach (var linha in item.Linhas)

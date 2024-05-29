@@ -3990,7 +3990,7 @@ namespace FT_Management.Models
 
         public List<Linha_Dossier> ObterLinhasDossierAbertas(string Stamp, Utilizador t)
         {
-            return ObterLinhasDossier("select (b.qtt-b.qtt2)- ISNULL((select SUM(qtt) from bi where emconf = 1 and oobistamp = b.bistamp),0),b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '"+Stamp+"' and a.tecnico="+t.IdPHC+" and qtt>qtt2 + ISNULL((select SUM(qtt) from bi where emconf = 1 and oobistamp = b.bistamp),0) and a.fechada=0 order by ousrinis, lordem", true);
+            return ObterLinhasDossier("select a.bostamp, b.bistamp, b.ref, b.design, b.qtt, a.ousrinis, b.qtt2 + ISNULL((select SUM(qtt) from bi(nolock) join bo2 (nolock) on bi.bostamp = bo2.bo2stamp where bi.emconf = 1 and bi.oobistamp = b.bistamp and bo2.anulado = 0),0) as qtt2 from bo a(nolock) join bo2 aa(nolock) on a.bostamp = aa.bo2stamp and aa.anulado = 0 join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '"+Stamp+"' and a.tecnico="+t.IdPHC+" and qtt>qtt2 + ISNULL((select SUM(qtt) from bi(nolock) join bo2 (nolock) on bi.bostamp = bo2.bo2stamp where bi.emconf = 1 and bi.oobistamp = b.bistamp and bo2.anulado = 0),0) and a.fechada=0 order by ousrinis, lordem;", true);
         }
 
         public Linha_Dossier ObterLinhaDossier(string STAMP)
