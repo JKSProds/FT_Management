@@ -1,7 +1,7 @@
-﻿@model IEnumerable<FT_Management.Models.Acesso>
+﻿@model IEnumerable<FT_Management.Models.RegistroAcessos>
 
 @{
-    ViewData["Title"] = "Acessos";
+    ViewData["Title"] = "Processamento - Acessos";
 }
 
 
@@ -18,7 +18,7 @@
                             <span class="icon mr-3">
                                 <i class="fas fa-clock"></i>
                             </span>
-                            <span>Acessos</span>
+                            <span>Processamento - Acessos</span>
                         </p>
                     </article>
                 </div>
@@ -81,35 +81,55 @@ else
                             @Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Data)
+                            E1
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().TipoAcesso)
+                            S1
+                        </th>                        
+                        <th>
+                            E2
+                        </th>                        
+                        <th>
+                            S2
                         </th>
+                        <th>Total</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.Tipo == 1 ? "table-primary" : "table-warning")">
-                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
-                                    <span>@item.Utilizador.NomeCompleto</span>
-                                </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Data)">
-                                    <span>@item.Data.ToString("HH:mm")</span>
-                                </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().TipoAcesso)">
-                                    <span class="icon  mr-2">
-                                        <i
-                                            class="fas @(item.Tipo == 1 ? "fa-arrow-right-to-bracket" : "fa-arrow-right-from-bracket")"></i>
-                                    </span>
-                                    <span>@item.TipoAcesso</span>
-                                </td>
-                                <td class="is-actions-cell">
-                                    <a class="button is-danger is-outlined is-fullwidth" onclick="ConfirmApagarAcesso(@item.Id)"
+                            <tr class="@(item.Validado ? "has-background-success" : (item.Valido ? "has-background-warning" : "has-background-danger"))">
+                            <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
+                                <span>@item.Utilizador.NomeCompleto</span>
+                            </td>
+                            <td data-label="E1">
+                                <input class="input" data-user="@item.Utilizador.Id" data-date="@item.Data.ToString("dd-MM-yyyy")" data-tipo=1 id="@item.E1.Id" type="text" value="@item.E1.Data.ToString("HH:mm")" disabled/>
+                            </td>
+                                <td data-label="S1">
+                                <input class="input" data-user="@item.Utilizador.Id" data-date="@item.Data.ToString("dd-MM-yyyy")" data-tipo=2 id="@item.S1.Id" type="text" value="@item.S1.Data.ToString("HH:mm")" disabled/>
+                            </td>
+                                <td data-label="E2">
+                                <input class="input" data-user="@item.Utilizador.Id" data-date="@item.Data.ToString("dd-MM-yyyy")" data-tipo=1 id="@item.E2.Id" type="text" value="@item.E2.Data.ToString("HH:mm")" disabled/>
+                            </td>
+                                <td data-label="S2">
+                                <input class="input" data-user="@item.Utilizador.Id" data-date="@item.Data.ToString("dd-MM-yyyy")" data-tipo=2 id="@item.S2.Id" type="text" value="@item.S2.Data.ToString("HH:mm")" disabled/>
+                            </td>
+                                <td data-label="Total">
+                                <span><b>@item.TotalHoras()</b></span>
+                            </td>
+                             <td style="min-width: 250px" class="is-actions-cell">
+                            @if (!item.Validado) {
+                                <div class="buttons">
+                                <a class="button is-success is-rounded" onclick="ValidarAcessos(this)"
+                                        href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
+                                <a class="button is-info is-rounded" onclick="EditarAcessos(this)"
+                                        href="javascript:;"><i class="fas fa-pencil" style="font-size:20px"></i></a>
+                                <a class="button is-danger is-rounded " onclick="ConfirmApagarAcesso(this)"
                                         href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                                </td>
+                                        </div>
+                                        }
+                            </td>
                             </tr>
                         }
                     </tbody>
@@ -118,7 +138,6 @@ else
         </div>
     </div>
 }
-
 
 <div id="modalApagarAcesso" class="modal">
     <div class="modal-background"></div>
@@ -180,6 +199,67 @@ else
         Bulma('#modalApagarAcesso').modal().close();
     }
 
+    function EditarAcessos(btn)
+    {
+        btn.closest('tr').querySelectorAll('input').forEach(input => {input.disabled = !input.disabled; });
+        if (btn.closest('tr').querySelectorAll('input')[0].disabled) {
+            btn.querySelector('i').classList.add('fa-pencil');
+            btn.querySelector('i').classList.remove('fa-floppy-disk');
+
+            btn.closest('tr').querySelectorAll('input').forEach(input => {
+                var json = {
+                    id: input.id,
+                    utilizador: input.getAttribute('data-user'),
+                    data: input.getAttribute('data-date') + ' ' + input.value,
+                    tipo: input.getAttribute('data-tipo'),
+                };
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/Acessos/Acesso",
+                    data: json,
+                    traditional: true,
+                    success: function (result) {
+                        $(function () {
+                        notify('Registros atualizados com sucesso!');
+                        input.id = result;
+                        });
+                    }
+                });
+            });
+           
+        }else{
+            btn.querySelector('i').classList.remove('fa-pencil');
+            btn.querySelector('i').classList.add('fa-floppy-disk');
+        }
+        
+    }
+
+    function ValidarAcessos(btn)
+    {
+
+        btn.closest('tr').querySelectorAll('input').forEach(input => {
+            var json = {
+                id: input.id,
+                utilizador: input.getAttribute('data-user'),
+                data: input.getAttribute('data-date') + ' ' + input.value,
+                tipo: input.getAttribute('data-tipo'),
+                validar: 1
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: "/Acessos/Acesso",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        notify('Registros validados com sucesso!')
+                    });
+                }
+            });
+        });
+    }
     function DataAlterada() {
         if (document.getElementById("hiddenTxtData").value != document.getElementById("txtData").value) {
             document.getElementById("hiddenTxtData").value = document.getElementById("txtData").value;

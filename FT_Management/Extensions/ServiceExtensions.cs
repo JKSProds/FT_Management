@@ -20,7 +20,7 @@ namespace FT_Management
                     {
                         string e = Guid.NewGuid().ToString();
                         _logger.LogError(new EventId(), contextFeature.Error.Message, null);
-                        MailContext.EnviarEmailError(dbContext.ObterUtilizador(int.Parse(_httpContextAccessor.HttpContext.User.Claims.First().Value)), e, contextFeature.Error.Message + "<br><br>" + contextFeature.Error.StackTrace.ToString());
+                        //MailContext.EnviarEmailError(dbContext.ObterUtilizador(int.Parse(_httpContextAccessor.HttpContext.User.Claims.First().Value)), e, contextFeature.Error.Message + "<br><br>" + contextFeature.Error.StackTrace.ToString());
 
                         context.Response.Redirect("/Home/Error/" + e, true);
                         await context.Response.WriteAsync(new Error

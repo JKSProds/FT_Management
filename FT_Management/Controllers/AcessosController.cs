@@ -24,7 +24,7 @@
             context.AdicionarLog(u.Id, "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
-            return View(context.ObterListaAcessos(DateTime.Parse(Data)));
+            return View(context.ObterListaRegistroAcessos(DateTime.Parse(Data)));
         }
 
         //Obter ultimo acesso de um utilizador em especifico
@@ -79,6 +79,33 @@
             }
 
             return Json(res);
+        }
+
+        //Editar um acesso em especifico
+        [HttpPut]
+        public JsonResult Acesso(int id, int utilizador, DateTime data, int tipo, int validar)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a editar/criar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
+
+            Acesso a = new Acesso(){
+                    Id=id,
+                    IdUtilizador = utilizador,
+                    Data = data,
+                    Tipo = tipo,
+                    Temperatura = "Modificado pelo utilizador " + u.NomeCompleto,
+                    Validado = validar == 1
+                };
+
+            if (id==0 && data.ToShortTimeString() != "00:00") {
+                return Json(context.CriarAcessoInterno(new List<Acesso>{a}));
+            }else{
+                context.AtualizarAcessoInterno(a);
+            } 
+
+            return Json("1");
         }
 
         //Obter todos os acessos em formato xls de uma data em especifico

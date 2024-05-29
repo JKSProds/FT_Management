@@ -1505,12 +1505,36 @@ namespace FT_Management.Models
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
                         Tipo = result["Tipo"],
-                        App = result["App"] == 1
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
                     });
                 }
             }
 
             return LstAcessos;
+
+        }
+
+        public List<RegistroAcessos> ObterListaRegistroAcessos(DateTime Data)
+        {
+            List<RegistroAcessos> LstRegistroAcessos = new List<RegistroAcessos>();
+            List<Acesso> LstAcessos = ObterListaAcessos(Data);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u=>u.Acessos).ToList();
+
+
+            foreach (Utilizador u in LstUtilizadores) {
+                List<Acesso> TMPAcessos = LstAcessos.Where(a => a.Utilizador.Id == u.Id).ToList();
+                LstRegistroAcessos.Add(new RegistroAcessos() {
+                    Utilizador =u,
+                    E1 = TMPAcessos.Count() >= 1? TMPAcessos[0] : new Acesso(),
+                    S1 = TMPAcessos.Count() >= 2? TMPAcessos[1] : new Acesso(),
+                    E2 = TMPAcessos.Count() >= 3? TMPAcessos[2] : new Acesso(),
+                    S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
+                    Data = Data
+                });
+            }
+
+            return LstRegistroAcessos;
 
         }
         public List<Acesso> ObterListaAcessosMes(DateTime Data)
@@ -1529,7 +1553,8 @@ namespace FT_Management.Models
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
                         Tipo = result["Tipo"],
-                        App = result["App"] == 1
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
                     });
                 }
             }
@@ -1555,7 +1580,8 @@ namespace FT_Management.Models
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
                         Tipo = result["Tipo"],
-                        App = result["App"] == 1
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
                     });
                 }
             }
@@ -1722,7 +1748,6 @@ namespace FT_Management.Models
 
                     db.Execute(sql1);
                     db.Execute(sql2);
-                    db.Connection.Close();
                 }
                 catch (Exception ex)
                 {
@@ -1730,8 +1755,9 @@ namespace FT_Management.Models
                 }
             }
         }
-        public void CriarAcessoInterno(List<Acesso> LstAcessos)
+        public int CriarAcessoInterno(List<Acesso> LstAcessos)
         {
+            int a = 0;
             if (LstAcessos.Count > 0)
             {
                 string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura, App) VALUES ";
@@ -1754,6 +1780,13 @@ namespace FT_Management.Models
                     Database db = ConnectionString;
 
                     db.Execute(sql1);
+
+                    using var result = db.Query("select LAST_INSERT_ID();");
+                    while (result.Read())
+                    {
+                        a = int.Parse(result[0]);
+                    }
+
                     db.Execute(sql2);
                     db.Connection.Close();
                 }
@@ -1762,6 +1795,25 @@ namespace FT_Management.Models
                     Console.WriteLine(ex.Message);
                 }
             }
+            return a;
+        }
+
+        public void AtualizarAcessoInterno(Acesso acesso)
+        {
+                string sql1 = "Update dat_acessos set DataHoraAcesso='"+acesso.Data.ToString("yyyy-MM-dd HH:mm:ss")+"', Validado='"+(acesso.Validado ? 1 : 0)+"' WHERE Id="+acesso.Id+";";
+                string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso, App, timestamp) VALUES (" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0, '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "') ON DUPLICATE KEY UPDATE DataUltimoAcesso = VALUES(DataUltimoAcesso), TipoUltimoAcesso = VALUES(TipoUltimoAcesso);";
+                try
+                {
+                    Database db = ConnectionString;
+
+                    db.Execute(sql1);
+                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) db.Execute(sql2);
+                    db.Connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
         }
         public void ApagarAcesso(int Id)
         {
