@@ -983,7 +983,7 @@ namespace FT_Management.Models
                 SQL_Query += "@OFICINA = '" + (fo.RecolhaOficina ? "1" : "0") + "', ";
                 SQL_Query += "@REMOTO = '" + (fo.AssistenciaRemota ? "1" : "0") + "', ";
                 SQL_Query += "@PIQUETE = '" + (fo.Piquete ? "1" : "0") + "', ";
-                SQL_Query += "@DESLOCACAO = '" + (fo.CobrarDeslocacao ? "1" : "0") + "', ";
+                SQL_Query += "@DESLOCACAO = '" + (fo.CobrarDeslocacao || fo.Instalação ? "1" : "0") + "', ";
                 SQL_Query += "@OBS = '" + fo.SituacoesPendentes.Replace("'", "''") + "', ";
                 SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
                 SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
