@@ -722,7 +722,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailTransferenciaViagem(Utilizador u, Dossier d, Attachment anexo)
         {
             string Assunto = "📦 " + "Transf. Viagem" + " - " + d.AtCode + " - " + d.Tecnico.NomeCompleto;
-            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + d.Tecnico.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "Código AT: " + ": " + d.AtCode + "<br><br>";
+            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + d.Tecnico.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "Código AT: " + ": " + d.AtCode + "<br>Link: " + d.GetUrlViagem + "<br><br>";;
 
             if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
             {

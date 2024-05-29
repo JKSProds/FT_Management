@@ -2763,7 +2763,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                     imageContext.DrawImage(img, new Point(x, y), 1);
 
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode("http://webapp.food-tech.pt/Produtos/Viagem/" + d.StampDossier, QRCodeGenerator.ECCLevel.Q);
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(d.GetUrlViagem, QRCodeGenerator.ECCLevel.Q);
                     BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
                     var qr = Image.Load(qrCode.GetGraphic(20));
