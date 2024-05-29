@@ -3922,6 +3922,14 @@ namespace FT_Management.Models
             return ObterDossiers("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", false, false, false, false);
         }
 
+        public List<Dossier> ObterDossiersAbertos(Utilizador t, int NumDossier)
+        {
+            List<Dossier> Dossiers = ObterDossiers("select a.* from bo a(nolock) where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 order by ousrinis;", false, false, false, false);
+            Dossiers.ForEach(d => d.Linhas = ObterLinhasDossierAbertas(d.StampDossier, t));
+
+            return Dossiers;
+        }
+
         public Dossier ObterDossier(string STAMP)
         {
             return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "';", true, true, true, true).DefaultIfEmpty(new Dossier()).First();
@@ -3980,9 +3988,9 @@ namespace FT_Management.Models
             return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '" + STAMP + "' order by lordem", true);
         }
 
-        public List<Linha_Dossier> ObterLinhasDossierAbertas(int NumDossier, Utilizador t)
+        public List<Linha_Dossier> ObterLinhasDossierAbertas(string Stamp, Utilizador t)
         {
-            return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and qtt>qtt2 and a.fechada=0 order by ousrinis, lordem", true);
+            return ObterLinhasDossier("select (b.qtt-b.qtt2)- ISNULL((select SUM(qtt) from bi where emconf = 1 and oobistamp = b.bistamp),0),b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '"+Stamp+"' and a.tecnico="+t.IdPHC+" and qtt>qtt2 + ISNULL((select SUM(qtt) from bi where emconf = 1 and oobistamp = b.bistamp),0) and a.fechada=0 order by ousrinis, lordem", true);
         }
 
         public Linha_Dossier ObterLinhaDossier(string STAMP)

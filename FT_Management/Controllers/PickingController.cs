@@ -75,10 +75,10 @@
 
             Parallel.ForEach(Tecnicos, t =>
             {
-                (t.Linhas ??= new List<Linha_Dossier>()).AddRange(phccontext.ObterLinhasDossierAbertas(36, t).Concat(phccontext.ObterLinhasDossierAbertas(96, t)));
+                (t.Dossiers ??= new List<Dossier>()).AddRange(phccontext.ObterDossiersAbertos(t, 36).Concat(phccontext.ObterDossiersAbertos(t, 96)));
             });
 
-            return View(Tecnicos.Where(t => t.Linhas.Count() > 0));
+            return View(Tecnicos.Where(t => t.Dossiers.Count() > 0));
         }
 
         //Obter um tecnico e as suas peças pedidas
@@ -92,8 +92,8 @@
             if (id==0) return StatusCode(500);
 
             Utilizador t = context.ObterUtilizador(id);
-            t.Linhas = phccontext.ObterLinhasDossierAbertas(36, t);
-            t.Linhas.AddRange(phccontext.ObterLinhasDossierAbertas(96, t));
+            t.Dossiers = phccontext.ObterDossiersAbertos(t,36);
+            t.Dossiers.AddRange(phccontext.ObterDossiersAbertos(t, 96));
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter um tecnico em especifico e as suas linhas: {3}.", u.NomeCompleto, u.Id, id);
 

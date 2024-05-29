@@ -2779,7 +2779,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                         HorizontalAlignment = HorizontalAlignment.Center,
                         WordBreaking = WordBreaking.Normal,
                         WrappingLength = width
-                    }, "Cliente: " + d.Cliente.NomeCliente.Trim() + "\r\nData: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"), Color.Black);
+                    }, "Técnico: " + d.Tecnico.NomeCompleto.Trim() + "\r\nData: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"), Color.Black);
 
                     y += 240;
                     imageContext.DrawText(new TextOptions(fontHeader)
