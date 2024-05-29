@@ -3281,19 +3281,15 @@ namespace FT_Management.Models
 
         //Transferencia Viagem
 
-        public List<string> CriarTransferenciaViagem(Utilizador u)
+        public List<string> CriarTransferenciaViagem(Utilizador u, Dossier d)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
             try
             {
-                string SQL_Query = "EXEC WEB_TV_Gera ";
-
-                SQL_Query += "@TECNICO = '" + u.IdPHC + "', ";
-                SQL_Query += "@ARM_ORI = '" + 3 + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
-
-                res = ExecutarQuery(SQL_Query);
+                 string SOAP = NotificacaoContext.ObterSoapPHC(d);
+                 string r =  MailContext.EnviarSoapPHC(SOAP).Result;
+                ExecutarQuery("update bo set ousrinis = '', usrinis = '' where bostamp = '';update bo2 set ousrinis = '', usrinis = ''  where bo2stamp = '';update bo3 set ousrinis = '', usrinis = ''  where bo3stamp = '';update bi set ousrinis = '', usrinis = ''  where bostamp = ''");
             }
 
             catch (Exception ex)
@@ -3304,52 +3300,6 @@ namespace FT_Management.Models
             return res;
         }
 
-
-        public List<string> CriarLinhaTransferenciaViagem(Linha_Dossier l, Utilizador u)
-        {
-            List<string> res = new List<string>() { "-1", "Erro", "", "" };
-
-            try
-            {
-                string SQL_Query = "EXEC WEB_TV_Cria_Linha ";
-
-                SQL_Query += "@STAMP = '" + l.Stamp_Dossier + "', ";
-                SQL_Query += "@STAMP_LIN_ORI = '" + l.Stamp_Linha + "', ";
-                SQL_Query += "@QTT = '" + l.Quantidade + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
-
-                res = ExecutarQuery(SQL_Query);
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine("Não foi possivel criar a linha na TV no PHC!\r\n(Exception: " + ex.Message + ")");
-            }
-
-            return res;
-        }
-
-        public List<string> FecharTransferenciaViagem(Dossier d, Utilizador u)
-        {
-            List<string> res = new List<string>() { "-1", "Erro", "", "" };
-
-            try
-            {
-                string SQL_Query = "EXEC WEB_TV_Fecha ";
-
-                SQL_Query += "@STAMP = '" + d.StampDossier + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
-
-                res = ExecutarQuery(SQL_Query);
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine("Não foi possivel criar a linha na TV no PHC!\r\n(Exception: " + ex.Message + ")");
-            }
-
-            return res;
-        }
 
                 public List<string> ValidarTransferenciaViagem(Linha_Dossier l, Utilizador u)
         {

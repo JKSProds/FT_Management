@@ -61,6 +61,8 @@ namespace FT_Management.Models
         public double QuantidadePendente { get{return Quantidade - QuantidadeFornecida;} }
         public string Serie { get; set; }
         public string CriadoPor { get; set; }
+        public int Armazem_Origem { get; set; }
+        public int Armazem_Destino { get; set; }
 
         public Linha_Dossier()
         {

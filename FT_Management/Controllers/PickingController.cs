@@ -102,34 +102,32 @@
 
         //Criar uma transferencia em viagem
         [HttpPost]
-        public IActionResult Tecnico(string id, string linhas)
+        public IActionResult Tecnico(int id, string linhas)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            Utilizador t = context.ObterUtilizador(id);
 
-            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(linhas)) return StatusCode(500);
+            if (id==0 || string.IsNullOrEmpty(linhas)) return StatusCode(500);
 
             _logger.LogDebug("Utilizador {1} [{2}] a criar uma transferencia em viagem do utilizador nº {3}: {4}", u.NomeCompleto, u.Id, id, linhas);
 
-             List<string> res = phccontext.CriarTransferenciaViagem(u);
-             if (res[0] == "-1") return StatusCode(500);
-
              //Dossier d = phccontext.ObterDossier(res[2]);
-            Dossier d = new Dossier() {StampDossier = res[2]};
-
+             Cliente c = new Cliente() {IdCliente=1, IdLoja=0};
+            Dossier d = new Dossier() {Serie=42, Cliente=c, StampMoradaDescarga="SUBIC Alverca", EditadoPor=u.NomeCompleto};
+            
             List<Linha_Dossier> LstLinhas = linhas.Split(';')
             .Select(l => l.Split('|'))
-            .Where(p => p.Length == 2)
-            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Quantidade = int.Parse(p[1]), Stamp_Dossier = d.StampDossier })
+            .Where(p => p.Length == 4)
+            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Referencia=p[1], Designacao =p[2], Quantidade = int.Parse(p[3]), Stamp_Dossier = d.StampDossier, Armazem_Origem=3, Armazem_Destino = u.IdArmazem })
             .ToList();
 
-            foreach (var l in LstLinhas) {
-                res = phccontext.CriarLinhaTransferenciaViagem(l, u);
-                if (res[0] == "-1") return StatusCode(500);
-            }
+            d.Linhas = LstLinhas;
+            
+            if (d.Linhas == null || d.Linhas.Count == 0) return StatusCode(500);
 
-            res = phccontext.FecharTransferenciaViagem(d,u);
+            List<string> res = phccontext.CriarTransferenciaViagem(u, d);
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
         }

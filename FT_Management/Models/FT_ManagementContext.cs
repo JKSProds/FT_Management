@@ -2239,193 +2239,212 @@ namespace FT_Management.Models
         }
 
         //NOT WORKING
-        /*       public Bitmap DesenharFolhaObraSimples(FolhaObra fo)
-              {
+  /*      public MemoryStream DesenharFolhaObraSimples(FolhaObra fo)
+        {
+            var stream = new System.IO.MemoryStream();
+            int x = 0;
+            int y = 0;
+            int width = 1024;
+            int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() * 140) * 2;
 
-                  int x = 0;
-                  int y = 0;
-                  int width = 1024;
-                  int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() * 140) * 2;
+            // Cria uma nova imagem com o tamanho especificado
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 70, FontStyle.Bold);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 22, FontStyle.Bold);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 22);
 
-                  Bitmap bm = new Bitmap(width, height);
+            string HeaderPagina = "Original";
 
-                  Font fontHeader = new Font("Rubik", 70, FontStyle.Bold);
-                  Font fontBody = new Font("Rubik", 22, FontStyle.Bold);
-                  Font fontFooter = new Font("Rubik", 22, FontStyle.Regular);
+            var penB = Pens.Solid(Color.Black, 5);
+            var penTransparent = Pens.Solid(Color.Transparent, 5);
 
-                  string HeaderPagina = "Original";
+            var textOptions = new TextOptions(fontHeader)
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var textOptionsRight = new TextOptions(fontBody)
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var textOptionsLeft = new TextOptions(fontBody)
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+               image.Mutate(ctx =>
+            {
+        ctx.Clear(Color.White);
 
-                  StringFormat format = new StringFormat
-                  {
-                      LineAlignment = StringAlignment.Center,
-                      Alignment = StringAlignment.Center
-                  };
-                  StringFormat formatRight = new StringFormat
-                  {
-                      LineAlignment = StringAlignment.Center,
-                      Alignment = StringAlignment.Far
-                  };
-                  StringFormat formatLeft = new StringFormat
-                  {
-                      LineAlignment = StringAlignment.Center,
-                      Alignment = StringAlignment.Near
-                  };
+        for (int i = 0; i <= 1; i++)
+        {
+            
 
-                  Pen penB = new Pen(Color.Black, 5);
-                  Pen pen = new Pen(Color.Transparent, 5);
+            ctx.DrawText(HeaderPagina, fontBody, Color.Black, new PointF(x + 410, y + 20));
+            y += 40;
+            ctx.DrawText("Nº PAT: " + fo.IdFolhaObra, fontFooter, Color.Black, new PointF(x + 410, y + 20));
+            y += 40;
+            ctx.DrawText("Nº Assis. Técnica: " + fo.IdAT, fontFooter, Color.Black, new PointF(x + 410, y + 20));
+            y += 40;
+            ctx.DrawText("Nº Marcação: " + fo.IdMarcacao, fontFooter, Color.Black, new PointF(x + 410, y + 20));
+            y += 40;
+            ctx.DrawText("Data: " + fo.DataServico.ToShortDateString(), fontFooter, Color.Black, new PointF(x + 410, y + 20));
+            y += 60;
 
-                  using (Graphics gr = Graphics.FromImage(bm))
-                  {
-                      gr.Clear(Color.White);
-                      Rectangle rect = new Rectangle();
+            var clientRect = new RectangleF(x + 10, y + 20, 400, 240);
+            ctx.Draw(penB, clientRect);
 
-                      gr.SmoothingMode = SmoothingMode.HighQuality;
-                      gr.CompositingQuality = CompositingQuality.HighQuality;
-                      gr.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            var clientDataRect = new RectangleF(x + 410, y + 20, width - 420, 240);
+            ctx.Draw(penB, clientDataRect);
 
-                      for (int i = 0; i <= 1; i++)
-                      {
-                          if (File.Exists(FT_Logo_Print)) { Image img = System.Drawing.Image.FromFile(FT_Logo_Print, true); gr.DrawImage(img, x, y, 400, 235); }
+            var rect = new RectangleF(x + 10, y + 20, 400, 40);
+            ctx.DrawText("Subic, Lda", fontFooter, Color.Black, rect);
+            ctx.Draw(penTransparent, rect);
 
-                          QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                          QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
-                          BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
-                          Bitmap qrCodeImage = new Bitmap(new MemoryStream(qrCode.GetGraphic(20)));
+            rect = new RectangleF(x + 410, y + 20, width - 420, 40);
+            ctx.DrawText("Dados do Cliente:", fontFooter, Color.Black, rect);
+            ctx.DrawText("Estab: " + fo.ClienteServico.IdCliente + " Loja: " + fo.ClienteServico.IdLoja, fontFooter, Color.Black, rect);
+            y += 40;
 
-                          gr.DrawImage(qrCodeImage, width - 200, y + 20, 200, 200);
+            rect = new RectangleF(x + 10, y + 20, 400, 40);
+            ctx.DrawText("NIF: 515 609 013", fontFooter, Color.Black, rect, textOptionsCenter);
+            y += 40;
 
-                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                          gr.DrawString(HeaderPagina, fontBody, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(pen, rect);
+            rect = new RectangleF(x + 410, y + 20, width - 420, 80);
+            ctx.DrawText("Nome: " + fo.ClienteServico.NomeCliente, fontFooter, Color.Black, rect, textOptionsLeft);
+            y += 40;
 
-                          y += 40;
-                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                          gr.DrawString("Nº PAT: " + fo.IdFolhaObra, fontFooter, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(pen, rect);
+            rect = new RectangleF(x + 10, y + 20, 400, 160);
+            ctx.DrawText("Morada: Rua Engenheiro Sabino Marques, 144, 4470-605 Maia", fontFooter, Color.Black, rect, textOptionsCenter);
+            y += 40;
 
-                          y += 40;
-                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                          gr.DrawString("Nº Assis. Técnica: " + fo.IdAT, fontFooter, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(pen, rect);
+            rect = new RectangleF(x + 410, y + 20, width - 420, 80);
+            ctx.DrawText("Morada: " + fo.ClienteServico.MoradaCliente, fontFooter, Color.Black, rect, textOptionsLeft);
+            y += 80;
 
-                          y += 40;
-                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                          gr.DrawString("Nº Marcação: " + fo.IdMarcacao, fontFooter, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(pen, rect);
+            rect = new RectangleF(x + 410, y + 20, width - 420, 40);
+            ctx.DrawText("NIF: " + fo.ClienteServico.NumeroContribuinteCliente, fontFooter, Color.Black, rect, textOptionsLeft);
+            y += 60;
 
-                          y += 40;
-                          rect = new Rectangle(x + 410, y + 20, width - 620, 40);
-                          gr.DrawString("Data: " + fo.DataServico.ToShortDateString(), fontFooter, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(pen, rect);
+            rect = new RectangleF(x + 10, y + 20, width - 20, 80);
+            ctx.Draw(penB, rect);
 
-                          y += 60;
-                          rect = new Rectangle(x + 10, y + 20, 400, 240);
-                          gr.DrawRectangle(penB, rect);
+            rect = new RectangleF(x + 10, y + 20, width - 20, 40);
+            ctx.DrawText("Equipamento", fontFooter, Color.Black, rect, textOptionsCenter);
+            y += 40;
 
-                          rect = new Rectangle(x + 410, y + 20, width - 420, 240);
-                          gr.DrawRectangle(penB, rect);
+            rect = new RectangleF(x + 10, y + 20, width - 20, 40);
+            ctx.DrawText("Marca: " + fo.EquipamentoServico.MarcaEquipamento, fontFooter, Color.Black, rect, textOptionsLeft);
+            ctx.DrawText("Modelo: " + fo.EquipamentoServico.ModeloEquipamento, fontFooter, Color.Black, rect, textOptionsCenter);
+            ctx.DrawText("N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, fontFooter, Color.Black, rect, textOptionsRight);
+            y += 60;
 
-                          rect = new Rectangle(x + 10, y + 20, 400, 40);
-                          gr.DrawString("Subic, Lda", fontFooter, Brushes.Black, rect, format);
-                          gr.DrawRectangle(pen, rect);
+            rect = new RectangleF(x + 10, y + 20, width - 20, 60);
+            if (fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() > 0)
+            {
+                ctx.DrawText("Peças retiradas da: " + fo.GuiaTransporteAtual, fontBody, Color.Black, rect, textOptionsCenter);
+            }
+            else
+            {
+                ctx.DrawText("Não foram retiradas nenhumas peças nesta assistência!", fontBody, Color.Black, rect, textOptionsCenter);
+            }
+            y += 20;
 
-                          rect = new Rectangle(x + 410, y + 20, width - 420, 40);
-                          gr.DrawString("Dados do Cliente:", fontFooter, Brushes.Black, rect, formatLeft);
-                          gr.DrawString("Estab: " + fo.ClienteServico.IdCliente + " Loja: " + fo.ClienteServico.IdLoja, fontFooter, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(pen, rect);
+            foreach (var peca in fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")))
+            {
+                y += 60;
+                rect = new RectangleF(x + 10, y + 20, width - 20, 120);
+                ctx.Draw(penB, rect);
 
-                          y += 40;
-                          rect = new Rectangle(x + 10, y + 20, 400, 40);
-                          gr.DrawString("NIF: 515 609 013", fontFooter, Brushes.Black, rect, format);
-                          gr.DrawRectangle(pen, rect);
+                rect = new RectangleF(x + 10, y + 20, width - 20, 40);
+                ctx.DrawText("Referência: " + peca.Ref_Produto, fontFooter, Color.Black, rect, textOptionsLeft);
+                y += 40;
+                rect = new RectangleF(x + 10, y + 20, width - 20, 40);
+                ctx.DrawText("Designação: " + peca.Designacao_Produto, fontFooter, Color.Black, rect, textOptionsLeft);
+                y += 40;
+                rect = new RectangleF(x + 10, y + 20, width - 20, 40);
+                ctx.DrawText("Qtd: " + peca.Stock_Fisico + " " + peca.TipoUn, fontFooter, Color.Black, rect, textOptionsLeft);
+            }
 
-                          rect = new Rectangle(x + 410, y + 20, width - 420, 80);
-                          gr.DrawString("Nome: " + fo.ClienteServico.NomeCliente, fontFooter, Brushes.Black, rect, formatLeft);
-                          gr.DrawRectangle(pen, rect);
+            y += 60;
+            rect = new RectangleF(x + 10, y + 20, width - 20, 40);
+            ctx.DrawText("Cliente: " + fo.ConferidoPor, fontFooter, Color.Black, rect, textOptionsLeft);
+            ctx.DrawText("Técnico: " + fo.IntervencaosServico.First().NomeTecnico, fontFooter, Color.Black, rect, textOptionsRight);
 
-                          y += 40;
+            y += 150;
+            var penDashed = Pens.Dash(Color.Black, 5, new float[] { 5, 5 });
+            ctx.DrawLine(penDashed, new PointF(0, y), new PointF(width, y));
+            y += 80;
+            HeaderPagina = "Duplicado";
+        }
+    });
 
-                          rect = new Rectangle(x + 10, y + 20, 400, 160);
-                          gr.DrawString("Morada: Rua Engenheiro Sabino Marques, 144, 4470-605 Maia", fontFooter, Brushes.Black, rect, format);
-                          gr.DrawRectangle(pen, rect);
+    return image
+}*/
 
-                          y += 40;
-                          rect = new Rectangle(x + 410, y + 20, width - 420, 80);
-                          gr.DrawString("Morada: " + fo.ClienteServico.MoradaCliente, fontFooter, Brushes.Black, rect, formatLeft);
-                          gr.DrawRectangle(pen, rect);
+public MemoryStream DesenharTicketFO(FolhaObra fo)
+        {
+            var stream = new System.IO.MemoryStream();
 
-                          y += 80;
-                          rect = new Rectangle(x + 410, y + 20, width - 420, 40);
-                          gr.DrawString("NIF: " + fo.ClienteServico.NumeroContribuinteCliente, fontFooter, Brushes.Black, rect, formatLeft);
-                          gr.DrawRectangle(pen, rect);
+            int x = 10;
+            int y = 0;
+            int width = 1024;
+            int height = (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() * 140) * 2;
 
-                          y += 60;
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 70, FontStyle.Bold);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 22, FontStyle.Bold);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 22);
 
-                          rect = new Rectangle(x + 10, y + 20, width - 20, 80);
-                          gr.DrawRectangle(penB, rect);
+            string Header = "Original";
 
-                          rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                          gr.DrawString("Equipamento", fontFooter, Brushes.Black, rect, format);
-                          gr.DrawRectangle(pen, rect);
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
 
-                          y += 40;
-                          rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                          gr.DrawString("Marca: " + fo.EquipamentoServico.MarcaEquipamento, fontFooter, Brushes.Black, rect, formatLeft);
-                          gr.DrawString("Modelo: " + fo.EquipamentoServico.ModeloEquipamento, fontFooter, Brushes.Black, rect, format);
-                          gr.DrawString("N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, fontFooter, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(pen, rect);
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/ft_logo.png");
+                    img.Mutate(x => x.Resize(400, 235));
+                    imageContext.DrawImage(img, new Point(x, y), 1);
 
-                          y += 60;
-                          rect = new Rectangle(x + 10, y + 20, width - 20, 60);
-                          if (fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() > 0)
-                          {
-                              gr.DrawString("Peças retiradas da: " + fo.GuiaTransporteAtual, fontBody, Brushes.Black, rect, format);
-                          }
-                          else
-                          {
-                              gr.DrawString("Não foram retiradas nenhumas peças nesta assistência!", fontBody, Brushes.Black, rect, format);
-                          }
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width - 100, y),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = 100
+                    }, Header, Color.Black);
 
-                          y += 20;
-                          gr.DrawRectangle(penB, rect);
+                    y+=30;
 
-                          foreach (var peca in fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")))
-                          {
-                              y += 60;
-                              rect = new Rectangle(x + 10, y + 20, width - 20, 120);
-                              gr.DrawRectangle(penB, rect);
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(fo.GetUrl, QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
-                              rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                              gr.DrawString("Referência: " + peca.Ref_Produto, fontFooter, Brushes.Black, rect, formatLeft);
-                              gr.DrawRectangle(pen, rect);
-                              y += 40;
-                              rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                              gr.DrawString("Designação: " + peca.Designacao_Produto, fontFooter, Brushes.Black, rect, formatLeft);
-                              gr.DrawRectangle(pen, rect);
-                              y += 40;
-                              rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                              gr.DrawString("Qtd: " + peca.Stock_Fisico + " " + peca.TipoUn, fontFooter, Brushes.Black, rect, formatLeft);
-                              gr.DrawRectangle(pen, rect);
-                          }
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(180, 180));
+                    imageContext.DrawImage(qr, new Point(width - 180, y), 1);
 
-                          y += 60;
-                          rect = new Rectangle(x + 10, y + 20, width - 20, 40);
-                          gr.DrawString("Cliente: " + fo.ConferidoPor, fontFooter, Brushes.Black, rect, formatLeft);
-                          gr.DrawString("Técnico: " + fo.IntervencaosServico.First().NomeTecnico, fontFooter, Brushes.Black, rect, formatRight);
-                          gr.DrawRectangle(penB, rect);
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width - 100, y),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = 100
+                    }, Header, Color.Black);
+                });
 
-                          y += 150;
-                          penB.DashStyle = DashStyle.Dash;
-                          gr.DrawLine(penB, new Point(0, y), new Point(width, y));
-                          penB.DashStyle = DashStyle.Solid;
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
+            }
 
-                          y += 80;
-                          HeaderPagina = "Duplicado";
-                      }
-
-                  }
-                  return bm;
-              } */
+            return stream;
+        }
 
         public MemoryStream DesenharEtiquetaMarcacao(Marcacao marcacao)
         {
