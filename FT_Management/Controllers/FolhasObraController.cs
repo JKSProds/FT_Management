@@ -295,10 +295,23 @@ namespace FT_Management.Controllers
 
         //Imprimir ticket 
         [HttpGet]
-        public virtual ActionResult Ticket(int id)
+        public virtual ActionResult Ticket(string id)
         {
-            return Content("NOT WORKING");
-        }
+            if (id == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            FolhaObra fo = phccontext.ObterFolhaObra(int.Parse(id));
+
+            if (!this.User.IsInRole("Admin") && !this.User.IsInRole("Escritorio") && fo.IntervencaosServico.Where(i => i.IdTecnico == u.IdPHC).Count() == 0) return Redirect("~/Home/AcessoNegado");
+
+            _logger.LogDebug("Utilizador {1} [{2}] a imprimir um ticket de uma folha de obra: Cliente - {3}, Id FO - {4}.", u.NomeCompleto, u.Id, fo.ClienteServico.NomeCliente, fo.IdFolhaObra);
+
+            return File(context.MemoryStreamToPDF(context.DesenharTicketFO(fo), 1024, (840 + fo.PecasServico.Where(p => !p.Ref_Produto.Contains("SRV")).Count() * 140) * 2), "application/pdf");  }
 
         //Criar codigo da folha de obra
         [HttpPost]

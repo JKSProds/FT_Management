@@ -983,7 +983,7 @@ namespace FT_Management.Models
                 SQL_Query += "@OFICINA = '" + (fo.RecolhaOficina ? "1" : "0") + "', ";
                 SQL_Query += "@REMOTO = '" + (fo.AssistenciaRemota ? "1" : "0") + "', ";
                 SQL_Query += "@PIQUETE = '" + (fo.Piquete ? "1" : "0") + "', ";
-                SQL_Query += "@DESLOCACAO = '" + (fo.CobrarDeslocacao ? "1" : "0") + "', ";
+                SQL_Query += "@DESLOCACAO = '" + (fo.CobrarDeslocacao || fo.Instalação ? "1" : "0") + "', ";
                 SQL_Query += "@OBS = '" + fo.SituacoesPendentes.Replace("'", "''") + "', ";
                 SQL_Query += "@DATA = '" + fo.DataServico.ToString("yyyyMMdd") + "', ";
                 SQL_Query += "@TECNICO = '" + fo.Utilizador.IdPHC + "', ";
@@ -3281,18 +3281,18 @@ namespace FT_Management.Models
 
         //Transferencia Viagem
 
-        public List<string> CriarTransferenciaViagem(Utilizador u)
+        public List<string> CriarTransferenciaViagem(Utilizador u, Dossier d)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
             try
             {
-                string SQL_Query = "EXEC WEB_TV_Gera ";
-
-                SQL_Query += "@TECNICO = '" + u.IdPHC + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
-
-                res = ExecutarQuery(SQL_Query);
+                 string SOAP = NotificacaoContext.ObterSoapPHC(d);
+                 string r =  MailContext.EnviarSoapPHC(SOAP).Result;
+                ExecutarQuery("update bo set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+' where bostamp = '"+d.StampDossier+"';update bo2 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '+u.NomeUtilizador+'  where bo2stamp = '+d.StampDossier+';update bo3 set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bo3stamp = '+d.StampDossier+';update bi set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bostamp = '+d.StampDossier+'");
+                res[0] = "1";
+                res[1] = r;
+                res[2] = ObterCodigoAt(r);
             }
 
             catch (Exception ex)
@@ -3304,40 +3304,49 @@ namespace FT_Management.Models
         }
 
 
-        public List<string> CriarLinhaTransferenciaViagem(Linha_Dossier l, Utilizador u)
+        public string ObterCodigoAt(string STAMP)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "", "" };
-
             try
             {
-                string SQL_Query = "EXEC WEB_TV_Cria_Linha ";
 
-                SQL_Query += "@STAMP = '" + l.Stamp_Dossier + "', ";
-                SQL_Query += "@STAMP_LIN_ORI = '" + l.Stamp_Linha + "', ";
-                SQL_Query += "@QTT = '" + l.Quantidade + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
+                SqlConnection conn = new SqlConnection(ConnectionString);
 
-                res = ExecutarQuery(SQL_Query);
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select atcodeid from bo2 where bo2stamp='"+STAMP+"';", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                       return result[0].ToString();
+                    }
+                }
+
+                conn.Close();
             }
-
             catch (Exception ex)
             {
-                Console.WriteLine("Não foi possivel criar a linha na TV no PHC!\r\n(Exception: " + ex.Message + ")");
+                Console.WriteLine("Não foi possivel obter o codigo AT do PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
-            return res;
+            return "";
         }
 
-        public List<string> FecharTransferenciaViagem(Dossier d, Utilizador u)
+
+                public List<string> ValidarTransferenciaViagem(Linha_Dossier l, Utilizador u)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
             try
             {
-                string SQL_Query = "EXEC WEB_TV_Fecha ";
+                string SQL_Query = "EXEC WEB_TV_Valida_Linha ";
 
-                SQL_Query += "@STAMP = '" + d.StampDossier + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
+                SQL_Query += "@TECNICO = '" + u.IdPHC + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "', ";
+                SQL_Query += "@STAMP_LIN = '" + l.Stamp_Linha + "'; ";
 
                 res = ExecutarQuery(SQL_Query);
             }
@@ -3914,6 +3923,14 @@ namespace FT_Management.Models
             return ObterDossiers("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", false, false, false, false);
         }
 
+        public List<Dossier> ObterDossiersAbertos(Utilizador t, int NumDossier)
+        {
+            List<Dossier> Dossiers = ObterDossiers("select a.* from bo a(nolock) where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 order by ousrinis;", false, false, false, false);
+            Dossiers.ForEach(d => d.Linhas = ObterLinhasDossierAbertas(d.StampDossier, t));
+
+            return Dossiers;
+        }
+
         public Dossier ObterDossier(string STAMP)
         {
             return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "';", true, true, true, true).DefaultIfEmpty(new Dossier()).First();
@@ -3947,6 +3964,7 @@ namespace FT_Management.Models
                                 Referencia = result["ref"].ToString().Trim(),
                                 Designacao = result["design"].ToString().Trim(),
                                 Quantidade = Double.Parse(result["qtt"].ToString()),
+                                QuantidadeFornecida = Double.Parse(result["qtt2"].ToString()),
                                 CriadoPor = result["ousrinis"].ToString()
                             });
                         }
@@ -3971,9 +3989,9 @@ namespace FT_Management.Models
             return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '" + STAMP + "' order by lordem", true);
         }
 
-        public List<Linha_Dossier> ObterLinhasDossierAbertas(int NumDossier, Utilizador t)
+        public List<Linha_Dossier> ObterLinhasDossierAbertas(string Stamp, Utilizador t)
         {
-            return ObterLinhasDossier("select b.* from bo a(nolock) join bi b(nolock) on a.bostamp = b.bostamp where b.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and qtt>qtt2 and a.fechada=0 order by ousrinis, lordem", true);
+            return ObterLinhasDossier("select a.bostamp, b.bistamp, b.ref, b.design, b.qtt, a.ousrinis, b.qtt2 + ISNULL((select SUM(qtt) from bi(nolock) join bo2 (nolock) on bi.bostamp = bo2.bo2stamp where bi.emconf = 1 and bi.oobistamp = b.bistamp and bo2.anulado = 0),0) as qtt2 from bo a(nolock) join bo2 aa(nolock) on a.bostamp = aa.bo2stamp and aa.anulado = 0 join bi b(nolock) on a.bostamp = b.bostamp where b.bostamp = '"+Stamp+"' and a.tecnico="+t.IdPHC+" and qtt>qtt2 + ISNULL((select SUM(qtt) from bi(nolock) join bo2 (nolock) on bi.bostamp = bo2.bo2stamp where bi.emconf = 1 and bi.oobistamp = b.bistamp and bo2.anulado = 0),0) and a.fechada=0 order by ousrinis, lordem;", true);
         }
 
         public Linha_Dossier ObterLinhaDossier(string STAMP)

@@ -85,7 +85,7 @@
         public string SecondFactorAuthCode { get; set; }
         public bool Ferias { get; set; }
         public List<Marcacao> LstMarcacoes { get; set; }
-        public List<Linha_Dossier> Linhas { get; set; }
+        public List<Dossier> Dossiers { get; set; }
         public Marcacao MarcacaoCurso
         {
             get

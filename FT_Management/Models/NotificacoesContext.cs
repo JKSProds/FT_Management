@@ -1,4 +1,6 @@
-﻿using Custom;
+﻿using System.Net.Http.Headers;
+using System.Xml.Linq;
+using Custom;
 
 namespace FT_Management.Models
 {
@@ -16,6 +18,27 @@ namespace FT_Management.Models
         {
             return c.TipoCliente == "Indústria";
         }
+
+        public static string ObterSoapPHC(Dossier d)
+        {
+            string linhas = "";
+            foreach (Linha_Dossier l in d.Linhas) {
+                linhas+= @"{""REF"":'"+l.Referencia+@"',""DESIGN"":'"+l.Designacao+@"',""QTT"":"+l.Quantidade+@",""armazem"":"+l.Armazem_Origem+@",""ar2mazem"":"+l.Armazem_Destino+@",""Oobistamp"":"""+l.Stamp_Linha+@"""},";
+            }
+            linhas = linhas.Remove(linhas.Length - 1, 1);
+
+            return @"<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">
+            <soap:Body>
+                <RunCode xmlns=""http://www.phc.pt/"">
+                <userName>" + ConfigurationManager.AppSetting["PHC:User"]+ @"</userName>
+                <password>" + ConfigurationManager.AppSetting["PHC:Password"]+ @"</password>
+                <code>PT001</code>
+                <parameter>{""ndos"":"+d.Serie+@",""no"":"+d.Cliente.IdCliente+@",""estab"":"+d.Cliente.IdLoja+@",""szadrsstamp"":"""+d.StampMoradaDescarga+@""",""ousrinis"":"""+d.EditadoPor+@""",""xpddata"":"""+DateTime.Now.AddMinutes(10).ToString("yyyy-MM-dd")+@""",""xpdhora"":"""+DateTime.Now.AddMinutes(10).ToString("HH:mm")+@""",""BI"":["+linhas+@"]}</parameter>
+                </RunCode>
+            </soap:Body>
+            </soap:Envelope>";
+        }
+
 
         public static string ObterSoapEnvComentario(string Incidente, string Comentario, string Estado, string NomeUtilizador)
         {
@@ -549,11 +572,11 @@ namespace FT_Management.Models
                 string Assunto = "[" + fo.ReferenciaServico + "] ";
                 Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
                 if (Estado==1){
-                    ApiUpdate = EnviarSoapSonae(NotificacaoContext.ObterSoapEnvFechar(m.Referencia, fo.RelatorioServico, fo.Utilizador.NomeCompleto)).Result ;
+                    ApiUpdate = EnviarSoap(NotificacaoContext.ObterSoapEnvFechar(m.Referencia, fo.RelatorioServico, fo.Utilizador.NomeCompleto),ConfigurationManager.AppSetting["Sonae:URL"]).Result ;
                 }else if(Estado==2){
-                    ApiUpdate = (EnviarSoapSonae(NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, "Encaminhar", fo.Utilizador.NomeCompleto)).Result && EnviarSoapSonae(NotificacaoContext.ObterSoapEnvEncaminhar(m.Referencia)).Result);
+                    ApiUpdate = (EnviarSoap(NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, "Encaminhar", fo.Utilizador.NomeCompleto),ConfigurationManager.AppSetting["Sonae:URL"]).Result && EnviarSoap(NotificacaoContext.ObterSoapEnvEncaminhar(m.Referencia),ConfigurationManager.AppSetting["Sonae:URL"]).Result);
                 }else{
-                    ApiUpdate = EnviarSoapSonae(NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, "Pendente", fo.Utilizador.NomeCompleto)).Result;
+                    ApiUpdate = EnviarSoap(NotificacaoContext.ObterSoapEnvComentario(m.Referencia, fo.RelatorioServico, "Pendente", fo.Utilizador.NomeCompleto),ConfigurationManager.AppSetting["Sonae:URL"]).Result;
                 }
 
                 EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico + "<br><br>" + (ApiUpdate ? "✅" : "😞") + " UPDATE API SONAE", ObterEmailCC(1), fo.Utilizador) ;
@@ -562,9 +585,62 @@ namespace FT_Management.Models
             return true;
         }
 
-        public async static Task<bool> EnviarSoapSonae(string soapRequest)
+        public async static Task<string> EnviarSoapPHC(string soapRequest) {
+           string url = ConfigurationManager.AppSetting["PHC:URL"];
+           string soapAction = "http://www.phc.pt/RunCode"; // Replace with your SOAP action
+           string result="";
+            soapRequest = soapRequest.Replace("\n", "").Replace("\r", "");
+
+                try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    // Create the HttpContent for the SOAP request
+                    HttpContent content = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+
+                    // Add SOAPAction header
+                    content.Headers.Add("SOAPAction", soapAction);
+
+                    // Make the POST request and get the response
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("SOAP request failed with status code: " + response.StatusCode + ". \r\n\r\n" + responseContent);
+                        return "";
+                    }else {
+                        XDocument xdoc = XDocument.Parse(responseContent);
+
+                        // Definir o namespace
+                        XNamespace ns = "http://www.phc.pt/";
+
+                        // Selecionar o valor de RunCodeResult
+                        result = xdoc.Root
+                                                .Element("{http://schemas.xmlsoap.org/soap/envelope/}Body")
+                                                .Element(ns + "RunCodeResponse")
+                                                .Element(ns + "RunCodeResult")
+                                                .Value;
+
+                        // Extrair a parte do resultado desejada (remover "#OK#")
+                        if (result.StartsWith("#OK#"))
+                        {
+                            result = result.Substring(4);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred: " + ex.Message);
+                return "";
+            }
+
+            return result;
+        }
+
+        public async static Task<bool> EnviarSoap(string soapRequest, string url)
         {
-            string url = ConfigurationManager.AppSetting["Sonae:URL"];
             string soapAction = ""; // Replace with your SOAP action
 
                 try
@@ -642,6 +718,30 @@ namespace FT_Management.Models
 
             return true;
         }
+
+        public static bool EnviarEmailTransferenciaViagem(Utilizador u, Dossier d, Attachment anexo)
+        {
+            string Assunto = "📦 " + "Transf. Viagem" + " - " + d.AtCode + " - " + d.Tecnico.NomeCompleto;
+            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + d.Tecnico.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "Código AT: " + ": " + d.AtCode + "<br>Link: " + d.GetUrlViagem + "<br><br>";;
+
+            if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
+            {
+                Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade | SN</th></tr>";
+                foreach (var item in d.Linhas)
+                {
+                    if (item.Quantidade > 0)
+                    {
+                            Mensagem += "<tr><td style='padding: 5px;'>" + item.Referencia + "</td><td style='padding: 5px;'>" + item.Designacao + "</td><td style='padding: 5px;'>" + item.Quantidade + "</td></tr>";
+                    }
+                }
+                Mensagem += "</table>";
+            }
+
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, new List<Attachment>(){anexo}, ObterEmailCC(6));
+
+            return true;
+        }
+
 
         public static bool EnviarEmailDossier(Utilizador u, Dossier d)
         {

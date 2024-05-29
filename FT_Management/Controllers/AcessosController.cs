@@ -24,7 +24,19 @@
             context.AdicionarLog(u.Id, "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
-            return View(context.ObterListaAcessos(DateTime.Parse(Data)));
+            return View(context.ObterListaRegistroAcessos(DateTime.Parse(Data), DateTime.Parse(Data)));
+        }
+
+        [HttpGet]
+        public ActionResult Calendario()
+        {
+            
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter todos os acessos do calendario:", u.NomeCompleto, u.Id);
+            return View(context.ObterListaUtilizadores(true, false).Where(u => u.Acessos));
         }
 
         //Obter ultimo acesso de um utilizador em especifico
@@ -81,6 +93,33 @@
             return Json(res);
         }
 
+        //Editar um acesso em especifico
+        [HttpPut]
+        public JsonResult Acesso(int id, int utilizador, DateTime data, int tipo, int validar)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a editar/criar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
+
+            Acesso a = new Acesso(){
+                    Id=id,
+                    IdUtilizador = utilizador,
+                    Data = data,
+                    Tipo = tipo,
+                    Temperatura = "Modificado pelo utilizador " + u.NomeCompleto,
+                    Validado = validar == 1
+                };
+
+            if (id==0 && data.ToShortTimeString() != "00:00") {
+                return Json(context.CriarAcessoInterno(new List<Acesso>{a}));
+            }else{
+                context.AtualizarAcessoInterno(a);
+            } 
+
+            return Json("1");
+        }
+
         //Obter todos os acessos em formato xls de uma data em especifico
         [HttpGet]
         public virtual ActionResult Acessos(string data)
@@ -101,6 +140,22 @@
             
             DateTime d = DateTime.Parse(data);
             return File(context.GerarMapaPresencas(DateTime.Parse(d.ToString("01/MM/yyyy")), DateTime.Parse(d.ToString(DateTime.DaysInMonth(d.Year, d.Month) + "/MM/yyyy"))), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+        [HttpGet]
+        public JsonResult AcessosJSON(DateTime start, DateTime end, int id)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            List<CalendarioEvent> LstEventos = context.ConverterAcessosEventos(context.ObterListaRegistroAcessos(start, end).Where(a=>a.Utilizador.Id == id).ToList()).ToList();
+            LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end.AddDays(-1), id), new List<Feriado>()));
+            LstEventos.AddRange(context.ConverterFeriadosEventos(context.ObterListaFeriados(start.Year.ToString())));
+
+            if (id > 0) return new JsonResult(LstEventos);
+
+            return Json("");
+            
         }
 
          [HttpGet]

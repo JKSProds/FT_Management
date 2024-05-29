@@ -122,6 +122,7 @@
             if (!m.Oficina && !m.Remoto) this.TipoFolhaObra = m.TipoServico;
             this.Contrato = m.Contrato;
             this.Instalação = m.TipoServico == "Instalação";
+            this.CobrarDeslocacao = this.Instalação;
             return this;
         }
 

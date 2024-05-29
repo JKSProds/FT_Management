@@ -42,6 +42,8 @@ namespace FT_Management.Models
         public string StampMoradaCarga { get; set; }
         public string StampMoradaDescarga { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Dossier/" + StampDossier; } }
+        public string GetUrlViagem { get { return "http://webapp.food-tech.pt/Produtos/Viagem/" + StampDossier; } }
+        public string AtCode { get; set; }
 
         public void DefinirSerie(TipoDossier tp)
         {
@@ -56,15 +58,20 @@ namespace FT_Management.Models
         public string Stamp_Linha { get; set; }
         public string Referencia { get; set; }
         public string Designacao { get; set; }
-        public double Quantidade { get; set; }        
+        public double Quantidade { get; set; }    
+        public double QuantidadeFornecida { get; set; }    
+        public double QuantidadePendente { get{return Quantidade - QuantidadeFornecida;} }
         public string Serie { get; set; }
         public string CriadoPor { get; set; }
+        public int Armazem_Origem { get; set; }
+        public int Armazem_Destino { get; set; }
 
         public Linha_Dossier()
         {
             this.Referencia = "";
             this.Designacao = "";
             this.Quantidade = 0;
+            this.QuantidadeFornecida = 0;
             this.CriadoPor = "N/D";
         }
     }
