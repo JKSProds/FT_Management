@@ -42,6 +42,8 @@ namespace FT_Management.Models
         public string StampMoradaCarga { get; set; }
         public string StampMoradaDescarga { get; set; }
         public string GetUrl { get { return "http://webapp.food-tech.pt/Dossiers/Dossier/" + StampDossier; } }
+        public string GetUrlViagem { get { return "http://webapp.food-tech.pt/Produtos/Viagem/" + StampDossier; } }
+        public string AtCode { get; set; }
 
         public void DefinirSerie(TipoDossier tp)
         {

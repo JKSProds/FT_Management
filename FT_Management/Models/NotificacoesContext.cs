@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Net.Http.Headers;
+using System.Xml.Linq;
 using Custom;
 
 namespace FT_Management.Models
@@ -718,10 +719,10 @@ namespace FT_Management.Models
             return true;
         }
 
-        public static bool EnviarEmailTransferenciaViagem(Utilizador u, Dossier d, string at, Attachment anexo)
+        public static bool EnviarEmailTransferenciaViagem(Utilizador u, Dossier d, Attachment anexo)
         {
-            string Assunto = "📦 " + d.NomeDossier + " - " + at + " - " + d.Tecnico.NomeCompleto;
-            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + d.Tecnico.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "ATCODE" + ": " + at + "<br><br>";
+            string Assunto = "📦 " + "Transf. Viagem" + " - " + d.AtCode + " - " + d.Tecnico.NomeCompleto;
+            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + d.Tecnico.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "Código AT: " + ": " + d.AtCode + "<br><br>";
 
             if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
             {

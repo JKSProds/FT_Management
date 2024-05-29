@@ -3291,7 +3291,8 @@ namespace FT_Management.Models
                  string r =  MailContext.EnviarSoapPHC(SOAP).Result;
                 ExecutarQuery("update bo set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+' where bostamp = '"+d.StampDossier+"';update bo2 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '+u.NomeUtilizador+'  where bo2stamp = '+d.StampDossier+';update bo3 set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bo3stamp = '+d.StampDossier+';update bi set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bostamp = '+d.StampDossier+'");
                 res[0] = "1";
-                res[1] = ObterCodigoAt(r);
+                res[1] = r;
+                res[2] = ObterCodigoAt(r);
             }
 
             catch (Exception ex)

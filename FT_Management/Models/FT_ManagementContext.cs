@@ -2739,7 +2739,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
             return stream;
         }
 
-        public MemoryStream DesenharEtiquetaViagem(Dossier d, string AtCode)
+        public MemoryStream DesenharEtiquetaViagem(Dossier d)
         {
             var stream = new System.IO.MemoryStream();
 
@@ -2763,7 +2763,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                     imageContext.DrawImage(img, new Point(x, y), 1);
 
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(d.IdDossier.ToString(), QRCodeGenerator.ECCLevel.Q);
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode("http://webapp.food-tech.pt/Produtos/Viagem/" + d.StampDossier, QRCodeGenerator.ECCLevel.Q);
                     BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
                     var qr = Image.Load(qrCode.GetGraphic(20));
@@ -2787,7 +2787,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                         TextAlignment = TextAlignment.Center,
                         Origin = new System.Numerics.Vector2(width / 2, y),
                         HorizontalAlignment = HorizontalAlignment.Center
-                    }, AtCode, Color.Black);
+                    }, d.AtCode, Color.Black);
 
                     var r = new RectangularPolygon(10, y, width - 20, 120);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));

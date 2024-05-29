@@ -129,7 +129,9 @@
 
             List<string> res = phccontext.CriarTransferenciaViagem(u, d);
 
-            MailContext.EnviarEmailTransferenciaViagem(u, d, res[1], new Attachment(context.MemoryStreamToPDF(context.DesenharEtiquetaViagem(d, res[1]), 801, 504), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
+            d.StampDossier = res[1];
+            d.AtCode = res[2];
+            MailContext.EnviarEmailTransferenciaViagem(u, d, new Attachment(context.MemoryStreamToPDF(context.DesenharEtiquetaViagem(d), 801, 504), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
         }
