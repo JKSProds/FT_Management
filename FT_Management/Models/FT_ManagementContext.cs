@@ -1515,10 +1515,41 @@ namespace FT_Management.Models
 
         }
 
-        public List<RegistroAcessos> ObterListaRegistroAcessos(DateTime Data)
+        public List<CalendarioEvent> ConverterAcessosEventos(List<RegistroAcessos> Acessos)
+        {
+            List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
+
+            foreach (var item in Acessos.OrderBy(a => a.Utilizador.Id).OrderBy(a => a.Data))
+            {
+                try
+                {
+                    if (item.Utilizador.Id != 0)
+                    {
+                        LstEventos.Add(new CalendarioEvent
+                        {
+                            id = item.E1.ToString(),
+                            calendarId = "1",
+                            title = item.E1.Data.ToShortTimeString(),
+                            start = item.E1.Data,
+                            end = item.S1.Data == DateTime.MinValue ? item.E1.Data : item.S1.Data,
+                            category = "time",
+                            url = "Acessos/" + item.Utilizador.Id
+                        });
+                    }
+                }
+                catch
+                {
+
+                }
+
+            }
+            return LstEventos;
+        }
+
+        public List<RegistroAcessos> ObterListaRegistroAcessos(DateTime start, DateTime end)
         {
             List<RegistroAcessos> LstRegistroAcessos = new List<RegistroAcessos>();
-            List<Acesso> LstAcessos = ObterListaAcessos(Data);
+            List<Acesso> LstAcessos = ObterListaAcessos(start, end);
             List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u=>u.Acessos).ToList();
 
 
@@ -1530,7 +1561,7 @@ namespace FT_Management.Models
                     S1 = TMPAcessos.Count() >= 2? TMPAcessos[1] : new Acesso(),
                     E2 = TMPAcessos.Count() >= 3? TMPAcessos[2] : new Acesso(),
                     S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
-                    Data = Data
+                    Data = TMPAcessos.Count() >=1 ? TMPAcessos.First().Data : DateTime.MinValue
                 });
             }
 
@@ -2687,6 +2718,76 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                         Origin = new System.Numerics.Vector2(width / 2, y),
                         HorizontalAlignment = HorizontalAlignment.Center
                     }, pi.Encomenda.Id.ToString(), Color.Black);
+
+                    var r = new RectangularPolygon(10, y, width - 20, 120);
+                    imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));
+
+                    y += 130;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, "pecas@food-tech.pt", Color.Black);
+                });
+
+                // render onto an Image
+                image.SaveAsBmp(stream);
+                stream.Position = 0;
+            }
+
+            return stream;
+        }
+
+        public MemoryStream DesenharEtiquetaViagem(Dossier d, string AtCode)
+        {
+            var stream = new System.IO.MemoryStream();
+
+            int x = 10;
+            int y = 50;
+            int width = 1024;
+            int height = 641;
+
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 110, FontStyle.Bold);
+            Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 50);
+            Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 40);
+
+            using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height))
+            {
+                image.Mutate(imageContext =>
+                {
+                    imageContext.BackgroundColor(Color.White);
+
+                    var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png");
+                    img.Mutate(x => x.Resize(700, 158));
+                    imageContext.DrawImage(img, new Point(x, y), 1);
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(d.IdDossier.ToString(), QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+
+                    var qr = Image.Load(qrCode.GetGraphic(20));
+                    qr.Mutate(x => x.Resize(180, 180));
+                    imageContext.DrawImage(qr, new Point(width - 180, 0), 1);
+
+                    y += 170;
+
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width
+                    }, "Cliente: " + d.Cliente.NomeCliente.Trim() + "\r\nData: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"), Color.Black);
+
+                    y += 240;
+                    imageContext.DrawText(new TextOptions(fontHeader)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width / 2, y),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }, AtCode, Color.Black);
 
                     var r = new RectangularPolygon(10, y, width - 20, 120);
                     imageContext.Draw(Color.FromRgb(54, 100, 157), 6, ApplyRoundCorners(r, 50));

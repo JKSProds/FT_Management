@@ -115,12 +115,12 @@
 
              //Dossier d = phccontext.ObterDossier(res[2]);
              Cliente c = new Cliente() {IdCliente=1, IdLoja=0};
-            Dossier d = new Dossier() {Serie=42, Cliente=c, StampMoradaDescarga="SUBIC Alverca", EditadoPor=u.NomeCompleto};
+            Dossier d = new Dossier() {Serie=98, Cliente=c, StampMoradaDescarga="SUBIC Alverca", EditadoPor=u.NomeCompleto, Tecnico=t, DataDossier=DateTime.Now};
             
             List<Linha_Dossier> LstLinhas = linhas.Split(';')
             .Select(l => l.Split('|'))
             .Where(p => p.Length == 4)
-            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Referencia=p[1], Designacao =p[2], Quantidade = int.Parse(p[3]), Stamp_Dossier = d.StampDossier, Armazem_Origem=3, Armazem_Destino = u.IdArmazem })
+            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Referencia=p[1], Designacao =p[2], Quantidade = int.Parse(p[3]), Stamp_Dossier = d.StampDossier, Armazem_Origem=3, Armazem_Destino = t.IdArmazem })
             .ToList();
 
             d.Linhas = LstLinhas;
@@ -128,6 +128,8 @@
             if (d.Linhas == null || d.Linhas.Count == 0) return StatusCode(500);
 
             List<string> res = phccontext.CriarTransferenciaViagem(u, d);
+
+            MailContext.EnviarEmailTransferenciaViagem(u, d, res[1], new Attachment(context.MemoryStreamToPDF(context.DesenharEtiquetaViagem(d, res[1]), 801, 504), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
         }

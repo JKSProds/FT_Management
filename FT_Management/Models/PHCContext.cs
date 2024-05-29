@@ -3289,7 +3289,9 @@ namespace FT_Management.Models
             {
                  string SOAP = NotificacaoContext.ObterSoapPHC(d);
                  string r =  MailContext.EnviarSoapPHC(SOAP).Result;
-                ExecutarQuery("update bo set ousrinis = '', usrinis = '' where bostamp = '';update bo2 set ousrinis = '', usrinis = ''  where bo2stamp = '';update bo3 set ousrinis = '', usrinis = ''  where bo3stamp = '';update bi set ousrinis = '', usrinis = ''  where bostamp = ''");
+                ExecutarQuery("update bo set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+' where bostamp = '"+d.StampDossier+"';update bo2 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '+u.NomeUtilizador+'  where bo2stamp = '+d.StampDossier+';update bo3 set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bo3stamp = '+d.StampDossier+';update bi set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bostamp = '+d.StampDossier+'");
+                res[0] = "1";
+                res[1] = ObterCodigoAt(r);
             }
 
             catch (Exception ex)
@@ -3298,6 +3300,38 @@ namespace FT_Management.Models
             }
 
             return res;
+        }
+
+
+        public string ObterCodigoAt(string STAMP)
+        {
+            try
+            {
+
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select atcodeid from bo2 where bo2stamp='"+STAMP+"';", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                       return result[0].ToString();
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel obter o codigo AT do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return "";
         }
 
 

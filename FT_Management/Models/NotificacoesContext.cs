@@ -718,6 +718,30 @@ namespace FT_Management.Models
             return true;
         }
 
+        public static bool EnviarEmailTransferenciaViagem(Utilizador u, Dossier d, string at, Attachment anexo)
+        {
+            string Assunto = "📦 " + d.NomeDossier + " - " + at + " - " + d.Tecnico.NomeCompleto;
+            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + d.Tecnico.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "ATCODE" + ": " + at + "<br><br>";
+
+            if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
+            {
+                Mensagem += "<table style='width:100%;border-width:3px;' border='1'><tr><th>Referência</th><th>Designação</th><th>Quantidade | SN</th></tr>";
+                foreach (var item in d.Linhas)
+                {
+                    if (item.Quantidade > 0)
+                    {
+                            Mensagem += "<tr><td style='padding: 5px;'>" + item.Referencia + "</td><td style='padding: 5px;'>" + item.Designacao + "</td><td style='padding: 5px;'>" + item.Quantidade + "</td></tr>";
+                    }
+                }
+                Mensagem += "</table>";
+            }
+
+            EnviarMail(u.EmailUtilizador, Assunto, Mensagem, new List<Attachment>(){anexo}, ObterEmailCC(6));
+
+            return true;
+        }
+
+
         public static bool EnviarEmailDossier(Utilizador u, Dossier d)
         {
             string Assunto = "📋" + d.SerieNome + " Nº " + d.IdDossier + " - " + d.Tecnico.NomeCompleto;
