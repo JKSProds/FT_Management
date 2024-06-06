@@ -7,6 +7,13 @@
 <input type="hidden" id="txtStampMarcacao">
 
 <div class="container">
+    @if ((bool)ViewData["Piquete"]) {
+    <section class="hero is-small is-danger">
+        <div class="hero-body">
+            <p class="title has-text-centered">PIQUETE</p>
+        </div>
+    </section>
+    }
     <div class="columns">
         <div class="column">
             <div class="tile">

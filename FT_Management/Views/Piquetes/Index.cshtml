@@ -1,0 +1,175 @@
+﻿@model IEnumerable<FT_Management.Models.Piquete>
+
+
+@{
+    ViewData["Title"] = "Piquetes - Lista";
+}
+
+    <div class="container">
+        <div class="columns">
+            <div class="column is-5">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-info">
+                            <p class="title">
+                                <span class="icon mr-3">
+                                    <i class="fa-solid fa-briefcase"></i>
+                                </span>
+                                <span>Piquetes</span>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+               <div class="control">
+                <form method="get" action="~/Piquetes">
+                <input type="" class="input" id="dInicio" name="dInicio" style="display: none;">
+                <input type="" class="input" id="dFim" name="dFim" style="display: none;" >
+                <input type="date" class="input" id="txtDatas" name="datas" disabled>
+                <script>
+                    bulmaCalendar.attach('#txtDatas', {
+                        color: 'info',
+                        isRange: true,
+                        lang: 'pt',
+                        labelFrom: 'De ',
+                        labelTo: 'A',
+                        displayMode: 'default',
+                        dateFormat: 'dd/MM/yyyy',
+                        todayLabel: 'Hoje',
+                        clearLabel: 'Limpar',
+                        cancelLabel: 'Cancelar',
+                        startDate: '@(DateTime.Parse(ViewBag.DataInicio.ToString()).ToString("yyyy-MM-dd"))',
+                        endDate: '@(DateTime.Parse(ViewBag.DataFim.ToString()).ToString("yyyy-MM-dd"))'
+                    });
+                    document.getElementById('txtDatas').bulmaCalendar.on('select', function (datepicker) {
+                        document.getElementById('dInicio').value = new Date(datepicker.data.datePicker._date.start - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                        document.getElementById('dFim').value = new Date(datepicker.data.datePicker._date.end - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                        $('form').submit();
+                    });
+                </script>
+                </form>
+            </div>
+            <div class="buttons is-right my-1">
+                <p class="control">
+                    <a class="button is-primary" onclick="AutoFill('@ViewBag.DataInicio', '@ViewBag.DataFim');">
+                        <span class="icon">
+                            <i class="fa-solid fa-wand-sparkles"></i>
+                        </span>
+                        <span>Auto-Preenchimento</span>
+                    </a>
+                </p>
+            </div>
+            </div>
+        </div>
+    </div>
+<hr />
+<div class="m-1">
+    @if (Model.Count() == 0)
+    {
+        <br />
+        <button class="button is-danger is-fullwidth is-disabled">Não foram encontradas piquetes!</button>
+    }
+    else
+    {
+        <div class="b-table">
+            <div class="table-wrapper has-mobile-cards">
+                <table class="table is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th>
+                                Semana
+                            </th>
+                            @foreach (var z in ViewBag.Zonas)
+                            {
+                                @foreach (var t in ViewBag.TipoTecnico)
+                                {
+                                    <th>
+                                        @t.Valor (@z.Valor)
+                                    </th>
+                                }
+                            }
+                            <th></th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model.Select(m => m.Semana).Distinct().ToList())
+                    {
+                        <tr>
+                            <td>
+                                <article class="tile is-child notification is-info">
+                                    <p>
+                                        <span>@item</span>
+                                    </p>
+                                </article>
+                            </td>
+                            @foreach (var p in Model.Where(m => m.Semana == item).OrderBy(m => m.IdOrdem).ToList())
+                            {
+                            <td id="@p.Stamp">
+                                <div class="field is-grouped">
+                                <p class="control has-addons">
+                                    <span class="select" >
+                                        <select class="select" style="height: auto" onchange="UpdatePiquete('@p.Stamp', $(this).val())"
+                                            asp-items="@(new SelectList(@ViewBag.ListaTecnicos, "Id", "NomeCompleto", @p.Utilizador.Id))">
+                                        </select>
+                                    </span>
+                                </p>
+                                @if(!p.Valido) {
+                                <p class="control">
+                                    <a class="button is-danger">
+                                        <span class="icon">
+                                            <i class="fa-regular fa-circle-xmark"></i>
+                                        </span>
+                                    </a>
+                                </p>
+                                }
+                            </div>  
+                            </td>
+                            }
+                            
+                            <td class="is-actions-cell" style="min-width:200px">
+                                
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+    }
+</div>
+
+<script>
+        function UpdatePiquete(id, utilizador) {
+        $.ajax({
+            url: '/Piquetes/Piquete/' + id + "?t=" + utilizador,
+            type: "POST",
+            success: function (response) {
+                notify("Piquete atualizado com sucesso!")
+            },
+            error: function (response) {
+                notifyError("Ocorreu um erro ao atualizar o piquete!");
+            },
+            failure: function (response) {
+                notifyError("Falha ao atualizar o piquete!");
+            }
+        });
+    }
+
+    function AutoFill(dI, dF) {
+        dI = new Date(dI.split(' ')[0].split('/').reverse().join('-') + 'T' + dI.split(' ')[1]).toISOString();
+        dF = new Date(dF.split(' ')[0].split('/').reverse().join('-') + 'T' + dF.split(' ')[1]).toISOString();
+        $.ajax({
+            url: '/Piquetes/Piquetes/?dInicio=' + dI + "&dFim=" + dF,
+            type: "POST",
+            success: function (response) {
+                window.location.reload();
+            },
+            error: function (response) {
+                notifyError("Ocorreu um erro ao gerar os piquetes!");
+            },
+            failure: function (response) {
+                notifyError("Falha ao gerar os piquetes!");
+            }
+        });
+    }
+</script>

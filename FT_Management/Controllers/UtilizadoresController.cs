@@ -195,7 +195,7 @@ namespace FT_Management.Controllers
             if (id == 0) id = int.Parse(this.User.Claims.First().Value.ToString());
             if (!User.IsInRole("Admin") && id != int.Parse(this.User.Claims.First().Value)) return RedirectToAction("Editar", new { id = int.Parse(this.User.Claims.First().Value) });
 
-            List<Zona> LstZonas = context.ObterZonas();
+            List<Zona> LstZonas = context.ObterZonas(false);
             LstZonas.Insert(0, new Zona() { Id = 0, Valor = "N/D" });
             ViewBag.Zonas = LstZonas.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
 
