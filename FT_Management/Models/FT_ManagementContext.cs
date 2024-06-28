@@ -1177,7 +1177,7 @@ namespace FT_Management.Models
                             id = item.Stamp,
                             calendarId = "1",
                             title = "🏖️😓🛠 PIQUETE",
-                            start = item.Data,
+                            start = item.Data.AddDays(6),
                             end = item.Data.AddDays(7),
                             isAllDay = true,
                             category = "time",
