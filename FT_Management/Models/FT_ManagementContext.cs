@@ -2334,8 +2334,8 @@ namespace FT_Management.Models
                        LstP.Last().Valido = !LstF
     .Any(x => x.IdUtilizador == LstP.Last().IdUtilizador &&
                (calendario.GetWeekOfYear(x.DataInicio, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana ||
-                calendario.GetWeekOfYear(x.DataFim, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana));
-                    }
+                calendario.GetWeekOfYear(x.DataFim, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana) && x.DataFim.DayOfWeek==DayOfWeek.Friday);
+         }
                 }
                 // Incrementa a data atual em 7 dias (uma semana)
                 dataAtual = dataAtual.AddDays(7);
@@ -2388,7 +2388,7 @@ namespace FT_Management.Models
                        LstP.Last().Valido = !LstF
     .Any(x => x.IdUtilizador == LstP.Last().IdUtilizador &&
                (calendario.GetWeekOfYear(x.DataInicio, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana ||
-                calendario.GetWeekOfYear(x.DataFim, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana));
+                calendario.GetWeekOfYear(x.DataFim, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana) && x.DataFim.DayOfWeek==DayOfWeek.Friday);
                     }
                 }
                 // Incrementa a data atual em 7 dias (uma semana)
