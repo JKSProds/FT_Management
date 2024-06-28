@@ -1163,6 +1163,36 @@ namespace FT_Management.Models
             return LstEventos;
         }
 
+        public List<CalendarioEvent> ConverterPiquetesEventos(List<Piquete> piquetes)
+        {
+            List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
+
+           
+            foreach (var item in piquetes)
+            {
+                try
+                {
+                        LstEventos.Add(new CalendarioEvent
+                        {
+                            id = item.Stamp,
+                            calendarId = "1",
+                            title = "🏖️😓🛠 PIQUETE",
+                            start = item.Data,
+                            end = item.Data.AddDays(7),
+                            isAllDay = true,
+                            category = "time",
+                            editable = false,
+                            color = "#f99f1e"
+                        });
+                }
+                catch
+                {
+
+                }
+
+            }
+            return LstEventos;
+        }
         public List<Ferias> ObterListaFeriasValidar()
         {
             List<Ferias> LstFerias = new List<Ferias>();
@@ -2313,6 +2343,60 @@ namespace FT_Management.Models
 
             
             return LstP;
+        }
+
+        public List<Piquete> ObterPiquetes(DateTime dInicio, DateTime dFim, Utilizador u) {
+            System.Globalization.CultureInfo cultura = System.Globalization.CultureInfo.CurrentCulture;
+            System.Globalization.Calendar calendario = cultura.Calendar;
+
+            List<Piquete> LstP = new List<Piquete>();
+            List<Piquete> LstP2 = new List<Piquete>();
+            List<TipoTecnico> LstT = ObterTipoTecnicos();
+            List<Ferias> LstF = ObterListaFeriasValidadas();
+            List<Zona> LstZ = ObterZonas(true);
+
+            string sqlQuery = "SELECT * FROM dat_piquete WHERE STR_TO_DATE(CONCAT(SUBSTRING(stamp, 1, 4), '-01-01') + INTERVAL (SUBSTRING(stamp, 6, 2) - 1) WEEK, '%Y-%m-%d') BETWEEN '" + dInicio.ToString("yyyy-MM-dd") + "' AND '" + dFim.ToString("yyyy-MM-dd") + "' and IdUtilizador="+u.Id+";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstP2.Add(new Piquete(){
+                        Stamp = result["Stamp"],
+                        IdUtilizador = result["IdUtilizador"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"])
+                    });
+                }
+            }
+
+            DateTime dataAtual = dInicio;
+            while (dataAtual <= dFim)
+            {
+                int numeroSemana = calendario.GetWeekOfYear(dataAtual, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+                foreach (var t in LstT) {
+                    foreach (var z in LstZ) {
+                        string Stamp = dataAtual.Year.ToString() + "," + numeroSemana + "," + z.Id + "," + t.Id;
+                        if (LstP2.Where(x => x.Stamp == Stamp).Count() > 0) {
+                            LstP.Add(LstP2.Where(x => x.Stamp == Stamp).First());
+                        }else{
+                        LstP.Add(new Piquete() {
+                            Stamp = dataAtual.Year.ToString() + "," + numeroSemana + "," + z.Id + "," + t.Id,
+                            Utilizador = new Utilizador(),
+                            });
+                        }
+                       LstP.Last().Valido = !LstF
+    .Any(x => x.IdUtilizador == LstP.Last().IdUtilizador &&
+               (calendario.GetWeekOfYear(x.DataInicio, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana ||
+                calendario.GetWeekOfYear(x.DataFim, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana));
+                    }
+                }
+                // Incrementa a data atual em 7 dias (uma semana)
+                dataAtual = dataAtual.AddDays(7);
+            }
+
+            
+            return LstP.Where(p => p.IdUtilizador != 0).ToList();
         }
 
         public void GerarPiquetes(DateTime dInicio, DateTime dFim) {
