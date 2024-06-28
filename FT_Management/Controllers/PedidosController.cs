@@ -70,7 +70,7 @@ namespace FT_Management.Controllers
             ViewData["DataPedidos"] = DataPedidos;
             ViewData["IdTecnico"] = u.IdPHC;
             ViewData["IdArmazem"] = u.IdArmazem;
-            ViewData["Piquete"] = context.VerificarPiquete(DateTime.Now, u);
+            ViewData["Piquete"] = context.VerificarPiquete(DateTime.Parse(DataPedidos), u);
 
             return View(ListaMarcacoes.OrderBy(m => m.EstadoMarcacao).OrderBy(m => m.Cliente.ClienteStamp));
         }
