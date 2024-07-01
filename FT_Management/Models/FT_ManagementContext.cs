@@ -1896,6 +1896,7 @@ namespace FT_Management.Models
                 {
                     Database db = ConnectionString;
 
+                    db.Execute(sql2);
                     db.Execute(sql1);
 
                     using var result = db.Query("select LAST_INSERT_ID();");
@@ -1904,7 +1905,6 @@ namespace FT_Management.Models
                         a = int.Parse(result[0]);
                     }
 
-                    db.Execute(sql2);
                     db.Connection.Close();
                 }
                 catch (Exception ex)
