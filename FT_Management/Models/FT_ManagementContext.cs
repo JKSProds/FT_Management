@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using System.util;
 using Custom;
 using SixLabors.Fonts;
@@ -62,6 +63,7 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
                         IdArmazem = result["IdArmazem"],
+                        IdFuncionario = result["IdFunc"],
                         TipoTecnico = result["TipoTecnico"],
                         Zona = result["Zona"],
                         ChatToken = result["ChatToken"],
@@ -115,6 +117,7 @@ namespace FT_Management.Models
                         Telemovel = result["TelemovelUtilizador"],
                         CorCalendario = result["CorCalendario"],
                         IdPHC = result["IdPHC"],
+                        IdFuncionario = result["IdFunc"],
                         TipoMapa = result["TipoMapa"],
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
@@ -174,6 +177,7 @@ namespace FT_Management.Models
                         Telemovel = result["TelemovelUtilizador"],
                         CorCalendario = result["CorCalendario"],
                         IdPHC = result["IdPHC"],
+                        IdFuncionario = result["IdFunc"],
                         TipoMapa = result["TipoMapa"],
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
@@ -1547,6 +1551,32 @@ namespace FT_Management.Models
 
         }
 
+        public Acesso ObterAcesso(int id)
+        {
+            List<Acesso> LstAcessos = new List<Acesso>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_acessos where Id="+id+";");
+                while (result.Read())
+                {
+                    LstAcessos.Add(new Acesso()
+                    {
+                        Id = result["Id"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                        Data = result["DataHoraAcesso"],
+                        Temperatura = result["Temperatura"],
+                        Tipo = result["Tipo"],
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
+                    });
+                }
+            }
+
+            return LstAcessos.DefaultIfEmpty(new Acesso()).First();
+
+        }
+
         public List<CalendarioEvent> ConverterAcessosEventos(List<RegistroAcessos> Acessos)
         {
             List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
@@ -1598,6 +1628,30 @@ namespace FT_Management.Models
             }
 
             return LstRegistroAcessos;
+
+        }
+
+        public RegistroAcessos ObterListaRegistroAcessos(List<Acesso> LstAcessos)
+        {
+            List<RegistroAcessos> LstRegistroAcessos = new List<RegistroAcessos>();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u=>u.Acessos).ToList();
+
+
+            foreach (Utilizador u in LstUtilizadores) {
+                List<Acesso> TMPAcessos = LstAcessos.Where(a => a.Utilizador.Id == u.Id).ToList();
+                if (TMPAcessos.Count() > 0) {
+                LstRegistroAcessos.Add(new RegistroAcessos() {
+                    Utilizador =u,
+                    E1 = TMPAcessos.Count() >= 1? TMPAcessos[0] : new Acesso(),
+                    S1 = TMPAcessos.Count() >= 2? TMPAcessos[1] : new Acesso(),
+                    E2 = TMPAcessos.Count() >= 3? TMPAcessos[2] : new Acesso(),
+                    S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
+                    Data = TMPAcessos.Count() >=1 ? TMPAcessos.First().Data : DateTime.MinValue
+                });
+                }
+            }
+
+            return LstRegistroAcessos.DefaultIfEmpty(new RegistroAcessos()).First();
 
         }
         public List<Acesso> ObterListaAcessosMes(DateTime Data)
