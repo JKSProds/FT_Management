@@ -1625,6 +1625,7 @@ namespace FT_Management.Models
                     S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
                     Data = TMPAcessos.Count() >=1 ? TMPAcessos.First().Data : DateTime.MinValue
                 });
+                LstRegistroAcessos.Last().Utilizador.Ferias = VerificarFeriasUtilizador(u.Id, LstRegistroAcessos.Last().Data);
             }
 
             return LstRegistroAcessos;

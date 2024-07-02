@@ -99,7 +99,7 @@ else
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.Validado ? "has-background-success" : (item.Valido ? "has-background-warning" : "has-background-danger"))">
+                            <tr class="@(item.Validado || item.Utilizador.Ferias ? "has-background-success" : (item.Valido ? "has-background-warning" : "has-background-danger"))">
                             <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
                                 <span>@item.Utilizador.NomeCompleto</span>
                             </td>
@@ -119,7 +119,7 @@ else
                                 <span><b>@item.TotalHorasDesc()</b></span>
                             </td>
                              <td style="min-width: 250px" class="is-actions-cell">
-                            @if (!item.Validado) {
+                            @if (!item.Validado && !item.Utilizador.Ferias) {
                                 <div class="buttons">
                                 <a class="button is-success is-rounded " onclick="ValidarAcessos(this)"
                                         href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
@@ -129,6 +129,9 @@ else
                                         href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
                                         </div>
                                         }
+                                        @if (item.Utilizador.Ferias) {
+                                            <a class="button is-rounded is-fullwidth is-info is-large"><span class="icon mr-3"><i class="fa-solid fa-umbrella-beach"></i></span><span>FÉRIAS</span></a>
+                                            }
                             </td>
                             </tr>
                         }
