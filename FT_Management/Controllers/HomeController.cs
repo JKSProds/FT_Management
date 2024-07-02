@@ -161,7 +161,7 @@
             
             context.CriarCodigo(new Models.Codigo() {Stamp = stamp, Estado=0, ObsInternas=codigo.ToString(), utilizador=u, ValidadeCodigo=DateTime.Now.AddMinutes(5) });
             
-            ChatContext.EnviarNotificacaoCodigoSimples(codigo.ToString(), u, u); 
+            ChatContext.EnviarNotificacaoCodigoSimples(codigo.ToString(), context.ObterUtilizador(2), u); 
 
             return Content(stamp);
         }
