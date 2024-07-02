@@ -20,8 +20,8 @@ namespace FT_Management
             builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
             builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 
-            //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
-            //{
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development")
+            {
                 if (FT_ManagementContext.ObterParam("EnvioEmailFerias", builder.Configuration.GetConnectionString("DefaultConnection")) == "1")
                 {
                     // Add our job
@@ -62,8 +62,8 @@ namespace FT_Management
                     builder.Services.AddSingleton(new JobSchedule(
                     jobType: typeof(CronJobEnviarAcessos),
                     cronExpression: FT_ManagementContext.ObterParam("DataEnviarAcessoAutomatico", builder.Configuration.GetConnectionString("DefaultConnection"))));
+                }
             }
-            //}
 
             //COPIAR IMAGENS UTILIZADOR && APAGAR FILES DA PASTE TEMPORARIA
             FicheirosContext.GestaoFicheiros(true, true);
