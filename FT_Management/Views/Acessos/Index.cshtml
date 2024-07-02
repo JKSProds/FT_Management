@@ -121,7 +121,7 @@ else
                              <td style="min-width: 250px" class="is-actions-cell">
                             @if (!item.Validado) {
                                 <div class="buttons">
-                                <a class="button is-success is-rounded " @(item.E1.Id == 0 && item.S1.Id == 0 ? "disabled" : "") onclick="if(!this.disabled) ValidarAcessos(this)"
+                                <a class="button is-success is-rounded " onclick="ValidarAcessos(this)"
                                         href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                                 <a class="button is-info is-rounded" onclick="EditarAcessos(this)"
                                         href="javascript:;"><i class="fas fa-pencil" style="font-size:20px"></i></a>
