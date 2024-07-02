@@ -50,5 +50,12 @@
             return d > TimeSpan.Zero ? $"{(int)d.TotalHours:D2}:{d.Minutes:D2}" : "--:--";
         }
 
+        public RegistroAcessos() {
+            E1 = new Acesso();
+            S1 = new Acesso();
+            E2 = new Acesso();
+            S2 =    new Acesso();
+        }
+
     }
 }
