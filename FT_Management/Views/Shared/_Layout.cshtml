@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var isDashboard = ViewData["IsDashboard"] != null && (bool)ViewData["IsDashboard"];
+}
+<!DOCTYPE html>
 <html lang="pt-pt">
 
 <head>
@@ -101,6 +104,7 @@
 </head>
 
 <body>
+    @if (!isDashboard) {
     <header>
         <nav class='navbar @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-warning" : "is-light")  has-shadow'
              role="navigation" aria-label="main navigation">
@@ -244,6 +248,7 @@
             </div>
         </nav>
     </header>
+    }
     <div class="container-fluid is-fullheight mx-1">
         <main role="main">
             &nbsp;

@@ -25,6 +25,7 @@
             ViewData["API"] = Api;
             ViewData["Hora"] = context.ObterParam("ShowAcessTime");
             ViewData["Acesso"] = context.ObterParam("ShowAcess");
+            ViewData["IsDashboard"] = true;
 
             using (HttpClient wc = new HttpClient())
             {

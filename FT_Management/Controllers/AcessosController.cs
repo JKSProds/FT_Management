@@ -98,8 +98,9 @@
             };
             Response.Headers.Add("Content-Disposition", cd.ToString());
 
-            return File(context.GerarMapaPresencas(DateTime.Parse(DateTime.Parse(data).ToString("01/MM/yyyy")), DateTime.Parse(DateTime.Parse(data).ToString("31/MM/yyyy"))), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        }
+            DateTime d = DateTime.Parse(data);
+            return File(context.GerarMapaPresencas(DateTime.Parse(d.ToString("01/MM/yyyy")), DateTime.Parse(d.ToString(DateTime.DaysInMonth(d.Year, d.Month) + "/MM/yyyy"))), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+          }
 
         [HttpGet]
         public virtual ActionResult AcessosAutomaticos(DateTime dInicio, DateTime dFim)
