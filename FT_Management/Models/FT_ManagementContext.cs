@@ -1,4 +1,7 @@
-﻿using Custom;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using System.util;
+using Custom;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
@@ -60,6 +63,7 @@ namespace FT_Management.Models
                         Iniciais = result["IniciaisUtilizador"],
                         DataNascimento = result["DataNascimento"],
                         IdArmazem = result["IdArmazem"],
+                        IdFuncionario = result["IdFunc"],
                         TipoTecnico = result["TipoTecnico"],
                         Zona = result["Zona"],
                         ChatToken = result["ChatToken"],
@@ -113,6 +117,7 @@ namespace FT_Management.Models
                         Telemovel = result["TelemovelUtilizador"],
                         CorCalendario = result["CorCalendario"],
                         IdPHC = result["IdPHC"],
+                        IdFuncionario = result["IdFunc"],
                         TipoMapa = result["TipoMapa"],
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
@@ -172,6 +177,7 @@ namespace FT_Management.Models
                         Telemovel = result["TelemovelUtilizador"],
                         CorCalendario = result["CorCalendario"],
                         IdPHC = result["IdPHC"],
+                        IdFuncionario = result["IdFunc"],
                         TipoMapa = result["TipoMapa"],
                         Pin = result["PinUtilizador"],
                         Iniciais = result["IniciaisUtilizador"],
@@ -233,9 +239,9 @@ namespace FT_Management.Models
             return 0;
         }
 
-        public List<Zona> ObterZonas()
+        public List<Zona> ObterZonas(bool Piquete)
         {
-            string sqlQuery = "SELECT * FROM sys_zonas;";
+            string sqlQuery = "SELECT * FROM sys_zonas "+ (Piquete ? "WHERE IdZona<3" : "") +" ;";
             List<Zona> LstZonas = new List<Zona>();
 
             using Database db = ConnectionString;
@@ -1161,6 +1167,36 @@ namespace FT_Management.Models
             return LstEventos;
         }
 
+        public List<CalendarioEvent> ConverterPiquetesEventos(List<Piquete> piquetes)
+        {
+            List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
+
+           
+            foreach (var item in piquetes)
+            {
+                try
+                {
+                        LstEventos.Add(new CalendarioEvent
+                        {
+                            id = item.Stamp,
+                            calendarId = "1",
+                            title = "🏖️😓🛠 PIQUETE",
+                            start = item.Data.AddDays(5),
+                            end = item.Data.AddDays(6),
+                            isAllDay = true,
+                            category = "time",
+                            editable = false,
+                            color = "#f99f1e"
+                        });
+                }
+                catch
+                {
+
+                }
+
+            }
+            return LstEventos;
+        }
         public List<Ferias> ObterListaFeriasValidar()
         {
             List<Ferias> LstFerias = new List<Ferias>();
@@ -1515,6 +1551,32 @@ namespace FT_Management.Models
 
         }
 
+        public Acesso ObterAcesso(int id)
+        {
+            List<Acesso> LstAcessos = new List<Acesso>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_acessos where Id="+id+";");
+                while (result.Read())
+                {
+                    LstAcessos.Add(new Acesso()
+                    {
+                        Id = result["Id"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                        Data = result["DataHoraAcesso"],
+                        Temperatura = result["Temperatura"],
+                        Tipo = result["Tipo"],
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
+                    });
+                }
+            }
+
+            return LstAcessos.DefaultIfEmpty(new Acesso()).First();
+
+        }
+
         public List<CalendarioEvent> ConverterAcessosEventos(List<RegistroAcessos> Acessos)
         {
             List<CalendarioEvent> LstEventos = new List<CalendarioEvent>();
@@ -1566,6 +1628,30 @@ namespace FT_Management.Models
             }
 
             return LstRegistroAcessos;
+
+        }
+
+        public RegistroAcessos ObterListaRegistroAcessos(List<Acesso> LstAcessos)
+        {
+            List<RegistroAcessos> LstRegistroAcessos = new List<RegistroAcessos>();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u=>u.Acessos).ToList();
+
+
+            foreach (Utilizador u in LstUtilizadores) {
+                List<Acesso> TMPAcessos = LstAcessos.Where(a => a.Utilizador.Id == u.Id).ToList();
+                if (TMPAcessos.Count() > 0) {
+                LstRegistroAcessos.Add(new RegistroAcessos() {
+                    Utilizador =u,
+                    E1 = TMPAcessos.Count() >= 1? TMPAcessos[0] : new Acesso(),
+                    S1 = TMPAcessos.Count() >= 2? TMPAcessos[1] : new Acesso(),
+                    E2 = TMPAcessos.Count() >= 3? TMPAcessos[2] : new Acesso(),
+                    S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
+                    Data = TMPAcessos.Count() >=1 ? TMPAcessos.First().Data : DateTime.MinValue
+                });
+                }
+            }
+
+            return LstRegistroAcessos.DefaultIfEmpty(new RegistroAcessos()).First();
 
         }
         public List<Acesso> ObterListaAcessosMes(DateTime Data)
@@ -1810,6 +1896,7 @@ namespace FT_Management.Models
                 {
                     Database db = ConnectionString;
 
+                    db.Execute(sql2);
                     db.Execute(sql1);
 
                     using var result = db.Query("select LAST_INSERT_ID();");
@@ -1818,7 +1905,6 @@ namespace FT_Management.Models
                         a = int.Parse(result[0]);
                     }
 
-                    db.Execute(sql2);
                     db.Connection.Close();
                 }
                 catch (Exception ex)
@@ -2255,6 +2341,204 @@ namespace FT_Management.Models
             using Database db = ConnectionString;
             db.Execute(sql);
         }
+        #endregion
+
+        #region Piquete
+
+            public List<Piquete> ObterPiquetes(DateTime dInicio, DateTime dFim) {
+            System.Globalization.CultureInfo cultura = System.Globalization.CultureInfo.CurrentCulture;
+            System.Globalization.Calendar calendario = cultura.Calendar;
+
+            List<Piquete> LstP = new List<Piquete>();
+            List<Piquete> LstP2 = new List<Piquete>();
+            List<TipoTecnico> LstT = ObterTipoTecnicos();
+            List<Ferias> LstF = ObterListaFeriasValidadas();
+            List<Zona> LstZ = ObterZonas(true);
+
+            string sqlQuery = "SELECT * FROM dat_piquete WHERE STR_TO_DATE(CONCAT(SUBSTRING(stamp, 1, 4), '-01-01') + INTERVAL (SUBSTRING(stamp, 6, 2) - 1) WEEK, '%Y-%m-%d') BETWEEN '" + dInicio.ToString("yyyy-MM-dd") + "' AND '" + dFim.ToString("yyyy-MM-dd") + "';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstP2.Add(new Piquete(){
+                        Stamp = result["Stamp"],
+                        IdUtilizador = result["IdUtilizador"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"])
+                    });
+                }
+            }
+
+            DateTime dataAtual = dInicio;
+            while (dataAtual <= dFim)
+            {
+                int numeroSemana = calendario.GetWeekOfYear(dataAtual, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+                foreach (var t in LstT) {
+                    foreach (var z in LstZ) {
+                        string Stamp = dataAtual.Year.ToString() + "," + numeroSemana + "," + z.Id + "," + t.Id;
+                        if (LstP2.Where(x => x.Stamp == Stamp).Count() > 0) {
+                            LstP.Add(LstP2.Where(x => x.Stamp == Stamp).First());
+                        }else{
+                        LstP.Add(new Piquete() {
+                            Stamp = dataAtual.Year.ToString() + "," + numeroSemana + "," + z.Id + "," + t.Id,
+                            Utilizador = new Utilizador(),
+                            });
+                        }
+                       LstP.Last().Valido = !LstF
+    .Any(x => x.IdUtilizador == LstP.Last().IdUtilizador &&
+               (calendario.GetWeekOfYear(x.DataInicio, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana ||
+                calendario.GetWeekOfYear(x.DataFim, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana) && x.DataFim.DayOfWeek==DayOfWeek.Friday);
+         }
+                }
+                // Incrementa a data atual em 7 dias (uma semana)
+                dataAtual = dataAtual.AddDays(7);
+            }
+
+            
+            return LstP;
+        }
+
+        public List<Piquete> ObterPiquetes(DateTime dInicio, DateTime dFim, Utilizador u) {
+            System.Globalization.CultureInfo cultura = System.Globalization.CultureInfo.CurrentCulture;
+            System.Globalization.Calendar calendario = cultura.Calendar;
+
+            List<Piquete> LstP = new List<Piquete>();
+            List<Piquete> LstP2 = new List<Piquete>();
+            List<TipoTecnico> LstT = ObterTipoTecnicos();
+            List<Ferias> LstF = ObterListaFeriasValidadas();
+            List<Zona> LstZ = ObterZonas(true);
+
+            string sqlQuery = "SELECT * FROM dat_piquete WHERE STR_TO_DATE(CONCAT(SUBSTRING(stamp, 1, 4), '-01-01') + INTERVAL (SUBSTRING(stamp, 6, 2) - 1) WEEK, '%Y-%m-%d') BETWEEN '" + dInicio.ToString("yyyy-MM-dd") + "' AND '" + dFim.ToString("yyyy-MM-dd") + "' and IdUtilizador="+u.Id+";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    LstP2.Add(new Piquete(){
+                        Stamp = result["Stamp"],
+                        IdUtilizador = result["IdUtilizador"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"])
+                    });
+                }
+            }
+
+            DateTime dataAtual = dInicio;
+            while (dataAtual <= dFim)
+            {
+                int numeroSemana = calendario.GetWeekOfYear(dataAtual, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+                foreach (var t in LstT) {
+                    foreach (var z in LstZ) {
+                        string Stamp = dataAtual.Year.ToString() + "," + numeroSemana + "," + z.Id + "," + t.Id;
+                        if (LstP2.Where(x => x.Stamp == Stamp).Count() > 0) {
+                            LstP.Add(LstP2.Where(x => x.Stamp == Stamp).First());
+                        }else{
+                        LstP.Add(new Piquete() {
+                            Stamp = dataAtual.Year.ToString() + "," + numeroSemana + "," + z.Id + "," + t.Id,
+                            Utilizador = new Utilizador(),
+                            });
+                        }
+                       LstP.Last().Valido = !LstF
+    .Any(x => x.IdUtilizador == LstP.Last().IdUtilizador &&
+               (calendario.GetWeekOfYear(x.DataInicio, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana ||
+                calendario.GetWeekOfYear(x.DataFim, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday) == numeroSemana) && x.DataFim.DayOfWeek==DayOfWeek.Friday);
+                    }
+                }
+                // Incrementa a data atual em 7 dias (uma semana)
+                dataAtual = dataAtual.AddDays(7);
+            }
+
+            
+            return LstP.Where(p => p.IdUtilizador != 0).ToList();
+        }
+
+        public void GerarPiquetes(DateTime dInicio, DateTime dFim) {
+            System.Globalization.CultureInfo cultura = System.Globalization.CultureInfo.CurrentCulture;
+            System.Globalization.Calendar calendario = cultura.Calendar;
+
+            List<Piquete> LstP = ObterPiquetes(dInicio, dFim);
+            List<TipoTecnico> LstT = ObterTipoTecnicos();
+            List<Zona> LstZ = ObterZonas(true);
+
+            foreach (Piquete p in LstP) {
+                if (p.IdUtilizador == 0) p.Utilizador = ObterUtilizadorMaisInativo(p.Data, LstT.Where(x => x.Id == p.Tipo).First(), LstZ.Where(x => x.Id == p.Zona).First());
+                p.IdUtilizador = p.Utilizador.Id;
+                CriarPiquete(p);
+            }
+        }
+
+
+        public Utilizador ObterUtilizadorMaisInativo(DateTime Data, TipoTecnico Tipo, Zona Zona)
+         {
+            string sqlQuery = "SELECT u.IdUtilizador, u.Zona, u.TipoTecnico FROM sys_utilizadores u LEFT JOIN (SELECT IdUtilizador, MAX(CONCAT(SUBSTRING_INDEX(SUBSTRING_INDEX(Stamp, ',', 1), ',', -1), ',', SUBSTRING_INDEX(SUBSTRING_INDEX(Stamp, ',', 2), ',', -1))) AS UltimoPiquete FROM dat_piquete GROUP BY IdUtilizador) p ON u.IdUtilizador = p.IdUtilizador WHERE (p.IdUtilizador IS NULL OR p.UltimoPiquete < CONCAT(YEAR('"+Data.ToString("yyyy-MM-dd")+"'), ',', WEEK('"+Data.ToString("yyyy-MM-dd")+"'))) and u.Zona="+Zona.Id+" and enable=1 and u.TipoTecnico="+Tipo.Id+" and u.TipoUtilizador=1 Order BY UltimoPiquete ASC LIMIT 1;";
+            Utilizador u = new Utilizador();
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    u = ObterUtilizador(result[0]);
+                }
+            }
+            return u;
+         }
+
+        public Piquete ObterPiquete(string Stamp) {
+            Piquete p = new Piquete();
+
+            string sqlQuery = "SELECT * FROM dat_piquete WHERE Stamp='"+Stamp+"';";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    p = new Piquete(){
+                        Stamp = result["Stamp"],
+                        IdUtilizador = result["IdUtilizador"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"])
+                    };
+                }
+            }
+            return p;
+        }
+
+        public void CriarPiquete(Piquete p)
+        {
+            string sql = "INSERT INTO dat_piquete (Stamp, IdUtilizador) VALUES ('"+ p.Stamp +"', '"+ p.IdUtilizador +"') ON DUPLICATE KEY UPDATE IdUtilizador = VALUES(IdUtilizador);";
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+
+
+        public bool VerificarPiquete(DateTime d, Utilizador u) {
+            int numeroSemana = System.Globalization.CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(d, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+            bool res = false;
+
+            string sqlQuery = "SELECT COUNT(*) FROM dat_piquete WHERE Stamp LIKE '"+ d.Year +","+ numeroSemana +"%' and IdUtilizador="+u.Id+";";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    res = int.Parse(result[0]) > 0;
+                }
+            }
+            return res;
+        }
+
+
+        public void ApagarPiquete(Piquete p)
+        {
+            string sql = "DELETE FROM dat_piquete WHERE Stamp='"+p.Stamp+"';";
+
+            using Database db = ConnectionString;
+            db.Execute(sql);
+        }
+
         #endregion
 
         //OUTROS

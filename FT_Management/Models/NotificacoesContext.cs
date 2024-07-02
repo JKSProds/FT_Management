@@ -171,6 +171,12 @@ namespace FT_Management.Models
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
+        public static bool EnviarNotificacaoCodigoSimples(string c, Utilizador u, Utilizador t)
+        {
+            string Mensagem = "Foi criada uma novo código de acesso pelo utilizador: " + t.NomeCompleto + "\r\n\r\n**" + c + "**";
+
+            return EnviarMensagem(u.ChatToken, Mensagem);
+        }
         public static bool EnviarNotificacaoFolhaObraTecnico(FolhaObra fo, Utilizador u)
         {
             string Mensagem = "Foi criada uma nova folha de obra para o cliente: " + fo.ClienteServico.NomeCliente + "\r\nData: " + fo.DataServico.ToShortDateString() + "\r\n\r\n" + fo.GetUrl;

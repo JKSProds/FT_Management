@@ -24,6 +24,10 @@
             context.AdicionarLog(u.Id, "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
+            ViewBag.Tipos = phccontext.ObterTipoAcessos().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
+            ViewBag.TipoHorasExtra = phccontext.ObterTipoHorasExtras().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
+            ViewBag.TipoFaltas = phccontext.ObterTipoFaltas().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
+
             return View(context.ObterListaRegistroAcessos(DateTime.Parse(Data), DateTime.Parse(Data)));
         }
 
@@ -118,6 +122,28 @@
             } 
 
             return Json("1");
+        }
+
+        [HttpPost]
+        public ActionResult Validar(string id, int tipo, int tipoFalta, int tipoHoraExtra)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            List<Acesso> LstA = new List<Acesso>();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a editar/criar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
+
+            foreach (var a in id.Split(",")) {
+                if (a != string.Empty && a != "0")
+                { 
+                    LstA.Add(context.ObterAcesso(int.Parse(a)));
+                    if (tipo == 1) LstA.Last().TipoHorasExtra = tipoHoraExtra;
+                    if (tipo == 2) LstA.Last().TipoFalta = tipoFalta;
+                }
+            }
+            
+            return phccontext.ValidarAcesso(context.ObterListaRegistroAcessos(LstA), u, 8,30) ? StatusCode(200) : StatusCode(500);
         }
 
         //Obter todos os acessos em formato xls de uma data em especifico

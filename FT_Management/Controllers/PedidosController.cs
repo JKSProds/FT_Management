@@ -51,7 +51,7 @@ namespace FT_Management.Controllers
             ViewData["estado"] = estado;
 
             if (string.IsNullOrEmpty(numMarcacao) && string.IsNullOrEmpty(nomeCliente) && string.IsNullOrEmpty(referencia) && string.IsNullOrEmpty(tipoe) && idtecnico == 0 && string.IsNullOrEmpty(estado)) return View(phccontext.ObterMarcacoes(DateTime.Now, DateTime.Now.AddDays(1)));
-
+            
             return View(phccontext.ObterMarcacoes(int.Parse(numMarcacao != "" ? numMarcacao : "0"), nomeCliente, referencia, tipoe, idtecnico, estado));
         }
 
@@ -70,6 +70,7 @@ namespace FT_Management.Controllers
             ViewData["DataPedidos"] = DataPedidos;
             ViewData["IdTecnico"] = u.IdPHC;
             ViewData["IdArmazem"] = u.IdArmazem;
+            ViewData["Piquete"] = context.VerificarPiquete(DateTime.Parse(DataPedidos), u);
 
             return View(ListaMarcacoes.OrderBy(m => m.EstadoMarcacao).OrderBy(m => m.Cliente.ClienteStamp));
         }
@@ -191,7 +192,7 @@ namespace FT_Management.Controllers
             ViewData["zona"] = zona;
             ViewData["tipo"] = tipo;
 
-            List<Zona> LstZonas = context.ObterZonas();
+            List<Zona> LstZonas = context.ObterZonas(false);
             LstZonas.Insert(0, new Zona() { Id = 0, Valor = "Todos" });
             ViewBag.Zonas = LstZonas.Select(l => new SelectListItem() { Value = l.Id.ToString(), Text = l.Valor });
 
@@ -271,6 +272,7 @@ namespace FT_Management.Controllers
             List<CalendarioEvent> LstEventos = context.ConverterMarcacoesEventos(phccontext.ObterMarcacoes(context.ObterUtilizador(id).IdPHC, start, end.AddDays(-1)).ToList().OrderBy(m => m.DataMarcacao).ToList()).ToList();
             LstEventos.AddRange(context.ConverterFeriasEventos(context.ObterListaFerias(start, end.AddDays(-1), id), new List<Feriado>()));
             LstEventos.AddRange(context.ConverterFeriadosEventos(context.ObterListaFeriados(start.Year.ToString())));
+            LstEventos.AddRange(context.ConverterPiquetesEventos(context.ObterPiquetes(start, end,context.ObterUtilizador(id))));
 
             if (id > 0) return new JsonResult(LstEventos);
 

@@ -19,6 +19,8 @@
         [Display(Name = "Temperatura")]
         public string Temperatura { get; set; }
         public bool Validado { get; set; }
+        public int TipoFalta { get; set; }
+        public int TipoHorasExtra { get; set; }
 
     }
 
@@ -30,11 +32,16 @@
        public Acesso E2 { get; set; }
        public Acesso S2 { get; set; }
        public DateTime Data { get; set; }
+       public int TipoFalta { get { return E1.TipoFalta;} }
+
+       public int TipoHorasExtra { get { return E1.TipoHorasExtra;} }
        public bool Valido { get { return E1.Id != 0 && S1.Id != 0;} }
 
        public bool Validado { get { return E1.Validado && S1.Validado;} }
 
-       public string TotalHoras() { 
+       public int TotalMinutos { get { return (int)((S1.Data - E1.Data) + (S2.Data - E2.Data)).TotalMinutes;}}
+       public bool ValidarPHC {get {return Math.Abs(TotalMinutos - 8*60) > 15 && this.Utilizador.TipoUtilizador != 1;}}     
+       public string TotalHorasDesc() { 
             TimeSpan t1 = S1.Data - E1.Data;
             TimeSpan t2 = S2.Data - E2.Data;
             TimeSpan d = t1+t2;
