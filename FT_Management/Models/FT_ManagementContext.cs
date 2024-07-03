@@ -1616,6 +1616,7 @@ namespace FT_Management.Models
 
 
             foreach (Utilizador u in LstUtilizadores) {
+                u.BancoHoras = ObterHorasBanco(u);
                 List<Acesso> TMPAcessos = LstAcessos.Where(a => a.Utilizador.Id == u.Id).ToList();
                 LstRegistroAcessos.Add(new RegistroAcessos() {
                     Utilizador =u,
@@ -1625,6 +1626,7 @@ namespace FT_Management.Models
                     S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
                     Data = TMPAcessos.Count() >=1 ? TMPAcessos.First().Data : DateTime.MinValue
                 });
+                LstRegistroAcessos.Last().Utilizador.Ferias = VerificarFeriasUtilizador(u.Id, LstRegistroAcessos.Last().Data);
             }
 
             return LstRegistroAcessos;
@@ -1638,6 +1640,7 @@ namespace FT_Management.Models
 
 
             foreach (Utilizador u in LstUtilizadores) {
+                u.BancoHoras = ObterHorasBanco(u);
                 List<Acesso> TMPAcessos = LstAcessos.Where(a => a.Utilizador.Id == u.Id).ToList();
                 if (TMPAcessos.Count() > 0) {
                 LstRegistroAcessos.Add(new RegistroAcessos() {
@@ -1875,6 +1878,7 @@ namespace FT_Management.Models
         public int CriarAcessoInterno(List<Acesso> LstAcessos)
         {
             int a = 0;
+            bool UltimoAcesso = false;
             if (LstAcessos.Count > 0)
             {
                 string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura, App) VALUES ";
@@ -1884,7 +1888,11 @@ namespace FT_Management.Models
                 {
                     sql1 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "', 0),\r\n";
 
-                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0, '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'),\r\n";
+                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) 
+                     {
+                        sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0, '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'),\r\n";
+                        UltimoAcesso = true;
+                     }
                 }
 
                 sql1 = sql1.Remove(sql1.Count() - 3);
@@ -1896,7 +1904,7 @@ namespace FT_Management.Models
                 {
                     Database db = ConnectionString;
 
-                    db.Execute(sql2);
+                    if (UltimoAcesso) db.Execute(sql2);
                     db.Execute(sql1);
 
                     using var result = db.Query("select LAST_INSERT_ID();");
@@ -1938,6 +1946,35 @@ namespace FT_Management.Models
 
             using Database db = ConnectionString;
             db.Execute(sql);
+        }
+
+        public bool CriarRegistoBancoHoras(RegistroAcessos r, Utilizador u, int NHoras, int Margem)
+        {
+                bool res = false;
+                string obs = "Criado um registo de banco de horas pelo utilizador " + u.NomeCompleto + " do utilizador " + r.Utilizador.NomeCompleto + " de " + (r.TipoHorasExtra > 0 ? " Horas Extraordinarias " : " Falta ") + ". " + r.ObterHoras(NHoras,Margem) + " Hora(s).";
+                
+                string sql = "INSERT INTO dat_banco_horas (Stamp,IdUtilizador,Tipo,Horas,IdAcessos,Observacoes,DataAcessos) VALUES ";
+
+                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ r.ObterHoras(NHoras, Margem).ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data +"');";
+
+                Database db = ConnectionString;
+
+                res = db.Execute(sql) == 1;
+                db.Connection.Close();
+
+                return res;
+        }
+
+        public int ObterHorasBanco(Utilizador u) {
+            int res = 0;
+
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT SUM(CASE WHEN Tipo = 1 THEN Horas WHEN Tipo = 2 THEN -Horas ELSE 0 END) AS total_horas FROM dat_banco_horas WHERE IdUtilizador="+ u.Id +";");
+            while (result.Read())
+            {
+                int.TryParse(result[0], out res);
+            }
+            return res;
         }
 
         #endregion

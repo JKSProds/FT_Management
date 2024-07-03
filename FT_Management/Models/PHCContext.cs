@@ -2794,7 +2794,7 @@ namespace FT_Management.Models
 
         public bool ValidarAcesso(RegistroAcessos r, Utilizador u, int NHoras, int Margem) {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
-            int Horas = ObterHoras(r, NHoras, Margem);
+            int Horas = r.ObterHoras(NHoras, Margem);
             string SQL_Query = "";
 
             try
@@ -2839,12 +2839,6 @@ namespace FT_Management.Models
 
         }
         
-        public int ObterHoras(RegistroAcessos r, int NHoras, int Margem) {
-             double tempoTrabalhadoHoras = r.TotalMinutos / 60.0;
-            double diferencaHoras = Math.Abs(NHoras - tempoTrabalhadoHoras);
-
-            return (int)Math.Ceiling(diferencaHoras);
-        }
 
          public List<KeyValuePair<int, string>> ObterTipoAcessos()
         {
