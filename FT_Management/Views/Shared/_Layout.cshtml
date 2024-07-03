@@ -497,7 +497,7 @@
             <section class="modal-card-body">
                 <div class="control">
                     <label class="label">Sugestões</label><textarea type="text" class="textarea"
-                                                                    id="txtObs" rows=4 value=""></textarea>
+                                                                    id="txtObsSugestao" rows=4 value=""></textarea>
                 </div>
             </section>
             <footer class="modal-card-foot">
@@ -709,7 +709,7 @@
         $.ajax({
             url: '/Home/Sugestao',
             type: "POST",
-            data: { "obs": document.getElementById('txtObs').value, "file": base64 },
+            data: { "obs": document.getElementById('txtObsSugestao').value, "file": base64 },
             success: function (data) {
                 if (data == "Ok") {
                     notify('Sugestão enviada com sucesso!');
