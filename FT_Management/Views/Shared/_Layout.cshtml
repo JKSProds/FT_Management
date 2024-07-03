@@ -3,7 +3,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt-pt" data-theme="light">
 
 <head>
     <meta charset="utf-8" />
@@ -107,7 +107,7 @@
 <body>
     @if (!isDashboard) {
     <header>
-        <nav class='navbar  @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-warning" : "is-light")  has-shadow'
+        <nav class='navbar  @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-warning" : "")  has-shadow'
              role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
