@@ -107,7 +107,7 @@
 <body>
     @if (!isDashboard) {
     <header>
-        <nav class='navbar @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-warning" : "is-light")  has-shadow'
+        <nav class='navbar  @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-warning" : "is-light")  has-shadow'
              role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
@@ -130,53 +130,43 @@
                         {
                             <div class="navbar-item has-dropdown is-hoverable">
                                 <a class="navbar-link">
-                                    <span class="icon">
-                                        <i class="fas fa-toggle-on"></i>
-                                    </span>
                                     <span>Dashboard</span>
                                 </a>
 
-                                <div class="navbar-dropdown buttons">
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded  is-fullwidth" href="~/Dashboard/Encomendas">
+                                <div class="navbar-dropdown is-boxed">
+                                   
+                                        <a class="navbar-item" href="~/Dashboard/Encomendas">
                                             <span class="icon">
                                                 <i class="fa-solid fa-boxes-stacked"></i>
                                             </span>
                                             <span>Encomendas</span>
-                                        </a>
-                                    </p>                                    
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded  is-fullwidth" href="~/Dashboard/Assistencias/878">
+                                        </a>                                  
+                                   
+                                        <a class="navbar-item" href="~/Dashboard/Assistencias/878">
                                             <span class="icon">
                                                 <i class="fa-solid fa-chart-pie"></i>
                                             </span>
                                             <span>Assistências</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Dashboard/Pendentes">
+                                        <a class="navbar-item" href="~/Dashboard/Pendentes">
                                             <span class="icon">
                                                 <i class="fa-solid fa-hourglass-half"></i>
                                             </span>
                                             <span>Pendentes</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Dashboard/Marcacoes">
+                                        <a class="navbar-item" href="~/Dashboard/Marcacoes">
                                             <span class="icon">
                                                 <i class="fas fa-calendar-alt"></i>
                                             </span>
                                             <span>Marcações</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Dashboard/Utilizadores">
+                                        <a class="navbar-item" href="~/Dashboard/Utilizadores">
                                             <span class="icon">
                                                 <i class="fas fa-user"></i>
                                             </span>
                                             <span>Utilizadores</span>
                                         </a>
-                                    </p>
+
                                 </div>
                             </div>
                         }
@@ -188,62 +178,48 @@
                                 </a>
 
                                 <div class="navbar-dropdown buttons">
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded  is-fullwidth" href="~/Produtos">
+                                        <a class="navbar-item" href="~/Produtos">
                                             <span class="icon">
                                                 <i class="fas  fa-dolly-flatbed"></i>
                                             </span>
                                             <span>Referências</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Picking">
+                                        <a class="navbar-item" href="~/Picking">
                                             <span class="icon">
                                                 <i class="fa-solid fa-barcode"></i>
                                             </span>
                                             <span>Picking</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Picking/Fornecedores">
+                                        <a class="navbar-item" href="~/Picking/Fornecedores">
                                             <span class="icon mb-2">
                                                 <i class="fa-solid fa-pallet"></i>
                                             </span>
                                             <span>Ordens de Receção</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Picking/Tecnicos">
+                                        <a class="navbar-item" href="~/Picking/Tecnicos">
                                             <span class="icon mb-2">
                                                 <i class="fa-solid fa-user-gear"></i>
                                             </span>
                                             <span>Técnicos</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Inventario">
+                                        <a class="navbar-item href="~/Inventario">
                                             <span class="icon">
                                                 <i class="fa-solid fa-dolly"></i>
                                             </span>
                                             <span>Inventário</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Dossiers">
+                                        <a class="navbar-item" href="~/Dossiers">
                                             <span class="icon">
                                                 <i class="fas fa-file-alt"></i>
                                             </span>
                                             <span>Dossiers</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Produtos/Garantias">
+                                        <a class="navbar-item" href="~/Produtos/Garantias">
                                             <span class="icon">
                                                 <i class="fa-solid fa-house-medical"></i>
                                             </span>
                                             <span>Garantias</span>
                                         </a>
-                                    </p>
                                 </div>
                             </div>
                         }
@@ -257,71 +233,56 @@
                                 <div class="navbar-dropdown buttons">
                                     @if (this.User.IsInRole("Admin") || this.User.IsInRole("Escritorio"))
                                     {
-                                        <p class="control mx-1">
-                                            <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Adicionar">
+                                            <a class="navbar-item" href="~/Pedidos/Adicionar">
                                                 <span class="icon">
                                                     <i class="fas fa-plus"></i>
                                                 </span>
                                                 <span>Nova Marcação</span>
                                             </a>
-                                        </p>
-                                        <p class="control mx-1">
-                                            <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos">
+                                            <a class="navbar-item" href="~/Pedidos">
                                                 <span class="icon">
                                                     <i class="fas fa-calendar-alt"></i>
                                                 </span>
                                                 <span>Marcações</span>
                                             </a>
-                                        </p>
+                                            <hr class="navbar-divider">
                                     }
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Pedidos">
+                                        <a class="navbar-item" href="~/Pedidos/Pedidos">
                                             <span class="icon">
                                                 <i class="fa-solid fa-calendar-check"></i>
                                             </span>
                                             <span>Minhas Marcações</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded  is-fullwidth" href="~/Produtos/Armazem">
+                                        <a class="navbar-item" href="~/Produtos/Armazem">
                                             <span class="icon">
                                                 <i class="fas  fa-dolly-flatbed"></i>
                                             </span>
                                             <span>Meu Armazém</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/FolhasObra">
+                                        <a class="navbar-item" href="~/FolhasObra">
                                             <span class="icon">
                                                 <i class="fas  fa-file-alt"></i>
                                             </span>
                                             <span>Folhas de Obra</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Equipamentos">
+                                        <a class="navbar-item" href="~/Equipamentos">
                                             <span class="icon">
                                                 <i class="fa-solid fa-desktop"></i>
                                             </span>
                                             <span>Equipamentos</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Pedidos/Agendamento">
+                                        <a class="navbar-item" href="~/Pedidos/Agendamento">
                                             <span class="icon">
                                                 <i class="fas fa-calendar-day"></i>
                                             </span>
                                             <span>Calendário</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
+                                        <a class="navbar-item" href="~/Ferias">
                                             <span class="icon">
                                                 <i class="fas  fa-umbrella-beach"></i>
                                             </span>
                                             <span>Mapa de Férias</span>
                                         </a>
-                                    </p>
                                 </div>
                             </div>
                         }
@@ -334,54 +295,42 @@
 
                                 <div class="navbar-dropdown buttons">
 
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/Adicionar">
+                                        <a class="navbar-item" href="~/Visitas/Adicionar">
                                             <span class="icon">
                                                 <i class="fas fa-plus"></i>
                                             </span>
                                             <span>Nova Visita</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Visitas/CalendarioView">
+                                        <a class="navbar-item" href="~/Visitas/CalendarioView">
                                             <span class="icon">
                                                 <i class="fas fa-calendar-day"></i>
                                             </span>
                                             <span>Calendário</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Visitas">
+                                        <a class="navbar-item" href="~/Visitas">
                                             <span class="icon">
                                                 <i class="fas fa-calendar-alt"></i>
                                             </span>
                                             <span>Visitas</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Contactos">
+                                        <a class="navbar-item" href="~/Contactos">
                                             <span class="icon">
                                                 <i class="fas fa-address-card"></i>
                                             </span>
                                             <span>Contactos</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Clientes">
+                                        <a class="navbar-item" href="~/Clientes">
                                             <span class="icon">
                                                 <i class="fas fa-user"></i>
                                             </span>
                                             <span>Clientes</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
+                                        <a class="navbar-item" href="~/Ferias">
                                             <span class="icon">
                                                 <i class="fas  fa-umbrella-beach"></i>
                                             </span>
                                             <span>Mapa de Férias</span>
                                         </a>
-                                    </p>
                                 </div>
                             </div>
                         }
@@ -393,38 +342,30 @@
                                 </a>
 
                                 <div class="navbar-dropdown buttons">
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Piquetes">
+                                        <a class="navbar-item" href="~/Piquetes">
                                             <span class="icon">
                                                  <i class="fa-solid fa-briefcase"></i>
                                             </span>
                                             <span>Mapa de Piquetes</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Ferias">
+                                        <a class="navbar-item" href="~/Ferias">
                                             <span class="icon">
                                                 <i class="fas  fa-umbrella-beach"></i>
                                             </span>
                                             <span>Mapa de Férias</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Acessos">
+                                        <a class="navbar-item" href="~/Acessos">
                                             <span class="icon">
                                                 <i class="fas fa-clock"></i>
                                             </span>
                                             <span>Acessos</span>
                                         </a>
-                                    </p>
-                                    <p class="control mx-1">
-                                        <a class="button is-info is-rounded is-fullwidth" href="~/Viaturas">
+                                        <a class="navbar-item" href="~/Viaturas">
                                             <span class="icon">
                                                 <i class="fas fa-car"></i>
                                             </span>
                                             <span>Viaturas</span>
                                         </a>
-                                    </p>
                                 </div>
                             </div>
                         }
@@ -463,6 +404,7 @@
                                             <span>Meu Perfil</span>
                                         </a>
                                     </div>
+                                    <hr class="navbar-divider">
                                 }
                                 else
                                 {
@@ -471,7 +413,7 @@
                                 @if (this.User.IsInRole("Admin"))
                                 {
                                     <div class="navbar-item">
-                                        <a class="button is-light is-fullwidth" href="~/Utilizadores">
+                                        <a class="button is-success is-fullwidth" href="~/Utilizadores">
                                             <span class="icon">
                                                 <i class="fas fa-gear"></i>
                                             </span>
@@ -486,9 +428,10 @@
                                             <span>Reiniciar</span>
                                         </a>
                                     </div>
+                                    <hr class="navbar-divider">
                                 }
                                 <div class="navbar-item">
-                                    <a class="button is-info is-light is-fullwidth"
+                                    <a class="button is-info is-fullwidth"
                                        onclick="Bulma('#modalSugestoes').modal().open();">
                                         <span class="icon">
                                             <i class="fa-solid fa-lightbulb"></i>
@@ -497,7 +440,7 @@
                                     </a>
                                 </div>
                                 <div class="navbar-item">
-                                    <a class="button is-danger is-light is-fullwidth" href="~/Utilizadores/Logout">
+                                    <a class="button is-danger is-fullwidth" href="~/Utilizadores/Logout">
                                         <span class="icon">
                                             <i class="fas fa-sign-out-alt"></i>
                                         </span>

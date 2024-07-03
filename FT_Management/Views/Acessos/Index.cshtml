@@ -121,7 +121,7 @@ else
                              <td style="min-width: 250px" class="is-actions-cell">
                             @if (!item.Validado && !item.Utilizador.Ferias) {
                                 <div class="buttons">
-                                <a class="button is-success is-rounded " onclick="ValidarAcessos(this)"
+                                <a class="button is-success is-rounded " onclick="ValidarAcessos(this);document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras(8,30)';"
                                         href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                                 <a class="button is-info is-rounded" onclick="EditarAcessos(this)"
                                         href="javascript:;"><i class="fas fa-pencil" style="font-size:20px"></i></a>
@@ -198,10 +198,23 @@ else
                         </div>
                     </div>
                 </div>
+                &nbsp;
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" id="chkBancoHoras">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Banco de Horas
+                        </span>
+                    </label>
+                </div>
                  <fieldset disabled>
                     <div class="field has-addons">
                         <div class="control">
                             <input type="text" class="input" id="txtHoras">
+                        </div>
+                        <div class="control">
+                            <input type="text" class="input" id="txtBancoHoras">
                         </div>
                     </div>
                 </fieldset>
@@ -271,7 +284,6 @@ else
 
     function EditarAcessos(btn)
     {
-        btn.classList.add("is-loading");
         btn.closest('tr').querySelectorAll('input').forEach(input => {input.disabled = !input.disabled; });
         if (btn.closest('tr').querySelectorAll('input')[0].disabled) {
             btn.querySelector('i').classList.add('fa-pencil');
@@ -292,7 +304,7 @@ else
                     traditional: true,
                     success: function (result) {
                         if (result != 1) {
-                             notify('Acesso atualizado com sucesso!');
+                             window.location.reload();
                         } 
                     },
                     error: function (response) {
@@ -307,9 +319,10 @@ else
         }else{
             btn.querySelector('i').classList.remove('fa-pencil');
             btn.querySelector('i').classList.add('fa-floppy-disk');
+            btn.closest('tr').querySelectorAll('btn').forEach(input => {input.disabled = true; });
+            btn.disabled = false;
         }
-        btn.classList.remove("is-loading");
-        btn.closest('tr').querySelectorAll('btn').forEach(input => {input.disabled = false; });
+
     }
 
     function ValidarAcessos(btn)
@@ -349,7 +362,6 @@ else
                                 document.getElementById("lstTipo").value = 2;
                             }
                             document.getElementById("lstTipo").dispatchEvent(new Event('change'));
-                            document.getElementById('txtHoras').value = (input.getAttribute('data-total') / 60).toFixed(2);
                             Bulma('#modalValidarAcesso').modal().open();
                          }
                          
@@ -369,11 +381,13 @@ else
 
     function GuardarAcessos(t, tF, tE, id)
     {
+        if (document.getElementById('chkBancoHoras').checked && (document.getElementById('txtBancoHoras').value < document.getElementById('txtHoras').value)) alert("Não tem horas para descontar!");
         var json = {
             id: document.getElementById('txtListaIdRegistros').value,
             tipo: t,
             tipoFalta: tF,
-            tipoHoraExtra: tE
+            tipoHoraExtra: tE,
+            bancoHoras: document.getElementById('chkBancoHoras').checked
         };
     
         $.ajax({

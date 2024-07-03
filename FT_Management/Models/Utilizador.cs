@@ -87,6 +87,7 @@
         public bool Ferias { get; set; }
         public List<Marcacao> LstMarcacoes { get; set; }
         public List<Dossier> Dossiers { get; set; }
+        public int BancoHoras {get; set;}
         public Marcacao MarcacaoCurso
         {
             get

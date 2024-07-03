@@ -50,6 +50,14 @@
             return d > TimeSpan.Zero ? $"{(int)d.TotalHours:D2}:{d.Minutes:D2}" : "--:--";
         }
 
+
+        public int ObterHoras(int NHoras, int Margem) {
+             double tempoTrabalhadoHoras = this.TotalMinutos / 60.0;
+            double diferencaHoras = Math.Abs(NHoras - tempoTrabalhadoHoras);
+
+            return (int)Math.Ceiling(diferencaHoras);
+        }
+
         public RegistroAcessos() {
             E1 = new Acesso();
             S1 = new Acesso();
