@@ -49,7 +49,7 @@
                 </p>
                 <p class="control">
                     <button type="button" onclick="window.location.href = '/Pedidos/Agendamento'"
-                        class="button is-outlined">
+                        class="button is-outlined is-link">
                         <span class="icon">
                             <i class="fas fa-backspace fa-lg"></i>
                         </span>
@@ -122,7 +122,7 @@ else
             <div class="card-content">
                 <div class="media">
                     <div class="media-content">
-                        <p class="title is-4">Marcações Por Associar</p>
+                        <p class="title is-4 has-text-black">Marcações Por Associar</p>
                     </div>
                 </div>
                 <a class="button is-link is-fullwidth is-large" href="~/Pedidos?estado=Criado">
@@ -138,6 +138,7 @@ else
         let criadoCalendar = document.getElementById('cl_criado');
 
         let scr1Calendar = new FullCalendar.Calendar(criadoCalendar, {
+            themeSystem: 'darkly',
             plugins: ['dayGrid', 'interaction'],
             defaultView: 'dayGridWeek',
             editable: true,
@@ -196,26 +197,26 @@ else
                     <div class="card" style="background:@u.CorCalendario;">
                         <div class="card-content">
                             <div class="media">
-                                <div class="media-left">
+                                <div class="media-left ">
                                     <figure class="image is-48x48">
                                         <img class="is-rounded" src="@u.ImgUtilizador" alt="user">
                                     </figure>
                                 </div>
                                 <div class="media-content">
-                                    <p class="title is-4">@u.NomeCompleto</p>
-                                    <p class="subtitle is-6">@u.EmailUtilizador</p>
+                                    <p class="title is-4  has-text-black">@u.NomeCompleto</p>
+                                    <p class="subtitle is-6 has-text-black">@u.EmailUtilizador</p>
                                 </div>
                             </div>
                             @if (u.Viatura.Matricula != null)
                             {
-                                <p class="subtitle is-6">
+                                <p class="subtitle is-6  has-text-black">
                                     <span class="icon">
                                         <i class="fa-solid @(u.Viatura.Ignicao ? "fa-car-on" : "fa-car")"></i>
                                     </span>
                                     <span><i>@u.Viatura.Matricula</i> - <b>@u.Viatura.LocalizacaoMorada</b></span>
                                 </p>
                             }
-                            <div class="progress-container" id='pbval_@u.Id' data-text="---"><progress
+                            <div class="progress-container has-text-black" id='pbval_@u.Id' data-text="---"><progress
                             class="progress is-info is-large" id="pb_@u.Id" max="100"></progress></div>
                             &nbsp;
                             <a class="button is-link is-fullwidth is-large" href="~/Pedidos/Pedidos/@u.IdPHC">
@@ -458,7 +459,7 @@ else
                         <span>Editar</span>
                     </a>
                 </p>
-                <button class="button is-secondary is-outlined"
+                <button class="button is-secondary is-outlined is-link"
                     onclick="Bulma('#modalQuickViewMarcacao').modal().close();">Cancelar</button>
             </div>
         </footer>

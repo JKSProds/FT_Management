@@ -6,7 +6,7 @@
 
 <div class="columns is-gapless">
     <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced has-background-danger-light">
+        <div class="card has-table has-mobile-sort-spaced has-background-danger-soft">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="fa-solid fa-calendar-xmark"></i></span>
@@ -19,11 +19,11 @@
                     <div class="table-wrapper has-mobile-cards">
                         @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.ATRASO)).Count() == 0)
                         {
-                            <button class="button is-rounded is-fullwidth" disabled>Não foram encontradas encomendas!</button>
+                            <button class="button is-danger is-rounded is-fullwidth">Não foram encontradas encomendas!</button>
                         }
                         else
                         {
-                            <table class="table is-fullwidth has-background-danger-light">
+                            <table class="table is-fullwidth has-background-danger-soft">
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
@@ -136,7 +136,7 @@
         </div>
     </div>
     <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced has-background-success-light">
+        <div class="card has-table has-mobile-sort-spaced has-background-success-soft">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="fa-solid fa-calendar-day"></i></span>
@@ -149,11 +149,11 @@
                     <div class="table-wrapper has-mobile-cards">
                          @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.HOJE)).Count() == 0)
                         {
-                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
+                            <button class="button is-danger is-rounded is-outlined is-fullwidth" >Não foram encontradas encomendas!</button>
                         }
                         else
                         {
-                            <table class="table is-fullwidth has-background-success-light">
+                            <table class="table is-fullwidth has-background-success-soft">
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
@@ -262,7 +262,7 @@
         </div>
     </div>
     <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced has-background-warning-light">
+        <div class="card has-table has-mobile-sort-spaced has-background-warning-soft">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="fa-solid fa-calendar-week"></i></span>
@@ -275,11 +275,11 @@
                     <div class="table-wrapper has-mobile-cards">
                         @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.AMANHA)).Count() == 0)
                         {
-                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
+                            <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram encontradas encomendas!</button>
                         }
                         else
                         {
-                            <table class="table is-fullwidth has-background-warning-light">
+                            <table class="table is-fullwidth has-background-warning-soft">
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Id)</th>
@@ -400,7 +400,7 @@
                     <div class="table-wrapper has-mobile-cards">
                         @if (Model.Where(e => e.ExisteEncomenda(Encomenda.Tipo.FUTURO)).Count() == 0)
                         {
-                            <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas encomendas!</button>
+                            <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram encontradas encomendas!</button>
                         }
                         else
                         {

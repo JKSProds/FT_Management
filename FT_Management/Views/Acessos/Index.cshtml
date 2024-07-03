@@ -49,7 +49,7 @@
                 </div>
             </form>
             <p class="control">
-                <a class="button is-primary is-fullwidth" id="addFerias"
+                <a class="button is-primary is-fullwidth mt-1" id="addFerias"
                     onclick="window.open('@Url.Action("Acessos", "Acessos", new { data = @ViewData["Data"]})')">
                     <span class="icon">
                         <i class="fas fa-cloud-download-alt"></i>
@@ -99,7 +99,7 @@ else
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.Validado || item.Utilizador.Ferias ? "has-background-success" : (item.Valido ? "has-background-warning" : "has-background-danger"))">
+                            <tr class="@(item.Validado || item.Utilizador.Ferias ? "has-background-success-soft" : (item.Valido ? "has-background-warning-soft" : "has-background-danger-soft"))">
                             <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
                                 <span>@item.Utilizador.NomeCompleto</span>
                             </td>

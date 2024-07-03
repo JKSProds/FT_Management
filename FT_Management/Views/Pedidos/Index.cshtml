@@ -76,30 +76,25 @@
                         </span>
 
                     <div class="control">
-                        <a class="button is-info" href="~/Pedidos/Pedidos/@ViewData["idtecnico"]">
+                        <a class="button is-info" href="~/Pedidos/Pedidos/@ViewData["idtecnico"]" style="height: 40px;">
                             <i class="fas fa-eye"></i>
                         </a>
                     </div>
                     </p>
                 </div>
-                <div class="buttons is-right">
-                    <p class="control">
+                <div class="buttons has-addons is-right">
                         <button type="submit" onclick="filtrar();" class="button is-info is-outlined">
                             <span class="icon">
                                 <i class="fas fa-search fa-lg"></i>
                             </span>
                             <span>Pesquisar</span>
                         </button>
-                    </p>
-                    <p class="control">
-                        <button type="button" onclick="window.location.href = '/Pedidos'" class="button is-outlined">
+                        <button type="button" onclick="window.location.href = '/Pedidos'" class="button is-link is-outlined">
                             <span class="icon">
                                 <i class="fas fa-backspace fa-lg"></i>
                             </span>
                             <span>Limpar</span>
                         </button>
-                    </p>
-                    <p class="control">
                         <button class="button is-primary is-info" type="button"
                             onclick="window.location.href = '/Pedidos/Adicionar'">
                             <span class="icon">
@@ -107,8 +102,6 @@
                             </span>
                             <span>Adicionar</span>
                         </button>
-                    </p>
-                    <p class="control">
                         <button type="button" onclick="window.location.href = '/Pedidos/Agendamento'"
                             class="button is-success is-outlined">
                             <span class="icon">
@@ -116,15 +109,12 @@
                             </span>
                             <span>Agendamento</span>
                         </button>
-                    </p>
-                    <p class="control">
                         <button class="button is-danger" type="button" onclick="ObterViaturas()">
                             <span class="icon">
                                 <i class="fas fa-car-side fa-lg"></i>
                             </span>
                             <span>Viaturas</span>
                         </button>
-                    </p>
                 </div>
             </div>
         </div>
@@ -169,7 +159,7 @@
                     @foreach (var item in Model)
                     {
                         <tr id="marcacao_@item.IdMarcacao"
-                    class="@(item.EstadoMarcacaoDesc=="Finalizado" ? "has-background-success" : "")">
+                    class="@(item.EstadoMarcacaoDesc=="Finalizado" ? "has-background-success-soft" : "")">
                             <td onclick="location.href = '@Url.Action("Pedido", "Pedidos", new { id = item.IdMarcacao })'"
                         data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">
                                 <span>@item.IdMarcacao</span>
@@ -206,8 +196,10 @@
                                         <i class="fas fa-sticky-note"></i>
                                     </span>
                                 </a>
-                                <a class="button is-info is-rounded is-outlined" onclick="copiarTexto('@item.Referencia');">
+                                <a class="button is-link is-rounded is-outlined" onclick="copiarTexto('@item.Referencia');">
+                                    <span class="icon is-small">
                                     <i class="fa-solid fa-copy"></i>
+                                    </span>
                                 </a>
                             </td>
                         </tr>

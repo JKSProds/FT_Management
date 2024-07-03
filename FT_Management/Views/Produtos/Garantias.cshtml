@@ -67,7 +67,7 @@ else
                             {
                             @foreach (var l in item.Linhas.Where(l => !string.IsNullOrEmpty(l.Referencia)))
                                 {
-                                <tr style="width:auto" class="@(item.Estado == "Maia" ? "has-background-success" : "")">
+                                <tr style="width:auto" class="@(item.Estado == "Maia" ? "has-background-success-soft" : "")">
                                     <td data-label="@Html.DisplayNameFor(model => model.First().IdDossier)">
                                         <span>@item.IdDossier</span>
                                     </td>
@@ -127,6 +127,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
+            <div class="buttons is-centered" style="width:100%">
             <button class="button is-info is-fullwidth is-large" type="button"
                     onclick="AtualizarEstadoGarantia(document.getElementById('txtHiddenStamp').value)">
                 <span class="icon">
@@ -141,6 +142,7 @@ else
                 </span>
                 <span>Não</span>
             </button>
+            </div>
         </footer>
     </div>
 </div>

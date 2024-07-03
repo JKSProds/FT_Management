@@ -128,7 +128,7 @@
                                     <button type="button" onclick="GerarSenha('@Model.ClienteStamp')"
                                         class="button is-primary"><i class="fas fa-rotate"></i></button>
                                     <div class="control">
-                                        <a class="button is-info"
+                                        <a class="button is-info" style="height: 40px;"
                                             onclick="Bulma('#modalEnviarEmailCliente').modal().open()">
                                             <i class="fa-solid fa-share"></i>
                                         </a>
@@ -181,7 +181,7 @@
                         <div class="container">
                             @if (Model.Marcacoes.Count() == 0)
                             {
-                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram
                                     encontradas marcações!</button>
                             }
                             else
@@ -243,7 +243,7 @@
                         <div class="container">
                             @if (Model.FolhasObra.Count() == 0)
                             {
-                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram
                                     encontradas intervenções!</button>
                             }
                             else
@@ -315,7 +315,7 @@
                         <div class="container">
                             @if (Model.Visitas.Count() == 0)
                             {
-                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram
                                     encontradas visitas!</button>
                             }
                             else
@@ -378,7 +378,7 @@
                         <div class="container">
                             @if (Model.Visitas.Count() == 0 || !(Model.Visitas.Any(v => v.Propostas.Count > 0)))
                             {
-                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram
                                     encontradas propostas!</button>
                             }
                             else
@@ -449,7 +449,7 @@
                         <div class="container">
                             @if (Model.Equipamentos.Count() == 0)
                             {
-                                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram
+                                <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram
                                     encontrados equipamentos!</button>
                             }
                             else
@@ -477,7 +477,7 @@
                                                 @foreach (var item in Model.Equipamentos)
                                                 {
                                                     <tr
-                                                        onclick="window.open('@(Url.Action("Detalhes", "Equipamentos", new { id = item.EquipamentoStamp }))')">
+                                                        onclick="window.open('@(Url.Action("Equipamento", "Equipamentos", new { id = item.EquipamentoStamp }))')">
                                                         <td
                                                             data-label="@Html.DisplayNameFor(model => model.Equipamentos.FirstOrDefault().MarcaEquipamento)">
                                                             <span>@item.MarcaEquipamento</span>
