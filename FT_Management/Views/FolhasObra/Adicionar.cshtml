@@ -585,6 +585,7 @@
                 </div>
             </section>
             <footer class="modal-card-foot">
+                 <div class="buttons is-centered" style="width:100%">
                 <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalFinal').modal().close(); if (document.getElementById('ListaPecas').value == '') { Bulma('#modalSemPecas').modal().open();} else if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} ">
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk fa-beat-fade"></i>
@@ -597,7 +598,7 @@
                     </span>
                     <span>Cancelar</span>
                 </button>
-            </footer>
+            </div></footer>
         </div>
     </div>
 
@@ -690,6 +691,7 @@
                 </div>
             </section>
             <footer class="modal-card-foot">
+                 <div class="buttons is-centered" style="width:100%">
                 <button class="button is-large is-fullwidth is-success" type="button" onclick="Bulma('#modalValidarCliente2').modal().open(); document.getElementById('divGuiasAssinar').hidden = !(document.getElementById('chkFecharMarcacao').checked && '@Model.Instalação' == 'True' && '@Model.Marcacao.GuiasInstalacao' == 'True'); resizeCanvas();">
                     <span class="icon">
                         <i class="fa-solid fa-circle-check"></i>
@@ -702,7 +704,7 @@
                     </span>
                     <span>Cancelar</span>
                 </button>
-            </footer>
+            </div></footer>
         </div>
     </div>
 
@@ -760,6 +762,7 @@
                 &nbsp;
             </section>
             <footer class="modal-card-foot">
+                 <div class="buttons is-centered" style="width:100%">
                 <button class="button is-large is-fullwidth is-success" type="button" onclick="if (document.getElementById('chkSatisfeito').checked) { document.getElementById('txtRubricaCliente').value = signaturePad.isEmpty() || signaturePad.toData().length == 0 ? document.getElementById('txtRubricaCliente').value : canvas.toDataURL().split(',')[1]; ValidarFolhaObra(); } else { notifyError('Por favor confirme a sua satisfação para avancar!'); }">
                     <span class="icon">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -772,7 +775,7 @@
                     </span>
                     <span>Voltar</span>
                 </button>
-            </footer>
+            </div></footer>
         </div>
     </div>
 </form>
@@ -981,6 +984,7 @@
             </div>
         </section>
         <footer class="modal-card-foot">
+             <div class="buttons is-centered" style="width:100%">
             <button class="button is-large is-fullwidth is-success" type="button" onclick="GuardarCheckList(); Bulma('#modalFinalInstalação').modal().close();ValidarCliente();">
                 <span class="icon">
                     <i class="fa-solid fa-circle-check"></i>
@@ -993,7 +997,7 @@
                 </span>
                 <span>Cancelar</span>
             </button>
-        </footer>
+        </div></footer>
     </div>
 </div>
 
@@ -1049,7 +1053,8 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-large is-fullwidth is-success" type="button" onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, document.getElementById('chkPecaGarantia').checked, (document.getElementById('chkPecaGarantia').checked ? document.getElementById('lstMotivosAvariaGarantia').value : document.getElementById('lstMotivosAvariaNaoGarantia').value), document.getElementById('txtObsPecaGarantia').value)">
+             <div class="buttons is-centered" style="width:100%">
+             </div><button class="button is-large is-fullwidth is-success" type="button" onclick="ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, document.getElementById('chkPecaGarantia').checked, (document.getElementById('chkPecaGarantia').checked ? document.getElementById('lstMotivosAvariaGarantia').value : document.getElementById('lstMotivosAvariaNaoGarantia').value), document.getElementById('txtObsPecaGarantia').value)">
                 <span class="icon">
                     <i class="fa-solid fa-circle-plus"></i>
                 </span>
@@ -1060,6 +1065,7 @@
                     href="javascript:;">
                 Fechar
             </button>
+            </div>
         </footer>
     </div>
 </div>
@@ -1095,6 +1101,7 @@
            </p>
         </section>
         <footer class="modal-card-foot">
+             <div class="buttons is-centered" style="width:100%">
             <button type="button" class="button is-info is-large is-fullwidth"
                     onclick="Bulma('#modalPecaSemStock').modal().close();if (document.getElementById('chkGarantiaSelecionadaPeca').checked || document.getElementById('chkGarantia').checked) { document.getElementById('chkPecaGarantia').checked = document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaGarantia').parentElement.parentElement.parentElement.hidden = !document.getElementById('chkGarantiaSelecionadaPeca').checked; document.getElementById('lstMotivosAvariaNaoGarantia').parentElement.parentElement.parentElement.hidden = document.getElementById('chkGarantiaSelecionadaPeca').checked;Bulma('#modalPecaGarantia').modal().open(); } else 
                                          { ObterPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value, false, '', ''); }"
@@ -1112,7 +1119,7 @@
                     </span>
                     <span>Não</span>
             </button>
-        </footer>
+        </div></footer>
     </div>
 </div>
 
@@ -1124,7 +1131,7 @@
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-                <form action="/Dossiers/Anexo" method="POST" class="dropzone" id="dropAnexo">
+                <form action="/Dossiers/Anexo" method="POST" class="dropzone has-background-dark-dark has-background-light-light" id="dropAnexo">
                     <div class="dz-message needsclick">
                         Largue vários anexos aqui para fazer o upload
                     </div>
@@ -1255,6 +1262,7 @@
             </div>
         </section>
         <footer class="modal-card-foot">
+            <div class="buttons is-centered" style="width:100%">
             <button type="button" class="button is-info is-large is-fullwidth"
                     onclick="Bulma('#modalSemPecas').modal().close(); if ('@Model.Instalação' == 'True' && document.getElementById('chkFecharMarcacao').checked) { Bulma('#modalFinalInstalação').modal().open(); } else {ValidarCliente(); document.getElementById('txtCheckList').value=''} "
                     href="javascript:;">
@@ -1271,6 +1279,7 @@
                     </span>
                     <span>Cancelar</span>
             </button>
+            </div>
         </footer>
     </div>
 </div>
@@ -1652,7 +1661,7 @@
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-small is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:25px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            var html = "<div class='field has-addons mb-1'><a class='button has-background-info is-fullwidth is-outlined mr-1 has-text-weight-semibold is-small' style='text-align:center;line-height:25px'>" + item.label + "</a><div class='field is-grouped is-right '>";
             html += "<input type='button' class='button is-small mr-1 is-success' value='" + item.qtd + " " + item.un + "' style='float: right;' />";
             html += "</div>";
             return $("<li>")
@@ -1816,7 +1825,7 @@
             },
             minLength: 1
         }).css('z-index', 3).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-small is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:25px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            var html = "<div class='field has-addons mb-1'><a class='button has-background-info is-fullwidth is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:35px'>" + item.label + "</a><div class='field is-grouped is-right '>";
              if (item.garantia) html += "<input type='button' class='button is-small is-success mr-1' value='G' />";
             if (!item.garantia) html += "<input type='button' class='button is-small is-danger mr-1' value='FG'  />";
             if (item.contrato) html += "<input type='button' class='button is-small is-info mr-1' value='C' />";

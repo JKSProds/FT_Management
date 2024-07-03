@@ -212,7 +212,7 @@ else
             },
             minLength: 1
         }).css('z-index', 100).data("ui-autocomplete")._renderItem = function (ul, item) {
-            var html = "<div class='field has-addons mb-1'><a class='button is-small is-fullwidth is-info is-outlined mr-1 has-text-weight-semibold' style='text-align:center;line-height:25px'>" + item.label + "</a><div class='field is-grouped is-right '>";
+            var html = "<div class='field has-addons mb-1'><a class='button has-background-info is-fullwidth is-outlined mr-1 has-text-weight-semibold is-small ' style='text-align:center;line-height:25px'>" + item.label + "</a><div class='field is-grouped is-right '>";
             html += "</div>";
             return $("<li>")
                 .append(html)

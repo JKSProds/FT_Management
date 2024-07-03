@@ -260,7 +260,7 @@
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-                <form action="/Dossiers/Anexo" method="POST" class="dropzone">
+                <form action="/Dossiers/Anexo" method="POST" class="dropzone has-background-dark-dark has-background-light-light">
                     <input type="hidden" name="ecra" value="BO">
                     <input type="hidden" name="serie" value="@Model.Serie">
                     <input type="hidden" name="id" value="@Model.Picking_Stamp">
@@ -273,7 +273,7 @@
             @if (Model.Anexos.Count() == 0)
             {
 
-                <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados
+                <button class="button is-danger is-rounded is-outlined is-fullwidth">Não foram encontrados
                     anexos!</button>
             }
             else

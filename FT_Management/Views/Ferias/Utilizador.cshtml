@@ -56,8 +56,7 @@
                     </button>
                 </p>
             </div>
-            <div class="buttons is-right is-grouped">
-                <p class="control">
+            <div class="buttons is-right has-addons">
                     <a class="button is-info is-outlined"
                         onclick="location.href = '@(Url.Action("CalendarioView", "Ferias"))'">
                         <span class="icon">
@@ -65,16 +64,12 @@
                         </span>
                         <span>Calendário</span>
                     </a>
-                </p>
-                <p class="control">
                     <a class="button is-primary is-outlined" id="addFerias">
                         <span class="icon">
                             <i class="fas fa-plus"></i>
                         </span>
                         <span>Adicionar</span>
                     </a>
-                </p>
-                <p class="control">
                     <a class="button is-info">
                         <span>Ano em Visualização: @ViewData["Ano"]</span>
                     </a>
@@ -120,7 +115,7 @@ else
                 <tbody>
                     @foreach (var item in Model.Ferias)
                         {
-                            <tr class="@(item.Validado ? "has-background-success-light" : "has-background-danger-light")">
+                            <tr class="@(item.Validado ? "has-background-success-soft" : "has-background-danger-soft")">
                                 <td style="min-width: 20%;"
                                     data-label="@Html.DisplayNameFor(model => model.Ferias.FirstOrDefault().DataInicio)">
                                     <span>@item.DataInicio.ToString("ddd dd/MM/yyyy")</span>
@@ -191,7 +186,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" id="btnAlterarDiasFerias" onclick="AlterarDiasFerias()"
+            <button type="button" class="button is-info is-fullwidth" id="btnAlterarDiasFerias" onclick="AlterarDiasFerias()"
                 href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check-circle"></i>
@@ -226,7 +221,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-danger" id="btnApagarFerias" onclick="ApagarFerias()"
+            <button type="button" class="button is-danger is-fullwidth" id="btnApagarFerias" onclick="ApagarFerias()"
                 href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-trash"></i>
@@ -259,7 +254,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" id="btnValidarFerias" onclick="ValidarFerias()"
+            <button type="button" class="button is-info is-fullwidth" id="btnValidarFerias" onclick="ValidarFerias()"
                 href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-check"></i>
@@ -288,7 +283,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-danger" id="btnApagarFerias2" onclick="ApagarFerias2()"
+            <button type="button" class="button is-danger is-fullwidth" id="btnApagarFerias2" onclick="ApagarFerias2()"
                 href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-trash"></i>
@@ -333,7 +328,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" id="btnAdicionarFerias" onclick="AdicionarFerias()"
+            <button type="button" class="button is-info is-fullwidth" id="btnAdicionarFerias" onclick="AdicionarFerias()"
                 href="javascript:;">
                 <span class="icon">
                     <i class="fas fa-plus"></i>

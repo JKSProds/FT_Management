@@ -6,7 +6,7 @@
 
 <div class="columns is-gapless">
     <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced has-background-info-light">
+        <div class="card has-table has-mobile-sort-spaced has-background-info-soft">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
@@ -23,7 +23,7 @@
                         }
                         else
                         {
-                            <table class="table is-fullwidth has-background-info-light">
+                            <table class="table is-fullwidth has-background-info-soft">
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)</th>
@@ -36,7 +36,7 @@
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc != "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold;border:0px" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger-light" : (item.DiffDias > 15 ? "has-background-warning-light" : "")) ">
+                                            <tr style="font-weight:bold;border:0px" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger-soft" : (item.DiffDias > 15 ? "has-background-warning-soft" : "")) ">
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                
@@ -73,7 +73,7 @@
         </div>
     </div>
     <div class="column mx-1">
-        <div class="card has-table has-mobile-sort-spaced has-background-success-light">
+        <div class="card has-table has-mobile-sort-spaced has-background-success-soft">
             <header class="card-header">
                 <p class="card-header-title">
                     <span class="icon"><i class="fa-solid fa-file-invoice"></i></span>
@@ -90,7 +90,7 @@
                         }
                         else
                         {
-                            <table class="table is-fullwidth has-background-success-light">
+                            <table class="table is-fullwidth has-background-success-soft">
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)</th>
@@ -103,7 +103,7 @@
                                 </thead>
                                     @foreach (var item in Model.Where(e => e.EstadoMarcacaoDesc == "Pedido Orçamento"))
                                     {
-                                            <tr style="font-weight:bold;" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger-light" : (item.DiffDias > 15 ? "has-background-warning-light" : "")) ">
+                                            <tr style="font-weight:bold;" class="lista-toggle @(item.DiffDias > 30 ? "has-background-danger-soft" : (item.DiffDias > 15 ? "has-background-warning-soft" : "")) ">
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().IdMarcacao)">@item.IdMarcacao</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Cliente.NomeCliente)">@item.Cliente.NomeCliente</td>
                                                 <td style="border:0px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().DiffDias)">@(item.DiffDias == 0 ? "< 1" : @item.DiffDias.ToString())</td>                                                

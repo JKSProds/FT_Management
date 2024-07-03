@@ -48,7 +48,7 @@
                     </span>
 
                 <div class="control">
-                    <a class="button is-info" href="~/Pedidos/Pedido/@Model.Marcacao.IdMarcacao">
+                    <a class="button is-info" style="height:40px" href="~/Pedidos/Pedido/@Model.Marcacao.IdMarcacao">
                         <i class="fa-solid fa-square-up-right"></i>
                     </a>
                 </div>
@@ -60,7 +60,7 @@
                     </span>
 
                 <div class="control">
-                    <a class="button is-info" href="~/FolhasObra/FolhaObra/@Model.FolhaObra.IdFolhaObra">
+                    <a class="button is-info" style="height:40px" href="~/FolhasObra/FolhaObra/@Model.FolhaObra.IdFolhaObra">
                         <i class="fa-solid fa-square-up-right"></i>
                     </a>
                 </div>
@@ -73,7 +73,7 @@
                     </span>
 
                 <div class="control">
-                    <a class="button is-info"
+                    <a class="button is-info" style="height:40px"
                         href="~/Equipamentos/Equipamento/@Model.FolhaObra.EquipamentoServico.EquipamentoStamp">
                         <i class="fa-solid fa-square-up-right"></i>
                     </a>
@@ -101,14 +101,6 @@
                                 <i class="fa-solid fa-square-plus"></i>
                             </span>
                             <span>Adicionar Linha</span>
-                        </button>
-                    </p>
-                    <p class="control">
-                        <button class="button is-success is-outlined" disabled type="button">
-                            <span class="icon">
-                                <i class="fa-solid fa-table-list"></i>
-                            </span>
-                            <span>Lista de Referências</span>
                         </button>
                     </p>
                     }
@@ -226,7 +218,7 @@ else
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-                <form action="/Dossiers/Anexo" method="POST" class="dropzone">
+                <form action="/Dossiers/Anexo" method="POST" class="dropzone has-background-dark-dark has-background-light-light">
                     <input type="hidden" name="ecra" value="BO">
                     <input type="hidden" name="serie" value="@Model.Serie">
                     <input type="hidden" name="id" value="@Model.StampDossier">
