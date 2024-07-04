@@ -99,7 +99,7 @@ else
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.Validado || item.Utilizador.Ferias ? "has-background-success-soft" : (item.Valido ? "has-background-warning-soft" : "has-background-danger-soft"))">
+                            <tr class="@(item.Validado || item.Utilizador.Ferias ? "has-background-success-soft" : (item.Valido ? "has-background-warning-soft" : "has-background-danger-soft"))" id="tr_@item.Utilizador.Id">
                             <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
                                 <span>@item.Utilizador.NomeCompleto</span>
                             </td>
@@ -121,7 +121,7 @@ else
                              <td style="min-width: 250px" class="is-actions-cell">
                             @if (!item.Validado && !item.Utilizador.Ferias) {
                                 <div class="buttons">
-                                <a class="button is-success is-rounded " onclick="ValidarAcessos(this);document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras(8,30)';"
+                                <a class="button is-success is-rounded " onclick="ValidarAcessos('tr_@item.Utilizador.Id');document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras(8,30)';"
                                         href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                                 <a class="button is-info is-rounded" onclick="EditarAcessos(this)"
                                         href="javascript:;"><i class="fas fa-pencil" style="font-size:20px"></i></a>
@@ -241,7 +241,7 @@ else
     </div>
 </div>
 
-
+<input hidden id="txtIdUtilizador">
 
 <script>
 
@@ -325,9 +325,28 @@ else
 
     }
 
-    function ValidarAcessos(btn)
+    function ValidarAcessos(id)
     {
-        btn.classList.add("is-loading");
+        var btn = document.getElementById(id);
+        document.getElementById('txtIdUtilizador').value = id;
+        btn.closest('tr').querySelectorAll('input').forEach(input => {
+            if (input.getAttribute('data-validar') == 'True') {
+                if (input.getAttribute('data-total') > 8*60) {
+                    document.getElementById("lstTipo").value = 1;
+                }else{
+                    document.getElementById("lstTipo").value = 2;
+                }
+            document.getElementById("lstTipo").dispatchEvent(new Event('change'));
+            }
+        });
+        Bulma('#modalValidarAcesso').modal().open();
+    }
+
+    function GuardarAcessos(t, tF, tE, id)
+    {
+       // if (document.getElementById('chkBancoHoras').checked && (document.getElementById('txtBancoHoras').value < document.getElementById('txtHoras').value)) alert("Não tem horas para descontar!");
+        var btn = document.getElementById(document.getElementById('txtIdUtilizador').value);
+       btn.classList.add("is-loading");
         lstId = '';
 
         btn.closest('tr').querySelectorAll('input').forEach(input => {
@@ -354,17 +373,32 @@ else
                         btn.closest('tr').classList.add('has-background-success');
                         notify('Registros validados com sucesso!');
                         document.getElementById('txtListaIdRegistros').value = lstId;
-
-                        if (input.getAttribute('data-validar') == 'True') {
-                            if (input.getAttribute('data-total') > 8*60) {
-                                document.getElementById("lstTipo").value = 1;
-                            }else{
-                                document.getElementById("lstTipo").value = 2;
+                        var json = {
+                            id: document.getElementById('txtListaIdRegistros').value,
+                            tipo: t,
+                            tipoFalta: tF,
+                            tipoHoraExtra: tE,
+                            bancoHoras: document.getElementById('chkBancoHoras').checked,
+                            horas: document.getElementById('txtHoras').value
+                        };
+                    
+                        $.ajax({
+                            type: "POST",
+                            url: "/Acessos/Validar",
+                            data: json,
+                            traditional: true,
+                            success: function (result) {
+                                $(function () {
+                                    window.location.reload();
+                                });
+                            },
+                            error: function (response) {
+                                notifyError('Ocorreu um erro ao guardar os acessos!');
+                            },
+                            failure: function (response) {
+                                notifyError('Falha ao guardar os acessos');
                             }
-                            document.getElementById("lstTipo").dispatchEvent(new Event('change'));
-                            Bulma('#modalValidarAcesso').modal().open();
-                         }
-                         
+                        });
                     });
                 },
                 error: function (response) {
@@ -376,39 +410,8 @@ else
             });
         });
         btn.classList.remove("is-loading");
-    }
 
-
-    function GuardarAcessos(t, tF, tE, id)
-    {
-       // if (document.getElementById('chkBancoHoras').checked && (document.getElementById('txtBancoHoras').value < document.getElementById('txtHoras').value)) alert("Não tem horas para descontar!");
-        var json = {
-            id: document.getElementById('txtListaIdRegistros').value,
-            tipo: t,
-            tipoFalta: tF,
-            tipoHoraExtra: tE,
-            bancoHoras: document.getElementById('chkBancoHoras').checked,
-            horas: document.getElementById('txtHoras').value
-        };
-    
-        $.ajax({
-            type: "POST",
-            url: "/Acessos/Validar",
-            data: json,
-            traditional: true,
-            success: function (result) {
-                $(function () {
-                    notify('Registros validados com sucesso no PHC!');
-                    Bulma('#modalValidarAcesso').modal().close();
-                });
-            },
-            error: function (response) {
-                notifyError('Ocorreu um erro ao guardar os acessos!');
-            },
-            failure: function (response) {
-                notifyError('Falha ao guardar os acessos');
-            }
-        });
+        
     }
 
     function DataAlterada() {
