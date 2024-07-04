@@ -7,14 +7,20 @@
 <input type="hidden" id="txtStampMarcacao">
 
 <div class="container">
-    @if ((bool)ViewData["Piquete"]) {
-    <section class="hero is-small is-danger">
-        <div class="hero-body">
-            <p class="title has-text-centered">FIM-DE-SEMANA PIQUETE</p>
-        </div>
-    </section>
-    }
     <div class="columns">
+         @if ((bool)ViewData["Piquete"]) {
+        <div class="column">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child notification is-danger">
+                        <p class="title has-text-centered">
+                            <span>FIM-DE-SEMANA PIQUETE</span>
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </div>
+        }
         <div class="column">
             <div class="tile">
                 <div class="tile is-parent is-vertical">
