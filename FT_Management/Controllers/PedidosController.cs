@@ -228,6 +228,7 @@ namespace FT_Management.Controllers
             ViewData["DataPedidos"] = DateTime.Now.ToString("dd-MM-yyyy");
             ViewData["IdTecnico"] = u.IdPHC;
             ViewData["IdArmazem"] = u.IdArmazem;
+            ViewData["Piquete"] = false;
 
             return View("Pedidos", ListaMarcacoes);
         }
