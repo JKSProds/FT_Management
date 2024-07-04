@@ -303,9 +303,7 @@ else
                     data: json,
                     traditional: true,
                     success: function (result) {
-                        if (result != 1) {
                              window.location.reload();
-                        } 
                     },
                     error: function (response) {
                         notifyError('Ocorreu um erro ao editar os acessos!');
