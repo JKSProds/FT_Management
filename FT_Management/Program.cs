@@ -97,7 +97,7 @@ namespace FT_Management
             cultura.NumberFormat.NumberDecimalSeparator = ".";
 
             app.UseAuthentication();
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development") app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.ConfigureExceptionHandler(app.Logger, app.Services.GetRequiredService<IHttpContextAccessor>());
