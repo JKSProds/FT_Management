@@ -2792,14 +2792,13 @@ namespace FT_Management.Models
             return LstAcessos;
         }
 
-        public bool ValidarAcesso(RegistroAcessos r, Utilizador u, int NHoras, int Margem) {
+        public bool ValidarAcesso(RegistroAcessos r, Utilizador u, int Horas) {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
-            int Horas = r.ObterHoras(NHoras, Margem);
             string SQL_Query = "";
 
             try
             {
-                if (r.TipoHorasExtra > 0 && Horas > 0 + (Margem / 60.0) && r.TipoHorasExtra != 6) {
+                if (r.TipoHorasExtra > 0 && Horas > 0 && r.TipoHorasExtra != 6) {
                     SQL_Query = "EXEC WEB_Insere_HS ";
 
                     SQL_Query += "@NO = '" + r.Utilizador.IdFuncionario + "', ";

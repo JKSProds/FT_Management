@@ -1948,14 +1948,14 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-        public bool CriarRegistoBancoHoras(RegistroAcessos r, Utilizador u, int NHoras, int Margem)
+        public bool CriarRegistoBancoHoras(RegistroAcessos r, Utilizador u, int NHoras)
         {
                 bool res = false;
-                string obs = "Criado um registo de banco de horas pelo utilizador " + u.NomeCompleto + " do utilizador " + r.Utilizador.NomeCompleto + " de " + (r.TipoHorasExtra > 0 ? " Horas Extraordinarias " : " Falta ") + ". " + r.ObterHoras(NHoras,Margem) + " Hora(s).";
+                string obs = "Criado um registo de banco de horas pelo utilizador " + u.NomeCompleto + " do utilizador " + r.Utilizador.NomeCompleto + " de " + (r.TipoHorasExtra > 0 ? " Horas Extraordinarias " : " Falta ") + ". " + NHoras + " Hora(s).";
                 
                 string sql = "INSERT INTO dat_banco_horas (Stamp,IdUtilizador,Tipo,Horas,IdAcessos,Observacoes,DataAcessos) VALUES ";
 
-                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ r.ObterHoras(NHoras, Margem).ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data +"');";
+                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ NHoras.ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data +"');";
 
                 Database db = ConnectionString;
 

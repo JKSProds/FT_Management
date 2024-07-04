@@ -208,19 +208,20 @@ else
                         </span>
                     </label>
                 </div>
-                 <fieldset disabled>
-                    <div class="field has-addons">
+                    <div class="field has-addons" style="width:100%">
                         <div class="control">
                             <input type="text" class="input" id="txtHoras">
                         </div>
+                 <fieldset disabled>
                         <div class="control">
                             <input type="text" class="input" id="txtBancoHoras">
                         </div>
-                    </div>
                 </fieldset>
+                    </div>
             </div>
         </section>
         <footer class="modal-card-foot">
+            <div class="buttons is-centered" style="width:100%">
             <button class="button is-info is-fullwidth"
                 onclick="GuardarAcessos(document.getElementById('lstTipo').value, document.getElementById('lstTipoFaltas').value, document.getElementById('lstTipoHorasExtra').value, document.getElementById('txtListaIdRegistros').value)">
                     <span class="icon">
@@ -228,13 +229,14 @@ else
                     </span>
                     <span>Guardar PHC</span>
                     </button>
-            <button class="button is-secondary is-outlined is-fullwidth"
+            <button class="button is-link is-outlined is-fullwidth"
                 onclick="Bulma('#modalValidarAcesso').modal().close();">
                 <span class="icon">
                         <i class="fa-regular fa-circle-xmark"></i>
                     </span>
                     <span>Cancelar</span>
                     </button>
+                </div>
         </footer>
     </div>
 </div>
@@ -379,13 +381,14 @@ else
 
     function GuardarAcessos(t, tF, tE, id)
     {
-        if (document.getElementById('chkBancoHoras').checked && (document.getElementById('txtBancoHoras').value < document.getElementById('txtHoras').value)) alert("Não tem horas para descontar!");
+       // if (document.getElementById('chkBancoHoras').checked && (document.getElementById('txtBancoHoras').value < document.getElementById('txtHoras').value)) alert("Não tem horas para descontar!");
         var json = {
             id: document.getElementById('txtListaIdRegistros').value,
             tipo: t,
             tipoFalta: tF,
             tipoHoraExtra: tE,
-            bancoHoras: document.getElementById('chkBancoHoras').checked
+            bancoHoras: document.getElementById('chkBancoHoras').checked,
+            horas: document.getElementById('txtHoras').value
         };
     
         $.ajax({
