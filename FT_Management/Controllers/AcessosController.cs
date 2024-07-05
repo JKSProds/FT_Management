@@ -134,6 +134,8 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a editar/criar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
 
+            if (horas == 0) return StatusCode(200);
+
             foreach (var a in id.Split(",")) {
                 if (a != string.Empty && a != "0")
                 { 

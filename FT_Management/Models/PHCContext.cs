@@ -2896,19 +2896,20 @@ namespace FT_Management.Models
 
                     Horas -=1;
                 }
+                if (Horas > 0) {
+                    SQL_Query = "EXEC WEB_Insere_HS ";
 
-                SQL_Query = "EXEC WEB_Insere_HS ";
+                    SQL_Query += "@NO = '" + r.Utilizador.IdFuncionario + "', ";
+                    SQL_Query += "@DATA = '" + r.Data.ToString("yyyy-MM-dd") + "', ";
+                    SQL_Query += "@NTIPO = '" + (r.TipoFalta != 0 ? 2 : (r.TipoHorasExtra != 0 ? 1 : 3)) + "', ";
+                    SQL_Query += "@HSHECOD = '" + r.TipoHorasExtra + "', ";
+                    SQL_Query += "@TYFALTA = '" + r.TipoFalta + "', ";
+                    SQL_Query += "@HORASEXTRA = '" + (r.TipoHorasExtra != 0 ? Horas.ToString() : "0") + "', ";
+                    SQL_Query += "@TEMPOFALTA = '" + (r.TipoFalta != 0 ? Horas.ToString() : "0") + "', ";
+                    SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
 
-                SQL_Query += "@NO = '" + r.Utilizador.IdFuncionario + "', ";
-                SQL_Query += "@DATA = '" + r.Data.ToString("yyyy-MM-dd") + "', ";
-                SQL_Query += "@NTIPO = '" + (r.TipoFalta != 0 ? 2 : (r.TipoHorasExtra != 0 ? 1 : 3)) + "', ";
-                SQL_Query += "@HSHECOD = '" + r.TipoHorasExtra + "', ";
-                SQL_Query += "@TYFALTA = '" + r.TipoFalta + "', ";
-                SQL_Query += "@HORASEXTRA = '" + (r.TipoHorasExtra != 0 ? Horas.ToString() : "0") + "', ";
-                SQL_Query += "@TEMPOFALTA = '" + (r.TipoFalta != 0 ? Horas.ToString() : "0") + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
-
-                res = ExecutarQuery(SQL_Query);
+                    res = ExecutarQuery(SQL_Query);
+                }
             }
 
             catch (Exception ex)
