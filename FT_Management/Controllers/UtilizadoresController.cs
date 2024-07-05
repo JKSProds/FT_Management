@@ -224,6 +224,7 @@ namespace FT_Management.Controllers
             }
             return View(t);
         }
+
         //Cria um utilizador em especifico
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -510,6 +511,22 @@ namespace FT_Management.Controllers
             }
 
             return ChatContext.EnviarNotificacao(Mensagem,u2) ? StatusCode(200) : StatusCode(500);
+        }
+
+        //ObterInfoPHC Utilizador
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public JsonResult PHC(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));          
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter a informação de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
+
+            
+
+            return Json(phccontext.ObterFuncionario(id));
         }
     }
 }
