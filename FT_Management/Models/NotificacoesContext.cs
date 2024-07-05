@@ -559,7 +559,7 @@ namespace FT_Management.Models
         public static bool EnviarEmailMarcacaoPD(FolhaObra fo, Marcacao m, int Estado)
         {
             string Assunto = "RE: " + fo.ReferenciaServico + " - ";
-            string Email = fo.ReferenciaServico.StartsWith("58") ? "2370@kyntech.pt" : "itsupport@jm-hello.com";
+            string Email = fo.ReferenciaServico.StartsWith("58") ? "2370@kyntech.pt" : "jeronimomartins@service-now.com";
 
             //Estado 1 - Concluido | 2 - Encaminhar | 3 - Pendente
             if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
