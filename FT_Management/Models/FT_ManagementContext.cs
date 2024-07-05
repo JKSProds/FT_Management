@@ -3703,6 +3703,57 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
             return c;
         }
 
+
+        public List<CategoriaResolucao> ObterCategoriasResolucao()
+        {
+            List<CategoriaResolucao> c = new List<CategoriaResolucao>();
+            string sqlQuery = "SELECT a.Id1, a.Texto, b.Id2, b.Texto, c.Id3, c.Texto, c.Relatorio FROM dat_categoria_resolucao a join dat_categoria_resolucao b on b.Id1=a.Id1 && b.Id2 <> 0 join dat_categoria_resolucao c on c.Id1=a.Id1 && c.Id2=b.Id2 && c.Id3 <> 0 group by a.Id1, b.Id2, c.Id3;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    c.Add(new CategoriaResolucao()
+                    {
+                        Id_1 = result[0],
+                        Categoria1 = result[1],
+                        Id_2 = result[2],
+                        Categoria2 = result[3],
+                        Id_3 = result[4],
+                        Categoria3 = result[5],
+                        ExemploRelatorio = result[6]
+                    });
+                }
+            }
+            return c;
+        }
+
+        public CategoriaResolucao ObterCategoriaResolucao(CategoriaResolucao cat)
+        {
+            List<CategoriaResolucao> c = new List<CategoriaResolucao>();
+            string sqlQuery = "SELECT a.Id1, a.Texto, b.Id2, b.Texto, c.Id3, c.Texto, c.Relatorio FROM dat_categoria_resolucao a join dat_categoria_resolucao b on b.Id1=a.Id1 && b.Id2 <> 0 join dat_categoria_resolucao c on c.Id1=a.Id1 && c.Id2=b.Id2 && c.Id3 <> 0 where a.Id1="+cat.Id_1+" and b.Id2="+cat.Id_2+" and c.Id3="+cat.Id_3+" group by a.Id1, b.Id2, c.Id3;";
+
+            using Database db = ConnectionString;
+            using (var result = db.Query(sqlQuery))
+            {
+                while (result.Read())
+                {
+                    c.Add(new CategoriaResolucao()
+                    {
+                        Id_1 = result[0],
+                        Categoria1 = result[1],
+                        Id_2 = result[2],
+                        Categoria2 = result[3],
+                        Id_3 = result[4],
+                        Categoria3 = result[5],
+                        ExemploRelatorio = result[6]
+                    });
+                }
+            }
+            return c.DefaultIfEmpty(new CategoriaResolucao()).First();
+        }
+
         //Produtos (INATIVO)
         //public void CriarProduto(List<Produto> LstProdutos)
         //{

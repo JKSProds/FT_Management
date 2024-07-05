@@ -163,7 +163,7 @@ else
                                 <div class="buttons has-addons">
                                     @if(item.EstadoMarcacaoDesc == "Em Curso") {
                                         <a class="button is-danger is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.MarcacaoStamp }))'" id="btnStop_@item.MarcacaoStamp"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
-                                    }else if(item.EstadoMarcacaoDesc != "Em Curso" || item.EstadoMarcacaoDesc != "Finalizado" || item.EstadoMarcacaoDesc != "Cancelado" ){
+                                    }else if(item.EstadoMarcacaoDesc != "Em Curso" && item.EstadoMarcacaoDesc != "Finalizado" && item.EstadoMarcacaoDesc != "Cancelado" ){
                                         <a class="button is-info is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
                                     }
                                           @if (item.Cliente.ContactoValido)
