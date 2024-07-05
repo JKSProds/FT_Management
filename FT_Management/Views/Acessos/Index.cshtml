@@ -122,7 +122,7 @@ else
                             @if (!item.Validado && !item.Utilizador.Ferias) {
                                 <div class="buttons">
                                     @if (item.TotalMinutos > 0 && !item.Utilizador.IsencaoHorario) {
-                                <a class="button is-success is-rounded " onclick="ValidarAcessos('tr_@item.Utilizador.Id');document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras(8,30)';"
+                                <a class="button is-success is-rounded " onclick="ValidarAcessos('tr_@item.Utilizador.Id');document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras()';"
                                         href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                                         }
                                 <a class="button is-info is-rounded" onclick="EditarAcessos(this)"
@@ -224,14 +224,14 @@ else
         </section>
         <footer class="modal-card-foot">
             <div class="buttons is-centered" style="width:100%">
-            <button class="button is-info is-fullwidth"
+            <button class="button is-info is-fullwidth is-large"
                 onclick="GuardarAcessos(document.getElementById('lstTipo').value, document.getElementById('lstTipoFaltas').value, document.getElementById('lstTipoHorasExtra').value, document.getElementById('txtListaIdRegistros').value)">
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk"></i>
                     </span>
                     <span>Guardar</span>
                     </button>
-            <button class="button is-link is-outlined is-fullwidth"
+            <button class="button is-link is-outlined is-fullwidth is-large"
                 onclick="Bulma('#modalValidarAcesso').modal().close();">
                 <span class="icon">
                         <i class="fa-regular fa-circle-xmark"></i>
