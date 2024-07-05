@@ -104,16 +104,16 @@ else
                                 <span>@item.Utilizador.NomeCompleto</span>
                             </td>
                             <td data-label="E1">
-                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=1 id="@item.E1.Id" data-total="@item.TotalMinutos" type="text" value="@item.E1.Data.ToString("HH:mm")" disabled/>
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=1 id="@item.E1.Id" data-total="@item.TotalMinutos" type="time" value="@item.E1.Data.ToString("HH:mm")" readonly/>
                             </td>
                                 <td data-label="S1">
-                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=2 id="@item.S1.Id" data-total="@item.TotalMinutos" type="text" value="@item.S1.Data.ToString("HH:mm")" disabled/>
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=2 id="@item.S1.Id" data-total="@item.TotalMinutos" type="time" value="@item.S1.Data.ToString("HH:mm")" readonly/>
                             </td>
                                 <td data-label="E2">
-                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=1 id="@item.E2.Id" data-total="@item.TotalMinutos" type="text" value="@item.E2.Data.ToString("HH:mm")" disabled/>
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=1 id="@item.E2.Id" data-total="@item.TotalMinutos" type="time" value="@item.E2.Data.ToString("HH:mm")" readonly/>
                             </td>
                                 <td data-label="S2">
-                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=2 id="@item.S2.Id" data-total="@item.TotalMinutos" type="text" value="@item.S2.Data.ToString("HH:mm")" disabled/>
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=2 id="@item.S2.Id" data-total="@item.TotalMinutos" type="time" value="@item.S2.Data.ToString("HH:mm")" readonly/>
                             </td>
                                 <td data-label="Total">
                                 <span><b>@item.TotalHorasDesc()</b></span>
@@ -288,8 +288,8 @@ else
 
     function EditarAcessos(btn)
     {
-        btn.closest('tr').querySelectorAll('input').forEach(input => {input.disabled = !input.disabled; });
-        if (btn.closest('tr').querySelectorAll('input')[0].disabled) {
+        btn.closest('tr').querySelectorAll('input').forEach(input => {input.readOnly = !input.readOnly; });
+        if (btn.closest('tr').querySelectorAll('input')[0].readOnly) {
             btn.querySelector('i').classList.add('fa-pencil');
             btn.querySelector('i').classList.remove('fa-floppy-disk');
 
@@ -321,7 +321,7 @@ else
         }else{
             btn.querySelector('i').classList.remove('fa-pencil');
             btn.querySelector('i').classList.add('fa-floppy-disk');
-            btn.closest('tr').querySelectorAll('btn').forEach(input => {input.disabled = true; });
+            btn.closest('tr').querySelectorAll('btn').forEach(input => {input.readOnly = true; });
             btn.disabled = false;
         }
 
