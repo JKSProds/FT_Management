@@ -85,7 +85,7 @@ namespace FT_Management.Models
         }
         public List<Utilizador> ObterListaTecnicos(bool Enable, bool Viatura)
         {
-            return ObterListaUtilizadores(Enable, Viatura).Where(u => u.TipoUtilizador == 1).ToList();
+            return ObterListaUtilizadores(Enable, Viatura).Where(u => u.IdPHC > 0 && u.IdArmazem > 0).ToList();
         }
         public List<Utilizador> ObterListaComerciais(bool Enable)
         {
