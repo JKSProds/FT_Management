@@ -50,7 +50,7 @@
                 ViewData["Frase"] = json.q + "<br><b>" + json.a + "</b>";
             }
 
-            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.Acessos).ToList();
+            List<Utilizador> LstUtilizadores = context.ObterListaUtilizadores(true, false).Where(u => u.Acessos && u.TipoUtilizador != 1).ToList();
             List<Ferias> LstFerias = context.ObterListaFerias(DateTime.Parse(DateTime.Now.ToLongDateString() + " 00:00:00"), DateTime.Parse(DateTime.Now.ToLongDateString() + " 23:59:59"));
             foreach (Ferias f in LstFerias)
             {

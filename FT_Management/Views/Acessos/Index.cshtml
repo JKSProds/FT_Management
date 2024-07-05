@@ -99,7 +99,7 @@ else
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.Validado || item.Utilizador.Ferias ? "has-background-success-soft" : (item.Valido ? "has-background-warning-soft" : "has-background-danger-soft"))" id="tr_@item.Utilizador.Id">
+                            <tr class="@(item.Validado || item.Utilizador.Ferias || item.Utilizador.IsencaoHorario ? "has-background-success-soft" : (item.Valido ? "has-background-warning-soft" : "has-background-danger-soft"))" id="tr_@item.Utilizador.Id">
                             <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
                                 <span>@item.Utilizador.NomeCompleto</span>
                             </td>
@@ -121,7 +121,7 @@ else
                              <td style="min-width: 250px" class="is-actions-cell">
                             @if (!item.Validado && !item.Utilizador.Ferias) {
                                 <div class="buttons">
-                                    @if (item.TotalMinutos > 0) {
+                                    @if (item.TotalMinutos > 0 && !item.Utilizador.IsencaoHorario) {
                                 <a class="button is-success is-rounded " onclick="ValidarAcessos('tr_@item.Utilizador.Id');document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras(8,30)';"
                                         href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
                                         }
@@ -229,7 +229,7 @@ else
                     <span class="icon">
                         <i class="fa-solid fa-floppy-disk"></i>
                     </span>
-                    <span>Guardar PHC</span>
+                    <span>Guardar</span>
                     </button>
             <button class="button is-link is-outlined is-fullwidth"
                 onclick="Bulma('#modalValidarAcesso').modal().close();">

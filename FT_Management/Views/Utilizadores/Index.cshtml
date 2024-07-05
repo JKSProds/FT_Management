@@ -71,7 +71,7 @@ else
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.AcessoAtivo ? "has-background-success-light" : "has-background-danger-light")">
+                            <tr class="@(item.AcessoAtivo ? "has-background-success-soft" : "has-background-danger-soft")">
                                 <td class="is-image-cell">
                                     <div class="image">
                                         <img src="@item.ImgUtilizador" class="is-rounded">
@@ -138,6 +138,17 @@ else
                                                             <span class="check is-warning"></span>
                                                             <span class="control-label">@Html.DisplayNameFor(model =>
                                                     model.Acessos)</span>
+                                                        </label>
+                                                    </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                                class="switch is-rounded">
+                                                            <input type="checkbox" id="chkIsencao_@item.Id" checked="@item.IsencaoHorario"
+                                                    onchange="AtualizarIsencaoUtilizador(@item.Id)">
+                                                            <span class="check is-link"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.IsencaoHorario)</span>
                                                         </label>
                                                     </div>
                                                     <hr class="dropdown-divider">
@@ -538,6 +549,24 @@ else
                 $(function () {
                     if (result == "1") {
                         notify('Valor de acessos do utilizador atualizado com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                });
+            }
+        });
+    }
+
+        function AtualizarIsencaoUtilizador(id) {
+        $.ajax({
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { isencao: document.getElementById('chkIsencao_' + id).checked ? 1 : 2 },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "1") {
+                        notify('Valor de isencao do utilizador atualizado com sucesso!');
                     } else {
                         notifyError('Ocorreu um erro ao atualizar o utilizador!');
                     }
