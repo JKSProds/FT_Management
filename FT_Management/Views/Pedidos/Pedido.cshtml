@@ -89,7 +89,7 @@
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <div class="control">
-                                            <a class="button is-info" href="~/Pedidos/Editar/@Model.IdMarcacao">
+                                            <a class="button is-info" href="~/Pedidos/Editar/@Model.IdMarcacao" style="height: 40px;">
                                                 <i class="fas fa-pencil"></i>
                                             </a>
                                         </div>
@@ -371,7 +371,7 @@
                     &nbsp;
                     @if (Model.LstFolhasObra.Count() == 0)
                     {
-                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontradas
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" >Não foram encontradas
                             folhas de obra!</button>
                     }
                     else
@@ -472,7 +472,7 @@
                     @if (Model.LstComentarios.Count() == 0)
                     {
 
-                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" >Não foram encontrados
                             comentários!</button>
                     }
                     else
@@ -523,7 +523,7 @@
                     @if (Model.LstAnexos.Count() == 0)
                     {
 
-                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" >Não foram encontrados
                             anexos!</button>
                     }
                     else
@@ -588,7 +588,7 @@
                     @if (Model.LstAtividade.Count() == 0)
                     {
 
-                        <button class="button is-danger is-rounded is-outlined is-fullwidth" disabled>Não foram encontrados dossier's!</button>
+                        <button class="button is-danger is-rounded is-outlined is-fullwidth" >Não foram encontrados dossier's!</button>
                     }
                     else
                     {
