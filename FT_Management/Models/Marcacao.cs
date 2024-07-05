@@ -12,6 +12,7 @@
                 this.EstadoMarcacaoDesc == "Pedido Orçamento" || this.EstadoMarcacaoDesc == "Pedido Peças" ? "⌛️" :
                 this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
                 this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
+                this.EstadoMarcacaoDesc.StartsWith("Enviado") ? "🛒 " :
                 this.EstadoMarcacaoDesc == "Reagendar" ? "📆 " :
                 this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : "✅ ");
             }
