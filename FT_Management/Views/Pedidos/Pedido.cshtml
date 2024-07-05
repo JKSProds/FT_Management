@@ -86,6 +86,11 @@
                                     </p>
                                     <input class="input" type="text" style="width:30%" readonly
                                            value="@Model.Cliente.IdCliente - @Model.Cliente.IdLoja">
+                                           <div class="control">
+                                            <a class="button is-primary" href="~/Clientes/Cliente?IdCliente=@Model.Cliente.IdCliente&IdLoja=@Model.Cliente.IdLoja" style="height: 40px;">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <div class="control">
@@ -676,8 +681,11 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info" onclick="AdicionarComentario()" id="btnConfirmAddComentario"
-                href="javascript:;">Adicionar</button>
+            <button type="button" class="button is-info is-fullwidth is-large" onclick="AdicionarComentario()" id="btnConfirmAddComentario"
+                href="javascript:;"><span class="icon">
+                        <i class="fa-regular fa-plus"></i>
+                    </span>
+                    <span>Adicionar</span></button>
         </footer>
     </div>
 </div>
@@ -699,8 +707,8 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-info is-fullwidth" onclick="window.location.reload();" id="btnConfirmAddAnexo"
-                href="javascript:;">Fechar</button>
+            <div class="buttons is-centered" style="width:100%">
+            
             <div class="select">
                 <select onchange="document.getElementById('TipoFicheiro').value = this.value;">
                     <option value="0">Marcação</option>
@@ -708,6 +716,13 @@
                     <option value="2">Auto de Formação</option>
                     <option value="3">Auto de Receção</option>
                 </select>
+                
+            </div>
+            <button type="button" class="button is-danger " onclick="window.location.reload();" id="btnConfirmAddAnexo"
+                href="javascript:;"><span class="icon">
+                        <i class="fa-regular fa-circle-xmark"></i>
+                    </span>
+                    <span>Fechar</span></button>
             </div>
         </footer>
     </div>
