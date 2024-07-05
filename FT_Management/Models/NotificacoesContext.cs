@@ -558,12 +558,15 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailMarcacaoPD(FolhaObra fo, Marcacao m, int Estado)
         {
+            string Assunto = "RE: " + fo.ReferenciaServico + " - ";
+            string Email = fo.ReferenciaServico.StartsWith("58") ? "2370@kyntech.pt" : "jeronimomartins@service-now.com";
+
             //Estado 1 - Concluido | 2 - Encaminhar | 3 - Pendente
-            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem" && fo.ReferenciaServico.StartsWith("58"))
+            if (!string.IsNullOrEmpty(fo.RelatorioServico) && m.TipoEquipamento == "Pesagem")
             {
-                string Assunto = "[Ticket#" + fo.ReferenciaServico + "] ";
+                if (fo.ReferenciaServico.StartsWith("58")) Assunto = "[Ticket#" + fo.ReferenciaServico + "] ";
                 Assunto += Estado == 1 ? "Resolvido" : Estado == 2 ? "Encaminhar" : "Pendente";
-                EnviarMailSimples("2370@kyntech.pt", Assunto, fo.RelatorioServico.ReplaceLineEndings("<br>"), ObterEmailCC(1), fo.Utilizador);
+                EnviarMailSimples(Email, Assunto, fo.RelatorioServico.ReplaceLineEndings("<br>"), ObterEmailCC(1), fo.Utilizador);
             }
 
             return true;

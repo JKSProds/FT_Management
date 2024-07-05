@@ -41,22 +41,24 @@
 
        public int TotalMinutos { get { return (int)((S1.Data - E1.Data) + (S2.Data - E2.Data)).TotalMinutes;}}
        public bool ValidarPHC {get {return Math.Abs(TotalMinutos - 8*60) > 15 && this.Utilizador.TipoUtilizador != 1;}}     
+       private int Horas = 8;
+    
        public string TotalHorasDesc() { 
             TimeSpan t1 = S1.Data - E1.Data;
             TimeSpan t2 = S2.Data - E2.Data;
             TimeSpan d = t1+t2;
-            
-
+        
             return d > TimeSpan.Zero ? $"{(int)d.TotalHours:D2}:{d.Minutes:D2}" : "--:--";
         }
 
 
-        public int ObterHoras(int NHoras, int Margem) {
-             double tempoTrabalhadoHoras = this.TotalMinutos / 60.0;
-            double diferencaHoras = Math.Abs(NHoras - tempoTrabalhadoHoras);
-
-            return (int)Math.Ceiling(diferencaHoras);
+        public int ObterHoras() {
+            double tempoTrabalhadoHoras = this.TotalMinutos / 60.0;
+            double diferencaHoras = Math.Abs(Horas - tempoTrabalhadoHoras);
+            
+            return (int)Math.Round(diferencaHoras);
         }
+
 
         public RegistroAcessos() {
             E1 = new Acesso();

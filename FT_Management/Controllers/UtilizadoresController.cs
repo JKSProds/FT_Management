@@ -224,6 +224,7 @@ namespace FT_Management.Controllers
             }
             return View(t);
         }
+
         //Cria um utilizador em especifico
         [Authorize(Roles = "Admin")]
         [HttpPost]
@@ -246,7 +247,7 @@ namespace FT_Management.Controllers
         //Atualiza um utilizador em especifico
         [Authorize(Roles = "Admin, Tech, Escritorio, Comercial")]
         [HttpPut]
-        public ContentResult Utilizador(int id, Utilizador utilizador, int enable, int acessos, int dev, int admin, int dash, int api, string faceid)
+        public ContentResult Utilizador(int id, Utilizador utilizador, int enable, int acessos, int dev, int admin, int dash, int api, int isencao, string faceid)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             Utilizador t = context.ObterUtilizador(id);
@@ -271,6 +272,7 @@ namespace FT_Management.Controllers
 
             if (enable > 0) t.Enable = enable == 1;
             if (acessos > 0) t.Acessos = acessos == 1;
+            if (isencao > 0) t.IsencaoHorario = isencao == 1;
             if (dev > 0) t.Dev = dev == 1;
             if (dash > 0) t.Dashboard = dash == 1;
             if (admin > 0) t.Admin = admin == 1;
@@ -509,6 +511,22 @@ namespace FT_Management.Controllers
             }
 
             return ChatContext.EnviarNotificacao(Mensagem,u2) ? StatusCode(200) : StatusCode(500);
+        }
+
+        //ObterInfoPHC Utilizador
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public JsonResult PHC(int id)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));          
+
+            _logger.LogDebug("Utilizador {1} [{2}] a obter a informação de um utilizador em especifico: {3}.", u.NomeCompleto, u.Id, id);
+
+            
+
+            return Json(phccontext.ObterFuncionario(id));
         }
     }
 }

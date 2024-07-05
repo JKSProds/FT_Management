@@ -125,7 +125,7 @@
         }
 
         [HttpPost]
-        public ActionResult Validar(string id, int tipo, int tipoFalta, int tipoHoraExtra, bool bancoHoras)
+        public ActionResult Validar(string id, int tipo, int tipoFalta, int tipoHoraExtra, bool bancoHoras, int horas)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -133,6 +133,8 @@
             List<Acesso> LstA = new List<Acesso>();
 
             _logger.LogDebug("Utilizador {1} [{2}] a editar/criar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
+
+            if (horas == 0) return StatusCode(200);
 
             foreach (var a in id.Split(",")) {
                 if (a != string.Empty && a != "0")
@@ -144,8 +146,8 @@
             }
 
             RegistroAcessos r = context.ObterListaRegistroAcessos(LstA);
-            if (bancoHoras) return context.CriarRegistoBancoHoras(r, u, 8, 30) ? StatusCode(200) : StatusCode(500);
-            return phccontext.ValidarAcesso(r, u, 8,30) ? StatusCode(200) : StatusCode(500);
+            if (bancoHoras) return context.CriarRegistoBancoHoras(r, u, horas) ? StatusCode(200) : StatusCode(500);
+            return phccontext.ValidarAcesso(r, u, horas) ? StatusCode(200) : StatusCode(500);
         }
 
         //Obter todos os acessos em formato xls de uma data em especifico

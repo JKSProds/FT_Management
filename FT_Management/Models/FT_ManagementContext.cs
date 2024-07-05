@@ -55,6 +55,7 @@ namespace FT_Management.Models
                         Admin = result["admin"],
                         Enable = result["enable"],
                         Acessos = result["acessos"],
+                        IsencaoHorario = result["isencao"],
                         Dev = result["dev"],
                         Dashboard = result["dashboard"],
                         TipoMapa = result["TipoMapa"],
@@ -84,7 +85,7 @@ namespace FT_Management.Models
         }
         public List<Utilizador> ObterListaTecnicos(bool Enable, bool Viatura)
         {
-            return ObterListaUtilizadores(Enable, Viatura).Where(u => u.TipoUtilizador == 1).ToList();
+            return ObterListaUtilizadores(Enable, Viatura).Where(u => u.IdPHC > 0 && u.IdArmazem > 0).ToList();
         }
         public List<Utilizador> ObterListaComerciais(bool Enable)
         {
@@ -112,6 +113,7 @@ namespace FT_Management.Models
                         Admin = result["admin"] == 1,
                         Enable = result["enable"] == 1,
                         Acessos = result["acessos"],
+                        IsencaoHorario = result["isencao"],
                         Dev = result["dev"],
                         Dashboard = result["dashboard"],
                         Telemovel = result["TelemovelUtilizador"],
@@ -172,6 +174,7 @@ namespace FT_Management.Models
                         Admin = result["admin"] == 1,
                         Enable = result["enable"] == 1,
                         Acessos = result["acessos"],
+                        IsencaoHorario = result["isencao"],
                         Dev = result["dev"],
                         Dashboard = result["dashboard"],
                         Telemovel = result["TelemovelUtilizador"],
@@ -273,11 +276,11 @@ namespace FT_Management.Models
 
         public void NovoUtilizador(Utilizador utilizador)
         {
-            string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, FaceRec, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, admin, enable, acessos, dev, dashboard, IdPHC, IdArmazem, IniciaisUtilizador, CorCalendario, TipoMapa, DataNascimento, TelemovelUtilizador, ImgUtilizador, TipoTecnico, Zona, ChatToken, NotificacaoAutomatica, SecondFactorAuthStamp) VALUES ";
+            string sql = "INSERT INTO sys_utilizadores (IdUtilizador, NomeUtilizador, Password, FaceRec, PinUtilizador, NomeCompleto, TipoUtilizador, EmailUtilizador, admin, enable, acessos, isencao, dev, dashboard, IdPHC, IdArmazem, IdFunc, IniciaisUtilizador, CorCalendario, TipoMapa, DataNascimento, TelemovelUtilizador, ImgUtilizador, TipoTecnico, Zona, ChatToken, NotificacaoAutomatica, SecondFactorAuthStamp) VALUES ";
 
-            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "',  '" + utilizador.FaceRec + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + (utilizador.Acessos ? "1" : "0") + "', '" + (utilizador.Dev ? "1" : "0") + "','" + (utilizador.Dashboard ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ", '" + utilizador.DataNascimento.ToString("yyyy-MM-dd") + "', '" + utilizador.ObterTelemovelFormatado(true) + "', '" + utilizador.ImgUtilizador + "', '" + utilizador.TipoTecnico + "', '" + utilizador.Zona + "', '" + utilizador.ChatToken + "', '" + utilizador.NotificacaoAutomatica + "', '" + utilizador.SecondFactorAuthStamp + "') ");
+            sql += ("('" + utilizador.Id + "', '" + utilizador.NomeUtilizador + "', '" + utilizador.Password + "',  '" + utilizador.FaceRec + "', '" + utilizador.Pin + "', '" + utilizador.NomeCompleto + "', '" + utilizador.TipoUtilizador + "', '" + utilizador.EmailUtilizador + "', '" + (utilizador.Admin ? "1" : "0") + "', '" + (utilizador.Enable ? "1" : "0") + "', '" + (utilizador.Acessos ? "1" : "0") + "', '" + (utilizador.IsencaoHorario ? "1" : "0") + "', '" + (utilizador.Dev ? "1" : "0") + "','" + (utilizador.Dashboard ? "1" : "0") + "', '" + utilizador.IdPHC + "', '" + utilizador.IdArmazem + "', '" + utilizador.IdFuncionario + "', '" + utilizador.Iniciais + "', '" + utilizador.CorCalendario + "', " + utilizador.TipoMapa + ", '" + utilizador.DataNascimento.ToString("yyyy-MM-dd") + "', '" + utilizador.ObterTelemovelFormatado(true) + "', '" + utilizador.ImgUtilizador + "', '" + utilizador.TipoTecnico + "', '" + utilizador.Zona + "', '" + utilizador.ChatToken + "', '" + utilizador.NotificacaoAutomatica + "', '" + utilizador.SecondFactorAuthStamp + "') ");
 
-            sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), FaceRec = VALUES(FaceRec), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), admin = VALUES(admin), enable = VALUES(enable), acessos = VALUES(acessos), dev = VALUES(dev), dashboard = VALUES(dashboard), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario), TipoMapa = VALUES(TipoMapa), DataNascimento = VALUES(DataNascimento), TelemovelUtilizador = VALUES(TelemovelUtilizador), ImgUtilizador = VALUES(ImgUtilizador), TipoTecnico = VALUES(TipoTecnico), Zona = VALUES(Zona), ChatToken = VALUES(ChatToken), NotificacaoAutomatica = VALUES(NotificacaoAutomatica), SecondFactorAuthStamp = VALUES(SecondFactorAuthStamp);";
+            sql += " ON DUPLICATE KEY UPDATE Password = VALUES(Password), FaceRec = VALUES(FaceRec), PinUtilizador = VALUES(PinUtilizador), NomeCompleto = VALUES(NomeCompleto), TipoUtilizador = VALUES(TipoUtilizador), EmailUtilizador = VALUES(EmailUtilizador), admin = VALUES(admin), enable = VALUES(enable), acessos = VALUES(acessos), isencao = VALUES(isencao), dev = VALUES(dev), dashboard = VALUES(dashboard), IdPHC = VALUES(IdPHC), IdArmazem = VALUES(IdArmazem), IdFunc = VALUES(IdFunc), IniciaisUtilizador = VALUES(IniciaisUtilizador), CorCalendario = VALUES(CorCalendario), TipoMapa = VALUES(TipoMapa), DataNascimento = VALUES(DataNascimento), TelemovelUtilizador = VALUES(TelemovelUtilizador), ImgUtilizador = VALUES(ImgUtilizador), TipoTecnico = VALUES(TipoTecnico), Zona = VALUES(Zona), ChatToken = VALUES(ChatToken), NotificacaoAutomatica = VALUES(NotificacaoAutomatica), SecondFactorAuthStamp = VALUES(SecondFactorAuthStamp);";
 
             using (Database db = ConnectionString)
             {
@@ -1948,14 +1951,14 @@ namespace FT_Management.Models
             db.Execute(sql);
         }
 
-        public bool CriarRegistoBancoHoras(RegistroAcessos r, Utilizador u, int NHoras, int Margem)
+        public bool CriarRegistoBancoHoras(RegistroAcessos r, Utilizador u, int NHoras)
         {
                 bool res = false;
-                string obs = "Criado um registo de banco de horas pelo utilizador " + u.NomeCompleto + " do utilizador " + r.Utilizador.NomeCompleto + " de " + (r.TipoHorasExtra > 0 ? " Horas Extraordinarias " : " Falta ") + ". " + r.ObterHoras(NHoras,Margem) + " Hora(s).";
+                string obs = "Criado um registo de banco de horas pelo utilizador " + u.NomeCompleto + " do utilizador " + r.Utilizador.NomeCompleto + " de " + (r.TipoHorasExtra > 0 ? " Horas Extraordinarias " : " Falta ") + ". " + NHoras + " Hora(s).";
                 
                 string sql = "INSERT INTO dat_banco_horas (Stamp,IdUtilizador,Tipo,Horas,IdAcessos,Observacoes,DataAcessos) VALUES ";
 
-                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ r.ObterHoras(NHoras, Margem).ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data +"');";
+                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ NHoras.ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data +"');";
 
                 Database db = ConnectionString;
 

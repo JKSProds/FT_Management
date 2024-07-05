@@ -71,7 +71,7 @@ else
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.AcessoAtivo ? "has-background-success-light" : "has-background-danger-light")">
+                            <tr class="@(item.AcessoAtivo ? "has-background-success-soft" : "has-background-danger-soft")">
                                 <td class="is-image-cell">
                                     <div class="image">
                                         <img src="@item.ImgUtilizador" class="is-rounded">
@@ -138,6 +138,17 @@ else
                                                             <span class="check is-warning"></span>
                                                             <span class="control-label">@Html.DisplayNameFor(model =>
                                                     model.Acessos)</span>
+                                                        </label>
+                                                    </div>
+                                                    <hr class="dropdown-divider">
+                                                    <div class="dropdown-item">
+                                                        <label @(!this.User.IsInRole("Master") && @item.Admin ? "disabled" : "")
+                                                class="switch is-rounded">
+                                                            <input type="checkbox" id="chkIsencao_@item.Id" checked="@item.IsencaoHorario"
+                                                    onchange="AtualizarIsencaoUtilizador(@item.Id)">
+                                                            <span class="check is-link"></span>
+                                                            <span class="control-label">@Html.DisplayNameFor(model =>
+                                                    model.IsencaoHorario)</span>
                                                         </label>
                                                     </div>
                                                     <hr class="dropdown-divider">
@@ -238,6 +249,21 @@ else
                 <button class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
+                <div class="field is-horizontal has-addons">
+                    <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
+                            Utilizador.IdFuncionario)</label></div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control"><input type="number" class="input" name="IdFuncionario" id="txtIdUtilizador" value="0" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control">
+                            <a class="button is-primary" style="height:40px" onclick="ProcurarUtilizador(document.getElementById('txtIdUtilizador').value);">
+                                <i class="fa-brands fa-searchengin"></i>
+                            </a>
+                    </div>
+                </div>
                 <div class="field is-horizontal">
                     <div class="field-label is-normal"><label class="label">@Html.DisplayNameFor(Utilizador =>
                             Utilizador.NomeUtilizador)</label></div>
@@ -323,6 +349,7 @@ else
                 </div>
             </section>
             <footer class="modal-card-foot">
+                <div class="buttons is-centered" style="width:100%">
                 <button type="submit" class="button is-success is-large">
                     <span class="icon">
                         <i class="fa-solid fa-circle-plus"></i>
@@ -336,6 +363,7 @@ else
                     </span>
                     <span>Fechar</span>
                 </button>
+                </div>
             </footer>
         </div>
     </form>
@@ -546,6 +574,24 @@ else
         });
     }
 
+        function AtualizarIsencaoUtilizador(id) {
+        $.ajax({
+            type: "PUT",
+            url: "/Utilizadores/Utilizador/" + id,
+            data: { isencao: document.getElementById('chkIsencao_' + id).checked ? 1 : 2 },
+            traditional: true,
+            success: function (result) {
+                $(function () {
+                    if (result == "1") {
+                        notify('Valor de isencao do utilizador atualizado com sucesso!');
+                    } else {
+                        notifyError('Ocorreu um erro ao atualizar o utilizador!');
+                    }
+                });
+            }
+        });
+    }
+
     function AtualizarDevUtilizador(id) {
         $.ajax({
             type: "PUT",
@@ -636,6 +682,23 @@ else
             traditional: true,
             success: function (result) {
                 if (result == "1") window.location.reload();
+            }
+        });
+    }
+
+    function ProcurarUtilizador(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Utilizadores/PHC/" + id,
+            traditional: true,
+            success: function (data) {
+                 // Supondo que `data` seja um objeto JSON com as propriedades do utilizador
+                 console.log(data);
+                $('input[name="IdFuncionario"]').val(data.idFuncionario);
+                $('input[name="NomeUtilizador"]').val(data.nomeUtilizador);
+                $('input[name="NomeCompleto"]').val(data.nomeCompleto);
+                $('input[name="EmailUtilizador"]').val(data.emailUtilizador);
+                $('input[name="Telemovel"]').val(data.telemovel);
             }
         });
     }

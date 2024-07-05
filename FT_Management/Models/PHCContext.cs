@@ -2751,6 +2751,88 @@ namespace FT_Management.Models
 
         //Obter Acessos
         #region ACESSOS
+
+          public List<Utilizador> ObterFuncionarios()
+        {
+
+            List<Utilizador> LstUsers = new List<Utilizador>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from pe(nolock) join pe2(nolock) on pe.pestamp = pe2.pe2stamp order by no;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstUsers.Add(new Utilizador()
+                        {
+                            IdFuncionario = int.Parse(result["no"].ToString()),
+                            NomeCompleto = result["nome"].ToString(),
+                            NomeUtilizador = (result["nome"].ToString()[0] + result["nome"].ToString().Split(" ").Last()).ToLower(),
+                            DataNascimento = DateTime.Parse(DateTime.Parse(result["nasc"].ToString()).ToShortDateString()),
+                            EmailUtilizador = result["email"].ToString(),
+                            Telemovel = result["tlmvl"].ToString()
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os funcionarios do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstUsers;
+        }
+
+          public Utilizador ObterFuncionario(int id)
+        {
+
+            List<Utilizador> LstUsers = new List<Utilizador>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from pe(nolock) join pe2(nolock) on pe.pestamp = pe2.pe2stamp where no="+id+" order by no;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        LstUsers.Add(new Utilizador()
+                        {
+                            IdFuncionario = int.Parse(result["no"].ToString()),
+                            NomeCompleto = result["nome"].ToString(),
+                            NomeUtilizador = (result["nome"].ToString()[0] + result["nome"].ToString().Split(" ").Last()).ToLower(),
+                            DataNascimento = DateTime.Parse(DateTime.Parse(result["nasc"].ToString()).ToShortDateString()),
+                            EmailUtilizador = result["email"].ToString(),
+                            Telemovel = result["tlmvl"].ToString()
+                        });
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os funcionarios do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return LstUsers.DefaultIfEmpty(new Utilizador()).First();
+        }
         public List<Acesso> ObterAcessos(DateTime dataUltimaLeitura)
         {
 
@@ -2792,14 +2874,13 @@ namespace FT_Management.Models
             return LstAcessos;
         }
 
-        public bool ValidarAcesso(RegistroAcessos r, Utilizador u, int NHoras, int Margem) {
+        public bool ValidarAcesso(RegistroAcessos r, Utilizador u, int Horas) {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
-            int Horas = r.ObterHoras(NHoras, Margem);
             string SQL_Query = "";
 
             try
             {
-                if (r.TipoHorasExtra > 0 && Horas > 0 + (Margem / 60.0) && r.TipoHorasExtra != 6) {
+                if (r.TipoHorasExtra > 0 && Horas > 0 && r.TipoHorasExtra != 6) {
                     SQL_Query = "EXEC WEB_Insere_HS ";
 
                     SQL_Query += "@NO = '" + r.Utilizador.IdFuncionario + "', ";
@@ -2815,19 +2896,20 @@ namespace FT_Management.Models
 
                     Horas -=1;
                 }
+                if (Horas > 0) {
+                    SQL_Query = "EXEC WEB_Insere_HS ";
 
-                SQL_Query = "EXEC WEB_Insere_HS ";
+                    SQL_Query += "@NO = '" + r.Utilizador.IdFuncionario + "', ";
+                    SQL_Query += "@DATA = '" + r.Data.ToString("yyyy-MM-dd") + "', ";
+                    SQL_Query += "@NTIPO = '" + (r.TipoFalta != 0 ? 2 : (r.TipoHorasExtra != 0 ? 1 : 3)) + "', ";
+                    SQL_Query += "@HSHECOD = '" + r.TipoHorasExtra + "', ";
+                    SQL_Query += "@TYFALTA = '" + r.TipoFalta + "', ";
+                    SQL_Query += "@HORASEXTRA = '" + (r.TipoHorasExtra != 0 ? Horas.ToString() : "0") + "', ";
+                    SQL_Query += "@TEMPOFALTA = '" + (r.TipoFalta != 0 ? Horas.ToString() : "0") + "', ";
+                    SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
 
-                SQL_Query += "@NO = '" + r.Utilizador.IdFuncionario + "', ";
-                SQL_Query += "@DATA = '" + r.Data.ToString("yyyy-MM-dd") + "', ";
-                SQL_Query += "@NTIPO = '" + (r.TipoFalta != 0 ? 2 : (r.TipoHorasExtra != 0 ? 1 : 3)) + "', ";
-                SQL_Query += "@HSHECOD = '" + r.TipoHorasExtra + "', ";
-                SQL_Query += "@TYFALTA = '" + r.TipoFalta + "', ";
-                SQL_Query += "@HORASEXTRA = '" + (r.TipoHorasExtra != 0 ? Horas.ToString() : "0") + "', ";
-                SQL_Query += "@TEMPOFALTA = '" + (r.TipoFalta != 0 ? Horas.ToString() : "0") + "', ";
-                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeCompleto + "'; ";
-
-                res = ExecutarQuery(SQL_Query);
+                    res = ExecutarQuery(SQL_Query);
+                }
             }
 
             catch (Exception ex)
