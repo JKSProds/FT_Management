@@ -70,11 +70,6 @@
       "destination": "wwwroot/lib/signature_pad/"
     },
     {
-      "provider": "unpkg",
-      "library": "bulma-pageloader@0.3.0",
-      "destination": "wwwroot/lib/bulma-pageloader/"
-    },
-    {
       "library": "fullcalendar@4.2.0",
       "destination": "wwwroot/lib/fullcalendar/"
     },

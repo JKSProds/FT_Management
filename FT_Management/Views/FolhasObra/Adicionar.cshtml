@@ -27,7 +27,7 @@
         background-color: white;
     }
 </style>
-<div class="pageloader is-success" id="pageloader"><span class="title">A gerar a folha de obra ...<br>POR FAVOR AGUARDE...</span></div>
+ <div id="loader" class="overlay" style="display: none;"><div class="spinner"></div></div>
 <form asp-action="FolhaObra" method="POST" name="frmAdicionar" id="frmAdicionar">
     <div class="container">
         <div class="columns is-mobile is-centered">
@@ -1253,7 +1253,7 @@
         <footer class="modal-card-foot">
             @if (User.IsInRole("Admin"))
             {
-                <button type="button" class="button is-danger is-large is-fullwidth" onclick="document.getElementById('pageloader').classList.add('is-active');document.getElementById('frmAdicionar').submit();" href="javascript:;">
+                <button type="button" class="button is-danger is-large is-fullwidth" onclick="document.getElementById('loader').style.display = 'block';document.getElementById('frmAdicionar').submit();" href="javascript:;">
                     <span class="icon">
                         <i class="fas fa-check-circle"></i>
                     </span>
@@ -1492,7 +1492,7 @@
                             Bulma('#modalValidacao').modal().open();
                         } else {
                             notify("Folha de Obra sem mensagens de validação!");
-                            document.getElementById('pageloader').classList.add('is-active');
+                            document.getElementById('loader').style.display = 'block';
                             document.getElementById('frmAdicionar').submit();
                         }
                      }
@@ -1591,7 +1591,7 @@
                         notify("Código Aprovado pelo utilizador " + result.split("|")[1]);
                         clearInterval(interval);
                         Bulma('#modalAguardarValidacao').modal().close();
-                        document.getElementById('pageloader').classList.add('is-active');
+                        document.getElementById('loader').style.display = 'block';
                         document.getElementById('frmAdicionar').submit();
                     } else if (result.split("|")[0] == "2") {
                         notifyError("Código Rejeitado pelo utilizador " + result.split("|")[1]);

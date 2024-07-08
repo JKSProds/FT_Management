@@ -6,7 +6,7 @@
     ViewData["Title"] = "Agendamento";
 }
 
-<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
+<div id="loader" class="overlay" style="display: none;"><div class="spinner"></div></div>
 <div class="columns mx-2">
     <div class="column is-8">
         <div class="tile">
@@ -191,7 +191,6 @@ else
     <div id='calendar-container' class="mx-2">
     @foreach (var u in Model)
         {
-            <div class="pageloader is-info" id="pageloader_@u.Id"><span class="title">A carregar ...</span></div>
             <div class="columns">
                 <div class="column is-3">
                     <div class="card" style="background:@u.CorCalendario;">
@@ -342,7 +341,7 @@ else
 
                 function ObterMarcacao(id) {
                     if (id > 0) {
-                        document.getElementById('pageloader').classList.add('is-active');
+                        document.getElementById('loader').style.display = 'block';
                         $.ajax({
                             url: '/Pedidos/Marcacao/' + id,
                             type: "GET",
@@ -361,7 +360,7 @@ else
                                 document.getElementById('btnVer').href = '/Pedidos/Pedido/' + response.idMarcacao;
                                 document.getElementById('btnEditar').href = '/Pedidos/Editar/' + response.idMarcacao;
 
-                                document.getElementById('pageloader').classList.remove('is-active');
+                                document.getElementById('loader').style.display = 'none';
                                 var modal = Bulma('#modalQuickViewMarcacao').modal().open();
 
                             },

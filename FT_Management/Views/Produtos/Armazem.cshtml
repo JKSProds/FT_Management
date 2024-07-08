@@ -4,8 +4,7 @@
     ViewData["Title"] = "Movimentos - " + Model.ArmazemNome;
 }
 
-<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
-<div class="pageloader is-success" id="pageloader2"><span class="title">A gerar a guia global! Por favor aguarde
+<div id="loader" class="overlay" style="display: none;"><div class="spinner"></div></div>
         ...</span></div>
 <div class="container">
     <div class="columns">
@@ -304,7 +303,7 @@ else
     document.getElementById("lstguias").value = document.getElementById("hiddenSelectedGT").value;
 
     function GerarGuiaGlobal(id) {
-        document.getElementById('pageloader2').classList.add('is-active');
+        document.getElementById('loader').style.display = 'block';
         Bulma('#modalGerarGuiaGlobal').modal().close();
         $.ajax({
             url: '/Produtos/GuiaGlobal/' + id,
@@ -316,27 +315,27 @@ else
                 } else {
                     notifyError("Ocorreu um erro ao gerar a sua guia. Por favor tente novamente! " + response[1]);
                 }
-                document.getElementById('pageloader2').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
             },
             error: function (response) {
                 notifyError(response);
-                document.getElementById('pageloader2').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
             },
             failure: function (response) {
                 notifyError(response);
-                document.getElementById('pageloader2').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
             }
         });
     }
 
     function GerarTransferencia(armazem) {
-        document.getElementById('pageloader').classList.add('is-active');
+        document.getElementById('loader').style.display = 'block';
         Bulma('#modalGerarPedidoTransferencia').modal().close();
 
         var id = '@ViewData["GT"].ToString().Replace("/", "|")';
         var load = document.getElementById('chkPecas').checked ? 1 : 0;
         var minimo = document.getElementById('chkStockMinimo').checked ? 1 : 0;
-        document.getElementById('pageloader').classList.remove('is-active');
+        document.getElementById('loader').style.display = 'none';
         window.location.href = "/Dossiers/Transferencia/" + id + "?armazem=" + armazem + "&load=" + load+ "&minimo=" + minimo;
     }
 
@@ -366,7 +365,7 @@ else
 
 
     function ObterGarantias(id) {
-        document.getElementById('pageloader').classList.add('is-active');
+        document.getElementById('loader').style.display = 'block';
         $.ajax({
             url: '/Produtos/Garantia/' + id,
             type: "GET",
@@ -385,21 +384,21 @@ else
                     notifyError('Não existem peças pendentes em garantia!')
                 }
 
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
             },
             error: function (response) {
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
                 notifyError('Ocorreu um erro ao obter os dossiers em garantia!');
             },
             failure: function (response) {
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
                 notifyError('Falha ao obter os dossiers em garantia!');
             }
         });
     }
 
     function AtualizarEstadoGarantia(id) {
-        document.getElementById('pageloader').classList.add('is-active');
+        document.getElementById('loader').style.display = 'block';
         $.ajax({
             url: '/Produtos/Garantia/' + id,
             type: "PUT",
@@ -408,11 +407,11 @@ else
                 ObterGarantias(@Model.ArmazemId);
             },
             error: function (response) {
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
                 notifyError('Ocorreu um erro ao obter os dossiers em garantia!');
             },
             failure: function (response) {
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
                 notifyError('Falha ao obter os dossiers em garantia!');
             }
         });
