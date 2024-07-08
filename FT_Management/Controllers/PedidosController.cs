@@ -124,7 +124,7 @@ namespace FT_Management.Controllers
                 CreationDate = DateTime.Now
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
 
             return File(ms, "text/calendar");
         }
@@ -178,7 +178,7 @@ namespace FT_Management.Controllers
                 CreationDate = DateTime.Now
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
 
             return File(ms, "text/calendar");
         }
@@ -543,7 +543,7 @@ namespace FT_Management.Controllers
                 {
                     byte[] bytes = System.IO.File.ReadAllBytes(CaminhoFicheiro);
 
-                    Response.Headers.Add("Content-Disposition", "inline;filename=" + a.ObterNomeFicheiro());
+                    Response.Headers.Append("Content-Disposition", "inline;filename=" + a.ObterNomeFicheiro());
                     //Send the File to Download.
                     return new FileContentResult(bytes, mimeType);
 

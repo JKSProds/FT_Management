@@ -310,7 +310,7 @@ namespace FT_Management.Controllers
                 CreationDate = DateTime.Now,
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
             //Send the File to Download.
             return new FileContentResult(output.ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
         }
