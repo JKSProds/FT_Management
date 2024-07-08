@@ -127,6 +127,7 @@ namespace FT_Management.Controllers
             ModelState.Remove("Marcacao.ResumoMarcacao");
             ModelState.Remove("Marcacao.PrioridadeMarcacao");
             ModelState.Remove("Marcacao.Referencia");
+            ModelState.Remove("DataServico");
 
             if (ModelState.IsValid)
             {   
@@ -205,6 +206,7 @@ namespace FT_Management.Controllers
             ModelState.Remove("Marcacao.ResumoMarcacao");
             ModelState.Remove("Marcacao.PrioridadeMarcacao");
             ModelState.Remove("Marcacao.Referencia");
+            ModelState.Remove("DataServico");
 
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.ValidarIntervencoes();

@@ -249,7 +249,7 @@
                             </div>
                         </div>
                         <input type="hidden" class="input"
-                            value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
+                            value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-dd-MM"))"
                             asp-for="DatasAdicionais" id="txtDatasAdicionais">
                         <div class="column is-6">
                             <div class="field">
@@ -257,8 +257,7 @@
                                 <div class="control">
                                     <input type="date" class="input "
                                         value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
-                                        asp-for="DataMarcacao" id="txtData"
-                                        onchange="document.getElementById('txtDatasAdicionais').value = document.getElementById('txtData').value">
+                                        asp-for="DataMarcacao" id="txtData">
                                     <script>
                                         bulmaCalendar.attach('#txtData', {
                                             color: 'info',
@@ -270,7 +269,7 @@
                                             cancelLabel: 'Cancelar'
                                         });
                                         document.getElementById('txtData').bulmaCalendar.on('select', function (datepicker) {
-                                            document.getElementById('txtDatasAdicionais').value = datepicker.data.value();
+                                            document.getElementById('txtDatasAdicionais').value = moment(datepicker.data.value()).format('YYYY-MM-DD');;
                                         });
 
                                     </script>
@@ -517,13 +516,16 @@ await Html.RenderPartialAsync("_ValidationScriptsPartial");
                     if (result[0] == "1") {
                         document.getElementById("btnValidar").disabled = false;
                         Bulma('#modalValidacao').modal().open();
+                        
+                        document.getElementById('btnCriarMarcacao').classList.remove('is-loading');
                     } else if (result[0] == "2") {
                         document.getElementById("btnValidar").disabled = true;
                         Bulma('#modalValidacao').modal().open();
+
+                        document.getElementById('btnCriarMarcacao').classList.remove('is-loading');
                     } else {
                         document.getElementById('frmAdicionar').submit();
                     }
-                    document.getElementById('btnCriarMarcacao').classList.remove('is-loading');
                 });
             }
         });

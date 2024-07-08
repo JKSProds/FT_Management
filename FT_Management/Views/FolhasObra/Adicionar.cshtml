@@ -230,19 +230,18 @@
                         </div>
                             <div class="field">
                                 <div class="control">
-                                    <input type="date" class="input "
+                                    <input type="date" class="input"
                                            value="@(DateTime.Parse(Model.DataServico.ToString()).ToString("yyyy-MM-dd"))"
                                            asp-for="DataServico" id="txtData">
                                     <script>bulmaCalendar.attach('#txtData', {
                                             color: 'info',
                                             lang: 'pt',
-                                            dateFormat: 'MM/dd/yyyy',
+                                            dateFormat: 'dd/MM/yyyy',
                                             todayLabel: 'Hoje',
                                             showClearButton: false,
                                             cancelLabel: 'Cancelar'
                                         });</script>
                                 </div>
-                                <span asp-validation-for="DataServico" class="has-text-danger"></span>
                             </div>
                             
                         </div>
@@ -282,14 +281,14 @@
                                     <span class="select" style="width:100%">
                                         <select asp-for="CatResolucao.Id_1" id="lstCat1" asp-items="ViewBag.CategoriaResolucao1"
                                                 class="form-control" style="width:100%">
-                                                <option value="">Não Definido</option>
+                                                <option value="0">Não Definido</option>
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
                                     </span>
                                 </p>
-                                <span asp-validation-for="CatResolucao.Categoria1" class="has-text-danger"></span>
+                                <span asp-validation-for="CatResolucao.Id_1" class="has-text-danger"></span>
                             </div>
                         </div>
                         <div class="column is-4">
@@ -299,13 +298,14 @@
                                     <span class="select" style="width:100%">
                                         <select asp-for="CatResolucao.Id_2" id="lstCat2"
                                                 class="form-control" style="width:100%">
+                                                <option value="0">Não Definido</option>
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
                                     </span>
                                 </p>
-                                <span asp-validation-for="CatResolucao.Categoria2" class="has-text-danger"></span>
+                                <span asp-validation-for="CatResolucao.Id_2" class="has-text-danger"></span>
                             </div>
                         </div>
                         <div class="column is-4">
@@ -315,15 +315,57 @@
                                     <span class="select" style="width:100%">
                                         <select asp-for="CatResolucao.Id_3" id="lstCat3" 
                                                 class="form-control" style="width:100%">
+                                                <option value="0">Não Definido</option>
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
                                         <i class="fas fa-hourglass"></i>
                                     </span>
                                 </p>
-                                <span asp-validation-for="CatResolucao.Categoria3" class="has-text-danger"></span>
+                                <span asp-validation-for="CatResolucao.Id_3" class="has-text-danger"></span>
                             </div>
                         </div>
+                        <script>
+                            const categoria2 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategoriaResolucao2 as Dictionary<int, List<SelectListItem>>));
+                            const categoria3 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategoriaResolucao3 as Dictionary<int, List<SelectListItem>>));
+
+                            document.getElementById('lstCat1').addEventListener('change', function () {
+                                const cat1Value = this.value;
+                                const lstCat2 = document.getElementById('lstCat2');
+                                lstCat2.innerHTML = '<option value="">Não Definido</option>';
+
+                                if (cat1Value && categoria2[cat1Value]) {
+                                    categoria2[cat1Value].forEach(cat2 => {
+                                        const option = document.createElement('option');
+                                        option.value = cat2.Value;
+                                        option.text = cat2.Text;
+                                        lstCat2.appendChild(option);
+                                    });
+                                }
+                                lstCat2.dispatchEvent(new Event('change'));
+                            });
+
+                            document.getElementById('lstCat2').addEventListener('change', function () {
+                                const cat2Value = this.value;
+                                const lstCat3 = document.getElementById('lstCat3');
+                                lstCat3.innerHTML = '<option value="">Não Definido</option>';
+
+                                if (cat2Value && categoria3[cat2Value]) {
+                                    categoria3[cat2Value].forEach(cat3 => {
+                                        const option = document.createElement('option');
+                                        option.value = cat3.Value;
+                                        option.text = cat3.Text;
+                                        lstCat3.appendChild(option);
+                                    });
+                                }
+                            });
+
+                            document.getElementById('lstCat3').addEventListener('change', function () {
+                                const cat1Value = document.getElementById('lstCat1').value;
+                                const cat2Value = document.getElementById('lstCat2').value;
+                                const cat3Value = this.value;
+                            });
+                        </script>
                         }
                         <div class="column is-6">
                             <div class="field">
@@ -1414,52 +1456,7 @@
 }
 
 <script>
-    const categoria2 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategoriaResolucao2 as Dictionary<int, List<SelectListItem>>));
-    const categoria3 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategoriaResolucao3 as Dictionary<int, List<SelectListItem>>));
-
-    document.getElementById('lstCat1').addEventListener('change', function () {
-        const cat1Value = this.value;
-        const lstCat2 = document.getElementById('lstCat2');
-        lstCat2.innerHTML = '<option value="">Não Definido</option>';
-
-        if (cat1Value && categoria2[cat1Value]) {
-            categoria2[cat1Value].forEach(cat2 => {
-                const option = document.createElement('option');
-                option.value = cat2.Value;
-                option.text = cat2.Text;
-                lstCat2.appendChild(option);
-            });
-        }
-        lstCat2.dispatchEvent(new Event('change'));
-    });
-
-    document.getElementById('lstCat2').addEventListener('change', function () {
-        const cat2Value = this.value;
-        const lstCat3 = document.getElementById('lstCat3');
-        lstCat3.innerHTML = '<option value="">Não Definido</option>';
-
-        if (cat2Value && categoria3[cat2Value]) {
-            categoria3[cat2Value].forEach(cat3 => {
-                const option = document.createElement('option');
-                option.value = cat3.Value;
-                option.text = cat3.Text;
-                lstCat3.appendChild(option);
-            });
-        }
-    });
-
-    document.getElementById('lstCat3').addEventListener('change', function () {
-        const cat1Value = document.getElementById('lstCat1').value;
-        const cat2Value = document.getElementById('lstCat2').value;
-        const cat3Value = this.value;
-
-        console.log(cat1Value);
-        console.log(cat2Value);
-        console.log(cat3Value);
-
-    });
-
-    function GuardarCheckList() {
+        function GuardarCheckList() {
         var e = document.getElementById('divFinalInstalacao');
         var s = '';
         for (let i = 2; i < e.childElementCount; i++) {

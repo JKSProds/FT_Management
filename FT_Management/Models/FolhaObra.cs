@@ -14,6 +14,7 @@
         public Marcacao Marcacao { get; set; }
         [Display(Name = "Data")]
         [Required]
+        [DataType(DataType.Date)]
         public DateTime DataServico { get; set; }
         private string _ReferenciaServico;
         [Display(Name = "Referência")]

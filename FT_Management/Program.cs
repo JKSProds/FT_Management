@@ -91,10 +91,11 @@ namespace FT_Management
             var app = builder.Build();
 
             CultureInfo cultura = new CultureInfo("pt-PT");
+            cultura.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+            cultura.DateTimeFormat.LongDatePattern = "dd/MM/yyyy";
+            cultura.NumberFormat.NumberDecimalSeparator = ".";
             CultureInfo.DefaultThreadCurrentCulture = cultura;
             CultureInfo.DefaultThreadCurrentUICulture = cultura;
-
-            cultura.NumberFormat.NumberDecimalSeparator = ".";
 
             app.UseAuthentication();
             app.UseHttpsRedirection();
