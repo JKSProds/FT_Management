@@ -9,10 +9,10 @@
                 return (this.Oficina || this.TipoServico == "Interno" ? "🏢 " : "") + (this.Remoto ? "💻 " : "") +
                 (this.DataMarcacao < DateTime.Now && (this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Reagendado") ? "❌ " :
                 this.EstadoMarcacaoDesc == "Reagendado" || this.EstadoMarcacaoDesc == "Agendado" || this.EstadoMarcacaoDesc == "Criado" || this.EstadoMarcacaoDesc == "Rececionado" ? "" :
-                this.EstadoMarcacaoDesc == "Pedido Orçamento" || this.EstadoMarcacaoDesc == "Pedido Peças" ? "⌛️" :
+                this.EstadoMarcacaoDesc == "Pedido Orçamento" || this.EstadoMarcacaoDesc == "Pedido Peças" || this.EstadoMarcacaoDesc.StartsWith("Transferido") ? "⌛️" :
                 this.EstadoMarcacaoDesc == "Em Curso" ? "🔧 " :
                 this.EstadoMarcacaoDesc == "Cancelado" ? "🚫 " :
-                this.EstadoMarcacaoDesc.StartsWith("Enviado") ? "🛒 " :
+                this.EstadoMarcacaoDesc.StartsWith("Enviado") || this.EstadoMarcacaoDesc.StartsWith("Stock")? "🛒 " :
                 this.EstadoMarcacaoDesc == "Reagendar" ? "📆 " :
                 this.EstadoMarcacaoDesc == "Criado" && this.Utilizador.NomeCompleto == "MailTrack" ? "🤖 " : "✅ ");
             }
