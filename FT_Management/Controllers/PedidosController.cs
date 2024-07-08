@@ -344,6 +344,7 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
+            ModelState.Remove("DataMarcacao");
             if (m.LstTecnicosSelect.Count() > 0)
             {
                 foreach (var item in m.LstTecnicosSelect)

@@ -89,6 +89,7 @@
             this.IdCliente = 0;
             this.IdLoja = 0;
             this.NomeCliente = "N/D";
+            this.Contactos = new List<ContactoCliente>();
         }
         public string ObterMoradaDirecoes()
         {
