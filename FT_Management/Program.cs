@@ -14,7 +14,7 @@ namespace FT_Management
             builder.Services.AddMvc();
 
             builder.Services.Add(new ServiceDescriptor(typeof(FT_ManagementContext), new FT_ManagementContext(builder.Configuration.GetConnectionString("DefaultConnection"))));
-
+            builder.Services.Add(new ServiceDescriptor(typeof(PHCContext), new PHCContext(builder.Configuration.GetConnectionString("PHCConnection"), builder.Configuration.GetConnectionString("DefaultConnection"))));
 
             //COPIAR IMAGENS UTILIZADOR && APAGAR FILES DA PASTE TEMPORARIA
             FicheirosContext.GestaoFicheiros(true, true);

@@ -10,22 +10,27 @@
             _logger = logger;
         }
 
-        //Obter todos os acessos de uma data em especifico
+//Obter todos os acessos de uma data em especifico
         [HttpGet]
         public ActionResult Index(string Data)
         {
             if (Data == null || Data == string.Empty) Data = DateTime.Now.ToString("dd-MM-yyyy");
 
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-        
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter todos os acessos do seguinte dia: {3}", u.NomeCompleto, u.Id, Data);
             context.AdicionarLog(u.Id, "Acessos atualizados com sucesso!", 6);
 
             ViewData["Data"] = Data;
-            return View(context.ObterListaAcessos(DateTime.Parse(Data)));
+            ViewBag.Tipos = phccontext.ObterTipoAcessos().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
+            ViewBag.TipoHorasExtra = phccontext.ObterTipoHorasExtras().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
+            ViewBag.TipoFaltas = phccontext.ObterTipoFaltas().Select(l => new SelectListItem() { Value = l.Key.ToString(), Text = l.Value });
+
+            return View(context.ObterListaRegistroAcessos(DateTime.Parse(Data), DateTime.Parse(Data)));
         }
+
 
         //Obter ultimo acesso de um utilizador em especifico
         [HttpGet]
@@ -96,7 +101,7 @@
                 CreationDate = DateTime.Now,
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
 
             DateTime d = DateTime.Parse(data);
             return File(context.GerarMapaPresencas(DateTime.Parse(d.ToString("01/MM/yyyy")), DateTime.Parse(d.ToString(DateTime.DaysInMonth(d.Year, d.Month) + "/MM/yyyy"))), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -118,7 +123,7 @@
                 CreationDate = DateTime.Now,
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
 
             return File(context.GerarMapaPresencas(dInicio, dFim), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }

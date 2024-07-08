@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/FT_Management/bin/Debug/net6.0/FT_Management.dll",
+            "program": "${workspaceFolder}/FT_Management/bin/Debug/net8.0/FT_Management.dll",
             "args": [],
             "requireExactSource": false,
             "cwd": "${workspaceFolder}/FT_Management",

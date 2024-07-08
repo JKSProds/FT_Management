@@ -475,6 +475,85 @@ namespace FT_Management.Models
 
         }
 
+        public List<RegistroAcessos> ObterListaRegistroAcessos(DateTime start, DateTime end)
+        {
+            List<RegistroAcessos> LstRegistroAcessos = new List<RegistroAcessos>();
+            List<Acesso> LstAcessos = ObterListaAcessos(start, end);
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u=>u.Acessos).ToList();
+
+
+            foreach (Utilizador u in LstUtilizadores) {
+                u.BancoHoras = ObterHorasBanco(u);
+                List<Acesso> TMPAcessos = LstAcessos.Where(a => a.Utilizador.Id == u.Id).ToList();
+                LstRegistroAcessos.Add(new RegistroAcessos() {
+                    Utilizador =u,
+                    E1 = TMPAcessos.Count() >= 1? TMPAcessos[0] : new Acesso(),
+                    S1 = TMPAcessos.Count() >= 2? TMPAcessos[1] : new Acesso(),
+                    E2 = TMPAcessos.Count() >= 3? TMPAcessos[2] : new Acesso(),
+                    S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
+                    Data = TMPAcessos.Count() >=1 ? TMPAcessos.First().Data : DateTime.MinValue
+                });
+                LstRegistroAcessos.Last().Utilizador.Ferias = false;
+            }
+
+            return LstRegistroAcessos;
+
+        }
+
+        public RegistroAcessos ObterListaRegistroAcessos(List<Acesso> LstAcessos)
+        {
+            List<RegistroAcessos> LstRegistroAcessos = new List<RegistroAcessos>();
+            List<Utilizador> LstUtilizadores = ObterListaUtilizadores(true, false).Where(u=>u.Acessos).ToList();
+
+
+            foreach (Utilizador u in LstUtilizadores) {
+                u.BancoHoras = ObterHorasBanco(u);
+                List<Acesso> TMPAcessos = LstAcessos.Where(a => a.Utilizador.Id == u.Id).ToList();
+                if (TMPAcessos.Count() > 0) {
+                LstRegistroAcessos.Add(new RegistroAcessos() {
+                    Utilizador =u,
+                    E1 = TMPAcessos.Count() >= 1? TMPAcessos[0] : new Acesso(),
+                    S1 = TMPAcessos.Count() >= 2? TMPAcessos[1] : new Acesso(),
+                    E2 = TMPAcessos.Count() >= 3? TMPAcessos[2] : new Acesso(),
+                    S2 = TMPAcessos.Count() >= 4? TMPAcessos[3] : new Acesso(),
+                    Data = TMPAcessos.Count() >=1 ? TMPAcessos.First().Data : DateTime.MinValue
+                });
+                }
+            }
+
+            return LstRegistroAcessos.DefaultIfEmpty(new RegistroAcessos()).First();
+
+        }
+
+        public bool CriarRegistoBancoHoras(RegistroAcessos r, Utilizador u, int NHoras)
+        {
+                bool res = false;
+                string obs = "Criado um registo de banco de horas pelo utilizador " + u.NomeCompleto + " do utilizador " + r.Utilizador.NomeCompleto + " de " + (r.TipoHorasExtra > 0 ? " Horas Extraordinarias " : " Falta ") + ". " + NHoras + " Hora(s).";
+                
+                string sql = "INSERT INTO dat_banco_horas (Stamp,IdUtilizador,Tipo,Horas,IdAcessos,Observacoes,DataAcessos) VALUES ";
+
+                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ NHoras.ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data +"');";
+
+                Database db = ConnectionString;
+
+                res = db.Execute(sql) == 1;
+                db.Connection.Close();
+
+                return res;
+        }
+
+        public int ObterHorasBanco(Utilizador u) {
+            int res = 0;
+
+            using Database db = ConnectionString;
+            using var result = db.Query("SELECT SUM(CASE WHEN Tipo = 1 THEN Horas WHEN Tipo = 2 THEN -Horas ELSE 0 END) AS total_horas FROM dat_banco_horas WHERE IdUtilizador="+ u.Id +";");
+            while (result.Read())
+            {
+                int.TryParse(result[0], out res);
+            }
+            return res;
+        }
+
         public byte[] GerarMapaPresencas(DateTime dInicio, DateTime dFim)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;

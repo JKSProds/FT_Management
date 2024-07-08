@@ -49,6 +49,8 @@
         public int IdPHC { get; set; }
         [Display(Name = "Num. do Armazém")]
         public int IdArmazem { get; set; }
+
+        public int IdFuncionario { get; set; }  
         [Display(Name = "Admin?")]
         public bool Admin { get; set; }
         [Display(Name = "Ativo?")]
@@ -83,6 +85,8 @@
         public string SecondFactorImgUrl { get; set; }
         public string SecondFactorAuthCode { get; set; }
         public bool Ferias { get; set; }
+        public bool IsencaoHorario { get; set; }
+        public int BancoHoras {get; set;}
         public Utilizador()
         {
             this.Id = 0;

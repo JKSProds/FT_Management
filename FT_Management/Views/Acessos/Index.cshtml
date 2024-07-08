@@ -1,7 +1,7 @@
-﻿@model IEnumerable<FT_Management.Models.Acesso>
+﻿@model IEnumerable<FT_Management.Models.RegistroAcessos>
 
 @{
-    ViewData["Title"] = "Acessos";
+    ViewData["Title"] = "Processamento - Acessos";
 }
 
 
@@ -18,7 +18,7 @@
                             <span class="icon mr-3">
                                 <i class="fas fa-clock"></i>
                             </span>
-                            <span>Acessos</span>
+                            <span>Processamento - Acessos</span>
                         </p>
                     </article>
                 </div>
@@ -49,7 +49,7 @@
                 </div>
             </form>
             <p class="control">
-                <a class="button is-primary is-fullwidth" id="addFerias"
+                <a class="button is-primary is-fullwidth mt-1" id="addFerias"
                     onclick="window.open('@Url.Action("Acessos", "Acessos", new { data = @ViewData["Data"]})')">
                     <span class="icon">
                         <i class="fas fa-cloud-download-alt"></i>
@@ -81,35 +81,60 @@ else
                             @Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().Data)
+                            E1
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.FirstOrDefault().TipoAcesso)
+                            S1
+                        </th>                        
+                        <th>
+                            E2
+                        </th>                        
+                        <th>
+                            S2
                         </th>
+                        <th>Total</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                         {
-                            <tr class="@(item.Tipo == 1 ? "table-primary" : "table-warning")">
-                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
-                                    <span>@item.Utilizador.NomeCompleto</span>
-                                </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Data)">
-                                    <span>@item.Data.ToString("HH:mm")</span>
-                                </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().TipoAcesso)">
-                                    <span class="icon  mr-2">
-                                        <i
-                                            class="fas @(item.Tipo == 1 ? "fa-arrow-right-to-bracket" : "fa-arrow-right-from-bracket")"></i>
-                                    </span>
-                                    <span>@item.TipoAcesso</span>
-                                </td>
-                                <td class="is-actions-cell">
-                                    <a class="button is-danger is-outlined is-fullwidth" onclick="ConfirmApagarAcesso(@item.Id)"
+                            <tr class="@(item.Validado || item.Utilizador.Ferias || item.Utilizador.IsencaoHorario ? "has-background-success-soft" : (item.Valido ? "has-background-warning-soft" : "has-background-danger-soft"))" id="tr_@item.Utilizador.Id">
+                            <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
+                                <span>@item.Utilizador.NomeCompleto</span>
+                            </td>
+                            <td data-label="E1">
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=1 id="@item.E1.Id" data-total="@item.TotalMinutos" type="time" value="@item.E1.Data.ToString("HH:mm")" readonly/>
+                            </td>
+                                <td data-label="S1">
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=2 id="@item.S1.Id" data-total="@item.TotalMinutos" type="time" value="@item.S1.Data.ToString("HH:mm")" readonly/>
+                            </td>
+                                <td data-label="E2">
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=1 id="@item.E2.Id" data-total="@item.TotalMinutos" type="time" value="@item.E2.Data.ToString("HH:mm")" readonly/>
+                            </td>
+                                <td data-label="S2">
+                                <input class="input" data-user="@item.Utilizador.Id" data-validar="@item.ValidarPHC" data-date="@(item.Data.ToString("dd-MM-yyyy") == "01-01-0001" ? DateTime.Parse(ViewData["Data"].ToString()).ToString("dd-MM-yyyy") : item.Data.ToString("dd-MM-yyyy"))" data-tipo=2 id="@item.S2.Id" data-total="@item.TotalMinutos" type="time" value="@item.S2.Data.ToString("HH:mm")" readonly/>
+                            </td>
+                                <td data-label="Total">
+                                <span><b>@item.TotalHorasDesc()</b></span>
+                            </td>
+                             <td style="min-width: 250px" class="is-actions-cell">
+                            @if (!item.Validado && !item.Utilizador.Ferias) {
+                                <div class="buttons">
+                                    @if (item.TotalMinutos > 0 && !item.Utilizador.IsencaoHorario) {
+                                <a class="button is-success is-rounded " onclick="ValidarAcessos('tr_@item.Utilizador.Id');document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras()';"
+                                        href="javascript:;"><i class="fas fa-check" style="font-size:20px"></i></a>
+                                        }
+                                <a class="button is-info is-rounded" onclick="EditarAcessos(this)"
+                                        href="javascript:;"><i class="fas fa-pencil" style="font-size:20px"></i></a>
+                                <a class="button is-danger is-rounded " onclick="ApagarAcesso(this)"
                                         href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
-                                </td>
+                                        </div>
+                                        }
+                                        @if (item.Utilizador.Ferias) {
+                                            <a class="button is-rounded is-fullwidth is-info is-large"><span class="icon mr-3"><i class="fa-solid fa-umbrella-beach"></i></span><span>FÉRIAS</span></a>
+                                            }
+                            </td>
                             </tr>
                         }
                     </tbody>
@@ -120,64 +145,278 @@ else
 }
 
 
-<div id="modalApagarAcesso" class="modal">
+<div id="modalValidarAcesso" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">
                 <span class="icon">
-                    <i class="fas fa-circle-minus"></i>
+                    <i class="fas fa-circle-check"></i>
                 </span>
-                <span>Apagar Acesso</span>
+                <span>Validar Acessos</span>
             </p>
 
             <button class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
             <div class="form-group">
-                <p>Tem a certeza que deseja apagar este acesso? <b>Esta ação é irreversivel!</b></p>
+                <div class="field">
+                     <input type="text" class="input" style="display: none;" id="txtListaIdRegistros">
+                    <label class="label">Tipo</label>
+                    <div class="control">
+                        <div class="select" style="width:100%">
+                            <span class="select" style="width:100%">
+                                <select id="lstTipo" asp-items="ViewBag.Tipos" onchange=" document.getElementById('divTipoHorasExtra').style.display = this.value == 1 ? 'block' : 'none';
+                            document.getElementById('divTipoFaltas').style.display = this.value == 2 ? 'block' : 'none';"
+                                                class="form-control" style="width:100%">
+                                        </select>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="field" id="divTipoHorasExtra">
+                    <label class="label">Tipo Horas Extra</label>
+                    <div class="control">
+                        <div class="select" style="width:100%">
+                            <span class="select" style="width:100%">
+                                <select id="lstTipoHorasExtra" asp-items="ViewBag.TipoHorasExtra"
+                                                class="form-control" style="width:100%">
+                                        </select>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="field" id="divTipoFaltas" style="display: none;">
+                    <label class="label">Tipo Faltas</label>
+                    <div class="control">
+                        <div class="select" style="width:100%">
+                            <span class="select" style="width:100%">
+                               <select id="lstTipoFaltas" asp-items="ViewBag.TipoFaltas"
+                                                class="form-control" style="width:100%">
+                                        </select>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                &nbsp;
+                <div class="field">
+                    <label class="switch is-rounded">
+                        <input type="checkbox" id="chkBancoHoras">
+                        <span class="check is-info"></span>
+                        <span class="control-label">
+                            Banco de Horas
+                        </span>
+                    </label>
+                </div>
+                    <div class="field has-addons" style="width:100%">
+                        <div class="control">
+                            <input type="text" class="input" id="txtHoras">
+                        </div>
+                 <fieldset disabled>
+                        <div class="control">
+                            <input type="text" class="input" id="txtBancoHoras">
+                        </div>
+                </fieldset>
+                    </div>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button type="button" class="button is-danger is-large is-fullwidth" id="btnApagarAcesso"
-                onclick="ApagarAcesso()" href="javascript:;">
+            <div class="buttons is-centered" style="width:100%">
+            <button class="button is-info is-fullwidth is-large"
+                onclick="GuardarAcessos(document.getElementById('lstTipo').value, document.getElementById('lstTipoFaltas').value, document.getElementById('lstTipoHorasExtra').value, document.getElementById('txtListaIdRegistros').value)">
+                    <span class="icon">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                    </span>
+                    <span>Guardar</span>
+                    </button>
+            <button class="button is-link is-outlined is-fullwidth is-large"
+                onclick="Bulma('#modalValidarAcesso').modal().close();">
                 <span class="icon">
-                    <i class="fas fa-trash"></i>
-                </span>
-                <span>Apagar</span>
-            </button>
+                        <i class="fa-regular fa-circle-xmark"></i>
+                    </span>
+                    <span>Cancelar</span>
+                    </button>
+                </div>
         </footer>
     </div>
 </div>
 
-
+<input hidden id="txtIdUtilizador">
 
 <script>
-    function ConfirmApagarAcesso(Id) {
-        document.getElementById("hiddenIdAcesso").value = Id;
-        Bulma('#modalApagarAcesso').modal().open();
+
+    function ApagarAcesso(btn) {
+        btn.classList.add("is-loading");
+        res = true;
+
+        btn.closest('tr').querySelectorAll('input').forEach(input => {
+
+            var json = {
+                id: input.id,
+            };
+
+            $.ajax({
+                type: "DELETE",
+                url: "/Acessos/Acesso",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        if (result != 1) {
+                            res = false;
+                        } 
+                        input.value = '00:00';
+                    });
+                },
+                error: function (response) {
+                    notifyError('Ocorreu um erro ao apagar os acessos!');
+                },
+                failure: function (response) {
+                    notifyError('Falha ao apagar os acessos');
+                }
+            });
+        });
+
+        btn.closest('tr').classList.remove('has-background-success');
+        btn.closest('tr').classList.remove('has-background-warning');
+        btn.closest('tr').classList.remove('has-background-danger');
+        btn.closest('tr').classList.add('has-background-danger');
+        btn.classList.remove("is-loading");
     }
 
-    function ApagarAcesso() {
-        document.getElementById("btnApagarAcesso").classList.add("is-loading");
+    function EditarAcessos(btn)
+    {
+        btn.closest('tr').querySelectorAll('input').forEach(input => {input.readOnly = !input.readOnly; });
+        if (btn.closest('tr').querySelectorAll('input')[0].readOnly) {
+            btn.querySelector('i').classList.add('fa-pencil');
+            btn.querySelector('i').classList.remove('fa-floppy-disk');
 
+            btn.closest('tr').querySelectorAll('input').forEach(input => {
+                var json = {
+                    id: input.id,
+                    utilizador: input.getAttribute('data-user'),
+                    data: input.getAttribute('data-date') + ' ' + input.value,
+                    tipo: input.getAttribute('data-tipo'),
+                };
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/Acessos/Acesso",
+                    data: json,
+                    traditional: true,
+                    success: function (result) {
+                             window.location.reload();
+                    },
+                    error: function (response) {
+                        notifyError('Ocorreu um erro ao editar os acessos!');
+                    },
+                    failure: function (response) {
+                        notifyError('Falha ao editar os acessos');
+                    }
+                });
+            });
+           
+        }else{
+            btn.querySelector('i').classList.remove('fa-pencil');
+            btn.querySelector('i').classList.add('fa-floppy-disk');
+            btn.closest('tr').querySelectorAll('btn').forEach(input => {input.readOnly = true; });
+            btn.disabled = false;
+        }
+
+    }
+
+    function ValidarAcessos(id)
+    {
+        var btn = document.getElementById(id);
+        document.getElementById('txtIdUtilizador').value = id;
+        btn.closest('tr').querySelectorAll('input').forEach(input => {
+            
+                if (input.getAttribute('data-total') > 8*60) {
+                    document.getElementById("lstTipo").value = 1;
+                }else{
+                    document.getElementById("lstTipo").value = 2;
+            document.getElementById("lstTipo").dispatchEvent(new Event('change'));
+            }
+        });
+        Bulma('#modalValidarAcesso').modal().open();
+    }
+
+    function GuardarAcessosMYSQL() {
+        var btn = document.getElementById(document.getElementById('txtIdUtilizador').value);
+       btn.classList.add("is-loading");
+        lstId = '';
+
+        btn.closest('tr').querySelectorAll('input').forEach(input => {
+            lstId = lstId + input.id + ',';
+
+            var json = {
+                id: input.id,
+                utilizador: input.getAttribute('data-user'),
+                data: input.getAttribute('data-date') + ' ' + input.value,
+                tipo: input.getAttribute('data-tipo'),
+                validar: 1
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: "/Acessos/Acesso",
+                data: json,
+                traditional: true,
+                success: function (result) {
+                    $(function () {
+                        btn.closest('tr').classList.remove('has-background-success');
+                        btn.closest('tr').classList.remove('has-background-warning');
+                        btn.closest('tr').classList.remove('has-background-danger');
+                        btn.closest('tr').classList.add('has-background-success');
+                        notify('Registros validados com sucesso!');
+                        
+                    });
+                },
+                error: function (response) {
+                    notifyError('Ocorreu um erro ao validar os acessos!');
+                },
+                failure: function (response) {
+                    notifyError('Falha ao validar os acessos');
+                }
+            });
+        });
+        document.getElementById('txtListaIdRegistros').value = lstId;
+        btn.classList.remove("is-loading");
+
+    }
+
+    function GuardarAcessos(t, tF, tE, id)
+    {
+       // if (document.getElementById('chkBancoHoras').checked && (document.getElementById('txtBancoHoras').value < document.getElementById('txtHoras').value)) alert("Não tem horas para descontar!");
+        GuardarAcessosMYSQL();
         var json = {
-            id: document.getElementById('hiddenIdAcesso').value
+            id: document.getElementById('txtListaIdRegistros').value,
+            tipo: t,
+            tipoFalta: tF,
+            tipoHoraExtra: tE,
+            bancoHoras: document.getElementById('chkBancoHoras').checked,
+            horas: document.getElementById('txtHoras').value
         };
-
+    
         $.ajax({
-            type: "DELETE",
-            url: "/Acessos/Acesso",
+            type: "POST",
+            url: "/Acessos/Validar",
             data: json,
             traditional: true,
             success: function (result) {
                 $(function () {
-                    if (result = 1) window.location.reload();
+                    window.location.reload();
                 });
+            },
+            error: function (response) {
+                notifyError('Ocorreu um erro ao guardar os acessos!');
+            },
+            failure: function (response) {
+                notifyError('Falha ao guardar os acessos');
             }
         });
-        document.getElementById("btnApagarAcesso").classList.remove("is-loading");
-        Bulma('#modalApagarAcesso').modal().close();
     }
 
     function DataAlterada() {
