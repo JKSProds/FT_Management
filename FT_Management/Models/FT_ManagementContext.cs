@@ -2123,7 +2123,7 @@ namespace FT_Management.Models
                     MoradaCliente = result["Morada"],
                     PessoaContatoCliente = result["PessoaContacto"],
                     EmailCliente = result["Email"],
-                    TelefoneCliente = result["Telefone"],
+                    Contactos = [new() { Contacto = result["Telefone"].ToString()}],
                     NumeroContribuinteCliente = result["NIF"],
                 };
             }
