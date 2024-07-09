@@ -149,7 +149,7 @@
 <body>
     @if (!isDashboard) {
     <header>
-        <nav class='navbar  @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "" : "")  has-shadow'
+        <nav class='navbar  @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-danger" : "")  has-shadow'
              role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
