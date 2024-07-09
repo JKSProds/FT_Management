@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Reflection;
 using System.Xml.Linq;
 using Custom;
 
@@ -41,8 +42,7 @@ namespace FT_Management.Models
 
 
         public static string ObterSoapEnvPendente(Marcacao m, FolhaObra fo, string Estado)
-        {
-            return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
+        {   string res = @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
                         <soapenv:Header>
                             <urn:AuthenticationInfo>
                                 <urn:userName>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:userName> -- utilizador de integração
@@ -64,11 +64,14 @@ namespace FT_Management.Models
                             </urn:HelpDesk_Modify_Service>
                         </soapenv:Body>
                     </soapenv:Envelope>";
+
+            Console.WriteLine("SOAP: " + res);
+            return res;
         }
 
         public static string ObterSoapEnvEncaminhar(Marcacao m)
         {
-            return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
+            string res = @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
                         <soapenv:Header>
                             <urn:AuthenticationInfo>
                                 <urn:userName>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:userName> -- utilizador de integração
@@ -84,11 +87,14 @@ namespace FT_Management.Models
                             </urn:HelpDesk_Modify_Service>
                         </soapenv:Body>
                     </soapenv:Envelope>";
+
+            Console.WriteLine("SOAP: " + res);
+            return res;
         }
 
         public static string ObterSoapEnvFechar(Marcacao m, FolhaObra fo)
         {
-            return @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
+            string res = @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:urn=""urn:HPD_IncidentInterface_WS"">
                        <soapenv:Header>
                           <urn:AuthenticationInfo>
                              <urn:userName>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:userName> -- utilizador de integração
@@ -115,6 +121,9 @@ namespace FT_Management.Models
                            </urn:HelpDesk_Modify_Service>
                        </soapenv:Body>
                     </soapenv:Envelope>";
+
+            Console.WriteLine("SOAP: " + res);
+            return res;
         }
     }
     public static class ChatContext
@@ -150,6 +159,8 @@ namespace FT_Management.Models
                     var response = client.PostAsync(ConfigurationManager.AppSetting["NextCloudChat:URL"] + "/v1/chat/" + token, content);
 
                     var responseString = response.Result.ToString();
+
+                    Console.WriteLine("NEXTCLOUDCHAT ["+token+"]: " + mensagem);
 
                     return response.Result.IsSuccessStatusCode;
 
@@ -320,6 +331,8 @@ namespace FT_Management.Models
                     throw new ApplicationException
                       ("SmtpException has occured: " + ex.Message);
                 }
+
+                    Console.WriteLine("MAIL ["+EmailDestino+"]: ("+Assunto+") - " + Mensagem);
             }
         }
         private static void EnviarMailSimples(string EmailDestino, string Assunto, string Mensagem, List<String> EmailCC, Utilizador u)
@@ -367,6 +380,8 @@ namespace FT_Management.Models
                     throw new ApplicationException
                       ("SmtpException has occured: " + ex.Message);
                 }
+
+                Console.WriteLine("MAIL ["+EmailDestino+"]: ("+Assunto+") - " + Mensagem);
             }
         }
         public static List<String> ObterEmailCC(int tipo)
