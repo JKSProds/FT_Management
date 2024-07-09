@@ -285,7 +285,7 @@
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
-                                        <i class="fas fa-hourglass"></i>
+                                        <i class="fa-solid fa-1"></i>
                                     </span>
                                 </p>
                                 <span asp-validation-for="CatResolucao.Id_1" class="has-text-danger"></span>
@@ -302,7 +302,7 @@
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
-                                        <i class="fas fa-hourglass"></i>
+                                        <i class="fa-solid fa-2"></i>
                                     </span>
                                 </p>
                                 <span asp-validation-for="CatResolucao.Id_2" class="has-text-danger"></span>
@@ -319,7 +319,7 @@
                                         </select>
                                     </span>
                                     <span class="icon is-small is-left">
-                                        <i class="fas fa-hourglass"></i>
+                                        <i class="fa-solid fa-3"></i>
                                     </span>
                                 </p>
                                 <span asp-validation-for="CatResolucao.Id_3" class="has-text-danger"></span>
@@ -332,7 +332,7 @@
                             document.getElementById('lstCat1').addEventListener('change', function () {
                                 const cat1Value = this.value;
                                 const lstCat2 = document.getElementById('lstCat2');
-                                lstCat2.innerHTML = '<option value="">Não Definido</option>';
+                                lstCat2.innerHTML = '<option value="0">Não Definido</option>';
 
                                 if (cat1Value && categoria2[cat1Value]) {
                                     categoria2[cat1Value].forEach(cat2 => {
@@ -348,7 +348,7 @@
                             document.getElementById('lstCat2').addEventListener('change', function () {
                                 const cat2Value = this.value;
                                 const lstCat3 = document.getElementById('lstCat3');
-                                lstCat3.innerHTML = '<option value="">Não Definido</option>';
+                                lstCat3.innerHTML = '<option value="0">Não Definido</option>';
 
                                 if (cat2Value && categoria3[cat2Value]) {
                                     categoria3[cat2Value].forEach(cat3 => {
