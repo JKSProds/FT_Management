@@ -249,14 +249,14 @@
                             </div>
                         </div>
                         <input type="hidden" class="input"
-                            value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-dd-MM"))"
+                            value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
                             asp-for="DatasAdicionais" id="txtDatasAdicionais">
                         <div class="column is-6">
                             <div class="field">
                                 <label asp-for="DataMarcacao" class="label"></label>
                                 <div class="control">
                                     <input type="date" class="input "
-                                        value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-dd-MM"))"
+                                        value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
                                         asp-for="DataMarcacao" id="txtData">
                                     <script>
                                         bulmaCalendar.attach('#txtData', {
