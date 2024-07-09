@@ -256,7 +256,7 @@
                                 <label asp-for="DataMarcacao" class="label"></label>
                                 <div class="control">
                                     <input type="date" class="input "
-                                        value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-MM-dd"))"
+                                        value="@(DateTime.Parse(Model.DataMarcacao.ToString()).ToString("yyyy-dd-MM"))"
                                         asp-for="DataMarcacao" id="txtData">
                                     <script>
                                         bulmaCalendar.attach('#txtData', {
