@@ -472,6 +472,7 @@ namespace FT_Management.Controllers
         public JsonResult ValidarMarcacao(Marcacao m)
         {
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            m.DataMarcacao = m.DatasAdicionaisDistintas.First();
             return Json(phccontext.ValidarMarcacao(m));
         }
 
