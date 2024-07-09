@@ -85,6 +85,59 @@
             return Json(res);
         }
 
+        //Editar um acesso em especifico
+        [HttpPut]
+        public JsonResult Acesso(int id, int utilizador, DateTime data, int tipo, int validar)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+            _logger.LogDebug("Utilizador {1} [{2}] a editar/criar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
+
+            Acesso a = new Acesso(){
+                    Id=id,
+                    IdUtilizador = utilizador,
+                    Data = data,
+                    Tipo = tipo,
+                    Temperatura = "Modificado pelo utilizador " + u.NomeCompleto,
+                    Validado = validar == 1
+                };
+
+            if (id==0 && data.ToShortTimeString() != "00:00") {
+                return Json(context.CriarAcessoInterno(new List<Acesso>{a}));
+            }else{
+                context.AtualizarAcessoInterno(a);
+            } 
+
+            return Json("1");
+        }
+
+         [HttpPost]
+        public ActionResult Validar(string id, int tipo, int tipoFalta, int tipoHoraExtra, bool bancoHoras, int horas)
+        {
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            List<Acesso> LstA = new List<Acesso>();
+
+            _logger.LogDebug("Utilizador {1} [{2}] a editar/criar o acesso com o seguinte ID: {3}", u.NomeCompleto, u.Id, id);
+
+            if (horas == 0) return StatusCode(200);
+
+            foreach (var a in id.Split(",")) {
+                if (a != string.Empty && a != "0")
+                { 
+                    LstA.Add(context.ObterAcesso(int.Parse(a)));
+                    if (tipo == 1) LstA.Last().TipoHorasExtra = tipoHoraExtra;
+                    if (tipo == 2) LstA.Last().TipoFalta = tipoFalta;
+                }
+            }
+
+            RegistroAcessos r = context.ObterListaRegistroAcessos(LstA);
+            if (bancoHoras) return context.CriarRegistoBancoHoras(r, u, horas) ? StatusCode(200) : StatusCode(500);
+            return phccontext.ValidarAcesso(r, u, horas) ? StatusCode(200) : StatusCode(500);
+        }
+
         //Obter todos os acessos em formato xls de uma data em especifico
         [HttpGet]
         public virtual ActionResult Acessos(string data)

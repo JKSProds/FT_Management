@@ -417,7 +417,8 @@ namespace FT_Management.Models
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
                         Tipo = result["Tipo"],
-                        App = result["App"] == 1
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
                     });
                 }
             }
@@ -441,7 +442,8 @@ namespace FT_Management.Models
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
                         Tipo = result["Tipo"],
-                        App = result["App"] == 1
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
                     });
                 }
             }
@@ -466,7 +468,8 @@ namespace FT_Management.Models
                         Data = result["DataHoraAcesso"],
                         Temperatura = result["Temperatura"],
                         Tipo = result["Tipo"],
-                        App = result["App"] == 1
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
                     });
                 }
             }
@@ -532,7 +535,7 @@ namespace FT_Management.Models
                 
                 string sql = "INSERT INTO dat_banco_horas (Stamp,IdUtilizador,Tipo,Horas,IdAcessos,Observacoes,DataAcessos) VALUES ";
 
-                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ NHoras.ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data +"');";
+                sql += "('"+ DateTime.Now.Ticks.ToString() +"', '"+ r.Utilizador.Id +"', '"+ (r.TipoHorasExtra > 0 ? 1 : 2) +"', '"+ NHoras.ToString() +"', '" + r.E1.Id + ", " + r.S1.Id + ", " + r.E2.Id + ", " + r.S2.Id +"', '"+ obs +"', '"+ r.Data.ToString("yyyy-MM-dd") +"');";
 
                 Database db = ConnectionString;
 
@@ -682,8 +685,10 @@ namespace FT_Management.Models
                 }
             }
         }
-        public void CriarAcessoInterno(List<Acesso> LstAcessos)
+        public int CriarAcessoInterno(List<Acesso> LstAcessos)
         {
+            int a = 0;
+            bool UltimoAcesso = false;
             if (LstAcessos.Count > 0)
             {
                 string sql1 = "INSERT INTO dat_acessos (IdUtilizador,DataHoraAcesso,Tipo, Temperatura, App) VALUES ";
@@ -693,7 +698,11 @@ namespace FT_Management.Models
                 {
                     sql1 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", '" + acesso.Temperatura + "', 0),\r\n";
 
-                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0, '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'),\r\n";
+                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) 
+                     {
+                        sql2 += "(" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0, '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'),\r\n";
+                        UltimoAcesso = true;
+                     }
                 }
 
                 sql1 = sql1.Remove(sql1.Count() - 3);
@@ -705,8 +714,15 @@ namespace FT_Management.Models
                 {
                     Database db = ConnectionString;
 
+                    if (UltimoAcesso) db.Execute(sql2);
                     db.Execute(sql1);
-                    db.Execute(sql2);
+
+                    using var result = db.Query("select LAST_INSERT_ID();");
+                    while (result.Read())
+                    {
+                        a = int.Parse(result[0]);
+                    }
+
                     db.Connection.Close();
                 }
                 catch (Exception ex)
@@ -714,6 +730,51 @@ namespace FT_Management.Models
                     Console.WriteLine(ex.Message);
                 }
             }
+            return a;
+        }
+        public void AtualizarAcessoInterno(Acesso acesso)
+        {
+                string sql1 = "Update dat_acessos set DataHoraAcesso='"+acesso.Data.ToString("yyyy-MM-dd HH:mm:ss")+"', Validado='"+(acesso.Validado ? 1 : 0)+"' WHERE Id="+acesso.Id+";";
+                string sql2 = "INSERT INTO dat_acessos_utilizador (IdUtilizador, DataUltimoAcesso, TipoUltimoAcesso, App, timestamp) VALUES (" + acesso.IdUtilizador + ", '" + acesso.Data.ToString("yyyy-MM-dd HH:mm:ss") + "', " + acesso.Tipo + ", 0, '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "') ON DUPLICATE KEY UPDATE DataUltimoAcesso = VALUES(DataUltimoAcesso), TipoUltimoAcesso = VALUES(TipoUltimoAcesso);";
+                try
+                {
+                    Database db = ConnectionString;
+
+                    db.Execute(sql1);
+                    if (acesso.Data > ObterDataUltimoAcesso(acesso.IdUtilizador)) db.Execute(sql2);
+                    db.Connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+        }
+
+
+        public Acesso ObterAcesso(int id)
+        {
+            List<Acesso> LstAcessos = new List<Acesso>();
+            using (Database db = ConnectionString)
+            {
+
+                using var result = db.Query("SELECT * FROM dat_acessos where Id="+id+";");
+                while (result.Read())
+                {
+                    LstAcessos.Add(new Acesso()
+                    {
+                        Id = result["Id"],
+                        Utilizador = ObterUtilizador(result["IdUtilizador"]),
+                        Data = result["DataHoraAcesso"],
+                        Temperatura = result["Temperatura"],
+                        Tipo = result["Tipo"],
+                        App = result["App"] == 1,
+                        Validado = result["Validado"] == 1
+                    });
+                }
+            }
+
+            return LstAcessos.DefaultIfEmpty(new Acesso()).First();
+
         }
         public void ApagarAcesso(int Id)
         {
