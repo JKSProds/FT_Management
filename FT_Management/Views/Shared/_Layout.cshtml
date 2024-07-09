@@ -149,11 +149,12 @@
 <body>
     @if (!isDashboard) {
     <header>
-        <nav class='navbar  @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "is-danger" : "")  has-shadow'
+        <nav class='navbar  @(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development" ? "" : "")  has-shadow'
              role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
-                    <img src="~/img/ft_logo.png" width="100">
+                    <img id="logo-light" src="~/img/logo_website.png" width="240">
+                    <img id="logo-dark" src="~/img/logo_website_dark.png" width="240">
                 </a>
 
                 <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
@@ -594,11 +595,15 @@
         const userTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', userTheme);
         if (userTheme === 'light') {
+            document.getElementById('logo-light').style.display = 'block';
+            document.getElementById('logo-dark').style.display = 'none';
             icon.classList.remove('fa-moon');
             icon.classList.add('fa-sun');
             toggleButton.classList.add('is-warning');
             toggleButton.classList.remove('is-link');
         }else{
+                document.getElementById('logo-light').style.display = 'none';
+                document.getElementById('logo-dark').style.display = 'block';
                 toggleButton.classList.remove('is-warning');
                 toggleButton.classList.add('is-link');
         }
@@ -609,11 +614,15 @@
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             if (newTheme === 'light') {
+                document.getElementById('logo-light').style.display = 'block';
+                document.getElementById('logo-dark').style.display = 'none';
                 icon.classList.remove('fa-moon');
                 icon.classList.add('fa-sun');
                 toggleButton.classList.add('is-warning');
                 toggleButton.classList.remove('is-link');
             } else {
+                document.getElementById('logo-light').style.display = 'none';
+                document.getElementById('logo-dark').style.display = 'block';
                 icon.classList.remove('fa-sun');
                 icon.classList.add('fa-moon');
                 toggleButton.classList.remove('is-warning');
