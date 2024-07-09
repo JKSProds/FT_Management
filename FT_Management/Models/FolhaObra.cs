@@ -100,6 +100,7 @@
             ClienteServico = new Cliente() { NomeCliente = "N/D" };
             Utilizador = new Utilizador();
             this.PecasServico = new List<Produto>();
+            this.CatResolucao = new CategoriaResolucao();
             this.IntervencaosServico = new List<Intervencao>()
             {
                 new Intervencao()
