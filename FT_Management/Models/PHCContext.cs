@@ -417,7 +417,6 @@ namespace FT_Management.Models
                             IdLoja = int.Parse(result["estab"].ToString()),
                             NomeCliente = result["nome"].ToString().Trim(),
                             NumeroContribuinteCliente = result["ncont"].ToString().Trim(),
-                            TelefoneCliente = result["telefone"].ToString().Trim(),
                             PessoaContatoCliente = result["contacto"].ToString().Trim(),
                             MoradaCliente = result["endereco"].ToString().Trim(),
                             EmailCliente = result["emailfo"].ToString().Trim(),
@@ -437,6 +436,8 @@ namespace FT_Management.Models
                             LstClientes.Last().Longitude = c.Longitude;
                             LstClientes.Last().Senha = c.Senha;
                         }
+                        LstClientes.Last().Contactos = ObterContactosCliente(LstClientes.Last());
+                        if (result["telefone"].ToString().Count() >= 9) LstClientes.Last().Contactos.Add(new ContactoCliente() {Tipo="Loja", Nome="Ficha de Cliente", Contacto = result["telefone"].ToString()});
                     }
                 }
 
@@ -483,6 +484,39 @@ namespace FT_Management.Models
         public Cliente ObterClienteNIF(string NIF)
         {
             return ObterCliente("SELECT DISTINCT TOP(100) csup.csupstamp, cl.clstamp, cl.no, cl.estab, cl.nome, ncont, telefone, contacto, CONCAT(morada, ' ' ,codpost) AS endereco, u_clresp.emailfo, tipo, vendedor, cl.usrdata, cl.usrhora FROM cl left join CSUP on cl.no=csup.no and GETDATE() between csup.datai and csup.datap full outer join u_clresp on cl.clstamp=u_clresp.clstamp where cl.ncont='" + NIF + "' and cl.no is not null;", true);
+        }
+
+                public List<ContactoCliente> ObterContactosCliente(Cliente c)
+        {
+
+            List<ContactoCliente> res = new List<ContactoCliente>();
+
+            try
+            {
+                SqlConnection conn = new SqlConnection(ConnectionString);
+
+                conn.Open();
+
+                SqlCommand command = new SqlCommand("select * from u_clresp where clstamp='"+ c.ClienteStamp +"' and LEN(tlmvl)>=9 ;", conn)
+                {
+                    CommandTimeout = TIMEOUT
+                };
+                using (SqlDataReader result = command.ExecuteReader())
+                {
+                    while (result.Read())
+                    {
+                        res.Add(new ContactoCliente() { Tipo = result["tipoe"].ToString(), Nome = result["nome"].ToString(), Contacto = result["tlmvl"].ToString()});
+                    }
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel ler os contactos do cliente do PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
         }
         #endregion
 
@@ -620,10 +654,10 @@ namespace FT_Management.Models
                             IdCliente = int.Parse(result["no"].ToString()),
                             NomeCliente = result["nome"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
                             MoradaCliente = result["MoradaFornecedor"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
-                            TelefoneCliente = result["telefone"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
                             EmailCliente = result["email"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''"),
                             PessoaContatoCliente = result["contacto"].ToString().Trim().Replace("\n", "").Replace("\r", "").Replace("'", "''")
                         };
+                        f.Contactos = ObterContactosCliente(f);
                     }
                 }
 

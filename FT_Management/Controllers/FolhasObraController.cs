@@ -66,6 +66,27 @@ namespace FT_Management.Controllers
             ViewBag.MotivosNaoGarantia = phccontext.ObterMotivosAvariaNaoGarantia().Select(l => new SelectListItem() { Value = l, Text = l });
             ViewData["Exclusoes"] = phccontext.ObterExclusoes(0);
 
+            var categoriasResolucao = context.ObterCategoriasResolucao().ToList();
+            ViewBag.CategoriaResolucao = categoriasResolucao;
+
+            ViewBag.CategoriaResolucao1 = categoriasResolucao.Distinct()
+                .Select(l => new SelectListItem() { Value = l.Id_1.ToString(), Text = l.Categoria1 }).DistinctBy(l => l.Value)
+                .ToList();
+
+            ViewBag.CategoriaResolucao2 = categoriasResolucao
+                .GroupBy(l => l.Id_1)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(l => new SelectListItem() { Value = l.Id_2.ToString(), Text = l.Categoria2 }).DistinctBy(l => l.Value).ToList()
+                );
+
+            ViewBag.CategoriaResolucao3 = categoriasResolucao
+                .GroupBy(l => l.Id_2)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(l => new SelectListItem() { Value = l.Id_3.ToString(), Text = l.Categoria3 }).DistinctBy(l => l.Value).ToList()
+                );
+
             return View(fo);
         }
 
@@ -99,12 +120,14 @@ namespace FT_Management.Controllers
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.Marcacao = phccontext.ObterMarcacao(fo.IdMarcacao);
             fo.ValidarIntervencoes();
+            fo.CatResolucao = fo.CategoriaResolucao || fo.CatResolucao.Id_3 > 0 ? context.ObterCategoriaResolucao(fo.CatResolucao) : fo.CatResolucao;
             if (fo.Contrato) fo.JustExtraContrato = "";
 
             ModelState.Remove("Utilizador.Password");
             ModelState.Remove("Marcacao.ResumoMarcacao");
             ModelState.Remove("Marcacao.PrioridadeMarcacao");
             ModelState.Remove("Marcacao.Referencia");
+            ModelState.Remove("DataServico");
 
             if (ModelState.IsValid)
             {   
@@ -183,6 +206,7 @@ namespace FT_Management.Controllers
             ModelState.Remove("Marcacao.ResumoMarcacao");
             ModelState.Remove("Marcacao.PrioridadeMarcacao");
             ModelState.Remove("Marcacao.Referencia");
+            ModelState.Remove("DataServico");
 
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.ValidarIntervencoes();
@@ -288,7 +312,7 @@ namespace FT_Management.Controllers
                 CreationDate = DateTime.Now,
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
             //Send the File to Download.
             return new FileContentResult(output.ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf);
         }

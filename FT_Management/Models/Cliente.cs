@@ -21,8 +21,8 @@
         [Display(Name = "Email")]
         public string EmailCliente { get { return _EmailCliente ?? ""; } set { _EmailCliente = value; } }
         [Display(Name = "Telefone")]
-        public string TelefoneCliente { get { return string.IsNullOrEmpty(_TelefoneCliente) ? "" : new string(_TelefoneCliente.Replace(" ", "").Take(9).ToArray()); } set { _TelefoneCliente = value; } }
-        private string _TelefoneCliente;
+        public string TelefoneCliente { get { return Contactos.DefaultIfEmpty(new ContactoCliente()).First().Contacto; } }
+        public List<ContactoCliente> Contactos { get; set; }
         public bool ContactoValido { get { return this.TelefoneCliente.Length >= 9; } }
         public bool MoradaValida { get { return this.MoradaCliente.Length >= 9; } }
         private string _NumeroContribuinteCliente;
@@ -89,6 +89,7 @@
             this.IdCliente = 0;
             this.IdLoja = 0;
             this.NomeCliente = "N/D";
+            this.Contactos = new List<ContactoCliente>();
         }
         public string ObterMoradaDirecoes()
         {
@@ -106,6 +107,18 @@
             }
 
             return MoradaCliente;
+        }
+    }
+
+    public class ContactoCliente {
+        public string Tipo { get; set; }
+        public string Nome { get; set; }
+        public string Contacto { get; set; }
+
+        public ContactoCliente() {
+            this.Tipo = "";
+            this.Nome = "";
+            this.Contacto = "";
         }
     }
 }

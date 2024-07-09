@@ -4,7 +4,7 @@
     ViewData["Title"] = "Garantias";
 }
 
-<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
+<div id="loader" class="overlay" style="display: none;"><div class="spinner"></div></div>
 <div class="container">
     <div class="columns">
         <div class="column">
@@ -149,7 +149,7 @@ else
 
 <script>
     function AtualizarEstadoGarantia(id) {
-        document.getElementById('pageloader').classList.add('is-active');
+       document.getElementById('loader').style.display = 'block';
         $.ajax({
             url: '/Produtos/Garantia/' + id,
             type: "PUT",
@@ -157,11 +157,11 @@ else
                 window.location.reload();
             },
             error: function (response) {
-                document.getElementById('pageloader').classList.remove('is-active');
+               document.getElementById('loader').style.display = 'none';
                 notifyError('Ocorreu um erro ao obter os dossiers em garantia!');
             },
             failure: function (response) {
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
                 notifyError('Falha ao obter os dossiers em garantia!');
             }
         });

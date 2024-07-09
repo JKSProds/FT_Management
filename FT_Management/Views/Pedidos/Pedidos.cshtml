@@ -163,12 +163,12 @@ else
                                 <div class="buttons has-addons">
                                     @if(item.EstadoMarcacaoDesc == "Em Curso") {
                                         <a class="button is-danger is-large card-footer-item" onclick="location.href = '@(Url.Action("Adicionar", "FolhasObra", new {id = item.MarcacaoStamp }))'" id="btnStop_@item.MarcacaoStamp"><i class="fas fa-stop float-left" style="margin-top:5px"></i></a>
-                                    }else if(item.EstadoMarcacaoDesc != "Em Curso" || item.EstadoMarcacaoDesc != "Finalizado" || item.EstadoMarcacaoDesc != "Cancelado" ){
-                                        <a class="button is-info is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
+                                    }else if(item.EstadoMarcacaoDesc != "Em Curso" && item.EstadoMarcacaoDesc != "Finalizado" && item.EstadoMarcacaoDesc != "Cancelado" ){
+                                        <a class="button is-success is-large card-footer-item" id="btnStart_@item.MarcacaoStamp" onclick="document.getElementById('txtStampMarcacao').value = '@item.MarcacaoStamp';Bulma('#modalIniciarAssistencia').modal().open();"><i class="fas fa-play float-left" style="margin-top:5px"></i></a>
                                     }
                                           @if (item.Cliente.ContactoValido)
                                     {
-                                        <a class="button is-info is-large card-footer-item" href="tel:@item.Cliente.TelefoneCliente"><i class="fa-solid fa-phone" style="margin-top:5px"></i></a>
+                                        <a class="button is-info is-large card-footer-item" onclick="AbrirContactos(@(JsonConvert.SerializeObject(item.Cliente.Contactos)))"><i class="fa-solid fa-phone" style="margin-top:5px"></i></a>
                                     }
                                     @if (item.Cliente.MoradaValida)
                                     {
@@ -189,6 +189,30 @@ else
         </div>
     </div>
 }
+
+<div id="modalContactos" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Contactos</p>
+            <button type="button" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="modal-body" id="divContactos">
+               
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <div class="buttons is-centered" style="width:100%">
+            <button class="button is-link is-outlined  is-fullwidth"
+                onclick="Bulma('#modalContactos').modal().close();"><span class="icon">
+                   <i class="fa-solid fa-arrow-left"></i>
+                </span>
+                <span>Cancelar</span></button>
+            </div>
+        </footer>
+    </div>
+</div>
 
 <div id="modalIniciarAssistencia" class="modal">
     <div class="modal-background"></div>
@@ -257,6 +281,15 @@ else
                 });
             }
         });
+    }
+
+    function AbrirContactos(cl) {
+        var html = '';
+        cl.forEach(c => {
+                html += "<div class='field has-addons' style='width:100%'><p class='control'><a class='button is-static'>" + c["Tipo"] + "</a></p><p class='control' style='width:100%'><a class='button is-static is-fullwidth'>" + c["Nome"] + "</a></p><div class='control is-fullwidth'><a class='button is-info is-fullwidth' href='tel:"+c["Contacto"]+"'><span class='icon'><i class='fa-solid fa-phone'></i></span><span>" + c["Contacto"] + "</span></a></div></div>";
+            });
+        document.getElementById('divContactos').innerHTML = html;
+        Bulma('#modalContactos').modal().open();
     }
  
 </script>

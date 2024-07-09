@@ -5,7 +5,7 @@
     ViewData["Title"] = "Pedidos - Lista de Técnicos";
 }
 
-<div class="pageloader is-info" id="pageloader"><span class="title">A carregar ...</span></div>
+ <div id="loader" class="overlay" style="display: none;"><div class="spinner"></div></div>
 <form id="frmFiltrar">
     <div class="container">
         <div class="columns">
@@ -299,10 +299,18 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button class="button is-info"
-                onclick="AtualizarMarcacao(document.getElementById('txtIdMarcacao').value);">Atualizar Marcação</button>
-            <button class="button is-secondary is-outlined"
-                onclick="Bulma('#modalQuickActionMarcacao').modal().close();">Cancelar</button>
+            <div class="buttons is-centered" style="width:100%">
+            <button class="button is-info is-fullwidth"
+                onclick="AtualizarMarcacao(document.getElementById('txtIdMarcacao').value);"><span class="icon">
+                    <i class="fa-regular fa-floppy-disk"></i>
+                </span>
+                <span>Atualizar Marcação</span></button>
+            <button class="button is-link is-outlined  is-fullwidth"
+                onclick="Bulma('#modalQuickActionMarcacao').modal().close();"><span class="icon">
+                   <i class="fa-solid fa-arrow-left"></i>
+                </span>
+                <span>Cancelar</span></button>
+                </div>
         </footer>
     </div>
 </div>
@@ -342,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function filtrar() {
-        document.getElementById('pageloader').classList.add('is-active');
+        document.getElementById('loader').style.display = 'block';
 
         var num = document.getElementById("txtNumMarcacao").value;
         var nome = document.getElementById("txtNomeCliente").value;
@@ -392,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function ObterMarcacao(id) {
-        document.getElementById('pageloader').classList.add('is-active');
+        document.getElementById('loader').style.display = 'block';
         $.ajax({
             url: '/Pedidos/Marcacao/' + id,
             type: "GET",
@@ -403,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('LstEstados').value = response.estadoMarcacaoDesc;
                 document.getElementById('LstTecnicos').value = response.tecnico.id;
 
-                document.getElementById('pageloader').classList.remove('is-active');
+                document.getElementById('loader').style.display = 'none';
                 var modal = Bulma('#modalQuickActionMarcacao').modal();
                 modal.open();
 
@@ -423,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
             notifyError('Tem de definir um tecnico!');
         } else {
 
-            document.getElementById('pageloader').classList.add('is-active');
+            document.getElementById('loader').style.display = 'block';
             var m = {
                 DataMarcacao: document.getElementById('txtData').value,
                 EstadoMarcacaoDesc: document.getElementById('LstEstados').value,
@@ -439,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('marcacao_' + id).querySelector('.tecnico').childNodes[0].data = document.getElementById('LstTecnicos').selectedIndex > 0 ? document.getElementById('LstTecnicos')[document.getElementById('LstTecnicos').selectedIndex].text : "N/D";
 
 
-                    document.getElementById('pageloader').classList.remove('is-active');
+                   document.getElementById('loader').style.display = 'none';
                     var modal = Bulma('#modalQuickActionMarcacao').modal();
                     modal.close();
 

@@ -14,6 +14,7 @@
         public Marcacao Marcacao { get; set; }
         [Display(Name = "Data")]
         [Required]
+        [DataType(DataType.Date)]
         public DateTime DataServico { get; set; }
         private string _ReferenciaServico;
         [Display(Name = "Referência")]
@@ -87,6 +88,8 @@
         public string JustExtraContrato { get; set; }
         public string CheckList { get; set; }
         public bool EnviarEmailGuias { get; set; }
+        public bool CategoriaResolucao { get { return this.ClienteServico.IdCliente == 561 || this.ClienteServico.IdCliente==1568;} }
+        public CategoriaResolucao CatResolucao { get; set; }
 
         public FolhaObra()
         {
@@ -202,6 +205,16 @@
                 }
             }
         }
+    }
+
+    public class CategoriaResolucao {
+        public int Id_1 { get; set; }
+        public int Id_2 { get; set; }
+        public int Id_3 { get; set; }
+        public string Categoria1 { get; set;}
+        public string Categoria2 { get; set;}
+        public string Categoria3 { get; set;}
+        public string ExemploRelatorio { get; set;}
     }
 }
 

@@ -333,7 +333,7 @@ namespace FT_Management.Controllers
                     CreationDate = DateTime.Now,
 
                 };
-                Response.Headers.Add("Content-Disposition", cd.ToString());
+                Response.Headers.Append("Content-Disposition", cd.ToString());
 
                 return File(bytes, contentType);
             }

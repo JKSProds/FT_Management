@@ -50,7 +50,7 @@ namespace FT_Management.Controllers
                 CreationDate = DateTime.Now,
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
 
             return File(context.GerarMapaFerias(id), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
@@ -269,7 +269,7 @@ namespace FT_Management.Controllers
                 CreationDate = DateTime.Now
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
 
             return File(ms, "text/calendar");
         }

@@ -166,7 +166,7 @@
                 CreationDate = DateTime.Now,
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
             
             DateTime d = DateTime.Parse(data);
             return File(context.GerarMapaPresencas(DateTime.Parse(d.ToString("01/MM/yyyy")), DateTime.Parse(d.ToString(DateTime.DaysInMonth(d.Year, d.Month) + "/MM/yyyy"))), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -204,7 +204,7 @@
                 CreationDate = DateTime.Now,
 
             };
-            Response.Headers.Add("Content-Disposition", cd.ToString());
+            Response.Headers.Append("Content-Disposition", cd.ToString());
 
             return File(context.GerarMapaPresencas(dInicio, dFim), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }

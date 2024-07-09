@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <title>@ViewData["Title"] - Gestor Food-Tech</title>
+    <title>@ViewData["Title"] - Food-Tech</title>
 
     @*<link rel="stylesheet" href="~/css/site.css" />*@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.css">
@@ -21,7 +21,6 @@
     <link rel="stylesheet" type="text/css" href="~/lib/tui-calendar/tui-calendar.min.css" />
     <link rel="stylesheet" type="text/css" href="~/lib/bulma-list//css/bulma-list.css" />
     <link rel="stylesheet" href="~/lib/dropzone/dropzone.min.css" type="text/css" />
-    <link rel="stylesheet" href="~/lib/bulma-pageloader/dist/css/bulma-pageloader.min.css" type="text/css" />
     <link href='~/lib/fullcalendar/core/main.min.css' rel='stylesheet' />
     <link href='~/lib/fullcalendar/daygrid/main.min.css' rel='stylesheet' />
     <link href='~/lib/leaflet/leaflet.css' rel='stylesheet' />
@@ -105,6 +104,44 @@
             border-radius: 15px;
         }
 
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* Cor de fundo semi-transparente */
+            backdrop-filter: blur(10px); /* Efeito de desfoque */
+            z-index: 9999; /* Certifique-se de que o overlay esteja acima do conteúdo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            background-image: linear-gradient(rgb(186, 66, 255) 35%,rgb(0, 225, 255));
+            width: 100px;
+            height: 100px;
+            animation: spinning 1.7s linear infinite;
+            text-align: center;
+            border-radius: 50px;
+            filter: blur(1px);
+            box-shadow: 0px -5px 20px 0px rgb(186, 66, 255), 0px 5px 20px 0px rgb(0, 225, 255);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -50px;
+            margin-top: -50px;
+            background-size: 100%;
+            z-index:10000;
+        }
+
+        @@keyframes spinning {
+            to {
+                transform: rotate(360deg);
+            }
+        }                           
+
     </style>
 
 </head>
@@ -116,7 +153,8 @@
              role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="~/">
-                    <img src="~/img/ft_logo.png" width="100">
+                    <img id="logo-light" src="~/img/logo_website.png" width="240">
+                    <img id="logo-dark" src="~/img/logo_website_dark.png" width="240">
                 </a>
 
                 <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
@@ -140,7 +178,7 @@
 
                                 <div class="navbar-dropdown is-boxed">
                                    
-                                        <a class="navbar-item is-roun" href="~/Dashboard/Encomendas">
+                                        <a class="navbar-item" href="~/Dashboard/Encomendas">
                                             <span class="icon">
                                                 <i class="fa-solid fa-boxes-stacked"></i>
                                             </span>
@@ -557,11 +595,15 @@
         const userTheme = localStorage.getItem('theme') || 'light';
         html.setAttribute('data-theme', userTheme);
         if (userTheme === 'light') {
+            document.getElementById('logo-light').style.display = 'block';
+            document.getElementById('logo-dark').style.display = 'none';
             icon.classList.remove('fa-moon');
             icon.classList.add('fa-sun');
             toggleButton.classList.add('is-warning');
             toggleButton.classList.remove('is-link');
         }else{
+                document.getElementById('logo-light').style.display = 'none';
+                document.getElementById('logo-dark').style.display = 'block';
                 toggleButton.classList.remove('is-warning');
                 toggleButton.classList.add('is-link');
         }
@@ -572,11 +614,15 @@
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             if (newTheme === 'light') {
+                document.getElementById('logo-light').style.display = 'block';
+                document.getElementById('logo-dark').style.display = 'none';
                 icon.classList.remove('fa-moon');
                 icon.classList.add('fa-sun');
                 toggleButton.classList.add('is-warning');
                 toggleButton.classList.remove('is-link');
             } else {
+                document.getElementById('logo-light').style.display = 'none';
+                document.getElementById('logo-dark').style.display = 'block';
                 icon.classList.remove('fa-sun');
                 icon.classList.add('fa-moon');
                 toggleButton.classList.remove('is-warning');
