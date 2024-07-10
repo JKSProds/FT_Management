@@ -173,13 +173,7 @@
                     @if (!User.IsInRole("Dashboard")) {
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <div class="navbar-item">
-                                <button id="dark-mode-toggle" class="button">
-                                    <span class="icon">
-                                        <i id="dark-mode-icon" class="fas fa-moon"></i>
-                                    </span>
-                                </button>
-                            </div>
+                            
                             <div class="navbar-item has-dropdown">
                                 <a class="navbar-link">
                                     <figure class="mr-3 image is-inline-block is-48x48">
@@ -279,41 +273,7 @@
 </html>
 
 <script>
-    const toggleButton = document.getElementById('dark-mode-toggle');
-        const icon = document.getElementById('dark-mode-icon');
-        const html = document.documentElement;
-
-        // Carregar preferência do usuário
-        const userTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', userTheme);
-        if (userTheme === 'light') {
-            icon.classList.remove('fa-moon');
-            icon.classList.add('fa-sun');
-            toggleButton.classList.add('is-warning');
-            toggleButton.classList.remove('is-link');
-        }else{
-                toggleButton.classList.remove('is-warning');
-                toggleButton.classList.add('is-link');
-        }
-
-        toggleButton.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            if (newTheme === 'light') {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-                toggleButton.classList.add('is-warning');
-                toggleButton.classList.remove('is-link');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-                toggleButton.classList.remove('is-warning');
-                toggleButton.classList.add('is-link');
-            }
-        });
-
+   
     function notifyError(mensagem) {
         bulmaToast.toast({
             message: mensagem,
