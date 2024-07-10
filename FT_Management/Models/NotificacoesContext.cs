@@ -20,7 +20,7 @@ namespace FT_Management.Models
             return c.TipoCliente == "Indústria";
         }
 
-        public static string ObterSoapPHC(Dossier d)
+        public static string ObterSoapPHCTransferenciaViagem(Dossier d)
         {
             string linhas = "";
             foreach (Linha_Dossier l in d.Linhas) {
@@ -28,7 +28,7 @@ namespace FT_Management.Models
             }
             linhas = linhas.Remove(linhas.Length - 1, 1);
 
-            return @"<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">
+            string res = @"<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">
             <soap:Body>
                 <RunCode xmlns=""http://www.phc.pt/"">
                 <userName>" + ConfigurationManager.AppSetting["PHC:User"]+ @"</userName>
@@ -38,6 +38,9 @@ namespace FT_Management.Models
                 </RunCode>
             </soap:Body>
             </soap:Envelope>";
+
+            Console.WriteLine("SOAP_PHC: " + res);
+            return res;
         }
 
 
@@ -212,6 +215,14 @@ namespace FT_Management.Models
         public static bool EnviarNotificacaoGuiaGlobal(Utilizador u)
         {
             string Mensagem = "Foi gerada com sucesso a sua guia global.\r\nPor requisite a impressão/envio da sua guia!";
+
+            return EnviarMensagem(u.ChatToken, Mensagem);
+        }
+
+
+        public static bool EnviarNotificacaoTransferencia(Utilizador u)
+        {
+            string Mensagem = "Foi gerada com sucesso uma nova transferência de viagem. Por favor valide no seu armazém.";
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }

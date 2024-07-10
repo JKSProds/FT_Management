@@ -131,6 +131,14 @@
 
             d.StampDossier = res[1];
             d.AtCode = res[2];
+            
+            context.CriarNotificacao(new Notificacao() {
+                UtilizadorDestino = t,
+                UtilizadorOrigem = u,
+                Assunto = "Transferência em Viagem",
+                Mensagem = "Foi criada uma nova transferência em viagem. ATCode: " + d.AtCode
+            });
+            ChatContext.EnviarNotificacaoTransferencia(t);
             MailContext.EnviarEmailTransferenciaViagem(u, d, new Attachment(context.MemoryStreamToPDF(context.DesenharEtiquetaViagem(d), 801, 504), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);

@@ -22,7 +22,9 @@
         </div>
     </div>
 <hr />
-
+@if (Model.Dossiers.Where(d=>d.Linhas.Count() > 0).Count() == 0) {
+<button class="button is-danger is-rounded is-outlined is-fullwidth" type="button" >Não foram encontrados dossiers com peças pendentes! Provavelmente existem documentos abertos!</button>
+}else {
 @foreach (var item in Model.Dossiers.Where(d=>d.Linhas.Count() > 0))
     {
 
@@ -84,13 +86,13 @@
     }
 
 <br>
-<a class="button is-large is-info is-rounded is-fullwidth" onclick="ValidarCriarTV('@Model.Id')">
+<a class="button is-large is-info is-rounded is-fullwidth" id="btnSubmit" onclick="ValidarCriarTV('@Model.Id')">
     <span class="icon is-small">
         <i class="fa-solid fa-check"></i>
     </span>
-    <span>Criar Transferência em Viagem</span>
+    <span>Criar Transferência</span>
 </a>
-
+}
 
 <script>
 
@@ -99,27 +101,34 @@ function ValidarCriarTV(id) {
     // Step 1: Get all rows with a specific class
     var rows = document.getElementsByClassName('checked');
 
-    if (rows.length == 0) notifyError("Tem de validar pelo menos uma peça!")
-    // Step 2: Iterate through the rows
-    for (var i = 0; i < rows.length; i++) {
-        if (isNaN(parseFloat(rows[i].querySelector('input').value))) rows[i].querySelector('input').value = 0;
-        res+=rows[i].getAttribute('id') + "|" + rows[i].querySelector('.ref').textContent +  "|" + rows[i].querySelector('.design').textContent +  "|" + parseFloat(rows[i].querySelector('input').value) + ";";
-    }
-    notify("A criar transferencia em viagem....");
-    $.ajax({
-        url: '/Picking/Tecnico/',
-        data: { "id": id, "linhas": res },
-        type: "POST",
-        success: function (data) {
-                window.location.href = "/Picking/Tecnicos/";
-        },
-        error: function (response) {
-            notifyError("Ocorreu um erro ao gerar a transferencia em viagem!")
-        },
-        failure: function (response) {
-            notifyError("Falha ao gerar a transferencia em viagem!")
+    if (rows.length == 0) {
+        notifyError("Tem de validar pelo menos uma peça!");
+    }else{
+
+        document.getElementById("btnSubmit").classList.add("is-loading");
+        // Step 2: Iterate through the rows
+        for (var i = 0; i < rows.length; i++) {
+            if (isNaN(parseFloat(rows[i].querySelector('input').value))) rows[i].querySelector('input').value = 0;
+            res+=rows[i].getAttribute('id') + "|" + rows[i].querySelector('.ref').textContent +  "|" + rows[i].querySelector('.design').textContent +  "|" + parseFloat(rows[i].querySelector('input').value) + ";";
         }
-    });
+        notify("A criar transferencia em viagem....");
+        $.ajax({
+            url: '/Picking/Tecnico/',
+            data: { "id": id, "linhas": res },
+            type: "POST",
+            success: function (data) {
+                    window.location.href = "/Picking/Tecnicos/";
+            },
+            error: function (response) {
+                notifyError("Ocorreu um erro ao gerar a transferencia em viagem!");
+                document.getElementById("btnSubmit").classList.remove("is-loading");
+            },
+            failure: function (response) {
+                notifyError("Falha ao gerar a transferencia em viagem!");
+                document.getElementById("btnSubmit").classList.remove("is-loading");
+            }
+        });
+    }
 }
    
 
