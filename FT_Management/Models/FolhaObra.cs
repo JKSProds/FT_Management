@@ -221,6 +221,11 @@
         [Display(Name = "Categoria 3")]
         public string Categoria3 { get; set;}
         public string ExemploRelatorio { get; set;}
+
+        public CategoriaResolucao() {
+            Categoria1 = "Generic";
+            Categoria2 = "Causa não identificada";
+        }
     }
 }
 
