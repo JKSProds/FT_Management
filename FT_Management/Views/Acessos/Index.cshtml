@@ -340,9 +340,12 @@ else
             
                 if (input.getAttribute('data-total') > 8*60) {
                     document.getElementById("lstTipo").value = 1;
+                    document.getElementById('divTipoHorasExtra').style.display = 'block';
+                            document.getElementById('divTipoFaltas').style.display = 'none';
                 }else{
                     document.getElementById("lstTipo").value = 2;
-            document.getElementById("lstTipo").dispatchEvent(new Event('change'));
+                    document.getElementById('divTipoHorasExtra').style.display = 'none';
+                            document.getElementById('divTipoFaltas').style.display = 'block';
             }
         });
         Bulma('#modalValidarAcesso').modal().open();
