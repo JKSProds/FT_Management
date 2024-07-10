@@ -128,6 +128,7 @@ namespace FT_Management.Controllers
             ModelState.Remove("Marcacao.PrioridadeMarcacao");
             ModelState.Remove("Marcacao.Referencia");
             ModelState.Remove("DataServico");
+            if (!fo.CategoriaResolucao) ModelState.Remove("CatResolucao.Id_3");
 
             if (ModelState.IsValid)
             {   
@@ -207,6 +208,7 @@ namespace FT_Management.Controllers
             ModelState.Remove("Marcacao.PrioridadeMarcacao");
             ModelState.Remove("Marcacao.Referencia");
             ModelState.Remove("DataServico");
+            if (!fo.CategoriaResolucao) ModelState.Remove("CatResolucao.Id_3");
 
             fo.Utilizador = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
             fo.ValidarIntervencoes();
