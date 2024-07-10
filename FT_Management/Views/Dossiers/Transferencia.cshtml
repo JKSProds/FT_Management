@@ -57,22 +57,6 @@
                             <span>Adicionar Linha</span>
                         </button>
                     </p>
-                    <p class="control">
-                        <button class="button is-success is-outlined" disabled type="button">
-                            <span class="icon">
-                                <i class="fa-solid fa-table-list"></i>
-                            </span>
-                            <span>Lista de Referências</span>
-                        </button>
-                    </p>
-                    <p class="control">
-                        <button class="button is-warning" disabled type="button">
-                            <span class="icon">
-                                <i class="fa-solid fa-link"></i>
-                            </span>
-                            <span>Anexos</span>
-                        </button>
-                    </p>
                 }
             </div>
         </div>
@@ -83,7 +67,7 @@
 {
     <div class="container">
     <br />
-    <button class="button is-danger is-fullwidth" disabled>Não foram encontradas linhas!</button>
+    <button class="button is-danger is-fullwidth" >Não foram encontradas linhas!</button>
 </div>
 }
 else
@@ -238,6 +222,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
+            <div class="buttons is-centered" style="width:100%">
             <button class="button is-info is-fullwidth is-large" type="button"
                 onclick="AdicionarPeca(document.getElementById('txtStampPeca').value, document.getElementById('txtQtd').value)"
                 disabled id="btnAdicionarPeca">
@@ -252,7 +237,7 @@ else
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
                 <span>Fechar</span>
-            </button>
+            </button></div>
         </footer>
     </div>
 </div>
@@ -282,6 +267,7 @@ else
             </div>
         </section>
         <footer class="modal-card-foot">
+            <div class="buttons is-centered" style="width:100%">
             <button class="button is-info is-fullwidth is-large" type="button" id="btnAdicionarLinha"
                 onclick="AdicionarLinha(document.getElementById('txtLinha').value)">
                 <span class="icon">
@@ -295,7 +281,7 @@ else
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
                 <span>Fechar</span>
-            </button>
+            </button></div>
         </footer>
     </div>
 </div>

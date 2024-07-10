@@ -134,6 +134,7 @@
             Dossier d = phccontext.ObterDossier(id);
             d.Linhas = phccontext.ObterLinhasViagem(id);
 
+            if (d.Linhas.Count() == 0) return Forbid();
             return View(d);
         }
 
@@ -162,6 +163,8 @@
             foreach (var l in d.Linhas) {
                 phccontext.ValidarTransferenciaViagem(l, u);
             }
+
+            phccontext.FecharTransferenciaViagem(d);
             return StatusCode(200);
         }
         

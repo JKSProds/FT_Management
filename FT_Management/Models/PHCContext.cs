@@ -3515,16 +3515,14 @@ namespace FT_Management.Models
 
         public List<string> CriarTransferenciaViagem(Utilizador u, Dossier d)
         {
-            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+            List<string> res = new List<string>() { "1", "Erro", "", "" };
 
             try
             {
-                 string SOAP = NotificacaoContext.ObterSoapPHC(d);
-                 string r =  MailContext.EnviarSoapPHC(SOAP).Result;
-                ExecutarQuery("update bo set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+' where bostamp = '"+d.StampDossier+"';update bo2 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '+u.NomeUtilizador+'  where bo2stamp = '+d.StampDossier+';update bo3 set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bo3stamp = '+d.StampDossier+';update bi set ousrinis = '+u.NomeUtilizador+', usrinis = '+u.NomeUtilizador+'  where bostamp = '+d.StampDossier+'");
-                res[0] = "1";
-                res[1] = r;
-                res[2] = ObterCodigoAt(r);
+                res[1] = MailContext.EnviarSoapPHC(NotificacaoContext.ObterSoapPHCTransferenciaViagem(d)).Result;;
+                res[2] = ObterCodigoAt(res[1]);
+
+                FecharPickingTransferencia(u, d);
             }
 
             catch (Exception ex)
@@ -3534,6 +3532,19 @@ namespace FT_Management.Models
 
             return res;
         }
+
+        public void FecharPickingTransferencia(Utilizador u, Dossier d) { 
+
+            ExecutarQuery("update bo set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"' where bostamp = '"+d.StampDossier+"';");
+            ExecutarQuery("update bo2 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"'  where bo2stamp = '"+d.StampDossier+"';");
+            ExecutarQuery("update bo3 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"'  where bo3stamp = '"+d.StampDossier+"';");
+
+            foreach (Linha_Dossier l in d.Linhas) {
+                ExecutarQuery("update bi set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"', fechada=1  where bistamp = '"+l.Stamp_Linha+"';");
+            }   
+
+            if (ExecutarQuery("select COUNT(*) from bi where bostamp='"+d.StampDossier+"' and ref <>'' and fechada=0;")[0] == "0") ExecutarQuery("update bo set fechada=1 where bostamp = '"+d.StampDossier+"';");
+        } 
 
 
         public string ObterCodigoAt(string STAMP)
@@ -3568,7 +3579,7 @@ namespace FT_Management.Models
         }
 
 
-                public List<string> ValidarTransferenciaViagem(Linha_Dossier l, Utilizador u)
+        public List<string> ValidarTransferenciaViagem(Linha_Dossier l, Utilizador u)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
@@ -3586,6 +3597,24 @@ namespace FT_Management.Models
             catch (Exception ex)
             {
                 Console.WriteLine("Não foi possivel criar a linha na TV no PHC!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
+        }
+
+        public List<string> FecharTransferenciaViagem(Dossier d)
+        {
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
+
+            try
+            {
+                //Validar linhas abertas
+                d.Linhas = ObterLinhasViagem(d.StampDossier);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel validar as linhas na TV no PHC!\r\n(Exception: " + ex.Message + ")");
             }
 
             return res;

@@ -68,11 +68,11 @@
         </div>
     </div>
 <br>
-<a class="button is-large is-info is-rounded is-fullwidth" onclick="ValidarTV('@Model.StampDossier')">
+<a class="button is-large is-info is-rounded is-fullwidth" id="btnSubmit" onclick="ValidarTV('@Model.StampDossier')">
     <span class="icon is-small">
         <i class="fa-solid fa-check"></i>
     </span>
-    <span>Validar Transferência em Viagem</span>
+    <span>Validar Transferência</span>
 </a>
 
 
@@ -86,6 +86,8 @@ function ValidarTV(id) {
     if (rows.length == 0) {
         notifyError("Tem de validar pelo menos uma peça!")
     }else{
+
+        document.getElementById("btnSubmit").classList.add("is-loading");
         // Step 2: Iterate through the rows
         for (var i = 0; i < rows.length; i++) {
             if (isNaN(parseFloat(rows[i].querySelector('.qtt').textContent))) rows[i].querySelector('.qtt').textContent = 0;
@@ -99,10 +101,12 @@ function ValidarTV(id) {
                     window.location.href = "/Produtos/Armazem/";
             },
             error: function (response) {
-                notifyError("Ocorreu um erro ao validar a transferencia em viagem!")
+                notifyError("Ocorreu um erro ao validar a transferencia em viagem!");
+                document.getElementById("btnSubmit").classList.remove("is-loading");
             },
             failure: function (response) {
-                notifyError("Falha ao validar a transferencia em viagem!")
+                notifyError("Falha ao validar a transferencia em viagem!");
+                document.getElementById("btnSubmit").classList.remove("is-loading");
             }
         });
     }
