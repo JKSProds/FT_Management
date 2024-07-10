@@ -100,6 +100,13 @@ else
                     @foreach (var item in Model)
                         {
                             <tr class="@(item.Validado || item.Utilizador.Ferias || item.Utilizador.IsencaoHorario ? "has-background-success-soft" : (item.Valido ? "has-background-warning-soft" : "has-background-danger-soft"))" id="tr_@item.Utilizador.Id">
+                            @if (item.Utilizador.Ferias) {
+                                <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
+                                <span>@item.Utilizador.NomeCompleto</span>
+                            </td>
+                                <td colspan="6">
+                                            <a class="button is-rounded is-fullwidth is-info is-large"><span class="icon mr-3"><i class="fa-solid fa-umbrella-beach"></i></span><span>FÉRIAS</span></a></td>
+                            }else{
                             <td id="@item.Utilizador.Id" style="min-width: 250px" data-label="@Html.DisplayNameFor(model => model.FirstOrDefault().Utilizador)">
                                 <span>@item.Utilizador.NomeCompleto</span>
                             </td>
@@ -119,7 +126,7 @@ else
                                 <span><b>@item.TotalHorasDesc()</b></span>
                             </td>
                              <td style="min-width: 250px" class="is-actions-cell">
-                            @if (!item.Validado && !item.Utilizador.Ferias) {
+                            @if (!item.Validado) {
                                 <div class="buttons">
                                     @if (item.TotalMinutos > 0 && !item.Utilizador.IsencaoHorario) {
                                 <a class="button is-success is-rounded " onclick="ValidarAcessos('tr_@item.Utilizador.Id');document.getElementById('txtBancoHoras').value='@item.Utilizador.BancoHoras';document.getElementById('txtHoras').value='@item.ObterHoras()';"
@@ -131,10 +138,8 @@ else
                                         href="javascript:;"><i class="fas fa-trash" style="font-size:20px"></i></a>
                                         </div>
                                         }
-                                        @if (item.Utilizador.Ferias) {
-                                            <a class="button is-rounded is-fullwidth is-info is-large"><span class="icon mr-3"><i class="fa-solid fa-umbrella-beach"></i></span><span>FÉRIAS</span></a>
-                                            }
                             </td>
+                                }
                             </tr>
                         }
                     </tbody>
