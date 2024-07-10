@@ -211,8 +211,8 @@
     public class CategoriaResolucao {
         public int Id_1 { get; set; }
         public int Id_2 { get; set; }
-        [Required(ErrorMessage = "Falta selecionar o categoria de resolução!")]
-        [Range(1, int.MaxValue, ErrorMessage = "Falta selecionar o categoria de resolução!")]
+        [Required(ErrorMessage = "Falta selecionar a categoria de resolução!")]
+        [Range(1, int.MaxValue, ErrorMessage = "Falta selecionar a categoria de resolução!")]
         public int Id_3 { get; set; }
         [Display(Name = "Categoria 1")]
         public string Categoria1 { get; set;}
