@@ -4157,7 +4157,7 @@ namespace FT_Management.Models
 
         public List<Dossier> ObterDossiersAbertos(Utilizador t, int NumDossier)
         {
-            List<Dossier> Dossiers = ObterDossiers("select a.* from bo a(nolock) where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 order by ousrinis;", false, false, false, false);
+            List<Dossier> Dossiers = ObterDossiers("select a.* from bo a(nolock) where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 and (select count(*) from bi b where a.bostamp=b.bostamp and b.ref<>'')>0 order by ousrinis;", false, false, false, false);
             Dossiers.ForEach(d => d.Linhas = ObterLinhasDossierAbertas(d.StampDossier, t));
 
             return Dossiers;

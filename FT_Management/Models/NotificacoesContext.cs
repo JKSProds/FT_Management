@@ -216,6 +216,14 @@ namespace FT_Management.Models
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
 
+
+        public static bool EnviarNotificacaoTransferencia(Utilizador u)
+        {
+            string Mensagem = "Foi gerada com sucesso uma nova transferência de viagem. Por favor valide no seu armazém.";
+
+            return EnviarMensagem(u.ChatToken, Mensagem);
+        }
+
         public static List<KeyValuePair<String, String>> ObterChatsAtivos()
         {
             List<KeyValuePair<string, string>> LstChats = new List<KeyValuePair<string, string>>();
