@@ -605,7 +605,7 @@ namespace FT_Management.Models
                     ApiUpdate = EnviarSoap(NotificacaoContext.ObterSoapEnvPendente(m, fo, "Pendente"),ConfigurationManager.AppSetting["Sonae:URL"]).Result;
                 }
 
-                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico + "<br><br>" + (ApiUpdate ? "✅" : "😞") + " UPDATE API SONAE", ObterEmailCC(1), fo.Utilizador) ;
+                EnviarMailSimples("assistecnica@food-tech.pt", Assunto, fo.RelatorioServico + "<br><br>Categoria 1: <b>"+ fo.CatResolucao.Categoria1 +"</b><br>Categoria 2: <b>"+ fo.CatResolucao.Categoria2 +"</b><br>Categoria 3: <b>"+ fo.CatResolucao.Categoria3 +"</b><br><br>" + (ApiUpdate ? "✅" : "😞") + " - UPDATE API SONAE", ObterEmailCC(1), fo.Utilizador) ;
             }
               
             return true;
