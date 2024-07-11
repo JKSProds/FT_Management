@@ -5201,6 +5201,7 @@ namespace FT_Management.Models
                     {
                             n = new Notificacao
                             {
+                                Stamp = result["mailstamp"].ToString(),
                                 Assunto = result["assunto"].ToString().Trim(),
                                 Mensagem = result["corpo"].ToString().Trim(),
                                 UtilizadorDestino = new Utilizador() {EmailUtilizador=result["para"].ToString().Trim()},
