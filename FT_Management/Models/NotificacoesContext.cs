@@ -62,6 +62,11 @@ namespace FT_Management.Models
                                 <urn:Work_Info_Notes>["+fo.Utilizador.NomeCompleto+"] (" + Estado.ToUpper() + ") - " + fo.RelatorioServico+@"</urn:Work_Info_Notes> -- descrição do comentário
                                 <urn:Status>Pending</urn:Status> -- Status
                                 <urn:Status_Reason>Client Hold</urn:Status_Reason> --status reason  
+                                <urn:Closure_Product_Category_Tier1>Catalog</urn:Closure_Product_Category_Tier1> -- categoria 1 de produto de resolução
+                                <urn:Closure_Product_Category_Tier2>Bit</urn:Closure_Product_Category_Tier2> -- categoria 2 de produto de resolução
+                                <urn:Closure_Product_Category_Tier3>Product</urn:Closure_Product_Category_Tier3> -- categoria 3 de produto de resolução
+                                <urn:Closure_Product_Model_Version>Balança</urn:Closure_Product_Model_Version> -- nome produto
+                                <urn:Closure_Product_Name>Balança</urn:Closure_Product_Name> -- nome produto
                                 <urn:Work_Info_Type>General Information</urn:Work_Info_Type>
                                 <urn:Work_Info_View_Access>Public</urn:Work_Info_View_Access> -- tipo do comentário (Internal ou Public)
                             </urn:HelpDesk_Modify_Service>
@@ -112,10 +117,11 @@ namespace FT_Management.Models
                              <urn:AssigneeID>"+ ConfigurationManager.AppSetting["Sonae:User"] + @"</urn:AssigneeID> -- userid do assignee do registo
                              <urn:AssigneeName>FoodTec ITSM (Integracao)</urn:AssigneeName> -- fullname do assignee
                              <urn:Closure_Product_Category_Tier1>Catalog</urn:Closure_Product_Category_Tier1> -- categoria 1 de produto de resolução
-                             <urn:Closure_Product_Category_Tier2>Bit</urn:Closure_Product_Category_Tier2> -- categoria 2 de produto de resolução
-                             <urn:Closure_Product_Category_Tier3>Product</urn:Closure_Product_Category_Tier3> -- categoria 3 de produto de resolução
-                             <urn:Closure_Product_Model_Version>Balança</urn:Closure_Product_Model_Version> -- nome produto
-                             <urn:Resolution>["+fo.Utilizador.NomeCompleto+"] " + fo.RelatorioServico +@"</urn:Resolution> -- notas de resolução
+                            <urn:Closure_Product_Category_Tier2>Bit</urn:Closure_Product_Category_Tier2> -- categoria 2 de produto de resolução
+                            <urn:Closure_Product_Category_Tier3>Product</urn:Closure_Product_Category_Tier3> -- categoria 3 de produto de resolução
+                            <urn:Closure_Product_Model_Version>Balança</urn:Closure_Product_Model_Version> -- nome produto
+                            <urn:Closure_Product_Name>Balança</urn:Closure_Product_Name> -- nome produto
+                            <urn:Resolution>["+fo.Utilizador.NomeCompleto+"] " + fo.RelatorioServico +@"</urn:Resolution> -- notas de resolução
                              <urn:Resolution_Category>" + fo.CatResolucao.Categoria1 + @"</urn:Resolution_Category> -- root cause nível 1
                              <urn:Resolution_Category_Tier_2>" + fo.CatResolucao.Categoria2 + @"</urn:Resolution_Category_Tier_2> -- root cause nível 2
                              <urn:Resolution_Category_Tier_3>" + fo.CatResolucao.Categoria3 + @"</urn:Resolution_Category_Tier_3> -- root cause nível 3
