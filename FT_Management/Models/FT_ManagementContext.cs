@@ -2816,6 +2816,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                     img.Mutate(x => x.Resize(400, 235));
                     imageContext.DrawImage(img, new Point(x, y), 1);
 
+                    y+=10;
                     imageContext.DrawText(new TextOptions(fontBody)
                     {
                         TextAlignment = TextAlignment.Center,
@@ -2838,11 +2839,147 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                     imageContext.DrawText(new TextOptions(fontBody)
                     {
                         TextAlignment = TextAlignment.Center,
-                        Origin = new System.Numerics.Vector2(width - 100, y),
-                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x + 400 + 30, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
                         WordBreaking = WordBreaking.Normal,
-                        WrappingLength = 100
-                    }, Header, Color.Black);
+                        WrappingLength = width - 100 - 400  - x
+                    }, "SUBIC, LDA - FOOD-TECH", Color.Black);
+                    y+=25;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x + 400 + 30, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width - 100 - 400 - x
+                    }, "R. Eng. Sabino Marques, 144", Color.Black);
+                    y+=25;                    
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x + 400 + 30, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width - 100 - 400 - x
+                    }, "4470-605 Maia", Color.Black);
+                    y+=25;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x + 400 + 30, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width - 100 - 400 - x
+                    }, "Tel: 229 479 670", Color.Black);
+                    y+=25;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x + 400 + 30, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width - 100 - 400 - x
+                    }, "NIF : 515 609 013", Color.Black);
+                    y+=40;
+                    imageContext.DrawLines(new Pen(Color.Black, 2), new Point(x + 400 + 30, y), new Point(width - 180, y));
+                    y+=10;
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x + 400 + 30, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width - 100 - 400 - x
+                    }, fo.IdAT + " | " +fo.IdFolhaObra + " | " +fo.IdMarcacao, Color.Black);
+                    y+=40;
+
+                    // Define the vertices (corners) of the rectangle
+                    PointF[] rectangleVertices =
+                    {
+                        new PointF(x, y),   // Top-left corner
+                        new PointF(width/2-10, y),   // Top-right corner
+                        new PointF(width/2-10, y+100),   // Bottom-right corner
+                        new PointF(x, y+100)    // Bottom-left corner
+                    };
+
+                    // Draw the rectangle onto the image
+                    imageContext.DrawPolygon(new Pen(Color.Black, 2), rectangleVertices);
+
+                    // Define the vertices (corners) of the rectangle
+                    rectangleVertices = new PointF[]
+                    {
+                        new PointF(width/2+10, y),   // Top-left corner
+                        new PointF(width-25, y),   // Top-right corner
+                        new PointF(width-25, y+100),   // Bottom-right corner
+                        new PointF(width/2+10, y+100)    // Bottom-left corner
+                    };
+
+                    // Draw the rectangle onto the image
+                    imageContext.DrawPolygon(new Pen(Color.Black, 2), rectangleVertices);
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x+10, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width/2
+                    }, fo.ClienteServico.NomeCliente + " (" + fo.ClienteServico.IdCliente + " / " + fo.ClienteServico.IdLoja + ")", Color.Black);
+                    y+=25;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x+10, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width/2
+                    }, fo.ClienteServico.MoradaCliente, Color.Black);
+                    y+=50;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(x+10, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width/2
+                    }, "NIF: " + fo.ClienteServico.NumeroContribuinteCliente, Color.Black);
+                    y+=25;
+                    y-=100;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width/2+25, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width/2-30
+                    }, fo.EquipamentoServico.DescricaoEquipamento, Color.Black);
+                    y+=25;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width/2+25, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width/2-30
+                    }, "Marca: " + fo.EquipamentoServico.MarcaEquipamento, Color.Black);
+                    y+=25;
+                    imageContext.DrawText(new TextOptions(fontFooter)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width/2+25, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width/2-30
+                    }, "Modelo: " + fo.EquipamentoServico.ModeloEquipamento, Color.Black);
+                    y+=25;
+                    imageContext.DrawText(new TextOptions(fontBody)
+                    {
+                        TextAlignment = TextAlignment.Center,
+                        Origin = new System.Numerics.Vector2(width/2+25, y),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        WordBreaking = WordBreaking.Normal,
+                        WrappingLength = width/2-30
+                    }, "N/S: " + fo.EquipamentoServico.NumeroSerieEquipamento, Color.Black);
+                    y+=25;
                 });
 
                 // render onto an Image
