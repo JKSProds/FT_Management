@@ -2971,7 +2971,7 @@ namespace FT_Management.Models
                 {
                     SqlConnection conn = new SqlConnection(ConnectionString);
                     conn.Open();
-                    SqlCommand command = new SqlCommand("select hshestamp, codigo, descricao, factor, cm, cmdesc, razao from hshe(nolock) where codigo = 3 or codigo = 6", conn)
+                    SqlCommand command = new SqlCommand("select hshestamp, codigo, descricao, factor, cm, cmdesc, razao from hshe(nolock) where codigo = 3 or codigo = 6 or codigo = 7;", conn)
                     {
                         CommandTimeout = TIMEOUT
                     };
@@ -5201,6 +5201,7 @@ namespace FT_Management.Models
                     {
                             n = new Notificacao
                             {
+                                Stamp = result["mailstamp"].ToString(),
                                 Assunto = result["assunto"].ToString().Trim(),
                                 Mensagem = result["corpo"].ToString().Trim(),
                                 UtilizadorDestino = new Utilizador() {EmailUtilizador=result["para"].ToString().Trim()},

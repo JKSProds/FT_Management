@@ -3,6 +3,7 @@
     public class Notificacao
     {
         public int ID { get; set; }
+        public string Stamp { get; set; }
         public string Assunto { get; set; }
         public string Mensagem { get; set; }        
         public List<String> Cc { get; set; }

@@ -5,11 +5,21 @@ namespace FT_Management.Controllers
     [Authorize(Roles = "Admin")]
     public class APIController : Controller
     {
+         private readonly ILogger<APIController> _logger;
+
+        public APIController(ILogger<APIController> logger)
+        {
+            _logger = logger;
+        }
+
         //Obter lista de marcacoes
         public JsonResult Pedidos(int id)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+
+            _logger.LogDebug("[API] - A obter o JSON das Marcações");
+
 
             return Json(phccontext.ObterMarcacoes(id, DateTime.Now));
         }
@@ -22,11 +32,12 @@ namespace FT_Management.Controllers
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
             if (string.IsNullOrEmpty(id)) return StatusCode(500);
-            
-            Console.WriteLine(id);
+                        
+            _logger.LogDebug("[API] - A enviar um email manual! ("+id+")");
+
             try {
                 Notificacao n = phccontext.ObterEmail(id);
-
+                if (string.IsNullOrEmpty(n.Stamp)) return StatusCode(500);
                 return MailContext.EnviarEmailManual(n.UtilizadorDestino.EmailUtilizador,n.Assunto,n.Mensagem,n.Cc) ? (phccontext.FecharEmail(id)[0] != "0" ? StatusCode(200) : StatusCode(500)) : StatusCode(500);
         
             }
@@ -46,7 +57,9 @@ namespace FT_Management.Controllers
             // Retrieve data from your data source
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            
+
+            _logger.LogDebug("[API] - A obter estatisticas de assistencia!");
+
             var d = phccontext.ObterEstatisticas(phccontext.ObterCliente(c,0), cl, dInicio, dFim);
             var data = new {
                 labels = d.Keys,
@@ -63,6 +76,8 @@ namespace FT_Management.Controllers
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
             
+            _logger.LogDebug("[API] - A obter dados das assistencias!");
+
             var data = phccontext.ObterFolhasObraEstatisticas(phccontext.ObterCliente(c,0), cl, vl, dInicio, dFim);
 
             return Ok(data);
