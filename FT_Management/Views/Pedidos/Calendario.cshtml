@@ -346,6 +346,7 @@ else
                             url: '/Pedidos/Marcacao/' + id,
                             type: "GET",
                             success: function (response) {
+                                console.log(response);
                                 document.getElementById('txtDatas').value = response.datasAdicionaisDistintas.map(function (elem) {
                                     return new Date(elem).toLocaleDateString();
                                 }).join(" | ");
@@ -409,7 +410,7 @@ else
                         <input type="text" class="input" readonly id="txtRef">
                     </div>
                     <div class="control">
-                        <a class="button is-info" onclick="copiarTexto('txtRef');">
+                        <a class="button is-info" style="width:40px" onclick="copiarTexto('txtRef');">
                             <i class="fa-solid fa-copy"></i>
                         </a>
                     </div>
