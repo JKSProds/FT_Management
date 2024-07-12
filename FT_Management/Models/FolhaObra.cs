@@ -88,7 +88,7 @@
         public string JustExtraContrato { get; set; }
         public string CheckList { get; set; }
         public bool EnviarEmailGuias { get; set; }
-        public bool CategoriaResolucao { get { return (this.ClienteServico.IdCliente == 561 || this.ClienteServico.IdCliente==1568) && Marcacao.TipoEquipamento == "Pesagem";} }
+        public bool CategoriaResolucao { get { return (this.ClienteServico.IdCliente == 561 || this.ClienteServico.IdCliente==1568) && (Marcacao == null) ? false : Marcacao.TipoEquipamento == "Pesagem";} }
         public CategoriaResolucao CatResolucao { get; set; }
 
         public FolhaObra()
