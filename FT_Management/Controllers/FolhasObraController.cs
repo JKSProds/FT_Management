@@ -81,7 +81,7 @@ namespace FT_Management.Controllers
                 );
 
             ViewBag.CategoriaResolucao3 = categoriasResolucao
-                .GroupBy(l => l.Id_2)
+                .GroupBy(l => l.Id_1 + "_" + l.Id_2)
                 .ToDictionary(
                     g => g.Key,
                     g => g.Select(l => new SelectListItem() { Value = l.Id_3.ToString(), Text = l.Categoria3 }).DistinctBy(l => l.Value).ToList()

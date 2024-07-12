@@ -327,7 +327,7 @@
                         </div>
                         <script>
                             const categoria2 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategoriaResolucao2 as Dictionary<int, List<SelectListItem>>));
-                            const categoria3 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategoriaResolucao3 as Dictionary<int, List<SelectListItem>>));
+                            const categoria3 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.CategoriaResolucao3 as Dictionary<string, List<SelectListItem>>));
 
                             document.getElementById('lstCat1').addEventListener('change', function () {
                                 const cat1Value = this.value;
@@ -346,7 +346,8 @@
                             });
 
                             document.getElementById('lstCat2').addEventListener('change', function () {
-                                const cat2Value = this.value;
+                                const cat2Value = document.getElementById('lstCat1').value + "_" + this.value;
+                                console.log(cat2Value);
                                 const lstCat3 = document.getElementById('lstCat3');
                                 lstCat3.innerHTML = '<option value="0">Não Definido</option>';
 
