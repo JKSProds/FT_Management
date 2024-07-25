@@ -3522,7 +3522,7 @@ namespace FT_Management.Models
                 res[1] = MailContext.EnviarSoapPHC(NotificacaoContext.ObterSoapPHCTransferenciaViagem(d)).Result;;
                 res[2] = ObterCodigoAt(res[1]);
 
-                FecharPickingTransferencia(u, d);
+                FecharPickingTransferencia(u, res[1]);
             }
 
             catch (Exception ex)
@@ -3533,17 +3533,25 @@ namespace FT_Management.Models
             return res;
         }
 
-        public void FecharPickingTransferencia(Utilizador u, Dossier d) { 
+        public List<string> FecharPickingTransferencia(Utilizador u, string Stamp_Dossier) { 
+            List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
-            ExecutarQuery("update bo set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"' where bostamp = '"+d.StampDossier+"';");
-            ExecutarQuery("update bo2 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"'  where bo2stamp = '"+d.StampDossier+"';");
-            ExecutarQuery("update bo3 set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"'  where bo3stamp = '"+d.StampDossier+"';");
+            try
+            {
+                string SQL_Query = "EXEC WEB_Fecha_Origem ";
 
-            foreach (Linha_Dossier l in d.Linhas) {
-                ExecutarQuery("update bi set ousrinis = '"+u.NomeUtilizador+"', usrinis = '"+u.NomeUtilizador+"', fechada=1  where bistamp = '"+l.Stamp_Linha+"';");
-            }   
+                SQL_Query += "@STAMP = '" + Stamp_Dossier + "', ";
+                SQL_Query += "@NOME_UTILIZADOR = '" + u.NomeUtilizador + "'; ";
 
-            if (ExecutarQuery("select COUNT(*) from bi where bostamp='"+d.StampDossier+"' and ref <>'' and fechada=0;")[0] == "0") ExecutarQuery("update bo set fechada=1 where bostamp = '"+d.StampDossier+"';");
+                res = ExecutarQuery(SQL_Query);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Não foi possivel fechar as origens!\r\n(Exception: " + ex.Message + ")");
+            }
+
+            return res;
         } 
 
 
