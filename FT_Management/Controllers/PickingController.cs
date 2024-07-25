@@ -59,7 +59,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter um fornecedor em especifico e as suas encomendas: {3}.", u.NomeCompleto, u.Id, id);
 
-            return View(phccontext.ObterFornecedor(id));
+            return View(f);
         }
 
         //Obter todos os tecnicos
