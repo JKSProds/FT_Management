@@ -5199,7 +5199,7 @@ namespace FT_Management.Models
 
                 conn.Open();
                 
-                SqlCommand command = new SqlCommand("select assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';", conn)
+                SqlCommand command = new SqlCommand("select mailstamp,assunto,corpo,para,cc from u_mails where mailstamp = '"+id+"';", conn)
                 {
                     CommandTimeout = TIMEOUT
                 };
