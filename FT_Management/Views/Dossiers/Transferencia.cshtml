@@ -102,20 +102,31 @@ else
                                 <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Designacao)">
                                     @Html.DisplayFor(modelItem => item.Designacao)
                                 </td>
-                                <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)">
-                                    @Html.DisplayFor(modelItem => item.Quantidade)
-                                </td>
-                                <td class="is-actions-cell">
-                                    @if (!Model.Fechado)
-                                    {
-                                        <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
-                                onclick="RemoverLinha('@item.Stamp_Linha')">
+                                @if (item.Fornecido) {
+                                     <td colspan="2">
+                                        <button class="button is-success is-fullwidth is-large" type="button">
                                             <span class="icon">
-                                                <i class="fa-solid fa-trash"></i>
+                                                <i class="fa-solid fa-check"></i>
                                             </span>
+                                            <span>Fornecido</span>
                                         </button>
-                                    }
-                                </td>
+                                    </td>
+                                }else{
+                                    <td data-label="@Html.DisplayNameFor(model => model.Linhas.First().Quantidade)">
+                                        @Html.DisplayFor(modelItem => item.Quantidade)
+                                    </td>
+                                    <td class="is-actions-cell">
+                                        @if (!Model.Fechado)
+                                        {
+                                            <button id="btn_@item.Stamp_Linha" class="button is-danger is-fullwidth is-large"
+                                    onclick="RemoverLinha('@item.Stamp_Linha')">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </span>
+                                            </button>
+                                        }
+                                    </td>
+                                }
                             </tr>
                         }
                         @foreach (var item in Model.Linhas.Where(l =>

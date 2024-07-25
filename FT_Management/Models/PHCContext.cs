@@ -3521,8 +3521,6 @@ namespace FT_Management.Models
             {
                 res[1] = MailContext.EnviarSoapPHC(NotificacaoContext.ObterSoapPHCTransferenciaViagem(d)).Result;;
                 res[2] = ObterCodigoAt(res[1]);
-
-                FecharPickingTransferencia(u, res[1]);
             }
 
             catch (Exception ex)
@@ -3610,12 +3608,13 @@ namespace FT_Management.Models
             return res;
         }
 
-        public List<string> FecharTransferenciaViagem(Dossier d)
+        public List<string> FecharTransferenciaViagem(Dossier d, Utilizador u)
         {
             List<string> res = new List<string>() { "-1", "Erro", "", "" };
 
             try
             {
+                FecharPickingTransferencia(u, d.StampDossier);
                 //Validar linhas abertas
                 d.Linhas = ObterLinhasViagem(d.StampDossier);
             }
@@ -4140,7 +4139,7 @@ namespace FT_Management.Models
                             Serie = int.Parse(result["ndos"].ToString()),
                             Cliente =  new Cliente() { NomeCliente = result["nome"].ToString() },
                             Referencia = result["obranome"].ToString(),
-                            Estado = result["tabela1"].ToString(),
+                            Estado = result["u_estado"].ToString() == null ? result["tabela1"].ToString() : result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
                             EditadoPor = result["usrinis"].ToString(),
@@ -4180,11 +4179,11 @@ namespace FT_Management.Models
         //Stocks Minimos
         public List<Dossier> ObterDossiersStocksMinimos()
         {
-            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101;", true, false, false, true);
+            return ObterDossiers("select bo3.u_estado, cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101;", true, false, false, true);
         }
         public Dossier ObterDossierStocksMinimos(Utilizador t)
         {
-            return ObterDossiers("select cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and cm3.u_tecnico="+t.IdPHC+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
+            return ObterDossiers("select bo3.u_estado, cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and cm3.u_tecnico="+t.IdPHC+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
@@ -4194,7 +4193,7 @@ namespace FT_Management.Models
 
         public List<Dossier> ObterDossiersAbertos(Utilizador t, int NumDossier)
         {
-            List<Dossier> Dossiers = ObterDossiers("select a.* from bo a(nolock) where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 and (select count(*) from bi b where a.bostamp=b.bostamp and b.ref<>'')>0 order by ousrinis;", false, false, false, false);
+            List<Dossier> Dossiers = ObterDossiers("select a.*,c.u_estado from bo a(nolock) left join bo3 c on a.bostamp=c.bo3stamp where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 and (select count(*) from bi b where a.bostamp=b.bostamp and b.ref<>'')>0 order by ousrinis;", false, false, false, false);
             Dossiers.ForEach(d => d.Linhas = ObterLinhasDossierAbertas(d.StampDossier, t));
 
             return Dossiers;
