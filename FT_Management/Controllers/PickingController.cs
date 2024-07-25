@@ -59,7 +59,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter um fornecedor em especifico e as suas encomendas: {3}.", u.NomeCompleto, u.Id, id);
 
-            return View(phccontext.ObterFornecedor(id));
+            return View(f);
         }
 
         //Obter todos os tecnicos
@@ -115,12 +115,12 @@
 
              //Dossier d = phccontext.ObterDossier(res[2]);
              Cliente c = new Cliente() {IdCliente=1, IdLoja=0};
-            Dossier d = new Dossier() {Serie=98, Cliente=c, StampMoradaDescarga="SUBIC Alverca", EditadoPor=u.NomeCompleto, Tecnico=t, DataDossier=DateTime.Now};
+            Dossier d = new Dossier() {Serie=98, Cliente=c, StampMoradaDescarga=(u.Zona == 1 ? "SUBIC LDA" : "SUBIC Alverca"), EditadoPor=u.NomeCompleto, Tecnico=t, DataDossier=DateTime.Now};
             
             List<Linha_Dossier> LstLinhas = linhas.Split(';')
             .Select(l => l.Split('|'))
             .Where(p => p.Length == 4)
-            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Referencia=p[1], Designacao =p[2], Quantidade = int.Parse(p[3]), Stamp_Dossier = d.StampDossier, Armazem_Origem=3, Armazem_Destino = t.IdArmazem })
+            .Select(p => new Linha_Dossier() { Stamp_Linha = p[0], Referencia=p[1], Designacao =p[2], Quantidade = double.Parse(p[3]), Stamp_Dossier = d.StampDossier, Armazem_Origem=3, Armazem_Destino = t.IdArmazem })
             .ToList();
 
             d.Linhas = LstLinhas;
