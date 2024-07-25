@@ -164,7 +164,7 @@
                 phccontext.ValidarTransferenciaViagem(l, u);
             }
 
-            phccontext.FecharTransferenciaViagem(d);
+            phccontext.FecharTransferenciaViagem(d, u);
             return StatusCode(200);
         }
         

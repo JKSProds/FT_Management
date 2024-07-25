@@ -93,7 +93,7 @@
 
             Utilizador t = context.ObterUtilizador(id);
             t.Dossiers = phccontext.ObterDossiersAbertos(t,36);
-            t.Dossiers.AddRange(phccontext.ObterDossiersAbertos(t, 96));
+            t.Dossiers.AddRange(phccontext.ObterDossiersAbertos(t, 96).Where(d=>d.Estado=="Stock Maia"));
 
             _logger.LogDebug("Utilizador {1} [{2}] a obter um tecnico em especifico e as suas linhas: {3}.", u.NomeCompleto, u.Id, id);
 
@@ -139,10 +139,22 @@
                 Mensagem = "Foi criada uma nova transferência em viagem. ATCode: " + d.AtCode
             });
             ChatContext.EnviarNotificacaoTransferencia(t);
-            MailContext.EnviarEmailTransferenciaViagem(u, d, new Attachment(context.MemoryStreamToPDF(context.DesenharEtiquetaViagem(d), 801, 504), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
+            MailContext.EnviarEmailTransferenciaViagem(u, d, new Attachment(context.MemoryStreamToPDF(context.DesenharDossier(d), 801, 504), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
         }
+
+                //Imprimir ticket 
+        [HttpGet]
+        public virtual ActionResult Ticket(string id)
+        {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
+            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+
+        
+            return File(context.MemoryStreamToPDF(context.DesenharDossier(phccontext.ObterDossier("WEBAPP68B02230O80B1O44DBO")), 2480, 3508), "application/pdf");  }
 
 
         //Obter uma encomenda em especifico
