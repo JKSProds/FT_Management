@@ -235,12 +235,43 @@ namespace FT_Management.Models
             List<string> res = new List<string>() { "-1", "Erro", "" };
             try
             {
-                string SQL_Query = "EXEC WEB_Guia_Global_Gera ";
+                List<Produto> LstProduto = ObterProdutosArmazem(IdArmazem).Where(p => p.Stock_Atual > 0).ToList();
+                List<Linha_Dossier> LstLinhas = new List<Linha_Dossier>();
 
-                SQL_Query += "@ARMAZEM = '" + IdArmazem + "'; ";
+                foreach (Produto p in LstProduto) {
+                    LstLinhas.Add(new Linha_Dossier() {
+                        Referencia = p.Ref_Produto,
+                        Designacao = p.Designacao_Produto,
+                        Quantidade = p.Stock_Atual,
+                        Armazem_Origem = IdArmazem,
+                        Armazem_Destino = 3
+                    });
+                }
 
-                res = ExecutarQuery(SQL_Query);
+                Dossier d = new Dossier() {
+                    Linhas = LstLinhas,
+                    Serie = 95,
+                    Cliente = new Cliente() {IdCliente = 6, IdLoja = 0},
+                    StampMoradaDescarga = "DESTINATÁRIO DESCONHECIDO",
+                    EditadoPor = u.NomeCompleto
+                };
 
+                res[1] = MailContext.EnviarSoapPHC(NotificacaoContext.ObterSoapPHCDossier(d)).Result;
+
+                LstLinhas.Insert(0, new Linha_Dossier() { Designacao = "* Equipamentos, acessórios e ferramentas p/ montagens"});
+                LstLinhas.Insert(1, new Linha_Dossier() {Designacao = " e assistência técnica em diversos clientes *"});
+                LstLinhas.ForEach(l => {l.Armazem_Origem = 3; l.Armazem_Destino=IdArmazem;});
+
+                d = new Dossier() {
+                    Linhas = LstLinhas,
+                    Serie = 90,
+                    Cliente = new Cliente() {IdCliente = 6, IdLoja = 0},
+                    StampMoradaDescarga = "DESTINATÁRIO DESCONHECIDO",
+                    EditadoPor = u.NomeCompleto
+                };
+
+                res[2] = MailContext.EnviarSoapPHC(NotificacaoContext.ObterSoapPHCDossier(d)).Result;
+                ExecutarQuery("update bo set emconf=0 WHERE bostamp='"+res[2]+"';update bi set emconf=0 WHERE bostamp='"+res[2]+"';");
                 ChatContext.EnviarNotificacaoGuiaGlobal(u);
             }
 
@@ -3520,7 +3551,7 @@ namespace FT_Management.Models
 
             try
             {
-                res[1] = MailContext.EnviarSoapPHC(NotificacaoContext.ObterSoapPHCTransferenciaViagem(d)).Result;;
+                res[1] = MailContext.EnviarSoapPHC(NotificacaoContext.ObterSoapPHCDossier(d)).Result;
                 res[2] = ObterCodigoAt(res[1]);
             }
 

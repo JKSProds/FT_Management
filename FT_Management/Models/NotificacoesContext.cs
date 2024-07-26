@@ -20,8 +20,9 @@ namespace FT_Management.Models
             return c.TipoCliente == "Indústria";
         }
 
-        public static string ObterSoapPHCTransferenciaViagem(Dossier d)
+        public static string ObterSoapPHCDossier(Dossier d)
         {
+            //IdCLiente = 6; Descarga DESTINÁRIO DESCONHECIDO; Serie: GG:90 TS:95
             string linhas = "";
             foreach (Linha_Dossier l in d.Linhas) {
                 linhas+= @"{""REF"":'"+l.Referencia+@"',""DESIGN"":'"+l.Designacao+@"',""QTT"":"+l.Quantidade+@",""armazem"":"+l.Armazem_Origem+@",""ar2mazem"":"+l.Armazem_Destino+@",""Oobistamp"":"""+l.Stamp_Linha+@"""},";

@@ -3228,8 +3228,8 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                     {
                         imageContext.BackgroundColor(Color.White);
 
-                        var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website.png"); // Adicione o caminho correto para o arquivo de imagem
-                        img.Mutate(x => x.Resize(700, 158));
+                        var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website_black.png"); // Adicione o caminho correto para o arquivo de imagem
+                        img.Mutate(x => x.Resize(700, 145));
                         imageContext.DrawImage(img, new Point(x, y + 75), 1);
 
                         QRCodeGenerator qrGenerator = new QRCodeGenerator();
@@ -3238,7 +3238,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
 
                         var qr = Image.Load(qrCode.GetGraphic(20));
                         qr.Mutate(x => x.Resize(300, 300));
-                        imageContext.DrawImage(qr, new Point(width - 300, y), 1);
+                        imageContext.DrawImage(qr, new Point(width - 300, y-10), 1);
 
                         // Informações da empresa
                         imageContext.DrawText(new TextOptions(fontHeader)
@@ -3248,9 +3248,9 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             HorizontalAlignment = HorizontalAlignment.Right,
                             WordBreaking = WordBreaking.Normal,
                             WrappingLength = width - 700 - 350
-                        }, d.NomeDossier.ToUpper() + " Nº " + d.IdDossier, Color.Black);
+                        }, d.NomeDossier.ToUpper() + "\nNº " + d.IdDossier, Color.Black);
 
-                        y+=100;
+                        y+=160;
 
                         // Informações da empresa
                         imageContext.DrawText(new TextOptions(fontCabecalho)
@@ -3261,10 +3261,10 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             WordBreaking = WordBreaking.Normal,
                             WrappingLength = width - 700 - 350
                         }, $"{d.DataCriacao:dd/MM/yyyy}" +
-                            (string.IsNullOrEmpty(d.AtCud) ? "" : $"\nATCUD: {d.AtCud}") +
-                            (string.IsNullOrEmpty(d.AtCode) ? "" : $"\nCód AT: {d.AtCode}"), Color.Black);
+                            (string.IsNullOrEmpty(d.AtCud.Trim()) ? "" : $"\nATCUD: {d.AtCud}") +
+                            (string.IsNullOrEmpty(d.AtCode.Trim()) ? "" : $"\nCód AT: {d.AtCode}"), Color.Black);
 
-                        y+=200;
+                        y+=190;
 
                         // Desenhar linha separadora
                         imageContext.DrawLines(Color.Black, 5, new PointF[] { new PointF(x, y), new PointF(width - x, y) });
@@ -3314,7 +3314,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             HorizontalAlignment = HorizontalAlignment.Left,
                             WordBreaking = WordBreaking.KeepAll,
                             WrappingLength = width-(width/2) - 75,
-                        }, $"{d.Cliente.NomeCliente.Trim()} ({d.Cliente.IdCliente}/{d.Cliente.IdLoja})", Color.Black);
+                        }, $"{d.Cliente.NomeCliente.Trim()}", Color.Black);
 
                         y+=120;              
                         imageContext.DrawText(new TextOptions(fontBody)

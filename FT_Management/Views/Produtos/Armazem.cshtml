@@ -155,21 +155,22 @@ else
                 <p>Tem a certeza que deseja gerar uma guia global do Armazém Nº @Model.ArmazemId?</p>
             </div>
         </section>
-        <footer class="modal-card-foot">
-            <button class="button is-info is-fullwidth is-large" type="button"
+        <footer class="modal-card-foot"> 
+            <div class="buttons is-centered" style="width:100%">
+            <button class="button is-info is-fullwidth is-large" id="btnGerarGuiaGlobal" type="button"
                 onclick="GerarGuiaGlobal(@Model.ArmazemId)">
                 <span class="icon">
                     <i class="fa-solid fa-file-export"></i>
                 </span>
                 <span>Gerar</span>
             </button>
-            <button type="button" class="button is-large is-fullwidth is-danger"
+            <button type="button" class="button is-large is-fullwidth is-danger" 
                 onclick="Bulma('#modalGerarGuiaGlobal').modal().close();" href="javascript:;">
                 <span class="icon">
                     <i class="fa-regular fa-circle-xmark"></i>
                 </span>
                 <span>Fechar</span>
-            </button>
+            </button></div>
         </footer>
     </div>
 </div>
@@ -306,27 +307,8 @@ else
     function GerarGuiaGlobal(id) {
         document.getElementById('loader').style.display = 'block';
         Bulma('#modalGerarGuiaGlobal').modal().close();
-        $.ajax({
-            url: '/Produtos/GuiaGlobal/' + id,
-            type: "POST",
-            success: function (response) {
-                if (response[0] == 1) {
-                    notify("Guia gerada com sucesso! Por requisite a impressão/envio da sua guia! " + response[1]);
-                    Bulma('#modalSucessoGuiaGlobal').modal().open();
-                } else {
-                    notifyError("Ocorreu um erro ao gerar a sua guia. Por favor tente novamente! " + response[1]);
-                }
-                document.getElementById('loader').style.display = 'none';
-            },
-            error: function (response) {
-                notifyError(response);
-                document.getElementById('loader').style.display = 'none';
-            },
-            failure: function (response) {
-                notifyError(response);
-                document.getElementById('loader').style.display = 'none';
-            }
-        });
+        window.location.href = '/Produtos/GuiaGlobal/@Model.ArmazemId';
+        document.getElementById('btnGerarGuiaGlobal').classList.add('is-loading');
     }
 
     function GerarTransferencia(armazem) {

@@ -243,8 +243,8 @@
         }
 
         //Gerar guia global
-        [HttpPost]
-        public JsonResult GuiaGlobal(int id, string Api)
+        [HttpGet]
+        public virtual ActionResult GuiaGlobal(int id, string Api)
         {
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
@@ -255,7 +255,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a gerar a guia global do armazem: {3}.", u.NomeCompleto, u.Id, id);
 
-            return Json(phccontext.GerarGuiaGlobal(id, u));
+            return File(context.MemoryStreamToPDF(context.DesenharDossier(phccontext.ObterDossier("phccontext.GerarGuiaGlobal(id, u)[2]")), 2480, 3508), "application/pdf");  
         }
 
         //Imprimir etiqueta normal
