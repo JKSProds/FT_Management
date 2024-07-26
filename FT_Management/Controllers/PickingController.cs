@@ -139,11 +139,11 @@
                 Mensagem = "Foi criada uma nova transferência em viagem. ATCode: " + d.AtCode
             });
             ChatContext.EnviarNotificacaoTransferencia(t);
-            MailContext.EnviarEmailTransferenciaViagem(u, d, new Attachment(context.MemoryStreamToPDF(context.DesenharDossier(d), 801, 504), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
+            MailContext.EnviarEmailTransferenciaViagem(u, d, new Attachment(context.MemoryStreamToPDF(context.DesenharDossier(d), 2480, 3508), "Viagem_" + d.Tecnico.IdArmazem + ".pdf"));
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
         }
-        
+
         //Obter uma encomenda em especifico
         [HttpGet]
         public JsonResult Encomenda(string stamp)
