@@ -307,18 +307,20 @@
             return StatusCode(500);
         }
 
-        //Email
+        //Imprimir ticket 
         [HttpGet]
-        public ActionResult Email(string id, string name, string email)
+        public virtual ActionResult Imprimir(string id)
         {
+
+            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email)) return StatusCode(500);
+            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
+            if (string.IsNullOrEmpty(id)) return StatusCode(500);
 
-            
-
-            return StatusCode(200);
-        }
-
-
+            Dossier d = phccontext.ObterDossier(id);
+            if (string.IsNullOrEmpty(d.StampDossier)) return StatusCode(500);
+        
+            return File(context.MemoryStreamToPDF(context.DesenharDossier(d), 2480, 3508), "application/pdf");  
+            }
     }
 }

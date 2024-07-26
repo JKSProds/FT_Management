@@ -143,20 +143,7 @@
 
             return (res[0] == "-1") ? StatusCode(500) : StatusCode(200);
         }
-
-                //Imprimir ticket 
-        [HttpGet]
-        public virtual ActionResult Ticket(string id)
-        {
-
-            FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
-            PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
-            Utilizador u = context.ObterUtilizador(int.Parse(this.User.Claims.First().Value));
-
         
-            return File(context.MemoryStreamToPDF(context.DesenharDossier(phccontext.ObterDossier("WEBAPP68B02230O80B1O44DBO")), 2480, 3508), "application/pdf");  }
-
-
         //Obter uma encomenda em especifico
         [HttpGet]
         public JsonResult Encomenda(string stamp)

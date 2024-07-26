@@ -4137,14 +4137,16 @@ namespace FT_Management.Models
                             DataDossier = DateTime.Parse(result["dataobra"].ToString()),
                             Tecnico = int.Parse(result["tecnico"].ToString()) == 0 ? new Utilizador() { NomeCompleto = result["ousrinis"].ToString() } : FT_ManagementContext.ObterListaUtilizadores(false, false).Where(u => u.IdPHC.ToString() == result["tecnico"].ToString()).DefaultIfEmpty(new Utilizador()).First(),
                             Serie = int.Parse(result["ndos"].ToString()),
-                            Cliente =  new Cliente() { NomeCliente = result["nome"].ToString() },
+                            Cliente =  new Cliente() { NomeCliente = result["nome"].ToString(), MoradaCliente = result["Morada"].ToString() + "\n" + result["local"].ToString() + "\n" + result["codpost"], NumeroContribuinteCliente = result["ncont"].ToString() },
                             Referencia = result["obranome"].ToString(),
                             Estado = result["u_estado"].ToString() == null ? result["tabela1"].ToString() : result["u_estado"].ToString(),
                             Obs = result["obstab2"].ToString(),
                             DataCriacao = DateTime.Parse(DateTime.Parse(result["ousrdata"].ToString()).ToShortDateString() + " " + DateTime.Parse(result["ousrhora"].ToString()).ToShortTimeString()),
                             EditadoPor = result["usrinis"].ToString(),
                             Fechado = result["fechada"].ToString() == "True",
-                            FolhaObra = new FolhaObra()
+                            FolhaObra = new FolhaObra(),
+                            AtCode = result["atcodeid"].ToString(),
+                            AtCud = result["atcud"].ToString()
                         });
                         if (LoadFolhaObra) LstDossiers.Last().FolhaObra = ObterFolhaObraSimples(result["pastamp"].ToString());
                         if (LoadMarcacao) LstDossiers.Last().Marcacao = ObterMarcacaoSimples(result["u_stampmar"].ToString());
@@ -4165,35 +4167,35 @@ namespace FT_Management.Models
         }
         public List<Dossier> ObterDossiers(DateTime Data, string Filtro, int Serie)
         {
-            return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where " + (string.IsNullOrEmpty(Filtro) ? "dataobra='" + Data.ToString("yyyy-MM-dd") + "'" : "(obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%')") + (Serie > 0 ? " AND ndos=" + Serie : "") + " order by nmdos", false, false, false, false);
+            return ObterDossiers("select top 100 * from bo (nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 on bo.bostamp=bo3.bo3stamp where " + (string.IsNullOrEmpty(Filtro) ? "dataobra='" + Data.ToString("yyyy-MM-dd") + "'" : "(obrano like '%" + Filtro + "%' OR nome like '%" + Filtro + "%' OR tecnico like '%" + Filtro + "%' OR bo.ousrinis like '%" + Filtro + "%')") + (Serie > 0 ? " AND ndos=" + Serie : "") + " order by nmdos", false, false, false, false);
         }
         public List<Dossier> ObterDossiersRMATecnico(Utilizador u)
         {
-            return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where tecnico=" + u.IdPHC + " and fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
+            return ObterDossiers("select top 100 * from bo (nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 on bo.bostamp=bo3.bo3stamp where tecnico=" + u.IdPHC + " and fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
         }
         public List<Dossier> ObterDossiersRMA()
         {
-            return ObterDossiers("select top 100 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
+            return ObterDossiers("select top 100 * from bo (nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 on bo.bostamp=bo3.bo3stamp where fechada=0 and ndos=105 and tabela1 != 'Final' order by nmdos", true, false, true, false);
         }
 
         //Stocks Minimos
         public List<Dossier> ObterDossiersStocksMinimos()
         {
-            return ObterDossiers("select bo3.u_estado, cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101;", true, false, false, true);
+            return ObterDossiers("select bo3.u_estado, cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis, bo2.* from bo (nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101;", true, false, false, true);
         }
         public Dossier ObterDossierStocksMinimos(Utilizador t)
         {
-            return ObterDossiers("select bo3.u_estado, cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and cm3.u_tecnico="+t.IdPHC+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
+            return ObterDossiers("select bo3.u_estado, cm3.u_tecnico as tecnico, bo.bostamp, bo.nmdos, bo.obrano, bo.dataobra, bo.ndos, cm3.nome, bo.obranome, bo.tabela1, bo.obstab2, bo.fechada, bo.ousrdata, bo.ousrhora, bo.usrinis, bo2.* from bo (nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 on bo.bostamp=bo3.bo3stamp join cm3 on cm3.cm=bo.vendedor where fechada=0 and ndos=101 and cm3.u_tecnico="+t.IdPHC+";", true, false, false, true).DefaultIfEmpty(new Dossier()).First();
         }
 
         public List<Dossier> ObterDossierAberto(Utilizador u)
         {
-            return ObterDossiers("select TOP 1 * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", false, false, false, false);
+            return ObterDossiers("select TOP 1 * from bo (nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 on bo.bostamp=bo3.bo3stamp where bo.ndos in (36) and tecnico=" + u.IdPHC + " and fechada = 0 order by bo.ousrdata DESC;", false, false, false, false);
         }
 
         public List<Dossier> ObterDossiersAbertos(Utilizador t, int NumDossier)
         {
-            List<Dossier> Dossiers = ObterDossiers("select a.*,c.u_estado from bo a(nolock) left join bo3 c on a.bostamp=c.bo3stamp where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 and (select count(*) from bi b where a.bostamp=b.bostamp and b.ref<>'')>0 order by ousrinis;", false, false, false, false);
+            List<Dossier> Dossiers = ObterDossiers("select a.*,c.u_estado, bo2.* from bo a(nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 c on a.bostamp=c.bo3stamp where a.ndos = "+NumDossier+" and a.tecnico="+t.IdPHC+" and a.fechada=0 and (select count(*) from bi b where a.bostamp=b.bostamp and b.ref<>'')>0 order by ousrinis;", false, false, false, false);
             Dossiers.ForEach(d => d.Linhas = ObterLinhasDossierAbertas(d.StampDossier, t));
 
             return Dossiers;
@@ -4201,7 +4203,7 @@ namespace FT_Management.Models
 
         public Dossier ObterDossier(string STAMP)
         {
-            return ObterDossiers("select * from bo (nolock) left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "';", true, true, true, true).DefaultIfEmpty(new Dossier()).First();
+            return ObterDossiers("select * from bo (nolock) left join bo2 on bo.bostamp=bo2.bo2stamp left join bo3 on bo.bostamp=bo3.bo3stamp where bostamp='" + STAMP + "';", true, true, true, true).DefaultIfEmpty(new Dossier()).First();
         }
 
         public List<Linha_Dossier> ObterLinhasDossier(string SQL_Query, bool LoadAll)
