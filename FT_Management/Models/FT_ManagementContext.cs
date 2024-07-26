@@ -3210,7 +3210,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
             int NLinhasPage = 40;
             int TotalPages = (int)Math.Ceiling((double)d.Linhas.Count() / NLinhasPage);
 
-            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 90, FontStyle.Bold);
+            Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 70, FontStyle.Bold);
             Font fontCabecalho = new Font(SystemFonts.Collection.Get("Rubik"), 50, FontStyle.Bold);
             Font fontBody = new Font(SystemFonts.Collection.Get("Rubik"), 40);
             Font fontBodyBold = new Font(SystemFonts.Collection.Get("Rubik"), 40, FontStyle.Bold);
@@ -3248,7 +3248,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             HorizontalAlignment = HorizontalAlignment.Right,
                             WordBreaking = WordBreaking.Normal,
                             WrappingLength = width - 700 - 350
-                        }, d.NomeDossier.ToUpper() + " Nº " + d.IdDossier, Color.Red);
+                        }, d.NomeDossier.ToUpper() + " Nº " + d.IdDossier, Color.Black);
 
                         y+=100;
 
@@ -3260,7 +3260,9 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             HorizontalAlignment = HorizontalAlignment.Right,
                             WordBreaking = WordBreaking.Normal,
                             WrappingLength = width - 700 - 350
-                        }, $"{d.DataCriacao:dd/MM/yyyy}\nATCUD: {d.AtCud}\nCód AT: {d.AtCode}", Color.Black);
+                        }, $"{d.DataCriacao:dd/MM/yyyy}" +
+                            (string.IsNullOrEmpty(d.AtCud) ? "" : $"\nATCUD: {d.AtCud}") +
+                            (string.IsNullOrEmpty(d.AtCode) ? "" : $"\nCód AT: {d.AtCode}"), Color.Black);
 
                         y+=200;
 
