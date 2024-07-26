@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="column">
-            <form asp-action="Index" method="get">
+            <form asp-action="Index" id="form" method="get">
                 <div class="field has-addons has-addons-right mx-1">
                     <p class="control has-icons-left">
                         <input type="text" class="input is-info" placeholder="Referência" aria-label="Referência"
@@ -210,7 +210,7 @@ else
         document.getElementById("hiddenSelectedArmazem").value = document.getElementById("lstarmazens").value;
         document.getElementById("hiddenSelectedFornecedor").value = document.getElementById("lstfornecedores").value;
         document.getElementById("hiddenSelectedTipoEquipamento").value = document.getElementById("lsttiposequipamento").value;
-        $('form').submit();
+        document.getElementById('form').submit();
     }
     document.getElementById("lstfornecedores").value = document.getElementById("hiddenSelectedFornecedor").value;
     document.getElementById("lstarmazens").value = document.getElementById("hiddenSelectedArmazem").value;
