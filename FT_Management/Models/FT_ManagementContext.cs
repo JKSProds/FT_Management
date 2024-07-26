@@ -3204,6 +3204,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
         {
             var stream = new List<MemoryStream>();
             if (string.IsNullOrEmpty(d.AtCode)) d.AtCode = string.Empty;
+            if (d.StampDossier == null || d.Linhas  == null) return stream;
 
             int width = 2480; // A4 width at 300 DPI
             int height = 3508; // A4 height at 300 DPI

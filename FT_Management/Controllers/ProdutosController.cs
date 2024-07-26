@@ -255,7 +255,7 @@
 
             _logger.LogDebug("Utilizador {1} [{2}] a gerar a guia global do armazem: {3}.", u.NomeCompleto, u.Id, id);
 
-            return File(context.MemoryStreamToPDF(context.DesenharDossier(phccontext.ObterDossier("phccontext.GerarGuiaGlobal(id, u)[2]")), 2480, 3508), "application/pdf");  
+            return File(context.MemoryStreamToPDF(context.DesenharDossier(phccontext.ObterDossier(phccontext.GerarGuiaGlobal(id, u)[2])), 2480, 3508), "application/pdf");  
         }
 
         //Imprimir etiqueta normal
