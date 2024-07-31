@@ -3252,7 +3252,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             imageContext.DrawText(new TextOptions(fontFooter)
                             {
                                 TextAlignment = TextAlignment.Center,
-                                Origin = new System.Numerics.Vector2(width-200, y-10),
+                                Origin = new System.Numerics.Vector2(width-200, y-40),
                                 HorizontalAlignment = HorizontalAlignment.Center,
                                 WordBreaking = WordBreaking.Normal,
                                 WrappingLength =  400
@@ -3314,18 +3314,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             WrappingLength = width
                         }, $"{"R. Eng. Sabino Marques, 144 4470-605 Maia"}\n{"+351 229 479 670"}\n{"pecas@food-tech.pt"}\nCapital Social: 1 150 000,00\n{"C.R.C. Lisboa e NIF/VAT (PT) 515609013"}", Color.Black);
 
-                        y+=240;
-                        // Informações do técnico
-                        imageContext.DrawText(new TextOptions(fontBody)
-                        {
-                            TextAlignment = TextAlignment.Start,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = width
-                        }, $"Criado por: {d.Tecnico.NomeCompleto}", Color.Black);
-                        
-                        y-=300;
+                        y-=60;
                         x = width-(width/2);
 
                         // Informações do cliente
@@ -3341,7 +3330,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                         var r = new RectangularPolygon(x-25, y-25, width/2-25, 350);
                         imageContext.Draw(Color.Black, 6, ApplyRoundCorners(r, 50)); 
 
-                        y+=120;              
+                        y+=80;              
                         imageContext.DrawText(new TextOptions(fontBody)
                         {
                             TextAlignment = TextAlignment.Start,
@@ -3351,7 +3340,7 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
                             WrappingLength = width-(width/2) - 75
                         }, $"{d.Cliente.MoradaCliente}\nNIF: {d.Cliente.NumeroContribuinteCliente}", Color.Black);
 
-                        y += 240;
+                        y += 280;
                         x = 50;
 
                         // Desenhar linha separadora
