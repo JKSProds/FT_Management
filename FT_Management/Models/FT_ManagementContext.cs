@@ -3209,7 +3209,9 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
             int width = 2480; // A4 width at 300 DPI
             int height = 3508; // A4 height at 300 DPI
             int NLinhasPage = 50;
+            int NCopias = 2;
             int TotalPages = (int)Math.Ceiling((double)d.Linhas.Count() / NLinhasPage);
+            string Header = "ORIGINAL";
 
             Font fontHeader = new Font(SystemFonts.Collection.Get("Rubik"), 70, FontStyle.Bold);
             Font fontCabecalho = new Font(SystemFonts.Collection.Get("Rubik"), 50, FontStyle.Bold);
@@ -3218,315 +3220,323 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
             Font fontFooter = new Font(SystemFonts.Collection.Get("Rubik"), 30);
 
             List<Image<Rgba32>> pages = new List<Image<Rgba32>>();
-
-            for (int pageIndex = 0; pageIndex < TotalPages; pageIndex++)
-            {       
-                int x = 50;
-                int y = 50;
-                using (var image = new Image<Rgba32>(width, height))
-                {
-                    image.Mutate(imageContext =>
+            for (int i = 0; i < NCopias; i++) {
+                for (int pageIndex = 0; pageIndex < TotalPages; pageIndex++)
+                {       
+                    int x = 50;
+                    int y = 50;
+                    using (var image = new Image<Rgba32>(width, height))
                     {
-                        imageContext.BackgroundColor(Color.White);
+                        image.Mutate(imageContext =>
+                        {
+                            imageContext.BackgroundColor(Color.White);
 
-                        var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website_black.png"); // Adicione o caminho correto para o arquivo de imagem
-                        img.Mutate(x => x.Resize(700, 145));
-                        imageContext.DrawImage(img, new Point(x, y + 75), 1);
+                            var img = Image.Load(Directory.GetCurrentDirectory() + "/wwwroot/img/logo_website_black.png"); // Adicione o caminho correto para o arquivo de imagem
+                            img.Mutate(x => x.Resize(700, 145));
+                            imageContext.DrawImage(img, new Point(x, y + 75), 1);
 
-                        QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                        QRCodeData qrCodeData = qrGenerator.CreateQrCode(d.Iniciais == "TV" ? d.GetUrlViagem : d.GetUrl, QRCodeGenerator.ECCLevel.Q);
-                        BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+                            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                            QRCodeData qrCodeData = qrGenerator.CreateQrCode(d.Iniciais == "TV" ? d.GetUrlViagem : d.GetUrl, QRCodeGenerator.ECCLevel.Q);
+                            BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
-                        var qr = Image.Load(qrCode.GetGraphic(20));
-                        qr.Mutate(x => x.Resize(400, 400));
-                        imageContext.DrawImage(qr, new Point(width - (string.IsNullOrEmpty(d.AtCud.Trim()) ? 400 : 800), y), 1);
-                        
-                        if (!string.IsNullOrEmpty(d.AtCud.Trim())) {
-                            qrCodeData = qrGenerator.CreateQrCode(d.AtCudQR, QRCodeGenerator.ECCLevel.Q);
-                            qrCode = new BitmapByteQRCode(qrCodeData);
-
-                            qr = Image.Load(qrCode.GetGraphic(20));
+                            var qr = Image.Load(qrCode.GetGraphic(20));
                             qr.Mutate(x => x.Resize(400, 400));
-                            imageContext.DrawImage(qr, new Point(width - 400, y), 1);  
+                            imageContext.DrawImage(qr, new Point(width - (string.IsNullOrEmpty(d.AtCud.Trim()) ? 400 : 800), y), 1);
                             
-                            imageContext.DrawText(new TextOptions(fontFooter)
-                            {
-                                TextAlignment = TextAlignment.Center,
-                                Origin = new System.Numerics.Vector2(width-200, y-40),
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                WordBreaking = WordBreaking.Normal,
-                                WrappingLength =  400
-                            }, "ATCUD: " + d.AtCud, Color.Black);
+                            if (!string.IsNullOrEmpty(d.AtCud.Trim())) {
+                                qrCodeData = qrGenerator.CreateQrCode(d.AtCudQR, QRCodeGenerator.ECCLevel.Q);
+                                qrCode = new BitmapByteQRCode(qrCodeData);
 
-                            x = width-800; 
-                        }  else {x = width-400;}
-
-                        y+=50;
-                        // Informações da empresa
-                        imageContext.DrawText(new TextOptions(fontHeader)
-                        {
-                            TextAlignment = TextAlignment.End,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength =  x - 700
-                        }, d.NomeDossier.ToUpper() + "\nNº " + d.IdDossier, Color.Black);
-
-                        y+=220;
-                        x=50;
-
-                        // Informações da empresa
-                        imageContext.DrawText(new TextOptions(fontCabecalho)
-                        {
-                            TextAlignment = TextAlignment.Start,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = x - 700
-                        }, $"Data: {d.DataCriacao:dd/MM/yyyy HH:mm}" +
-                            (string.IsNullOrEmpty(d.AtCode.Trim()) ? "" : $"\nCód AT: {d.AtCode}"), Color.Black);
-
-                        y+=140;
-
-                        // Desenhar linha separadora
-                        imageContext.DrawLines(Color.Black, 5, new PointF[] { new PointF(x, y), new PointF(width - x, y) });
-
-                        y += 50;
-
-                        // Informações da empresa
-                        imageContext.DrawText(new TextOptions(fontCabecalho)
-                        {
-                            TextAlignment = TextAlignment.Start,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = width
-                        }, $"{"SUBIC Lda"}", Color.Black);
-                        
-                        y +=60;
-
-                        imageContext.DrawText(new TextOptions(fontBody)
-                        {
-                            TextAlignment = TextAlignment.Start,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = width
-                        }, $"{"R. Eng. Sabino Marques, 144 4470-605 Maia"}\n{"+351 229 479 670"}\n{"pecas@food-tech.pt"}\nCapital Social: 1 150 000,00\n{"C.R.C. Lisboa e NIF/VAT (PT) 515609013"}", Color.Black);
-
-                        y-=60;
-                        x = width-(width/2);
-
-                        // Informações do cliente
-                        imageContext.DrawText(new TextOptions(fontBodyBold)
-                        {
-                            TextAlignment = TextAlignment.Start,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            WordBreaking = WordBreaking.KeepAll,
-                            WrappingLength = width-(width/2) - 75,
-                        }, $"{d.Cliente.NomeCliente.Trim()}", Color.Black);
-
-                        var r = new RectangularPolygon(x-25, y-25, width/2-25, 350);
-                        imageContext.Draw(Color.Black, 6, ApplyRoundCorners(r, 50)); 
-
-                        y+=80;              
-                        imageContext.DrawText(new TextOptions(fontBody)
-                        {
-                            TextAlignment = TextAlignment.Start,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = width-(width/2) - 75
-                        }, $"{d.Cliente.MoradaCliente}\nNIF: {d.Cliente.NumeroContribuinteCliente}", Color.Black);
-
-                        y += 280;
-                        x = 50;
-
-                        // Desenhar linha separadora
-                        imageContext.DrawLines(Color.Black, 5, new PointF[] { new PointF(x, y), new PointF(width - x, y) });
-
-                        y+= 50;
-
-                        // Desenhar tabela
-                        int tableX = x;
-                        int tableY = y;
-                        int tableWidth = width - 2 * x;
-                        int rowHeight = 40;
-                        int headerHeight = 100;
-
-                        // Largura das colunas
-                        int leftColWidth = tableWidth / 6;
-                        int middleColWidth = tableWidth - 800;
-                        int rightColWidth = tableWidth - leftColWidth - middleColWidth;
-
-                        // Desenhar cabeçalho da tabela
-                        string[] tableHeaders = { "Referência", "Designação", "Quantidade" };
-                        int[] colWidths = { leftColWidth, middleColWidth, rightColWidth };
-                        for (int i = 0; i < tableHeaders.Length; i++)
-                        {
-                            imageContext.DrawText(new TextOptions(fontCabecalho)
-                            {
-                                TextAlignment = TextAlignment.Center,
-                                Origin = new System.Numerics.Vector2(tableX + (i == 0 ? leftColWidth / 2 : (i == 1 ? leftColWidth + middleColWidth / 2 : leftColWidth + middleColWidth + rightColWidth / 2)), tableY),
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                WordBreaking = WordBreaking.Normal,
-                                WrappingLength = colWidths[i]
-                            }, tableHeaders[i], Color.Black);
-                        }
-
-                        tableY += headerHeight + rowHeight;
-
-
-                        foreach (var l in d.Linhas.Skip(NLinhasPage*pageIndex).Take(NLinhasPage))
-                        {
-                            int i = 0;
-
-                            imageContext.DrawText(new TextOptions(fontFooter)
-                            {
-                                TextAlignment = TextAlignment.Start,
-                                Origin = new System.Numerics.Vector2(tableX +  leftColWidth / 2, tableY - rowHeight/2),
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                WordBreaking = WordBreaking.Normal,
-                                WrappingLength = colWidths[i]
-                            }, l.Referencia, Color.Black);
-                            i++;
-                            imageContext.DrawText(new TextOptions(fontFooter)
+                                qr = Image.Load(qrCode.GetGraphic(20));
+                                qr.Mutate(x => x.Resize(400, 400));
+                                imageContext.DrawImage(qr, new Point(width - 400, y), 1);  
+                                
+                                imageContext.DrawText(new TextOptions(fontFooter)
                                 {
                                     TextAlignment = TextAlignment.Center,
-                                    Origin = new System.Numerics.Vector2(tableX + leftColWidth + 40, tableY - rowHeight/2),
-                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    Origin = new System.Numerics.Vector2(width-200, y-40),
+                                    HorizontalAlignment = HorizontalAlignment.Center,
                                     WordBreaking = WordBreaking.Normal,
-                                    WrappingLength = colWidths[i]
-                                }, l.Designacao, Color.Black);
-                            i++;
-                            imageContext.DrawText(new TextOptions(fontFooter)
+                                    WrappingLength =  400
+                                }, "ATCUD: " + d.AtCud, Color.Black);
+
+                                x = width-800; 
+                            }  else {x = width-400;}
+
+                            imageContext.DrawText(new TextOptions(fontBodyBold)
                                 {
-                                    TextAlignment = TextAlignment.Start,
-                                    Origin = new System.Numerics.Vector2(tableX + leftColWidth + middleColWidth + rightColWidth / 2, tableY - rowHeight/2),
+                                    TextAlignment = TextAlignment.Center,
+                                    Origin = new System.Numerics.Vector2(width - (string.IsNullOrEmpty(d.AtCud.Trim()) ? 200 : 600), y-40),
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    WordBreaking = WordBreaking.Normal,
+                                    WrappingLength =  400
+                                }, Header, Color.Black);
+
+                            y+=50;
+                            // Informações da empresa
+                            imageContext.DrawText(new TextOptions(fontHeader)
+                            {
+                                TextAlignment = TextAlignment.End,
+                                Origin = new System.Numerics.Vector2(x, y),
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength =  x - 700
+                            }, d.NomeDossier.ToUpper() + "\nNº " + d.IdDossier, Color.Black);
+
+                            y+=220;
+                            x=50;
+
+                            // Informações da empresa
+                            imageContext.DrawText(new TextOptions(fontCabecalho)
+                            {
+                                TextAlignment = TextAlignment.Start,
+                                Origin = new System.Numerics.Vector2(x, y),
+                                HorizontalAlignment = HorizontalAlignment.Left,
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength = x - 700
+                            }, $"Data: {d.DataCriacao:dd/MM/yyyy HH:mm}" +
+                                (string.IsNullOrEmpty(d.AtCode.Trim()) ? "" : $"\nCód AT: {d.AtCode}"), Color.Black);
+
+                            y+=140;
+
+                            // Desenhar linha separadora
+                            imageContext.DrawLines(Color.Black, 5, new PointF[] { new PointF(x, y), new PointF(width - x, y) });
+
+                            y += 50;
+
+                            // Informações da empresa
+                            imageContext.DrawText(new TextOptions(fontCabecalho)
+                            {
+                                TextAlignment = TextAlignment.Start,
+                                Origin = new System.Numerics.Vector2(x, y),
+                                HorizontalAlignment = HorizontalAlignment.Left,
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength = width
+                            }, $"{"SUBIC Lda"}", Color.Black);
+                            
+                            y +=60;
+
+                            imageContext.DrawText(new TextOptions(fontBody)
+                            {
+                                TextAlignment = TextAlignment.Start,
+                                Origin = new System.Numerics.Vector2(x, y),
+                                HorizontalAlignment = HorizontalAlignment.Left,
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength = width
+                            }, $"{"R. Eng. Sabino Marques, 144 4470-605 Maia"}\n{"+351 229 479 670"}\n{"pecas@food-tech.pt"}\nCapital Social: 1 150 000,00\n{"C.R.C. Lisboa e NIF/VAT (PT) 515609013"}", Color.Black);
+
+                            y-=60;
+                            x = width-(width/2);
+
+                            // Informações do cliente
+                            imageContext.DrawText(new TextOptions(fontBodyBold)
+                            {
+                                TextAlignment = TextAlignment.Start,
+                                Origin = new System.Numerics.Vector2(x, y),
+                                HorizontalAlignment = HorizontalAlignment.Left,
+                                WordBreaking = WordBreaking.KeepAll,
+                                WrappingLength = width-(width/2) - 75,
+                            }, $"{d.Cliente.NomeCliente.Trim()}", Color.Black);
+
+                            var r = new RectangularPolygon(x-25, y-25, width/2-25, 350);
+                            imageContext.Draw(Color.Black, 6, ApplyRoundCorners(r, 50)); 
+
+                            y+=80;              
+                            imageContext.DrawText(new TextOptions(fontBody)
+                            {
+                                TextAlignment = TextAlignment.Start,
+                                Origin = new System.Numerics.Vector2(x, y),
+                                HorizontalAlignment = HorizontalAlignment.Left,
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength = width-(width/2) - 75
+                            }, $"{d.Cliente.MoradaCliente}\nNIF: {d.Cliente.NumeroContribuinteCliente}", Color.Black);
+
+                            y += 280;
+                            x = 50;
+
+                            // Desenhar linha separadora
+                            imageContext.DrawLines(Color.Black, 5, new PointF[] { new PointF(x, y), new PointF(width - x, y) });
+
+                            y+= 50;
+
+                            // Desenhar tabela
+                            int tableX = x;
+                            int tableY = y;
+                            int tableWidth = width - 2 * x;
+                            int rowHeight = 40;
+                            int headerHeight = 100;
+
+                            // Largura das colunas
+                            int leftColWidth = tableWidth / 6;
+                            int middleColWidth = tableWidth - 800;
+                            int rightColWidth = tableWidth - leftColWidth - middleColWidth;
+
+                            // Desenhar cabeçalho da tabela
+                            string[] tableHeaders = { "Referência", "Designação", "Quantidade" };
+                            int[] colWidths = { leftColWidth, middleColWidth, rightColWidth };
+                            for (int i = 0; i < tableHeaders.Length; i++)
+                            {
+                                imageContext.DrawText(new TextOptions(fontCabecalho)
+                                {
+                                    TextAlignment = TextAlignment.Center,
+                                    Origin = new System.Numerics.Vector2(tableX + (i == 0 ? leftColWidth / 2 : (i == 1 ? leftColWidth + middleColWidth / 2 : leftColWidth + middleColWidth + rightColWidth / 2)), tableY),
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     WordBreaking = WordBreaking.Normal,
                                     WrappingLength = colWidths[i]
-                                }, l.Quantidade == 0 ? "" : l.Quantidade.ToString(), Color.Black);
+                                }, tableHeaders[i], Color.Black);
+                            }
 
-                            tableY += rowHeight;
-                        }
+                            tableY += headerHeight + rowHeight;
 
-                        // Desenhar bordas da tabela
-                        // Bordas horizontais
-                        imageContext.DrawLines(Color.Black, 2, new PointF[] {
-                            new PointF(tableX, y),
-                            new PointF(tableX + tableWidth, y)
-                        });
 
-                        imageContext.DrawLines(Color.Black, 2, new PointF[] {
-                            new PointF(tableX, y + headerHeight),
-                            new PointF(tableX + tableWidth, y + headerHeight)
-                        });
+                            foreach (var l in d.Linhas.Skip(NLinhasPage*pageIndex).Take(NLinhasPage))
+                            {
+                                int i = 0;
 
-                        imageContext.DrawLines(Color.Black, 2, new PointF[] {
-                            new PointF(tableX, tableY),
-                            new PointF(tableX + tableWidth, tableY)
-                        });
+                                imageContext.DrawText(new TextOptions(fontFooter)
+                                {
+                                    TextAlignment = TextAlignment.Start,
+                                    Origin = new System.Numerics.Vector2(tableX +  leftColWidth / 2, tableY - rowHeight/2),
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    WordBreaking = WordBreaking.Normal,
+                                    WrappingLength = colWidths[i]
+                                }, l.Referencia, Color.Black);
+                                i++;
+                                imageContext.DrawText(new TextOptions(fontFooter)
+                                    {
+                                        TextAlignment = TextAlignment.Center,
+                                        Origin = new System.Numerics.Vector2(tableX + leftColWidth + 40, tableY - rowHeight/2),
+                                        HorizontalAlignment = HorizontalAlignment.Left,
+                                        WordBreaking = WordBreaking.Normal,
+                                        WrappingLength = colWidths[i]
+                                    }, l.Designacao, Color.Black);
+                                i++;
+                                imageContext.DrawText(new TextOptions(fontFooter)
+                                    {
+                                        TextAlignment = TextAlignment.Start,
+                                        Origin = new System.Numerics.Vector2(tableX + leftColWidth + middleColWidth + rightColWidth / 2, tableY - rowHeight/2),
+                                        HorizontalAlignment = HorizontalAlignment.Center,
+                                        WordBreaking = WordBreaking.Normal,
+                                        WrappingLength = colWidths[i]
+                                    }, l.Quantidade == 0 ? "" : l.Quantidade.ToString(), Color.Black);
 
-                        // Bordas verticais
-                        int xOffset = 0;
-                        foreach (var width in colWidths)
-                        {
+                                tableY += rowHeight;
+                            }
+
+                            // Desenhar bordas da tabela
+                            // Bordas horizontais
                             imageContext.DrawLines(Color.Black, 2, new PointF[] {
-                                new PointF(tableX + xOffset, y),
-                                new PointF(tableX + xOffset, tableY)
-                            });
-                            xOffset += width;
-                        }
-
-                        imageContext.DrawLines(Color.Black, 2, new PointF[] {
-                                new PointF(tableX + xOffset, y),
-                                new PointF(tableX + xOffset, tableY)
+                                new PointF(tableX, y),
+                                new PointF(tableX + tableWidth, y)
                             });
 
-                        y = tableY + 20; // Ajuste y após a tabela
+                            imageContext.DrawLines(Color.Black, 2, new PointF[] {
+                                new PointF(tableX, y + headerHeight),
+                                new PointF(tableX + tableWidth, y + headerHeight)
+                            });
 
-                        imageContext.DrawText(new TextOptions(fontFooter)
-                        {
-                            TextAlignment = TextAlignment.End,
-                            Origin = new System.Numerics.Vector2(width - x*2, y),
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = width
-                        }, "Pág: " + Math.Abs(pageIndex + 1) + "/" + TotalPages , Color.Black);
+                            imageContext.DrawLines(Color.Black, 2, new PointF[] {
+                                new PointF(tableX, tableY),
+                                new PointF(tableX + tableWidth, tableY)
+                            });
 
-                        imageContext.DrawText(new TextOptions(fontFooter)
-                        {
-                            TextAlignment = TextAlignment.Start,
-                            Origin = new System.Numerics.Vector2(x, y),
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = width
-                        }, d.ObsSoftware , Color.Black);
+                            // Bordas verticais
+                            int xOffset = 0;
+                            foreach (var width in colWidths)
+                            {
+                                imageContext.DrawLines(Color.Black, 2, new PointF[] {
+                                    new PointF(tableX + xOffset, y),
+                                    new PointF(tableX + xOffset, tableY)
+                                });
+                                xOffset += width;
+                            }
 
-                        y = height - 360;
+                            imageContext.DrawLines(Color.Black, 2, new PointF[] {
+                                    new PointF(tableX + xOffset, y),
+                                    new PointF(tableX + xOffset, tableY)
+                                });
 
-                        if (!string.IsNullOrEmpty(d.StampMoradaCarga) && !string.IsNullOrEmpty(d.StampMoradaDescarga)) {
-                            r = new RectangularPolygon(x, y, width/2-x, 300);
-                            imageContext.Draw(Color.Black, 6, ApplyRoundCorners(r, 50)); 
+                            y = tableY + 20; // Ajuste y após a tabela
 
-                            r = new RectangularPolygon(width/2+x, y, width/2-x*2, 300);
-                            imageContext.Draw(Color.Black, 6, ApplyRoundCorners(r, 50));   
-                            y+=10;
-                            imageContext.DrawText(new TextOptions(fontBodyBold)
+                            imageContext.DrawText(new TextOptions(fontFooter)
+                            {
+                                TextAlignment = TextAlignment.End,
+                                Origin = new System.Numerics.Vector2(width - x*2, y),
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength = width
+                            }, "Pág: " + Math.Abs(pageIndex + 1) + "/" + TotalPages , Color.Black);
+
+                            imageContext.DrawText(new TextOptions(fontFooter)
                             {
                                 TextAlignment = TextAlignment.Start,
-                                Origin = new System.Numerics.Vector2(x + 25, y),
+                                Origin = new System.Numerics.Vector2(x, y),
                                 HorizontalAlignment = HorizontalAlignment.Left,
-                                WrappingLength = width/2-x
-                            }, "Local de carga", Color.Black);
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength = width
+                            }, d.ObsSoftware , Color.Black);
 
-                            imageContext.DrawText(new TextOptions(fontBodyBold)
-                            {
-                                TextAlignment = TextAlignment.Start,
-                                Origin = new System.Numerics.Vector2(width / 2 + x + 25, y),
-                                HorizontalAlignment = HorizontalAlignment.Left,
-                                WrappingLength = width/2-x*2
-                            }, "Local de descarga", Color.Black);
+                            y = height - 360;
 
-                            y+=50;
+                            if (!string.IsNullOrEmpty(d.StampMoradaCarga) && !string.IsNullOrEmpty(d.StampMoradaDescarga)) {
+                                r = new RectangularPolygon(x, y, width/2-x, 300);
+                                imageContext.Draw(Color.Black, 6, ApplyRoundCorners(r, 50)); 
 
-                            imageContext.DrawText(new TextOptions(fontBody)
-                            {
-                                TextAlignment = TextAlignment.Start,
-                                Origin = new System.Numerics.Vector2(x + 25, y),
-                                HorizontalAlignment = HorizontalAlignment.Left,
-                                WrappingLength = width/2-x
-                            }, d.StampMoradaCarga, Color.Black);      
+                                r = new RectangularPolygon(width/2+x, y, width/2-x*2, 300);
+                                imageContext.Draw(Color.Black, 6, ApplyRoundCorners(r, 50));   
+                                y+=10;
+                                imageContext.DrawText(new TextOptions(fontBodyBold)
+                                {
+                                    TextAlignment = TextAlignment.Start,
+                                    Origin = new System.Numerics.Vector2(x + 25, y),
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    WrappingLength = width/2-x
+                                }, "Local de carga", Color.Black);
+
+                                imageContext.DrawText(new TextOptions(fontBodyBold)
+                                {
+                                    TextAlignment = TextAlignment.Start,
+                                    Origin = new System.Numerics.Vector2(width / 2 + x + 25, y),
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    WrappingLength = width/2-x*2
+                                }, "Local de descarga", Color.Black);
+
+                                y+=50;
+
+                                imageContext.DrawText(new TextOptions(fontBody)
+                                {
+                                    TextAlignment = TextAlignment.Start,
+                                    Origin = new System.Numerics.Vector2(x + 25, y),
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    WrappingLength = width/2-x
+                                }, d.StampMoradaCarga, Color.Black);      
+                                
+                                imageContext.DrawText(new TextOptions(fontBody)
+                                {
+                                    TextAlignment = TextAlignment.Start,
+                                    Origin = new System.Numerics.Vector2(width / 2 + x + 25, y),
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    WrappingLength = width/2-x*2
+                                }, d.StampMoradaDescarga, Color.Black);
+                            }
+                            y+=250;
                             
-                            imageContext.DrawText(new TextOptions(fontBody)
+                            imageContext.DrawText(new TextOptions(fontFooter)
                             {
-                                TextAlignment = TextAlignment.Start,
-                                Origin = new System.Numerics.Vector2(width / 2 + x + 25, y),
-                                HorizontalAlignment = HorizontalAlignment.Left,
-                                WrappingLength = width/2-x*2
-                            }, d.StampMoradaDescarga, Color.Black);
+                                TextAlignment = TextAlignment.Center,
+                                Origin = new System.Numerics.Vector2(width/2, y),
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                WordBreaking = WordBreaking.Normal,
+                                WrappingLength = width
+                            }, "Powered by: JKSProds - Software" , Color.Black);
+                        });
+                            height++;
+                            // Salvar a imagem em um arquivo
+                            pages.Add(image.Clone());
                         }
-                        y+=250;
-                        
-                        imageContext.DrawText(new TextOptions(fontFooter)
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            Origin = new System.Numerics.Vector2(width/2, y),
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            WordBreaking = WordBreaking.Normal,
-                            WrappingLength = width
-                        }, "Powered by: JKSProds - Software" , Color.Black);
-
-                        Console.WriteLine("A gerar pagina " + Math.Abs(pageIndex + 1) + " de " + TotalPages);
-                    });
-                        height++;
-                         // Salvar a imagem em um arquivo
-                        pages.Add(image.Clone());
                     }
-                }
-
+                    Header = "DUPLICADO";
+            }
             // Salvar todas as páginas no MemoryStream
             foreach (var page in pages)
             {
