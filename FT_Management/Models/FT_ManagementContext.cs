@@ -3395,9 +3395,9 @@ public MemoryStream DesenharTicketFO(FolhaObra fo)
 
                                 imageContext.DrawText(new TextOptions(fontFooter)
                                 {
-                                    TextAlignment = TextAlignment.Start,
-                                    Origin = new System.Numerics.Vector2(tableX +  leftColWidth / 2, tableY - rowHeight/2),
-                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    TextAlignment = TextAlignment.Center,
+                                    Origin = new System.Numerics.Vector2(tableX + 40, tableY - rowHeight/2),
+                                    HorizontalAlignment = HorizontalAlignment.Left,
                                     WordBreaking = WordBreaking.Normal,
                                     WrappingLength = colWidths[i]
                                 }, l.Referencia, Color.Black);
