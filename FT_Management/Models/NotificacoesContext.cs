@@ -221,7 +221,7 @@ namespace FT_Management.Models
 
         public static bool EnviarNotificacaoGuiaGlobal(Utilizador u)
         {
-            string Mensagem = "Foi gerada com sucesso a sua guia global.\r\nPor requisite a impressão/envio da sua guia!";
+            string Mensagem = "Foi gerada com sucesso a sua guia global.\r\nPor imprima a sua guia!";
 
             return EnviarMensagem(u.ChatToken, Mensagem);
         }
@@ -765,8 +765,8 @@ namespace FT_Management.Models
 
         public static bool EnviarEmailTransferenciaViagem(Utilizador u, Dossier d, Attachment anexo)
         {
-            string Assunto = "📦 " + "Transf. Viagem" + " - " + d.AtCode + " - " + d.Tecnico.NomeCompleto;
-            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + d.Tecnico.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "Código AT: " + d.AtCode + "<br>Link: " + d.GetUrlViagem + "<br><br>";;
+            string Assunto = "📦 " + "Transf. Viagem" + " - " + d.AtCode + " - " + u.NomeCompleto;
+            string Mensagem = "Foi criado um novo documento de transferencia em viagem!<br><br><b>Dados adicionais:</b><br>Tecnico: " + u.NomeCompleto + "<br>Data: " + d.DataDossier.ToShortDateString() + "<br>" + "Código AT: " + d.AtCode + "<br>Link: " + d.GetUrlViagem + "<br><br>";;
 
             if (d.Linhas.Where(l => l.Quantidade > 0).Count() > 0)
             {

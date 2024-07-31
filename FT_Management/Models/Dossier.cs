@@ -45,12 +45,20 @@ namespace FT_Management.Models
         public string GetUrlViagem { get { return "http://webapp.food-tech.pt/Produtos/Viagem/" + StampDossier; } }
         public string AtCode { get; set; }        
         public string AtCud { get; set; }
+        public string AtCudQR { get; set; }
+        public string ObsSoftware { get; set; }
 
         public void DefinirSerie(TipoDossier tp)
         {
             if (tp == TipoDossier.Pecas) this.Serie = 96;
             if (tp == TipoDossier.Orcamento) this.Serie = 97;
             if (tp == TipoDossier.Transferencia) this.Serie = 36;
+        }
+
+        public Dossier() {
+            AtCud="";
+            AtCode="";
+            ObsSoftware="";
         }
     }
     public class Linha_Dossier

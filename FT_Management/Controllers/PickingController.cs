@@ -75,7 +75,7 @@
 
             Parallel.ForEach(Tecnicos, t =>
             {
-                (t.Dossiers ??= new List<Dossier>()).AddRange(phccontext.ObterDossiersAbertos(t, 36).Concat(phccontext.ObterDossiersAbertos(t, 96)));
+                (t.Dossiers ??= new List<Dossier>()).AddRange(phccontext.ObterDossiersAbertos(t, 36).Concat(phccontext.ObterDossiersAbertos(t, 96).Where(d=>d.Estado=="Stock Maia")));
             });
 
             return View(Tecnicos.Where(t => t.Dossiers.Count() > 0));
@@ -131,6 +131,8 @@
 
             d.StampDossier = res[1];
             d.AtCode = res[2];
+
+            d = phccontext.ObterDossier(d.StampDossier);
             
             context.CriarNotificacao(new Notificacao() {
                 UtilizadorDestino = t,

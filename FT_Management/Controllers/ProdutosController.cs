@@ -249,8 +249,7 @@
             FT_ManagementContext context = HttpContext.RequestServices.GetService(typeof(FT_ManagementContext)) as FT_ManagementContext;
             PHCContext phccontext = HttpContext.RequestServices.GetService(typeof(PHCContext)) as PHCContext;
 
-            int IdUtilizador = int.Parse(this.User.Claims.First().Value);
-            Utilizador u = context.ObterUtilizador(IdUtilizador);
+            Utilizador u = context.ObterListaUtilizadores(true, false).Where(m => m.IdArmazem == id).DefaultIfEmpty(new Utilizador()).First();
             if (u.Id == 0) return Json("Acesso Negado - " + Api);
 
             _logger.LogDebug("Utilizador {1} [{2}] a gerar a guia global do armazem: {3}.", u.NomeCompleto, u.Id, id);

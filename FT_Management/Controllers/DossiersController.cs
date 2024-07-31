@@ -320,7 +320,7 @@
             Dossier d = phccontext.ObterDossier(id);
             if (string.IsNullOrEmpty(d.StampDossier)) return StatusCode(500);
 
-            return File(context.MemoryStreamToPDF(context.DesenharDossier(d), 2480, 3508), "application/pdf", d.Iniciais + d.IdDossier);  
+            return File(context.MemoryStreamToPDF(context.DesenharDossier(d), 2480, 3508), "application/pdf");  
             }
     }
 }

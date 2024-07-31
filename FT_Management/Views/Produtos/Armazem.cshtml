@@ -199,32 +199,6 @@ else
     </div>
 </div>
 
-<div id="modalSucessoGuiaGlobal" class="modal">
-    <div class="modal-background has-background-success"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title">Guia Global</p>
-            <button type="button" class="delete" aria-label="close"></button>
-        </header>
-        <section class="modal-card-body">
-            <div class="modal-body">
-                <p class="is-size-2 has-text-centered has-text-weight-bold">Foi gerada com sucesso a sua guia global.
-                    Por requisite a impressão/envio da sua guia!</p>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <div class="buttons is-centered" style="width:100%">
-            <button type="button" class="button is-large is-fullwidth is-danger"
-                onclick="Bulma('#modalSucessoGuiaGlobal').modal().close();" href="javascript:;">
-                <span class="icon">
-                    <i class="fa-regular fa-circle-xmark"></i>
-                </span>
-                <span>Fechar</span>
-            </button></div>
-        </footer>
-    </div>
-</div>
-
 <div id="modalGerarPedidoTransferencia" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -282,7 +256,7 @@ else
         </header>
         <section class="modal-card-body">
             <div class="modal-body has-text-centered" id="divTVs">
-                
+                <button class="button is-danger is-large is-fullwidth" type="button" >Não existem Transferências por aceitar!</button>
             </div>
         </section>
         <footer class="modal-card-foot">
@@ -335,7 +309,7 @@ else
                 });
                 
                 document.getElementById('badgeTV').hidden = !exist;
-                document.getElementById("divTVs").innerHTML = html;
+                if (exist) document.getElementById("divTVs").innerHTML = html;
             },
             error: function (response) {
                 notifyError('Ocorreu um erro ao obter os dossiers em viagem!');
